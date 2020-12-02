@@ -45,12 +45,12 @@ class AtlasStakeSelectPage extends StatefulWidget {
 
 class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   var infoTitleList = [
-    "总抵押",
-    "昨日年化",
-    "当前管理费",
+    S.of(Keys.rootKey.currentContext).total_staking,
+    S.of(Keys.rootKey.currentContext).atlas_reward_rate,
+    S.of(Keys.rootKey.currentContext).current_management_fee,
     S.of(Keys.rootKey.currentContext).description,
-    "可设最高管理费",
-    "单纪元可调管理费幅度",
+    S.of(Keys.rootKey.currentContext).setting_max_management_fee,
+    S.of(Keys.rootKey.currentContext).epoch_management_fee_trim,
     S.of(Keys.rootKey.currentContext).max_staking_num,
     S.of(Keys.rootKey.currentContext).website,
     S.of(Keys.rootKey.currentContext).contact,
@@ -83,7 +83,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: BaseAppBar(baseTitle: "抵押Atlas节点"),
+        appBar: BaseAppBar(baseTitle: S.of(context).staking_atlas_node),
         body: _pageWidget(context));
   }
 
@@ -156,7 +156,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            '选择需要抵押的Map3节点',
+            S.of(context).select_map3_node_need_staking,
             style: TextStyles.textC333S14,
           ),
           SizedBox(
@@ -198,12 +198,12 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text("注意事项", style: TextStyles.textC333S16),
+          Text(S.of(context).precautions, style: TextStyles.textC333S16),
           Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 10),
-            child: Text("· 抵押后下一个纪元当选才会产生收益"),
+            child: Text("· ${S.of(context).after_staking_next_epoch_income}"),
           ),
-          Text("· 撤销抵押需要等下一个纪元才能生效，期间可以继续享受出块收益回报"),
+          Text("· ${S.of(context).unstaking_next_epoch_effect_continue_yield}"),
         ],
       ),
     );
@@ -307,7 +307,7 @@ Widget stakeHeaderInfo(
                 Padding(
                   padding: const EdgeInsets.only(bottom: 2.0),
                   child: Text(
-                    "节点号：${atlasInfoEntity.nodeId}",
+                    "${S.of(buildContext).node_num}：${atlasInfoEntity.nodeId}",
                     style: TextStyles.textC333S12,
                   ),
                 ),

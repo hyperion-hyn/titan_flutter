@@ -100,15 +100,15 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     _dataTitleList.add("${S.of(context).tx_amount}:");
 
     if (isContract) {
-      _dataTitleList.add("金额转移");
+      _dataTitleList.add(S.of(context).amount_transfer);
     }
 
     _dataTitleList.add("${S.of(context).transfer_gas_fee}:");
-    _dataTitleList.add("燃料价格:");
+    _dataTitleList.add("${S.of(context).gas_price}:");
     _dataTitleList.add("HYN${S.of(context).price}:");
-    _dataTitleList.add("燃料限制:");
-    _dataTitleList.add("交易燃料费用:");
-    _dataTitleList.add("随机数");
+    _dataTitleList.add("${S.of(context).gas_limit}:");
+    _dataTitleList.add("${S.of(context).transaction_gas_fee}:");
+    _dataTitleList.add(S.of(context).random_number);
     _dataTitleList.add("${S.of(context).tx_type}:");
     _dataTitleList.add("${S.of(context).tx_input_data}:");
 
@@ -183,12 +183,14 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       var tempAmountText = amountText;
       if (tempAmountText.contains("-") || tempAmountText.contains("+")) {
         tempAmountText = tempAmountText.substring(1);
+      }
+      if(tempAmountText.contains(",")){
         tempAmountText = tempAmountText.replaceAll(",", "");
       }
 
       var amountQuote = Decimal.parse(tempAmountText) * Decimal.parse(hynQuote.price.toString());
       amountText =
-          "${FormatUtil.stringFormatCoinNum(tempAmountText)} (${quotesSign.sign}${FormatUtil.truncateDecimalNum(amountQuote, 4)})";
+          "${FormatUtil.stringFormatCoinNum(tempAmountText)} HYN (${quotesSign.sign}${FormatUtil.truncateDecimalNum(amountQuote, 4)})";
       gasEstimateQuote = "(${(gasPriceEth * gasLimit) * Decimal.parse(hynQuote.price.toString())})";
       hynPrice =
           "${quotesSign.sign}${FormatUtil.truncateDecimalNum(Decimal.parse(hynQuote.price.toString()), 4)} / HYN";
@@ -383,7 +385,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                   children: <Widget>[
                     RichText(
                       text: TextSpan(
-                          text: "从 ",
+                          text: "${S.of(context).exchange_from} ",
                           style: TextStyle(color: DefaultColors.color999, fontSize: 13),
                           children: [
                             TextSpan(
@@ -392,7 +394,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                               style:
                                   TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
                             ),
-                            TextSpan(text: "到 ", style: TextStyle(color: DefaultColors.color999, fontSize: 13)),
+                            TextSpan(text: "${S.of(context).exchange_to} ", style: TextStyle(color: DefaultColors.color999, fontSize: 13)),
                             TextSpan(
                               text: "${shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(contractItem.to))}",
                               style:
@@ -453,7 +455,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                   Padding(
                     padding: const EdgeInsets.only(left: 6.0),
                     child: Text(
-                      "交易位置",
+                      S.of(context).transaction_location,
                       style: TextStyles.textC999S13,
                     ),
                   ),
@@ -568,14 +570,14 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
             Row(
               children: <Widget>[
                 ClickOvalButton(
-                  "Origi",
+                  S.of(context).origin,
                   () {
                     selectLeftData = true;
                     inputData = widget.transactionDetail.data;
                     setState(() {});
                   },
                   width: 112,
-                  btnColor: HexColor(selectLeftData ? "#1F81FF" : "#F2F2F2"),
+                  btnColor: [HexColor(selectLeftData ? "#1F81FF" : "#F2F2F2")],
                   radius: 4,
                   fontColor: HexColor(selectLeftData ? "#ffffff" : "#999999"),
                 ),
@@ -583,14 +585,14 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                   width: 11,
                 ),
                 ClickOvalButton(
-                  "Decoded",
+                  S.of(context).decoded,
                   () {
                     selectLeftData = false;
                     inputData = json.encode(widget.transactionDetail.dataDecoded);
                     setState(() {});
                   },
                   width: 112,
-                  btnColor: HexColor(selectLeftData ? "#F2F2F2" : "#1F81FF"),
+                  btnColor: [HexColor(selectLeftData ? "#F2F2F2" : "#1F81FF")],
                   radius: 4,
                   fontColor: HexColor(selectLeftData ? "#999999" : "#ffffff"),
                 ),

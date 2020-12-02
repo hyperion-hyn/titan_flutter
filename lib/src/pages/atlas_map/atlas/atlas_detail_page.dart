@@ -511,7 +511,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                             height: 32,
                             fontSize: 14,
                             fontColor: DefaultColors.color999,
-                            btnColor: Colors.transparent,
+                            btnColor: [Colors.transparent],
                           ),
                           SizedBox(
                             width: 8,
@@ -864,7 +864,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                         height: 32,
                         fontSize: 14,
                         fontColor: DefaultColors.color999,
-                        btnColor: Colors.transparent,
+                        btnColor: [Colors.transparent],
                       ),
                       SizedBox(
                         width: 8,
@@ -886,7 +886,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 height: 32,
                 fontSize: 14,
                 fontColor: DefaultColors.color999,
-                btnColor: Colors.transparent,
+                btnColor: [Colors.transparent],
               ),
             ),
           ClickOvalButton(

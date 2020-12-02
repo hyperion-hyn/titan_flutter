@@ -80,6 +80,14 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
   ),
   ERROR_OUT_OF_RANGE,
   HttpResponseCodeNotSuccess(
+    -2005,
+    S.of(Keys.rootKey.currentContext).agreed_invitation_cannot_invite_again,
+  ),
+  HttpResponseCodeNotSuccess(
+    -2006,
+    S.of(Keys.rootKey.currentContext).already_your_friend_cannot_be_referrer,
+  ),
+  HttpResponseCodeNotSuccess(
     -20001,
     S.of(Keys.rootKey.currentContext).create_account_fail,
   ),

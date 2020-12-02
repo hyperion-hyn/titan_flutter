@@ -48,12 +48,15 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   final _formKey = GlobalKey<FormState>();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final TextEditingController _textEditController = TextEditingController();
-  final StreamController<String> _inputController = StreamController.broadcast();
+  final StreamController<String> _inputController =
+      StreamController.broadcast();
 
   String get _address => _activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
   String get _hynPerRpStr => _rpStatistics?.rpContractInfo?.hynPerRpStr;
+
   String get _hynPerRp => FormatUtil.stringFormatCoinNum(_hynPerRpStr) ?? '--';
+
   double get _hynPerRpValue => double?.tryParse(_hynPerRpStr) ?? 0;
 
   WalletVo _activeWallet;
@@ -67,7 +70,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
     _rpStatistics = widget.rpStatistics;
 
-    _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    _activeWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
   }
 
   @override
@@ -97,13 +101,13 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '传导池',
+        baseTitle: S.of(context).rp_transmit_pool,
         backgroundColor: HexColor('#F8F8F8'),
         actions: <Widget>[
           FlatButton(
             onPressed: _pushRecordAction,
             child: Text(
-              '传导明细',
+              S.of(context).rp_transmit_detail,
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
@@ -170,9 +174,15 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   }
 
   _poolInfo() {
-    String totalStakingHyn = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalStakingHynStr) ?? '--';
-    String transmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.transmitStr) ?? '--';
-    String totalTransmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalTransmitStr) ?? '--';
+    String totalStakingHyn = FormatUtil.stringFormatCoinNum(
+            _rpStatistics?.global?.totalStakingHynStr) ??
+        '--';
+    String transmit =
+        FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.transmitStr) ??
+            '--';
+    String totalTransmit = FormatUtil.stringFormatCoinNum(
+            _rpStatistics?.global?.totalTransmitStr) ??
+        '--';
 
     return SliverToBoxAdapter(
       child: Container(
@@ -190,7 +200,10 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                   padding: const EdgeInsets.only(
                     left: 16,
                   ),
-                  child: _columnWidget('${_rpStatistics?.rpContractInfo?.poolPercent ?? '--'}万 RP', '总可传导'),
+                  child: _columnWidget(
+                    '${_rpStatistics?.rpContractInfo?.poolPercent ?? '--'}${S.of(context).rp_million_rp}',
+                    S.of(context).rp_total_available_transmit,
+                  ),
                   // child: _columnWidget('$totalTransmit RP', '总可传导'),
                 ),
               ),
@@ -199,14 +212,20 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                 child: _lineWidget(),
               ),
               Expanded(
-                child: _columnWidget('$totalStakingHyn HYN', '全网抵押'),
+                child: _columnWidget(
+                  '$totalStakingHyn HYN',
+                  S.of(context).rp_global_hyn_staking,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: _lineWidget(),
               ),
               Expanded(
-                child: _columnWidget('$transmit RP', '全网累计传导'),
+                child: _columnWidget(
+                  '$transmit RP',
+                  S.of(context).rp_global_transmit,
+                ),
               ),
               Spacer(),
             ],
@@ -218,9 +237,14 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
   _myRPInfo() {
     int totalAmount = _rpStatistics?.self?.totalAmount ?? 0;
-    String totalStakingHyn = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalStakingHynStr) ?? '--';
-    String totalRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalRpStr) ?? '--';
-    String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
+    String totalStakingHyn = FormatUtil.stringFormatCoinNum(
+            _rpStatistics?.self?.totalStakingHynStr) ??
+        '--';
+    String totalRp =
+        FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalRpStr) ?? '--';
+    String yesterday =
+        FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ??
+            '--';
 
     // String baseRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.rpContractInfo?.baseRpStr) ?? '--';
     String baseRp = _rpStatistics?.rpContractInfo?.baseRpStr ?? '--';
@@ -264,7 +288,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                                 bottom: 4,
                               ),
                               child: Text(
-                                '已抵押',
+                                '${S.of(context).rp_already_stake}',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: DefaultColors.color999,
@@ -275,7 +299,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
                                 Text(
-                                  '$totalAmount份',
+                                  '$totalAmount${S.of(context).rp_amount_unit}',
                                   style: TextStyle(
                                     color: DefaultColors.color333,
                                     fontSize: 18,
@@ -295,7 +319,9 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                           crossAxisAlignment: CrossAxisAlignment.start,
                         ),
                       ),
-                      _columnWidget('$totalRp RP', '我累计获得', isBold: true),
+                      _columnWidget(
+                          '$totalRp RP', S.of(context).rp_my_total_transmit,
+                          isBold: true),
                       Padding(
                         padding: const EdgeInsets.only(
                           bottom: 8,
@@ -308,7 +334,9 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                         onTap: _pushRecordAction,
                         child: Row(
                           children: <Widget>[
-                            _columnWidget('$yesterday RP', '我昨日获得', isBold: true),
+                            _columnWidget('$yesterday RP',
+                                S.of(context).rp_my_yesterday_transmit,
+                                isBold: true),
                             Padding(
                               padding: const EdgeInsets.only(
                                 left: 8,
@@ -366,7 +394,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            text: '当前每份（$_hynPerRp HYN）总共可传导出 ',
+                            text: S.of(context).rp_transmit_desc_1(_hynPerRp),
                             style: TextStyle(
                               fontSize: 10,
                               color: HexColor("#999999"),
@@ -384,25 +412,10 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                                 ),
                               ),
                               TextSpan(
-                                text: ' RP，分',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: HexColor("#999999"),
-                                  fontWeight: FontWeight.normal,
-                                  height: 1.5,
-                                ),
-                              ),
-                              TextSpan(
-                                text: '$releaseDay',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: HexColor("#333333"),
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.5,
-                                ),
-                              ),
-                              TextSpan(
-                                text: '天释放。$stakingDay天后可取回已抵押的HYN。',
+                                text: ' ${S.of(context).rp_transmit_desc_2(
+                                  releaseDay,
+                                  stakingDay,
+                                )}',
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: HexColor("#999999"),
@@ -425,12 +438,12 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       ClickOvalButton(
-                        '一键取回',
+                        S.of(context).rp_retrive_hyn,
                         _showCollectAlertView,
                         width: 120,
                         height: 32,
                         fontSize: 12,
-                        btnColor: HexColor('#00B97C'),
+                        btnColor: [HexColor('#00B97C')],
                       ),
                       SizedBox(
                         width: 14,
@@ -439,12 +452,12 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                         children: <Widget>[
                           Container(
                             child: ClickOvalButton(
-                              '抵押HYN',
+                              S.of(context).rp_stake_hyn,
                               _showStakingAlertView,
                               width: 120,
                               height: 32,
                               fontSize: 12,
-                              btnColor: HexColor('#107EDC'),
+                              btnColor: [HexColor('#107EDC')],
                             ),
                             padding: const EdgeInsets.all(
                               16,
@@ -486,7 +499,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
-                '我的抵押',
+                S.of(context).rp_my_hyn_staking,
                 style: TextStyle(
                   color: HexColor("#333333"),
                   fontSize: 14,
@@ -506,10 +519,13 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
         child: Container(
           color: HexColor('#F8F8F8'),
           child: Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 160),
+            padding: const EdgeInsets.only(
+                left: 16.0, right: 16.0, top: 16.0, bottom: 160),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16.0),
-              child: emptyListWidget(title: "抵押记录为空", isAdapter: false),
+              child: emptyListWidget(
+                  title: S.of(context).rp_empty_staking_record,
+                  isAdapter: false),
             ),
           ),
         ),
@@ -533,7 +549,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     String stateDesc = getStateDesc(status);
     var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
     var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
-    var hynPerRpBig = ConvertTokenUnit.strToBigInt(_rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
+    var hynPerRpBig = ConvertTokenUnit.strToBigInt(
+        _rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
     var amountBig = (hynAmountBig / hynPerRpBig);
 
     if (amountBig.isNaN || amountBig.isInfinite) {
@@ -545,8 +562,11 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       amount = 1;
     }
 
-    var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
-    var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectRetrieveTime ?? '0', isSecond: true);
+    var stakingAt =
+        FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
+    var expectReleaseTime = FormatUtil.newFormatUTCDateStr(
+        model?.expectRetrieveTime ?? '0',
+        isSecond: true);
 
     return InkWell(
       onTap: () => _pushStakingInfoAction(index),
@@ -594,7 +614,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                                 right: 6,
                               ),
                               child: Text(
-                                '$amount 份',
+                                '$amount ${S.of(context).rp_amount_unit}',
                                 style: TextStyle(
                                   color: HexColor("#333333"),
                                   fontSize: 14,
@@ -603,7 +623,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                               ),
                             ),
                             Text(
-                              '共 $hynAmount HYN',
+                              '${S.of(context).rp_total_pretext} $hynAmount HYN',
                               style: TextStyle(
                                 color: HexColor("#999999"),
                                 fontSize: 12,
@@ -616,7 +636,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                           height: 6,
                         ),
                         Text(
-                          '抵押ID：${model?.stakingId ?? 0}',
+                          '${S.of(context).rp_staking_id}：${model?.stakingId ?? 0}',
                           //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                           style: TextStyle(
                             fontSize: 12,
@@ -664,7 +684,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         Text(
-                          '${expectReleaseTime ?? '--'}可提回',
+                          '${expectReleaseTime ?? '--'}${S.of(context).rp_hyn_can_retrieved}',
                           //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                           style: TextStyle(
                             fontSize: 12,
@@ -686,7 +706,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   void getNetworkData() async {
     _currentPage = 1;
     try {
-      var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
+      var netData =
+          await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
       _rpStatistics = await _rpApi.getRPStatistics(_address);
 
@@ -710,7 +731,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   void getMoreNetworkData() async {
     try {
       _currentPage = _currentPage + 1;
-      var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
+      var netData =
+          await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
       if (netData?.isNotEmpty ?? false) {
         _dataList.addAll(netData);
@@ -736,7 +758,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
     UiUtil.showAlertView(
       context,
-      title: '抵押份数',
+      title: S.of(context).rp_staking_amount,
       isInputValue: true,
       actions: [
         ClickOvalButton(
@@ -748,7 +770,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
           fontWeight: FontWeight.normal,
         ),
       ],
-      detail: '注：你的HYN抵押将锁定${_rpStatistics?.rpContractInfo?.stakingDay ?? 0}天，满期后可自行取回',
+      detail:
+          S.of(context).rp_hyn_locked_hint(_rpStatistics?.rpContractInfo?.stakingDay ?? 0),
       contentItem: Material(
         child: Form(
           key: _formKey,
@@ -765,29 +788,34 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                   autofocus: true,
                   controller: _textEditController,
                   keyboardType: TextInputType.numberWithOptions(decimal: false),
-                  inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9]"))],
+                  inputFormatters: [
+                    WhitelistingTextInputFormatter(RegExp("[0-9]"))
+                  ],
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return '请输入抵押份数';
+                      return S.of(context).rp_input_staking_amount;
                     }
 
-                    var hynToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
+                    var hynToken =
+                        WalletInheritedModel.of(context).getCoinVoBySymbol(
                       SupportedTokens.HYN_Atlas.symbol,
                     );
-                    var hynTokenBalance = Decimal.parse(hynToken.balance.toString());
+                    var hynTokenBalance =
+                        Decimal.parse(hynToken.balance.toString());
                     var amount = int.tryParse(value) ?? 0;
                     if (amount <= 0) {
-                      return '请输入抵押份数';
+                      return S.of(context).rp_input_staking_amount;
                     }
 
                     var total = _hynPerRpValue * amount;
-                    var amountBig = ConvertTokenUnit.strToBigInt(total.toString());
+                    var amountBig =
+                        ConvertTokenUnit.strToBigInt(total.toString());
                     var inputValue = Decimal.parse(amountBig.toString());
                     var isOver = inputValue > hynTokenBalance;
                     print(
                         "[$runtimeType] isOver:$isOver, hynTokenBalance:$hynTokenBalance, inputValue:$inputValue, amount:$amount");
                     if (isOver) {
-                      return '钱包的HYN余额不足购买当前份数';
+                      return S.of(context).rp_not_enough_hyn;
                     }
 
                     return null;
@@ -796,7 +824,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                     isDense: true,
                     filled: true,
                     fillColor: HexColor('#FFF2F2F2'),
-                    hintText: '输入抵押份数，每份$_hynPerRp HYN',
+                    hintText: S.of(context).rp_input_staking_amount_with_hyn(_hynPerRp),
                     hintStyle: TextStyle(
                       color: HexColor('#FF999999'),
                       fontSize: 13,
@@ -830,7 +858,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                         stream: _inputController.stream,
                         builder: (context, snapshot) {
                           var inputText = snapshot?.data ?? '0';
-                          var total = (_hynPerRpValue.toInt()) * (int.tryParse(inputText) ?? 0);
+                          var total = (_hynPerRpValue.toInt()) *
+                              (int.tryParse(inputText) ?? 0);
 
                           return Padding(
                             padding: const EdgeInsets.only(
@@ -838,7 +867,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                               left: 4,
                             ),
                             child: Text(
-                              '价值 $total HYN',
+                              '${S.of(context).rp_worth} $total HYN',
                               style: TextStyle(
                                 color: HexColor('#333333'),
                                 fontSize: 12,
@@ -884,13 +913,13 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     print("[$runtimeType] count:$count, hynSum:$hynSum");
 
     if (count <= 0 || hynSum == '0') {
-      Fluttertoast.showToast(msg: '当前没有到期的抵押合约！');
+      Fluttertoast.showToast(msg: '${S.of(context).rp_no_valid_contract}！');
       return;
     }
 
     UiUtil.showAlertView(
       context,
-      title: '取回所有满期抵押',
+      title: S.of(context).rp_retrieve_all_staking,
       actions: [
         ClickOvalButton(
           S.of(context).cancel,
@@ -902,7 +931,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
           fontSize: 14,
           fontWeight: FontWeight.normal,
           fontColor: DefaultColors.color999,
-          btnColor: Colors.transparent,
+          btnColor: [Colors.transparent],
         ),
         SizedBox(
           width: 20,
@@ -916,21 +945,23 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
           fontWeight: FontWeight.normal,
         ),
       ],
-      content: '当前满期HYN有$count 笔，总共 $hynSum HYN，你将发起提回抵押操作，确定继续吗？',
+      content: S.of(context).rp_retrieve_all_staking_confirm(count, hynSum),
     );
   }
 
   void _retrieveAction() async {
     Navigator.pop(context, true);
 
-    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
+    var password =
+        await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
     if (password == null) {
       return;
     }
 
     try {
-      await _rpApi.postRetrieveHyn(activeWallet: _activeWallet, password: password);
-      Fluttertoast.showToast(msg: '取回请求已发送成功，请稍后查看钱包HYN余额！');
+      await _rpApi.postRetrieveHyn(
+          activeWallet: _activeWallet, password: password);
+      Fluttertoast.showToast(msg: S.of(context).rp_retrieve_staking_request_success);
       getNetworkData();
     } catch (e) {
       LogUtil.toastException(e);
@@ -951,7 +982,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
     Navigator.pop(context, true);
 
-    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
+    var password =
+        await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
     if (password == null) {
       return;
     }
@@ -959,7 +991,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     var total = _hynPerRpValue * (int.tryParse(inputText) ?? 0);
     var amount = ConvertTokenUnit.strToBigInt(total.toString());
     try {
-      await _rpApi.postStakingRp(amount: amount, activeWallet: _activeWallet, password: password);
+      await _rpApi.postStakingRp(
+          amount: amount, activeWallet: _activeWallet, password: password);
       getNetworkData();
     } catch (e) {
       LogUtil.toastException(e);
@@ -979,7 +1012,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpStakingInfoPage(_rpStatistics, _dataList[index]),
+        builder: (context) =>
+            RpStakingInfoPage(_rpStatistics, _dataList[index]),
       ),
     );
   }
@@ -1043,35 +1077,35 @@ String getStateDesc(int status) {
 
   switch (status) {
     case 1:
-      stateDesc = '抵押确认中...';
+      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_1;
       break;
 
     case 2:
-      stateDesc = '失败';
+      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_2;
       break;
 
     case 3:
-      stateDesc = '运行中';
+      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_3;
       break;
 
     case 4:
-      stateDesc = '释放中...';
+      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_4;
       break;
 
     case 5:
-      stateDesc = '释放结束';
+      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_5;
       break;
 
     case 6:
-      stateDesc = '可取回';
+      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_6;
       break;
 
     case 7:
-      stateDesc = '取回中...';
+      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_7;
       break;
 
     case 8:
-      stateDesc = '已提取';
+      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_8;
       break;
 
     default:

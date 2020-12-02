@@ -19,6 +19,7 @@ import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/global_data/global_data.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -707,54 +708,55 @@ class HomePanelState extends State<HomePanel> {
   Widget _search() {
     return Padding(
       padding: const EdgeInsets.only(left: 14, right: 14),
-      child: InkWell(
-        onTap: onSearch,
-        borderRadius: BorderRadius.all(Radius.circular(44)),
-        child: Container(
-          height: 44,
-          decoration: BoxDecoration(
-            color: Color(0xfff2f2f2),
-            borderRadius: BorderRadius.all(Radius.circular(44)),
-            /*boxShadow: [
-              BoxShadow(
-                color: HexColor("#000000").withOpacity(0.08),
-                offset: Offset(0, 2),
-                blurRadius: 12.0,
+      child: Container(
+        height: 44,
+        decoration: BoxDecoration(
+          color: Color(0xfff2f2f2),
+          borderRadius: BorderRadius.all(Radius.circular(44)),
+          /*boxShadow: [
+            BoxShadow(
+              color: HexColor("#000000").withOpacity(0.08),
+              offset: Offset(0, 2),
+              blurRadius: 12.0,
+            ),
+          ],*/
+        ),
+        child: Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0, right: 8),
+              child: Icon(
+                Icons.search,
+                color: Color(0xff777777),
               ),
-            ],*/
-          ),
-          child: Row(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 8),
-                child: Icon(
-                  Icons.search,
-                  color: Color(0xff777777),
-                ),
-              ),
-              SizedBox(
-                width: 34,
-              ),
-              Text(
-                S.of(context).search_or_decode,
-                style: TextStyle(
-                  fontSize: 17,
-                  color: Color(0xff777777),
-                ),
-              ),
-              Spacer(),
-              GestureDetector(
-                onTap: _scanAction,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 24),
-                  child: Icon(
-                    ExtendsIconFont.qrcode_scan,
-                    color: Color(0xff777777),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: onSearch,
+                child: Container(
+                  alignment: Alignment.center,
+                  width: double.infinity,
+                  child: Text(
+                    S.of(context).search_or_decode,
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Color(0xff777777),
+                    ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+            GestureDetector(
+              onTap: _scanAction,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 24.0, right: 24),
+                child: Icon(
+                  ExtendsIconFont.qrcode_scan,
+                  color: Color(0xff777777),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -932,6 +934,14 @@ class HomePanelState extends State<HomePanel> {
           context,
           Routes.map3node_contract_detail_page +
               '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
+    } else if (scanStr.contains(RpInviteFriendPage.shareDomain)) {
+      var fromArr = scanStr.split("from=");
+      if(fromArr[1].length > 0){
+        fromArr = fromArr[1].split("&name=");
+        if(fromArr[0].length > 0 && fromArr[1].length > 0){
+          showInviteDialog(context,fromArr[0],fromArr[1]);
+        }
+      }
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
       scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
       Application.router.navigateTo(

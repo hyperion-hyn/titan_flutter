@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -60,7 +61,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
     return Scaffold(
       backgroundColor: HexColor('#F8F8F8'),
       appBar: BaseAppBar(
-        baseTitle: '传导明细',
+        baseTitle: S.of(context).rp_transmit_detail,
         backgroundColor: HexColor('#F8F8F8'),
       ),
       body: _pageView(),
@@ -175,7 +176,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                           right: 6,
                         ),
                         child: Text(
-                          '$amount 份',
+                          '$amount ${S.of(context).rp_amount_unit}',
                           style: TextStyle(
                             color: HexColor("#333333"),
                             fontSize: 14,
@@ -184,7 +185,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                         ),
                       ),
                       Text(
-                        '共 $hynAmount HYN',
+                        '${S.of(context).rp_total_pretext} $hynAmount HYN',
                         style: TextStyle(
                           color: HexColor("#999999"),
                           fontSize: 12,
@@ -197,7 +198,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                     height: 6,
                   ),
                   Text(
-                    '抵押ID：${model?.stakingId ?? 0}',
+                    '${S.of(context).rp_staking_id}：${model?.stakingId ?? 0}',
                     //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                     style: TextStyle(
                       fontSize: 12,
