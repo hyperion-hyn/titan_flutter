@@ -133,19 +133,6 @@ class FinishImportPage extends StatelessWidget {
     ///Clear exchange account when switch wallet
     BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
 
-    try {
-      if(MemoryCache.rpInviteKey != null) {
-        RPApi _rpApi = RPApi();
-        bool inviteResult = await _rpApi.postRpInviter(MemoryCache.rpInviteKey, wallet);
-        if(inviteResult) {
-          Fluttertoast.showToast(msg: "邀请成功");
-          MemoryCache.rpInviteKey = null;
-        }
-      }
-    }catch(error){
-      LogUtil.toastException(error);
-    }
-
     var userPayload = UserPayloadWithAddressEntity(Payload(userName: wallet.keystore.name),wallet.getAtlasAccount().address);
     AtlasApi.postUserSync(userPayload);
     Routes.popUntilCachedEntryRouteName(context);

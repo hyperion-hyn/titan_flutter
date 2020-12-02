@@ -18,6 +18,7 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'entity/rp_statistics.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 
 class RpFriendsPage extends StatefulWidget {
   RpFriendsPage();
@@ -200,65 +201,69 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
   _inviterWidget() {
     var inviterName = _inviter?.name ?? '';
     var inviterLevel = _inviter?.level ?? '';
-    var address = shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(
-      _inviter?.address ?? '',
-    ));
+    var bech32Address = WalletUtil.ethAddressToBech32Address(_inviter?.address ?? '');
+    var address = shortBlockChainAddress(bech32Address,);
     if (_inviter != null) {
-      return Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              right: 10,
+      return InkWell(
+        onTap: (){
+          AtlasApi.goToHynScanPage(context,bech32Address);
+        },
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                right: 10,
+              ),
+              child: walletHeaderWidget(inviterName,
+                  isShowShape: false,
+                  address: _inviter?.address,
+                  isCircle: true,
+                  size: 32),
             ),
-            child: walletHeaderWidget(inviterName,
-                isShowShape: false,
-                address: _inviter?.address,
-                isCircle: true,
-                size: 32),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      right: 6,
-                    ),
-                    child: Text(
-                      inviterName,
-                      style: TextStyle(
-                        color: HexColor("#333333"),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 6,
+                      ),
+                      child: Text(
+                        inviterName,
+                        style: TextStyle(
+                          color: HexColor("#333333"),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
-                  // Text(
-                  //   '$inviterLevel',
-                  //   style: TextStyle(
-                  //     color: HexColor("#999999"),
-                  //     fontSize: 12,
-                  //     fontWeight: FontWeight.normal,
-                  //   ),
-                  // ),
-                ],
-              ),
-              SizedBox(
-                height: 6,
-              ),
-              Text(
-                '$address',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: HexColor('#999999'),
+                    // Text(
+                    //   '$inviterLevel',
+                    //   style: TextStyle(
+                    //     color: HexColor("#999999"),
+                    //     fontSize: 12,
+                    //     fontWeight: FontWeight.normal,
+                    //   ),
+                    // ),
+                  ],
                 ),
-                textAlign: TextAlign.left,
-              ),
-            ],
-          ),
-        ],
+                SizedBox(
+                  height: 6,
+                ),
+                Text(
+                  '$address',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: HexColor('#999999'),
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ],
+            ),
+          ],
+        ),
       );
     } else {
       return Text('暂无',
@@ -272,114 +277,120 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
   Widget _itemBuilder(RpMinerInfo info) {
     var name = info?.name ?? '';
     var level = info?.level ?? 0;
-    var address = shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(
+    var bech32Address = WalletUtil.ethAddressToBech32Address(
       info?.address ?? '',
-    ));
+    );
+    var address = shortBlockChainAddress(bech32Address);
     var inviteTime = info?.inviteTime ?? 0;
     var inviteTimeDate = DateTime.fromMillisecondsSinceEpoch(inviteTime * 1000);
     var inviteTimeStr = Const.DATE_FORMAT.format(inviteTimeDate);
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: 16,
-          horizontal: 12,
-        ),
-        decoration: BoxDecoration(
-          color: HexColor('#FFFFFF'),
-          borderRadius: BorderRadius.all(
-            Radius.circular(6.0),
-          ), //设置四周圆角 角度
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(
-                right: 10,
-              ),
-              child: SizedBox(
-                height: 40,
-                width: 40,
-                child: walletHeaderWidget(
-                  name,
-                  address: info?.address ?? '',
-                  isCircle: true,
-                  isShowShape: false,
-                  size: 32,
-                ),
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        right: 6,
-                      ),
-                      child: name.isNotEmpty
-                          ? Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 6.0),
-                              child: Text(
-                                name,
-                                style: TextStyle(
-                                  color: HexColor("#333333"),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            )
-                          : SizedBox(),
-                    ),
-                    // Text(
-                    //   ' $level 级',
-                    //   style: TextStyle(
-                    //     color: HexColor("#999999"),
-                    //     fontSize: 12,
-                    //     fontWeight: FontWeight.normal,
-                    //   ),
-                    // ),
-                  ],
-                ),
-                Text(
-                  '${UiUtil.shortEthAddress(address)}',
-                  //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: HexColor('#999999'),
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ],
-            ),
-            //Spacer(),
-            Expanded(
-              child: Padding(
+    return InkWell(
+      onTap: (){
+        AtlasApi.goToHynScanPage(context,bech32Address);
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: 16,
+            horizontal: 12,
+          ),
+          decoration: BoxDecoration(
+            color: HexColor('#FFFFFF'),
+            borderRadius: BorderRadius.all(
+              Radius.circular(6.0),
+            ), //设置四周圆角 角度
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
                 padding: const EdgeInsets.only(
-                  left: 12,
+                  right: 10,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      inviteTimeStr,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: HexColor('#999999'),
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                  ],
+                child: SizedBox(
+                  height: 40,
+                  width: 40,
+                  child: walletHeaderWidget(
+                    name,
+                    address: info?.address ?? '',
+                    isCircle: true,
+                    isShowShape: false,
+                    size: 32,
+                  ),
                 ),
               ),
-            ),
-          ],
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          right: 6,
+                        ),
+                        child: name.isNotEmpty
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 6.0),
+                                child: Text(
+                                  name,
+                                  style: TextStyle(
+                                    color: HexColor("#333333"),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              )
+                            : SizedBox(),
+                      ),
+                      // Text(
+                      //   ' $level 级',
+                      //   style: TextStyle(
+                      //     color: HexColor("#999999"),
+                      //     fontSize: 12,
+                      //     fontWeight: FontWeight.normal,
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                  Text(
+                    '${UiUtil.shortEthAddress(address)}',
+                    //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: HexColor('#999999'),
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ],
+              ),
+              //Spacer(),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 12,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        inviteTimeStr,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: HexColor('#999999'),
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
