@@ -221,7 +221,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
               ),
             ),
             Container(
-              height: 102,
+              height: 60,
               child: Stack(
                 alignment: Alignment.topCenter,
                 children: [
@@ -231,7 +231,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                     width: double.infinity,
                     height: double.infinity,
                   ),
-                  Padding(
+                  /*Padding(
                     padding: const EdgeInsets.only(left:58.0,right: 58,top: 20),
                     child: Text(
                       "提示：如果你还没有推荐人，当你的好友接收你的邀请，那么系统也会为你设定一个推荐人",
@@ -240,7 +240,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                         color: Colors.white,
                       ),
                     ),
-                  )
+                  )*/
                 ],
               ),
             )
