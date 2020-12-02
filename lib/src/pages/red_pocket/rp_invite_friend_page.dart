@@ -186,6 +186,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                             width: 84,
                                             height: 84,
                                             child: QrImage(
+                                              padding: const EdgeInsets.all(9),
                                               data:
                                                   "${RpInviteFriendPage.shareDomain}?from=$walletAddress&name=$walletName",
                                               size: 131,
