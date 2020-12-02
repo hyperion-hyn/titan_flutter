@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
@@ -144,9 +146,6 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
   }
 
   Widget _inviteBuilder() {
-    var inviterName = _inviter?.name ?? '';
-    var inviterLevel = _inviter?.level ?? '';
-    var inviterAddress = _inviter?.address ?? '';
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
       child: Container(
@@ -184,67 +183,86 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                right: 10,
-              ),
-              child: SizedBox(
-                height: 30,
-                width: 30,
-                child: walletHeaderWidget(
-                  inviterName,
-                  isShowShape: false,
-                  address: inviterAddress,
-                  isCircle: true,
-                ),
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        right: 6,
-                      ),
-                      child: Text(
-                        inviterName,
-                        style: TextStyle(
-                          color: HexColor("#333333"),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    // Text(
-                    //   '$inviterLevel',
-                    //   style: TextStyle(
-                    //     color: HexColor("#999999"),
-                    //     fontSize: 12,
-                    //     fontWeight: FontWeight.normal,
-                    //   ),
-                    // ),
-                  ],
-                ),
-                SizedBox(
-                  height: 6,
-                ),
-                Text(
-                  '${UiUtil.shortEthAddress(inviterAddress)}',
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: HexColor('#999999'),
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ],
-            ),
+            _inviterWidget()
           ],
         ),
       ),
     );
+  }
+
+  _inviterWidget() {
+    var inviterName = _inviter?.name ?? '';
+    var inviterLevel = _inviter?.level ?? '';
+    var inviterAddress = _inviter?.address ?? '';
+    if (_inviter != null) {
+      return Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              right: 10,
+            ),
+            child: SizedBox(
+              height: 30,
+              width: 30,
+              child: walletHeaderWidget(
+                inviterName,
+                isShowShape: false,
+                address: inviterAddress,
+                isCircle: true,
+              ),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      right: 6,
+                    ),
+                    child: Text(
+                      inviterName,
+                      style: TextStyle(
+                        color: HexColor("#333333"),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  // Text(
+                  //   '$inviterLevel',
+                  //   style: TextStyle(
+                  //     color: HexColor("#999999"),
+                  //     fontSize: 12,
+                  //     fontWeight: FontWeight.normal,
+                  //   ),
+                  // ),
+                ],
+              ),
+              SizedBox(
+                height: 6,
+              ),
+              Text(
+                '${UiUtil.shortEthAddress(inviterAddress)}',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: HexColor('#999999'),
+                ),
+                textAlign: TextAlign.left,
+              ),
+            ],
+          ),
+        ],
+      );
+    } else {
+      return Text('暂无',
+          style: TextStyle(
+            fontSize: 11,
+            color: DefaultColors.color999,
+          ));
+    }
   }
 
   Widget _itemBuilder(RpMinerInfo info) {
