@@ -199,7 +199,7 @@ class RPApi {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/miners/$address',
       EntityFactory<RpMinersEntity>((json) {
-        return RpMinersEntity.fromJson(json);
+        return RpMinersEntity.fromJson(json['data']);
       }),
       params: {
         'page': page,

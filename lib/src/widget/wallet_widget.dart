@@ -4,7 +4,11 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:characters/characters.dart';
 
 Widget walletHeaderWidget(String shortName,
-    {double size = 40, double fontSize = 15, bool isShowShape = true, String address = "#000000", bool isCircle = true}) {
+    {double size = 40,
+    double fontSize = 15,
+    bool isShowShape = true,
+    String address = "#000000",
+    bool isCircle = true}) {
   if (shortName.isNotEmpty) {
     shortName = shortName.characters.first;
   }
@@ -12,7 +16,7 @@ Widget walletHeaderWidget(String shortName,
   if (address.length > 6) {
     hexColor = "#" + address.substring(address.length - 6);
   } else {
-    hexColor = "#1FB9C7";
+    hexColor = "#BFBFBF";
   }
   HexColor color = HexColor(hexColor);
   var decoration = BoxDecoration(
@@ -20,11 +24,11 @@ Widget walletHeaderWidget(String shortName,
     shape: BoxShape.circle,
     boxShadow: isShowShape
         ? [
-      BoxShadow(
-        color: Colors.grey[300],
-        blurRadius: 8.0,
-      ),
-    ]
+            BoxShadow(
+              color: Colors.grey[300],
+              blurRadius: 8.0,
+            ),
+          ]
         : null,
   );
 
@@ -34,11 +38,11 @@ Widget walletHeaderWidget(String shortName,
       borderRadius: BorderRadius.circular(6),
       boxShadow: isShowShape
           ? [
-        BoxShadow(
-          color: Colors.grey[300],
-          blurRadius: 8.0,
-        ),
-      ]
+              BoxShadow(
+                color: Colors.grey[300],
+                blurRadius: 8.0,
+              ),
+            ]
           : null,
     );
   }
@@ -51,12 +55,16 @@ Widget walletHeaderWidget(String shortName,
       child: Center(
         child: Text(
           shortName.toUpperCase(),
-          style: TextStyle(fontSize: fontSize, color: HexColor("#FFFFFF"), fontWeight: FontWeight.w500, shadows: [
-            BoxShadow(
-              color: Colors.black,
-              blurRadius: 1.0,
-            ),
-          ]),
+          style: TextStyle(
+              fontSize: fontSize,
+              color: HexColor("#FFFFFF"),
+              fontWeight: FontWeight.w500,
+              shadows: [
+                BoxShadow(
+                  color: Colors.black,
+                  blurRadius: 1.0,
+                ),
+              ]),
         ),
       ),
     ),
