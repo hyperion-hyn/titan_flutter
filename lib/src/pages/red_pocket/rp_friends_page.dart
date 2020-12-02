@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -9,13 +10,15 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_miners_entity.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 import 'entity/rp_statistics.dart';
 
-class RpAddFriendsPage extends StatefulWidget {
-  final RPStatistics rpStatistics;
-
-  RpAddFriendsPage(this.rpStatistics);
+class RpFriendsPage extends StatefulWidget {
+  RpFriendsPage();
 
   @override
   State<StatefulWidget> createState() {
@@ -23,23 +26,22 @@ class RpAddFriendsPage extends StatefulWidget {
   }
 }
 
-class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
+class _RpAddFriendsState extends BaseState<RpFriendsPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
   int _currentPage = 1;
   var _address = "";
-  List<RpMinerInfo> _dataList = [];
-  RpMinersEntity _rpMinersEntity;
-  RpMinerInfo get _inviterInfo => _rpMinersEntity?.inviter;
 
-  int lastDay;
+  List<RpMinerInfo> _myInviteList = List();
+  RpMinerInfo _inviter;
 
   @override
   void initState() {
     super.initState();
 
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   }
 
@@ -59,7 +61,7 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
     return Scaffold(
       backgroundColor: HexColor('#F8F8F8'),
       appBar: BaseAppBar(
-        baseTitle: '朋友圈',
+        baseTitle: S.of(context).rp_friends,
         backgroundColor: HexColor('#F8F8F8'),
       ),
       body: _pageView(),
@@ -80,48 +82,71 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
       },
       child: CustomScrollView(
         slivers: <Widget>[
-          SliverList(
-              delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              var model = _dataList[index];
-
-              bool isFirstRow = false;
-              if (index == 0) {
-                isFirstRow = true;
-              }
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (isFirstRow) _inviteBuilder(index),
-                  if (isFirstRow)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
-                      child: Text(
-                        '我邀请的好友',
-                        style: TextStyle(
-                          color: Color(0xff333333),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _inviteBuilder(),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
+                  child: Text(
+                    S.of(context).rp_my_invite_list,
+                    style: TextStyle(
+                      color: Color(0xff333333),
+                      fontWeight: FontWeight.w500,
                     ),
-                  _itemBuilder(index),
-                ],
-              );
-            },
-            childCount: _dataList?.length ?? 0,
-          ))
+                  ),
+                ),
+              ],
+            ),
+          ),
+          _myInviteListWidget(),
         ],
       ),
     );
   }
 
-  Widget _inviteBuilder(int index) {
-    var model = _inviterInfo;
+  _myInviteListWidget() {
+    if (_myInviteList.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Image.asset(
+                  'res/drawable/ic_empty_contract.png',
+                  width: 100,
+                  height: 100,
+                ),
+              ),
+              Text(
+                '暂无记录',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: DefaultColors.color999,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            return _itemBuilder(_myInviteList[index]);
+          },
+          childCount: _myInviteList.length,
+        ),
+      );
+    }
+  }
 
-    var currentDate = DateTime.fromMillisecondsSinceEpoch(model.inviteTime * 1000);
-    var updatedAt = Const.DATE_FORMAT.format(currentDate);
-
+  Widget _inviteBuilder() {
+    var inviterName = _inviter?.name ?? '';
+    var inviterLevel = _inviter?.level ?? '';
+    var inviterAddress = _inviter?.address ?? '';
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
       child: Container(
@@ -146,9 +171,8 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-
                     Text(
-                      '邀请我',
+                      S.of(context).rp_invite_me,
                       style: TextStyle(
                         fontSize: 14,
                         color: HexColor('#333333'),
@@ -164,10 +188,15 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
               padding: const EdgeInsets.only(
                 right: 10,
               ),
-              child: Image.asset(
-                "res/drawable/ic_map3_node_default_icon.png",
-                width: 28,
-                height: 28,
+              child: SizedBox(
+                height: 30,
+                width: 30,
+                child: walletHeaderWidget(
+                  inviterName,
+                  isShowShape: false,
+                  address: inviterAddress,
+                  isCircle: true,
+                ),
               ),
             ),
             Column(
@@ -181,7 +210,7 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
                         right: 6,
                       ),
                       child: Text(
-                        model?.name??'',
+                        inviterName,
                         style: TextStyle(
                           color: HexColor("#333333"),
                           fontSize: 14,
@@ -189,22 +218,21 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
                         ),
                       ),
                     ),
-                    Text(
-                      '${model?.level??0}',
-                      style: TextStyle(
-                        color: HexColor("#999999"),
-                        fontSize: 12,
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
+                    // Text(
+                    //   '$inviterLevel',
+                    //   style: TextStyle(
+                    //     color: HexColor("#999999"),
+                    //     fontSize: 12,
+                    //     fontWeight: FontWeight.normal,
+                    //   ),
+                    // ),
                   ],
                 ),
                 SizedBox(
                   height: 6,
                 ),
                 Text(
-                  '${UiUtil.shortEthAddress(model?.address??'')}',
-                  //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                  '${UiUtil.shortEthAddress(inviterAddress)}',
                   style: TextStyle(
                     fontSize: 10,
                     color: HexColor('#999999'),
@@ -213,19 +241,21 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
                 ),
               ],
             ),
-            //Spacer(),
-
           ],
         ),
       ),
     );
   }
 
-  Widget _itemBuilder(int index) {
-    var model = _dataList[index];
-
-    var currentDate = DateTime.fromMillisecondsSinceEpoch(model.inviteTime * 1000);
-    var updatedAt = Const.DATE_FORMAT.format(currentDate);
+  Widget _itemBuilder(RpMinerInfo info) {
+    var name = info?.name ?? '';
+    var level = info?.level ?? 0;
+    var address = shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(
+      info?.address ?? '',
+    ));
+    var inviteTime = info?.inviteTime ?? 0;
+    var inviteTimeDate = DateTime.fromMillisecondsSinceEpoch(inviteTime * 1000);
+    var inviteTimeStr = Const.DATE_FORMAT.format(inviteTimeDate);
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -246,10 +276,13 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
               padding: const EdgeInsets.only(
                 right: 10,
               ),
-              child: Image.asset(
-                "res/drawable/ic_map3_node_default_icon.png",
-                width: 28,
-                height: 28,
+              child: SizedBox(
+                height: 30,
+                width: 30,
+                child: walletHeaderWidget(name,
+                    address: info?.address ?? '',
+                    isCircle: true,
+                    isShowShape: false),
               ),
             ),
             Column(
@@ -262,30 +295,33 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
                       padding: const EdgeInsets.only(
                         right: 6,
                       ),
-                      child: Text(
-                        model?.name??'',
-                        style: TextStyle(
-                          color: HexColor("#333333"),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      child: name.isNotEmpty
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 6.0),
+                              child: Text(
+                                name,
+                                style: TextStyle(
+                                  color: HexColor("#333333"),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            )
+                          : SizedBox(),
                     ),
-                    Text(
-                      ' ${model?.level??0} 级',
-                      style: TextStyle(
-                        color: HexColor("#999999"),
-                        fontSize: 12,
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
+                    // Text(
+                    //   ' $level 级',
+                    //   style: TextStyle(
+                    //     color: HexColor("#999999"),
+                    //     fontSize: 12,
+                    //     fontWeight: FontWeight.normal,
+                    //   ),
+                    // ),
                   ],
                 ),
-                SizedBox(
-                  height: 6,
-                ),
                 Text(
-                  '${UiUtil.shortEthAddress(model?.address??'')}',
+                  '${UiUtil.shortEthAddress(address)}',
                   //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                   style: TextStyle(
                     fontSize: 10,
@@ -305,10 +341,8 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-
                     Text(
-                      updatedAt,
-                      //'21:21:21',
+                      inviteTimeStr,
                       style: TextStyle(
                         fontSize: 12,
                         color: HexColor('#999999'),
@@ -327,22 +361,22 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
 
   void getNetworkData() async {
     _currentPage = 1;
+    _myInviteList.clear();
 
     try {
-      var netData = await _rpApi.getRPMinerList(_address, page: _currentPage);
+      var netData = await _rpApi.getRPMinerList(
+        _address,
+        page: _currentPage,
+      );
 
-      _rpMinersEntity = netData;
-
-      if (netData?.miners?.isNotEmpty ?? false) {
-        _dataList = netData.miners;
-        if (mounted) {
-          setState(() {
-            _loadDataBloc.add(RefreshSuccessEvent());
-          });
-        }
-      } else {
-        _loadDataBloc.add(LoadEmptyEvent());
+      _inviter = netData.inviter;
+      _myInviteList = netData.miners ?? [];
+      if (mounted) {
+        setState(() {
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
       }
+      setState(() {});
     } catch (e) {
       _loadDataBloc.add(LoadFailEvent());
     }
@@ -351,10 +385,13 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
   void getMoreNetworkData() async {
     try {
       _currentPage = _currentPage + 1;
-      var netData = await _rpApi.getRPMinerList(_address, page: _currentPage);
+      var netData = await _rpApi.getRPMinerList(
+        _address,
+        page: _currentPage,
+      );
 
       if (netData?.miners?.isNotEmpty ?? false) {
-        _dataList.addAll(netData.miners);
+        _myInviteList.addAll(netData.miners);
         _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
