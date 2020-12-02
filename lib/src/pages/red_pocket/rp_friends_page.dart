@@ -200,7 +200,9 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
   _inviterWidget() {
     var inviterName = _inviter?.name ?? '';
     var inviterLevel = _inviter?.level ?? '';
-    var inviterAddress = _inviter?.address ?? '';
+    var address = shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(
+      _inviter?.address ?? '',
+    ));
     if (_inviter != null) {
       return Row(
         children: [
@@ -214,7 +216,7 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
               child: walletHeaderWidget(
                 inviterName,
                 isShowShape: false,
-                address: inviterAddress,
+                address: _inviter?.address,
                 isCircle: true,
               ),
             ),
@@ -252,7 +254,7 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
                 height: 6,
               ),
               Text(
-                '${UiUtil.shortEthAddress(inviterAddress)}',
+                '$address',
                 style: TextStyle(
                   fontSize: 10,
                   color: HexColor('#999999'),
