@@ -104,6 +104,8 @@
   "@agree": {},
   "agree_and_continue": "同意并继续",
   "@agree_and_continue": {},
+  "agreed_invitation_cannot_invite_again": "",
+  "@agreed_invitation_cannot_invite_again": {},
   "all": "全部",
   "@all": {},
   "all_bug": "全部買入",

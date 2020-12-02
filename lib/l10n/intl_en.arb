@@ -104,6 +104,8 @@
   "@agree": {},
   "agree_and_continue": "Agree and continue",
   "@agree_and_continue": {},
+  "agreed_invitation_cannot_invite_again": "",
+  "@agreed_invitation_cannot_invite_again": {},
   "all": "ALL",
   "@all": {},
   "all_bug": "All in",
