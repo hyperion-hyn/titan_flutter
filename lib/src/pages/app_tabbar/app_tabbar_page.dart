@@ -34,8 +34,10 @@ import 'package:titan/src/pages/wallet/wallet_tabs_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/encryption.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
@@ -47,6 +49,7 @@ import 'bloc/app_tabbar_bloc.dart';
 import 'bloc/app_tabbar_event.dart';
 import 'bloc/app_tabbar_state.dart';
 import 'drawer_component.dart';
+import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
 
 class AppTabBarPage extends StatefulWidget {
   @override
@@ -55,8 +58,7 @@ class AppTabBarPage extends StatefulWidget {
   }
 }
 
-class AppTabBarPageState extends BaseState<AppTabBarPage>
-    with TickerProviderStateMixin {
+class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderStateMixin {
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
   final GlobalKey _discoverKey = GlobalKey(debugLabel: '__discover_key__');
 
@@ -110,8 +112,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
 
     Future.delayed(Duration(milliseconds: 500)).then((value) {
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateWalletPageEvent(updateGasPrice: true));
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent(updateGasPrice: true));
     });
 
 //    Future.delayed(Duration(milliseconds: 2000)).then((value) {
@@ -138,6 +139,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
     TitanPlugin.urlLauncherCallBack = (Map values) {
       _urlLauncherAction(values);
     };
+
   }
 
   @override
@@ -160,8 +162,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
 
   void getClipboardData() async {
     var clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-    if (clipboardData != null &&
-        clipboardData.text.contains("titan://map3/detail")) {
+    if (clipboardData != null && clipboardData.text.contains("titan://map3/detail")) {
       var shareUser = clipboardData.text.split("key=")[1];
       MemoryCache.shareKey = shareUser;
     }
@@ -195,10 +196,12 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
       MemoryCache.shareKey = key;
       print("shareuser jump $key");
       var infoEntity = Map3InfoEntity.onlyNodeId(nodeId);
-      Application.router.navigateTo(
-          context,
-          Routes.map3node_contract_detail_page +
-              '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
+      Application.router.navigateTo(context,
+          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
+    } else if (type == "rp" && subType == "detail") {
+      var inviterAddress = content["from"];
+      var walletName = content["name"];
+      showInviteDialog(context,inviterAddress,walletName);
     } else if (type == "location" && subType == 'share') {
       ///When received encrypted msg, show dialog
       ///
@@ -209,30 +212,25 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
         if (encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) {
           var _activeWallet = WalletInheritedModel.of(context).activatedWallet;
           if (_activeWallet == null) {
-            Fluttertoast.showToast(
-                msg: S.of(context).create_or_import_wallet_first);
+            Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
             return;
           }
           fileName = _activeWallet.wallet.keystore.fileName;
-          password = await UiUtil.showWalletPasswordDialogV2(
-              context, _activeWallet.wallet,
+          password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet,
               dialogTitle: S.of(context).wallet_password_decrypt);
         }
-        if ((password != null &&
-                encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) ||
+        if ((password != null && encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) ||
             !encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) {
           Navigator.pop(context);
           (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)?.back();
           Routes.popUntilCachedEntryRouteName(context);
         }
 
-        var poi = await ciphertextToPoi(
-            Injector.of(context).repository, encryptedMsg,
+        var poi = await ciphertextToPoi(Injector.of(context).repository, encryptedMsg,
             fileName: fileName, password: password);
 
         ///switch to map page first, then poi can show correctly.
-        BlocProvider.of<AppTabBarBloc>(context)
-            .add(ChangeTabBarItemEvent(index: 0));
+        BlocProvider.of<AppTabBarBloc>(context).add(ChangeTabBarItemEvent(index: 0));
         await Future.delayed(Duration(milliseconds: 300));
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
       });
@@ -257,11 +255,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
             listener: (context, state) {
               _mapState = state;
               if (state is DefaultScaffoldMapState) {
-                _bottomBarPositionAnimationController.animateBack(0,
-                    curve: Curves.easeInQuart);
+                _bottomBarPositionAnimationController.animateBack(0, curve: Curves.easeInQuart);
               } else {
-                _bottomBarPositionAnimationController.animateTo(1,
-                    curve: Curves.easeOutQuint);
+                _bottomBarPositionAnimationController.animateTo(1, curve: Curves.easeOutQuint);
               }
             },
           ),
@@ -300,56 +296,43 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
           drawer: isDebug ? DrawerComponent() : null,
           body: NotificationListener<myWidget.DraggableScrollableNotification>(
             onNotification: (notification) {
-              bool isHomePanelMoving =
-                  notification.context.widget.key == Keys.homePanelKey;
+              bool isHomePanelMoving = notification.context.widget.key == Keys.homePanelKey;
               if (notification.extent <= notification.anchorExtent &&
-                  ((_isDefaultState && isHomePanelMoving) ||
-                      (!_isDefaultState && !isHomePanelMoving))) {
+                  ((_isDefaultState && isHomePanelMoving) || (!_isDefaultState && !isHomePanelMoving))) {
                 SchedulerBinding.instance.addPostFrameCallback((_) {
-                  var toValue = (notification.extent *
-                          (notification.maxHeight + _fabsHeight)) /
-                      notification.maxHeight;
+                  var toValue = (notification.extent * (notification.maxHeight + _fabsHeight)) / notification.maxHeight;
                   _fabsBarPositionAnimationController.value = toValue;
                 });
               }
 
               var shouldShow = notification.extent <= notification.anchorExtent;
               SchedulerBinding.instance.addPostFrameCallback((_) {
-                (_bottomBarKey.currentState as BottomFabsWidgetState)
-                    .setVisible(shouldShow);
+                (_bottomBarKey.currentState as BottomFabsWidgetState).setVisible(shouldShow);
               });
 
               return true;
             },
             child: WillPopScope(
               onWillPop: () async {
-                var isHandled =
-                    (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)
-                        ?.back();
+                var isHandled = (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)?.back();
                 if (isHandled == true) {
                   return false;
                 }
 
-                isHandled =
-                    (_discoverKey.currentState as DiscoverPageState)?.back();
+                isHandled = (_discoverKey.currentState as DiscoverPageState)?.back();
                 if (isHandled == true) {
                   return false;
                 }
 
-                if (_lastPressedAt == null ||
-                    DateTime.now().difference(_lastPressedAt) >
-                        Duration(seconds: 2)) {
+                if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
                   _lastPressedAt = DateTime.now();
-                  Fluttertoast.showToast(
-                      msg: S.of(context).click_again_to_exist_app);
+                  Fluttertoast.showToast(msg: S.of(context).click_again_to_exist_app);
                   return false;
                 }
                 return true;
               },
-              child: BlocBuilder<AppTabBarBloc, AppTabBarState>(
-                  builder: (context, state) {
-                if (state is CheckNewAnnouncementState &&
-                    state.announcement != null) {
+              child: BlocBuilder<AppTabBarBloc, AppTabBarState>(builder: (context, state) {
+                if (state is CheckNewAnnouncementState && state.announcement != null) {
                   _isShowAnnounceDialog = false;
                   Application.isUpdateAnnounce = true;
                 }
@@ -359,20 +342,16 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
                     ScaffoldMap(key: Keys.scaffoldMap),
                     userLocationBar(),
                     Padding(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).padding.bottom +
-                              kBottomNavigationBarHeight),
+                      padding:
+                          EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight),
                       child: _getTabView(_currentTabIndex),
                     ),
                     bottomNavigationBar(),
-                    if (createDAppWidgetFunction != null)
-                      createDAppWidgetFunction(context),
-                    if (_isShowAnnounceDialog &&
-                        state is CheckNewAnnouncementState)
+                    if (createDAppWidgetFunction != null) createDAppWidgetFunction(context),
+                    if (_isShowAnnounceDialog && state is CheckNewAnnouncementState)
                       AnnouncementDialog(state.announcement, () {
                         _isShowAnnounceDialog = false;
-                        BlocProvider.of<AppTabBarBloc>(context)
-                            .add(InitialAppTabBarEvent());
+                        BlocProvider.of<AppTabBarBloc>(context).add(InitialAppTabBarEvent());
                       })
                   ],
                 );
@@ -395,15 +374,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
         var barHeight = additionalBottomPadding + kBottomNavigationBarHeight;
 
         var bottomMostRelative = RelativeRect.fromLTRB(
-            0.0,
-            constraints.biggest.height -
-                _fabsHeight -
-                (_isDefaultState ? barHeight : 0),
-            0.0,
-            0.0);
+            0.0, constraints.biggest.height - _fabsHeight - (_isDefaultState ? barHeight : 0), 0.0, 0.0);
         var topMostRelative = RelativeRect.fromLTRB(0.0, 0, 0.0, 0);
-        final Animation<RelativeRect> barAnimationRect =
-            _fabsBarPositionAnimationController.drive(
+        final Animation<RelativeRect> barAnimationRect = _fabsBarPositionAnimationController.drive(
           RelativeRectTween(
             begin: bottomMostRelative,
             end: topMostRelative,
@@ -429,12 +402,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
       builder: (context, constraints) {
         var additionalBottomPadding = MediaQuery.of(context).padding.bottom;
         var barHeight = additionalBottomPadding + kBottomNavigationBarHeight;
-        var expandedRelative = RelativeRect.fromLTRB(
-            0.0, constraints.biggest.height - barHeight, 0.0, 0.0);
-        var hideRelative = RelativeRect.fromLTRB(
-            0.0, constraints.biggest.height, 0.0, -barHeight);
-        final Animation<RelativeRect> barAnimationRect =
-            _bottomBarPositionAnimationController.drive(
+        var expandedRelative = RelativeRect.fromLTRB(0.0, constraints.biggest.height - barHeight, 0.0, 0.0);
+        var hideRelative = RelativeRect.fromLTRB(0.0, constraints.biggest.height, 0.0, -barHeight);
+        final Animation<RelativeRect> barAnimationRect = _bottomBarPositionAnimationController.drive(
           RelativeRectTween(
             begin: expandedRelative,
             end: hideRelative,
@@ -456,16 +426,12 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
                     ),
                   ],
                 ),
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom,
-                    left: 8,
-                    right: 8),
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, left: 8, right: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     tabItem(Icons.home, S.of(context).home_page, 0),
-                    tabItem(
-                        Icons.account_balance_wallet, S.of(context).wallet, 1),
+                    tabItem(Icons.account_balance_wallet, S.of(context).wallet, 1),
                     tabItem(Icons.explore, S.of(context).node, 2),
                     tabItem(Icons.description, S.of(context).information, 3),
                     tabItem(Icons.person, S.of(context).my_page, 4),
@@ -501,17 +467,11 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
                   children: <Widget>[
                     Icon(
                       iconData,
-                      color: selected
-                          ? Theme.of(context).primaryColor
-                          : Colors.black38,
+                      color: selected ? Theme.of(context).primaryColor : Colors.black38,
                     ),
                     Text(
                       text,
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: selected
-                              ? Theme.of(context).primaryColor
-                              : Colors.black38),
+                      style: TextStyle(fontSize: 12, color: selected ? Theme.of(context).primaryColor : Colors.black38),
                     ),
                   ],
                 ),

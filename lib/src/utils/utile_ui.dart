@@ -78,16 +78,17 @@ class UiUtil {
   static Future<bool> showAlertView<T>(
     BuildContext context, {
     String title,
-    List<Widget> actions,
-    String content,
-    String detail = "",
-    String boldContent = "",
-    TextStyle boldStyle,
-    String suffixContent = "",
+    Color titleColor,
     bool barrierDismissible = true,
     bool isShowCloseIcon = true,
-        bool isInputValue = false,
     Widget contentItem,
+    List<Widget> actions,
+    String content,
+    String boldContent = "",
+    String suffixContent = "",
+    String detail = "",
+    TextStyle boldStyle,
+    bool isInputValue = false,
   }) {
     return showDialog<bool>(
       barrierDismissible: barrierDismissible,
@@ -95,8 +96,7 @@ class UiUtil {
       context: context,
       // 构建 Dialog 的视图
       builder: (_) => AnimatedPadding(
-        padding: MediaQuery.of(context).viewInsets +
-            const EdgeInsets.symmetric(horizontal: 36.0),
+        padding: MediaQuery.of(context).viewInsets + const EdgeInsets.symmetric(horizontal: 36.0),
         duration: const Duration(milliseconds: 100),
         curve: Curves.decelerate,
         child: Column(
@@ -131,7 +131,7 @@ class UiUtil {
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: HexColor("#333333"),
+                                color: titleColor ?? HexColor("#333333"),
                                 decoration: TextDecoration.none)),
                       ),
                       Padding(
@@ -175,7 +175,72 @@ class UiUtil {
                 ],
               ),
             ),
-            if (isInputValue) SizedBox(height: 120,),
+            if (isInputValue)
+              SizedBox(
+                height: 120,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // alertView
+  static Future<bool> showAlertViewNew<T>(
+      BuildContext context, {
+        List<Widget> actions,
+        Widget contentWidget,
+        bool barrierDismissible = true,
+        bool isShowCloseIcon = true,
+      }) {
+    return showDialog<bool>(
+      barrierDismissible: barrierDismissible,
+      // 传入 context
+      context: context,
+      // 构建 Dialog 的视图
+      builder: (_) => AnimatedPadding(
+        padding: MediaQuery.of(context).viewInsets +
+            const EdgeInsets.symmetric(horizontal: 36.0),
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.decelerate,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+              //alignment: Alignment.center,
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              child: Stack(
+                children: <Widget>[
+                  isShowCloseIcon
+                      ? Positioned(
+                    right: 10,
+                    top: 10,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(_, false),
+                      child: Image.asset(
+                        "res/drawable/map3_node_close.png",
+                        width: 18,
+                        height: 18,
+                      ),
+                    ),
+                  )
+                      : Container(),
+                  Column(
+                    children: <Widget>[
+                      contentWidget,
+                      Padding(
+                        padding: EdgeInsets.only(top: 18, bottom: 18),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: actions,
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

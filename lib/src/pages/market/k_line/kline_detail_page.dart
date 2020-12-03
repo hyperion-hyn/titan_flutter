@@ -21,7 +21,6 @@ import 'package:titan/src/pages/market/entity/trade_info_entity.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'package:titan/src/utils/utils.dart';
 
 class KLineDetailPage extends StatefulWidget {
   final String symbol;
@@ -948,16 +947,14 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                     flex: 2,
                     child: Text(
                       S.of(context).kline_delegate_time,
-                      style:
-                          TextStyle(color: HexColor("#777777"), fontSize: 10),
+                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
                     ),
                   ),
                   Expanded(
                     flex: 1,
                     child: Text(
                       S.of(context).kline_delegate_direction,
-                      style:
-                          TextStyle(color: HexColor("#777777"), fontSize: 10),
+                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
                     ),
                   ),
                   Expanded(
@@ -965,8 +962,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                     child: Text(
                       S.of(context).kline_delegate_price,
                       textAlign: TextAlign.end,
-                      style:
-                          TextStyle(color: HexColor("#777777"), fontSize: 10),
+                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
                     ),
                   ),
                   Expanded(
@@ -974,8 +970,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                     child: Text(
                       S.of(context).kline_delegate_amount,
                       textAlign: TextAlign.end,
-                      style:
-                          TextStyle(color: HexColor("#777777"), fontSize: 10),
+                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
                     ),
                   ),
                 ],
@@ -987,7 +982,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                     //"买盘 数量(HYN)",
                     S.of(context).kline_delegate_buy +
                         " " +
-                        '${S.of(context).kline_delegate_amount}(${widget.quote})',
+                        '${S.of(context).kline_delegate_amount_v2}(${widget.quote})',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 10,
@@ -1008,7 +1003,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                   Text(
                     //"数量(HYN)卖盘",
                     '(${widget.quote})' +
-                        S.of(context).kline_delegate_amount +
+                        S.of(context).kline_delegate_amount_v2 +
                         " " +
                         S.of(context).kline_delegate_sell,
                     textAlign: TextAlign.right,

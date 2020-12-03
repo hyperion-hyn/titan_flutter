@@ -170,7 +170,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
         amountText,
         WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
         _toAddress,
-        "结算(节点终止)",
+        S.of(context).node_settlement,
       ];
     } else {
       _dataInfoList = [
@@ -230,13 +230,13 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                       if (isBillItem)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text("抵押 ${transactionDetail.getBillDelegate()} HYN",
+                          child: Text("${S.of(context).staking} ${transactionDetail.getBillDelegate()} HYN",
                               style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
                       if (isBillItem)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text("奖励 ${transactionDetail.getBillReward()} HYN",
+                          child: Text("${S.of(context).reward} ${transactionDetail.getBillReward()} HYN",
                               style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
                     ],
@@ -330,7 +330,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
               }
             } else {
               if (index == 1) {
-                var bottomText = "GasPrice($gasPriceStr) * Gas(${transactionDetail.gas})";
+                var bottomText = "${S.of(context).gas_price}($gasPriceStr) * ${S.of(context).gas}(${transactionDetail.gas})";
                 return accountInfoItem(leftText, rightText, bottomText: bottomText);
               } else if (index == 4) {
                 return accountInfoItem(leftText, rightText, normalLine: false);
