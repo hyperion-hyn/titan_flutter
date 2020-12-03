@@ -155,6 +155,7 @@ class RPApi {
     );
   }
 
+  ///统计信息
   Future<Map<String, dynamic>> getCanRetrieve(String address) async {
     var data = await RPHttpCore.instance.getEntity(
       '/v1/rp/can_retrieve/$address',
@@ -170,6 +171,7 @@ class RPApi {
     return data;
   }
 
+  ///确认邀请
   Future<bool> postRpInviter(
     String inviterAddress,
     Wallet wallet,
@@ -192,6 +194,7 @@ class RPApi {
     return true;
   }
 
+  ///邀请列表
   Future<RpMinersEntity> getRPMinerList(
     String address, {
     int page = 1,
