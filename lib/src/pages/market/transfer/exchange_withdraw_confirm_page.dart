@@ -62,8 +62,10 @@ class _ExchangeWithdrawConfirmPageState
 
   @override
   void onCreated() async {
-    activatedQuoteSign = WalletInheritedModel.of(context)
-        .activatedQuoteVoAndSign(widget.coinVo.symbol);
+    activatedQuoteSign =
+        WalletInheritedModel.of(context).activatedQuoteVoAndSign(
+      widget.coinVo.symbol,
+    );
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
@@ -124,7 +126,7 @@ class _ExchangeWithdrawConfirmPageState
       _gasPriceEstimateStr =
           "$fees BTC (≈ $_quoteSign${FormatUtil.formatPrice(_gasPriceEstimate.toDouble())})";
     } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      // var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
+      //var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
       var hynQuotePrice = WalletInheritedModel.of(context)
               .activatedQuoteVoAndSign('HYN')
               ?.quoteVo
@@ -174,11 +176,11 @@ class _ExchangeWithdrawConfirmPageState
     print(
         'WithdrawConfirm: gasPriceEstimate: $_gasPriceEstimate quotePrice: $_quotePrice');
 
-    var _gasPriceByToken = '0';
+    Decimal _gasPriceByToken = Decimal.fromInt(0);
 
     try {
-      _gasPriceByToken = FormatUtil.truncateDoubleNum(
-          _gasPriceEstimate.toDouble() / _quotePrice, 8);
+      _gasPriceByToken = Decimal.parse(FormatUtil.truncateDoubleNum(
+          _gasPriceEstimate.toDouble() / _quotePrice, 8));
     } catch (e) {}
 
     _gasPriceEstimateStr =
@@ -447,7 +449,7 @@ class _ExchangeWithdrawConfirmPageState
                     : () async {
                         await _transfer(
                           _actualAmount.toString(),
-                          _gasPriceByToken,
+                          '$_gasPriceByToken',
                         );
                       },
                 child: Padding(
