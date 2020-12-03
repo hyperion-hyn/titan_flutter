@@ -1,22 +1,44 @@
 package org.hyn.titan.push
 
 import android.content.Context
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.hyn.titan.TitanApp
 
-class UMengPluginInterface(private val context: Context, private val binaryMessenger: BinaryMessenger) {
-    val methodChannel = MethodChannel(binaryMessenger, "org.hyn.titan/push_call_channel")
+class UMengPluginInterface(context: Context): FlutterPlugin {
+
+    private var methodChannel: MethodChannel? = null
+    private val sChannelName = "org.hyn.titan/push_call_channel"
     val iUMengPush = (context.applicationContext as TitanApp).iUMengPush
 
+    /*
+    val methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "org.hyn.titan/push_call_channel")
+
     init {
-        methodChannel.setMethodCallHandler { call, result ->
+        methodChannel!!.setMethodCallHandler { call, result ->
             setMethodCallHandler(call, result)
         }
     }
+    */
 
-    fun setMethodCallHandler(call: MethodCall, result: MethodChannel.Result): Boolean {
+    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        methodChannel = MethodChannel(
+                binding.flutterEngine.dartExecutor.binaryMessenger, sChannelName)
+        //context = binding.applicationContext
+        methodChannel!!.setMethodCallHandler { call, result ->
+            setMethodCallHandler(call, result);
+        }
+    }
+
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        methodChannel?.setMethodCallHandler(null)
+        methodChannel = null
+    }
+
+    private fun setMethodCallHandler(call: MethodCall, result: MethodChannel.Result): Boolean {
         return when (call.method) {
 
             "push#getUMengToken" -> {
@@ -32,16 +54,4 @@ class UMengPluginInterface(private val context: Context, private val binaryMesse
         }
     }
 
-    /*private val onPushChangeListener = object : OnPushChangeListener{
-        override fun onTokenSuccess(deviceToken: String) {
-            context.runOnUiThread {
-                methodChannel.invokeMethod("push#umengToken", deviceToken)
-            }
-        }
-
-        override fun onTokenFail(s: String, s1: String) {
-            print("push#onTokenFail")
-        }
-
-    }*/
 }

@@ -2,6 +2,8 @@ package org.hyn.titan.encryption
 
 import android.annotation.SuppressLint
 import android.content.Context
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
@@ -9,13 +11,13 @@ import io.flutter.plugin.common.MethodChannel
 import org.hyn.titan.ErrorCode
 import timber.log.Timber
 
-class EncryptionPluginInterface(private val context: Context, private val binaryMessenger: BinaryMessenger) {
-    private val keyPairChangeChannel by lazy { EventChannel(binaryMessenger, "org.hyn.titan/event_stream") }
-    private val encryptionService by lazy { EncryptionProvider.getDefaultEncryption(context) }
-    private var cipherEventSink: EventChannel.EventSink? = null
+class EncryptionPluginInterface(): FlutterPlugin {
+
+    /*
+    private val keyPairChangeChannel by lazy { EventChannel(flutterEngine.dartExecutor.binaryMessenger, "org.hyn.titan/event_stream") }
 
     init {
-        keyPairChangeChannel.setStreamHandler(object : EventChannel.StreamHandler {
+        keyPairChangeChannel!!.setStreamHandler(object : EventChannel.StreamHandler {
             override fun onListen(arguments: Any?, eventSink: EventChannel.EventSink) {
                 Timber.i("onListen ${arguments?.toString()}")
                 cipherEventSink = eventSink
@@ -26,6 +28,48 @@ class EncryptionPluginInterface(private val context: Context, private val binary
                 cipherEventSink = null
             }
         })
+    }
+    */
+
+    private val encryptionService by lazy { EncryptionProvider.getDefaultEncryption(context!!) }
+    private var cipherEventSink: EventChannel.EventSink? = null
+
+    private var keyPairChangeChannel: EventChannel? = null
+    private val keyPairChangesChannelName = "org.hyn.titan/event_stream"
+
+    private var methodChannel: MethodChannel? = null
+    private val sChannelName = "org.hyn.titan/encrytion_call_channel"
+    private var context: Context? = null
+
+
+    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        methodChannel = MethodChannel(
+                binding.flutterEngine.dartExecutor.binaryMessenger, sChannelName)
+        context = binding.applicationContext
+        methodChannel!!.setMethodCallHandler { call, result ->
+            setMethodCallHandler(call, result);
+        }
+
+        keyPairChangeChannel = EventChannel(
+                binding.flutterEngine.dartExecutor.binaryMessenger, keyPairChangesChannelName)
+        keyPairChangeChannel!!.setStreamHandler(object : EventChannel.StreamHandler {
+            override fun onListen(arguments: Any?, eventSink: EventChannel.EventSink) {
+                Timber.i("onListen ${arguments?.toString()}")
+                cipherEventSink = eventSink
+            }
+
+            override fun onCancel(arguments: Any?) {
+                Timber.i("onCancel listener ${arguments?.toString()}")
+                cipherEventSink = null
+            }
+        })
+    }
+
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        methodChannel?.setMethodCallHandler(null)
+        methodChannel = null
+
+        keyPairChangeChannel = null
     }
 
     fun setMethodCallHandler(call: MethodCall, result: MethodChannel.Result): Boolean {

@@ -1,30 +1,58 @@
 package org.hyn.titan.sensor
 
 import android.content.Context
-import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import timber.log.Timber
 
-class SensorPluginInterface(private val context: Context, private val binaryMessenger: BinaryMessenger) {
+class SensorPluginInterface() : FlutterPlugin {
 
 
-    val methodChannel = MethodChannel(binaryMessenger, "org.hyn.titan/sensor_call_channel")
+    private var methodChannel: MethodChannel? = null
+    private val sChannelName = "org.hyn.titan/sensor_call_channel"
+    private var context: Context? = null
+
+    /*
+    val methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "org.hyn.titan/sensor_call_channel")
 
     init {
-        methodChannel.setMethodCallHandler { call, result ->
+        methodChannel!!.setMethodCallHandler { call, result ->
+            setMethodCallHandler(call, result);
+        }
+    }
+    */
+
+    lateinit var sensorManager: SensorManager;
+
+    private val sensorValueChangeListener = object : OnSensorValueChangeListener {
+        override fun onSensorChange(sensorType: Int, values: Map<String, Any>) {
+            Timber.i("sensorType:$sensorType,values:$values")
+            val mutableMap = values.toMutableMap()
+            mutableMap.put("sensorType",sensorType)
+            methodChannel!!.invokeMethod("sensor#valueChange", mutableMap)
+        }
+    }
+
+    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        methodChannel = MethodChannel(
+                binding.flutterEngine.dartExecutor.binaryMessenger, sChannelName)
+        context = binding.applicationContext
+        methodChannel!!.setMethodCallHandler { call, result ->
             setMethodCallHandler(call, result);
         }
     }
 
-    lateinit var sensorManager: SensorManager;
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        methodChannel?.setMethodCallHandler(null)
+        methodChannel = null
+    }
 
-
-    fun setMethodCallHandler(call: MethodCall, result: MethodChannel.Result): Boolean {
+    private fun setMethodCallHandler(call: MethodCall, result: MethodChannel.Result): Boolean {
         return when (call.method) {
 
             "sensor#init" -> {
-                sensorManager = SensorManager(context, sensorValueChangeListener);
+                sensorManager = SensorManager(this.context!!, sensorValueChangeListener);
                 sensorManager.init()
 
                 print("sensor#init")
@@ -48,16 +76,6 @@ class SensorPluginInterface(private val context: Context, private val binaryMess
                 return true
             }
             else -> false
-        }
-    }
-
-
-    private val sensorValueChangeListener = object : OnSensorValueChangeListener {
-        override fun onSensorChange(sensorType: Int, values: Map<String, Any>) {
-            Timber.i("sensorType:$sensorType,values:$values")
-            val mutableMap = values.toMutableMap()
-            mutableMap.put("sensorType",sensorType)
-            methodChannel.invokeMethod("sensor#valueChange", mutableMap)
         }
     }
 

@@ -6,12 +6,16 @@ import android.content.Context
 import android.net.Uri
 import com.hyn.titan.tools.AppPrintInterface
 import com.hyn.titan.tools.AppPrintTools
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
-import org.hyn.titan.TitanApp
 
-class AppToolsPlugin(private val context: Context) : MethodChannel.MethodCallHandler {
+class AppToolsPlugin() : FlutterPlugin, MethodChannel.MethodCallHandler {
+
+    private var methodChannel: MethodChannel? = null
+    private val sChannelName = "org.hyn.titan/app_tools_call_channel"
+    private var context: Context? = null
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     }
@@ -70,7 +74,7 @@ class AppToolsPlugin(private val context: Context) : MethodChannel.MethodCallHan
 
     fun getClipboardData(){
         //获取系统剪贴板服务
-        var clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        var clipboardManager = context!!.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         if (null != clipboardManager) {
             // 获取剪贴板的剪贴数据集
             var clipData = clipboardManager.primaryClip
@@ -83,12 +87,27 @@ class AppToolsPlugin(private val context: Context) : MethodChannel.MethodCallHan
 
                         clipboardManager.text = null
                         var mapValue = mapOf("type" to "save","subType" to "shareUser","content" to mapOf("shareUserValue" to shareUser))
-                        methodChannel.invokeMethod("urlLauncher",mapValue)
+                        methodChannel!!.invokeMethod("urlLauncher",mapValue)
                         return
                     }
                 }
             }
         }
+    }
+
+
+    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        methodChannel = MethodChannel(
+                binding.flutterEngine.dartExecutor.binaryMessenger, sChannelName)
+        context = binding.applicationContext
+        methodChannel!!.setMethodCallHandler { call, result ->
+            setMethodCallHandler(context!!,call, result);
+        }
+    }
+
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        methodChannel?.setMethodCallHandler(null)
+        methodChannel = null
     }
 
 }
