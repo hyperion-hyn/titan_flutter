@@ -8,21 +8,15 @@ part of 'rp_statistics.dart';
 
 RPStatistics _$RPStatisticsFromJson(Map<String, dynamic> json) {
   return RPStatistics(
-    json['global'] == null
-        ? null
-        : Global.fromJson(json['global'] as Map<String, dynamic>),
-    json['self'] == null
-        ? null
-        : Self.fromJson(json['self'] as Map<String, dynamic>),
+    json['global'] == null ? null : Global.fromJson(json['global'] as Map<String, dynamic>),
+    json['self'] == null ? null : Self.fromJson(json['self'] as Map<String, dynamic>),
     json['rp_contract_info'] == null
         ? null
-        : Rp_contract_info.fromJson(
-        json['rp_contract_info'] as Map<String, dynamic>),
+        : Rp_contract_info.fromJson(json['rp_contract_info'] as Map<String, dynamic>),
   );
 }
 
-Map<String, dynamic> _$RPStatisticsToJson(RPStatistics instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$RPStatisticsToJson(RPStatistics instance) => <String, dynamic>{
       'global': instance.global,
       'self': instance.self,
       'rp_contract_info': instance.rpContractInfo,
@@ -37,10 +31,10 @@ Global _$GlobalFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$GlobalToJson(Global instance) => <String, dynamic>{
-  'total_staking_hyn': instance.totalStakingHyn,
-  'transmit': instance.transmit,
-  'total_transmit': instance.totalTransmit,
-};
+      'total_staking_hyn': instance.totalStakingHyn,
+      'transmit': instance.transmit,
+      'total_transmit': instance.totalTransmit,
+    };
 
 Self _$SelfFromJson(Map<String, dynamic> json) {
   return Self(
@@ -48,15 +42,17 @@ Self _$SelfFromJson(Map<String, dynamic> json) {
     json['total_amount'] as int,
     json['total_rp'] as String,
     json['yesterday'] as String,
+    json['friends'] as int,
   );
 }
 
 Map<String, dynamic> _$SelfToJson(Self instance) => <String, dynamic>{
-  'total_staking_hyn': instance.totalStakingHyn,
-  'total_amount': instance.totalAmount,
-  'total_rp': instance.totalRp,
-  'yesterday': instance.yesterday,
-};
+      'total_staking_hyn': instance.totalStakingHyn,
+      'total_amount': instance.totalAmount,
+      'total_rp': instance.totalRp,
+      'yesterday': instance.yesterday,
+      'friends': instance.friends,
+    };
 
 Rp_contract_info _$Rp_contract_infoFromJson(Map<String, dynamic> json) {
   return Rp_contract_info(
@@ -69,8 +65,7 @@ Rp_contract_info _$Rp_contract_infoFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$Rp_contract_infoToJson(Rp_contract_info instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$Rp_contract_infoToJson(Rp_contract_info instance) => <String, dynamic>{
       'base_rp': instance.baseRp,
       'hyn_per_rp': instance.hynPerRp,
       'release_day': instance.releaseDay,

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -60,7 +61,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
     return Scaffold(
       backgroundColor: HexColor('#F8F8F8'),
       appBar: BaseAppBar(
-        baseTitle: '传导明细',
+        baseTitle: S.of(context).rp_transmit_detail,
         backgroundColor: HexColor('#F8F8F8'),
       ),
       body: _pageView(),
@@ -128,7 +129,8 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
     var amount = model?.amount ?? 0;
 
     var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
-    rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
+    // rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
+    // rpAmount = '00000000000000000000000000000000000000000000000000000000000000';
 
     var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
     var updatedAt = Const.DATE_FORMAT.format(currentDate);
@@ -174,7 +176,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                           right: 6,
                         ),
                         child: Text(
-                          '$amount 份',
+                          '$amount ${S.of(context).rp_amount_unit}',
                           style: TextStyle(
                             color: HexColor("#333333"),
                             fontSize: 14,
@@ -183,7 +185,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                         ),
                       ),
                       Text(
-                        '共 $hynAmount HYN',
+                        '${S.of(context).rp_total_pretext} $hynAmount HYN',
                         style: TextStyle(
                           color: HexColor("#999999"),
                           fontSize: 12,
@@ -196,7 +198,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                     height: 6,
                   ),
                   Text(
-                    '抵押ID：${model?.stakingId ?? 0}',
+                    '${S.of(context).rp_staking_id}：${model?.stakingId ?? 0}',
                     //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                     style: TextStyle(
                       fontSize: 12,
@@ -206,32 +208,40 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                   ),
                 ],
               ),
-              Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    '+ $rpAmount RP',
-                    style: TextStyle(
-                      color: HexColor("#333333"),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
+              // Spacer(),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12,),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        '+ $rpAmount RP',
+                        style: TextStyle(
+                          color: HexColor("#333333"),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 3,
+                        textAlign: TextAlign.right,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(
+                        height: 6,
+                      ),
+                      Text(
+                        updatedAt,
+                        //'21:21:21',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: HexColor('#999999'),
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    height: 6,
-                  ),
-                  Text(
-                    updatedAt,
-                    //'21:21:21',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: HexColor('#999999'),
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                ],
+                ),
               ),
             ],
           ),

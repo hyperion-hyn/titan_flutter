@@ -297,7 +297,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
   Widget _exchangeHYNViewOld(BuildContext context, CoinVo coin) {
     return InkWell(
       onTap: () {
-        print("111111111");
         AtlasApi.goToAtlasMap3HelpPage(context);
       },
       child: Column(
@@ -552,7 +551,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
     var quotePrice;
     var balancePrice;
     if(!hasPrice){
-      quotePrice = "即将开放兑换";
+      quotePrice = S.of(context).exchange_soon;
       balancePrice = "";
     }else{
       quotePrice = "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(symbolQuote?.quoteVo?.price ?? 0.0)}";

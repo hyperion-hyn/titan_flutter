@@ -27,12 +27,12 @@ class AtlasLookOverPage extends StatefulWidget {
 
 class _AtlasLookOverPageState extends State<AtlasLookOverPage> {
   var infoTitleList = [
-    "总抵押",
-    "昨日年化",
-    "当前管理费",
+    S.of(Keys.rootKey.currentContext).total_staking,
+    S.of(Keys.rootKey.currentContext).atlas_reward_rate,
+    S.of(Keys.rootKey.currentContext).current_management_fee,
     S.of(Keys.rootKey.currentContext).description,
-    "可设最高管理费",
-    "单纪元可调管理费幅度",
+    S.of(Keys.rootKey.currentContext).setting_max_management_fee,
+    S.of(Keys.rootKey.currentContext).epoch_management_fee_trim,
     S.of(Keys.rootKey.currentContext).max_staking_num,
     S.of(Keys.rootKey.currentContext).website,
     S.of(Keys.rootKey.currentContext).contact,
@@ -60,7 +60,7 @@ class _AtlasLookOverPageState extends State<AtlasLookOverPage> {
           centerTitle: true,
           iconTheme: IconThemeData(color: Colors.black),
           title: Text(
-            "抵押Atlas节点",
+            S.of(context).staking_atlas_node,
             style: TextStyle(
               color: Colors.black,
               fontSize: 16,
@@ -109,15 +109,15 @@ class _AtlasLookOverPageState extends State<AtlasLookOverPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Text("抵押Atlas节点，你需要先拥有未抵押的Map3节点，现在你可以进行以下操作参与抵押Atlas节点：", style: TextStyles.textC333S14),
+                    Text(S.of(context).staking_atlas_need_unstaking_map3_follow_operation, style: TextStyles.textC333S14),
                     Padding(
                       padding: const EdgeInsets.only(top: 28, bottom: 10),
-                      child: Text("1、创建并启动一个Map3节点，然后抵押到Atlas节点并享受节点出块奖励", style: TextStyles.textC333S12),
+                      child: Text(S.of(context).create_start_map3_stake_atlas_reward, style: TextStyles.textC333S12),
                     ),
                     Text("", style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12)),
                     Padding(
                       padding: const EdgeInsets.only(top: 20, bottom: 10),
-                      child: Text("2、抵押一个已经抵押到Atlas节点的Map3节点，这样也能享受到Atlas区块出块的奖励", style: TextStyles.textC333S12),
+                      child: Text(S.of(context).stake_staked_map3_atlas_reward, style: TextStyles.textC333S12),
                     ),
                     InkWell(
                         onTap: () {
