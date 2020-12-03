@@ -709,13 +709,9 @@ class _ExchangePageState extends BaseState<ExchangePage>
     )}';
 
     // price
-    var _selectedQuote =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign(
-      marketItemEntity.symbolName,
-    );
-    var _latestPrice = '-';
-    var _latestQuotePriceString = '-';
-    var _latestPercentString = '-';
+    var _latestPrice = '--';
+    var _latestQuotePriceString = '--';
+    var _latestPercentString = '--';
     var _latestPercentBgColor = HexColor('#FF53AE86');
 
     try {
@@ -725,7 +721,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
       );
 
       double _latestPercent =
-      MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
+          MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
               .getRealTimePricePercent(
         marketItemEntity.symbol,
       );
@@ -735,6 +731,11 @@ class _ExchangePageState extends BaseState<ExchangePage>
 
       _latestPercentString =
           '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(_latestPercent * 100.0, 2)}%';
+
+      var _selectedQuote =
+      WalletInheritedModel.of(context).activatedQuoteVoAndSign(
+        marketItemEntity?.base,
+      );
 
       var _latestQuotePrice = FormatUtil.truncateDoubleNum(
         double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,

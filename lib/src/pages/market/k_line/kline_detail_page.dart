@@ -312,33 +312,38 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
     );
     var _latestPriceString = '${_latestPrice ?? '--'}';
 
-    var _selectedQuote =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign(
-      marketItemEntity?.symbolName,
-    );
-    var _latestQuotePrice = _selectedQuote == null
-        ? '--'
-        : FormatUtil.truncateDoubleNum(
-            double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
-            4,
-          );
-    var _latestRmbPriceString =
-        '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
-
     // _latestPercent
     double _latestPercent =
         MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
             .getRealTimePricePercent(
       marketItemEntity?.symbol,
     );
+
     var _latestPercentBgColor = _latestPercent == 0
         ? HexColor('#FF999999')
-        : _latestPercent > 0 ? HexColor('#FF53AE86') : HexColor('#FFCC5858');
+        : _latestPercent > 0
+            ? HexColor('#FF53AE86')
+            : HexColor('#FFCC5858');
     var _latestPercentString =
         '${(_latestPercent) > 0 ? ' +' : ' '}${FormatUtil.truncateDoubleNum(
       _latestPercent * 100.0,
       2,
     )}%';
+
+    var _latestQuotePriceString = '--';
+
+    try {
+      var _selectedQuote =
+          WalletInheritedModel.of(context).activatedQuoteVoAndSign(
+        marketItemEntity?.base,
+      );
+      var _latestQuotePrice = FormatUtil.truncateDoubleNum(
+        double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
+        4,
+      );
+      _latestQuotePriceString =
+          '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
+    } catch (e) {}
 
     return SliverToBoxAdapter(
       child: Container(
@@ -363,7 +368,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                       ),
                       RichText(
                         text: TextSpan(
-                            text: _latestRmbPriceString,
+                            text: _latestQuotePriceString,
                             style: TextStyle(
                               color: HexColor("#777777"),
                               fontSize: 14,
@@ -947,14 +952,16 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                     flex: 2,
                     child: Text(
                       S.of(context).kline_delegate_time,
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                      style:
+                          TextStyle(color: HexColor("#777777"), fontSize: 10),
                     ),
                   ),
                   Expanded(
                     flex: 1,
                     child: Text(
                       S.of(context).kline_delegate_direction,
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                      style:
+                          TextStyle(color: HexColor("#777777"), fontSize: 10),
                     ),
                   ),
                   Expanded(
@@ -962,7 +969,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                     child: Text(
                       S.of(context).kline_delegate_price,
                       textAlign: TextAlign.end,
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                      style:
+                          TextStyle(color: HexColor("#777777"), fontSize: 10),
                     ),
                   ),
                   Expanded(
@@ -970,7 +978,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                     child: Text(
                       S.of(context).kline_delegate_amount,
                       textAlign: TextAlign.end,
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                      style:
+                          TextStyle(color: HexColor("#777777"), fontSize: 10),
                     ),
                   ),
                 ],
