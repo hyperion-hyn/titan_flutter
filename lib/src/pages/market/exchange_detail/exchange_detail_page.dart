@@ -133,7 +133,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
 
   @override
   void initState() {
-    symbol = "hyn${widget.selectedCoin.toLowerCase()}";
+    symbol = "${widget.quote.toLowerCase()}${widget.base.toLowerCase()}";
     marketCoin = "${widget.quote}/${widget.base}";
     isBuy = (widget.exchangeType == ExchangeType.BUY);
     exchangeDetailBloc.add(MarketInfoEvent(marketCoin));
