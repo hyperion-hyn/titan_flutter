@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lottie/lottie.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -299,8 +300,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       ),
                       _verticalLine(),
                       Expanded(
-                        child:
-                            _contentColumn(rpTodayStr, S.of(context).rp_today_rp),
+                        child: _contentColumn(
+                            rpTodayStr, S.of(context).rp_today_rp),
                       ),
                       _verticalLine(),
                       Expanded(
@@ -309,8 +310,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       ),
                       _verticalLine(),
                       Expanded(
-                        child:
-                            _contentColumn(rpMissedStr, S.of(context).rp_missed),
+                        child: _contentColumn(
+                            rpMissedStr, S.of(context).rp_missed),
                       ),
                     ],
                   ),
@@ -396,6 +397,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   _airdropWidget() {
     var airDropPercent = _rpStatistics?.rpContractInfo?.dropOnPercent ?? '--';
+    var alreadyAirdrop = '1';
+
     return SliverToBoxAdapter(
       child: Padding(
         padding: _cardPadding(),
@@ -419,19 +422,34 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         SizedBox(
                           height: 24,
                         ),
-                        Image.asset(
-                          'res/drawable/img_rp_airdrop.png',
-                          width: 80,
-                          height: 80,
+                        Container(
+                          width: 200,
+                          height: 200,
+                          child: Lottie.network('https://assets6.lottiefiles.com/private_files/lf30_ffn6ekit.json'),
                         ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Text(
-                          S.of(context).rp_available_soon,
-                          style: TextStyle(
-                            fontSize: 13,
-                          ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _contentColumn(
+                                '20RP',
+                                S.of(context).rp_today_rp,
+                              ),
+                            ),
+                            _verticalLine(),
+                            Expanded(
+                              child: _contentColumn(
+                                '20',
+                                S.of(context).rp_yesterday_rp,
+                              ),
+                            ),
+                            _verticalLine(),
+                            Expanded(
+                              child: _contentColumn(
+                                '100',
+                                S.of(context).rp_missed,
+                              ),
+                            ),
+                          ],
                         )
                       ],
                     ),
@@ -460,6 +478,14 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         ),
                       ),
                     ),
+                    Spacer(),
+                    Text(
+                      '已累计空投 ${alreadyAirdrop}万 RP',
+                      style: TextStyle(
+                        color: DefaultColors.color999,
+                        fontSize: 12,
+                      ),
+                    )
                   ],
                 )
               ],
