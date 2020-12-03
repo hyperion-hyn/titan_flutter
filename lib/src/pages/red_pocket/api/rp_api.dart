@@ -4,6 +4,7 @@ import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_http.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_miners_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_promotion_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
@@ -209,5 +210,71 @@ class RPApi {
         contentType: "application/json",
       ),
     );
+  }
+
+  ///用户等级信息
+  Future<RpPromotionEntity> getRPPromotionInfo(String address) async {
+    return await RPHttpCore.instance.getEntity(
+        "/v1/rp/promotion/$address",
+        EntityFactory<RpPromotionEntity>(
+          (json) => RpPromotionEntity.fromJson(json),
+        ),
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  // 预提交升级
+  Future<dynamic> postLevelPromotion({
+    BigInt burning,
+    BigInt holding,
+    int level,
+    String password = '',
+    WalletVo activeWallet,
+  }) async {
+    var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
+    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(
+      HynContractMethod.STAKE,
+      password,
+      stakingAmount: burning + holding,
+    );
+    print("[Rp_api] postLevelPromotion, address:$address, txHash:$txHash");
+    if (txHash == null) {
+      return;
+    }
+
+    return await RPHttpCore.instance.postEntity("/v1/rp/level/promotion/submit", EntityFactory<dynamic>((json) => json),
+        params: {
+          "address": address,
+          "burning": burning.toString(),
+          "holding": holding.toString(),
+          "level": level,
+          "tx_hash": txHash,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  // 预提交提取
+  Future<dynamic> postLevelWithdraw({
+    BigInt withdraw,
+    String password = '',
+    WalletVo activeWallet,
+  }) async {
+    var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
+    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(
+      HynContractMethod.STAKE,
+      password,
+      stakingAmount: withdraw,
+    );
+    print("[Rp_api] postLevelWithdraw, address:$address, txHash:$txHash");
+    if (txHash == null) {
+      return;
+    }
+
+    return await RPHttpCore.instance.postEntity("/v1/rp/level/withdraw/submit", EntityFactory<dynamic>((json) => json),
+        params: {
+          "address": address,
+          "level": withdraw.toString(),
+          "tx_hash": txHash,
+        },
+        options: RequestOptions(contentType: "application/json"));
   }
 }
