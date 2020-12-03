@@ -286,6 +286,12 @@ class _ExchangePageState extends BaseState<ExchangePage>
                             builder: (context) => ExchangeDetailPage(
                                   selectedCoin: _selectedCoin,
                                   exchangeType: _exchangeType,
+                                  base: _exchangeType == ExchangeType.BUY
+                                      ? _selectedCoin
+                                      : 'HYN',
+                                  quote: _exchangeType == ExchangeType.BUY
+                                      ? 'HYN'
+                                      : _selectedCoin,
                                 )));
                   }
                 },
@@ -733,7 +739,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
           '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(_latestPercent * 100.0, 2)}%';
 
       var _selectedQuote =
-      WalletInheritedModel.of(context).activatedQuoteVoAndSign(
+          WalletInheritedModel.of(context).activatedQuoteVoAndSign(
         marketItemEntity?.base,
       );
 
