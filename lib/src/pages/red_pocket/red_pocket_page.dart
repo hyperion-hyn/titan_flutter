@@ -12,8 +12,9 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
-import 'package:titan/src/pages/red_pocket/rp_friends_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_my_rp_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_release_records_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -76,6 +77,19 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       appBar: BaseAppBar(
         baseTitle: S.of(context).rp_hrc30,
         backgroundColor: Colors.grey[50],
+        actions: <Widget>[
+          FlatButton(
+            onPressed: _navToMyRpRecords,
+            child: Text(
+              '我的红包',
+              style: TextStyle(
+                color: HexColor("#1F81FF"),
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
       ),
       body: LoadDataContainer(
           bloc: _loadDataBloc,
@@ -275,28 +289,31 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 SizedBox(
                   height: 24,
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _contentColumn(
-                          rpBalanceStr, S.of(context).rp_balance),
-                    ),
-                    _verticalLine(),
-                    Expanded(
-                      child:
-                          _contentColumn(rpTodayStr, S.of(context).rp_today_rp),
-                    ),
-                    _verticalLine(),
-                    Expanded(
-                      child: _contentColumn(
-                          rpYesterdayStr, S.of(context).rp_yesterday_rp),
-                    ),
-                    _verticalLine(),
-                    Expanded(
-                      child:
-                          _contentColumn(rpMissedStr, S.of(context).rp_missed),
-                    ),
-                  ],
+                InkWell(
+                  onTap: _navToMyRpRecords,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _contentColumn(
+                            rpBalanceStr, S.of(context).rp_balance),
+                      ),
+                      _verticalLine(),
+                      Expanded(
+                        child:
+                            _contentColumn(rpTodayStr, S.of(context).rp_today_rp),
+                      ),
+                      _verticalLine(),
+                      Expanded(
+                        child: _contentColumn(
+                            rpYesterdayStr, S.of(context).rp_yesterday_rp),
+                      ),
+                      _verticalLine(),
+                      Expanded(
+                        child:
+                            _contentColumn(rpMissedStr, S.of(context).rp_missed),
+                      ),
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -313,7 +330,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 Row(
                   children: <Widget>[
                     InkWell(
-                      onTap: _navToRPAddFriends,
+                      onTap: _navToMyFriends,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
@@ -820,13 +837,27 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     }
   }
 
-  _navToRPAddFriends() {
+  _navToMyFriends() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
     if (activeWallet != null) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpFriendsPage(),
+          builder: (context) => RpMyFriendsPage(),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
+    }
+  }
+
+  _navToMyRpRecords() {
+    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+    if (activeWallet != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RpMyRpRecordsPage(),
         ),
       );
     } else {
