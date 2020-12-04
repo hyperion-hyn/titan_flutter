@@ -38,6 +38,8 @@ class MainActivity : FlutterActivity() {
     private var requestInstallUnknownSourceResult: MethodChannel.Result? = null
     private var callChannel: MethodChannel? = null;
 
+    private val appToolsPlugin = AppToolsPlugin()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //GeneratedPluginRegistrant.registerWith(this)
@@ -66,13 +68,12 @@ class MainActivity : FlutterActivity() {
         val sensorPluginInterface = SensorPluginInterface()
         flutterEngine.plugins.add(sensorPluginInterface)
 
-        val umPluginInterface = UMengPluginInterface(context)
+        val umPluginInterface = UMengPluginInterface()
         flutterEngine.plugins.add(umPluginInterface)
 
         val encryptionPluginInterface = EncryptionPluginInterface()
         flutterEngine.plugins.add(encryptionPluginInterface)
 
-        val appToolsPlugin = AppToolsPlugin()
         flutterEngine.plugins.add(appToolsPlugin)
 
         val walletPluginInterface = WalletPluginInterface()
@@ -80,7 +81,7 @@ class MainActivity : FlutterActivity() {
 
         callChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, callChannelName);
 
-        callChannel!!.setMethodCallHandler { call, result ->
+        callChannel?.setMethodCallHandler { call, result ->
             var handled = encryptionPluginInterface.setMethodCallHandler(call, result)
             if (!handled) {
                 handled = appToolsPlugin.setMethodCallHandler(this@MainActivity, call, result)
@@ -92,7 +93,7 @@ class MainActivity : FlutterActivity() {
                 when (call.method) {
                     "nativeGreet" -> {  // this is a test call
                         val m = mapOf("where" to "native", "name" to "moo", "age" to 19)
-                        callChannel!!.invokeMethod("dartGreet", m, object : MethodChannel.Result {
+                        callChannel?.invokeMethod("dartGreet", m, object : MethodChannel.Result {
                             override fun notImplemented() {
                                 result.notImplemented()
                             }
@@ -178,7 +179,7 @@ class MainActivity : FlutterActivity() {
         super.onNewIntent(intent)
 
         var data = intent?.data
-        AppToolsPlugin.deeplinkStart(data)
+        appToolsPlugin.deepLinkStart(data)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

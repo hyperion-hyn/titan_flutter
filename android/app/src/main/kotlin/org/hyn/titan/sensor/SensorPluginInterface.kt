@@ -8,11 +8,6 @@ import timber.log.Timber
 
 class SensorPluginInterface() : FlutterPlugin {
 
-
-    private var methodChannel: MethodChannel? = null
-    private val sChannelName = "org.hyn.titan/sensor_call_channel"
-    private var context: Context? = null
-
     /*
     val methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "org.hyn.titan/sensor_call_channel")
 
@@ -23,14 +18,18 @@ class SensorPluginInterface() : FlutterPlugin {
     }
     */
 
-    lateinit var sensorManager: SensorManager;
+    private var methodChannel: MethodChannel? = null
+    private val sChannelName = "org.hyn.titan/sensor_call_channel"
+    private var context: Context? = null
+
+    private lateinit var sensorManager: SensorManager;
 
     private val sensorValueChangeListener = object : OnSensorValueChangeListener {
         override fun onSensorChange(sensorType: Int, values: Map<String, Any>) {
             Timber.i("sensorType:$sensorType,values:$values")
             val mutableMap = values.toMutableMap()
-            mutableMap.put("sensorType",sensorType)
-            methodChannel!!.invokeMethod("sensor#valueChange", mutableMap)
+            mutableMap["sensorType"] = sensorType
+            methodChannel?.invokeMethod("sensor#valueChange", mutableMap)
         }
     }
 
@@ -38,7 +37,7 @@ class SensorPluginInterface() : FlutterPlugin {
         methodChannel = MethodChannel(
                 binding.flutterEngine.dartExecutor.binaryMessenger, sChannelName)
         context = binding.applicationContext
-        methodChannel!!.setMethodCallHandler { call, result ->
+        methodChannel?.setMethodCallHandler { call, result ->
             setMethodCallHandler(call, result);
         }
     }
@@ -61,18 +60,23 @@ class SensorPluginInterface() : FlutterPlugin {
             }
             "sensor#startScan" -> {
                 sensorManager.startScan()
+
                 print("sensor#startScan")
+
                 return true
             }
             "sensor#stopScan" -> {
                 sensorManager.stopScan()
+
                 print("sensor#stopScan")
+
                 return true
             }
             "sensor#destory" -> {
                 sensorManager.destory()
 
                 print("sensor#destory")
+
                 return true
             }
             else -> false

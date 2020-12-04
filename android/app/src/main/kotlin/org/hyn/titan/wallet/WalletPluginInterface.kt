@@ -27,6 +27,18 @@ class WalletPluginInterface(): FlutterPlugin {
     //val HYNDerivationPath = "m/44'/546'/0'/0"
     //private val secureRandom by lazy { SecureRandomUtils.secureRandom() }
 
+    //    //ropsten api
+//    private val ETH_ROPSTEN_API = "https://ropsten.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226"
+//    //main net api
+//    private val ETH_MAIN_API = "https://mainnet.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226"
+
+//    private val objectMapper by lazy {
+//        val om = ObjectMapper()
+//        om.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
+//        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+//        om
+//    }
+
     init {
         System.loadLibrary("TrustWalletCore")
     }
@@ -39,7 +51,7 @@ class WalletPluginInterface(): FlutterPlugin {
         methodChannel = MethodChannel(
                 binding.flutterEngine.dartExecutor.binaryMessenger, sChannelName)
         context = binding.applicationContext
-        methodChannel!!.setMethodCallHandler { call, result ->
+        methodChannel?.setMethodCallHandler { call, result ->
             setMethodCallHandler(call, result)
         }
     }
@@ -48,18 +60,6 @@ class WalletPluginInterface(): FlutterPlugin {
         methodChannel?.setMethodCallHandler(null)
         methodChannel = null
     }
-
-//    //ropsten api
-//    private val ETH_ROPSTEN_API = "https://ropsten.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226"
-//    //main net api
-//    private val ETH_MAIN_API = "https://mainnet.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226"
-
-//    private val objectMapper by lazy {
-//        val om = ObjectMapper()
-//        om.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
-//        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-//        om
-//    }
 
 
     fun setMethodCallHandler(call: MethodCall, result: MethodChannel.Result): Boolean {
