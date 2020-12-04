@@ -305,7 +305,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
               case AccountDetailType.TEXT_INSIDE_TRANSFER:
                 return accountContractItem(accountViewItem);
               case AccountDetailType.TEXT_TWO_RIGHT:
-                return accountInfoItem(accountViewItem, hasSubTitle: true);
+                return accountInfoItemTwoRight(accountViewItem);
               case AccountDetailType.TEXT_DECODE_VIEW:
                 return inputDataView(accountViewItem);
             }
@@ -479,7 +479,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                   ),
                 Spacer(),
                 Container(
-                  width: 228,
+                  width: 204,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
@@ -508,7 +508,6 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                         Row(
                           children: <Widget>[
                             Expanded(
-                              flex: 4,
                               child: Text(
                                 accountDetailItemView.rightStr ?? "",
                                 style:
@@ -547,6 +546,55 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                           child: Text(bottomText, style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
                     ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Divider(
+            color: DefaultColors.colorf2f2f2,
+            indent: 15,
+            endIndent: 15,
+            height: 1,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget accountInfoItemTwoRight(AccountDetailItemView accountDetailItemView,) {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 18.0, bottom: 18, left: 15, right: 15),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  accountDetailItemView.leftStr,
+                  style: TextStyles.textC333S13,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 6.0),
+                  child: Text(
+                    S.of(context).transaction_location,
+                    style: TextStyles.textC999S13,
+                  ),
+                ),
+                Spacer(),
+                Text(
+                  accountDetailItemView.rightStr ?? "",
+                  style:
+                  TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.end,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 11.0),
+                  child: Text(
+                    "${widget.transactionDetail.transactionIndex}",
+                    style: TextStyles.textC999S13,
                   ),
                 ),
               ],
