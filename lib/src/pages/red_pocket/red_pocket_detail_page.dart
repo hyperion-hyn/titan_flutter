@@ -13,6 +13,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_miners_entity.dart';
+import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -157,170 +158,182 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: 16,
-          horizontal: 12,
-        ),
-        decoration: BoxDecoration(
-          color: HexColor('#FFFFFF'),
-          borderRadius: BorderRadius.all(
-            Radius.circular(12.0),
-          ), //设置四周圆角 角度
-        ),
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 16,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'res/drawable/red_pocket_logo_small.png',
-                    width: 12,
-                    height: 16,
-                  ),
-                  SizedBox(
-                    width: 6,
-                  ),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: HexColor("#333333"),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    subTitle,
-                    style: TextStyle(
-                      color: HexColor("#999999"),
-                      fontSize: 10,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ],
-              ),
+      child: Stack(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 16,
+              horizontal: 12,
             ),
-            if (_rpType == 2)Padding(
-              padding: const EdgeInsets.only(
-                top: 6,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+            decoration: BoxDecoration(
+              color: HexColor('#FFFFFF'),
+              borderRadius: BorderRadius.all(
+                Radius.circular(12.0),
+              ), //设置四周圆角 角度
+            ),
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 16,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'res/drawable/red_pocket_logo_small.png',
+                        width: 12,
+                        height: 16,
+                      ),
+                      SizedBox(
+                        width: 6,
+                      ),
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: HexColor("#333333"),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        subTitle,
+                        style: TextStyle(
+                          color: HexColor("#999999"),
+                          fontSize: 10,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (_rpType == 2)Padding(
+                  padding: const EdgeInsets.only(
+                    top: 6,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
 
-                children: [
-                  Text(
-                    '派大星',
-                    style: TextStyle(
-                      color: HexColor("#333333"),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    children: [
+                      Text(
+                        '派大星',
+                        style: TextStyle(
+                          color: HexColor("#333333"),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 6,
+                      ),
+                      Text(
+                        'hyn19493…43222',
+                        style: TextStyle(
+                          color: HexColor("#999999"),
+                          fontSize: 10,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    width: 6,
+                ),
+                if (_rpType == 2)Padding(
+                  padding: const EdgeInsets.only(
+                    top: 2,
                   ),
-                  Text(
-                    'hyn19493…43222',
-                    style: TextStyle(
-                      color: HexColor("#999999"),
-                      fontSize: 10,
-                      fontWeight: FontWeight.normal,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '量级1 - 量级3',
+                        style: TextStyle(
+                          color: HexColor("#333333"),
+                          fontSize: 10,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            if (_rpType == 2)Padding(
-              padding: const EdgeInsets.only(
-                top: 2,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '量级1 - 量级3',
-                    style: TextStyle(
-                      color: HexColor("#333333"),
-                      fontSize: 10,
-                      fontWeight: FontWeight.normal,
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 16,
                   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 16,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
 
-                children: [
-                  Image.asset(
-                    "res/drawable/red_pocket_bg_left.png",
-                    width: 14,
-                    height: 42,
+                    children: [
+                      Image.asset(
+                        "res/drawable/red_pocket_bg_left.png",
+                        width: 14,
+                        height: 42,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                        ),
+                        child: Image.asset(
+                          "res/drawable/red_pocket_coins.png",
+                          width: 28,
+                          height: 28,
+                        ),
+                      ),
+                      Text(
+                        rpAmount,
+                        style: TextStyle(
+                          color: HexColor("#E3A900"),
+                          fontSize: 26,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Image.asset(
+                        "res/drawable/red_pocket_bg_right.png",
+                        width: 43,
+                        height: 49,
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                    ),
-                    child: Image.asset(
-                      "res/drawable/red_pocket_coins.png",
-                      width: 28,
-                      height: 28,
-                    ),
+                ),
+                if (isIgnored)Padding(
+                  padding: const EdgeInsets.only(
+                    top: 16,
                   ),
-                  Text(
-                    rpAmount,
-                    style: TextStyle(
-                      color: HexColor("#E3A900"),
-                      fontSize: 26,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Image.asset(
-                    "res/drawable/red_pocket_bg_right.png",
-                    width: 43,
-                    height: 49,
-                  ),
-                ],
-              ),
-            ),
-            if (isIgnored)Padding(
-              padding: const EdgeInsets.only(
-                top: 16,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
 
-                children: [
-                  Text(
-                    '你已错过红包机会',
-                    style: TextStyle(
-                      color: HexColor("#999999"),
-                      fontSize: 12,
-                      fontWeight: FontWeight.normal,
-                    ),
+                    children: [
+                      Text(
+                        '你已错过红包机会',
+                        style: TextStyle(
+                          color: HexColor("#999999"),
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 6,
+                      ),
+                      Image.asset(
+                        'res/drawable/red_pocket_detail_info.png',
+                        width: 12,
+                        height: 12,
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    width: 6,
-                  ),
-                  Image.asset(
-                    'res/drawable/red_pocket_detail_info.png',
-                    width: 12,
-                    height: 12,
-                  ),
-                ],
-              ),
+                ),
+                SizedBox(height: 16,),
+              ],
             ),
-            SizedBox(height: 16,),
-          ],
-        ),
+          ),
+          Positioned(
+            left: 30,
+            child: Container(
+              width: 200,
+              height: 200,
+              child: RPAirdropWidget(),
+            ),
+          ),
+        ],
       ),
     );
   }
