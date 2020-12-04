@@ -280,18 +280,23 @@ class _ExchangePageState extends BaseState<ExchangePage>
                   if (await _checkShowConfirmPolicy()) {
                     _showConfirmDexPolicy();
                   } else {
+                    var base = '';
+                    var quote = '';
+                    if (_selectedCoin == 'USDT') {
+                      base = 'USDT';
+                      quote = 'HYN';
+                    } else if (_selectedCoin == 'RP') {
+                      base = 'HYN';
+                      quote = 'RP';
+                    }
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => ExchangeDetailPage(
                                   selectedCoin: _selectedCoin,
                                   exchangeType: _exchangeType,
-                                  base: _exchangeType == ExchangeType.BUY
-                                      ? _selectedCoin
-                                      : 'HYN',
-                                  quote: _exchangeType == ExchangeType.BUY
-                                      ? 'HYN'
-                                      : _selectedCoin,
+                                  base: base,
+                                  quote: quote,
                                 )));
                   }
                 },
