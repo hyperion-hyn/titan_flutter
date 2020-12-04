@@ -262,15 +262,15 @@ class _SocketState extends State<_SocketManager> {
         }
       }
 
-      if (index == null) return;
-
-      var lastElement = _marketItemList[index];
-      var element = MarketItemEntity(
-        lastElement.symbol,
-        kLineDataList.first,
-        symbolName: lastElement.symbolName,
-      );
-      _marketItemList[index] = element;
+      if (index != null) {
+        var lastElement = _marketItemList[index];
+        var element = MarketItemEntity(
+          lastElement.symbol,
+          kLineDataList.first,
+          symbolName: lastElement.symbolName,
+        );
+        _marketItemList[index] = element;
+      }
 
       // 使得ui刷新
       _marketItemList = _marketItemList.toList();
