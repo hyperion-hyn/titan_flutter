@@ -257,9 +257,19 @@ class _SocketState extends State<_SocketManager> {
       return;
     }
 
-    for (var i = 0; i < _marketItemList.length; i++) {
-      var lastElement = _marketItemList[i];
-      if (lastElement.symbol == symbol) {
+    try {
+      int index;
+      for (var i = 0; i < _marketItemList.length; i++) {
+        var element = _marketItemList[i];
+        // replace
+        if (element.symbol == symbol) {
+          index = i;
+          break;
+        }
+      }
+
+      if (index != null) {
+        var lastElement = _marketItemList[index];
         var element = MarketItemEntity(
           lastElement.symbol,
           kLineDataList.first,
@@ -267,12 +277,12 @@ class _SocketState extends State<_SocketManager> {
           base: lastElement.base,
           quote: lastElement.quote,
         );
-        _marketItemList[i] = element;
+        _marketItemList[index] = element;
       }
-    }
 
-    // 使得ui刷新
-    _marketItemList = _marketItemList.toList();
+      // 使得ui刷新
+      _marketItemList = _marketItemList.toList();
+    } catch (e) {}
   }
 }
 
