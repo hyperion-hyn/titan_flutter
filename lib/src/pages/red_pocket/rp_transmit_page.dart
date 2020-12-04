@@ -21,8 +21,8 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
-import 'package:titan/src/pages/red_pocket/rp_release_records_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_staking_info_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_staking_detail_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/rich_text_widget.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -1004,7 +1004,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpReleaseRecordsPage(_rpStatistics),
+        builder: (context) => RpTransmitRecordsPage(_rpStatistics),
       ),
     );
   }
@@ -1014,7 +1014,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            RpStakingInfoPage(_rpStatistics, _dataList[index]),
+            RpStakingDetailPage(_rpStatistics, _dataList[index]),
       ),
     );
   }

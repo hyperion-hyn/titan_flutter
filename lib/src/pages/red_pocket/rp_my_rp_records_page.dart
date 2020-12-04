@@ -10,6 +10,7 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/red_pocket_detail_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -172,8 +173,15 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
     }
     return InkWell(
       onTap: () {
-        WalletShowAccountInfoPage.jumpToAccountInfoPage(
-            context, model?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+        // WalletShowAccountInfoPage.jumpToAccountInfoPage(
+        //     context, model?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RedPocketDetailPage(),
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
