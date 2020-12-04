@@ -41,10 +41,12 @@ class WalletManagerPage extends StatefulWidget {
 
 class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
   WalletManagerBloc _walletManagerBloc;
+  bool isRefresh = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    isRefresh = false;
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
   }
 
@@ -158,16 +160,30 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
             builder: (context, state) {
               if (state is ShowWalletState) {
                 var walletList = state.wallets;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: ListView.builder(
-                    primary: false,
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      return _buildWallet(walletList[index]);
-                    },
-                    itemCount: walletList.length,
-                  ),
+                return Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: ListView.builder(
+                        primary: false,
+                        shrinkWrap: true,
+                        itemBuilder: (BuildContext context, int index) {
+                          return _buildWallet(walletList[index]);
+                        },
+                        itemCount: walletList.length,
+                      ),
+                    ),
+                    if(isRefresh)
+                      Center(
+                        child: SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3,
+                          ),
+                        ),
+                      ),
+                  ],
                 );
               } else if (state is WalletEmptyState) {
                 return Align(
@@ -203,6 +219,9 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                 child: InkWell(
                   onTap: () {
                     if (!isSelected) {
+                      isRefresh = true;
+                      setState(() {
+                      });
                       BlocProvider.of<WalletCmpBloc>(context)
                           .add(ActiveWalletEvent(wallet: wallet));
 
