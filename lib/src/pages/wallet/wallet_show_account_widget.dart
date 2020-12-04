@@ -238,7 +238,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                           Fluttertoast.showToast(msg: S.of(context).feature_available_soon);
                                           return;
                                         }
-                                        
+
                                         if (widget.coinVo.coinType == CoinType.ETHEREUM) {
                                           TransactionDetailVo localTransfer = await getLocalTransfer(true);
                                           if (localTransfer != null) {
@@ -354,7 +354,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) => ExchangeDetailPage(
-                                                          selectedCoin: 'USDT', exchangeType: ExchangeType.BUY)));
+                                                        quote: 'HYN',
+                                                          base: 'USDT', exchangeType: ExchangeType.BUY)));
                                             } else {
                                               Fluttertoast.showToast(msg: S.of(context).exchange_is_not_yet_open(widget.coinVo.symbol));
                                             }

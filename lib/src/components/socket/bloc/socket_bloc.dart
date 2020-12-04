@@ -137,35 +137,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     } else if (event is MarketSymbolEvent) {
       // 价格行情
       var response = await _exchangeApi.getMarketAllSymbol();
-      MarketSymbolList marketSymbolList = MarketSymbolList.fromJson(response);
-      var _marketItemList = List<MarketItemEntity>();
-      if (marketSymbolList.hynusdt != null) {
-        _marketItemList.add(MarketItemEntity(
-          'hynusdt',
-          marketSymbolList.hynusdt,
-          symbolName: 'USDT',
-          base: 'USDT',
-          quote: 'HYN',
-        ));
-      }
-      if (marketSymbolList.hyneth != null) {
-        _marketItemList.add(MarketItemEntity(
-          'hyneth',
-          marketSymbolList.hyneth,
-          symbolName: 'ETH',
-          base: 'ETH',
-          quote: 'HYN',
-        ));
-      }
-      if (marketSymbolList.rphyn != null) {
-        _marketItemList.add(MarketItemEntity(
-          'rphyn',
-          marketSymbolList.rphyn,
-          symbolName: 'RP',
-          base: 'HYN',
-          quote: 'RP',
-        ));
-      }
+      List<MarketItemEntity> _marketItemList =
+          MarketSymbolList.fromJsonToMarketItemList(response);
 
       yield MarketSymbolState(_marketItemList);
     }

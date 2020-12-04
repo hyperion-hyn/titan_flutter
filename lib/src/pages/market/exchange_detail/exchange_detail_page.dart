@@ -45,15 +45,11 @@ import 'package:titan/src/widget/popup/pop_widget.dart';
 import 'bloc/exchange_detail_bloc.dart';
 
 class ExchangeDetailPage extends StatefulWidget {
-//  final String leftSymbol;
-//  final String rightSymbol;
-  var selectedCoin = 'USDT';
   var exchangeType = ExchangeType.SELL;
   var quote = '';
   var base = '';
 
   ExchangeDetailPage({
-    this.selectedCoin,
     this.exchangeType,
     this.quote,
     this.base,
@@ -289,8 +285,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
     _realTimePrice =
         MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
             .getRealTimePrice(symbol);
-    selectQuote = WalletInheritedModel.of(context)
-        .activatedQuoteVoAndSign(widget.selectedCoin);
+    selectQuote =
+        WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.quote);
     _realTimeQuotePrice = FormatUtil.truncateDoubleNum(
         double.parse(_realTimePrice) * (selectQuote?.quoteVo?.price ?? 0), 2);
     _realTimePricePercent =
@@ -431,7 +427,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                       MaterialPageRoute(
                           builder: (context) => KLineDetailPage(
                                 symbol: symbol,
-                                symbolName: widget.selectedCoin,
                                 isPop: true,
                                 periodCurrentIndex: periodCurrentIndex,
                                 base: widget.base,

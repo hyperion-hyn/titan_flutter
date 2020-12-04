@@ -24,7 +24,6 @@ import 'package:titan/src/utils/format_util.dart';
 
 class KLineDetailPage extends StatefulWidget {
   final String symbol;
-  final String symbolName;
   final bool isPop;
   final int periodCurrentIndex;
   final String quote;
@@ -32,7 +31,6 @@ class KLineDetailPage extends StatefulWidget {
 
   KLineDetailPage({
     this.symbol,
-    this.symbolName,
     this.isPop,
     this.periodCurrentIndex,
     this.quote,
@@ -284,7 +282,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
           context,
           MaterialPageRoute(
             builder: (context) => ExchangeDetailPage(
-              selectedCoin: widget.symbolName,
               exchangeType: exchangeType,
               base: widget.base,
               quote: widget.quote,

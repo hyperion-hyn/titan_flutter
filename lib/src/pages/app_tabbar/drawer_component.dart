@@ -195,7 +195,14 @@ class _DrawerComponentState extends State<DrawerComponent> {
                 ListTile(
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeDetailPage(selectedCoin:"USDT", exchangeType:0)));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ExchangeDetailPage(
+                                  base: 'USDT',
+                                  quote: 'HYN',
+                                  exchangeType: 0,
+                                )));
                   },
                   leading: Icon(Icons.monetization_on),
                   title: Text('交易详情页'),
@@ -215,7 +222,8 @@ class _DrawerComponentState extends State<DrawerComponent> {
                 ListTile(
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ApiDemo()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ApiDemo()));
                   },
                   leading: Icon(Icons.http),
                   title: Text('API Demo'),

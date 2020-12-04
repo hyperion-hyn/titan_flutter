@@ -215,7 +215,6 @@ class _SocketState extends State<_SocketManager> {
       var marketItemJsonStr = json.encode(MarketItemEntity(
         element.symbol,
         KLineEntity.fromCustom(),
-        symbolName: element.symbolName,
         base: element.base,
         quote: element.quote,
       ).toJson());
@@ -273,7 +272,6 @@ class _SocketState extends State<_SocketManager> {
         var element = MarketItemEntity(
           lastElement.symbol,
           kLineDataList.first,
-          symbolName: lastElement.symbolName,
           base: lastElement.base,
           quote: lastElement.quote,
         );

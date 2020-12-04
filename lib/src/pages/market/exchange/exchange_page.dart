@@ -293,7 +293,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
                         context,
                         MaterialPageRoute(
                             builder: (context) => ExchangeDetailPage(
-                                  selectedCoin: _selectedCoin,
                                   exchangeType: _exchangeType,
                                   base: base,
                                   quote: quote,
@@ -775,7 +774,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
                     MaterialPageRoute(
                         builder: (context) => KLineDetailPage(
                               symbol: marketItemEntity.symbol,
-                              symbolName: marketItemEntity.symbolName,
                               isPop: false,
                               periodCurrentIndex: periodCurrentIndex,
                               base: marketItemEntity.base,
@@ -900,10 +898,10 @@ class _ExchangePageState extends BaseState<ExchangePage>
     );
   }
 
-  MarketItemEntity _getMarketItem(String coinType) {
+  MarketItemEntity _getMarketItem(String token) {
     var result;
     _marketItemList.forEach((element) {
-      if (element.symbolName == coinType) {
+      if (element.quote == token) {
         result = element;
       }
     });
