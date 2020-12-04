@@ -1212,6 +1212,8 @@
   "@invitation_code_error": {},
   "invitation_success": "邀請成功",
   "@invitation_success": {},
+  "invite_come_receive_red_pocket": "\"\"\"<p><span style='color: #333333;'>邀请你一起来海伯利安领</span><span style='color: #ff3b3b;'>红包</span><span style='color: #333333;'>啦!</span></p>\"\"\"",
+  "@invite_come_receive_red_pocket": {},
   "invite_friend_join": "邀請好友\n參加",
   "@invite_friend_join": {},
   "invite_friend_receive_pocket_agree": "邀請你成為他的好友並一起領紅包，是否接受邀請?",
