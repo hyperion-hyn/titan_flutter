@@ -18,6 +18,7 @@ import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_rp_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_release_records_page.dart';
+import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -425,7 +426,30 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         Container(
                           width: 200,
                           height: 200,
-                          child: Lottie.network('https://assets6.lottiefiles.com/private_files/lf30_ffn6ekit.json'),
+                          child: RPAirdropWidget(),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              color: HexColor('#FFFFF7F8'),
+                              borderRadius: BorderRadius.circular(
+                                4.0,
+                              )),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8.0,
+                              horizontal: 16.0,
+                            ),
+                            child: Text(
+                              '最近一轮 ',
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 16.0,
                         ),
                         Row(
                           children: [
@@ -480,7 +504,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     ),
                     Spacer(),
                     Text(
-                      '已累计空投 ${alreadyAirdrop}万 RP',
+                      '已累计空投 $alreadyAirdrop万 RP',
                       style: TextStyle(
                         color: DefaultColors.color999,
                         fontSize: 12,
