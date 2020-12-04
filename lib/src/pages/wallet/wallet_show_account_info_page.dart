@@ -205,9 +205,8 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                   accountInfoItemView.leftStr,
                   style: TextStyles.textC999S13,
                 ),
-                Spacer(),
-                Container(
-                  width: 198,
+                SizedBox(width: 30,),
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
@@ -314,7 +313,6 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
           ),
           SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
-                print("!!!${_accountInfoViewList.length}  $index");
                 var accountViewItem = _accountInfoViewList[index];
                 switch(accountViewItem.type){
                   case AccountInfoType.TEXT_TEXT:
