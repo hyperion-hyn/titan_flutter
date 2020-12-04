@@ -60,7 +60,6 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
     String walletAddress = WalletUtil.ethAddressToBech32Address(ethWalletAddress);
     String walletName = activityWallet.wallet.keystore.name;
 
-    var htmlData = """<p><span style='color: #333333;'>邀请你一起来海伯利安领</span><span style='color: #ff3b3b;'>红包</span><span style='color: #333333;'>啦!</span></p>""";
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -139,7 +138,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                   SizedBox(
                                     width: 230,
                                     child: Html(
-                                      data: htmlData,
+                                      data: S.of(context).invite_come_receive_red_pocket,
                                       style: {
                                         "p": Style(
                                           textAlign: TextAlign.center

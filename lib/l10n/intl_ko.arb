@@ -1212,7 +1212,7 @@
   "@invitation_code_error": {},
   "invitation_success": "邀请成功",
   "@invitation_success": {},
-  "invite_come_receive_red_pocket": "“\"”<p><span style='color: #333333;'>하이베르니언 칼라<span style='color: #ff3b3b;'>레드 팩에</span>여러분을 초대하세요</span><span style='color: #333333;'>!</span></p>“ “”",
+  "invite_come_receive_red_pocket": "<p><span style='color: #333333;'>邀请你一起来海伯利安领</span><span style='color: #ff3b3b;'>红包</span><span style='color: #333333;'>啦!</span></p>",
   "@invite_come_receive_red_pocket": {},
   "invite_friend_join": "참가할 친구 초대",
   "@invite_friend_join": {},
