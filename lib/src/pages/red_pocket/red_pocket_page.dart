@@ -16,7 +16,7 @@ import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_rp_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_release_records_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -829,7 +829,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpReleaseRecordsPage(_rpStatistics),
+          builder: (context) => RpTransmitRecordsPage(_rpStatistics),
         ),
       );
     } else {

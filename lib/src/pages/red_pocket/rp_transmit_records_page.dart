@@ -16,18 +16,18 @@ import 'package:titan/src/utils/format_util.dart';
 import 'entity/rp_release_info.dart';
 import 'entity/rp_statistics.dart';
 
-class RpReleaseRecordsPage extends StatefulWidget {
+class RpTransmitRecordsPage extends StatefulWidget {
   final RPStatistics rpStatistics;
 
-  RpReleaseRecordsPage(this.rpStatistics);
+  RpTransmitRecordsPage(this.rpStatistics);
 
   @override
   State<StatefulWidget> createState() {
-    return _RpReleaseRecordsState();
+    return _RpTransmitRecordsState();
   }
 }
 
-class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
+class _RpTransmitRecordsState extends BaseState<RpTransmitRecordsPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
