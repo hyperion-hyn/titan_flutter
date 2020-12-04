@@ -18,9 +18,11 @@ class AnnouncementDialog extends StatelessWidget {
             height: 510,
             width: 370,
             child: SingleChildScrollView(
-              child: Html(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                data: announcement.content,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Html(
+                  data: announcement.content,
+                ),
               ),
             ),
           ),

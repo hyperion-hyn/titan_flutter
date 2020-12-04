@@ -22,22 +22,22 @@ import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'entity/rp_staking_release_info.dart';
 
-class RpStakingInfoPage extends StatefulWidget {
+class RpStakingDetailPage extends StatefulWidget {
   final RPStatistics rpStatistics;
   final RpStakingInfo rpStakingInfo;
 
-  RpStakingInfoPage(
+  RpStakingDetailPage(
     this.rpStatistics,
     this.rpStakingInfo,
   );
 
   @override
   State<StatefulWidget> createState() {
-    return _RpStakingInfoPageState();
+    return _RpStakingDetailPageState();
   }
 }
 
-class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage>
+class _RpStakingDetailPageState extends BaseState<RpStakingDetailPage>
     with RouteAware {
   final RPApi _rpApi = RPApi();
 

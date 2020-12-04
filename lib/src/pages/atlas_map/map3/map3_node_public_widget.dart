@@ -26,6 +26,7 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
@@ -155,7 +156,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
   var feeRatePre = "${S.of(context).manage_fee}：";
   var feeRate =
       FormatUtil.formatPercent(double.parse(infoEntity?.getFeeRate() ?? "0"));
-  var descPre = "描   述：";
+  var descPre = S.of(context).map3_node_notification + "：";
   var desc = (infoEntity?.describe ?? "").isEmpty
       ? S.of(context).map3_node_notification_default
       : infoEntity.describe;
@@ -164,13 +165,13 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
 
   if (infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index) {
     date =
-        "创建于 ${FormatUtil.formatDate(infoEntity?.createTime, isSecond: true)}";
+        "${S.of(context).map3_create_at} ${FormatUtil.formatDate(infoEntity?.createTime, isSecond: true)}";
   } else if (infoEntity.status == Map3InfoStatus.CONTRACT_HAS_STARTED.index) {
-    print("currentEpoch:$currentEpoch, endEpoch:${infoEntity?.endEpoch ?? 0}");
+    LogUtil.printMessage("currentEpoch:$currentEpoch, endEpoch:${infoEntity?.endEpoch ?? 0}");
 
     var remainEpoch = (infoEntity?.endEpoch ?? 0) - currentEpoch + 1;
     date =
-        "剩余 ${remainEpoch > 0 ? remainEpoch : 0}纪元 ${FormatUtil.formatDate(infoEntity?.endTime, isSecond: true)}";
+        "${S.of(context).time_left} ${remainEpoch > 0 ? remainEpoch : 0} ${S.of(context).epoch} ${FormatUtil.formatDate(infoEntity?.endTime, isSecond: true)}";
   }
 
   var status = Map3InfoStatus.values[infoEntity?.status ?? 0];

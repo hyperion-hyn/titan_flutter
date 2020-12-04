@@ -14,10 +14,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
-import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
-import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -26,8 +23,9 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:titan/src/widget/widget_shot.dart';
-
+import 'package:flutter_html/flutter_html.dart';
 import 'api/rp_api.dart';
+import 'package:flutter_html/style.dart';
 
 class RpInviteFriendPage extends StatefulWidget {
   static String shareDomain = "https://h.hyn.space/share";
@@ -61,6 +59,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
     String ethWalletAddress = activityWallet.wallet.getAtlasAccount().address;
     String walletAddress = WalletUtil.ethAddressToBech32Address(ethWalletAddress);
     String walletName = activityWallet.wallet.keystore.name;
+
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -138,6 +137,21 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                   ),
                                   SizedBox(
                                     width: 230,
+                                    child: Html(
+                                      data: S.of(context).invite_come_receive_red_pocket,
+                                      style: {
+                                        "p": Style(
+                                          textAlign: TextAlign.center
+                                        ),
+                                        "span": Style(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: FontSize(22),
+                                        )
+                                      },
+                                    ),
+                                  ),
+                                  /*SizedBox(
+                                    width: 230,
                                     child: RichText(
                                       textAlign: TextAlign.center,
                                       text: TextSpan(
@@ -166,7 +180,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                             ),
                                           ]),
                                     ),
-                                  ),
+                                  ),*/
                                   Padding(
                                     padding: const EdgeInsets.only(top: 14, bottom: 21.0),
                                     child: Stack(

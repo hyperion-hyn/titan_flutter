@@ -875,13 +875,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                                   height: 36,
                                   child: TextField(
                                     controller: priceEditController,
-                                    keyboardType:
-                                        TextInputType.numberWithOptions(
-                                            decimal: true),
-                                    inputFormatters: [
-                                      WhitelistingTextInputFormatter(
-                                          RegExp("[0-9.]"))
-                                    ],
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
                                     decoration: new InputDecoration(
                                       contentPadding:
                                           EdgeInsets.only(bottom: 12.0),
@@ -995,11 +990,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                         Expanded(
                           child: TextField(
                             controller: numEditController,
-                            keyboardType:
-                                TextInputType.numberWithOptions(decimal: true),
-                            inputFormatters: [
-                              WhitelistingTextInputFormatter(RegExp("[0-9.]"))
-                            ],
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
+                            inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
                             decoration: new InputDecoration(
                               contentPadding: EdgeInsets.only(bottom: 12.0),
                               border: InputBorder.none,
@@ -1119,11 +1111,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                         Expanded(
                           child: TextField(
                             controller: totalEditController,
-                            keyboardType:
-                                TextInputType.numberWithOptions(decimal: true),
-                            inputFormatters: [
-                              WhitelistingTextInputFormatter(RegExp("[0-9.]"))
-                            ],
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
+                            inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
                             decoration: new InputDecoration(
                               contentPadding: EdgeInsets.only(bottom: 12.0),
                               border: InputBorder.none,

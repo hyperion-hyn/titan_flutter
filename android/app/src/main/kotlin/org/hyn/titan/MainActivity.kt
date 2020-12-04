@@ -2,49 +2,50 @@ package org.hyn.titan
 
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.hyn.titan.tools.AppPrintTools
-import io.flutter.app.FlutterActivity
-import io.flutter.app.FlutterFragmentActivity
 import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugins.GeneratedPluginRegistrant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.hyn.titan.encryption.EncryptionPluginInterface
 import org.hyn.titan.push.UMengPluginInterface
-import org.hyn.titan.push.UmengPlugin
 import org.hyn.titan.sensor.SensorPluginInterface
 import org.hyn.titan.umenglib.push.UMengPushImpl
 import org.hyn.titan.utils.AppToolsPlugin
 import org.hyn.titan.wallet.WalletPluginInterface
-import org.jetbrains.anko.toast
 import java.io.File
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.plugins.GeneratedPluginRegistrant;
+import androidx.annotation.NonNull;
 
+class MainActivity : FlutterActivity() {
 
-class MainActivity : FlutterFragmentActivity() {
-    private val callChannel by lazy { MethodChannel(flutterView, "org.hyn.titan/call_channel") }
+    private val callChannelName = "org.hyn.titan/call_channel"
 
     private val QRCODE_SCAN_REQUEST_CODE = 1
     private val MANAGE_UNKNOWN_APP_SOURCES = 2
 
     private var scanResult: MethodChannel.Result? = null
     private var requestInstallUnknownSourceResult: MethodChannel.Result? = null
+    private var callChannel: MethodChannel? = null;
+
+    private val appToolsPlugin = AppToolsPlugin()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        GeneratedPluginRegistrant.registerWith(this)
-        AppToolsPlugin.registerWith(this)
-        UmengPlugin.registerWith(this)
+        //GeneratedPluginRegistrant.registerWith(this)
+        //AppToolsPlugin.registerWith(this)
+        //UmengPlugin.registerWith(this)
+
         GlobalScope.launch {
             /*Thread.sleep(2000)
             withContext(Dispatchers.Main) {
@@ -59,14 +60,28 @@ class MainActivity : FlutterFragmentActivity() {
                 AppPrintTools.printLog(UMengPushImpl.umengToken)
             }
         }
+    }
 
-        val encryptionPluginInterface = EncryptionPluginInterface(this, flutterView)
-        val walletPluginInterface = WalletPluginInterface(this, flutterView)
-        val sensorPluginInterface = SensorPluginInterface(this, flutterView)
-        val umengPluginInterface = UMengPluginInterface(this, flutterView)
-        val appToolsPlugin = AppToolsPlugin(this)
+    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+        GeneratedPluginRegistrant.registerWith(flutterEngine)
 
-        callChannel.setMethodCallHandler { call, result ->
+        val sensorPluginInterface = SensorPluginInterface()
+        flutterEngine.plugins.add(sensorPluginInterface)
+
+        val umPluginInterface = UMengPluginInterface()
+        flutterEngine.plugins.add(umPluginInterface)
+
+        val encryptionPluginInterface = EncryptionPluginInterface()
+        flutterEngine.plugins.add(encryptionPluginInterface)
+
+        flutterEngine.plugins.add(appToolsPlugin)
+
+        val walletPluginInterface = WalletPluginInterface()
+        flutterEngine.plugins.add(walletPluginInterface)
+
+        callChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, callChannelName);
+
+        callChannel?.setMethodCallHandler { call, result ->
             var handled = encryptionPluginInterface.setMethodCallHandler(call, result)
             if (!handled) {
                 handled = appToolsPlugin.setMethodCallHandler(this@MainActivity, call, result)
@@ -78,7 +93,7 @@ class MainActivity : FlutterFragmentActivity() {
                 when (call.method) {
                     "nativeGreet" -> {  // this is a test call
                         val m = mapOf("where" to "native", "name" to "moo", "age" to 19)
-                        callChannel.invokeMethod("dartGreet", m, object : MethodChannel.Result {
+                        callChannel?.invokeMethod("dartGreet", m, object : MethodChannel.Result {
                             override fun notImplemented() {
                                 result.notImplemented()
                             }
@@ -138,11 +153,11 @@ class MainActivity : FlutterFragmentActivity() {
                         startActivity(Intent.createChooser(sendIntent, title))
                     }
                     "requestWiFiIsOpenedSetting" -> {
-                        val wifi = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager;
+                        val wifi = applicationContext.getSystemService(WIFI_SERVICE) as WifiManager;
                         result.success(wifi.isWifiEnabled)
                     }
                     "wifiEnable" -> {
-                        val wifiManager: WifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+                        val wifiManager: WifiManager = applicationContext.getSystemService(WIFI_SERVICE) as WifiManager
                         result.success(wifiManager.isWifiEnabled)
                     }
                     "bluetoothEnable" -> {
@@ -158,14 +173,13 @@ class MainActivity : FlutterFragmentActivity() {
                 }
             }
         }
-
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
         var data = intent?.data
-        AppToolsPlugin.deeplinkStart(data)
+        appToolsPlugin.deepLinkStart(data)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
