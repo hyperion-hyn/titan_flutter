@@ -789,7 +789,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                   controller: _textEditController,
                   keyboardType: TextInputType.numberWithOptions(decimal: false),
                   inputFormatters: [
-                    WhitelistingTextInputFormatter(RegExp("[0-9]"))
+                    FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+                    //WhitelistingTextInputFormatter(RegExp("[0-9]"))
                   ],
                   validator: (value) {
                     if (value?.isEmpty ?? true) {

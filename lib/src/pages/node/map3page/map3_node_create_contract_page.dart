@@ -450,7 +450,8 @@ Widget getHoldInNum(
                         child: TextFormField(
                             controller: textEditingController,
                             keyboardType: TextInputType.number,
-                            inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                             decoration: InputDecoration(
                               hintStyle: TextStyles.textC9b9b9bS14,
                               labelStyle: TextStyles.textC333S14,
