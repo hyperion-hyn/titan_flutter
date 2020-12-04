@@ -1212,6 +1212,8 @@
   "@invitation_code_error": {},
   "invitation_success": "Invited successfully",
   "@invitation_success": {},
+  "invite_come_receive_red_pocket": "“\"”<p><span style='color: #333333;'>Invite you to a Hyperion collar</span><span style='color: #ff3b3b;'>red pack</span><span style='color: #333333;'>!</span></p>“ \"”",
+  "@invite_come_receive_red_pocket": {},
   "invite_friend_join": "Invite friends to join",
   "@invite_friend_join": {},
   "invite_friend_receive_pocket_agree": "invites you to be his friends and share the Red Pocket. Do you accept the request?",
