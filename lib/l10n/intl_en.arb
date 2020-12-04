@@ -2366,6 +2366,8 @@
   "@rp_transmit_desc_2": {},
   "rp_transmit_detail": "Redeem details",
   "@rp_transmit_detail": {},
+  "rp_transmit_input_hint": "Please enter the number of valid copies",
+  "@rp_transmit_input_hint": {},
   "rp_transmit_pool": "RP swap pool",
   "@rp_transmit_pool": {},
   "rp_transmit_yesterday": "Yesterday gained",

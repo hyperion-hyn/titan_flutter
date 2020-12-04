@@ -2366,6 +2366,8 @@
   "@rp_transmit_desc_2": {},
   "rp_transmit_detail": "傳導明細",
   "@rp_transmit_detail": {},
+  "rp_transmit_input_hint": "请输入有效份数",
+  "@rp_transmit_input_hint": {},
   "rp_transmit_pool": "傳導池",
   "@rp_transmit_pool": {},
   "rp_transmit_yesterday": "昨日獲得",

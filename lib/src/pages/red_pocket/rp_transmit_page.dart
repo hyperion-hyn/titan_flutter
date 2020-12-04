@@ -771,6 +771,10 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                       return S.of(context).rp_input_staking_amount;
                     }
 
+                    if ((value?.length ?? 0) > 18) {
+                      return S.of(context).rp_transmit_input_hint;
+                    }
+
                     var hynToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
                       SupportedTokens.HYN_Atlas.symbol,
                     );
@@ -831,6 +835,10 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                         builder: (context, snapshot) {
                           var inputText = snapshot?.data ?? '0';
                           var total = (_hynPerRpValue.toInt()) * (int.tryParse(inputText) ?? 0);
+
+                          if (total <= 0) {
+                            total = 0;
+                          }
 
                           return Padding(
                             padding: const EdgeInsets.only(

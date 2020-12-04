@@ -2366,6 +2366,8 @@
   "@rp_transmit_desc_2": {},
   "rp_transmit_detail": "전도 상세 정보",
   "@rp_transmit_detail": {},
+  "rp_transmit_input_hint": "유효한 사본 수를 입력하십시오.",
+  "@rp_transmit_input_hint": {},
   "rp_transmit_pool": "传导池",
   "@rp_transmit_pool": {},
   "rp_transmit_yesterday": "昨日获得",
