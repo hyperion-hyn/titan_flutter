@@ -351,29 +351,6 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                   child: Row(
                     children: <Widget>[
                       /*
-                      Flexible(
-                        child: RichTextWidget(
-                          Text(
-                            content,
-                            maxLines: 3,
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: HexColor("#999999"),
-                              fontWeight: FontWeight.normal,
-                              height: 1.5,
-                            ),
-                          ),
-                          richTexts: [
-                            BaseRichText(
-                              "RP",
-                              style: TextStyle(color: Colors.yellow),
-                              onTap: () => {print("touch pushed")},
-                            ),
-                          ],
-                        ),
-                      ),
-                      */
-                      /*
                       Expanded(
                         flex: 2,
                         child: RichText(
