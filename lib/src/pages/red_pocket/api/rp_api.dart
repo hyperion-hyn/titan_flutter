@@ -3,13 +3,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_http.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_detail_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_miners_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
@@ -279,5 +279,30 @@ class RPApi {
           "tx_hash": txHash,
         },
         options: RequestOptions(contentType: "application/json"));
+  }
+
+  ///我的红包列表
+  Future<RpDetailEntity> getMyRdList(
+    String address, {
+    int id = 0,
+    int type = 0,
+    int page = 1,
+    int size = 20,
+  }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/redpocket/$address/detail',
+      EntityFactory<RpDetailEntity>((json) {
+        return RpDetailEntity.fromJson(json['data']);
+      }),
+      params: {
+        'id': id,
+        'type': type,
+        'page': page,
+        'size': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
   }
 }
