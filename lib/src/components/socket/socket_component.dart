@@ -44,8 +44,10 @@ class _SocketState extends State<_SocketManager> {
   IOWebSocketChannel _socketChannel;
 
   SocketBloc _bloc;
+
   // 24小时候成交数据
   List<MarketItemEntity> _marketItemList = List();
+
   // List<List<String>> _tradeDetailList;
   Timer _timer;
 
@@ -86,7 +88,8 @@ class _SocketState extends State<_SocketManager> {
         LogUtil.printMessage('[WS]  listen..., data, Socket 连接成功， 发起订阅！');
 
         for (var channel in _channelList) {
-          LogUtil.printMessage('[WS]  listen..., data, Socket 连接成功， 发起订阅， channel:$channel');
+          LogUtil.printMessage(
+              '[WS]  listen..., data, Socket 连接成功， 发起订阅， channel:$channel');
 
           _bloc.add(SubChannelEvent(channel: channel));
         }
@@ -143,7 +146,8 @@ class _SocketState extends State<_SocketManager> {
   _getCacheMarketSymbolList() async {
     _marketItemList.clear();
     var sharePref = await SharedPreferences.getInstance();
-    List<String> emptyMarketItemStrList = sharePref.getStringList('cache_market_item_list');
+    List<String> emptyMarketItemStrList =
+        sharePref.getStringList('cache_market_item_list');
     emptyMarketItemStrList?.forEach((element) {
       try {
         var emptyMarketItem = MarketItemEntity.fromJson(jsonDecode(element));
@@ -171,16 +175,20 @@ class _SocketState extends State<_SocketManager> {
   Widget build(BuildContext context) {
     return BlocListener<SocketBloc, SocketState>(
       listener: (context, state) async {
-        if (state is MarketSymbolState) { // 24小时候成交数据  api 方式
+        if (state is MarketSymbolState) {
+          // 24小时候成交数据  api 方式
           _marketItemList = state.marketItemList;
           cacheDebounceLater.debounceInterval(() {
             _cacheSymbolList(_marketItemList);
           }, 1000);
-        } else if (state is ChannelKLine24HourState) {  // 24小时候成交数据  socket 方式
+        } else if (state is ChannelKLine24HourState) {
+          // 24小时候成交数据  socket 方式
           _updateMarketItemList(state.response, symbol: state.symbol);
-        } /*else if (state is ChannelTradeDetailState) {
+        }
+        /*else if (state is ChannelTradeDetailState) {
           _tradeDetailList = state.response.map((item) => (item as List).map((e) => e.toString()).toList()).toList();
-        }*/ else if (state is SubChannelState) {
+        }*/
+        else if (state is SubChannelState) {
           _channelList.add(state.channel);
         } else if (state is UnSubChannelState) {
           _channelList.remove(state.channel);
@@ -209,7 +217,8 @@ class _SocketState extends State<_SocketManager> {
       ).toJson());
       _emptyMarketItemStrList.add(marketItemJsonStr);
     });
-    await sharePref.setStringList('cache_market_item_list', _emptyMarketItemStrList);
+    await sharePref.setStringList(
+        'cache_market_item_list', _emptyMarketItemStrList);
   }
 
   _updateMarketItemList(dynamic data, {String symbol = ''}) {
@@ -242,35 +251,19 @@ class _SocketState extends State<_SocketManager> {
       return;
     }
 
-    bool _isNewSymbol = true;
-    /*_marketItemList.forEach((element) {
-      // replace
-      if (element.symbol == symbol) {
-        _isNewSymbol = false;
-        element = MarketItemEntity(
-          symbol,
-          kLineDataList.last,
-          symbolName: element.symbolName,
-        );
+    try {
+      int index;
+      for (var i = 0; i < _marketItemList.length; i++) {
+        var element = _marketItemList[i];
+        // replace
+        if (element.symbol == symbol) {
+          index = i;
+          break;
+        }
       }
-    });*/
 
-    int index;
-    for (var i = 0; i < _marketItemList.length; i++) {
-      var element = _marketItemList[i];
-      // replace
-      if (element.symbol == symbol) {
-        index = i;
-        break;
-      }
-    }
+      if (index == null) return;
 
-    _isNewSymbol = index == null;
-
-    // add
-    if (_isNewSymbol) {
-      _marketItemList.add(MarketItemEntity(symbol, kLineDataList.first));
-    } else {
       var lastElement = _marketItemList[index];
       var element = MarketItemEntity(
         lastElement.symbol,
@@ -278,10 +271,10 @@ class _SocketState extends State<_SocketManager> {
         symbolName: lastElement.symbolName,
       );
       _marketItemList[index] = element;
-    }
 
-    // 使得ui刷新
-    _marketItemList = _marketItemList.toList();
+      // 使得ui刷新
+      _marketItemList = _marketItemList.toList();
+    } catch (e) {}
   }
 }
 
@@ -289,6 +282,7 @@ enum SocketAspect { marketItemList }
 
 class MarketInheritedModel extends InheritedModel<SocketAspect> {
   final List<MarketItemEntity> marketItemList;
+
   // final List<List<String>> tradeDetailList;
 
   const MarketInheritedModel({
@@ -343,7 +337,8 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
       var marketItem = getMarketItem(symbol);
       var realPercent = marketItem == null
           ? 0.0
-          : (marketItem.kLineEntity.close - marketItem.kLineEntity.open) / (marketItem.kLineEntity.open);
+          : (marketItem.kLineEntity.close - marketItem.kLineEntity.open) /
+              (marketItem.kLineEntity.open);
       return realPercent;
     } catch (e) {
       return 0.0;
@@ -352,17 +347,20 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
 
   double get24HourAmount(String symbol) {
     var marketItem = getMarketItem(symbol);
-    var amount = marketItem == null ? 0.0 : (marketItem.kLineEntity?.amount ?? 0.0);
+    var amount =
+        marketItem == null ? 0.0 : (marketItem.kLineEntity?.amount ?? 0.0);
     return amount;
   }
 
   static MarketInheritedModel of(BuildContext context, {SocketAspect aspect}) {
-    return InheritedModel.inheritFrom<MarketInheritedModel>(context, aspect: aspect);
+    return InheritedModel.inheritFrom<MarketInheritedModel>(context,
+        aspect: aspect);
   }
 
   @override
   bool updateShouldNotify(MarketInheritedModel old) {
-    return marketItemList != old.marketItemList; // || tradeDetailList != old.tradeDetailList;
+    return marketItemList !=
+        old.marketItemList; // || tradeDetailList != old.tradeDetailList;
   }
 
   @override
@@ -370,8 +368,9 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
     MarketInheritedModel old,
     Set<SocketAspect> dependencies,
   ) {
-    return marketItemList != old.marketItemList && dependencies.contains(SocketAspect.marketItemList);
-        // ||
-        // tradeDetailList != old.tradeDetailList && dependencies.contains(SocketAspect.tradeDetailList);
+    return marketItemList != old.marketItemList &&
+        dependencies.contains(SocketAspect.marketItemList);
+    // ||
+    // tradeDetailList != old.tradeDetailList && dependencies.contains(SocketAspect.tradeDetailList);
   }
 }
