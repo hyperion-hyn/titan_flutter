@@ -879,7 +879,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpReleaseRecordsPage(_rpStatistics),
+          builder: (context) => RpTransmitRecordsPage(_rpStatistics),
         ),
       );
     } else {

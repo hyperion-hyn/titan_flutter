@@ -25,6 +25,9 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import 'api/hyn_api.dart';
 import 'model/transtion_detail_vo.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 class WalletShowAccountDetailPage extends StatefulWidget {
   final TransactionDetailVo transactionDetail;
@@ -39,8 +42,10 @@ class WalletShowAccountDetailPage extends StatefulWidget {
 }
 
 class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetailPage> {
+  AllPageState _currentState = LoadingState();
   List<String> _dataTitleList = [];
   List<String> _dataInfoList = [];
+  List<AccountDetailItemView> _accountDetailViewList = [];
   CoinMarketApi _coinMarketApi = CoinMarketApi();
   var gasEstimateQuote;
   var hynPrice = "\$0";
@@ -66,152 +71,200 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
   }
 
   @override
-  void onCreated() async {
-    var transDetail = widget.transactionDetail;
+  void onCreated() {
+    getNetworkData();
+    super.onCreated();
+  }
 
-    if (transDetail.dataDecoded == null) {
-      hasDecodeData = false;
-    } else {
-      hasDecodeData = true;
-    }
-    inputData = transDetail.data;
+  void getNetworkData() async {
+    try {
+      var transDetail = widget.transactionDetail;
 
-    isContract = (transDetail.internalTransactions != null && transDetail.internalTransactions.length != 0);
-
-    print("[widget.isContain] ${widget.isContain}");
-    var fromAddressTitle = HYNApi.toAddressHint(transDetail.hynType, true);
-    var toAddressTitle = HYNApi.toAddressHint(transDetail.hynType, false);
-
-    _dataTitleList.add(S.of(context).transfer_hash);
-    _dataTitleList.add(S.of(context).transfer_status);
-    _dataTitleList.add(S.of(context).tx_age);
-    _dataTitleList.add("${S.of(context).tx_block}:");
-    _dataTitleList.add("${S.of(context).tx_time}:");
-
-    if (widget.isContain) {
-      _dataTitleList.add("$fromAddressTitle:");
-      _dataTitleList.add("$toAddressTitle:");
-      _dataTitleList.add("${S.of(context).tx_to_address}（原以太链0X开头）:");
-    } else {
-      _dataTitleList.add("${S.of(context).tx_from_address}:");
-      _dataTitleList.add("$toAddressTitle:");
-    }
-
-    _dataTitleList.add("${S.of(context).tx_amount}:");
-
-    if (isContract) {
-      _dataTitleList.add(S.of(context).amount_transfer);
-    }
-
-    _dataTitleList.add("${S.of(context).transfer_gas_fee}:");
-    _dataTitleList.add("${S.of(context).gas_price}:");
-    _dataTitleList.add("HYN${S.of(context).price}:");
-    _dataTitleList.add("${S.of(context).gas_limit}:");
-    _dataTitleList.add("${S.of(context).transaction_gas_fee}:");
-    _dataTitleList.add(S.of(context).random_number);
-    _dataTitleList.add("${S.of(context).tx_type}:");
-    _dataTitleList.add("${S.of(context).tx_input_data}:");
-
-    var amountText = "${HYNApi.getValueByHynType(
-      transDetail.hynType,
-      transactionDetail: transDetail,
-      getAmountStr: true,
-      isWallet: true,
-    )}";
-    /*var amountText = "";
-    if (transDetail.type == TransactionType.TRANSFER_IN) {
-      amountText = '+${FormatUtil.strClearZero(transDetail.amount.toString())} HYN';
-    } else if (transDetail.type == TransactionType.TRANSFER_OUT) {
-      amountText = '-${FormatUtil.strClearZero(transDetail.amount.toString())} HYN';
-    }*/
-    var gasPriceGwei = ConvertTokenUnit.weiToGWei(weiBigInt: BigInt.parse(transDetail.gasPrice));
-    var gasPriceWithHyn = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
-    var gasPriceStr = "$gasPriceWithHyn Hyn ($gasPriceGwei Gdust)";
-
-    var gasLimit = Decimal.parse(transDetail.gasUsed);
-    var gasPriceEth = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
-    var gasEstimate = "${gasPriceEth * gasLimit} HYN";
-
-    var statusStr = "";
-    var timeStr = FormatUtil.formatDate(transDetail.time, isSecond: true, isMillisecond: true);
-    var hynPriceStr = "\$0 / HYN";
-    var gasUsedStr =
-        "${transDetail.gasUsed} (${FormatUtil.formatPercent((Decimal.parse(transDetail.gasUsed) / Decimal.parse(transDetail.gas)).toDouble())})";
-    var typeStr = HYNApi.getValueByHynType(
-      transDetail.hynType,
-      getTypeStr: true,
-      creatorAddress: transDetail.fromAddress,
-      isWallet: true,
-    );
-
-    _dataInfoList.add(transDetail.hash);
-    _dataInfoList.add(statusStr);
-    _dataInfoList.add("${transDetail.epoch}");
-    _dataInfoList.add("${transDetail.blockNum}");
-    _dataInfoList.add(timeStr);
-    _dataInfoList.add(WalletUtil.ethAddressToBech32Address(transDetail.fromAddress));
-    _dataInfoList.add(_toHynAddress);
-    if (widget.isContain) {
-      _dataInfoList.add(_toEthAddress);
-    }
-    _dataInfoList.add(amountText);
-    if (isContract) {
-      _dataInfoList.add("");
-    }
-    _dataInfoList.add(gasEstimate);
-    _dataInfoList.add(gasPriceStr);
-    _dataInfoList.add(hynPriceStr);
-    _dataInfoList.add(transDetail.gas);
-    _dataInfoList.add(gasUsedStr);
-    _dataInfoList.add(transDetail.nonce);
-    _dataInfoList.add(typeStr);
-
-    var timestamp = 0;
-    if (transDetail.time != null && transDetail.time.toString().length >= 10) {
-      timestamp = int.parse(transDetail.time.toString().substring(0, 10));
-    }
-
-    var quotes = await _coinMarketApi.quotes(timestamp);
-    SymbolQuoteVo hynQuote;
-    var quotesSign = WalletInheritedModel.of(context).activeQuotesSign;
-    for (var quoteItem in quotes) {
-      if (quoteItem.symbol == SupportedTokens.HYN_Atlas.symbol && quoteItem.quote == quotesSign.quote) {
-        hynQuote = quoteItem;
+      if (transDetail.dataDecoded == null) {
+        hasDecodeData = false;
+      } else {
+        hasDecodeData = true;
       }
-    }
-    if (hynQuote != null) {
-      var tempAmountText = amountText;
-      if (tempAmountText.contains("-") || tempAmountText.contains("+")) {
-        tempAmountText = tempAmountText.substring(1);
+      inputData = transDetail.data;
+
+      isContract = (transDetail.internalTransactions != null && transDetail.internalTransactions.length != 0);
+
+      print("[widget.isContain] ${widget.isContain}");
+      var fromAddressTitle = HYNApi.toAddressHint(transDetail.hynType, true);
+      var toAddressTitle = HYNApi.toAddressHint(transDetail.hynType, false);
+
+      var amountText = "${HYNApi.getValueByHynType(
+        transDetail.hynType,
+        transactionDetail: transDetail,
+        getAmountStr: true,
+        isWallet: true,
+      )}";
+      var gasPriceGwei = ConvertTokenUnit.weiToGWei(weiBigInt: BigInt.parse(transDetail.gasPrice));
+      var gasPriceWithHyn = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
+      var gasPriceStr = "$gasPriceWithHyn Hyn ($gasPriceGwei Gdust)";
+
+      var gasLimit = Decimal.parse(transDetail.gasUsed);
+      var gasPriceEth = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
+      var gasEstimate = "${gasPriceEth * gasLimit} HYN";
+
+      var statusStr = "";
+      var timeStr = FormatUtil.formatDate(transDetail.time, isSecond: true, isMillisecond: true);
+      var hynPriceStr = "\$0 / HYN";
+      var gasUsedStr =
+          "${transDetail.gasUsed} (${FormatUtil.formatPercent((Decimal.parse(transDetail.gasUsed) / Decimal.parse(transDetail.gas)).toDouble())})";
+      var typeStr = HYNApi.getValueByHynType(
+        transDetail.hynType,
+        getTypeStr: true,
+        creatorAddress: transDetail.fromAddress,
+        isWallet: true,
+      );
+
+      var timestamp = 0;
+      var netAmountText;
+      var netHynPrice;
+      if (transDetail.time != null && transDetail.time.toString().length >= 10) {
+        timestamp = int.parse(transDetail.time.toString().substring(0, 10));
       }
-      if(tempAmountText.contains(",")){
-        tempAmountText = tempAmountText.replaceAll(",", "");
+      var quotes = await _coinMarketApi.quotes(timestamp);
+      SymbolQuoteVo hynQuote;
+      var quotesSign = WalletInheritedModel.of(context).activeQuotesSign;
+      for (var quoteItem in quotes) {
+        if (quoteItem.symbol == SupportedTokens.HYN_Atlas.symbol && quoteItem.quote == quotesSign.quote) {
+          hynQuote = quoteItem;
+        }
+      }
+      if (hynQuote != null) {
+        var tempAmountText = amountText;
+        if (tempAmountText.contains("-") || tempAmountText.contains("+")) {
+          tempAmountText = tempAmountText.substring(1);
+        }
+        if (tempAmountText.contains(",")) {
+          tempAmountText = tempAmountText.replaceAll(",", "");
+        }
+
+        var amountQuote = Decimal.parse(tempAmountText) * Decimal.parse(hynQuote.price.toString());
+        amountText =
+            "${FormatUtil.stringFormatCoinNum(tempAmountText)} HYN (${quotesSign.sign}${FormatUtil.truncateDecimalNum(amountQuote, 4)})";
+        gasEstimateQuote = "(${(gasPriceEth * gasLimit) * Decimal.parse(hynQuote.price.toString())})";
+        hynPrice =
+            "${quotesSign.sign}${FormatUtil.truncateDecimalNum(Decimal.parse(hynQuote.price.toString()), 4)} / HYN";
+
+        netAmountText = amountText;
+        netHynPrice = hynPrice;
       }
 
-      var amountQuote = Decimal.parse(tempAmountText) * Decimal.parse(hynQuote.price.toString());
-      amountText =
-          "${FormatUtil.stringFormatCoinNum(tempAmountText)} HYN (${quotesSign.sign}${FormatUtil.truncateDecimalNum(amountQuote, 4)})";
-      gasEstimateQuote = "(${(gasPriceEth * gasLimit) * Decimal.parse(hynQuote.price.toString())})";
-      hynPrice =
-          "${quotesSign.sign}${FormatUtil.truncateDecimalNum(Decimal.parse(hynQuote.price.toString()), 4)} / HYN";
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_COPY,
+        S.of(context).transfer_hash,
+        rightStr: transDetail.hash,
+      ));
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_STATUS,
+        S.of(context).transfer_status,
+        transactionDetailVo: transDetail,
+      ));
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_TEXT,
+        S.of(context).tx_age,
+        rightStr: "${transDetail.epoch}",
+      ));
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_TEXT,
+        "${S.of(context).tx_block}:",
+        rightStr: "${transDetail.blockNum}",
+      ));
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_TIME,
+        "${S.of(context).tx_time}:",
+        rightStr: timeStr,
+      ));
+
+      var fromTitle = widget.isContain ? "$fromAddressTitle:" : "${S.of(context).tx_from_address}:";
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_COPY,
+        fromTitle,
+        rightStr: WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
+      ));
+
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_COPY,
+        "$toAddressTitle:",
+        rightStr: _toHynAddress,
+      ));
 
       if (widget.isContain) {
-        _dataInfoList[8] = amountText;
-        _dataInfoList[11] = hynPrice;
-        if(isContract) {
-          _dataInfoList[12] = hynPrice;
-        }
-      } else if(isContract) {
-        _dataInfoList[7] = amountText;
-        _dataInfoList[11] = hynPrice;
-      } else {
-        _dataInfoList[7] = amountText;
-        _dataInfoList[10] = hynPrice;
+        _accountDetailViewList.add(AccountDetailItemView(
+          AccountDetailType.TEXT_COPY,
+          "${S.of(context).tx_to_address}（原以太链0X开头）:",
+          rightStr: _toEthAddress,
+        ));
       }
-      setState(() {});
-    }
 
-    super.onCreated();
+      if (isContract) {
+        _accountDetailViewList.add(AccountDetailItemView(
+          AccountDetailType.TEXT_INSIDE_TRANSFER,
+          S.of(context).amount_transfer,
+          transactionDetailVo: transDetail,
+        ));
+      }
+
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_TEXT,
+        "${S.of(context).tx_amount}:",
+        rightStr: netAmountText ?? amountText,
+      ));
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_TEXT,
+        "${S.of(context).transfer_gas_fee}:",
+        rightStr: gasEstimate,
+      ));
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_TEXT,
+        "${S.of(context).gas_price}:",
+        rightStr: gasPriceStr,
+      ));
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_TEXT,
+        "HYN${S.of(context).price}:",
+        rightStr: netHynPrice ?? hynPriceStr,
+      ));
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_TEXT,
+        "${S.of(context).gas_limit}:",
+        rightStr: transDetail.gas,
+      ));
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_TEXT,
+        "${S.of(context).transaction_gas_fee}:",
+        rightStr: gasUsedStr,
+      ));
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_TWO_RIGHT,
+        S.of(context).random_number,
+        rightStr: transDetail.nonce,
+        transactionDetailVo: transDetail,
+      ));
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_TEXT,
+        "${S.of(context).tx_type}:",
+        rightStr: typeStr,
+      ));
+      _accountDetailViewList.add(AccountDetailItemView(
+        AccountDetailType.TEXT_DECODE_VIEW,
+        "${S.of(context).tx_input_data}:",
+        transactionDetailVo: transDetail,
+      ));
+
+      setState(() {
+        _currentState = null;
+      });
+    } catch (e) {
+      LogUtil.toastException(e);
+
+      setState(() {
+        _currentState = LoadFailState();
+      });
+    }
   }
 
   @override
@@ -221,6 +274,16 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
 
   @override
   Widget build(BuildContext context) {
+    if (_currentState != null || _accountDetailViewList.length == 0) {
+      return Scaffold(
+        body: AllPageStateContainer(_currentState, () {
+          setState(() {
+            _currentState = LoadingState();
+          });
+          getNetworkData();
+        }),
+      );
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: BaseAppBar(baseTitle: "Hynscan"),
@@ -228,79 +291,32 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
         slivers: <Widget>[
           SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
-            if (widget.isContain) {
-              var leftText = _dataTitleList[index];
-              if (index == 0 || index == 5 || index == 6 || index == 7) {
-                var rightText = _dataInfoList[index];
-                return accountInfoItem(leftText, rightText, hasCopy: true);
-              } else if (index == 1) {
-                var rightText = _dataInfoList[index];
+            var accountViewItem = _accountDetailViewList[index];
+            switch (accountViewItem.type) {
+              case AccountDetailType.TEXT_COPY:
+                return accountInfoItem(accountViewItem, hasCopy: true);
+              case AccountDetailType.TEXT_STATUS:
                 var isFail = (widget.transactionDetail.state == 4 || widget.transactionDetail.state == 5);
-                return accountInfoItemStatus(leftText, rightText, isFail);
-              } else if (index == 4) {
-                var rightText = _dataInfoList[index];
-                return accountInfoItem(leftText, rightText, isTime: true);
-              } else if (index == 14) {
-                var rightText = _dataInfoList[index];
-                return accountInfoItem(leftText, rightText, hasSubTitle: true);
-              } else if (index == 16) {
-                return inputDataView(leftText);
-              } else {
-                var rightText = _dataInfoList[index];
-                return accountInfoItem(leftText, rightText);
-              }
-            } else if (isContract) {
-              var leftText = _dataTitleList[index];
-              if (index == 0 || index == 5 || index == 6) {
-                var rightText = _dataInfoList[index];
-                return accountInfoItem(leftText, rightText, hasCopy: true);
-              } else if (index == 1) {
-                var rightText = _dataInfoList[index];
-                var isFail = (widget.transactionDetail.state == 4 || widget.transactionDetail.state == 5);
-                return accountInfoItemStatus(leftText, rightText, isFail);
-              } else if (index == 4) {
-                var rightText = _dataInfoList[index];
-                return accountInfoItem(leftText, rightText, isTime: true);
-              } else if (index == 8) {
-                return accountContractItem(leftText);
-              } else if (index == 14) {
-                var rightText = _dataInfoList[index];
-                return accountInfoItem(leftText, rightText, hasSubTitle: true);
-              } else if (index == 16) {
-                return inputDataView(leftText);
-              } else {
-                var rightText = _dataInfoList[index];
-                return accountInfoItem(leftText, rightText);
-              }
-            } else {
-              var leftText = _dataTitleList[index];
-              if (index == 0 || index == 5 || index == 6) {
-                var rightText = _dataInfoList[index];
-                return accountInfoItem(leftText, rightText, hasCopy: true);
-              } else if (index == 1) {
-                var rightText = _dataInfoList[index];
-                var isFail = (widget.transactionDetail.state == 4 || widget.transactionDetail.state == 5);
-                return accountInfoItemStatus(leftText, rightText, isFail);
-              } else if (index == 4) {
-                var rightText = _dataInfoList[index];
-                return accountInfoItem(leftText, rightText, isTime: true);
-              } else if (index == 13) {
-                var rightText = _dataInfoList[index];
-                return accountInfoItem(leftText, rightText, hasSubTitle: true);
-              } else if (index == 15) {
-                return inputDataView(leftText);
-              } else {
-                var rightText = _dataInfoList[index];
-                return accountInfoItem(leftText, rightText);
-              }
+                return accountInfoItemStatus(accountViewItem, isFail);
+              case AccountDetailType.TEXT_TEXT:
+                return accountInfoItem(accountViewItem);
+              case AccountDetailType.TEXT_TIME:
+                return accountInfoItem(accountViewItem, isTime: true);
+              case AccountDetailType.TEXT_INSIDE_TRANSFER:
+                return accountContractItem(accountViewItem);
+              case AccountDetailType.TEXT_TWO_RIGHT:
+                return accountInfoItemTwoRight(accountViewItem);
+              case AccountDetailType.TEXT_DECODE_VIEW:
+                return inputDataView(accountViewItem);
             }
-          }, childCount: _dataTitleList.length))
+            return null;
+          }, childCount: _accountDetailViewList.length))
         ],
       ),
     );
   }
 
-  Widget accountInfoItemStatus(String leftText, String rightText, bool isFail) {
+  Widget accountInfoItemStatus(AccountDetailItemView accountDetailItemView, bool isFail) {
     var infoItemTitle;
     Color accountItemColor;
     var accountItemImage = "res/drawable/ic_transfer_account_detail_pending.png";
@@ -320,7 +336,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  leftText,
+                  accountDetailItemView.leftStr,
                   style: TextStyles.textC333S13,
                 ),
                 Spacer(),
@@ -364,7 +380,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
   }
 
   Widget accountContractItem(
-    String leftText,
+    AccountDetailItemView accountDetailItemView,
   ) {
     var contractList = List.generate(widget.transactionDetail.internalTransactions.length, (index) {
       var contractItem = widget.transactionDetail.internalTransactions[index];
@@ -376,7 +392,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  leftText,
+                  accountDetailItemView.leftStr,
                   style: TextStyles.textC333S13,
                 ),
                 Spacer(),
@@ -394,7 +410,9 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                               style:
                                   TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
                             ),
-                            TextSpan(text: "${S.of(context).exchange_to} ", style: TextStyle(color: DefaultColors.color999, fontSize: 13)),
+                            TextSpan(
+                                text: "${S.of(context).exchange_to} ",
+                                style: TextStyle(color: DefaultColors.color999, fontSize: 13)),
                             TextSpan(
                               text: "${shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(contractItem.to))}",
                               style:
@@ -428,7 +446,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     );
   }
 
-  Widget accountInfoItem(String leftText, String rightText,
+  Widget accountInfoItem(AccountDetailItemView accountDetailItemView,
       {String bottomText, bool hasCopy = false, bool isTime = false, bool hasSubTitle = false}) {
     return Container(
       color: Colors.white,
@@ -443,12 +461,12 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                     ? Expanded(
                         flex: 2,
                         child: Text(
-                          leftText,
+                          accountDetailItemView.leftStr,
                           style: TextStyles.textC333S13,
                         ),
                       )
                     : Text(
-                        leftText,
+                        accountDetailItemView.leftStr,
                         style: TextStyles.textC333S13,
                       ),
                 if (hasSubTitle)
@@ -461,7 +479,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                   ),
                 Spacer(),
                 Container(
-                  width: 228,
+                  width: 204,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
@@ -478,7 +496,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                               ),
                             ),
                             Text(
-                              rightText,
+                              accountDetailItemView.rightStr,
                               style:
                                   TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.end,
@@ -490,9 +508,8 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                         Row(
                           children: <Widget>[
                             Expanded(
-                              flex: 4,
                               child: Text(
-                                rightText ?? "",
+                                accountDetailItemView.rightStr ?? "",
                                 style:
                                     TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
                                 textAlign: TextAlign.end,
@@ -511,7 +528,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                       if (hasCopy)
                         InkWell(
                           onTap: () {
-                            Clipboard.setData(ClipboardData(text: rightText));
+                            Clipboard.setData(ClipboardData(text: accountDetailItemView.rightStr));
                             UiUtil.toast(S.of(context).copyed);
                           },
                           child: Padding(
@@ -545,14 +562,65 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     );
   }
 
-  Widget inputDataView(String leftText) {
+  Widget accountInfoItemTwoRight(AccountDetailItemView accountDetailItemView,) {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 18.0, bottom: 18, left: 15, right: 15),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  accountDetailItemView.leftStr,
+                  style: TextStyles.textC333S13,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 6.0),
+                  child: Text(
+                    S.of(context).transaction_location,
+                    style: TextStyles.textC999S13,
+                  ),
+                ),
+                Spacer(),
+                Text(
+                  accountDetailItemView.rightStr ?? "",
+                  style:
+                  TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.end,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 11.0),
+                  child: Text(
+                    "${widget.transactionDetail.transactionIndex}",
+                    style: TextStyles.textC999S13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Divider(
+            color: DefaultColors.colorf2f2f2,
+            indent: 15,
+            endIndent: 15,
+            height: 1,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget inputDataView(
+    AccountDetailItemView accountDetailItemView,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(left: 14, right: 14, top: 17, bottom: 17),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            leftText,
+            accountDetailItemView.leftStr,
             style: TextStyles.textC333S13,
           ),
           Container(
@@ -602,4 +670,23 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       ),
     );
   }
+}
+
+enum AccountDetailType {
+  TEXT_COPY,
+  TEXT_STATUS,
+  TEXT_TEXT,
+  TEXT_TIME,
+  TEXT_INSIDE_TRANSFER,
+  TEXT_TWO_RIGHT,
+  TEXT_DECODE_VIEW
+}
+
+class AccountDetailItemView {
+  AccountDetailType type;
+  String leftStr;
+  String rightStr;
+  TransactionDetailVo transactionDetailVo;
+
+  AccountDetailItemView(this.type, this.leftStr, {this.rightStr, this.transactionDetailVo});
 }

@@ -39,7 +39,7 @@ class UiUtil {
   }
 
   static toast(String message) {
-    Fluttertoast.showToast(msg: message, backgroundColor: Colors.black, textColor: Colors.white);
+    Fluttertoast.showToast(msg: message, backgroundColor: Colors.black, textColor: Colors.white, timeInSecForIosWeb: 3);
   }
 
   static String shortEthAddress(String address, {int limitLength = 9}) {
