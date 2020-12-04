@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -23,7 +24,10 @@ import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 
 class RedPocketDetailPage extends StatefulWidget {
-  RedPocketDetailPage();
+
+  final int rpType;
+
+  RedPocketDetailPage({this.rpType});
 
   @override
   State<StatefulWidget> createState() {
@@ -41,9 +45,13 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   List<RpMinerInfo> _dataList = List();
   RpMinerInfo _inviter;
 
+  int _rpType = Random().nextInt(3);
+
   @override
   void initState() {
     super.initState();
+
+    _rpType = widget.rpType;
 
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
@@ -103,7 +111,6 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         slivers: <Widget>[
           SliverToBoxAdapter(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _infoDetailBuilder(),
                 _rpListHeaderWidget(),
@@ -117,6 +124,37 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 
   Widget _infoDetailBuilder() {
+
+    var title = '';
+    var subTitle = '';
+    print("[$runtimeType] _infoDetailBuilder, rpType:$_rpType");
+
+
+    var rpAmount = '12 RP';
+
+    var isIgnored = _rpType == 1;
+
+    switch (_rpType) {
+      case 0:
+        title = '幸运红包';
+        break;
+
+      case 1:
+        title = '量级红包';
+        subTitle = '（量级1）';
+        rpAmount = '0 RP';
+        break;
+
+      case 2:
+        title = '晋升红包';
+        break;
+
+      default:
+        title = '幸运红包';
+        break;
+    }
+
+
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
       child: Container(
@@ -127,37 +165,52 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         decoration: BoxDecoration(
           color: HexColor('#FFFFFF'),
           borderRadius: BorderRadius.all(
-            Radius.circular(6.0),
+            Radius.circular(12.0),
           ), //设置四周圆角 角度
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Row(
-              children: [
-                Image.asset(
-                  'res/drawable/red_pocket_logo_small.png',
-                  width: 12,
-                  height: 16,
-                ),
-                SizedBox(
-                  width: 6,
-                ),
-                Text(
-                  '晋升红包',
-                  style: TextStyle(
-                    color: HexColor("#333333"),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
             Padding(
+              padding: const EdgeInsets.only(
+                top: 16,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'res/drawable/red_pocket_logo_small.png',
+                    width: 12,
+                    height: 16,
+                  ),
+                  SizedBox(
+                    width: 6,
+                  ),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: HexColor("#333333"),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    subTitle,
+                    style: TextStyle(
+                      color: HexColor("#999999"),
+                      fontSize: 10,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (_rpType == 2)Padding(
               padding: const EdgeInsets.only(
                 top: 6,
               ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+
                 children: [
                   Text(
                     '派大星',
@@ -181,11 +234,12 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 ],
               ),
             ),
-            Padding(
+            if (_rpType == 2)Padding(
               padding: const EdgeInsets.only(
                 top: 2,
               ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     '量级1 - 量级3',
@@ -203,6 +257,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 top: 16,
               ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+
                 children: [
                   Image.asset(
                     "res/drawable/red_pocket_bg_left.png",
@@ -220,7 +276,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                     ),
                   ),
                   Text(
-                    '20 RP',
+                    rpAmount,
                     style: TextStyle(
                       color: HexColor("#E3A900"),
                       fontSize: 26,
@@ -235,11 +291,13 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 ],
               ),
             ),
-            Padding(
+            if (isIgnored)Padding(
               padding: const EdgeInsets.only(
                 top: 16,
               ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+
                 children: [
                   Text(
                     '你已错过红包机会',
@@ -260,6 +318,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 ],
               ),
             ),
+            SizedBox(height: 16,),
           ],
         ),
       ),
@@ -271,6 +330,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       padding: const EdgeInsets.only(
         top: 16,
         left: 16,
+        right: 16,
         bottom: 6,
       ),
       child: Row(
@@ -329,7 +389,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       return SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
-            if ((index + 1) == _dataList.length) {
+            if ((index + 1) == _dataList.length && _rpType == 1) {
               return _defaultItem(index);
             }
             return _itemBuilder(index);

@@ -179,7 +179,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => RedPocketDetailPage(),
+            builder: (context) => RedPocketDetailPage(rpType: index,),
           ),
         );
       },
