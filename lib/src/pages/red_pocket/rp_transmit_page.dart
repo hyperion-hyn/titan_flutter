@@ -765,7 +765,6 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(18),
                     FilteringTextInputFormatter.allow(RegExp("[0-9]"))
-                    //WhitelistingTextInputFormatter(RegExp("[0-9]"))
                   ],
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
