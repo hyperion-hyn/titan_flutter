@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lottie/lottie.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 
 class RPAirdropWidget extends StatefulWidget {
   RPAirdropWidget();
@@ -11,10 +14,21 @@ class RPAirdropWidget extends StatefulWidget {
   }
 }
 
-class _RPAirdropWidgetState extends State<RPAirdropWidget> {
+class _RPAirdropWidgetState extends State<RPAirdropWidget>
+    with SingleTickerProviderStateMixin {
+  Timer _timer;
+
+  AnimationController _animationController;
+
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      value: 0,
+      vsync: this,
+    );
+    _animationController.reverse();
   }
 
   @override
@@ -24,17 +38,107 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget> {
 
   @override
   void dispose() {
+    if (_timer != null) {
+      if (_timer.isActive) {
+        _timer.cancel();
+      }
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Container(
+      width: double.infinity,
+      height: 500,
+      child: Stack(
+        children: [
+          _airdropView(),
+          Lottie.asset(
+            'res/lottie/rp_airdrop.json',
+            reverse: true,
+          ),
+          Container(
+            width: double.infinity,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: _redPocketDetail(),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  ///views
+
+  _airdropView() {
+    return Container(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            '正在空投',
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Text('已投600,000 RP')
+        ],
+      ),
+    );
+  }
+
+  _countDownView() {
+    var nextRoundTime = '';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Lottie.asset(
-          'res/lottie/rp_airdrop.json',
-        ),
+        Text('12：00'),
+        Text('下一轮 $nextRoundTime'),
       ],
     );
   }
+
+  _redPocketDetail() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(
+              4.0,
+            )),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 8.0,
+            horizontal: 16.0,
+          ),
+          child: Row(
+            children: [
+              Text(
+                '我获得的红包 ',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  ///
+
+  _setUpTimer() {
+    _timer = Timer.periodic(Duration(seconds: 5), (t) {});
+  }
+
+  _getLatestAirdrop() {}
+
+  _getLatestRedPocket() {}
 }
