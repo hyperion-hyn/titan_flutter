@@ -207,9 +207,9 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               itemBuilder: (BuildContext context, int index) {
                 var coinVo = widget.walletVo.coins[index];
                 var hasPrice = true;
-                if(coinVo.symbol == SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol){
-                  hasPrice = false;
-                }
+                // if(coinVo.symbol == SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol){
+                //   hasPrice = false;
+                // }
                 return InkWell(
                     onTap: () {
                       var coinVo = widget.walletVo.coins[index];

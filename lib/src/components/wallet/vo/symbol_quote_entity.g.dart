@@ -27,6 +27,10 @@ SymbolQuoteEntity _$SymbolQuoteEntityFromJson(Map<String, dynamic> json) {
     (json['usdt_usd_price'] as num)?.toDouble(),
     (json['usdt_percent_change_cny24h'] as num)?.toDouble(),
     (json['usdt_percent_change_usd24h'] as num)?.toDouble(),
+    (json['rp_cny_price'] as num)?.toDouble(),
+    (json['rp_usd_price'] as num)?.toDouble(),
+    (json['rp_percent_change_cny24h'] as num)?.toDouble(),
+    (json['rp_percent_change_usd24h'] as num)?.toDouble(),
   );
 }
 
@@ -51,4 +55,8 @@ Map<String, dynamic> _$SymbolQuoteEntityToJson(SymbolQuoteEntity instance) =>
       'usdt_usd_price': instance.usdtUsdPrice,
       'usdt_percent_change_cny24h': instance.usdtPercentChangeCny24h,
       'usdt_percent_change_usd24h': instance.usdtPercentChangeUsd24h,
+      'rp_cny_price': instance.rpCnyPrice,
+      'rp_usd_price': instance.rpUsdPrice,
+      'rp_percent_change_cny24h': instance.rpPercentChangeCny24h,
+      'rp_percent_change_usd24h': instance.rpPercentChangeUsd24h,
     };

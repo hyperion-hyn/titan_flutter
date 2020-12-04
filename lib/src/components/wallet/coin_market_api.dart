@@ -40,6 +40,11 @@ class CoinMarketApi {
     var usdtVo2 = SymbolQuoteVo(symbol: "USDT", quote: "USD", price: response.usdtUsdPrice, percentChange24h: response.usdtPercentChangeUsd24h);
     list.add(usdtVo2);
 
+    var rpVo1 = SymbolQuoteVo(symbol: "RP", quote: "CNY", price: response.rpCnyPrice, percentChange24h: response.rpPercentChangeCny24h);
+    list.add(rpVo1);
+    var rpVo2 = SymbolQuoteVo(symbol: "RP", quote: "USD", price: response.rpUsdPrice, percentChange24h: response.rpPercentChangeUsd24h);
+    list.add(rpVo2);
+
     return list;
   }
 }

@@ -167,6 +167,7 @@ dependencies:
   device_info: ^0.4.0+1
   shimmer:  1.1.2
   glitters: 0.1.3
+  lottie: 0.7.0+1
 
 dev_dependencies:
   flutter_driver:
@@ -199,6 +200,7 @@ flutter:
 
     - res/drawable/
     - res/kline/
+    - res/lottie/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
