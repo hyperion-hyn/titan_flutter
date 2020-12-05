@@ -68,8 +68,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   @override
   void dispose() {
     Application.routeObserver.unsubscribe(this);
-    super.dispose();
     _loadDataBloc.close();
+    super.dispose();
   }
 
   @override
