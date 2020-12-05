@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -8,25 +10,22 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/red_pocket_detail_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
-
 import 'entity/rp_release_info.dart';
-import 'entity/rp_statistics.dart';
 
-class RpReleaseRecordsPage extends StatefulWidget {
-  final RPStatistics rpStatistics;
-
-  RpReleaseRecordsPage(this.rpStatistics);
+class RpMyRpRecordsPage extends StatefulWidget {
+  RpMyRpRecordsPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RpReleaseRecordsState();
+    return _RpMyRpRecordsState();
   }
 }
 
-class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
+class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
@@ -60,7 +59,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
     return Scaffold(
       backgroundColor: HexColor('#F8F8F8'),
       appBar: BaseAppBar(
-        baseTitle: '传导明细',
+        baseTitle: '我的红包',
         backgroundColor: HexColor('#F8F8F8'),
       ),
       body: _pageView(),
@@ -128,15 +127,61 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
     var amount = model?.amount ?? 0;
 
     var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
-    rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
+    // rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
+    // rpAmount = '00000000000000000000000000000000000000000000000000000000000000';
 
     var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
-    var updatedAt = Const.DATE_FORMAT.format(currentDate);
+    var updatedAt = DateFormat("HH:mm").format(currentDate);
 
+    var title = '';
+    var desc = '';
+
+    switch (index) {
+      case 0:
+        desc = '最佳';
+        break;
+
+      case 1:
+        desc = '错过';
+        break;
+
+      case 2:
+        desc = '砸中';
+        break;
+
+      default:
+        desc = '';
+        break;
+    }
+
+    switch (index) {
+      case 0:
+        title = '幸运红包';
+        break;
+
+      case 1:
+        title = '量级红包';
+        break;
+
+      case 2:
+        title = '晋升红包';
+        break;
+
+      default:
+        title = '幸运红包';
+        break;
+    }
     return InkWell(
       onTap: () {
-        WalletShowAccountInfoPage.jumpToAccountInfoPage(
-            context, model?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+        // WalletShowAccountInfoPage.jumpToAccountInfoPage(
+        //     context, model?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RedPocketDetailPage(rpType: index,),
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -158,80 +203,95 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                   right: 10,
                 ),
                 child: Image.asset(
-                  "res/drawable/red_pocket_coins.png",
+                  "res/drawable/red_pocket_logo.png",
                   width: 28,
                   height: 28,
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          right: 6,
-                        ),
-                        child: Text(
-                          '$amount 份',
-                          style: TextStyle(
-                            color: HexColor("#333333"),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Wrap(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            right: 6,
+                          ),
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              color: HexColor("#333333"),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
+                        Text(
+                          '${S.of(context).rp_total_pretext} $rpAmount RP',
+                          style: TextStyle(
+                            color: HexColor("#999999"),
+                            fontSize: 12,
+                            fontWeight: FontWeight.normal,
+                          ),
+                          maxLines: 3,
+                          textAlign: TextAlign.right,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 6,
+                    ),
+                    Text(
+                      updatedAt,
+                      //'${S.of(context).rp_staking_id}：${model?.stakingId ?? 0}',
+                      //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: HexColor('#999999'),
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ],
+                ),
+              ),
+              // Spacer(),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 12,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        '+ $rpAmount RP',
+                        style: TextStyle(
+                          color: HexColor("#333333"),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 3,
+                        textAlign: TextAlign.right,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(
+                        height: 6,
                       ),
                       Text(
-                        '共 $hynAmount HYN',
+                        desc,
                         style: TextStyle(
-                          color: HexColor("#999999"),
-                          fontSize: 12,
-                          fontWeight: FontWeight.normal,
+                          fontSize: 10,
+                          color: index == 0 ? HexColor('#F0BE00') : HexColor('#999999'),
                         ),
+                        textAlign: TextAlign.right,
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 6,
-                  ),
-                  Text(
-                    '抵押ID：${model?.stakingId ?? 0}',
-                    //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: HexColor('#333333'),
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                ],
-              ),
-              Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    '+ $rpAmount RP',
-                    style: TextStyle(
-                      color: HexColor("#333333"),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 6,
-                  ),
-                  Text(
-                    updatedAt,
-                    //'21:21:21',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: HexColor('#999999'),
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                ],
+                ),
               ),
             ],
           ),

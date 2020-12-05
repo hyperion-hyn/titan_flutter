@@ -50,12 +50,12 @@ class LogUtil {
         }
       }
 
-      if (env.buildType == BuildType.DEV) {
-        Fluttertoast.showToast(msg: error.toString());
-        return;
-      }
       HttpResponseCodeNotSuccess notSuccessError = NOT_SUCCESS_ERROR_CODE_MAP[error.code];
       if (notSuccessError == null) {
+        if (env.buildType == BuildType.DEV) {
+          Fluttertoast.showToast(msg: error.toString());
+          return;
+        }
         Fluttertoast.showToast(msg: "${S.of(Keys.rootKey.currentContext).undefind_error} ${error.code}");
       } else {
         Fluttertoast.showToast(msg: notSuccessError.message);

@@ -207,9 +207,9 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               itemBuilder: (BuildContext context, int index) {
                 var coinVo = widget.walletVo.coins[index];
                 var hasPrice = true;
-                if(coinVo.symbol == SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol){
-                  hasPrice = false;
-                }
+                // if(coinVo.symbol == SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol){
+                //   hasPrice = false;
+                // }
                 return InkWell(
                     onTap: () {
                       var coinVo = widget.walletVo.coins[index];
@@ -256,7 +256,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               height: 16,
             ),
             HynBurnBanner(),
-            if (env.buildType == BuildType.DEV) _ropstenTestWalletView(context),
+//            if (env.buildType == BuildType.DEV) _ropstenTestWalletView(context),
           ]),
     );
   }
@@ -297,7 +297,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
   Widget _exchangeHYNViewOld(BuildContext context, CoinVo coin) {
     return InkWell(
       onTap: () {
-        print("111111111");
         AtlasApi.goToAtlasMap3HelpPage(context);
       },
       child: Column(
@@ -552,7 +551,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
     var quotePrice;
     var balancePrice;
     if(!hasPrice){
-      quotePrice = "即将开放兑换";
+      quotePrice = S.of(context).exchange_soon;
       balancePrice = "";
     }else{
       quotePrice = "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(symbolQuote?.quoteVo?.price ?? 0.0)}";

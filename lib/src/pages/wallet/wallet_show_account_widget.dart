@@ -53,7 +53,7 @@ class ShowAccountPage extends StatefulWidget {
   final CoinVo coinVo;
   TransactionInteractor transactionInteractor = Injector.of(Keys.rootKey.currentContext).transactionInteractor;
 
-  ShowAccountPage(String coinVo) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
+  ShowAccountPage(this.coinVo);
 
   @override
   State<StatefulWidget> createState() {
@@ -92,56 +92,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
-    if(!HYNApi.isHynHrc30ContractAddress(widget.coinVo.contractAddress)){
-      var tempTransList = await getEthTransferList();
-      if (tempTransList.length > 0) {
-        await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
-      }
-
-      getWhiteList();
+    var tempTransList = await getEthTransferList();
+    if (tempTransList.length > 0) {
+      await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
     }
-  }
-
-  List<String> whiteList = [];
-  getWhiteList() async {
-    if (widget.coinVo.coinType != CoinType.HYN_ATLAS) {
-      return;
-    }
-
-    whiteList = await AtlasApi().getBiboxWhiteList();
-  }
-
-  String _toAddress(TransactionDetailVo transactionDetail) {
-    //bool isContain = _isContain(transactionDetail);
-
-    var ethAddress = HYNApi.getHynToAddress(transactionDetail);
-    //var toAddress = isContain ? ethAddress : WalletUtil.ethAddressToBech32Address(ethAddress);
-    return WalletUtil.ethAddressToBech32Address(ethAddress);
-  }
-
-  // todo: whiteList
-  bool _isContain(TransactionDetailVo transactionDetail) {
-    if (widget.coinVo.coinType != CoinType.HYN_ATLAS) {
-      return false;
-    }
-
-    if (transactionDetail.type == TransactionType.TRANSFER_IN) {
-      return false;
-    }
-
-    //转出的地址在bibox白名单列表，则显示原以太地址
-    var ethAddress = HYNApi.getHynToAddress(transactionDetail);
-    bool isContain = false;
-    if (whiteList.isNotEmpty && ethAddress.isNotEmpty) {
-      for (var item in whiteList) {
-        if (item.toLowerCase() == ethAddress.toLowerCase()) {
-          isContain = true;
-          break;
-        }
-      }
-    }
-
-    return isContain;
   }
 
   @override
@@ -234,11 +188,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                   children: <Widget>[
                                     InkWell(
                                       onTap: () async {
-                                        if(widget.coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol){
-                                          Fluttertoast.showToast(msg: "该功能即将开放");
-                                          return;
-                                        }
-                                        
                                         if (widget.coinVo.coinType == CoinType.ETHEREUM) {
                                           TransactionDetailVo localTransfer = await getLocalTransfer(true);
                                           if (localTransfer != null) {
@@ -309,10 +258,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        if(widget.coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol){
-                                          Fluttertoast.showToast(msg: "该功能即将开放");
-                                          return;
-                                        }
                                         Navigator.push(context,
                                             MaterialPageRoute(builder: (context) => WalletReceivePage(coinVo)));
                                       },
@@ -347,16 +292,16 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                       builder: (BuildContext context) {
                                         return InkWell(
                                           onTap: () {
-                                            if (widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol ||
-                                                widget.coinVo.symbol == SupportedTokens.USDT_ERC20.symbol ||
+                                            if (widget.coinVo.symbol == SupportedTokens.USDT_ERC20.symbol ||
                                                 widget.coinVo.symbol == SupportedTokens.USDT_ERC20_ROPSTEN.symbol) {
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) => ExchangeDetailPage(
-                                                          selectedCoin: 'USDT', exchangeType: ExchangeType.BUY)));
+                                                        quote: 'HYN',
+                                                          base: 'USDT', exchangeType: ExchangeType.BUY)));
                                             } else {
-                                              Fluttertoast.showToast(msg: "尚未开放${widget.coinVo.symbol}兑换");
+                                              Fluttertoast.showToast(msg: S.of(context).exchange_is_not_yet_open(widget.coinVo.symbol));
                                             }
                                             /*Clipboard.setData(ClipboardData(text: coinVo.address));
                                             Scaffold.of(context)
@@ -427,11 +372,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     var amountSubText = "";
     amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)} ${transactionDetail.symbol}";
 
-    if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      amountText =
-          "${HYNApi.getValueByHynType(transactionDetail.hynType, transactionDetail: transactionDetail, getAmountStr: true, isWallet: true)}";
-      amountSubText = " ${HYNApi.getValueByHynType(transactionDetail.hynType, getTypeStr: true, isWallet: true)}";
-    } else if (transactionDetail.type == TransactionType.TRANSFER_IN) {
+    if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       if (transactionDetail.amount > 0) {
         amountColor = HexColor("#FF259B24");
         amountText = '+$amountText';
@@ -448,30 +389,14 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 
     if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       iconPath = "res/drawable/ic_wallet_account_list_receiver.png";
-      var fromAddress = WalletUtil.formatToHynAddrIfAtlasChain(
+      /*var fromAddress = WalletUtil.formatToHynAddrIfAtlasChain(
         widget.coinVo,
         transactionDetail.fromAddress,
-      );
-      describe = "From: " + shortBlockChainAddress(fromAddress, limitCharsLength: limitLength);
+      );*/
+      describe = "From: " + shortBlockChainAddress(transactionDetail.fromAddress, limitCharsLength: limitLength);
     } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
       iconPath = "res/drawable/ic_wallet_account_list_send.png";
-      if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-        var toAddress = WalletUtil.formatToHynAddrIfAtlasChain(
-          widget.coinVo,
-          HYNApi.getHynToAddress(transactionDetail),
-        );
-
-        toAddress = _toAddress(transactionDetail);
-        describe = "To: " + shortBlockChainAddress(toAddress, limitCharsLength: limitLength);
-      } else {
-        describe = "To: " + shortBlockChainAddress(transactionDetail.toAddress, limitCharsLength: limitLength);
-      }
-    }
-
-    if(AtlasApi.isTransferBill(transactionDetail.hynType)){
-      iconPath = "res/drawable/ic_wallet_account_list_bill.png";
-    }else if(AtlasApi.isTransferMap3Atlas(transactionDetail.hynType)){
-      iconPath = "res/drawable/ic_wallet_account_list_map3_atlas.png";
+      describe = "To: " + shortBlockChainAddress(transactionDetail.toAddress, limitCharsLength: limitLength);
     }
 
     if ((transactionDetail.state == null) ||
@@ -481,26 +406,18 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
             widget.coinVo.coinType == CoinType.BITCOIN) ||
         (transactionDetail.state != null &&
             transactionDetail.state == 0 &&
-            widget.coinVo.coinType == CoinType.ETHEREUM) ||
-        (transactionDetail.state != null &&
-            (transactionDetail.state == 1 || transactionDetail.state == 2) &&
-            widget.coinVo.coinType == CoinType.HYN_ATLAS)) {
+            widget.coinVo.coinType == CoinType.ETHEREUM)) {
       title = S.of(context).pending;
     } else if (((widget.coinVo.coinType == CoinType.ETHEREUM) && transactionDetail.state == 1) ||
-        (widget.coinVo.coinType == CoinType.BITCOIN && transactionDetail.state >= 6) ||
-        (widget.coinVo.coinType == CoinType.HYN_ATLAS && transactionDetail.state == 3)) {
+        (widget.coinVo.coinType == CoinType.BITCOIN && transactionDetail.state >= 6)) {
       title = S.of(context).completed;
-      if (HYNApi.isContractTokenAddress(transactionDetail.toAddress)
-      || HYNApi.isHynHrc30ContractAddress(transactionDetail.toAddress)) {
-        //Hyn、Eth的toAddress是合约地址，erc20或hrc30的toAddress是对方钱包地址
+      if (HYNApi.isContractTokenAddress(transactionDetail.toAddress)) {
         title = S.of(context).contract_call;
         iconPath = "res/drawable/ic_hyn_wallet_contract.png";
       } else if (WalletConfig.map3ContractAddress.toLowerCase() == transactionDetail.toAddress.toLowerCase()) {
         title = S.of(context).map_contract_execution;
       }
-    } else if ((widget.coinVo.coinType == CoinType.ETHEREUM && transactionDetail.state == -1) ||
-        (widget.coinVo.coinType == CoinType.HYN_ATLAS &&
-            (transactionDetail.state == 4 || transactionDetail.state == 5))) {
+    } else if ((widget.coinVo.coinType == CoinType.ETHEREUM && transactionDetail.state == -1)) {
       title = S.of(context).wallet_fail_title;
       titleColor = DefaultColors.colorf23524;
     }
@@ -527,16 +444,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                 title: '',
                               )));
                 } else {
-                  if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => WalletShowAccountInfoPage(
-                                  transactionDetail.hash,
-                                  transactionDetail.symbol,
-                                  isContain: _isContain(transactionDetail),
-                                )));
-                  } else {
                     var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland ?? true == true;
                     var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
                     if (url != null) {
@@ -548,7 +455,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                     title: '',
                                   )));
                     }
-                  }
                 }
               },
               child: Padding(
@@ -666,7 +572,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                             msg: S.of(context).wallet_transaction_finish_tips, toastLength: Toast.LENGTH_LONG);
                       }
                     }
-                  }, width: 52, height: 22, fontSize: 12, btnColor: Color(0xffDEDEDE)),
+                  }, width: 52, height: 22, fontSize: 12, btnColor: [Color(0xffDEDEDE)]),
                   SizedBox(
                     width: 10,
                   ),
@@ -701,7 +607,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                             toastLength: Toast.LENGTH_LONG);
                       }
                     }
-                  }, width: 52, height: 22, fontSize: 12, btnColor: Theme.of(context).primaryColor),
+                  }, width: 52, height: 22, fontSize: 12, btnColor: [Theme.of(context).primaryColor]),
                 ],
               ),
             ),
@@ -732,11 +638,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     }
 
     List<TransactionDetailVo> transferList = [];
-    if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
-      retList.addAll(transferList);
-      return retList;
-    }
 
     try {
       transferList = await _accountTransferService.getTransferList(widget.coinVo, page);

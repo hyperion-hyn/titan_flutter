@@ -39,6 +39,7 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
 import '../../../../config.dart';
 import '../../../../env.dart';
@@ -121,7 +122,9 @@ class AtlasApi {
   }
 
   static goToHynScanPage(BuildContext context,String walletAddress) {
-
+    if(walletAddress != null && walletAddress.startsWith("0x")){
+      walletAddress = WalletUtil.ethAddressToBech32Address(walletAddress);
+    }
     String webUrl;
     if(env.buildType == BuildType.DEV){
       webUrl = FluroConvertUtils.fluroCnParamsEncode("https://test.hynscan.io/address/$walletAddress/transactions");

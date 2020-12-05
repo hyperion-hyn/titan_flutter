@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -14,28 +15,30 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
+import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'entity/rp_staking_release_info.dart';
 
-class RpStakingInfoPage extends StatefulWidget {
+class RpStakingDetailPage extends StatefulWidget {
   final RPStatistics rpStatistics;
   final RpStakingInfo rpStakingInfo;
 
-  RpStakingInfoPage(
+  RpStakingDetailPage(
     this.rpStatistics,
     this.rpStakingInfo,
   );
 
   @override
   State<StatefulWidget> createState() {
-    return _RpStakingInfoPageState();
+    return _RpStakingDetailPageState();
   }
 }
 
-class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAware {
+class _RpStakingDetailPageState extends BaseState<RpStakingDetailPage>
+    with RouteAware {
   final RPApi _rpApi = RPApi();
 
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
@@ -57,7 +60,8 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
 
     _rpStatistics = widget.rpStatistics;
 
-    _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    _activeWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
   }
 
   @override
@@ -86,16 +90,18 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '抵押详情',
+        baseTitle: S.of(context).rp_staking_detail,
         backgroundColor: HexColor('#F8F8F8'),
         actions: <Widget>[
           FlatButton(
             onPressed: () {
               WalletShowAccountInfoPage.jumpToAccountInfoPage(
-                  context, widget.rpStakingInfo?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+                  context,
+                  widget.rpStakingInfo?.txHash ?? '',
+                  SupportedTokens.HYN_Atlas.symbol);
             },
             child: Text(
-              '查看抵押交易',
+              S.of(context).rp_check_staking_tx,
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
@@ -128,57 +134,15 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
   }
 
   Widget _stakingInfoWidget() {
-    HexColor stateColor = HexColor('#999999');
-    String stateDesc = '运行中';
     var model = _stakingInfo;
-
-    //1:确认中 2:失败 3:成功 4:释放中 5:释放结束 6:可取回 7:取回中 8: 已提取
     var status = model?.status ?? 0;
-    switch (status) {
-      case 1:
-        stateColor = HexColor('#FFC500');
-        stateDesc = '抵押确认中...';
-        break;
-
-      case 2:
-        stateColor = HexColor('#999999');
-        stateDesc = '失败';
-        break;
-
-      case 3:
-        stateColor = HexColor('#333333');
-        stateDesc = '运行中';
-        break;
-
-      case 4:
-        stateColor = HexColor('#FFC500');
-        stateDesc = '释放中...';
-        break;
-
-      case 5:
-        stateColor = HexColor('#333333');
-        stateDesc = '释放结束';
-        break;
-
-      case 6:
-        stateColor = HexColor('#00C081');
-        stateDesc = '可取回';
-        break;
-
-      case 7:
-        stateColor = HexColor('#FFC500');
-        stateDesc = '取回中...';
-        break;
-
-      case 8:
-        stateColor = HexColor('#999999');
-        stateDesc = '已提取';
-        break;
-    }
+    HexColor stateColor = getStateColor(status);
+    String stateDesc = getStateDesc(status);
 
     var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
     var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
-    var hynPerRpBig = ConvertTokenUnit.strToBigInt(_rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
+    var hynPerRpBig = ConvertTokenUnit.strToBigInt(
+        _rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
     var amountBig = (hynAmountBig / hynPerRpBig);
 
     if (amountBig.isNaN || amountBig.isInfinite) {
@@ -190,8 +154,11 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
       amount = 1;
     }
 
-    var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
-    var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectRetrieveTime ?? '0', isSecond: true);
+    var stakingAt =
+        FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
+    var expectReleaseTime = FormatUtil.newFormatUTCDateStr(
+        model?.expectRetrieveTime ?? '0',
+        isSecond: true);
 
     return SliverToBoxAdapter(
       child: Container(
@@ -239,7 +206,7 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
                                 right: 6,
                               ),
                               child: Text(
-                                '抵押 $amount 份',
+                                '${S.of(context).rp_stake} $amount ${S.of(context).rp_amount_unit}',
                                 style: TextStyle(
                                   color: HexColor("#333333"),
                                   fontSize: 14,
@@ -251,7 +218,9 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
                               width: 6,
                             ),
                             Text(
-                              '第 ${model?.releaseTimes ?? 0} 天',
+                              S
+                                  .of(context)
+                                  .rp_staking_days(model?.releaseTimes ?? 0),
                               style: TextStyle(
                                 color: HexColor("#999999"),
                                 fontSize: 12,
@@ -267,7 +236,7 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              '价值 $hynAmount HYN',
+                              '${S.of(context).rp_worth} $hynAmount HYN',
                               style: TextStyle(
                                 color: HexColor("#999999"),
                                 fontSize: 12,
@@ -328,7 +297,7 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '抵押时间 ${stakingAt ?? '--'}',
+                      '${S.of(context).rp_staking_start_time} ${stakingAt ?? '--'}',
                       //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(model?.createdAt)),
                       style: TextStyle(
                         fontSize: 10,
@@ -339,7 +308,7 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
                     Spacer(),
                     if (status >= 3 && status <= 5)
                       Text(
-                        '到期时间 ${expectReleaseTime ?? '--'}',
+                        '${S.of(context).rp_staking_end_time} ${expectReleaseTime ?? '--'}',
                         //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                         style: TextStyle(
                           fontSize: 10,
@@ -371,7 +340,7 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
-                'RP传导明细',
+                'RP${S.of(context).rp_transmit_detail}',
                 style: TextStyle(
                   color: HexColor("#333333"),
                   fontSize: 14,
@@ -382,7 +351,7 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
                 width: 10,
               ),
               Text(
-                '累计${FormatUtil.weiToEtherStr(_stakingInfo?.rpAmount ?? '0') ?? '0'} RP',
+                '${S.of(context).rp_total_pre}${FormatUtil.weiToEtherStr(_stakingInfo?.rpAmount ?? '0') ?? '0'} RP',
                 style: TextStyle(
                   color: HexColor("#999999"),
                   fontSize: 12,
@@ -399,15 +368,19 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
   Widget _myReleaseListView() {
     print("[$runtimeType] _dataList?.length:${_dataList?.length ?? 0}");
 
-    if (_dataList?.isEmpty??true) {
+    if (_dataList?.isEmpty ?? true) {
       return SliverToBoxAdapter(
         child: Container(
           color: HexColor('#F8F8F8'),
           child: Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 160),
+            padding: const EdgeInsets.only(
+                left: 16.0, right: 16.0, top: 16.0, bottom: 160),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16.0),
-              child: emptyListWidget(title: "暂无数据", isAdapter: false),
+              child: emptyListWidget(
+                title: S.of(context).no_data,
+                isAdapter: false,
+              ),
             ),
           ),
         ),
@@ -427,9 +400,11 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
   Widget _itemBuilder(int index) {
     var model = _dataList[index];
     var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
-    rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
+    //rpAmount = '00000000000000000000000000000000000000000000000000000000000000';
+    //rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
 
-    var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
+    var currentDate =
+        DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
     var updatedAt = Const.DATE_FORMAT.format(currentDate);
 
     return InkWell(
@@ -440,7 +415,8 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
       child: Container(
         color: HexColor('#F8F8F8'),
         child: Padding(
-          padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
+          padding:
+              const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
           child: Container(
             padding: const EdgeInsets.symmetric(
               vertical: 16,
@@ -455,15 +431,17 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  '+ $rpAmount RP',
-                  style: TextStyle(
-                    color: HexColor("#333333"),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                Expanded(
+                  child: Text(
+                    '+ $rpAmount RP',
+                    style: TextStyle(
+                      color: HexColor("#333333"),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-                Spacer(),
+                //Spacer(),
                 Text(
                   updatedAt,
                   style: TextStyle(

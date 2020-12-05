@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/inject/injector.dart';
@@ -153,19 +154,24 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
                   width: 80,
                   padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                   child: InkWell(
-                    child: Image.asset('res/drawable/red_pocket.png'),
+                    child: Lottie.asset(
+                      'res/lottie/lottie_red_pocket.json',
+                    ),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => RedPocketPage()),
+                          builder: (context) => RedPocketPage(),
+                        ),
                       );
                     },
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 24,),
+            SizedBox(
+              height: 24,
+            ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,23 +27,22 @@ class WalletShowAccountInfoPage extends StatefulWidget {
   String symbol;
   final bool isContain;
 
-  WalletShowAccountInfoPage(this.hashTx,this.symbol, {this.isContain = false});
+  WalletShowAccountInfoPage(this.hashTx, this.symbol, {this.isContain = false});
 
   @override
   State<StatefulWidget> createState() {
     return WalletShowAccountInfoPageState();
   }
 
-
-  static void jumpToAccountInfoPage(BuildContext context, String hashTx, String symbol){
+  static void jumpToAccountInfoPage(BuildContext context, String hashTx, String symbol) {
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => WalletShowAccountInfoPage(
-              hashTx,
-              symbol,
-              isContain: false,
-            )));
+                  hashTx,
+                  symbol,
+                  isContain: false,
+                )));
   }
 }
 
@@ -60,6 +57,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
   var isToken = false;
   TransactionDetailVo transactionDetail;
   WalletVo walletVo;
+  List<AccountInfoItemView> _accountInfoViewList = [];
 
   @override
   void initState() {
@@ -90,14 +88,8 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
       type = TransactionType.TRANSFER_IN;
     }
 
-    transactionDetail = TransactionDetailVo.fromHynHrc30TransferHistory(
-        hynTransferHistory, type, widget.symbol);
+    transactionDetail = TransactionDetailVo.fromHynHrc30TransferHistory(hynTransferHistory, type, widget.symbol);
 
-    /*if (HYNApi.isHynHrc30ContractAddress(widget.transactionDetail.toAddress) ||
-        HYNApi.isHynHrc30ContractAddress(widget.transactionDetail.contractAddress)) {
-      widget.transactionDetail = TransactionDetailVo.fromHynHrc30TransferHistory(
-          hynTransferHistory, widget.transactionDetail.type, widget.transactionDetail.symbol);
-    }*/
     var transDetail = transactionDetail;
     isContract = (transDetail.internalTransactions != null && transDetail.internalTransactions.length != 0);
 
@@ -108,45 +100,16 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     var fromAddressTitle = HYNApi.toAddressHint(transactionDetail.hynType, true);
     var toAddressTitle = HYNApi.toAddressHint(transactionDetail.hynType, false);
 
-    if (isBillPage) {
-      _dataTitleList = [
-        S.of(context).transfer_amount,
-        fromAddressTitle,
-        toAddressTitle,
-        S.of(context).description,
-      ];
-    } else {
-      _dataTitleList = [
-        S.of(context).transfer_amount,
-        S.of(context).transfer_gas_fee,
-        fromAddressTitle,
-        toAddressTitle,
-        S.of(context).transfer_id,
-      ];
-    }
-
     var amountText = "";
     var _toAddress = "";
-    /*if (isContract) {
-      *//*var tempTransDetail = TransactionDetailVo(
-        type: transDetail.type,
-        amount: ConvertTokenUnit.weiToEther(weiBigInt: transDetail.getAllContractValue()).toDouble(),
-      );
-      amountText = "${HYNApi.getValueByHynType(
-        transDetail.hynType,
-        transactionDetail: tempTransDetail,
-        getAmountStr: true,
-      )}";*//*
-    } else {
 
-    }*/
-
-    if(isToken){
+    if (isToken) {
       amountText = ConvertTokenUnit.weiToEther(weiBigInt: transDetail.getAllContractValue()).toString();
 
-      InternalTransactions internalTransaction = transDetail?.internalTransactions?.isEmpty??true?null:transDetail.internalTransactions[0];
-      _toAddress = WalletUtil.ethAddressToBech32Address(internalTransaction?.to??'0');
-    }else{
+      InternalTransactions internalTransaction =
+          transDetail?.internalTransactions?.isEmpty ?? true ? null : transDetail.internalTransactions[0];
+      _toAddress = WalletUtil.ethAddressToBech32Address(internalTransaction?.to ?? '0');
+    } else {
       amountText = "${HYNApi.getValueByHynType(
         transDetail.hynType,
         transactionDetail: transDetail,
@@ -165,21 +128,52 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     var gasLimit = Decimal.parse(transDetail.gas);
     var gasEstimate = "${gasPriceEth * gasLimit} HYN";
 
-    if (isBillPage) {
-      _dataInfoList = [
-        amountText,
-        WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
-        _toAddress,
-        "结算(节点终止)",
-      ];
-    } else {
-      _dataInfoList = [
-        amountText,
-        gasEstimate,
-        WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
-        _toAddress,
-        transDetail.hash,
-      ];
+    _accountInfoViewList.add(AccountInfoItemView(
+      isBillPage ? AccountInfoType.TEXT_TEXT_BILL : AccountInfoType.TEXT_TEXT,
+      S.of(context).transfer_amount,
+      rightStr: amountText,
+    ));
+
+    if(!isBillPage){
+      _accountInfoViewList.add(AccountInfoItemView(
+        AccountInfoType.TEXT_TEXT_BOTTOM,
+        S.of(context).transfer_gas_fee,
+        rightStr: gasEstimate,
+      ));
+    }
+
+    _accountInfoViewList.add(AccountInfoItemView(
+      AccountInfoType.TEXT_TEXT,
+      fromAddressTitle,
+      rightStr: WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
+    ));
+
+    _accountInfoViewList.add(AccountInfoItemView(
+      AccountInfoType.TEXT_TEXT,
+      toAddressTitle,
+      rightStr: _toAddress,
+    ));
+
+    if(isBillPage){
+      _accountInfoViewList.add(AccountInfoItemView(
+        AccountInfoType.TEXT_TEXT_LAST,
+        S.of(context).description,
+        rightStr: S.of(context).node_settlement,
+      ));
+    }else{
+      _accountInfoViewList.add(AccountInfoItemView(
+        AccountInfoType.TEXT_TEXT_LAST,
+        S.of(context).transfer_id,
+        rightStr: transDetail.hash,
+      ));
+    }
+
+    if(!isBillPage) {
+      _accountInfoViewList.add(AccountInfoItemView(
+        AccountInfoType.DETAIL_INFO,
+        S.of(context).check_for_detail_info,
+        transactionDetailVo: transDetail
+      ));
     }
 
     setState(() {
@@ -196,7 +190,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     );
   }
 
-  Widget accountInfoItem(String leftText, String rightText,
+  Widget accountInfoItem(AccountInfoItemView accountInfoItemView,
       {String bottomText, bool normalLine = true, bool isBillItem = false}) {
     return Container(
       color: Colors.white,
@@ -208,17 +202,16 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  leftText,
+                  accountInfoItemView.leftStr,
                   style: TextStyles.textC999S13,
                 ),
-                Spacer(),
-                Container(
-                  width: 198,
+                SizedBox(width: 30,),
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        rightText ?? "",
+                        accountInfoItemView.rightStr ?? "",
                         style: TextStyles.textC333S13,
                         textAlign: TextAlign.end,
                       ),
@@ -230,13 +223,13 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                       if (isBillItem)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text("抵押 ${transactionDetail.getBillDelegate()} HYN",
+                          child: Text("${S.of(context).staking} ${transactionDetail.getBillDelegate()} HYN",
                               style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
                       if (isBillItem)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text("奖励 ${transactionDetail.getBillReward()} HYN",
+                          child: Text("${S.of(context).reward} ${transactionDetail.getBillReward()} HYN",
                               style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
                     ],
@@ -263,7 +256,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
   }
 
   _pageView() {
-    if (_currentState != null) {
+    if (_currentState != null || _accountInfoViewList.length == 0) {
       return Scaffold(
         body: AllPageStateContainer(_currentState, () {
           setState(() {
@@ -320,65 +313,63 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
           ),
           SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
-            var leftText = _dataTitleList[index];
-            var rightText = _dataInfoList[index];
-            if (isBillPage) {
-              if (index == 0) {
-                return accountInfoItem(leftText, rightText, isBillItem: isBillPage);
-              } else if (index == 3) {
-                return accountInfoItem(leftText, rightText, normalLine: false);
-              }
-            } else {
-              if (index == 1) {
-                var bottomText = "GasPrice($gasPriceStr) * Gas(${transactionDetail.gas})";
-                return accountInfoItem(leftText, rightText, bottomText: bottomText);
-              } else if (index == 4) {
-                return accountInfoItem(leftText, rightText, normalLine: false);
-              }
-            }
-            return accountInfoItem(leftText, rightText);
-          }, childCount: _dataTitleList.length)),
-          if (!isBillPage)
-            SliverToBoxAdapter(
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => WalletShowAccountDetailPage(
-                                transactionDetail,
-                                isContain: widget.isContain,
-                              )));
-                },
-                child: Container(
-                  color: Colors.white,
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16, bottom: 16.0, left: 15),
-                        child: Text(
-                          S.of(context).check_for_detail_info,
-                          style: TextStyles.textC333S13,
-                        ),
-                      ),
-                      Spacer(),
-                      Image.asset(
-                        "res/drawable/add_position_image_next.png",
-                        height: 13,
-                      ),
-                      SizedBox(
-                        width: 15,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            )
+                var accountViewItem = _accountInfoViewList[index];
+                switch(accountViewItem.type){
+                  case AccountInfoType.TEXT_TEXT:
+                    return accountInfoItem(accountViewItem);
+                  case AccountInfoType.TEXT_TEXT_BILL:
+                    return accountInfoItem(accountViewItem,isBillItem: true);
+                  case AccountInfoType.TEXT_TEXT_BOTTOM:
+                    var bottomText =
+                        "${S.of(context).gas_price}($gasPriceStr) * ${S.of(context).gas}(${transactionDetail.gas})";
+                    return accountInfoItem(accountViewItem,bottomText: bottomText);
+                  case AccountInfoType.TEXT_TEXT_LAST:
+                    return accountInfoItem(accountViewItem, normalLine: false);
+                  case AccountInfoType.DETAIL_INFO:
+                    return detailInfoView(accountViewItem);
+                }
+            return null;
+          }, childCount: _accountInfoViewList.length)),
         ],
       ),
     );
   }
 
+  Widget detailInfoView(AccountInfoItemView accountInfoItemView,){
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => WalletShowAccountDetailPage(
+                  transactionDetail,
+                  isContain: widget.isContain,
+                )));
+      },
+      child: Container(
+        color: Colors.white,
+        child: Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 16, bottom: 16.0, left: 15),
+              child: Text(
+                accountInfoItemView.leftStr,
+                style: TextStyles.textC333S13,
+              ),
+            ),
+            Spacer(),
+            Image.asset(
+              "res/drawable/add_position_image_next.png",
+              height: 13,
+            ),
+            SizedBox(
+              width: 15,
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
 }
 
@@ -415,4 +406,21 @@ void getAccountPageTitle(BuildContext context, TransactionDetailVo transactionDe
     pageDetailStatusImage = "res/drawable/ic_transfer_account_detail_fail.png";
   }
   function(pageTitle, pageStatusImage, pageDetailColor, pageDetailStatusImage);
+}
+
+enum AccountInfoType {
+  TEXT_TEXT_BILL,
+  TEXT_TEXT_BOTTOM,
+  TEXT_TEXT,
+  TEXT_TEXT_LAST,
+  DETAIL_INFO,
+}
+
+class AccountInfoItemView {
+  AccountInfoType type;
+  String leftStr;
+  String rightStr;
+  TransactionDetailVo transactionDetailVo;
+
+  AccountInfoItemView(this.type, this.leftStr, {this.rightStr, this.transactionDetailVo});
 }

@@ -131,9 +131,11 @@ class _InfoDetailState extends State<InfoDetailPage> {
 
   Widget _loadContent() {
     return SingleChildScrollView(
-      child: Html(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        data: newsDetail.content,
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Html(
+          data: newsDetail.content,
+        ),
       ),
     );
   }

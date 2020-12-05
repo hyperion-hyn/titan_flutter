@@ -108,47 +108,49 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   get _notifyMessage {
     if (_isLoading) {
-      return '数据刷新中...';
+      return S.of(Keys.rootKey.currentContext).map3_refresh_data;
     }
 
     switch (_map3Status) {
       case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
-        return '终止请求处理中...';
+        return S.of(Keys.rootKey.currentContext).map3_exit_doing;
         break;
 
       case Map3InfoStatus.CANCEL_NODE_SUCCESS:
-        return '节点已终止，抵押金额已返回您的钱包';
+        return S.of(Keys.rootKey.currentContext).map3_exit_done;
         //return '终止请求已完成, 请前往【钱包】查看退款情况!';
         break;
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
         if (_isFullDelegate) {
           var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
-          return "抵押已满$startMinValue，将在下个纪元启动……";
+          return S.of(Keys.rootKey.currentContext).map3_pending_delegate_full(startMinValue);
         } else {
           if (_lastPendingTx != null) {
             var type = _lastPendingTx.type;
             switch (type) {
               case MessageType.typeTerminateMap3:
-                return '终止请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_exit_doing;
                 break;
 
               case MessageType.typeUnMicroDelegate:
                 TransactionDetailVo transactionDetail =
                     TransactionDetailVo.fromHynTransferHistory(_lastPendingTx, 0, "HYN");
+
                 var amount = FormatUtil.stringFormatCoinNum(transactionDetail.getDecodedAmount());
-                return '部分撤销${amount}HYN请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_cancel_doing(amount);
                 break;
 
               case MessageType.typeEditMap3:
-                return '编辑请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_edit_doing;
                 break;
 
               case MessageType.typeMicroDelegate:
                 TransactionDetailVo transactionDetail =
                     TransactionDetailVo.fromHynTransferHistory(_lastPendingTx, 0, "HYN");
+
                 var amount = FormatUtil.stringFormatCoinNum(transactionDetail.getDecodedAmount());
-                return '抵押${amount}HYN请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_delegate_doing(amount);
                 break;
             }
           }
@@ -158,7 +160,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       case Map3InfoStatus.CONTRACT_IS_END:
         //print("[text] _currentEpoch:$_currentEpoch, _releaseEpoch:$_releaseEpoch");
         if (_currentEpoch <= (_releaseEpoch + 1)) {
-          return "节点已到期，将在下个纪元结算";
+          return S.of(Keys.rootKey.currentContext).map3_end_done;
         }
         break;
 
@@ -168,33 +170,33 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             var type = _lastPendingTx.type;
             switch (type) {
               case MessageType.typeCollectMicroStakingRewards:
-                return '提取请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_collect_doing;
                 break;
 
               case MessageType.typeRenewMap3:
-                return '续约请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_renew_doing;
                 break;
 
               case MessageType.typeEditMap3:
-                return '编辑请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_edit_doing;
                 break;
 
               case MessageType.typeReDelegate:
-                return '复抵押请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_re_delegate_doing;
                 break;
 
               case MessageType.typeUnReDelegate:
-                return '取消复抵押请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_un_re_delegate_doing;
                 break;
 
               case MessageType.typeCollectReStakingReward:
-                return '提取Atlas奖励请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_collect_in_atlas_doing;
                 break;
             }
           }
 
           if (_map3infoEntity.atlas == null) {
-            return '请节点主尽快复抵押至atlas节点以享受出块奖励！';
+            return S.of(Keys.rootKey.currentContext).map3_notification_redelegate;
           }
 
           if (_isCreator) {
@@ -207,7 +209,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             var leftEpoch = periodEpoch14 - _currentEpoch;
 
             if (_statusCreator == 0 && leftEpoch > 0) {
-              return "距离可以设置下期续约还需$leftEpoch纪元";
+              return S.of(Keys.rootKey.currentContext).map3_notification_left_epoch(leftEpoch);
             }
           } else {
             /*
@@ -220,7 +222,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
             if (_statusJoiner == 0 && leftEpoch > 0) {
               if (_statusCreator == 0) {
-                return "距离可以设置下期续约还需$leftEpoch纪元";
+                return S.of(Keys.rootKey.currentContext).map3_notification_left_epoch(leftEpoch);
               } else if (_statusCreator == 1) {
                 return _closeRenewDefaultText;
               }
@@ -254,7 +256,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   // get _pendingUnlockEpoch =>
   //     double.tryParse(_microDelegationsCreator?.pendingDelegation?.unlockedEpoch ?? '0')?.toInt() ?? 0;
 
-  get _closeRenewDefaultText => '节点主已经停止续约，该节点到期后自动终止';
+  get _closeRenewDefaultText => S.of(Keys.rootKey.currentContext).map3_notification_expired;
 
   /*
   tips:
@@ -512,7 +514,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         var _endRemainEpochValue = _endRemainEpoch.toInt();
         if (_endRemainEpochValue > 0) {
-          _map3StatusDesc = "距离到期还需$_endRemainEpochValue纪元";
+          _map3StatusDesc = S.of(Keys.rootKey.currentContext).map3_notification_expired_left_epoch(_endRemainEpochValue);
         } else {
           //_map3StatusDesc = "距离到期仅剩1个纪元";
           _map3StatusDesc = "";
@@ -539,11 +541,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
         if (_isFullDelegate) {
-          _map3StatusDesc = "抵押已满，准备启动";
+          _map3StatusDesc = S.of(Keys.rootKey.currentContext).delegation_full_will_active_hint;
         } else {
           var remain = startMin - staking;
           var remainDelegation = FormatUtil.formatPrice(remain);
-          _map3StatusDesc = S.of(context).remain + remainDelegation + "启动";
+          _map3StatusDesc = S.of(Keys.rootKey.currentContext).remain + remainDelegation + S.of(Keys.rootKey.currentContext).active;
         }
 
         break;
@@ -581,8 +583,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     super.onCreated();
 
     _delegateRecordTabModels = [
-      Map3NodeDetailTabBarModel('节点记录', Map3NodeDetailType.tx_log),
-      Map3NodeDetailTabBarModel('参与地址', Map3NodeDetailType.user_list),
+      Map3NodeDetailTabBarModel(S.of(context).account_flow, Map3NodeDetailType.tx_log),
+      Map3NodeDetailTabBarModel(S.of(context).join_address, Map3NodeDetailType.user_list),
     ];
     _detailTabController = TabController(length: _delegateRecordTabModels.length, vsync: this);
 
@@ -602,8 +604,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     if (_nodeAddress.isNotEmpty) {
       print("[Map3Detail] --> _nodeAddress:$_nodeAddress");
 
-      _isLoading = true;
-
       setState(() {
         _loadDataBloc.add(RefreshSuccessEvent());
       });
@@ -621,7 +621,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         title: S.of(context).important_hint,
         actions: [
           ClickOvalButton(
-            "马上设置",
+            S.of(context).map3_node_setting_now,
             () {
               setState(() {
                 _haveShowedAlertView = true;
@@ -636,7 +636,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           ),
         ],
         content:
-            _isCreator ? '请你设置下期预设是否自动续约。如果过期不设置，节点将在到期后自动续约' : '节点主已经设置下期自动续约，请你设置下期是否跟随续约。如果过期不设置，节点将在到期后自动跟随续约。',
+            _isCreator ? S.of(context).map3_renew_content_creator : S.of(context).map3_renew_content_joiner,
       );
     }
   }
@@ -695,7 +695,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         FlatButton(
           onPressed: _exitAction,
           child: Text(
-            "终止",
+            S.of(context).map3_node_exit,
             style: TextStyle(
               color: HexColor("#999999"),
               fontSize: 14,
@@ -928,7 +928,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         children = <Widget>[
           ClickOvalButton(
-            "提取奖励",
+            S.of(context).collect_reward,
             _collectAction,
             width: 160,
             height: 36,
@@ -942,17 +942,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         children = <Widget>[
           Spacer(),
           ClickOvalButton(
-            "部分撤销",
+            S.of(context).map3_node_cancel_staking,
             _cancelAction,
             width: 120,
             height: 32,
             fontSize: 14,
             fontColor: HexColor("#999999"),
-            btnColor: Colors.transparent,
+            btnColor: [Colors.transparent],
           ),
           Spacer(),
           ClickOvalButton(
-            "抵押",
+            S.of(context).map3_node_delegate,
             _joinAction,
             width: 120,
             height: 32,
@@ -1059,15 +1059,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
     var nodeName = _map3nodeInformationEntity?.map3Node?.description?.name ?? _map3infoEntity?.name ?? "***";
     var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
-    var oldYearValue = oldYear > 0 ? "节龄：${FormatUtil.formatPrice(oldYear.toDouble())}" : "";
+    var oldYearValue = oldYear > 0 ? "${S.of(context).node_age}：${FormatUtil.formatPrice(oldYear.toDouble())}" : "";
 
     var nodeAddress =
         "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_nodeAddress) ?? "***", limitLength: 8)}";
-    var nodeIdPre = "节点号 ";
+    var nodeIdPre = "${S.of(context).node_num} ";
 
-    var descPre = "节点公告";
+    var descPre = S.of(context).map3_node_notification;
     var describe = _map3nodeInformationEntity?.map3Node?.description?.details ?? _map3infoEntity?.describe ?? "";
-    var desc = describe.isEmpty ?? false ? "大家快来参与我的节点吧，人帅靠谱，光干活不说话，奖励稳定，服务周到！" : describe;
+    var desc = describe.isEmpty ?? false ? S.of(context).map3_node_notification_default : describe;
     var home = _map3nodeInformationEntity?.map3Node?.description?.website ?? _map3infoEntity?.home ?? '';
     var contact = _map3nodeInformationEntity?.map3Node?.description?.securityContact ?? _map3infoEntity?.contact ?? '';
 
@@ -1278,7 +1278,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
                             Spacer(),
-                            Text("编辑节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                            Text(S.of(context).map3_node_edit, style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                           ],
                         ),
                         //style: TextStyles.textC906b00S13),
@@ -1303,7 +1303,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     var rateForNextPeriod = _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod ?? "0";
     var newFeeRate = FormatUtil.formatPercent(double.parse(rateForNextPeriod));
 
-    var statusDesc = "已开启";
+    var statusDesc = S.of(context).map3_renew_open;
     var feeRate = lastFeeRate;
 
     // 参与者，没设置，没到期
@@ -1319,7 +1319,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
     switch (status) {
       case -1:
-        statusDesc = "未参与抵押，不能设置";
+        statusDesc = S.of(context).map3_renew_delegate_no;
 
         alertContent = '';
         isShowAlert = false;
@@ -1339,14 +1339,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           isShowEpoch = !isOutActionPeriodCreator;
 
           if (isOutActionPeriodCreator) {
-            statusDesc = '设置期已过，到期后将默认续期';
+            statusDesc = S.of(context).map3_renew_setting_expired;
             alertColor = HexColor('999999');
           } else {
-            statusDesc = "未设置，到期后将默认续期";
+            statusDesc = S.of(context).map3_renew_setting_no;
             alertColor = _canRenewNextPeriod ? HexColor('#FF5041') : HexColor('#FEC500');
           }
 
-          alertContent = "（请在纪元${periodEpoch14 + 1} ~ $periodEpoch7内设置）";
+          alertContent = "（${S.of(context).map_renew_setting_date_func(periodEpoch14 + 1,periodEpoch7)}）";
 
           if (_canRenewNextPeriod) {
             _renewRemainEpoch = periodEpoch7 - _currentEpoch + 1;
@@ -1359,14 +1359,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           isShowEpoch = !isOutActionPeriodJoiner;
 
           if (isOutActionPeriodJoiner) {
-            statusDesc = '设置期已过，到期后默认续期';
-            alertColor = HexColor('999999');
+            statusDesc = S.of(context).map3_renew_setting_expired;
+            alertColor = HexColor('#999999');
           } else {
-            statusDesc = "未设置，到期后将默认续期";
+            statusDesc = S.of(context).map3_renew_setting_no;
             alertColor = _canRenewNextPeriod ? HexColor('#FF5041') : HexColor('#FEC500');
           }
 
-          alertContent = "（请在纪元${periodEpoch7 + 1} ~ $_releaseEpoch内设置）";
+          var periodEpoch7Add = periodEpoch7 + 1;
+          var releaseEpoch = _releaseEpoch;
+          alertContent = "（${S.of(context).map_renew_setting_date_func(periodEpoch7Add,releaseEpoch)}）";
 
           if (_canRenewNextPeriod) {
             _renewRemainEpoch = _releaseEpoch - _currentEpoch + 1;
@@ -1375,7 +1377,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           }
 
           if (_statusCreator == 2 && _canRenewNextPeriod) {
-            alertContent = "（请在节点到期前设置）";
+            alertContent = "（${S.of(context).map3_renew_setting_pre}）";
             _renewRemainEpoch = _releaseEpoch - _currentEpoch + 1;
           }
         }
@@ -1400,19 +1402,19 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         break;
 
       case 1:
-        statusDesc = "已关闭，到期后停止续期";
+        statusDesc = S.of(context).map3_renew_setting_close;
         feeRate = newFeeRate;
 
-        alertContent = "（设置完成）";
+        alertContent = "（${S.of(context).map3_renew_setting_finished}）";
         isShowAlert = false;
 
         break;
 
       case 2:
-        statusDesc = "已开启，到期后自动续期";
+        statusDesc = S.of(context).map3_renew_setting_open;
         feeRate = newFeeRate;
 
-        alertContent = "（设置完成）";
+        alertContent = "（${S.of(context).map3_renew_setting_finished}）";
         isShowAlert = false;
 
         break;
@@ -1431,7 +1433,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             Row(
               children: <Widget>[
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: "下期预设", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                  TextSpan(text: S.of(context).map3_renew_next_period, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 ])),
                 Visibility(
                   visible: isShowAlert,
@@ -1459,7 +1461,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                       onTap: _canRenewNextPeriod ? _renewAction : null,
                       child: Center(
                           child: Text(
-                        isCloseRenew ? '' : "设置",
+                        isCloseRenew ? '' : S.of(context).setting,
                         style: TextStyle(
                           fontSize: 14,
                           color: _canRenewNextPeriod ? HexColor("#1F81FF") : HexColor("#999999"),
@@ -1492,7 +1494,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                       children: <Widget>[
                         Expanded(
                           child: Text(
-                            _isCreator ? "自动续期" : "跟随续期",
+                            _isCreator ? S.of(context).map3_renew_auto : S.of(context).map3_renew_join,
                             style: TextStyle(
                               color: HexColor("#999999"),
                               fontSize: 14,
@@ -1519,7 +1521,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          "你无需任何操作",
+                          S.of(context).map3_node_no_action_hint,
                           style: TextStyle(
                             color: HexColor("#999999"),
                             fontSize: 12,
@@ -1534,7 +1536,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                       children: <Widget>[
                         Expanded(
                           child: Text(
-                            "管理费",
+                            S.of(context).manage_fee,
                             style: TextStyle(
                               color: HexColor("#999999"),
                               fontSize: 14,
@@ -1560,7 +1562,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                   top: 16,
                 ),
                 child: Text.rich(TextSpan(children: [
-                  TextSpan(text: "当前纪元 ", style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
+                  TextSpan(text: "${S.of(context).atlas_current_age} ", style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
                   TextSpan(
                       text: '$_currentEpoch',
                       style: TextStyle(
@@ -1577,7 +1579,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                 ),
                 child: Text.rich(TextSpan(children: [
                   TextSpan(
-                      text: _canRenewNextPeriod ? '剩余可设置只有 ' : '距离可设置还需 ',
+                      text: _canRenewNextPeriod ? '${S.of(context).map3_setting_epoch_left} ' : '${S.of(context).map3_setting_epoch_need} ',
                       style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
                   TextSpan(
                       text: '$_renewRemainEpoch',
@@ -1586,7 +1588,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                         color: HexColor("#1096B1"),
                         fontWeight: FontWeight.w600,
                       )),
-                  TextSpan(text: ' 纪元', style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
+                  TextSpan(text: ' ${S.of(context).epoch}', style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
                 ])),
               ),
           ],
@@ -1630,7 +1632,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                         child: Text.rich(
                           TextSpan(children: [
                             TextSpan(
-                                text: "尚未复投Atlas节点，请节点主尽快复投Atlas节点以获得出块奖励",
+                                text: S.of(context).map3_node_re_staking_hint,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: HexColor("#333333"),
@@ -1653,7 +1655,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                     },
                     child: Text.rich(TextSpan(children: [
                       TextSpan(
-                          text: "复投Atlas节点",
+                          text: S.of(context).map3_node_re_staking_title,
                           style: TextStyle(
                             fontSize: 14,
                             color: HexColor("#1F81FF"),
@@ -1693,7 +1695,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                 children: <Widget>[
                   Text.rich(TextSpan(children: [
                     TextSpan(
-                        text: "正在复投Atlas共识节点",
+                        text: S.of(context).map3_node_re_staking_ing,
                         style: TextStyle(
                           fontSize: 16,
                           color: HexColor("#333333"),
@@ -1741,7 +1743,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                                   Container(
                                     height: 4,
                                   ),
-                                  _item("节点号：", atlasEntity?.nodeId ?? ''),
+                                  _item("${S.of(context).node_num}：", atlasEntity?.nodeId ?? ''),
                                 ],
                               ),
                             ),
@@ -1760,7 +1762,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                                 Container(
                                   height: 4,
                                 ),
-                                Text("昨日年化",
+                                Text(S.of(context).atlas_reward_rate,
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: HexColor("#999999"),
@@ -1797,7 +1799,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             Row(
               children: <Widget>[
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: "节点服务", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                  TextSpan(text: S.of(context).map3_node_service, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 ])),
                 Spacer(),
                 Visibility(
@@ -1806,7 +1808,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                     height: 30,
                     child: InkWell(
                       onTap: _pushNodeInfoAction,
-                      child: Center(child: Text("访问节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
+                      child: Center(child: Text(S.of(context).click_view_detail, style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
                       //style: TextStyles.textC906b00S13),
                     ),
                   ),
@@ -1836,8 +1838,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Column(
                         children: [0, 1].map((index) {
-                          var titles = ["设备", "位置"];
-                          var details = [_selectProviderEntity?.name ?? "亚马逊云", _selectedRegion?.name ?? ""];
+                          var titles = [S.of(context).map3_node_device, S.of(context).position];
+                          var details = [_selectProviderEntity?.name ?? S.of(context).amazon_cloud, _selectedRegion?.name ?? ""];
 
                           return Padding(
                             padding: const EdgeInsets.only(top: 12),
@@ -1920,7 +1922,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(left: 18, top: 16),
-                child: Text("节点金额", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                child: Text(S.of(context).node_amount, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
               ),
             ],
           ),
@@ -1939,7 +1941,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
-                      "总抵押",
+                      S.of(context).total_staking,
                       style: TextStyle(fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.normal),
                     ),
                   ),
@@ -1960,7 +1962,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
-                      "可提奖励",
+                      S.of(context).map3_current_reward,
                       style: TextStyle(fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.normal),
                     ),
                   ),
@@ -1980,9 +1982,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
               ),
               child: profitListBigWidget(
                 [
-                  {"节点累计奖励": totalRewardString},
-                  {"管理费": feeRate},
-                  {"我的抵押": (_isDelegate || myDelegationString != '0') ? myDelegationString : "未抵押"},
+                  {S.of(context).node_cumulative_reward: totalRewardString},
+                  {S.of(context).atlas_fee_rate: feeRate},
+                  {S.of(context).my_staking: (_isDelegate || myDelegationString != '0') ? myDelegationString : S.of(context).map3_node_un_staking},
                 ],
               ),
             ),
@@ -2004,12 +2006,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
             child: Row(
               children: <Widget>[
-                Text("节点进度", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                Text(S.of(context).map3_node_progress, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 Spacer(),
                 Text.rich(
                   TextSpan(children: [
                     TextSpan(
-                      text: '当前纪元 ',
+                      text: '${S.of(context).atlas_current_age} ',
                       style: TextStyle(
                         fontSize: 14,
                         color: HexColor('#999999'),
@@ -2075,10 +2077,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   Widget _customStepperWidget() {
     var titles = [
-      _pendingEpoch > 0 ? "创建 #$_pendingEpoch" : "创建",
-      _activeEpoch > 0 ? "启动 #$_activeEpoch" : "启动",
-      _renewEpoch > 0 ? '续期 #$_renewEpoch' : '续期',
-      _releaseEpoch > 0 ? "到期 #$_releaseEpoch" : "到期",
+      _pendingEpoch > 0 ? "${S.of(context).create} #$_pendingEpoch" : S.of(context).create,
+      _activeEpoch > 0 ? "${S.of(context).active} #$_activeEpoch" : S.of(context).active,
+      _renewEpoch > 0 ? '${S.of(context).map3_renew} #$_renewEpoch' : S.of(context).map3_renew,
+      _releaseEpoch > 0 ? "${S.of(context).expired} #$_releaseEpoch" : S.of(context).expired,
     ];
 
     var createdAt = FormatUtil.formatDate(_map3infoEntity?.createTime ?? 0, isSecond: false);
@@ -2270,7 +2272,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       return Container(
         width: double.infinity,
         child: emptyListWidget(
-          title: "节点记录为空",
+          title: S.of(context).map3_node_record_is_empty,
           isAdapter: false,
         ),
       );
@@ -2321,12 +2323,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       return Container(
         width: double.infinity,
         child: emptyListWidget(
-          title: "参与地址为空",
+          title: S.of(context).map3_join_delegate_address_is_empty_hint,
           isAdapter: false,
         ),
       );
     }
 
+    var totalCount = _userList?.length ?? 0;
     return Column(
       children: <Widget>[
         Row(
@@ -2339,7 +2342,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                   vertical: 12,
                 ),
                 color: Colors.white,
-                child: Text('共 ${_userList?.length ?? 0}个',
+                child: Text(S.of(context).map3_join_total_count(totalCount),
                     style: TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: 16,
@@ -2611,8 +2614,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     }
   }
 
-
-
   void _loadUserListMoreData() async {
     if (_nodeAddress.isEmpty) {
       if (mounted) {
@@ -2688,6 +2689,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   // refresh
   Future _refreshData() async {
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
     try {
       await _loadDetailData();
 
@@ -2702,10 +2709,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           _isLoading = false;
           _loadDataBloc.add(RefreshSuccessEvent());
         });
+      }
 
-        if (_canRenewNextPeriod && _lastPendingTx == null) {
-          _showEditPreNextAlert();
-        }
+      if (_canRenewNextPeriod && _lastPendingTx == null) {
+        _showEditPreNextAlert();
       }
     } catch (e) {
       logger.e(e);
@@ -2713,6 +2720,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
       if (mounted) {
         setState(() {
+          _isLoading = false;
           _loadDataBloc.add(RefreshFailEvent());
         });
       }
