@@ -12,7 +12,7 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
-import 'package:titan/src/pages/red_pocket/red_pocket_level_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_my_level_record_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_rp_records_page.dart';
@@ -859,7 +859,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RedPocketLevelPage(_rpStatistics),
+          builder: (context) => RpMyLevelRecordsPage(_rpStatistics),
         ),
       );
     } else {

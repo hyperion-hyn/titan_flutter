@@ -33,18 +33,18 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class RedPocketLevelPage extends StatefulWidget {
+class RpMyLevelRecordsPage extends StatefulWidget {
   final RPStatistics rpStatistics;
 
-  RedPocketLevelPage(this.rpStatistics);
+  RpMyLevelRecordsPage(this.rpStatistics);
 
   @override
   State<StatefulWidget> createState() {
-    return _RedPocketLevelPageState();
+    return _RpMyLevelRecordsPageState();
   }
 }
 
-class _RedPocketLevelPageState extends BaseState<RedPocketLevelPage> with RouteAware {
+class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with RouteAware {
   final RPApi _rpApi = RPApi();
   final _formKey = GlobalKey<FormState>();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
