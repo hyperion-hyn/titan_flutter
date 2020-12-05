@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_info_page.dart';
@@ -16,7 +13,6 @@ import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_broadcast_success_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_cancel_page.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_page_deprecated.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_reward_tabs_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_create_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_create_page.dart';
@@ -26,7 +22,6 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_divide_add_page_pending
 import 'package:titan/src/pages/atlas_map/map3/map3_node_divide_page_pending.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_exit_page.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_formal_confirm_page_deprecated.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_introduction_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_join_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_list_page.dart';
@@ -41,10 +36,6 @@ import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_success_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_withdraw_confirm_page.dart';
 import 'package:titan/src/pages/mine/qr_code_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_broadcase_success_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_contract_detail_page_v8.dart';
-import 'package:titan/src/pages/node/map3page/my_map3_contracts_page_v8.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/confirm_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
@@ -257,15 +248,6 @@ var map3NodePreEditHandler = Handler(handlerFunc: (context, params) {
   );
 });
 
-var map3NodeFormalConfirmHandler = Handler(handlerFunc: (context, params) {
-  _cacheEntryRouteName(params);
-
-  var index = int.parse(params['actionEvent']?.first);
-  var actionEvent = Map3NodeActionEvent.values[index];
-  return Map3NodeFormalConfirmPage(
-    actionEvent: actionEvent,
-  );
-});
 
 var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
@@ -291,18 +273,6 @@ var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
   );
 });
 
-var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
-  _cacheEntryRouteName(params);
-  ContractNodeItem contractNodeItem;
-  var item = params['contractNodeItem']?.first;
-  if (item != null) {
-    contractNodeItem = ContractNodeItem.fromJson(FluroConvertUtils.string2map(item));
-  }
-  return Map3NodeBroadcaseSuccessPageV8(
-    params['pageType']?.first,
-    contractNodeItem: contractNodeItem,
-  );
-});
 
 var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
@@ -310,12 +280,6 @@ var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
   Map3InfoEntity entity = Map3InfoEntity.fromJson(FluroConvertUtils.string2map(params['info']?.first));
 
   return Map3NodeDetailPage(entity);
-});
-
-var map3NodeContractDetailHandlerV8 = Handler(handlerFunc: (context, params) {
-  _cacheEntryRouteName(params);
-
-  return Map3NodeContractDetailPageV8(int.parse(params['contractId']?.first));
 });
 
 var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
@@ -341,10 +305,6 @@ var map3NodeMyHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeMyPage();
 });
 
-var map3NodeMyHandlerV8 = Handler(handlerFunc: (context, params) {
-  _cacheEntryRouteName(params);
-  return MyContractsPageV8();
-});
 
 var map3NodeMyHandlerReward = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
@@ -373,11 +333,6 @@ var map3NodeExitHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeExitPage(
     map3infoEntity: map3infoEntity,
   );
-});
-
-var map3NodeCollectHandler = Handler(handlerFunc: (context, params) {
-  _cacheEntryRouteName(params);
-  return Map3NodeCollectPage();
 });
 
 var map3NodeCancelHandler = Handler(handlerFunc: (context, params) {

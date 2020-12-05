@@ -2,29 +2,20 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:decimal/decimal.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:titan/src/basic/http/http.dart';
-import 'package:titan/src/components/auth/bloc/bloc.dart';
-import 'package:titan/src/components/auth/model.dart';
-import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import '../coin_market_api.dart';
 import '../vo/symbol_quote_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/model/start_join_instance.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
-import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/future_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 
@@ -33,7 +24,6 @@ import '../../../global.dart';
 import '../wallet_repository.dart';
 import '../vo/wallet_vo.dart';
 import '../vo/coin_vo.dart';
-import 'package:rxdart/rxdart.dart';
 import 'dart:math';
 
 class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
