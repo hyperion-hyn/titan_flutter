@@ -12,6 +12,7 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/red_pocket_level_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_rp_records_page.dart';
@@ -265,25 +266,40 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     SizedBox(
                       width: 16,
                     ),
-                    // Column(
-                    //   children: [
-                    //     Text(
-                    //       level,
-                    //       style: TextStyle(
-                    //         color: Colors.red,
-                    //         fontSize: 20,
-                    //         fontWeight: FontWeight.w500,
-                    //       ),
-                    //     ),
-                    //     Text(
-                    //       '抵押量级',
-                    //       style: TextStyle(
-                    //         fontSize: 10,
-                    //         color: DefaultColors.color999,
-                    //       ),
-                    //     ),
-                    //   ],
-                    // )
+                    InkWell(
+                      onTap: _navToLevel,
+                      child: Row(
+                        children: [
+                          Column(
+                            children: [
+                              Text(
+                                '2',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                '持币量级',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: DefaultColors.color999,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8,),
+                            child: Image.asset(
+                              'res/drawable/rp_add_friends_arrow.png',
+                              width: 15,
+                              height: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
                 SizedBox(
@@ -830,6 +846,20 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         context,
         MaterialPageRoute(
           builder: (context) => RpTransmitRecordsPage(_rpStatistics),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
+    }
+  }
+
+  _navToLevel() {
+    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+    if (activeWallet != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RedPocketLevelPage(_rpStatistics),
         ),
       );
     } else {
