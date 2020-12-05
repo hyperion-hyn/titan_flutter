@@ -788,8 +788,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                     var amountBig = ConvertTokenUnit.strToBigInt(total.toString());
                     var inputValue = Decimal.parse(amountBig.toString());
                     var isOver = inputValue > hynTokenBalance;
-                    print(
-                        "[$runtimeType] isOver:$isOver, hynTokenBalance:$hynTokenBalance, inputValue:$inputValue, amount:$amount");
+                    // print(
+                    //     "[$runtimeType] isOver:$isOver, hynTokenBalance:$hynTokenBalance, inputValue:$inputValue, amount:$amount");
                     if (isOver) {
                       return S.of(context).rp_not_enough_hyn;
                     }
@@ -819,10 +819,10 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                   ),
                   style: TextStyle(fontSize: 13),
                   onSaved: (value) {
-                    print("[$runtimeType] onSaved, inputValue:$value");
+                    // print("[$runtimeType] onSaved, inputValue:$value");
                   },
                   onChanged: (String value) {
-                    print("[$runtimeType] onChanged, inputValue:$value");
+                    // print("[$runtimeType] onChanged, inputValue:$value");
 
                     _inputController.add(value);
                   },
