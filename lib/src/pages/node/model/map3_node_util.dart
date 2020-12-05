@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
@@ -226,51 +228,51 @@ class Map3NodeUtil {
   }
 
   static String stateDescText(Map3InfoStatus _map3Status) {
-    var _map3StatusDesc = "待启动";
+    var _map3StatusDesc = S.of(Keys.rootKey.currentContext).pending;
 
     switch (_map3Status) {
       case Map3InfoStatus.MAP:
-        _map3StatusDesc = "映射中";
+        _map3StatusDesc = S.of(Keys.rootKey.currentContext).map3_status_map;
 
         break;
 
       case Map3InfoStatus.CREATE_SUBMIT_ING:
-        _map3StatusDesc = "创建中";
+        _map3StatusDesc = S.of(Keys.rootKey.currentContext).map3_status_creating;
 
         break;
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
-        _map3StatusDesc = "待启动";
+        _map3StatusDesc = S.of(Keys.rootKey.currentContext).map3_status_pending;
 
         break;
 
       case Map3InfoStatus.CREATE_FAIL:
-        _map3StatusDesc = "启动失败";
+        _map3StatusDesc = S.of(Keys.rootKey.currentContext).map3_status_create_fail;
 
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        _map3StatusDesc = "运行中";
+        _map3StatusDesc = S.of(Keys.rootKey.currentContext).map3_status_running;
 
         break;
 
       case Map3InfoStatus.CONTRACT_IS_END:
-        _map3StatusDesc = "已到期";
+        _map3StatusDesc = S.of(Keys.rootKey.currentContext).map3_status_expired;
 
         break;
 
       case Map3InfoStatus.CANCEL_NODE_SUCCESS:
-        _map3StatusDesc = "已终止";
+        _map3StatusDesc = S.of(Keys.rootKey.currentContext).map3_status_cancel_success;
 
         break;
 
       case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
-        _map3StatusDesc = "撤销中";
+        _map3StatusDesc = S.of(Keys.rootKey.currentContext).map3_status_cancel_ing;
 
         break;
 
       case Map3InfoStatus.MAP:
-        _map3StatusDesc = "映射中";
+        _map3StatusDesc = S.of(Keys.rootKey.currentContext).map3_status_map;
 
         break;
 

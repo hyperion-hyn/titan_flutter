@@ -24,11 +24,18 @@ import 'package:titan/src/utils/format_util.dart';
 
 class KLineDetailPage extends StatefulWidget {
   final String symbol;
-  final String symbolName;
   final bool isPop;
   final int periodCurrentIndex;
+  final String quote;
+  final String base;
 
-  KLineDetailPage({this.symbol, this.symbolName, this.isPop, this.periodCurrentIndex});
+  KLineDetailPage({
+    this.symbol,
+    this.isPop,
+    this.periodCurrentIndex,
+    this.quote,
+    this.base,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -36,7 +43,8 @@ class KLineDetailPage extends StatefulWidget {
   }
 }
 
-class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProviderStateMixin {
+class _KLineDetailPageState extends BaseState<KLineDetailPage>
+    with TickerProviderStateMixin {
   final ExchangeApi api = ExchangeApi();
   SocketBloc _socketBloc;
   List<KLineEntity> _kChartItemList = [];
@@ -203,7 +211,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Text(
-                  'HYN/${widget.symbolName}',
+                  '${widget.quote}/${widget.base}',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
@@ -237,7 +245,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                 disabledColor: Colors.grey[600],
                 disabledTextColor: Colors.white,
                 color: HexColor("#53AE86"),
-                child: Text(S.of(context).exchange_buy, style: TextStyle(fontSize: 16, color: Colors.white70)),
+                child: Text(S.of(context).exchange_buy,
+                    style: TextStyle(fontSize: 16, color: Colors.white70)),
                 onPressed: () {
                   _buySellAction(ExchangeType.BUY);
                 },
@@ -252,7 +261,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                 disabledColor: Colors.grey[600],
                 disabledTextColor: Colors.white,
                 color: HexColor("#CC5858"),
-                child: Text(S.of(context).exchange_sell, style: TextStyle(fontSize: 16, color: Colors.white70)),
+                child: Text(S.of(context).exchange_sell,
+                    style: TextStyle(fontSize: 16, color: Colors.white70)),
                 onPressed: () {
                   _buySellAction(ExchangeType.SELL);
                 },
@@ -271,18 +281,24 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => ExchangeDetailPage(selectedCoin: widget.symbolName, exchangeType: exchangeType),
+            builder: (context) => ExchangeDetailPage(
+              exchangeType: exchangeType,
+              base: widget.base,
+              quote: widget.quote,
+            ),
           ));
     }
   }
 
   Widget _headerWidget() {
     var marketItemEntity =
-        MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList).getMarketItem(widget.symbol);
+        MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
+            .getMarketItem(widget.symbol);
 
     var _high = marketItemEntity?.kLineEntity?.high?.toString() ?? "--";
     var _low = marketItemEntity?.kLineEntity?.low?.toString() ?? "--";
-    var _amount24Hour = marketItemEntity?.kLineEntity?.amount?.toString() ?? "--";
+    var _amount24Hour =
+        marketItemEntity?.kLineEntity?.amount?.toString() ?? "--";
 
     // price
     var close = marketItemEntity?.kLineEntity?.close;
@@ -293,29 +309,38 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     );
     var _latestPriceString = '${_latestPrice ?? '--'}';
 
-    var _selectedQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign(
-      marketItemEntity?.symbolName,
-    );
-    var _latestQuotePrice = _selectedQuote == null
-        ? '--'
-        : FormatUtil.truncateDoubleNum(
-            double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
-            4,
-          );
-    var _latestRmbPriceString = '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
-
     // _latestPercent
     double _latestPercent =
-        MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList).getRealTimePricePercent(
+        MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
+            .getRealTimePricePercent(
       marketItemEntity?.symbol,
     );
+
     var _latestPercentBgColor = _latestPercent == 0
         ? HexColor('#FF999999')
-        : _latestPercent > 0 ? HexColor('#FF53AE86') : HexColor('#FFCC5858');
-    var _latestPercentString = '${(_latestPercent) > 0 ? ' +' : ' '}${FormatUtil.truncateDoubleNum(
+        : _latestPercent > 0
+            ? HexColor('#FF53AE86')
+            : HexColor('#FFCC5858');
+    var _latestPercentString =
+        '${(_latestPercent) > 0 ? ' +' : ' '}${FormatUtil.truncateDoubleNum(
       _latestPercent * 100.0,
       2,
     )}%';
+
+    var _latestQuotePriceString = '--';
+
+    try {
+      var _selectedQuote =
+          WalletInheritedModel.of(context).activatedQuoteVoAndSign(
+        marketItemEntity?.base,
+      );
+      var _latestQuotePrice = FormatUtil.truncateDoubleNum(
+        double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
+        4,
+      );
+      _latestQuotePriceString =
+          '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
+    } catch (e) {}
 
     return SliverToBoxAdapter(
       child: Container(
@@ -330,14 +355,17 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                     children: <Widget>[
                       Text(
                         _latestPriceString,
-                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 28, color: _latestPercentBgColor),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 28,
+                            color: _latestPercentBgColor),
                       ),
                       SizedBox(
                         height: 2,
                       ),
                       RichText(
                         text: TextSpan(
-                            text: _latestRmbPriceString,
+                            text: _latestQuotePriceString,
                             style: TextStyle(
                               color: HexColor("#777777"),
                               fontSize: 14,
@@ -360,21 +388,30 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                       children: <Widget>[
                         Text(
                           S.of(context).kline_24h_high,
-                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10, color: HexColor("#999999")),
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 10,
+                              color: HexColor("#999999")),
                         ),
                         SizedBox(
                           height: 5,
                         ),
                         Text(
                           S.of(context).kline_24h_low,
-                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10, color: HexColor("#999999")),
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 10,
+                              color: HexColor("#999999")),
                         ),
                         SizedBox(
                           height: 5,
                         ),
                         Text(
                           '24H',
-                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10, color: HexColor("#999999")),
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 10,
+                              color: HexColor("#999999")),
                         ),
                       ]),
                   SizedBox(
@@ -390,8 +427,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                                 )
                               : Text(
                                   text,
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.w500, fontSize: 10, color: HexColor("#333333")),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 10,
+                                      color: HexColor("#333333")),
                                 ))
                           .toList()),
                 ],
@@ -415,7 +454,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   Widget _kLineWidget() {
     double kLineHeight = 340;
     var locale =
-        SettingInheritedModel.of(context, aspect: SettingAspect.language)?.languageModel?.getLocaleName() ?? 'zh';
+        SettingInheritedModel.of(context, aspect: SettingAspect.language)
+                ?.languageModel
+                ?.getLocaleName() ??
+            'zh';
     //print("[KLine] local:$local");
 
     return SliverToBoxAdapter(
@@ -461,7 +503,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: _morePeriodList.map((item) => _periodTextWidget(item)).toList(),
+                    children: _morePeriodList
+                        .map((item) => _periodTextWidget(item))
+                        .toList(),
                   ),
                 ),
                 /*InkWell(
@@ -499,7 +543,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                             child: Text(
                               //"主图",
                               S.of(context).kline_state_main,
-                              style: TextStyle(color: HexColor("#333333"), fontSize: 12),
+                              style: TextStyle(
+                                  color: HexColor("#333333"), fontSize: 12),
                             ),
                           ),
                           _spacerWidget,
@@ -530,7 +575,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                             padding: const EdgeInsets.only(left: 14),
                             child: Text(
                               S.of(context).kline_state_secondary,
-                              style: TextStyle(color: HexColor("#333333"), fontSize: 12),
+                              style: TextStyle(
+                                  color: HexColor("#333333"), fontSize: 12),
                             ),
                           ),
                           _spacerWidget,
@@ -576,8 +622,12 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 
   Widget get _spacerWidget => SizedBox(
-        width:
-            SettingInheritedModel.of(context, aspect: SettingAspect.language)?.languageModel?.isKo() ?? false ? 15 : 18,
+        width: SettingInheritedModel.of(context, aspect: SettingAspect.language)
+                    ?.languageModel
+                    ?.isKo() ??
+                false
+            ? 15
+            : 18,
       );
 
   Widget _iconWidget({bool isMain}) {
@@ -611,7 +661,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
               var mainStateValue = prefs.getInt(PrefsKey.KLINE_MAIN_STATE) ?? 0;
               _mainState = MainState.values[mainStateValue];
             } else {
-              var secondaryStateValue = prefs.getInt(PrefsKey.KLINE_SECONDARY_STATE) ?? 0;
+              var secondaryStateValue =
+                  prefs.getInt(PrefsKey.KLINE_SECONDARY_STATE) ?? 0;
               _secondaryState = SecondaryState.values[secondaryStateValue];
             }
           });
@@ -650,7 +701,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         child: Text(
           title,
-          style: TextStyle(color: isSelected ? HexColor("#228BA1") : HexColor("#999999"), fontSize: 12),
+          style: TextStyle(
+              color: isSelected ? HexColor("#228BA1") : HexColor("#999999"),
+              fontSize: 12),
         ),
       ),
     );
@@ -689,8 +742,11 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         padding: const EdgeInsets.all(8),
         child: Text(
           item.name,
-          style:
-              TextStyle(color: item.name == equalValue.name ? HexColor("#228BA1") : HexColor("#999999"), fontSize: 12),
+          style: TextStyle(
+              color: item.name == equalValue.name
+                  ? HexColor("#228BA1")
+                  : HexColor("#999999"),
+              fontSize: 12),
         ),
       ),
     );
@@ -714,9 +770,13 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             Text(
-              _morePeriodList.contains(_periodParameter) ? _periodParameter.name : S.of(context).kline_period_more,
+              _morePeriodList.contains(_periodParameter)
+                  ? _periodParameter.name
+                  : S.of(context).kline_period_more,
               style: TextStyle(
-                  color: _isShowMore || (_morePeriodList.contains(_periodParameter) && _periodCurrentIndex == 4)
+                  color: _isShowMore ||
+                          (_morePeriodList.contains(_periodParameter) &&
+                              _periodCurrentIndex == 4)
                       ? HexColor("#228BA1")
                       : HexColor("#999999")),
             ),
@@ -724,7 +784,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
               'res/drawable/k_line_down_arrow.png',
               width: 5,
               height: 5,
-              color: _isShowMore || (_morePeriodList.contains(_periodParameter) && _periodCurrentIndex == 3)
+              color: _isShowMore ||
+                      (_morePeriodList.contains(_periodParameter) &&
+                          _periodCurrentIndex == 3)
                   ? HexColor("#228BA1")
                   : HexColor("#999999"),
             ),
@@ -887,14 +949,16 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                     flex: 2,
                     child: Text(
                       S.of(context).kline_delegate_time,
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                      style:
+                          TextStyle(color: HexColor("#777777"), fontSize: 10),
                     ),
                   ),
                   Expanded(
                     flex: 1,
                     child: Text(
                       S.of(context).kline_delegate_direction,
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                      style:
+                          TextStyle(color: HexColor("#777777"), fontSize: 10),
                     ),
                   ),
                   Expanded(
@@ -902,7 +966,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                     child: Text(
                       S.of(context).kline_delegate_price,
                       textAlign: TextAlign.end,
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                      style:
+                          TextStyle(color: HexColor("#777777"), fontSize: 10),
                     ),
                   ),
                   Expanded(
@@ -910,7 +975,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                     child: Text(
                       S.of(context).kline_delegate_amount,
                       textAlign: TextAlign.end,
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                      style:
+                          TextStyle(color: HexColor("#777777"), fontSize: 10),
                     ),
                   ),
                 ],
@@ -920,7 +986,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                 children: <Widget>[
                   Text(
                     //"买盘 数量(HYN)",
-                    S.of(context).kline_delegate_buy + " " + S.of(context).kline_delegate_amount,
+                    S.of(context).kline_delegate_buy +
+                        " " +
+                        '${S.of(context).kline_delegate_amount_v2}(${widget.quote})',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 10,
@@ -930,7 +998,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                   ),
                   Text(
                     //"价格(USDT)",
-                    S.of(context).kline_delegate_price,
+                    '${S.of(context).price} (${widget.base})',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 10,
@@ -940,7 +1008,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                   ),
                   Text(
                     //"数量(HYN)卖盘",
-                    S.of(context).kline_delegate_amount + " " + S.of(context).kline_delegate_sell,
+                    '(${widget.quote})' +
+                        S.of(context).kline_delegate_amount_v2 +
+                        " " +
+                        S.of(context).kline_delegate_sell,
                     textAlign: TextAlign.right,
                     style: TextStyle(
                       fontSize: 10,
@@ -993,7 +1064,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                       child: Text(
                         FormatUtil.formatSecondDate(excDetailEntity.date),
 //                          FormatUtil.formatDate(excDetailEntity.date, isSecond: true, isMillisecond: true),
-                        style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            color: HexColor("#333333"),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                     Expanded(
@@ -1003,7 +1077,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                             ? S.of(context).kline_direct_sell
                             : S.of(context).kline_direct_buy,
                         style: TextStyle(
-                            color: HexColor(excDetailEntity.actionType == "sell" ? "#CC5858" : "#53AE86"),
+                            color: HexColor(excDetailEntity.actionType == "sell"
+                                ? "#CC5858"
+                                : "#53AE86"),
                             fontSize: 10,
                             fontWeight: FontWeight.w500),
                       ),
@@ -1013,7 +1089,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                       child: Text(
                         excDetailEntity.price,
                         textAlign: TextAlign.end,
-                        style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            color: HexColor("#333333"),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                     Expanded(
@@ -1021,7 +1100,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                       child: Text(
                         excDetailEntity.amount,
                         textAlign: TextAlign.end,
-                        style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            color: HexColor("#333333"),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                   ],
@@ -1089,7 +1171,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                                     //splashColor: Colors.greenAccent,
                                     highlightColor: HexColor("#D8F3E7"),
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: <Widget>[
                                         Container(
                                           height: 25,
@@ -1106,10 +1189,13 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                                         ),
                                         Container(
                                           height: 25,
-                                          padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                                          padding: EdgeInsets.only(
+                                              left: index >= 9 ? 3 : 8),
                                           alignment: Alignment.centerLeft,
                                           child: Text(
-                                            buyEntity?.depthEntity?.vol?.toString() ?? "--",
+                                            buyEntity?.depthEntity?.vol
+                                                    ?.toString() ??
+                                                "--",
                                             style: TextStyle(
                                               fontSize: 10,
                                               fontWeight: FontWeight.w500,
@@ -1121,10 +1207,15 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                                           flex: 2,
                                           child: Container(
                                             height: 25,
-                                            padding: const EdgeInsets.only(right: 5),
+                                            padding:
+                                                const EdgeInsets.only(right: 5),
                                             alignment: Alignment.centerRight,
                                             child: Text(
-                                              FormatUtil.clearScientificCounting(buyEntity?.depthEntity?.price) ?? "--",
+                                              FormatUtil
+                                                      .clearScientificCounting(
+                                                          buyEntity?.depthEntity
+                                                              ?.price) ??
+                                                  "--",
                                               textAlign: TextAlign.end,
                                               style: TextStyle(
                                                 fontSize: 10,
@@ -1174,16 +1265,22 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                                     highlightColor: HexColor("#FAE4E4"),
 
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: <Widget>[
                                         Expanded(
                                           flex: 2,
                                           child: Container(
                                             height: 25,
                                             alignment: Alignment.centerLeft,
-                                            padding: const EdgeInsets.only(left: 5),
+                                            padding:
+                                                const EdgeInsets.only(left: 5),
                                             child: Text(
-                                              FormatUtil.clearScientificCounting(sellEntity?.depthEntity?.price) ??
+                                              FormatUtil
+                                                      .clearScientificCounting(
+                                                          sellEntity
+                                                              ?.depthEntity
+                                                              ?.price) ??
                                                   "--",
                                               style: TextStyle(
                                                 fontSize: 10,
@@ -1197,7 +1294,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                                           height: 25,
                                           alignment: Alignment.centerRight,
                                           child: Text(
-                                            sellEntity?.depthEntity?.vol?.toString() ?? "--",
+                                            sellEntity?.depthEntity?.vol
+                                                    ?.toString() ??
+                                                "--",
                                             textAlign: TextAlign.end,
                                             style: TextStyle(
                                               fontSize: 10,
@@ -1209,7 +1308,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                                         Container(
                                           height: 25,
                                           alignment: Alignment.centerRight,
-                                          padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                                          padding: EdgeInsets.only(
+                                              left: index >= 9 ? 3 : 8),
                                           child: Text(
                                             "${index + 1}",
                                             textAlign: TextAlign.end,
@@ -1229,7 +1329,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                       ],
                     ),
                   ),
-                  if ((index + 1) == max(buyChartList.length, sellChartList.length))
+                  if ((index + 1) ==
+                      max(buyChartList.length, sellChartList.length))
                     SizedBox(
                       height: 12,
                     ),
@@ -1241,7 +1342,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         });
   }
 
-  Widget _loadingWidget({bool visible = true, double height = 160, bool isDetail = false}) {
+  Widget _loadingWidget(
+      {bool visible = true, double height = 160, bool isDetail = false}) {
     //print("[$runtimeType] isDetail:$isDetail, _showLoadingTrade:$_showLoadingTrade, _showLoadingDepth:$_showLoadingDepth");
 
     var child = Visibility(
@@ -1307,7 +1409,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       });
     }
 
-    var data = await api.historyKline(widget.symbol, period: _periodParameter.value);
+    var data =
+        await api.historyKline(widget.symbol, period: _periodParameter.value);
     //print("[WS] --> _getPeriodData, data:$data");
     _dealPeriodData(data);
 
@@ -1385,7 +1488,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   ]
   * */
   Future _getTradeData() async {
-    var data = await api.historyTrade(widget.symbol, limit: (_kMaxTradeCount * 2).toString());
+    var data = await api.historyTrade(widget.symbol,
+        limit: (_kMaxTradeCount * 2).toString());
 
     //print("[WS] --> _getTradeData, data:$data");
 
@@ -1513,12 +1617,14 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
   // period
   void _subPeriodChannel() {
-    var channel = SocketConfig.channelKLinePeriod(widget.symbol, _periodParameter.value);
+    var channel =
+        SocketConfig.channelKLinePeriod(widget.symbol, _periodParameter.value);
     _subChannel(channel);
   }
 
   void _unSubPeriodChannel({String period = ''}) {
-    var channel = SocketConfig.channelKLinePeriod(widget.symbol, period.isEmpty ? _periodParameter.value : period);
+    var channel = SocketConfig.channelKLinePeriod(
+        widget.symbol, period.isEmpty ? _periodParameter.value : period);
     _unSubChannel(channel);
   }
 
@@ -1592,7 +1698,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         // depthDebounceLater.debounceInterval(() {
         _buyChartList.clear();
         _sellChartList.clear();
-        dealDepthData(_buyChartList, _sellChartList, state.response, enable: false);
+        dealDepthData(_buyChartList, _sellChartList, state.response,
+            enable: false);
         _setupDepthWidget();
         _depthController.add(_depthRefresh);
         // }, 500);
@@ -1607,7 +1714,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 }
 
-Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,
+Widget delegationListView(BuildContext context,
+    List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,
     {limitNum = 20, enable = true, Function clickPrice}) {
   return Container(
     padding: const EdgeInsets.only(left: 14, right: 14, top: 14, bottom: 8),
@@ -1703,7 +1811,9 @@ Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartLi
                   children: <Widget>[
                     Text(
                       //"买盘 数量(HYN)",
-                      S.of(context).kline_delegate_buy + " " + S.of(context).kline_delegate_amount,
+                      S.of(context).kline_delegate_buy +
+                          " " +
+                          S.of(context).kline_delegate_amount,
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontSize: 10,
@@ -1723,7 +1833,9 @@ Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartLi
                     ),
                     Text(
                       //"数量(HYN)卖盘",
-                      S.of(context).kline_delegate_amount + " " + S.of(context).kline_delegate_sell,
+                      S.of(context).kline_delegate_amount +
+                          " " +
+                          S.of(context).kline_delegate_sell,
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         fontSize: 10,
@@ -1782,7 +1894,10 @@ Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartLi
 
                               onTap: enable
                                   ? () {
-                                      var depthPrice = buyEntity?.depthEntity?.price.toString() ?? "0";
+                                      var depthPrice = buyEntity
+                                              ?.depthEntity?.price
+                                              .toString() ??
+                                          "0";
                                       clickPrice(depthPrice);
                                       //print("[KLINE] 当前选中价格：${buyEntity?.depthEntity?.price?.toString() ?? "--"}");
                                     }
@@ -1806,10 +1921,12 @@ Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartLi
                                   ),
                                   Container(
                                     height: 25,
-                                    padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                                    padding: EdgeInsets.only(
+                                        left: index >= 9 ? 3 : 8),
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      buyEntity?.depthEntity?.vol?.toString() ?? "--",
+                                      buyEntity?.depthEntity?.vol?.toString() ??
+                                          "--",
                                       style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w500,
@@ -1824,7 +1941,10 @@ Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartLi
                                       padding: const EdgeInsets.only(right: 5),
                                       alignment: Alignment.centerRight,
                                       child: Text(
-                                        FormatUtil.clearScientificCounting(buyEntity?.depthEntity?.price) ?? "--",
+                                        FormatUtil.clearScientificCounting(
+                                                buyEntity
+                                                    ?.depthEntity?.price) ??
+                                            "--",
                                         textAlign: TextAlign.end,
                                         style: TextStyle(
                                           fontSize: 10,
@@ -1875,7 +1995,9 @@ Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartLi
 
                               onTap: enable
                                   ? () {
-                                      clickPrice(sellEntity?.depthEntity?.price.toString() ?? "0");
+                                      clickPrice(sellEntity?.depthEntity?.price
+                                              .toString() ??
+                                          "0");
                                       //print("[KLINE] 当前选中价格：${sellEntity?.depthEntity?.price?.toString() ?? "--"}");
                                     }
                                   : null,
@@ -1890,7 +2012,10 @@ Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartLi
                                       alignment: Alignment.centerLeft,
                                       padding: const EdgeInsets.only(left: 5),
                                       child: Text(
-                                        FormatUtil.clearScientificCounting(sellEntity?.depthEntity?.price) ?? "--",
+                                        FormatUtil.clearScientificCounting(
+                                                sellEntity
+                                                    ?.depthEntity?.price) ??
+                                            "--",
                                         style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.w500,
@@ -1903,7 +2028,9 @@ Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartLi
                                     height: 25,
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      sellEntity?.depthEntity?.vol?.toString() ?? "--",
+                                      sellEntity?.depthEntity?.vol
+                                              ?.toString() ??
+                                          "--",
                                       textAlign: TextAlign.end,
                                       style: TextStyle(
                                         fontSize: 10,
@@ -1915,7 +2042,8 @@ Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartLi
                                   Container(
                                     height: 25,
                                     alignment: Alignment.centerRight,
-                                    padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                                    padding: EdgeInsets.only(
+                                        left: index >= 9 ? 3 : 8),
                                     child: Text(
                                       "${index + 1}",
                                       textAlign: TextAlign.end,
@@ -1935,13 +2063,16 @@ Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartLi
                 ],
               );
             },
-            itemCount: limitNum == 20 ? max(buyChartList.length, sellChartList.length) : limitNum),
+            itemCount: limitNum == 20
+                ? max(buyChartList.length, sellChartList.length)
+                : limitNum),
       ],
     ),
   );
 }
 
-dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList, dynamic data,
+dealDepthData(List<ExcDetailEntity> buyChartList,
+    List<ExcDetailEntity> sellChartList, dynamic data,
     {var enable = true}) {
   if (!(data is Map)) {
     return;

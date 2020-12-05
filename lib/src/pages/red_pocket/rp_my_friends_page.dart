@@ -17,19 +17,18 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
-import 'entity/rp_statistics.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 
-class RpFriendsPage extends StatefulWidget {
-  RpFriendsPage();
+class RpMyFriendsPage extends StatefulWidget {
+  RpMyFriendsPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RpAddFriendsState();
+    return _RpMyFriendsState();
   }
 }
 
-class _RpAddFriendsState extends BaseState<RpFriendsPage> {
+class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 

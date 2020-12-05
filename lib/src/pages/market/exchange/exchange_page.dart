@@ -45,7 +45,8 @@ class ExchangePage extends StatefulWidget {
   }
 }
 
-class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAliveClientMixin {
+class _ExchangePageState extends BaseState<ExchangePage>
+    with AutomaticKeepAliveClientMixin {
   var _selectedCoin = 'USDT';
   var _exchangeType = ExchangeType.BUY;
 
@@ -105,15 +106,21 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
   }
 
   _updateQuotes() async {
-    var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
-    QuotesSign quotesSign =
-        quoteSignStr != null ? QuotesSign.fromJson(json.decode(quoteSignStr)) : SupportedQuoteSigns.defaultQuotesSign;
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign));
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+    var quoteSignStr =
+        await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
+    QuotesSign quotesSign = quoteSignStr != null
+        ? QuotesSign.fromJson(json.decode(quoteSignStr))
+        : SupportedQuoteSigns.defaultQuotesSign;
+    BlocProvider.of<WalletCmpBloc>(context)
+        .add(UpdateQuotesSignEvent(sign: quotesSign));
+    BlocProvider.of<WalletCmpBloc>(context)
+        .add(UpdateQuotesEvent(isForceUpdate: true));
   }
 
   _setupMarketItemList() {
-    var mlist = MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList).marketItemList;
+    var mlist =
+        MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
+            .marketItemList;
     if (mlist != null) {
       _marketItemList = mlist;
     }
@@ -154,8 +161,11 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
               },
               onRefresh: () async {
                 ///update assets if logged in
-                if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) {
-                  BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
+                if (ExchangeInheritedModel.of(context)
+                    .exchangeModel
+                    .hasActiveAccount()) {
+                  BlocProvider.of<ExchangeCmpBloc>(context)
+                      .add(UpdateAssetsEvent());
                 }
 
                 ///update symbol list
@@ -242,7 +252,9 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
                       ),
                       onPressed: () {
                         setState(() {
-                          _exchangeType = (_exchangeType == ExchangeType.BUY ? ExchangeType.SELL : ExchangeType.BUY);
+                          _exchangeType = (_exchangeType == ExchangeType.BUY
+                              ? ExchangeType.SELL
+                              : ExchangeType.BUY);
                         });
                       },
                     ),
@@ -268,11 +280,23 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
                   if (await _checkShowConfirmPolicy()) {
                     _showConfirmDexPolicy();
                   } else {
+                    var base = '';
+                    var quote = '';
+                    if (_selectedCoin == 'USDT') {
+                      base = 'USDT';
+                      quote = 'HYN';
+                    } else if (_selectedCoin == 'RP') {
+                      base = 'HYN';
+                      quote = 'RP';
+                    }
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                ExchangeDetailPage(selectedCoin: _selectedCoin, exchangeType: _exchangeType)));
+                            builder: (context) => ExchangeDetailPage(
+                                  exchangeType: _exchangeType,
+                                  base: base,
+                                  quote: quote,
+                                )));
                   }
                 },
                 width: 88,
@@ -346,17 +370,25 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
   }
 
   _account() {
-    var quote = WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote;
+    var quote = WalletInheritedModel.of(context)
+        .activatedQuoteVoAndSign('USDT')
+        ?.sign
+        ?.quote;
     return InkWell(
       onTap: () async {
         if (await _checkShowConfirmPolicy()) {
           _showConfirmDexPolicy();
         } else {
-          if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) {
-            Application.router.navigateTo(context,
-                Routes.exchange_assets_page + '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
+          if (ExchangeInheritedModel.of(context)
+              .exchangeModel
+              .hasActiveAccount()) {
+            Application.router.navigateTo(
+                context,
+                Routes.exchange_assets_page +
+                    '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
           }
         }
       },
@@ -430,9 +462,16 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
     var _usdtTotalQuotePrice = '--';
 
     try {
-      var _totalByUSDT = ExchangeInheritedModel.of(context).exchangeModel.activeAccount?.assetList?.getTotalUsdt();
+      var _totalByUSDT = ExchangeInheritedModel.of(context)
+          .exchangeModel
+          .activeAccount
+          ?.assetList
+          ?.getTotalUsdt();
 
-      var _coinQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.quoteVo?.price;
+      var _coinQuotePrice = WalletInheritedModel.of(context)
+          .activatedQuoteVoAndSign('USDT')
+          ?.quoteVo
+          ?.price;
 
       _usdtTotalQuotePrice = FormatUtil.truncateDecimalNum(
         _totalByUSDT *
@@ -579,22 +618,22 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
 //      ),
 //    );
 
-    // return Row(
-    //   children: [
-    //     if (_exchangeType == ExchangeType.BUY) Spacer(),
-    //     DropdownButtonHideUnderline(
-    //       child: DropdownButton(
-    //         onChanged: (value) {
-    //           setState(() {
-    //             _selectedCoin = value;
-    //           });
-    //         },
-    //         value: _selectedCoin,
-    //         items: availableCoinItemList,
-    //       ),
-    //     ),
-    //   ],
-    // );
+    return Row(
+      children: [
+        if (_exchangeType == ExchangeType.BUY) Spacer(),
+        DropdownButtonHideUnderline(
+          child: DropdownButton(
+            onChanged: (value) {
+              setState(() {
+                _selectedCoin = value;
+              });
+            },
+            value: _selectedCoin,
+            items: availableCoinItemList,
+          ),
+        ),
+      ],
+    );
 
     return Row(
       children: <Widget>[
@@ -669,22 +708,20 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
   }
 
   _marketItem(MarketItemEntity marketItemEntity) {
-    // symbol
-    var _symbolName = '/${marketItemEntity.symbolName}';
+    var base = marketItemEntity?.base;
+    var quote = marketItemEntity?.quote;
 
     // 24hour
-    var _amount24Hour = '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
+    var _amount24Hour =
+        '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
       marketItemEntity.kLineEntity?.amount,
       2,
     )}';
 
     // price
-    var _selectedQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign(
-      marketItemEntity.symbolName,
-    );
-    var _latestPrice = '-';
-    var _latestQuotePriceString = '-';
-    var _latestPercentString = '-';
+    var _latestPrice = '--';
+    var _latestQuotePriceString = '--';
+    var _latestPercentString = '--';
     var _latestPercentBgColor = HexColor('#FF53AE86');
 
     try {
@@ -693,20 +730,30 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
         4,
       );
 
+      double _latestPercent =
+          MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
+              .getRealTimePricePercent(
+        marketItemEntity.symbol,
+      );
+
+      _latestPercentBgColor =
+          _latestPercent < 0 ? HexColor('#FFCC5858') : HexColor('#FF53AE86');
+
+      _latestPercentString =
+          '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(_latestPercent * 100.0, 2)}%';
+
+      var _selectedQuote =
+          WalletInheritedModel.of(context).activatedQuoteVoAndSign(
+        marketItemEntity?.base,
+      );
+
       var _latestQuotePrice = FormatUtil.truncateDoubleNum(
         double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
         4,
       );
 
-      _latestQuotePriceString = '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
-
-      double _latestPercent =
-          MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList).getRealTimePricePercent(
-        marketItemEntity.symbol,
-      );
-      _latestPercentBgColor = _latestPercent < 0 ? HexColor('#FFCC5858') : HexColor('#FF53AE86');
-      _latestPercentString =
-          '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(_latestPercent * 100.0, 2)}%';
+      _latestQuotePriceString =
+          '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
     } catch (e) {}
 
     return Column(
@@ -727,14 +774,16 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
                     MaterialPageRoute(
                         builder: (context) => KLineDetailPage(
                               symbol: marketItemEntity.symbol,
-                              symbolName: marketItemEntity.symbolName,
                               isPop: false,
                               periodCurrentIndex: periodCurrentIndex,
+                              base: marketItemEntity.base,
+                              quote: marketItemEntity.quote,
                             )));
               }
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
               child: Column(
                 children: <Widget>[
                   Row(
@@ -746,14 +795,21 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
                           children: <Widget>[
                             Text.rich(TextSpan(children: [
                               TextSpan(
-                                  text: 'HYN',
+                                  text: quote,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     color: Colors.black,
                                     fontSize: 16,
                                   )),
                               TextSpan(
-                                  text: _symbolName,
+                                  text: '/',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  )),
+                              TextSpan(
+                                  text: base,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w400,
                                     color: Colors.grey,
@@ -817,7 +873,10 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
                               child: Center(
                                 child: Text(
                                   _latestPercentString,
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 12),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12),
                                 ),
                               ),
                             )
@@ -839,10 +898,10 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
     );
   }
 
-  MarketItemEntity _getMarketItem(String coinType) {
+  MarketItemEntity _getMarketItem(String token) {
     var result;
     _marketItemList.forEach((element) {
-      if (element.symbolName == coinType) {
+      if (element.quote == token) {
         result = element;
       }
     });

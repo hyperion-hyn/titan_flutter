@@ -1,14 +1,15 @@
-
 import 'package:k_chart/flutter_k_chart.dart';
+import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 
 class MarketSymbolList {
   dynamic baseCurrency;
   KLineEntity hynusdt;
   KLineEntity hyneth;
   KLineEntity hynbtc;
+  KLineEntity rphyn;
 
+  @deprecated
   MarketSymbolList.fromJson(dynamic response) {
-    //print('[MarketSymbolList.fromJson] ${(response as List<dynamic>).first}');
     try {
       var json = response[0];
       baseCurrency = json['baseCurrency'];
@@ -22,12 +23,40 @@ class MarketSymbolList {
       if (symbols.containsKey('HYN/BTC')) {
         hynbtc = fromSymbolToKLineEntity(symbols['HYN/BTC']);
       }
+      if (symbols.containsKey('RP/HYN')) {
+        rphyn = fromSymbolToKLineEntity(symbols['RP/HYN']);
+      }
     } catch (e) {
       print('[ MarketSymbolList.fromJson] $e');
     }
   }
 
-  KLineEntity fromSymbolToKLineEntity(List itemList) {
+  static List<MarketItemEntity> fromJsonToMarketItemList(dynamic response) {
+    List<MarketItemEntity> marketItemList = List();
+    try {
+      var json = response[0];
+      Map<String, dynamic> symbols = json['symbols'];
+
+      symbols.forEach((key, value) {
+        var quote = key.split('/')[0];
+        var base = key.split('/')[1];
+        var market = '${quote.toLowerCase()}${base.toLowerCase()}';
+        var kLineEntity = fromSymbolToKLineEntity(value);
+        var marketItem = MarketItemEntity(
+          market,
+          kLineEntity,
+          base: base,
+          quote: quote,
+        );
+        marketItemList.add(marketItem);
+      });
+    } catch (e) {
+      print('[ MarketSymbolList.fromJson] $e');
+    }
+    return marketItemList;
+  }
+
+  static KLineEntity fromSymbolToKLineEntity(List itemList) {
     Map<String, dynamic> json = {
       'open': double.parse(itemList[1].toString()),
       'high': double.parse(itemList[2].toString()),

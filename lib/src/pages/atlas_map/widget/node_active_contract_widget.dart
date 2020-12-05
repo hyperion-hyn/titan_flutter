@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
@@ -74,7 +75,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
 
     var width = (MediaQuery.of(context).size.width - 4.0 * 16) / 3.0;
     var nodeName = infoEntity.name;
-    var nodeId = "节点号: ${infoEntity.nodeId}";
+    var nodeId = "${S.of(context).node_num}: ${infoEntity.nodeId}";
 
     //print("[object] item.nodeId:${item.nodeId}");
 
