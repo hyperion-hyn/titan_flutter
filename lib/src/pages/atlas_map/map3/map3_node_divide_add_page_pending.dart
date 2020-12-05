@@ -9,16 +9,9 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
-import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
-import 'package:titan/src/pages/node/model/enum_state.dart';
-import 'package:titan/src/pages/node/model/map3_node_util.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
-import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -39,7 +32,6 @@ class Map3NodeDivideAddPage extends StatefulWidget {
 class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsBindingObserver {
   AllPageState currentState = LoadingState();
 
-  ContractNodeItem contractItem;
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
@@ -148,7 +140,7 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
   }
 
   void getCurrentSpend(String inputText) {
-    if (contractItem == null || !mounted || originInputStr == inputText) {
+    if (!mounted || originInputStr == inputText) {
       return;
     }
 
@@ -162,8 +154,8 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
       return;
     }
     double inputValue = double.parse(inputText);
-    endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
-    spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
+    // endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
+    // spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
   }
 
   @override

@@ -57,16 +57,12 @@ class Routes {
   static const String map3node_send_confirm_page = '/map3node/send_confirm_page';
   static const String map3node_broadcast_success_page = '/map3node/broadcase_success_page';
 
-  static const String map3node_broadcase_success_page_v8 = '/map3node/broadcase_success_page_v8';
-
   static const String map3node_contract_detail_page = '/map3node/contract_detail_page';
-  static const String map3node_contract_detail_page_v8 = '/map3node/contract_detail_page_v8';
 
   static const String map3node_share_page = '/map3node/share_page';
   static const String map3node_introduction_page = '/map3node/pre_create_contract_page';
   static const String map3node_my_page = '/map3node/my_page';
 
-  static const String map3node_my_page_v8 = '/map3node/my_page_v8';
   static const String map3node_my_page_reward = '/map3node/my_page_reward';
   static const String map3node_my_page_reward_new = '/map3node/my_page_reward_new';
 
@@ -219,20 +215,8 @@ class Routes {
     );
 
     router.define(
-      map3node_broadcase_success_page_v8,
-      handler: map3NodeBroadcaseSuccessHandler,
-      transitionType: pushNewPageTransitionType,
-    );
-
-    router.define(
       map3node_contract_detail_page,
       handler: map3NodeContractDetailHandler,
-      transitionType: pushNewPageTransitionType,
-    );
-
-    router.define(
-      map3node_contract_detail_page_v8,
-      handler: map3NodeContractDetailHandlerV8,
       transitionType: pushNewPageTransitionType,
     );
 
@@ -245,13 +229,6 @@ class Routes {
     router.define(
       map3node_introduction_page,
       handler: map3NodeIntroductionHandler,
-      transitionType: pushNewPageTransitionType,
-    );
-
-
-    router.define(
-      map3node_my_page_v8,
-      handler: map3NodeMyHandlerV8,
       transitionType: pushNewPageTransitionType,
     );
 

@@ -41,10 +41,6 @@ import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_success_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_withdraw_confirm_page.dart';
 import 'package:titan/src/pages/mine/qr_code_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_broadcase_success_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_contract_detail_page_v8.dart';
-import 'package:titan/src/pages/node/map3page/my_map3_contracts_page_v8.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/confirm_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
@@ -291,18 +287,6 @@ var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
   );
 });
 
-var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
-  _cacheEntryRouteName(params);
-  ContractNodeItem contractNodeItem;
-  var item = params['contractNodeItem']?.first;
-  if (item != null) {
-    contractNodeItem = ContractNodeItem.fromJson(FluroConvertUtils.string2map(item));
-  }
-  return Map3NodeBroadcaseSuccessPageV8(
-    params['pageType']?.first,
-    contractNodeItem: contractNodeItem,
-  );
-});
 
 var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
@@ -310,12 +294,6 @@ var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
   Map3InfoEntity entity = Map3InfoEntity.fromJson(FluroConvertUtils.string2map(params['info']?.first));
 
   return Map3NodeDetailPage(entity);
-});
-
-var map3NodeContractDetailHandlerV8 = Handler(handlerFunc: (context, params) {
-  _cacheEntryRouteName(params);
-
-  return Map3NodeContractDetailPageV8(int.parse(params['contractId']?.first));
 });
 
 var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
@@ -341,10 +319,6 @@ var map3NodeMyHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeMyPage();
 });
 
-var map3NodeMyHandlerV8 = Handler(handlerFunc: (context, params) {
-  _cacheEntryRouteName(params);
-  return MyContractsPageV8();
-});
 
 var map3NodeMyHandlerReward = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
