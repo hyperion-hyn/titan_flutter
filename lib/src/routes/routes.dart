@@ -199,11 +199,6 @@ class Routes {
     );
 
     router.define(
-      map3node_formal_confirm_page,
-      handler: map3NodeFormalConfirmHandler,
-      transitionType: pushNewPageTransitionType,
-    );
-    router.define(
       map3node_join_contract_page,
       handler: map3NodeJoinContractHandler,
       transitionType: pushNewPageTransitionType,
@@ -259,12 +254,6 @@ class Routes {
     router.define(
       map3node_exit_page,
       handler: map3NodeExitHandler,
-      transitionType: pushNewPageTransitionType,
-    );
-
-    router.define(
-      map3node_collect_page,
-      handler: map3NodeCollectHandler,
       transitionType: pushNewPageTransitionType,
     );
 

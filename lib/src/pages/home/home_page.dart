@@ -4,15 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/updater/bloc/bloc.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/home/home_panel.dart';
-import 'package:titan/src/pages/news/info_detail_page.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
-import 'package:titan/src/pages/node/model/node_item.dart';
-import 'package:titan/src/plugins/titan_plugin.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
-import 'package:titan/src/routes/routes.dart';
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
 class HomePage extends StatefulWidget {
