@@ -125,6 +125,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
   String _realTimePrice = "--";
   String _realTimeQuotePrice = "--";
   ActiveQuoteVoAndSign selectQuote;
+  String _realTimePricePercentStr = "--";
   double _realTimePricePercent = 0;
 
   @override
@@ -286,12 +287,14 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
         MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
             .getRealTimePrice(symbol);
     selectQuote =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.quote);
+        WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.base);
     _realTimeQuotePrice = FormatUtil.truncateDoubleNum(
         double.parse(_realTimePrice) * (selectQuote?.quoteVo?.price ?? 0), 2);
     _realTimePricePercent =
         MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
             .getRealTimePricePercent(symbol);
+    _realTimePricePercentStr =
+    '${(_realTimePricePercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(_realTimePricePercent * 100.0, 2)}%';
 
     return SafeArea(
       child: GestureDetector(
@@ -361,12 +364,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                 padding:
                     EdgeInsets.only(top: 3.0, bottom: 2, left: 2, right: 2),
                 child: Text(
-                  _realTimePricePercent == 0
-                      ? "--"
-                      : (_realTimePricePercent >= 0 ? "+" : "") +
-                          FormatUtil.truncateDoubleNum(
-                              _realTimePricePercent * 100, 2) +
-                          "%",
+                  _realTimePricePercentStr,
                   style: TextStyle(
                     color: _realTimePricePercent >= 0
                         ? HexColor("#53AE86")
