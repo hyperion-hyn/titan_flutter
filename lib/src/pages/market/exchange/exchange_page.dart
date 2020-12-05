@@ -746,7 +746,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
           WalletInheritedModel.of(context).activatedQuoteVoAndSign(
         marketItemEntity?.base,
       );
-print("!!!!555 ${_selectedQuote?.quoteVo.symbol} ${_selectedQuote?.quoteVo.price}  $_latestPercentString");
       var _latestQuotePrice = FormatUtil.truncateDoubleNum(
         double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
         4,

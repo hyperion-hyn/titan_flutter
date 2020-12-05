@@ -314,7 +314,6 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
 
   String getRealTimePrice(String symbol) {
     var marketItem = getMarketItem(symbol);
-    print("!!!!123123 $symbol ${marketItem?.kLineEntity?.close?.toString() ?? "0"}");
     return marketItem?.kLineEntity?.close?.toString() ?? "0";
   }
 
