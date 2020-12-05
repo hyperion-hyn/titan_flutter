@@ -2348,7 +2348,7 @@
   "@rp_staking_state_7": {},
   "rp_staking_state_8": "已提取",
   "@rp_staking_state_8": {},
-  "rp_swap_pool_transmit_func": "<p>前每份（<span>{hynPerRp}</span> HYN）总共可传导出<span>{baseRp}</span> RP，分<span>{releaseDay}</span> 天释放。<span>{stakingDay}</span>天后可取回已抵押的HYN。</p>",
+  "rp_swap_pool_transmit_func": "<p>当前每份（<span>{hynPerRp}</span> HYN）总共可传导出<span>{baseRp}</span> RP，分<span>{releaseDay}</span> 天释放。<span>{stakingDay}</span>天后可取回已抵押的HYN。</p>",
   "@rp_swap_pool_transmit_func": {},
   "rp_today_rp": "今日红包",
   "@rp_today_rp": {},

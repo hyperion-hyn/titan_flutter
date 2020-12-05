@@ -318,16 +318,29 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                                       builder: (BuildContext context) {
                                         return InkWell(
                                           onTap: () {
-                                            if (widget.coinVo.symbol ==
+                                            if ((widget.coinVo.symbol ==
                                                 SupportedTokens
-                                                    .HYN_Atlas.symbol) {
+                                                    .HYN_Atlas.symbol) ||
+                                                (widget.coinVo.symbol ==
+                                                    SupportedTokens
+                                                        .HYN_RP_HRC30.symbol)
+                                            ) {
+
+                                              var base = 'USDT';
+                                              var quote = 'HYN';
+                                              if (widget.coinVo.symbol ==
+                                                  SupportedTokens
+                                                      .HYN_RP_HRC30.symbol) {
+                                                base = 'HYN';
+                                                quote = 'RP';
+                                              }
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           ExchangeDetailPage(
-                                                            base: 'USDT',
-                                                            quote: 'HYN',
+                                                            base: base,
+                                                            quote: quote,
                                                             exchangeType:
                                                                 ExchangeType
                                                                     .BUY,
