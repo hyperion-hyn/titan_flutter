@@ -46,8 +46,7 @@ class ExchangePage extends StatefulWidget {
 }
 
 
-class _ExchangePageState extends BaseState<ExchangePage>
-    with AutomaticKeepAliveClientMixin {
+class _ExchangePageState extends BaseState<ExchangePage>  {
 
   var _selectedCoin = 'USDT';
   var _exchangeType = ExchangeType.BUY;
