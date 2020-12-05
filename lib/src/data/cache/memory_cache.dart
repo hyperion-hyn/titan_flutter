@@ -6,7 +6,6 @@ import 'package:titan/src/config/consts.dart';
 class MemoryCache {
   static var NODE_SHARE_USER_KEY = "node_share_user_key";
   static var NODE_PAGE_DATA_CACHE_KEY = "node_page_data_cache_key";
-  static var MAP3_PAGE_DATA_CACHE_KEY = "map3_page_data_cache_key";
   static var NODE_PRODUCT_PAGE_DATA_CACHE_KEY = "node_product_page_data_cache_key";
   static var CONTRACT_ERROR_TRANSLATION = "contract_error_translation";
   static var RP_INVITE_USER_KEY = "rp_invite_user_key";
