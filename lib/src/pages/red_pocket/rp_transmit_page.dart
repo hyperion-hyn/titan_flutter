@@ -819,10 +819,10 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                   ),
                   style: TextStyle(fontSize: 13),
                   onSaved: (value) {
-                    print("[$runtimeType] onSaved, inputValue:$value");
+                    //print("[$runtimeType] onSaved, inputValue:$value");
                   },
                   onChanged: (String value) {
-                    print("[$runtimeType] onChanged, inputValue:$value");
+                    //print("[$runtimeType] onChanged, inputValue:$value");
 
                     _inputController.add(value);
                   },
