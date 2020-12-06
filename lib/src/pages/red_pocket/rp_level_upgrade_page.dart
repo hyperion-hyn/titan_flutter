@@ -290,7 +290,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
           padding: const EdgeInsets.only(top: 60),
           child: Center(
             child: ClickOvalButton(
-              '升级',
+              _currentSelectedIndex != null ?'升级':'选择想升到的量级',
               _confirmAction,
               height: 38,
               width: 200,
