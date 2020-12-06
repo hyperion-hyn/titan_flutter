@@ -355,13 +355,14 @@ class Wallet {
     int nonce,
     int gasLimit = 0,
   }) async {
-    /*var ethBalance = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('ETH').balance;
+
+    var hynBalance = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('HYN').balance;
 
     var gasFees = BigInt.from(gasLimit) * gasPrice;
-    if(gasFees > ethBalance){
-      Fluttertoast.showToast(msg: "ETH余额不足以支付gas费");
+    if (gasFees > hynBalance) {
+      Fluttertoast.showToast(msg: "HYN余额不足以支付gas费");
       return null;
-    }*/
+    }
 
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client(true);
@@ -380,6 +381,9 @@ class Wallet {
       fetchChainIdFromNetworkId: false,
     );
 
+    if (txHash == null) {
+      Fluttertoast.showToast(msg: "广播异常");
+    }
     return txHash;
   }
 
