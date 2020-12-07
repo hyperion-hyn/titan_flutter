@@ -53,7 +53,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
 
       try {
         Map<String, dynamic> dataMap = json.decode(receivedData);
-        //LogUtil.printMessage("[SocketBloc] mapEventToState, dataMap:$dataMap");
+        LogUtil.printMessage("[SocketBloc] mapEventToState, dataMap:$dataMap");
 
         var status = dataMap["status"];
         var eventAction = dataMap["event"];
@@ -69,7 +69,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                 String channelValue = channel;
 
 
-
+                //LogUtil.printMessage("[SocketBloc] mapEventToState, channelValue:$channelValue");
 
 
                 if (channelValue == SocketConfig.channelKLine24Hour) {
@@ -77,7 +77,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                   var responseMap = response as Map;
                   var symbol = responseMap['symbol'];
                   var data = responseMap['data'];
-                  LogUtil.printMessage("[SocketBloc] mapEventToState, channelValue:$channelValue， symbol:$symbol, data:$data");
+                  //LogUtil.printMessage("[SocketBloc] mapEventToState, channelValue:$channelValue， symbol:$symbol, data:$data");
 
                   /*{
                     status: 0,
