@@ -1688,11 +1688,11 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
       if (state is SubChannelSuccessState) {
         var msg = '订阅 ${state.channel} 成功';
         //print("[Bloc] msg:$msg");
-        Fluttertoast.showToast(msg: msg);
+        //Fluttertoast.showToast(msg: msg);
       } else if (state is UnSubChannelSuccessState) {
         var msg = '取阅 ${state.channel} 成功';
         //print("[Bloc] msg:$msg");
-        Fluttertoast.showToast(msg: msg);
+        //Fluttertoast.showToast(msg: msg);
       } else if (state is ChannelKLine24HourState) {
         //24小时
         // _amount24HourController.add(_amount24HourRefresh);
