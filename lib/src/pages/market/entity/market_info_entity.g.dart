@@ -12,7 +12,7 @@ MarketInfoEntity _$MarketInfoEntityFromJson(Map<String, dynamic> json) {
     int.parse(json['price_precision'] ?? 8),
     int.parse(json['turnover_precision'] ?? 8),
     int.parse(json['amount_max'] ?? 1000000),
-    int.parse(json['amount_min'] ?? 10),
+    double.parse(json['amount_min'] ?? 10),
     (json['depth_precision'] as List)?.map((e) => e as int)?.toList(),
   );
 }
