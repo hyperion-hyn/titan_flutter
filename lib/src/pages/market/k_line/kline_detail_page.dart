@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
@@ -1685,13 +1686,13 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
 
     _socketBloc.listen((state) {
       if (state is SubChannelSuccessState) {
-        //var msg = '订阅 ${state.channel} 成功';
+        var msg = '订阅 ${state.channel} 成功';
         //print("[Bloc] msg:$msg");
-        //Fluttertoast.showToast(msg: msg);
+        Fluttertoast.showToast(msg: msg);
       } else if (state is UnSubChannelSuccessState) {
-        //var msg = '取阅 ${state.channel} 成功';
+        var msg = '取阅 ${state.channel} 成功';
         //print("[Bloc] msg:$msg");
-        //Fluttertoast.showToast(msg: msg);
+        Fluttertoast.showToast(msg: msg);
       } else if (state is ChannelKLine24HourState) {
         //24小时
         // _amount24HourController.add(_amount24HourRefresh);
@@ -1708,23 +1709,34 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
       } else if (state is ChannelExchangeDepthState) {
         //订单深度
         // depthDebounceLater.debounceInterval(() {
-        print("[object] ---ChannelExchangeDepthState, response:${state.response}");
 
-        _buyChartList.clear();
-        _sellChartList.clear();
-        dealDepthData(_buyChartList, _sellChartList, state.response,
-            enable: false);
-        _setupDepthWidget();
-        _depthController.add(_depthRefresh);
+        var currentSymbol = "${widget.quote}/${widget.base}".toLowerCase();
+        print("[object] ---ChannelExchangeDepthState, response:${state.response}, currentSymbol:$currentSymbol");
+
+        if (state.symbol == currentSymbol) {
+          _buyChartList.clear();
+          _sellChartList.clear();
+          dealDepthData(_buyChartList, _sellChartList, state.response,
+              enable: false);
+          _setupDepthWidget();
+          _depthController.add(_depthRefresh);
+        }
+
         // }, 500);
       } else if (state is ChannelTradeDetailState) {
         print("[object] ---ChannelTradeDetailState, response:${state.response}");
 
-        //成交
-        // tradeDebounceLater.debounceInterval(() {
-        _dealTradeData(state.response, isReplace: false);
-        _tradeController.add(_tradeRefresh);
-        // }, 500);
+        var currentSymbol = "${widget.quote}/${widget.base}".toLowerCase();
+        print("[object] ---ChannelExchangeDepthState, response:${state.response}, currentSymbol:$currentSymbol");
+
+        if (state.symbol == currentSymbol) {
+          //成交
+          // tradeDebounceLater.debounceInterval(() {
+          _dealTradeData(state.response, isReplace: false);
+          _tradeController.add(_tradeRefresh);
+          // }, 500);
+        }
+
       }
     });
   }

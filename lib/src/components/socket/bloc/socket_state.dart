@@ -64,12 +64,14 @@ class ChannelKLinePeriodState extends SocketState {
 
 class ChannelExchangeDepthState extends SocketState {
   final Map<String, dynamic> response;
-  ChannelExchangeDepthState({this.response});
+  final String symbol;
+  ChannelExchangeDepthState({this.response, this.symbol});
 }
 
 class ChannelTradeDetailState extends SocketState {
   final List<dynamic> response;
-  ChannelTradeDetailState({this.response});
+  final String symbol;
+  ChannelTradeDetailState({this.response, this.symbol});
 }
 
 class ChannelUserTickState extends SocketState {
