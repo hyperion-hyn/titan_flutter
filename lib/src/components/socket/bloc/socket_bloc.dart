@@ -69,13 +69,15 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                 String channelValue = channel;
 
 
-                var responseMap = response as Map;
-                var symbol = responseMap['symbol'];
-                var data = responseMap['data'];
 
-                LogUtil.printMessage("[SocketBloc] mapEventToState, channelValue:$channelValue， symbol:$symbol, data:$data");
+
 
                 if (channelValue == SocketConfig.channelKLine24Hour) {
+
+                  var responseMap = response as Map;
+                  var symbol = responseMap['symbol'];
+                  var data = responseMap['data'];
+                  LogUtil.printMessage("[SocketBloc] mapEventToState, channelValue:$channelValue， symbol:$symbol, data:$data");
 
                   /*{
                     status: 0,
@@ -97,9 +99,9 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
 
                   yield ChannelKLine24HourState(symbol: symbol, response: data);
                 } else if (channelValue.contains("depth")) {
-                  yield ChannelExchangeDepthState(response: response, symbol: symbol);
+                  yield ChannelExchangeDepthState(response: response,);
                 } else if (channelValue.contains("trade.detail")) {
-                  yield ChannelTradeDetailState(response: response, symbol: symbol);
+                  yield ChannelTradeDetailState(response: response,);
                 } else if (channelValue.startsWith("user") &&
                     channelValue.contains("tick")) {
                   yield ChannelUserTickState(response: response);

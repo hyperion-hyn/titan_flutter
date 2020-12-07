@@ -11,9 +11,11 @@ import 'package:titan/src/widget/loading_button/click_loading_button.dart';
 class OrderItem extends StatefulWidget {
   final Order _order;
   final Function revokeOrder;
+  final String marketCoin;
 
   OrderItem(
     this._order, {
+      this.marketCoin,
     this.revokeOrder,
   });
 
@@ -34,6 +36,10 @@ class OrderItemState extends State<OrderItem> {
     if ((widget?._order?.market?.split('/')?.length ?? -1) == 2) {
       _base = widget._order.market.split('/')[0];
       _quote = widget._order.market.split('/')[1];
+    }
+    if(widget?.marketCoin != null){
+      _base = widget.marketCoin.split('/')[0];
+      _quote = widget.marketCoin.split('/')[1];
     }
   }
 

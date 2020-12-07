@@ -196,14 +196,15 @@ Widget orderListEmpty(BuildContext context) {
   );
 }
 
-Widget orderListWidget(BuildContext context, String marketCoin, bool isLoading,
-    List<Order> _activeOrders) {
+Widget orderListWidget(BuildContext context, String marketCoin, bool isLoading, List<Order> _activeOrders) {
+  print("!!!4445555 $marketCoin");
   return ListView.builder(
     shrinkWrap: true,
     physics: NeverScrollableScrollPhysics(),
     itemCount: _activeOrders.length,
     itemBuilder: (ctx, index) => OrderItem(
       _activeOrders[index],
+      marketCoin: marketCoin,
       revokeOrder: (Order orderEntity) async {
         ExchangeApi exchangeApi = ExchangeApi();
         try {
