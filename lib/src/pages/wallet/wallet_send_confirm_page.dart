@@ -579,13 +579,27 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           return;
         }
       } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-        await HYNApi.sendTransferHYN(
-          walletPassword,
-          activatedWallet.wallet,
-          toAddress: widget.receiverAddress,
-          amount: ConvertTokenUnit.strToBigInt(
-              widget.transferAmount, widget.coinVo.decimals),
-        );
+        if (widget.coinVo.contractAddress != null) {
+          var txHash = await HYNApi.sendTransferHYNHrc30(
+              walletPassword,
+              ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
+              widget.receiverAddress,
+              activatedWallet.wallet,
+              widget.coinVo.contractAddress);
+          if (txHash == null) {
+            setState(() {
+              isTransferring = false;
+            });
+            return;
+          }
+        } else {
+          await HYNApi.sendTransferHYN(
+            walletPassword,
+            activatedWallet.wallet,
+            toAddress: widget.receiverAddress,
+            amount: ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
+          );
+        }
       } else {
         var txHash = await _transferErc20(
             walletPassword,

@@ -87,39 +87,52 @@ class HynTransferHistory extends Object {
   @JsonKey(name: 'payload')
   TransferPayload payload;
 
+  @JsonKey(name: 'internal_trans')
+  List<InternalTransactions> internalTransactions;
+
   HynTransferHistory(
-    this.atlasAddress,
-    this.blockHash,
-    this.blockNum,
-    this.contractAddress,
-    this.createdAt,
-    this.data,
-    this.dataDecoded,
-    this.epoch,
-    this.from,
-    this.gasLimit,
-    this.gasPrice,
-    this.gasUsed,
-    this.id,
-    this.logsDecoded,
-    this.map3Address,
-    this.name,
-    this.nonce,
-    this.pic,
-    this.status,
-    this.timestamp,
-    this.to,
-    this.transactionIndex,
-    this.txHash,
-    this.type,
-    this.updatedAt,
-    this.value,
-    this.payload,
-  );
+      this.atlasAddress,
+      this.blockHash,
+      this.blockNum,
+      this.contractAddress,
+      this.createdAt,
+      this.data,
+      this.dataDecoded,
+      this.epoch,
+      this.from,
+      this.gasLimit,
+      this.gasPrice,
+      this.gasUsed,
+      this.id,
+      this.logsDecoded,
+      this.map3Address,
+      this.name,
+      this.nonce,
+      this.pic,
+      this.status,
+      this.timestamp,
+      this.to,
+      this.transactionIndex,
+      this.txHash,
+      this.type,
+      this.updatedAt,
+      this.value,
+      this.payload,
+      this.internalTransactions,
+      );
 
   factory HynTransferHistory.fromJson(Map<String, dynamic> srcJson) => _$HynTransferHistoryFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$HynTransferHistoryToJson(this);
+
+  BigInt getAllContractValue(){
+    BigInt value = BigInt.from(0);
+    internalTransactions.forEach((element) {
+      value += BigInt.parse(element.value);
+    });
+    return value;
+  }
+
 }
 
 @JsonSerializable()
@@ -143,13 +156,13 @@ class DataDecoded extends Object {
   String amount;
 
   DataDecoded(
-    this.operatorAddress,
-    this.description,
-    this.commission,
-    this.nodePubKey,
-    this.nodeKeySig,
-    this.amount,
-  );
+      this.operatorAddress,
+      this.description,
+      this.commission,
+      this.nodePubKey,
+      this.nodeKeySig,
+      this.amount,
+      );
 
   factory DataDecoded.fromJson(Map<String, dynamic> srcJson) => _$DataDecodedFromJson(srcJson);
 
@@ -174,12 +187,12 @@ class Description extends Object {
   String details;
 
   Description(
-    this.name,
-    this.identity,
-    this.website,
-    this.securityContact,
-    this.details,
-  );
+      this.name,
+      this.identity,
+      this.website,
+      this.securityContact,
+      this.details,
+      );
 
   factory Description.fromJson(Map<String, dynamic> srcJson) => _$DescriptionFromJson(srcJson);
 
@@ -195,9 +208,9 @@ class LogsDecoded extends Object {
   String topics;
 
   LogsDecoded(
-    this.rewards,
-    this.topics,
-  );
+      this.rewards,
+      this.topics,
+      );
 
   factory LogsDecoded.fromJson(Map<String, dynamic> srcJson) => _$LogsDecodedFromJson(srcJson);
 
@@ -213,9 +226,9 @@ class Rewards extends Object {
   String amount;
 
   Rewards(
-    this.address,
-    this.amount,
-  );
+      this.address,
+      this.amount,
+      );
 
   factory Rewards.fromJson(Map<String, dynamic> srcJson) => _$RewardsFromJson(srcJson);
 
@@ -242,5 +255,49 @@ class TransferPayload extends Object {
   factory TransferPayload.fromJson(Map<String, dynamic> srcJson) => _$TransferPayloadFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$TransferPayloadToJson(this);
+
+}
+
+@JsonSerializable()
+class InternalTransactions extends Object {
+
+  @JsonKey(name: 'tx_hash')
+  String txHash;
+
+  @JsonKey(name: 'log_index')
+  int logIndex;
+
+  @JsonKey(name: 'from')
+  String from;
+
+  @JsonKey(name: 'to')
+  String to;
+
+  @JsonKey(name: 'value')
+  String value;
+
+  @JsonKey(name: 'data')
+  String data;
+
+  @JsonKey(name: 'payload')
+  String payload;
+
+  @JsonKey(name: 'type')
+  String type;
+
+  @JsonKey(name: 'status')
+  int status;
+
+  @JsonKey(name: 'timestamp')
+  int timestamp;
+
+  @JsonKey(name: 'contract_address')
+  String contractAddress;
+
+  InternalTransactions(this.txHash,this.logIndex,this.from,this.to,this.value,this.data,this.payload,this.type,this.status,this.timestamp,this.contractAddress,);
+
+  factory InternalTransactions.fromJson(Map<String, dynamic> srcJson) => _$InternalTransactionsFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$InternalTransactionsToJson(this);
 
 }

@@ -148,15 +148,15 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                               },
                               child: _isShowBalances
                                   ? Image.asset(
-                                      'res/drawable/ic_wallet_show_balances.png',
-                                      height: 20,
-                                      width: 20,
-                                    )
+                                'res/drawable/ic_wallet_show_balances.png',
+                                height: 20,
+                                width: 20,
+                              )
                                   : Image.asset(
-                                      'res/drawable/ic_wallet_hide_balances.png',
-                                      height: 20,
-                                      width: 20,
-                                    ),
+                                'res/drawable/ic_wallet_hide_balances.png',
+                                height: 20,
+                                width: 20,
+                              ),
                             )
                           ],
                         ),
@@ -168,9 +168,9 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                         children: <Widget>[
                           Text(
                             WalletInheritedModel.of(context,
-                                        aspect: WalletAspect.quote)
-                                    .activeQuotesSign
-                                    ?.sign ??
+                                aspect: WalletAspect.quote)
+                                .activeQuotesSign
+                                ?.sign ??
                                 '',
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
@@ -206,17 +206,21 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (BuildContext context, int index) {
                 var coinVo = widget.walletVo.coins[index];
+                var hasPrice = true;
+                // if(coinVo.symbol == SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol){
+                //   hasPrice = false;
+                // }
                 return InkWell(
                     onTap: () {
                       var coinVo = widget.walletVo.coins[index];
                       var coinVoJsonStr =
-                          FluroConvertUtils.object2string(coinVo.toJson());
+                      FluroConvertUtils.object2string(coinVo.toJson());
                       Application.router.navigateTo(
                           context,
                           Routes.wallet_account_detail +
                               '?coinVo=$coinVoJsonStr');
                     },
-                    child: _buildAccountItem(context, coinVo));
+                    child: _buildAccountItem(context, coinVo, hasPrice: hasPrice));
               },
               itemCount: widget.walletVo.coins.length,
             ),
@@ -252,7 +256,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               height: 16,
             ),
             HynBurnBanner(),
-            if (env.buildType == BuildType.DEV) _ropstenTestWalletView(context),
+//            if (env.buildType == BuildType.DEV) _ropstenTestWalletView(context),
           ]),
     );
   }
@@ -293,7 +297,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
   Widget _exchangeHYNViewOld(BuildContext context, CoinVo coin) {
     return InkWell(
       onTap: () {
-        print("111111111");
         AtlasApi.goToAtlasMap3HelpPage(context);
       },
       child: Column(
@@ -407,7 +410,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
               final credentials =
-                  await client.credentialsFromPrivateKey(privateKey);
+              await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
                 var toAddress = activeWallet.getEthAccount().address;
                 var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.05);
@@ -445,14 +448,14 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
               final credentials =
-                  await client.credentialsFromPrivateKey(privateKey);
+              await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
                 var toAddress = activeWallet.getEthAccount().address;
 
                 var hynErc20Contract = WalletUtil.getHynErc20Contract(
                     ContractTestConfig.hynContractAddress);
                 var hynAmount =
-                    ConvertTokenUnit.etherToWei(etherDouble: 600000); //二十万
+                ConvertTokenUnit.etherToWei(etherDouble: 600000); //二十万
                 var txHash = await client.sendTransaction(
                   credentials,
                   Transaction.callContract(
@@ -488,7 +491,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
               final credentials =
-                  await client.credentialsFromPrivateKey(privateKey);
+              await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
                 var toAddress = activeWallet.getEthAccount().address;
 
@@ -529,10 +532,10 @@ class _ShowWalletViewState extends State<ShowWalletView> {
     );
   }
 
-  Widget _buildAccountItem(BuildContext context, CoinVo coin) {
+  Widget _buildAccountItem(BuildContext context, CoinVo coin, {bool hasPrice = true}) {
     var symbol = coin.symbol;
     var symbolQuote =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign(symbol);
+    WalletInheritedModel.of(context).activatedQuoteVoAndSign(symbol);
     var subSymbol = "";
 
     if (coin.coinType == CoinType.HYN_ATLAS) {
@@ -543,6 +546,18 @@ class _ShowWalletViewState extends State<ShowWalletView> {
         symbol = symbolComponents.first;
         subSymbol = symbolComponents.last.toLowerCase();
       }
+    }
+
+    var quotePrice;
+    var balancePrice;
+    if(!hasPrice){
+      quotePrice = S.of(context).exchange_soon;
+      balancePrice = "";
+    }else{
+      quotePrice = "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(symbolQuote?.quoteVo?.price ?? 0.0)}";
+      balancePrice = _isShowBalances
+          ? "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}"
+          : '${symbolQuote?.sign?.sign ?? ''} *****';
     }
 
     return Padding(
@@ -591,7 +606,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
-                        "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(symbolQuote?.quoteVo?.price ?? 0.0)}",
+                        quotePrice,
                         style: TextStyles.textC9b9b9bS12,
                       ),
                     ),
@@ -621,10 +636,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Text(
-                      _isShowBalances
-                          ? "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}"
-                          : '${symbolQuote?.sign?.sign ?? ''} *****',
+                    child: Text(balancePrice,
                       style: TextStyles.textC9b9b9bS12,
                     ),
                   ),
@@ -689,7 +701,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               final client = WalletUtil.getWeb3Client(true);
               String privateKey = Config.TEST_WALLET_PRIVATE_KEY;
               final credentials =
-                  await client.credentialsFromPrivateKey(privateKey);
+              await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
                 var toAddress = activeWallet.getAtlasAccount().address;
                 var amount = ConvertTokenUnit.etherToWei(etherDouble: 550000);

@@ -38,8 +38,10 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
 import '../../../../config.dart';
+import '../../../../env.dart';
 
 class AtlasApi {
   Future<List<HynTransferHistory>> queryHYNHistory(
@@ -57,6 +59,27 @@ class AtlasApi {
       List resultList = dataList as List;
       return resultList
           .map((json) => HynTransferHistory.fromJson(json))
+          .toList();
+    } else {
+      throw new Exception();
+    }
+  }
+
+  Future<List<InternalTransactions>> queryHYNHrc30History(
+      String address, int page, String contractAddress) async {
+    Map result = await AtlasHttpCore.instance.post(
+      "v1/wallet/account_internal_txs",
+      data: "{\"address\": \"$address\",\"contract_address\": \"$contractAddress\",\"page\": $page,\"size\": 20}",
+    );
+
+    if (result["code"] == 0) {
+      var dataList = result["data"]["data"];
+      if (dataList == null || (dataList as List).length == 0) {
+        return [];
+      }
+      List resultList = dataList as List;
+      return resultList
+          .map((json) => InternalTransactions.fromJson(json))
           .toList();
     } else {
       throw new Exception();
@@ -93,6 +116,21 @@ class AtlasApi {
         "http://h.hyn.space/helpPage");
     String webTitle = FluroConvertUtils.fluroCnParamsEncode(
         S.of(Keys.rootKey.currentContext).help);
+    Application.router.navigateTo(context,
+        Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+  }
+
+  static goToHynScanPage(BuildContext context,String walletAddress) {
+    if(walletAddress != null && walletAddress.startsWith("0x")){
+      walletAddress = WalletUtil.ethAddressToBech32Address(walletAddress);
+    }
+    String webUrl;
+    if(env.buildType == BuildType.DEV){
+      webUrl = FluroConvertUtils.fluroCnParamsEncode("https://test.hynscan.io/address/$walletAddress/transactions");
+    }else{
+      webUrl = FluroConvertUtils.fluroCnParamsEncode("https://hynscan.io/address/$walletAddress/transactions");
+    }
+    String webTitle = FluroConvertUtils.fluroCnParamsEncode("");
     Application.router.navigateTo(context,
         Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
   }

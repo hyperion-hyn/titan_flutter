@@ -10,8 +10,6 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
-import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -33,7 +31,6 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
   NodeApi _nodeApi = NodeApi();
-  ContractNodeItem contractItem;
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
@@ -140,9 +137,8 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
 
   void getNetworkData() async {
     try {
-      var requestList = await Future.wait([_nodeApi.getContractInstanceItem("1"), _nodeApi.getNodeProviderList()]);
-      contractItem = requestList[0];
-      providerList = requestList[1];
+
+      providerList = await _nodeApi.getNodeProviderList();
 
       selectNodeProvider(0, 0);
 
@@ -190,7 +186,7 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
   }
 
   void getCurrentSpend(String inputText) {
-    if (contractItem == null || !mounted || originInputStr == inputText) {
+    if (!mounted || originInputStr == inputText) {
       return;
     }
 
@@ -205,8 +201,8 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
       return;
     }
     double inputValue = double.parse(inputText);
-    endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
-    spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
+    // endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
+    // spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
 
     if (mounted) {
       setState(() {
@@ -237,7 +233,7 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
   List<String> _hintList = ["请选择节点图标", "请输入节点名称", "请输入一个全网唯一的节点号", "节点允许的最大抵押量", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
 
   Widget _pageView(BuildContext context) {
-    if (currentState != null || contractItem.contract == null) {
+    if (currentState != null) {
       return AllPageStateContainer(currentState, () {
         setState(() {
           currentState = LoadingState();

@@ -6,6 +6,7 @@ class AssetList {
   AssetType HYN;
   AssetType ETH;
   AssetType BTC;
+  AssetType RP;
 
   AssetList();
 
@@ -22,6 +23,9 @@ class AssetList {
     if (json.containsKey('BTC')) {
       BTC = AssetType.fromJson(json['BTC']);
     }
+    if (json.containsKey('RP')) {
+      RP = AssetType.fromJson(json['RP']);
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -30,6 +34,7 @@ class AssetList {
     ret['HYN'] = HYN.toJson();
     ret['ETH'] = ETH.toJson();
     ret['BTC'] = BTC.toJson();
+    ret['RP'] = RP.toJson();
     return ret;
   }
 
@@ -42,19 +47,11 @@ class AssetList {
       return USDT;
     } else if (type == 'ETH') {
       return ETH;
+    } else if (type == 'RP') {
+      return RP;
     } else {
       return null;
     }
-  }
-
-  Decimal getTotalEth() {
-    var total;
-    try {
-      Decimal usdtToEth = Decimal.parse(USDT.eth);
-      Decimal hynToEth = Decimal.parse(HYN.eth);
-      total = usdtToEth + hynToEth;
-    } catch (e) {}
-    return total;
   }
 
   Decimal getTotalUsdt() {
@@ -63,6 +60,8 @@ class AssetList {
       Decimal usdt = Decimal.parse(USDT.usdt);
       Decimal hynToUsdt = Decimal.parse(HYN.usdt);
       total = usdt + hynToUsdt;
+      Decimal rpToUsdt = Decimal.parse(RP.usdt);
+      total = usdt + hynToUsdt + rpToUsdt;
     } catch (e) {}
     return total;
   }
@@ -71,8 +70,9 @@ class AssetList {
     var total;
     try {
       Decimal usdtToHyn = Decimal.parse(USDT.hyn);
+      Decimal rpToHyn = Decimal.parse(RP.hyn);
       Decimal hyn = Decimal.parse(HYN.hyn);
-      total = usdtToHyn + hyn;
+      total = usdtToHyn + rpToHyn + hyn;
     } catch (e) {}
     return total;
   }
@@ -84,6 +84,8 @@ class AssetList {
       return USDT.withdrawFee;
     } else if (type == 'ETH') {
       return ETH.withdrawFee;
+    } else if (type == 'RP') {
+      return RP.withdrawFee;
     } else {
       return '';
     }

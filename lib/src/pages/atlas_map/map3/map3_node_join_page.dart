@@ -332,7 +332,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
         padding: const EdgeInsets.only(bottom: 18.0, top: 10),
         child: Center(
           child: ClickOvalButton(
-            "确定",
+            S.of(context).confirm,
             () async{
               if (!(_joinCoinFormKey.currentState?.validate() ?? false)) {
                 return;

@@ -57,16 +57,12 @@ class Routes {
   static const String map3node_send_confirm_page = '/map3node/send_confirm_page';
   static const String map3node_broadcast_success_page = '/map3node/broadcase_success_page';
 
-  static const String map3node_broadcase_success_page_v8 = '/map3node/broadcase_success_page_v8';
-
   static const String map3node_contract_detail_page = '/map3node/contract_detail_page';
-  static const String map3node_contract_detail_page_v8 = '/map3node/contract_detail_page_v8';
 
   static const String map3node_share_page = '/map3node/share_page';
   static const String map3node_introduction_page = '/map3node/pre_create_contract_page';
   static const String map3node_my_page = '/map3node/my_page';
 
-  static const String map3node_my_page_v8 = '/map3node/my_page_v8';
   static const String map3node_my_page_reward = '/map3node/my_page_reward';
   static const String map3node_my_page_reward_new = '/map3node/my_page_reward_new';
 
@@ -107,7 +103,7 @@ class Routes {
     );
   }
 
-  static void configureRoutes(Router router) {
+  static void configureRoutes(FluroRouter router) {
     router.notFoundHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
       print("ROUTE WAS NOT FOUND !!!");
       return unknownPage();
@@ -203,11 +199,6 @@ class Routes {
     );
 
     router.define(
-      map3node_formal_confirm_page,
-      handler: map3NodeFormalConfirmHandler,
-      transitionType: pushNewPageTransitionType,
-    );
-    router.define(
       map3node_join_contract_page,
       handler: map3NodeJoinContractHandler,
       transitionType: pushNewPageTransitionType,
@@ -219,20 +210,8 @@ class Routes {
     );
 
     router.define(
-      map3node_broadcase_success_page_v8,
-      handler: map3NodeBroadcaseSuccessHandler,
-      transitionType: pushNewPageTransitionType,
-    );
-
-    router.define(
       map3node_contract_detail_page,
       handler: map3NodeContractDetailHandler,
-      transitionType: pushNewPageTransitionType,
-    );
-
-    router.define(
-      map3node_contract_detail_page_v8,
-      handler: map3NodeContractDetailHandlerV8,
       transitionType: pushNewPageTransitionType,
     );
 
@@ -245,13 +224,6 @@ class Routes {
     router.define(
       map3node_introduction_page,
       handler: map3NodeIntroductionHandler,
-      transitionType: pushNewPageTransitionType,
-    );
-
-
-    router.define(
-      map3node_my_page_v8,
-      handler: map3NodeMyHandlerV8,
       transitionType: pushNewPageTransitionType,
     );
 
@@ -282,12 +254,6 @@ class Routes {
     router.define(
       map3node_exit_page,
       handler: map3NodeExitHandler,
-      transitionType: pushNewPageTransitionType,
-    );
-
-    router.define(
-      map3node_collect_page,
-      handler: map3NodeCollectHandler,
       transitionType: pushNewPageTransitionType,
     );
 
@@ -358,13 +324,14 @@ class Routes {
       body: Center(child: Text('page not found')));
 }
 
-class MyRouter extends Router {
+class MyRouter extends FluroRouter {
   @override
   RouteMatch matchRoute(BuildContext buildContext, String path,
       {RouteSettings routeSettings,
       TransitionType transitionType,
       Duration transitionDuration = const Duration(milliseconds: 250),
-      transitionsBuilder}) {
+      transitionsBuilder,
+      bool maintainState = true}) {
     RouteSettings settingsToUse = routeSettings;
     if (routeSettings == null) {
       settingsToUse = RouteSettings(name: path, arguments: Map());
@@ -378,6 +345,7 @@ class MyRouter extends Router {
       transitionType: transitionType,
       transitionDuration: transitionDuration,
       transitionsBuilder: transitionsBuilder,
+      maintainState: maintainState
     );
   }
 }

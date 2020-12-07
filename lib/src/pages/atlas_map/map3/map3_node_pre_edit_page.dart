@@ -619,7 +619,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
           height: 32,
           fontSize: 14,
           fontColor: DefaultColors.color999,
-          btnColor: Colors.transparent,
+          btnColor: [Colors.transparent],
         ),
         SizedBox(
           width: 8,

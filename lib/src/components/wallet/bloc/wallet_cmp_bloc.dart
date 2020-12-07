@@ -2,29 +2,20 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:decimal/decimal.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:titan/src/basic/http/http.dart';
-import 'package:titan/src/components/auth/bloc/bloc.dart';
-import 'package:titan/src/components/auth/model.dart';
-import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import '../coin_market_api.dart';
 import '../vo/symbol_quote_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/model/start_join_instance.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
-import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/future_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 
@@ -33,7 +24,6 @@ import '../../../global.dart';
 import '../wallet_repository.dart';
 import '../vo/wallet_vo.dart';
 import '../vo/coin_vo.dart';
-import 'package:rxdart/rxdart.dart';
 import 'dart:math';
 
 class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
@@ -147,7 +137,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         quotes.addAll(addQuotes);
 
         var currentQuotesModel =
-            QuotesModel(quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
+        QuotesModel(quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
 
         if (_activatedWalletVo != null) {
           //faster show quote
@@ -174,7 +164,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       final symbolString = symbols.reduce((value, element) => value + ',' + element);
 
       var quotes = await _coinMarketApi.quotes(0);
-
       List<SymbolQuoteVo> addQuotes = [];
       for (var quote in quotes) {
         if (quote.symbol == SupportedTokens.HYN_Atlas.symbol) {
@@ -186,7 +175,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       quotes.addAll(addQuotes);
 
       var currentQuotesModel =
-          QuotesModel(quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
+      QuotesModel(quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
 
       yield UpdatedQuotesState(quoteModel: currentQuotesModel);
     } else if (event is UpdateQuotesSignEvent) {
@@ -249,6 +238,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   WalletVo walletToWalletCoinsVo(Wallet wallet) {
     List<CoinVo> coins = [];
     var hynContractCoin;
+    var hynRPContractCoin;
     for (var account in wallet.accounts) {
       // add public chain coin
       CoinVo coin = CoinVo(
@@ -276,7 +266,9 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           logo: asset.logo,
           balance: BigInt.from(0),
         );
-        if (contractCoin.symbol == SupportedTokens.HYN_ERC20.symbol) {
+        if (contractCoin.symbol == SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol) {
+          hynRPContractCoin = contractCoin;
+        } else if (contractCoin.symbol == SupportedTokens.HYN_ERC20.symbol) {
           hynContractCoin = contractCoin;
         } else {
           coins.add(contractCoin);
@@ -285,6 +277,9 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
     }
     if (hynContractCoin != null) {
       coins.add(hynContractCoin);
+    }
+    if (hynRPContractCoin != null) {
+      coins.add(hynRPContractCoin);
     }
     return WalletVo(wallet: wallet, coins: coins);
   }
@@ -323,17 +318,17 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
     // fastest
     var fastGasPrice = double.parse(responseFromEtherScanDict["FastGasPrice"]) * 10.0;
     var fastest = double.parse(responseFromEthGasStationDict["fastest"].toString());
-    responseFromEthGasStationDict["fastest"] = max(fastGasPrice, fastest);
+    responseFromEthGasStationDict["fastest"] = min(fastGasPrice, fastest);
 
     // fast
     var proposeGasPrice = double.parse(responseFromEtherScanDict["ProposeGasPrice"]) * 10.0;
     var fast = double.parse(responseFromEthGasStationDict["fast"].toString());
-    responseFromEthGasStationDict["fast"] = max(proposeGasPrice, fast);
+    responseFromEthGasStationDict["fast"] = min(proposeGasPrice, fast);
 
     // average
     var safeGasPrice = double.parse(responseFromEtherScanDict["SafeGasPrice"]) * 10.0;
     var average = double.parse(responseFromEthGasStationDict["average"].toString());
-    responseFromEthGasStationDict["average"] = max(safeGasPrice, average);
+    responseFromEthGasStationDict["average"] = min(safeGasPrice, average);
 
     //print("[object] requestGasPrice，2, responseFromEtherScanDict:$responseFromEtherScanDict, responseFromEthGasStationDict:$responseFromEthGasStationDict");
 

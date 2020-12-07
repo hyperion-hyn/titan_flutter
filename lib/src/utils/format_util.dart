@@ -5,6 +5,7 @@ import 'package:titan/generated/l10n.dart';
 import 'dart:convert';
 
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 
 class FormatUtil {
@@ -18,7 +19,12 @@ class FormatUtil {
 
   static String stringFormatCoinNum(String numValue) {
     return NumberFormat("#,###,###,###.######")
-        .format(Decimal.parse(numValue).toDouble());
+        .format(Decimal.tryParse(numValue ?? '0').toDouble());
+  }
+
+  static String stringFormatCoinNum10(String numValue) {
+    return NumberFormat("#,###,###,###.##########")
+        .format(Decimal.tryParse(numValue ?? '0').toDouble());
   }
 
   static String stringFormatCoinNumWithFour(String numValue) {
@@ -168,7 +174,7 @@ class FormatUtil {
   }
 
   static String coinBalanceHumanReadFormat(CoinVo coinVo, [isFloor = true]) {
-    var value = double.tryParse(coinBalanceHumanRead(coinVo))??0;
+    var value = double.tryParse(coinBalanceHumanRead(coinVo)) ?? 0;
     if (isFloor) {
       value = (value * 1000000).floor() / 1000000;
     }
@@ -350,6 +356,22 @@ class FormatUtil {
     }
   }
 
+  /// timestamp 秒
+  static String humanReadableDay(int timestamp) {
+    var now = DateTime.now();
+    var timeDate = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    var todayBegin = DateTime(now.year, now.month, now.day);
+    if (timeDate.isAfter(todayBegin)) {
+      return S.of(Keys.rootKey.currentContext).today;
+    } else if (timeDate.isAfter(DateTime(now.year, now.month, now.day - 1))) {
+      return S.of(Keys.rootKey.currentContext).yesterday;
+    } else if (timeDate.isAfter(DateTime(now.year, now.month, now.day - 2))) {
+      return S.of(Keys.rootKey.currentContext).the_day_before_yesterday;
+    } else {
+      return Const.DAY_FORMAT.format(timeDate);
+    }
+  }
+
   static String strClearZero(String value) {
     return Decimal.parse(value).toString();
   }
@@ -366,8 +388,15 @@ class FormatUtil {
       return entityParam;
     }
     if (entityParam is String) {
-      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entityParam))
-          .toString();
+      var arr = entityParam.split('.');
+      bool isContainerPoint = (arr?.length ?? 0) > 1;
+      String pendingValue = entityParam;
+      if (isContainerPoint) {
+        pendingValue = arr?.first ?? '0';
+      }
+      var weiBigInt = (BigInt.tryParse(pendingValue) ??
+          BigInt.from(int.tryParse(pendingValue) ?? 0));
+      return ConvertTokenUnit.weiToEther(weiBigInt: weiBigInt).toString();
     } else if (entityParam is int) {
       return ConvertTokenUnit.weiToEther(weiInt: entityParam).toString();
     } else {

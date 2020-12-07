@@ -630,54 +630,55 @@ class HomePanelState extends State<HomePanel> {
   Widget _search() {
     return Padding(
       padding: const EdgeInsets.only(left: 14, right: 14),
-      child: InkWell(
-        onTap: onSearch,
-        borderRadius: BorderRadius.all(Radius.circular(44)),
-        child: Container(
-          height: 44,
-          decoration: BoxDecoration(
-            color: Color(0xfff2f2f2),
-            borderRadius: BorderRadius.all(Radius.circular(44)),
-            /*boxShadow: [
-              BoxShadow(
-                color: HexColor("#000000").withOpacity(0.08),
-                offset: Offset(0, 2),
-                blurRadius: 12.0,
+      child: Container(
+        height: 44,
+        decoration: BoxDecoration(
+          color: Color(0xfff2f2f2),
+          borderRadius: BorderRadius.all(Radius.circular(44)),
+          /*boxShadow: [
+            BoxShadow(
+              color: HexColor("#000000").withOpacity(0.08),
+              offset: Offset(0, 2),
+              blurRadius: 12.0,
+            ),
+          ],*/
+        ),
+        child: Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0, right: 8),
+              child: Icon(
+                Icons.search,
+                color: Color(0xff777777),
               ),
-            ],*/
-          ),
-          child: Row(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 8),
-                child: Icon(
-                  Icons.search,
-                  color: Color(0xff777777),
-                ),
-              ),
-              SizedBox(
-                width: 34,
-              ),
-              Text(
-                S.of(context).search_or_decode,
-                style: TextStyle(
-                  fontSize: 17,
-                  color: Color(0xff777777),
-                ),
-              ),
-              Spacer(),
-              GestureDetector(
-                onTap: _scanAction,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 24),
-                  child: Icon(
-                    ExtendsIconFont.qrcode_scan,
-                    color: Color(0xff777777),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: onSearch,
+                child: Container(
+                  alignment: Alignment.center,
+                  width: double.infinity,
+                  child: Text(
+                    S.of(context).search_or_decode,
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Color(0xff777777),
+                    ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+            GestureDetector(
+              onTap: _scanAction,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 24.0, right: 24),
+                child: Icon(
+                  ExtendsIconFont.qrcode_scan,
+                  color: Color(0xff777777),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

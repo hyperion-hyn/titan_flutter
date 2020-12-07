@@ -155,7 +155,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                           scrollDirection: Axis.horizontal,
                         )),
                   )
-                : Expanded(child: emptyListWidget(title: "参与地址为空", isAdapter: false)),
+                : Expanded(child: emptyListWidget(title: S.of(context).map3_join_delegate_address_is_empty_hint, isAdapter: false)),
           ],
         ),
       ),

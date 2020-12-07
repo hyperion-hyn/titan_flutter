@@ -49,6 +49,15 @@ class Const {
     }
   }
 
+  static String get RP_DOMAIN {
+    if (env.buildType == BuildType.DEV) {
+      return Config.RP_API_URL_TEST;
+    } else {
+      return Config.RP_API_URL;
+    }
+  }
+
+
   static const String TITAN_SCHEMA = "titan://";
   static const String TITAN_SHARE_URL_PREFIX =
       'https://www.hyn.mobi/titan/sharev2/?key=';
@@ -62,6 +71,7 @@ class Const {
 //  static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.##");
 
   static DateFormat DATE_FORMAT = new DateFormat("yy/MM/dd HH:mm");
+  static DateFormat DAY_FORMAT = new DateFormat("yyyy/MM/dd");
 
   //ncov
   static const kNcovMapStyleCn = 'https://cn.tile.map3.network/ncov.json';
@@ -149,11 +159,12 @@ class PrefsKey {
 
   static const String SHARED_PREF_GAS_FEE_KEY = "shared_pref_gas_fee_key";
 
-  // kLine
+  // Exchange
   static const String PERIOD_CURRENT_INDEX = 'periodCurrentIndex';
-
   static const String KLINE_MAIN_STATE = 'mainState';
   static const String KLINE_SECONDARY_STATE = 'secondaryState';
+
+  static const String CACHE_MARKET_ITEM_LIST = 'cache_market_item_list_v2';
 
   static const String SHARED_PREF_LOGIN_USER_API_KEY_LIST = "shared_pref_login_user_api_key_list";
   static const String SHARED_PREF_LOGIN_USER_API_SECRET_LIST = "shared_pref_login_user_api_secret_list";

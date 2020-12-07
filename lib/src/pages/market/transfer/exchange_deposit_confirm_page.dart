@@ -320,7 +320,7 @@ class _ExchangeDepositConfirmPageState
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      '${S.of(context).gas_fee}(${widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol ? 'HYN' : 'ETH'})',
+                      '${S.of(context).gas_fee}(${widget.coinVo.coinType == CoinType.HYN_ATLAS ? 'HYN' : 'ETH'})',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -574,15 +574,32 @@ class _ExchangeDepositConfirmPageState
           return;
         }
       } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-        await HYNApi.sendTransferHYN(
-          walletPassword,
-          activatedWallet.wallet,
-          toAddress: widget.exchangeAddress,
-          amount: ConvertTokenUnit.strToBigInt(
-            widget.transferAmount,
-            widget.coinVo.decimals,
-          ),
-        );
+        if (widget.coinVo.contractAddress != null) {
+          var txHash = await HYNApi.sendTransferHYNHrc30(
+            walletPassword,
+            ConvertTokenUnit.strToBigInt(
+                widget.transferAmount, widget.coinVo.decimals),
+            widget.exchangeAddress,
+            activatedWallet.wallet,
+            widget.coinVo.contractAddress,
+          );
+          if (txHash == null) {
+            setState(() {
+              isTransferring = false;
+            });
+            return;
+          }
+        } else {
+          await HYNApi.sendTransferHYN(
+            walletPassword,
+            activatedWallet.wallet,
+            toAddress: widget.exchangeAddress,
+            amount: ConvertTokenUnit.strToBigInt(
+              widget.transferAmount,
+              widget.coinVo.decimals,
+            ),
+          );
+        }
       } else {
         await _transferErc20(
           walletPassword,
@@ -604,7 +621,6 @@ class _ExchangeDepositConfirmPageState
       msg = FluroConvertUtils.fluroCnParamsEncode(msg);
       Application.router
           .navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
-
     } catch (_) {
       LogUtil.uploadException(_, "ETH or Bitcoin upload");
       setState(() {

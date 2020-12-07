@@ -11,6 +11,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
+import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
@@ -23,6 +24,7 @@ import 'package:web3dart/credentials.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/json_rpc.dart';
 import 'package:web3dart/web3dart.dart' as web3;
+import 'package:web3dart/web3dart.dart';
 
 import 'wallet_util.dart';
 
@@ -352,6 +354,48 @@ class Wallet {
     return txHash;
   }
 
+  Future<String> sendHYNHrc30Transaction({
+    int id,
+    String contractAddress,
+    String password,
+    String toAddress,
+    BigInt value,
+    BigInt gasPrice,
+    int nonce,
+    int gasLimit = 0,
+  }) async {
+
+    var hynBalance = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('HYN').balance;
+
+    var gasFees = BigInt.from(gasLimit) * gasPrice;
+    if (gasFees > hynBalance) {
+      Fluttertoast.showToast(msg: "HYN余额不足以支付gas费");
+      return null;
+    }
+
+    var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+    final client = WalletUtil.getWeb3Client(true);
+    final credentials = await client.credentialsFromPrivateKey(privateKey);
+    final contract = WalletUtil.getHynErc20Contract(contractAddress);
+    final txHash = await client.sendTransaction(
+      credentials,
+      web3.Transaction.callContract(
+          contract: contract,
+          function: contract.function('transfer'),
+          parameters: [web3.EthereumAddress.fromHex(toAddress), value],
+          gasPrice: web3.EtherAmount.inWei(gasPrice),
+          maxGas: gasLimit,
+          nonce: nonce,
+          type: MessageType.typeNormal),
+      fetchChainIdFromNetworkId: false,
+    );
+
+    if (txHash == null) {
+      Fluttertoast.showToast(msg: "广播异常");
+    }
+    return txHash;
+  }
+
   Future<dynamic> sendBitcoinTransaction(String password, String pubString, String toAddr, int fee, int amount) async {
     var transResult =
         await BitcoinApi.sendBitcoinTransaction(keystore.fileName, password, pubString, toAddr, fee, amount);
@@ -454,6 +498,42 @@ class Wallet {
         nonce: nonce,
       ),
       fetchChainIdFromNetworkId: true,
+    );
+  }
+
+  Future<String> sendHynStakeWithdraw(
+    HynContractMethod methodType,
+    String password, {
+        BigInt stakingAmount,
+        BigInt gasPrice,
+    int gasLimit,
+  }) async {
+    if (gasPrice == null) {
+      gasPrice = BigInt.from(1 * TokenUnit.G_WEI);
+    }
+    if (gasLimit == null) {
+      gasLimit = 300000;
+    }
+    if(!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)){
+      return null;
+    }
+
+    var methodName = methodType == HynContractMethod.STAKE ? 'stake' : 'withdraw';
+
+    final client = WalletUtil.getWeb3Client(true);
+    var credentials = await getCredentials(password);
+    var stakingContract = WalletUtil.getHynStakingContract(WalletConfig.hynStakingContractAddress);
+    return await client.sendTransaction(
+      credentials,
+      web3.Transaction.callContract(
+          value: stakingAmount != null ? EtherAmount.inWei(stakingAmount) : null,
+          contract: stakingContract,
+          function: stakingContract.function(methodName),
+          parameters: [],
+          gasPrice: web3.EtherAmount.inWei(gasPrice),
+          maxGas: gasLimit,
+          type: web3.MessageType.typeNormal),
+      fetchChainIdFromNetworkId: false,
     );
   }
 
@@ -610,3 +690,5 @@ class Wallet {
     return toJson().toString();
   }
 }
+
+enum HynContractMethod { STAKE, WITHDRAW }

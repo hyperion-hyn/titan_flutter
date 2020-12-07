@@ -5,14 +5,18 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
+import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/bitcoin_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/erc20_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/eth_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
+import 'package:web3dart/web3dart.dart';
 
 class AccountTransferService {
   EtherscanApi _etherScanApi = EtherscanApi();
@@ -23,7 +27,11 @@ class AccountTransferService {
     if (coinVo.symbol == "ETH") {
       return await _getEthTransferList(coinVo, page);
     } else if (coinVo.coinType == CoinType.HYN_ATLAS) {
-      return await _getHYNAtlasTransferList(coinVo, page);
+      if (coinVo.contractAddress != null) {
+        return await _getHYNHrc30TransferList(coinVo, page);
+      } else {
+        return await _getHYNAtlasTransferList(coinVo, page);
+      }
     } else if (coinVo.coinType == CoinType.BITCOIN) {
       return await _getBitcoinTransferList(coinVo, page);
     } else {
@@ -53,13 +61,39 @@ class AccountTransferService {
     return detailList;
   }
 
-  Future<List<TransactionDetailVo>> _getErc20TransferList(
-      CoinVo coinVo, int page) async {
-    List<Erc20TransferHistory> erc20TransferHistoryList = await _etherScanApi
-        .queryErc20History(coinVo.contractAddress, coinVo.address, page);
+  Future<List<TransactionDetailVo>> _getHYNHrc30TransferList(CoinVo coinVo, int page) async {
+    var assetToken = HYNApi.getContractToken(coinVo.contractAddress);
 
-    List<TransactionDetailVo> detailList =
-        erc20TransferHistoryList.map((erc20TransferHistory) {
+    List<InternalTransactions> hrc30TransferHistoryList =
+        await _atlasApi.queryHYNHrc30History(coinVo.address, page, coinVo.contractAddress);
+    List<TransactionDetailVo> detailList = hrc30TransferHistoryList.map((hynHrc30TransferHistory) {
+      var type = 0;
+      if (hynHrc30TransferHistory.from.toLowerCase() == coinVo.address.toLowerCase()) {
+        type = TransactionType.TRANSFER_OUT;
+      } else if (hynHrc30TransferHistory.to.toLowerCase() == coinVo.address.toLowerCase()) {
+        type = TransactionType.TRANSFER_IN;
+      }
+      return TransactionDetailVo(
+          type: type,
+          state: hynHrc30TransferHistory.status,
+          amount: ConvertTokenUnit.weiToDecimal(BigInt.parse(hynHrc30TransferHistory.value), assetToken.decimals)
+              .toDouble(),
+          symbol: assetToken.symbol,
+          fromAddress: hynHrc30TransferHistory.from,
+          toAddress: hynHrc30TransferHistory.to,
+          time: hynHrc30TransferHistory.timestamp * 1000,
+          hash: hynHrc30TransferHistory.txHash,
+          hynType: MessageType.typeNormal,
+          contractAddress: coinVo.contractAddress);
+    }).toList();
+    return detailList;
+  }
+
+  Future<List<TransactionDetailVo>> _getErc20TransferList(CoinVo coinVo, int page) async {
+    List<Erc20TransferHistory> erc20TransferHistoryList =
+        await _etherScanApi.queryErc20History(coinVo.contractAddress, coinVo.address, page);
+
+    List<TransactionDetailVo> detailList = erc20TransferHistoryList.map((erc20TransferHistory) {
       var type = 0;
       if (erc20TransferHistory.from == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_OUT;

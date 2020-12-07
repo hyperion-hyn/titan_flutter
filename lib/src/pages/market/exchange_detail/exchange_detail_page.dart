@@ -45,12 +45,15 @@ import 'package:titan/src/widget/popup/pop_widget.dart';
 import 'bloc/exchange_detail_bloc.dart';
 
 class ExchangeDetailPage extends StatefulWidget {
-//  final String leftSymbol;
-//  final String rightSymbol;
-  var selectedCoin = 'USDT';
   var exchangeType = ExchangeType.SELL;
+  var quote = '';
+  var base = '';
 
-  ExchangeDetailPage({this.selectedCoin, this.exchangeType});
+  ExchangeDetailPage({
+    this.exchangeType,
+    this.quote,
+    this.base,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -58,7 +61,8 @@ class ExchangeDetailPage extends StatefulWidget {
   }
 }
 
-class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAware {
+class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
+    with RouteAware {
   ExchangeDetailBloc exchangeDetailBloc = ExchangeDetailBloc();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   SocketBloc _socketBloc;
@@ -114,18 +118,20 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   ExchangeModel exchangeModel;
   String symbol;
   String marketCoin;
-  MarketInfoEntity marketInfoEntity = MarketInfoEntity.defaultEntity(4, 4, 8, 1000000, 10, [1, 2, 3, 4]);
+  MarketInfoEntity marketInfoEntity =
+      MarketInfoEntity.defaultEntity(4, 4, 8, 1000000, 10, [1, 2, 3, 4]);
   bool beforeJumpNoLogin = true;
 
   String _realTimePrice = "--";
   String _realTimeQuotePrice = "--";
   ActiveQuoteVoAndSign selectQuote;
+  String _realTimePricePercentStr = "--";
   double _realTimePricePercent = 0;
 
   @override
   void initState() {
-    symbol = "hyn${widget.selectedCoin.toLowerCase()}";
-    marketCoin = "HYN/${widget.selectedCoin.toUpperCase()}";
+    symbol = "${widget.quote.toLowerCase()}${widget.base.toLowerCase()}";
+    marketCoin = "${widget.quote}/${widget.base}";
     isBuy = (widget.exchangeType == ExchangeType.BUY);
     exchangeDetailBloc.add(MarketInfoEvent(marketCoin));
     super.initState();
@@ -170,7 +176,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   void _getExchangelData() async {
     if (exchangeModel.isActiveAccountAndHasAssets()) {
       beforeJumpNoLogin = false;
-      userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, symbol);
+      userTickChannel =
+          SocketConfig.channelUserTick(exchangeModel.activeAccount.id, symbol);
       _socketBloc.add(SubChannelEvent(channel: userTickChannel));
     } else {
       beforeJumpNoLogin = true;
@@ -188,8 +195,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     _loadDataBloc.add(RefreshSuccessEvent());
   }
 
-  // DebounceLater depthDebounceLater = DebounceLater();
-  DebounceLater tradeDebounceLater = DebounceLater();
+  DebounceLater assetsDebounceLater = DebounceLater();
 
   @override
   Widget build(BuildContext context) {
@@ -197,20 +203,26 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
       body: BlocListener<SocketBloc, SocketState>(
         bloc: _socketBloc,
         listener: (ctx, state) {
-          bool isRefresh = consignListSocket(context, state, _activeOrders, true);
+          bool isRefresh =
+              consignListSocket(context, state, _activeOrders, true);
           if (isRefresh) {
-            tradeDebounceLater.debounceInterval(() {
-              BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
-              _loadDataBloc.add(LoadingMoreSuccessEvent());
+            assetsDebounceLater.debounceInterval(() {
+              BlocProvider.of<ExchangeCmpBloc>(context)
+                  .add(UpdateAssetsEvent());
+            }, 1000);
 
-              consignListController.add(contrConsignTypeRefresh);
-            }, 500);
+            _loadDataBloc.add(LoadingMoreSuccessEvent());
+            consignListController.add(contrConsignTypeRefresh);
           }
           if (state is ChannelExchangeDepthState) {
-            _buyChartList.clear();
-            _sailChartList.clear();
-            dealDepthData(_buyChartList, _sailChartList, state.response);
-            depthController.add(contrDepthTypeRefresh);
+
+            var currentSymbol = "${widget.quote}/${widget.base}".toLowerCase();
+            if (currentSymbol == state.symbol) {
+              _buyChartList.clear();
+              _sailChartList.clear();
+              dealDepthData(_buyChartList, _sailChartList, state.response);
+              depthController.add(contrDepthTypeRefresh);
+            }
           }
         },
         child: BlocListener<ExchangeDetailBloc, AllPageState>(
@@ -220,7 +232,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               if (state.marketInfoEntity != null) {
                 marketInfoEntity = state.marketInfoEntity;
               }
-              selectDepthNum = marketInfoEntity.depthPrecision[marketInfoEntity.depthPrecision.length - 1];
+              selectDepthNum = marketInfoEntity
+                  .depthPrecision[marketInfoEntity.depthPrecision.length - 1];
               exchangeDetailBloc.add(DepthInfoEvent(symbol, selectDepthNum));
             } else if (state is DepthInfoState) {
               _buyChartList.clear();
@@ -228,13 +241,17 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               dealDepthData(_buyChartList, _sailChartList, state.depthData);
               depthController.add(contrDepthTypeRefresh);
 
-              depthChannel = SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
+              depthChannel =
+                  SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
               _socketBloc.add(SubChannelEvent(channel: depthChannel));
             } else if (state is OrderPutLimitState) {
               isOrderActionLoading = false;
               if (state.respMsg == null) {
-                BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
-                Fluttertoast.showToast(msg: S.of(context).order_success, gravity: ToastGravity.CENTER);
+                BlocProvider.of<ExchangeCmpBloc>(context)
+                    .add(UpdateAssetsEvent());
+                Fluttertoast.showToast(
+                    msg: S.of(context).order_success,
+                    gravity: ToastGravity.CENTER);
                 currentPrice = Decimal.fromInt(0);
                 currentNum = Decimal.fromInt(0);
                 currentPriceStr = "";
@@ -270,12 +287,18 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   }
 
   Widget exchangePageView() {
-    _realTimePrice = MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList).getRealTimePrice(symbol);
-    selectQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.selectedCoin);
-    _realTimeQuotePrice =
-        FormatUtil.truncateDoubleNum(double.parse(_realTimePrice) * (selectQuote?.quoteVo?.price ?? 0), 2);
+    _realTimePrice =
+        MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
+            .getRealTimePrice(symbol);
+    selectQuote =
+        WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.base);
+    _realTimeQuotePrice = FormatUtil.truncateDoubleNum(
+        double.parse(_realTimePrice) * (selectQuote?.quoteVo?.price ?? 0), 2);
     _realTimePricePercent =
-        MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList).getRealTimePricePercent(symbol);
+        MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
+            .getRealTimePricePercent(symbol);
+    _realTimePricePercentStr =
+    '${(_realTimePricePercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(_realTimePricePercent * 100.0, 2)}%';
 
     return SafeArea(
       child: GestureDetector(
@@ -296,17 +319,20 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   onLoadingMore: () async {
                     if (exchangeModel.isActiveAccountAndHasAssets()) {
                       consignPageSize++;
-                      await loadMoreConsignList(_loadDataBloc, marketCoin, consignPageSize, _activeOrders);
+                      await loadMoreConsignList(_loadDataBloc, marketCoin,
+                          consignPageSize, _activeOrders);
                       consignListController.add(contrConsignTypeRefresh);
                     } else {
                       _loadDataBloc.add(LoadingMoreSuccessEvent());
                     }
                   },
-                  child: SingleChildScrollView(
-                      child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[_depthWidget(), _exchangeOptionsWidget(), _consignListWidget()],
-                  )),
+                  child: CustomScrollView(
+                    slivers: <Widget>[
+                      _depthWidget(),
+                      _exchangeOptionsWidget(),
+                      _consignListWidget()
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -339,20 +365,21 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(top: 3.0, bottom: 2, left: 2, right: 2),
+                padding:
+                    EdgeInsets.only(top: 3.0, bottom: 2, left: 2, right: 2),
                 child: Text(
-                  _realTimePricePercent == 0
-                      ? "--"
-                      : (_realTimePricePercent >= 0 ? "+" : "") +
-                          FormatUtil.truncateDoubleNum(_realTimePricePercent * 100, 2) +
-                          "%",
+                  _realTimePricePercentStr,
                   style: TextStyle(
-                    color: _realTimePricePercent >= 0 ? HexColor("#53AE86") : HexColor("#CC5858"),
+                    color: _realTimePricePercent >= 0
+                        ? HexColor("#53AE86")
+                        : HexColor("#CC5858"),
                     fontSize: 10.0,
                   ),
                 ),
                 decoration: BoxDecoration(
-                    color: _realTimePricePercent >= 0 ? HexColor("#EBF8F2") : HexColor("#F9EFEF"),
+                    color: _realTimePricePercent >= 0
+                        ? HexColor("#EBF8F2")
+                        : HexColor("#F9EFEF"),
                     borderRadius: BorderRadius.circular(4.0)),
               ),
               Spacer(),
@@ -361,9 +388,11 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   showDepthView();
                 },
                 child: Container(
-                  padding: EdgeInsets.only(top: 2.0, bottom: 2, left: 10, right: 10),
+                  padding:
+                      EdgeInsets.only(top: 2.0, bottom: 2, left: 10, right: 10),
                   decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
+                      border: Border.all(
+                          width: 1, color: DefaultColors.colord0d0d0),
                       borderRadius: BorderRadius.all(Radius.circular(2))),
                   child: Row(
                     children: <Widget>[
@@ -371,7 +400,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         padding: const EdgeInsets.only(bottom: 2.0, right: 15),
                         child: Text(
                           S.of(context).depth_bit(selectDepthNum),
-                          style: TextStyle(fontSize: 10, color: DefaultColors.color999),
+                          style: TextStyle(
+                              fontSize: 10, color: DefaultColors.color999),
                         ),
                       ),
                       Image.asset(
@@ -399,9 +429,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                       MaterialPageRoute(
                           builder: (context) => KLineDetailPage(
                                 symbol: symbol,
-                                symbolName: widget.selectedCoin,
                                 isPop: true,
                                 periodCurrentIndex: periodCurrentIndex,
+                                base: widget.base,
+                                quote: widget.quote,
                               )));
 
                   if (callBackValue != null) {
@@ -428,41 +459,49 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   }
 
   Widget _depthWidget() {
-    return StreamBuilder(
-        stream: depthController.stream,
-        builder: (context, optionType) {
-          return Column(
-            children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  SizedBox(
-                    width: 14,
-                  ),
-                  Text(_realTimePrice,
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: _realTimePricePercent >= 0 ? DefaultColors.color53ae86 : DefaultColors.colorcc5858)),
-                  SizedBox(
-                    width: 6,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 3.0),
-                    child: Text("≈  ${selectQuote?.sign?.sign ?? ""} $_realTimeQuotePrice",
-                        style: TextStyle(fontSize: 10, color: DefaultColors.color777)),
-                  ),
-                ],
-              ),
-              delegationListView(context, _buyChartList, _sailChartList, limitNum: 5, clickPrice: (depthPrice) {
-                if (depthPrice == "null") return;
-                currentPrice = Decimal.parse(depthPrice);
-                currentPriceStr = depthPrice;
-                priceEditController.text = currentPriceStr;
-                optionsController.add({contrOptionsTypePrice: ""});
-              }),
-            ],
-          );
-        });
+    return SliverToBoxAdapter(
+      child: StreamBuilder(
+          stream: depthController.stream,
+          builder: (context, optionType) {
+            return Column(
+              children: <Widget>[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    SizedBox(
+                      width: 14,
+                    ),
+                    Text(_realTimePrice,
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: _realTimePricePercent >= 0
+                                ? DefaultColors.color53ae86
+                                : DefaultColors.colorcc5858)),
+                    SizedBox(
+                      width: 6,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 3.0),
+                      child: Text(
+                          "≈  ${selectQuote?.sign?.sign ?? ""} $_realTimeQuotePrice",
+                          style: TextStyle(
+                              fontSize: 10, color: DefaultColors.color777)),
+                    ),
+                  ],
+                ),
+                delegationListView(context, _buyChartList, _sailChartList,
+                    limitNum: 5, clickPrice: (depthPrice) {
+                  if (depthPrice == "null") return;
+
+                  currentPrice = Decimal.parse(depthPrice);
+                  currentPriceStr = depthPrice;
+                  priceEditController.text = currentPriceStr;
+                  optionsController.add({contrOptionsTypePrice: ""});
+                }, quote: widget.quote),
+              ],
+            );
+          }),
+    );
   }
 
   updateTotalView() {
@@ -472,18 +511,23 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
       return;
     }
     var totalPrice = currentPrice * currentNum;
-    totalPriceStr = FormatUtil.truncateDecimalNum(totalPrice, marketInfoEntity.turnoverPrecision);
+    totalPriceStr = FormatUtil.truncateDecimalNum(
+        totalPrice, marketInfoEntity.turnoverPrecision);
     totalEditController.text = totalPriceStr;
-    totalEditController.selection = TextSelection.fromPosition(TextPosition(offset: totalPriceStr.length));
+    totalEditController.selection =
+        TextSelection.fromPosition(TextPosition(offset: totalPriceStr.length));
   }
 
   Decimal getValidNum() {
     if (exchangeModel.isActiveAccountAndHasAssets()) {
       if (isBuy) {
-        return Decimal.parse(
-            exchangeModel.activeAccount.assetList.getAsset(widget.selectedCoin.toUpperCase()).exchangeAvailable);
+        return Decimal.parse(exchangeModel.activeAccount.assetList
+            .getAsset(widget.base)
+            .exchangeAvailable);
       } else {
-        return Decimal.parse(exchangeModel.activeAccount?.assetList?.getAsset("HYN")?.exchangeAvailable);
+        return Decimal.parse(exchangeModel.activeAccount?.assetList
+            ?.getAsset(widget.quote)
+            ?.exchangeAvailable);
       }
     } else {
       return Decimal.fromInt(0);
@@ -496,8 +540,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
         Decimal.parse(currentPriceStr) == Decimal.fromInt(0)) {
       return "--";
     }
-    var priceQuote = Decimal.parse(selectQuote.quoteVo.price.toString()) * Decimal.parse(currentPriceStr);
-    return FormatUtil.truncateDecimalNum(priceQuote, marketInfoEntity.pricePrecision);
+    var priceQuote = Decimal.parse(selectQuote.quoteVo.price.toString()) *
+        Decimal.parse(currentPriceStr);
+    return FormatUtil.truncateDecimalNum(
+        priceQuote, marketInfoEntity.pricePrecision);
   }
 
   showDepthView() {
@@ -505,7 +551,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
       context,
       PopRoute(
         child: Popup(
-          child: BubbleWidget(100.0, 166.0, Colors.white, BubbleArrowDirection.top,
+          child: BubbleWidget(
+              100.0, 166.0, Colors.white, BubbleArrowDirection.top,
               length: 55,
               innerPadding: 0.0,
               child: Container(
@@ -522,7 +569,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                             children: <Widget>[
                               Text(
                                 S.of(context).depth_decimal_places,
-                                style: TextStyle(fontSize: 12, color: DefaultColors.color333),
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: DefaultColors.color333),
                               ),
                             ],
                           ),
@@ -549,9 +598,13 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                               endIndent: 13,
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 6.0),
-                              child: Text(S.of(context).num_decimal_places(depthIndex),
-                                  style: TextStyle(fontSize: 12, color: DefaultColors.color999)),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 6.0),
+                              child: Text(
+                                  S.of(context).num_decimal_places(depthIndex),
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: DefaultColors.color999)),
                             ),
                           ],
                         ),
@@ -569,569 +622,671 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   }
 
   Widget _exchangeOptionsWidget() {
-    return StreamBuilder<Map>(
-        stream: optionsController.stream,
-        builder: (context, optionType) {
-          Map optionData = optionType.data;
-          var optionKey = optionData?.keys?.elementAt(0) ?? -1;
-          var optionValue = optionData?.values?.elementAt(0) ?? "";
-          if (optionKey != contrOptionsTypeRefresh) {
-            optionsController.add({contrOptionsTypeRefresh: ""});
-          }
-          if (optionKey == contrOptionsTypeBuy) {
-            isBuy = true;
-          } else if (optionKey == contrOptionsTypeSell) {
-            isBuy = false;
-          } else if (optionKey == contrOptionsTypeLimit) {
-            isLimit = true;
-          } else if (optionKey == contrOptionsTypeMarket) {
-            isLimit = false;
-          } else if (optionKey == contrOptionsTypePrice) {
-            updateTotalView();
-
-            currentPriceStr = currentPrice.toString();
-          } else if (optionKey == contrOptionsTypePricePreError) {
-            priceEditController.text = currentPriceStr;
-            priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentPriceStr.length));
-          } else if (optionKey == contrOptionsTypePriceAdd) {
-            var preNum = math.pow(10, marketInfoEntity.pricePrecision);
-            currentPrice += Decimal.parse((1 / preNum).toString());
-            updateTotalView();
-
-            currentPriceStr = FormatUtil.truncateDecimalNum(currentPrice, marketInfoEntity.pricePrecision);
-            priceEditController.text = currentPriceStr;
-            priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentPriceStr.length));
-          } else if (optionKey == contrOptionsTypePriceDecrease) {
-            if (currentPrice > Decimal.fromInt(0)) {
-              var preNum = math.pow(10, marketInfoEntity.pricePrecision);
-              currentPrice -= Decimal.parse((1 / preNum).toString());
+    return SliverToBoxAdapter(
+      child: StreamBuilder<Map>(
+          stream: optionsController.stream,
+          builder: (context, optionType) {
+            Map optionData = optionType.data;
+            var optionKey = optionData?.keys?.elementAt(0) ?? -1;
+            var optionValue = optionData?.values?.elementAt(0) ?? "";
+            if (optionKey != contrOptionsTypeRefresh) {
+              optionsController.add({contrOptionsTypeRefresh: ""});
+            }
+            if (optionKey == contrOptionsTypeBuy) {
+              isBuy = true;
+            } else if (optionKey == contrOptionsTypeSell) {
+              isBuy = false;
+            } else if (optionKey == contrOptionsTypeLimit) {
+              isLimit = true;
+            } else if (optionKey == contrOptionsTypeMarket) {
+              isLimit = false;
+            } else if (optionKey == contrOptionsTypePrice) {
               updateTotalView();
 
-              currentPriceStr = FormatUtil.truncateDecimalNum(currentPrice, marketInfoEntity.pricePrecision);
+              currentPriceStr = currentPrice.toString();
+            } else if (optionKey == contrOptionsTypePricePreError) {
               priceEditController.text = currentPriceStr;
-              priceEditController.selection =
-                  TextSelection.fromPosition(TextPosition(offset: '$currentPriceStr'.length));
-            }
-          } else if (optionKey == contrOptionsTypeNum) {
-            updateTotalView();
-
-            currentNumStr = FormatUtil.truncateDecimalNum(currentNum, marketInfoEntity.amountPrecision);
-          } else if (optionKey == contrOptionsTypeNumPercent) {
-            if (exchangeModel.isActiveAccountAndHasAssets()) {
-              if (isBuy) {
-                currentNum = currentPrice.toString() == "0"
-                    ? currentNum
-                    : getValidNum() * Decimal.parse(optionValue) / currentPrice;
-              } else {
-                currentNum = getValidNum() * Decimal.parse(optionValue);
-              }
+              priceEditController.selection = TextSelection.fromPosition(
+                  TextPosition(offset: currentPriceStr.length));
+            } else if (optionKey == contrOptionsTypePriceAdd) {
+              var preNum = math.pow(10, marketInfoEntity.pricePrecision);
+              currentPrice += Decimal.parse((1 / preNum).toString());
               updateTotalView();
 
-              currentNumStr = FormatUtil.truncateDecimalNum(currentNum, marketInfoEntity.amountPrecision);
+              currentPriceStr = FormatUtil.truncateDecimalNum(
+                  currentPrice, marketInfoEntity.pricePrecision);
+              priceEditController.text = currentPriceStr;
+              priceEditController.selection = TextSelection.fromPosition(
+                  TextPosition(offset: currentPriceStr.length));
+            } else if (optionKey == contrOptionsTypePriceDecrease) {
+              if (currentPrice > Decimal.fromInt(0)) {
+                var preNum = math.pow(10, marketInfoEntity.pricePrecision);
+                currentPrice -= Decimal.parse((1 / preNum).toString());
+                updateTotalView();
+
+                currentPriceStr = FormatUtil.truncateDecimalNum(
+                    currentPrice, marketInfoEntity.pricePrecision);
+                priceEditController.text = currentPriceStr;
+                priceEditController.selection = TextSelection.fromPosition(
+                    TextPosition(offset: '$currentPriceStr'.length));
+              }
+            } else if (optionKey == contrOptionsTypeNum) {
+              updateTotalView();
+
+              currentNumStr = FormatUtil.truncateDecimalNum(
+                  currentNum, marketInfoEntity.amountPrecision);
+            } else if (optionKey == contrOptionsTypeNumPercent) {
+              if (exchangeModel.isActiveAccountAndHasAssets()) {
+                if (isBuy) {
+                  currentNum = currentPrice.toString() == "0"
+                      ? currentNum
+                      : getValidNum() *
+                          Decimal.parse(optionValue) /
+                          currentPrice;
+                } else {
+                  currentNum = getValidNum() * Decimal.parse(optionValue);
+                }
+                updateTotalView();
+
+                currentNumStr = FormatUtil.truncateDecimalNum(
+                    currentNum, marketInfoEntity.amountPrecision);
+                numEditController.text = currentNumStr;
+                numEditController.selection = TextSelection.fromPosition(
+                    TextPosition(offset: currentNumStr.length));
+              }
+            } else if (optionKey == contrOptionsTypeNumPreError) {
               numEditController.text = currentNumStr;
-              numEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentNumStr.length));
-            }
-          } else if (optionKey == contrOptionsTypeNumPreError) {
-            numEditController.text = currentNumStr;
-            numEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentNumStr.length));
-          } else if (optionKey == contrOptionsTypeTotalPrice) {
-            totalPriceStr = optionValue;
-            if (currentPrice != Decimal.fromInt(0) && optionValue != "") {
-              currentNum = Decimal.parse(optionValue) / currentPrice;
-              currentNumStr = FormatUtil.truncateDecimalNum(currentNum, marketInfoEntity.amountPrecision);
-              numEditController.text = currentNumStr;
-              numEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentNumStr.length));
-            } else if (optionValue == "") {
-              currentNum = Decimal.fromInt(0);
-              currentNumStr = "";
-              numEditController.text = currentNumStr;
-            }
-          } else if (optionKey == contrOptionsTypeTotalPriceError) {
-            totalEditController.text = totalPriceStr;
-            totalEditController.selection = TextSelection.fromPosition(TextPosition(offset: totalPriceStr.length));
-          } else if (optionKey == contrOptionsTypeRefresh) {}
-          return Padding(
-            padding: const EdgeInsets.only(top: 20.0, bottom: 16, left: 14, right: 14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 3,
-                      child: InkWell(
-                        onTap: () {
-                          optionsController.add({contrOptionsTypeBuy: ""});
-                        },
-                        child: Container(
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            image: DecorationImage(
-                                image: AssetImage(isBuy
-                                    ? "res/drawable/ic_exchange_bg_left_buy_select.png"
-                                    : "res/drawable/ic_exchange_bg_left_buy.png"),
-                                fit: BoxFit.fitWidth),
-                          ),
-                          alignment: Alignment.center,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              Text(S.of(context).buy,
-                                  style: TextStyle(fontSize: 14, color: isBuy ? Colors.white : DefaultColors.color999)),
-                              Text("HYN",
-                                  style: TextStyle(fontSize: 11, color: isBuy ? Colors.white : DefaultColors.color999)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: InkWell(
-                        onTap: () {
-                          optionsController.add({contrOptionsTypeSell: ""});
-                        },
-                        child: Container(
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            image: DecorationImage(
-                                image: AssetImage(isBuy
-                                    ? "res/drawable/ic_exchange_bg_right_sell.png"
-                                    : "res/drawable/ic_exchange_bg_right_sell_select.png"),
-                                fit: BoxFit.fitWidth),
-                          ),
-                          alignment: Alignment.center,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              Text(S.of(context).sale,
-                                  style: TextStyle(fontSize: 14, color: isBuy ? DefaultColors.color999 : Colors.white)),
-                              Text("HYN",
-                                  style: TextStyle(fontSize: 11, color: isBuy ? DefaultColors.color999 : Colors.white)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 4,
-                      child: SizedBox(),
-                      /*child: Container(
-                          height: 28,
-                          padding: const EdgeInsets.only(left: 10, right: 10),
-                          decoration: BoxDecoration(
-                              border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
-                              borderRadius: BorderRadius.all(Radius.circular(3))),
-                          child: new DropdownButtonHideUnderline(
-                              child: new DropdownButton(
-                            icon: Image.asset(
-                              "res/drawable/ic_exchange_down_triangle.png",
-                              width: 10,
+              numEditController.selection = TextSelection.fromPosition(
+                  TextPosition(offset: currentNumStr.length));
+            } else if (optionKey == contrOptionsTypeTotalPrice) {
+              totalPriceStr = optionValue;
+              if (currentPrice != Decimal.fromInt(0) && optionValue != "") {
+                currentNum = Decimal.parse(optionValue) / currentPrice;
+                currentNumStr = FormatUtil.truncateDecimalNum(
+                    currentNum, marketInfoEntity.amountPrecision);
+                numEditController.text = currentNumStr;
+                numEditController.selection = TextSelection.fromPosition(
+                    TextPosition(offset: currentNumStr.length));
+              } else if (optionValue == "") {
+                currentNum = Decimal.fromInt(0);
+                currentNumStr = "";
+                numEditController.text = currentNumStr;
+              }
+            } else if (optionKey == contrOptionsTypeTotalPriceError) {
+              totalEditController.text = totalPriceStr;
+              totalEditController.selection = TextSelection.fromPosition(
+                  TextPosition(offset: totalPriceStr.length));
+            } else if (optionKey == contrOptionsTypeRefresh) {}
+            return Padding(
+              padding: const EdgeInsets.only(
+                  top: 20.0, bottom: 16, left: 14, right: 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 3,
+                        child: InkWell(
+                          onTap: () {
+                            optionsController.add({contrOptionsTypeBuy: ""});
+                          },
+                          child: Container(
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              image: DecorationImage(
+                                  image: AssetImage(isBuy
+                                      ? "res/drawable/ic_exchange_bg_left_buy_select.png"
+                                      : "res/drawable/ic_exchange_bg_left_buy.png"),
+                                  fit: BoxFit.fitWidth),
                             ),
-                            items: [
-                              new DropdownMenuItem(
-                                child: new Text('限价委托'),
-                                value: contrOptionsTypeLimit,
+                            alignment: Alignment.center,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Text(S.of(context).buy,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: isBuy
+                                            ? Colors.white
+                                            : DefaultColors.color999)),
+                                Text(widget.quote,
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        color: isBuy
+                                            ? Colors.white
+                                            : DefaultColors.color999)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: InkWell(
+                          onTap: () {
+                            optionsController.add({contrOptionsTypeSell: ""});
+                          },
+                          child: Container(
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              image: DecorationImage(
+                                  image: AssetImage(isBuy
+                                      ? "res/drawable/ic_exchange_bg_right_sell.png"
+                                      : "res/drawable/ic_exchange_bg_right_sell_select.png"),
+                                  fit: BoxFit.fitWidth),
+                            ),
+                            alignment: Alignment.center,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Text(S.of(context).sale,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: isBuy
+                                            ? DefaultColors.color999
+                                            : Colors.white)),
+                                Text(widget.quote,
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        color: isBuy
+                                            ? DefaultColors.color999
+                                            : Colors.white)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 4,
+                        child: SizedBox(),
+                        /*child: Container(
+                            height: 28,
+                            padding: const EdgeInsets.only(left: 10, right: 10),
+                            decoration: BoxDecoration(
+                                border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
+                                borderRadius: BorderRadius.all(Radius.circular(3))),
+                            child: new DropdownButtonHideUnderline(
+                                child: new DropdownButton(
+                              icon: Image.asset(
+                                "res/drawable/ic_exchange_down_triangle.png",
+                                width: 10,
                               ),
-                              new DropdownMenuItem(
-                                child: new Text('市价委托'),
-                                value: contrOptionsTypeMarket,
+                              items: [
+                                new DropdownMenuItem(
+                                  child: new Text('限价委托'),
+                                  value: contrOptionsTypeLimit,
+                                ),
+                                new DropdownMenuItem(
+                                  child: new Text('市价委托'),
+                                  value: contrOptionsTypeMarket,
+                                ),
+                              ],
+                              hint: new Text('请选择'),
+                              onChanged: (value) {
+                                optionsController.add(value);
+                              },
+                              isExpanded: true,
+                              value: isLimit ? contrOptionsTypeLimit : contrOptionsTypeMarket,
+                              style: new TextStyle(
+                                color: DefaultColors.color333,
+                                fontSize: 14,
                               ),
-                            ],
-                            hint: new Text('请选择'),
-                            onChanged: (value) {
-                              optionsController.add(value);
+                            ))),*/
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                      margin: EdgeInsets.only(top: 10, bottom: 2),
+                      padding: const EdgeInsets.only(left: 10),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              width: 1, color: DefaultColors.colord0d0d0),
+                          borderRadius: BorderRadius.all(Radius.circular(3))),
+                      child: Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(
+                                bottom: currentPriceStr != "0" &&
+                                        currentPriceStr != ""
+                                    ? 16.0
+                                    : 0),
+                            child: Text(
+                              '${S.of(context).price}(${widget.base})',
+                              style: TextStyle(
+                                  fontSize: 14, color: DefaultColors.color999),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  height: 36,
+                                  child: TextField(
+                                    controller: priceEditController,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
+                                    decoration: new InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.only(bottom: 12.0),
+                                      border: InputBorder.none,
+                                      hintStyle: TextStyles.textCaaaS14,
+                                    ),
+                                    onChanged: (price) {
+                                      if (price.contains("-")) {
+                                        return;
+                                      }
+                                      if (price.split(".").length > 2) {
+                                        optionsController.add({
+                                          contrOptionsTypePricePreError: ""
+                                        });
+                                        return;
+                                      }
+                                      if (price.contains(".")) {
+                                        var priceAfter = price.split(".")[1];
+                                        if (priceAfter.length <=
+                                            marketInfoEntity.pricePrecision) {
+                                          currentPrice = Decimal.parse(price);
+                                          optionsController
+                                              .add({contrOptionsTypePrice: ""});
+                                        } else {
+                                          optionsController.add({
+                                            contrOptionsTypePricePreError: ""
+                                          });
+                                        }
+                                      } else {
+                                        if (price.length == 0) {
+                                          currentPrice = Decimal.fromInt(0);
+                                        } else {
+                                          currentPrice = Decimal.parse(price);
+                                        }
+                                        optionsController
+                                            .add({contrOptionsTypePrice: ""});
+                                      }
+                                    },
+                                  ),
+                                ),
+                                if (currentPriceStr != "0" &&
+                                    currentPriceStr != "")
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 4.0),
+                                    child: Text(
+                                      "≈${getInputPriceQuote()} ${selectQuote?.quoteVo?.quote ?? ""}",
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          color: DefaultColors.color999),
+                                    ),
+                                  )
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: 1,
+                            color: DefaultColors.colord0d0d0,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              optionsController
+                                  .add({contrOptionsTypePriceDecrease: ""});
                             },
-                            isExpanded: true,
-                            value: isLimit ? contrOptionsTypeLimit : contrOptionsTypeMarket,
-                            style: new TextStyle(
-                              color: DefaultColors.color333,
-                              fontSize: 14,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  top: 4, bottom: 4, left: 17, right: 17),
+                              child: Text(
+                                "-",
+                                style: TextStyle(
+                                    fontSize: 21,
+                                    color: DefaultColors.color999),
+                              ),
                             ),
-                          ))),*/
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
+                          ),
+                          Container(
+                            width: 1,
+                            height: 20,
+                            color: DefaultColors.colord0d0d0,
+                          ),
+                          InkWell(
+                              onTap: () {
+                                optionsController
+                                    .add({contrOptionsTypePriceAdd: ""});
+                              },
+                              child: Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 7, bottom: 7, left: 17, right: 17),
+                                  child: Text("+",
+                                      style: TextStyle(
+                                          color: DefaultColors.color999)))),
+                        ],
+                      )),
+                  Container(
+                    height: 36,
                     margin: EdgeInsets.only(top: 10, bottom: 2),
                     padding: const EdgeInsets.only(left: 10),
                     decoration: BoxDecoration(
-                        border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
+                        border: Border.all(
+                            width: 1, color: DefaultColors.colord0d0d0),
                         borderRadius: BorderRadius.all(Radius.circular(3))),
                     child: Row(
                       children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(bottom: currentPriceStr != "0" && currentPriceStr != "" ? 16.0 : 0),
-                          child: Text(
-                            S.of(context).price,
-                            style: TextStyle(fontSize: 14, color: DefaultColors.color999),
-                          ),
+                        Text(
+                          S.of(context).count,
+                          style: TextStyle(
+                              fontSize: 14, color: DefaultColors.color999),
                         ),
                         SizedBox(
                           width: 20,
                         ),
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                height: 36,
-                                child: TextField(
-                                  controller: priceEditController,
-                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                  inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
-                                  decoration: new InputDecoration(
-                                    contentPadding: EdgeInsets.only(bottom: 12.0),
-                                    border: InputBorder.none,
-                                    hintStyle: TextStyles.textCaaaS14,
-                                  ),
-                                  onChanged: (price) {
-                                    if (price.contains("-")) {
-                                      return;
-                                    }
-                                    if (price.split(".").length > 2) {
-                                      optionsController.add({contrOptionsTypePricePreError: ""});
-                                      return;
-                                    }
-                                    if (price.contains(".")) {
-                                      var priceAfter = price.split(".")[1];
-                                      if (priceAfter.length <= marketInfoEntity.pricePrecision) {
-                                        currentPrice = Decimal.parse(price);
-                                        optionsController.add({contrOptionsTypePrice: ""});
-                                      } else {
-                                        optionsController.add({contrOptionsTypePricePreError: ""});
-                                      }
-                                    } else {
-                                      if (price.length == 0) {
-                                        currentPrice = Decimal.fromInt(0);
-                                      } else {
-                                        currentPrice = Decimal.parse(price);
-                                      }
-                                      optionsController.add({contrOptionsTypePrice: ""});
-                                    }
-                                  },
-                                ),
-                              ),
-                              if (currentPriceStr != "0" && currentPriceStr != "")
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 4.0),
-                                  child: Text(
-                                    "≈${getInputPriceQuote()} ${selectQuote?.quoteVo?.quote ?? ""}",
-                                    style: TextStyle(fontSize: 10, color: DefaultColors.color999),
-                                  ),
-                                )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          width: 1,
-                          color: DefaultColors.colord0d0d0,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            optionsController.add({contrOptionsTypePriceDecrease: ""});
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 4, bottom: 4, left: 17, right: 17),
-                            child: Text(
-                              "-",
-                              style: TextStyle(fontSize: 21, color: DefaultColors.color999),
+                          child: TextField(
+                            controller: numEditController,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
+                            inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
+                            decoration: new InputDecoration(
+                              contentPadding: EdgeInsets.only(bottom: 12.0),
+                              border: InputBorder.none,
+                              hintStyle: TextStyles.textCaaaS14,
                             ),
-                          ),
-                        ),
-                        Container(
-                          width: 1,
-                          height: 20,
-                          color: DefaultColors.colord0d0d0,
-                        ),
-                        InkWell(
-                            onTap: () {
-                              optionsController.add({contrOptionsTypePriceAdd: ""});
-                            },
-                            child: Padding(
-                                padding: EdgeInsets.only(top: 7, bottom: 7, left: 17, right: 17),
-                                child: Text("+", style: TextStyle(color: DefaultColors.color999)))),
-                      ],
-                    )),
-                Container(
-                  height: 36,
-                  margin: EdgeInsets.only(top: 10, bottom: 2),
-                  padding: const EdgeInsets.only(left: 10),
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
-                      borderRadius: BorderRadius.all(Radius.circular(3))),
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        S.of(context).count,
-                        style: TextStyle(fontSize: 14, color: DefaultColors.color999),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: numEditController,
-                          keyboardType: TextInputType.numberWithOptions(decimal: true),
-                          inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
-                          decoration: new InputDecoration(
-                            contentPadding: EdgeInsets.only(bottom: 12.0),
-                            border: InputBorder.none,
-                            hintStyle: TextStyles.textCaaaS14,
-                          ),
-                          onChanged: (number) {
-                            if (number.contains("-")) {
-                              return;
-                            }
-                            if (number.split(".").length > 2) {
-                              optionsController.add({contrOptionsTypeNumPreError: ""});
-                              return;
-                            }
-                            if (number.contains(".")) {
-                              var priceAfter = number.split(".")[1];
-                              if (priceAfter.length <= marketInfoEntity.amountPrecision) {
-                                currentNum = Decimal.parse(number);
-                                optionsController.add({contrOptionsTypeNum: ""});
-                              } else {
-                                optionsController.add({contrOptionsTypeNumPreError: ""});
-                              }
-                            } else {
-                              if (number.length == 0) {
-                                currentNum = Decimal.fromInt(0);
-                              } else {
-                                currentNum = Decimal.parse(number);
-                              }
-                              optionsController.add({contrOptionsTypeNum: ""});
-                            }
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: 36,
-                        child: FlatButton(
-                            padding: const EdgeInsets.all(0),
-                            onPressed: () {
-                              if (isBuy && currentPrice == Decimal.fromInt(0)) {
+                            onChanged: (number) {
+                              if (number.contains("-")) {
                                 return;
                               }
-                              optionsController.add({contrOptionsTypeNumPercent: "0.25"});
-                            },
-                            child: Text(
-                              "25%",
-                              style: TextStyle(fontSize: 10, color: DefaultColors.color999),
-                            )),
-                      ),
-                      SizedBox(
-                        width: 36,
-                        child: FlatButton(
-                            padding: const EdgeInsets.all(0),
-                            onPressed: () {
-                              if (isBuy && currentPrice == Decimal.fromInt(0)) {
+                              if (number.split(".").length > 2) {
+                                optionsController
+                                    .add({contrOptionsTypeNumPreError: ""});
                                 return;
                               }
-                              optionsController.add({contrOptionsTypeNumPercent: "0.5"});
-                            },
-                            child: Text("50%", style: TextStyle(fontSize: 10, color: DefaultColors.color999))),
-                      ),
-                      SizedBox(
-                        width: 36,
-                        child: FlatButton(
-                            padding: const EdgeInsets.all(0),
-                            onPressed: () {
-                              if (isBuy && currentPrice == Decimal.fromInt(0)) {
-                                return;
-                              }
-                              optionsController.add({contrOptionsTypeNumPercent: "1"});
-                            },
-                            child: Text(
-                              "100%",
-                              style: TextStyle(fontSize: 10, color: DefaultColors.color999),
-                            )),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  height: 36,
-                  margin: EdgeInsets.only(top: 10, bottom: 2),
-                  padding: const EdgeInsets.only(left: 10),
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
-                      borderRadius: BorderRadius.all(Radius.circular(3))),
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        S.of(context).amount,
-                        style: TextStyle(fontSize: 14, color: DefaultColors.color999),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: totalEditController,
-                          keyboardType: TextInputType.numberWithOptions(decimal: true),
-                          inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
-                          decoration: new InputDecoration(
-                            contentPadding: EdgeInsets.only(bottom: 12.0),
-                            border: InputBorder.none,
-                            hintStyle: TextStyles.textCaaaS14,
-                          ),
-                          onChanged: (turnover) {
-                            if (turnover.contains("-")) {
-                              return;
-                            }
-                            if (turnover.split(".").length > 2) {
-                              optionsController.add({contrOptionsTypeTotalPriceError: ""});
-                              return;
-                            }
-                            if (turnover.contains(".")) {
-                              var priceAfter = turnover.split(".")[1];
-                              if (priceAfter.length <= marketInfoEntity.turnoverPrecision) {
-                                optionsController.add({contrOptionsTypeTotalPrice: turnover});
+                              if (number.contains(".")) {
+                                var priceAfter = number.split(".")[1];
+                                if (priceAfter.length <=
+                                    marketInfoEntity.amountPrecision) {
+                                  currentNum = Decimal.parse(number);
+                                  optionsController
+                                      .add({contrOptionsTypeNum: ""});
+                                } else {
+                                  optionsController
+                                      .add({contrOptionsTypeNumPreError: ""});
+                                }
                               } else {
-                                optionsController.add({contrOptionsTypeTotalPriceError: ""});
+                                if (number.length == 0) {
+                                  currentNum = Decimal.fromInt(0);
+                                } else {
+                                  currentNum = Decimal.parse(number);
+                                }
+                                optionsController
+                                    .add({contrOptionsTypeNum: ""});
                               }
-                            } else {
-                              optionsController.add({contrOptionsTypeTotalPrice: turnover});
-                            }
-                          },
+                            },
+                          ),
                         ),
-                      ),
-                      Text(
-                        "${widget.selectedCoin.toUpperCase()}",
-                        style: TextStyle(fontSize: 14, color: DefaultColors.color777),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-                  child: Text(
-                    !exchangeModel.isActiveAccountAndHasAssets()
-                        ? "授权后查看余额"
-                        : "${S.of(context).available}  ${getValidNum()}  ${isBuy ? widget.selectedCoin.toUpperCase() : "HYN"}",
-                    style: TextStyle(color: DefaultColors.color999, fontSize: 10),
-                  ),
-                ),
-                Container(
-                  height: 36,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                    color: isOrderActionLoading
-                        ? Color(0xffDEDEDE)
-                        : isBuy ? DefaultColors.color53ae86 : DefaultColors.colorcc5858,
-                  ),
-                  child: FlatButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(22.0)),
-                      ),
-                      padding: const EdgeInsets.all(0.0),
-                      child: Text(
-                          exchangeModel.isActiveAccountAndHasAssets()
-                              ? isBuy ? "${S.of(context).buy}" : "${S.of(context).sale}"
-                              : S.of(context).login_please,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: isOrderActionLoading ? DefaultColors.color999 : Colors.white,
-                          )),
-                      onPressed: isOrderActionLoading
-                          ? null
-                          : () {
-                              isOrderActionLoading = true;
-                              optionsController.add({contrOptionsTypeRefresh: ""});
-
-                              buyAction();
-                            }),
-                )
-              ],
-            ),
-          );
-        });
-  }
-
-  Widget _consignListWidget() {
-    return StreamBuilder<int>(
-      stream: consignListController.stream,
-      builder: (context, optionType) {
-        if (optionType.data == contrConsignTypeRefresh) {}
-        return Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 13.0, bottom: 11, left: 13, right: 13),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Text(
-                        S.of(context).current_commission,
-                        style: TextStyle(fontSize: 16, color: DefaultColors.color333, fontWeight: FontWeight.bold),
-                      ),
-                      Spacer(),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ExchangeOrderManagementPage(
-                                        marketCoin,
-                                      )));
-                        },
-                        child: Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.end,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 2.0),
-                              child: Image.asset(
-                                "res/drawable/ic_exhange_all_consign.png",
-                                width: 12,
-                                height: 12,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Text("${S.of(context).all}",
+                        SizedBox(
+                          width: 36,
+                          child: FlatButton(
+                              padding: const EdgeInsets.all(0),
+                              onPressed: () {
+                                if (isBuy &&
+                                    currentPrice == Decimal.fromInt(0)) {
+                                  return;
+                                }
+                                optionsController
+                                    .add({contrOptionsTypeNumPercent: "0.25"});
+                              },
+                              child: Text(
+                                "25%",
                                 style: TextStyle(
-                                  fontSize: 12,
-                                  color: DefaultColors.color999,
-                                ))
-                          ],
+                                    fontSize: 10,
+                                    color: DefaultColors.color999),
+                              )),
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          width: 36,
+                          child: FlatButton(
+                              padding: const EdgeInsets.all(0),
+                              onPressed: () {
+                                if (isBuy &&
+                                    currentPrice == Decimal.fromInt(0)) {
+                                  return;
+                                }
+                                optionsController
+                                    .add({contrOptionsTypeNumPercent: "0.5"});
+                              },
+                              child: Text("50%",
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      color: DefaultColors.color999))),
+                        ),
+                        SizedBox(
+                          width: 36,
+                          child: FlatButton(
+                              padding: const EdgeInsets.all(0),
+                              onPressed: () {
+                                if (isBuy &&
+                                    currentPrice == Decimal.fromInt(0)) {
+                                  return;
+                                }
+                                optionsController
+                                    .add({contrOptionsTypeNumPercent: "1"});
+                              },
+                              child: Text(
+                                "100%",
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    color: DefaultColors.color999),
+                              )),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        )
+                      ],
+                    ),
                   ),
-                  SizedBox(
-                    height: 11,
+                  Container(
+                    height: 36,
+                    margin: EdgeInsets.only(top: 10, bottom: 2),
+                    padding: const EdgeInsets.only(left: 10),
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            width: 1, color: DefaultColors.colord0d0d0),
+                        borderRadius: BorderRadius.all(Radius.circular(3))),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          S.of(context).amount,
+                          style: TextStyle(
+                              fontSize: 14, color: DefaultColors.color999),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: totalEditController,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
+                            inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
+                            decoration: new InputDecoration(
+                              contentPadding: EdgeInsets.only(bottom: 12.0),
+                              border: InputBorder.none,
+                              hintStyle: TextStyles.textCaaaS14,
+                            ),
+                            onChanged: (turnover) {
+                              if (turnover.contains("-")) {
+                                return;
+                              }
+                              if (turnover.split(".").length > 2) {
+                                optionsController
+                                    .add({contrOptionsTypeTotalPriceError: ""});
+                                return;
+                              }
+                              if (turnover.contains(".")) {
+                                var priceAfter = turnover.split(".")[1];
+                                if (priceAfter.length <=
+                                    marketInfoEntity.turnoverPrecision) {
+                                  optionsController.add(
+                                      {contrOptionsTypeTotalPrice: turnover});
+                                } else {
+                                  optionsController.add(
+                                      {contrOptionsTypeTotalPriceError: ""});
+                                }
+                              } else {
+                                optionsController.add(
+                                    {contrOptionsTypeTotalPrice: turnover});
+                              }
+                            },
+                          ),
+                        ),
+                        Text(
+                          "${widget.base}",
+                          style: TextStyle(
+                              fontSize: 14, color: DefaultColors.color777),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                      ],
+                    ),
                   ),
-                  Divider(
-                    height: 1,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    child: Text(
+                      !exchangeModel.isActiveAccountAndHasAssets()
+                          ? "授权后查看余额"
+                          : "${S.of(context).available}  ${getValidNum()}  ${isBuy ? widget.base : widget.quote}",
+                      style: TextStyle(
+                          color: DefaultColors.color999, fontSize: 10),
+                    ),
+                  ),
+                  Container(
+                    height: 36,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(4)),
+                      color: isOrderActionLoading
+                          ? Color(0xffDEDEDE)
+                          : isBuy
+                              ? DefaultColors.color53ae86
+                              : DefaultColors.colorcc5858,
+                    ),
+                    child: FlatButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(22.0)),
+                        ),
+                        padding: const EdgeInsets.all(0.0),
+                        child: Text(
+                            exchangeModel.isActiveAccountAndHasAssets()
+                                ? isBuy
+                                    ? "${S.of(context).buy}"
+                                    : "${S.of(context).sale}"
+                                : S.of(context).login_please,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isOrderActionLoading
+                                  ? DefaultColors.color999
+                                  : Colors.white,
+                            )),
+                        onPressed: isOrderActionLoading
+                            ? null
+                            : () {
+                                isOrderActionLoading = true;
+                                optionsController
+                                    .add({contrOptionsTypeRefresh: ""});
+
+                                buyAction();
+                              }),
                   )
                 ],
               ),
-            ),
-            if (_activeOrders.length == 0) orderListEmpty(context),
-            if (_activeOrders.length > 0) orderListWidget(context, marketCoin, consignIsLoading, _activeOrders)
-          ],
-        );
-      },
+            );
+          }),
+    );
+  }
+
+  Widget _consignListWidget() {
+    return SliverToBoxAdapter(
+      child: StreamBuilder<int>(
+        stream: consignListController.stream,
+        builder: (context, optionType) {
+          if (optionType.data == contrConsignTypeRefresh) {}
+          return Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 13.0, bottom: 11, left: 13, right: 13),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          S.of(context).current_commission,
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: DefaultColors.color333,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Spacer(),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ExchangeOrderManagementPage(
+                                          marketCoin,
+                                        )));
+                          },
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.end,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 2.0),
+                                child: Image.asset(
+                                  "res/drawable/ic_exhange_all_consign.png",
+                                  width: 12,
+                                  height: 12,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Text("${S.of(context).all}",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: DefaultColors.color999,
+                                  ))
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 11,
+                    ),
+                    Divider(
+                      height: 1,
+                    )
+                  ],
+                ),
+              ),
+              if (_activeOrders.length == 0) orderListEmpty(context),
+              if (_activeOrders.length > 0)
+                orderListWidget(
+                    context, marketCoin, consignIsLoading, _activeOrders)
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -1158,18 +1313,20 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
         optionsController.add({contrOptionsTypeRefresh: ""});
         return;
       }
-      if (marketInfoEntity.amountMin > Decimal.parse(currentNumStr).toDouble()) {
+      if (marketInfoEntity.amountMin >
+          Decimal.parse(currentNumStr).toDouble()) {
         Fluttertoast.showToast(
             msg:
-                "${S.of(context).each}${isBuy ? "${S.of(context).buy}" : "${S.of(context).sale}"}${S.of(context).no_less_than}${marketInfoEntity.amountMin}HYN");
+                "${S.of(context).each}${isBuy ? "${S.of(context).buy}" : "${S.of(context).sale}"}${S.of(context).no_less_than}${marketInfoEntity.amountMin} ${widget.quote}");
         isOrderActionLoading = false;
         optionsController.add({contrOptionsTypeRefresh: ""});
         return;
       }
-      if (marketInfoEntity.amountMax < Decimal.parse(currentNumStr).toDouble()) {
+      if (marketInfoEntity.amountMax <
+          Decimal.parse(currentNumStr).toDouble()) {
         Fluttertoast.showToast(
             msg:
-                "${S.of(context).each}${isBuy ? "${S.of(context).buy}" : "${S.of(context).sale}"}${S.of(context).no_more_than}${marketInfoEntity.amountMax}HYN");
+                "${S.of(context).each}${isBuy ? "${S.of(context).buy}" : "${S.of(context).sale}"}${S.of(context).no_more_than}${marketInfoEntity.amountMax} ${widget.quote}");
         isOrderActionLoading = false;
         optionsController.add({contrOptionsTypeRefresh: ""});
         return;
@@ -1183,12 +1340,15 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
       }
       var exchangeType = isBuy ? ExchangeType.BUY : ExchangeType.SELL;
       if (isLimit) {
-        exchangeDetailBloc.add(LimitExchangeEvent(marketCoin, exchangeType, currentPriceStr, currentNumStr));
+        exchangeDetailBloc.add(LimitExchangeEvent(
+            marketCoin, exchangeType, currentPriceStr, currentNumStr));
       } else {
-        exchangeDetailBloc.add(MarketExchangeEvent(marketCoin, exchangeType, currentNumStr));
+        exchangeDetailBloc
+            .add(MarketExchangeEvent(marketCoin, exchangeType, currentNumStr));
       }
     } else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
     }
   }
 }
