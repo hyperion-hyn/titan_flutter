@@ -162,8 +162,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
   void dispose() {
     /*if (exchangeModel.isActiveAccount()) {
       _socketBloc.add(UnSubChannelEvent(channel: userTickChannel));
-    }
-    _socketBloc.add(UnSubChannelEvent(channel: tradeChannel));*/
+    }*/
+    _socketBloc.add(UnSubChannelEvent(channel: tradeChannel));
     _socketBloc.add(UnSubChannelEvent(channel: depthChannel));
     Application.routeObserver.unsubscribe(this);
 
@@ -216,13 +216,12 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
           }
           if (state is ChannelExchangeDepthState) {
 
-            var currentSymbol = "${widget.quote}/${widget.base}".toLowerCase();
-            if (currentSymbol == state.symbol) {
-              _buyChartList.clear();
-              _sailChartList.clear();
-              dealDepthData(_buyChartList, _sailChartList, state.response);
-              depthController.add(contrDepthTypeRefresh);
-            }
+            //var currentSymbol = "${widget.quote}/${widget.base}".toLowerCase();
+            _buyChartList.clear();
+            _sailChartList.clear();
+            dealDepthData(_buyChartList, _sailChartList, state.response);
+            depthController.add(contrDepthTypeRefresh);
+
           }
         },
         child: BlocListener<ExchangeDetailBloc, AllPageState>(
