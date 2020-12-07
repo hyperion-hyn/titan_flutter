@@ -938,7 +938,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
 
     var priceStr = S.of(context).kline_delegate_price;
     var amountStr = S.of(context).kline_delegate_amount;
-    if (widget.quote == 'USDT') {
+    print("quote:${widget.quote}, base:${widget.base}");
+
+    if (widget.base.toUpperCase() == 'USDT') {
       priceStr = S.of(context).kline_delegate_price;
       amountStr = S.of(context).kline_delegate_amount;
     } else {
