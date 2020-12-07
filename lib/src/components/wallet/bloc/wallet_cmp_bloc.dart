@@ -164,7 +164,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       final symbolString = symbols.reduce((value, element) => value + ',' + element);
 
       var quotes = await _coinMarketApi.quotes(0);
-
       List<SymbolQuoteVo> addQuotes = [];
       for (var quote in quotes) {
         if (quote.symbol == SupportedTokens.HYN_Atlas.symbol) {

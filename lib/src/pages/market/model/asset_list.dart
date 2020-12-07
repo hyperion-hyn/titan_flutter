@@ -60,9 +60,8 @@ class AssetList {
       Decimal usdt = Decimal.parse(USDT.usdt);
       Decimal hynToUsdt = Decimal.parse(HYN.usdt);
       total = usdt + hynToUsdt;
-      //Decimal rpToUsdt = Decimal.parse(RP.usdt);
-      //total = usdt + hynToUsdt + rpToUsdt;
-
+      Decimal rpToUsdt = Decimal.parse(RP.usdt);
+      total = usdt + hynToUsdt + rpToUsdt;
     } catch (e) {}
     return total;
   }
@@ -71,10 +70,9 @@ class AssetList {
     var total;
     try {
       Decimal usdtToHyn = Decimal.parse(USDT.hyn);
-      //Decimal rpToHyn = Decimal.parse(RP.hyn);
+      Decimal rpToHyn = Decimal.parse(RP.hyn);
       Decimal hyn = Decimal.parse(HYN.hyn);
-      //total = usdtToHyn + rpToHyn + hyn;
-      total = usdtToHyn + hyn;
+      total = usdtToHyn + rpToHyn + hyn;
     } catch (e) {}
     return total;
   }
