@@ -160,16 +160,11 @@ class _ExchangeWithdrawConfirmPageState
     _gasPriceEstimate =
         Decimal.parse(widget.withdrawFeeByGas) * _gasPriceEstimate;
 
-    print(
-        'WithdrawConfirm: gasPriceEstimate: $_gasPriceEstimate quotePrice: $_quotePrice');
-
     Decimal _gasPriceByToken = Decimal.fromInt(0);
     var _gasFeeSymbol = widget.coinVo.symbol;
     var _gasFeeShown = _gasPriceByToken;
 
     try {
-      ///RP-HYN : gas * HYN
-      ///HYN-USDT/ETH: gas / HYN
       if (widget.coinVo.contractAddress != null &&
           widget.coinVo.coinType == CoinType.HYN_ATLAS) {
         _gasFeeSymbol = 'HYN';
@@ -187,7 +182,7 @@ class _ExchangeWithdrawConfirmPageState
         _gasPriceByToken = (Decimal.parse('$_gasPriceEstimate') /
             Decimal.parse('$_quotePrice'));
         _gasPriceEstimateStr =
-            " ${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GDUST $_gasFeeShown $_gasFeeSymbol \n ≈ $_gasPriceByToken ${widget.coinVo.symbol}";
+            " ${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GDUST ($_gasFeeShown $_gasFeeSymbol)";
       } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
         var gasLimit = SettingInheritedModel.ofConfig(context)
             .systemConfigEntity
@@ -201,7 +196,7 @@ class _ExchangeWithdrawConfirmPageState
           8,
         ));
         _gasPriceEstimateStr =
-            " ${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GDUST $gasPriceEstimate $_gasFeeSymbol ";
+            " ${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GDUST ($gasPriceEstimate $_gasFeeSymbol)";
       } else {
         var ethQuotePrice = WalletInheritedModel.of(context)
                 .activatedQuoteVoAndSign('ETH')
@@ -228,7 +223,7 @@ class _ExchangeWithdrawConfirmPageState
         ));
 
         _gasPriceEstimateStr =
-            "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI $gasEstimate ETH ";
+            "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI ($gasEstimate ETH) ";
       }
     } catch (e) {}
 
@@ -437,13 +432,15 @@ class _ExchangeWithdrawConfirmPageState
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4.0),
-                          child: Text(
-                            '≈ $_gasPriceByToken ${widget.coinVo.symbol}',
-                            style: TextStyle(
-                              color: DefaultColors.color999,
-                              fontSize: 15,
-                            ),
-                          ),
+                          child: widget.coinVo.symbol != 'HYN'
+                              ? Text(
+                                  '≈ $_gasPriceByToken ${widget.coinVo.symbol}',
+                                  style: TextStyle(
+                                    color: DefaultColors.color999,
+                                    fontSize: 13,
+                                  ),
+                                )
+                              : SizedBox(),
                         ),
                         Text(
                           '实际扣除的矿工费将以${widget.coinVo.symbol}来抵除',
