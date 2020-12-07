@@ -160,9 +160,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
 
   @override
   void dispose() {
-    /*if (exchangeModel.isActiveAccount()) {
+    if (exchangeModel.isActiveAccountAndHasAssets()) {
       _socketBloc.add(UnSubChannelEvent(channel: userTickChannel));
-    }*/
+    }
     _socketBloc.add(UnSubChannelEvent(channel: tradeChannel));
     _socketBloc.add(UnSubChannelEvent(channel: depthChannel));
     Application.routeObserver.unsubscribe(this);
