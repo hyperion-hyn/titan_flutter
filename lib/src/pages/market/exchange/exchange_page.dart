@@ -317,50 +317,50 @@ class _ExchangePageState extends BaseState<ExchangePage>  {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: HexColor('#FFF2F2F2'),
-              borderRadius: BorderRadius.circular(3.0),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 8.0,
-                horizontal: 16.0,
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      '${S.of(context).exchange_24h_amount} ${_amount24H}',
-                      style: TextStyle(
-                        color: HexColor('#FF999999'),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        '${S.of(context).exchange_latest_quote} ${_exchangeType == ExchangeType.BUY ? '1HYN = $_hynToSelectedCoin $_selectedCoin' : '1$_selectedCoin = $_selectedCoinToHYN HYN'}',
-                        style: TextStyle(
-                          color: HexColor('#FF999999'),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        //   child: Container(
+        //     width: double.infinity,
+        //     decoration: BoxDecoration(
+        //       color: HexColor('#FFF2F2F2'),
+        //       borderRadius: BorderRadius.circular(3.0),
+        //     ),
+        //     child: Padding(
+        //       padding: const EdgeInsets.symmetric(
+        //         vertical: 8.0,
+        //         horizontal: 16.0,
+        //       ),
+        //       child: Row(
+        //         crossAxisAlignment: CrossAxisAlignment.start,
+        //         children: <Widget>[
+        //           Expanded(
+        //             flex: 1,
+        //             child: Text(
+        //               '${S.of(context).exchange_24h_amount} ${_amount24H}',
+        //               style: TextStyle(
+        //                 color: HexColor('#FF999999'),
+        //                 fontSize: 12,
+        //               ),
+        //             ),
+        //           ),
+        //           Expanded(
+        //             flex: 2,
+        //             child: Align(
+        //               alignment: Alignment.centerRight,
+        //               child: Text(
+        //                 '${S.of(context).exchange_latest_quote} ${_exchangeType == ExchangeType.BUY ? '1HYN = $_hynToSelectedCoin $_selectedCoin' : '1$_selectedCoin = $_selectedCoinToHYN HYN'}',
+        //                 style: TextStyle(
+        //                   color: HexColor('#FF999999'),
+        //                   fontSize: 12,
+        //                 ),
+        //               ),
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
         SizedBox(
           height: 16,
         )
