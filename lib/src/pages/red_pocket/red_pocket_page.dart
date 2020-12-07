@@ -273,7 +273,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           Column(
                             children: [
                               Text(
-                                '2',
+                                activeWallet != null?'2':'-',
                                 style: TextStyle(
                                   color: Colors.red,
                                   fontSize: 20,
@@ -331,7 +331,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     ],
                   ),
                 ),
-                /*
                 Padding(
                   padding: const EdgeInsets.only(
                     left: 16,
@@ -344,7 +343,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     color: HexColor('#F2F2F2'),
                   ),
                 ),
-                Row(
+                if (activeWallet != null)Row(
                   children: <Widget>[
                     InkWell(
                       onTap: _navToMyFriends,
@@ -403,7 +402,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     ),
                   ],
                 ),
-                */
               ],
             ),
           ),
