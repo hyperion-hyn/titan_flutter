@@ -934,6 +934,18 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
   }
 
   Widget _detailHeaderWidget() {
+
+    var priceStr = S.of(context).kline_delegate_price;
+    var amountStr = S.of(context).kline_delegate_amount;
+    if (widget.quote == 'USDT') {
+      priceStr = S.of(context).kline_delegate_price;
+      amountStr = S.of(context).kline_delegate_amount;
+    } else {
+      priceStr = '价格(HYN)';
+      amountStr = '数量(RP)';
+    }
+
+
     return SliverToBoxAdapter(
       child: Container(
         padding: const EdgeInsets.only(
@@ -964,7 +976,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                   Expanded(
                     flex: 2,
                     child: Text(
-                      S.of(context).kline_delegate_price,
+                      priceStr,
                       textAlign: TextAlign.end,
                       style:
                           TextStyle(color: HexColor("#777777"), fontSize: 10),
@@ -973,7 +985,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                   Expanded(
                     flex: 2,
                     child: Text(
-                      S.of(context).kline_delegate_amount,
+                      amountStr,
                       textAlign: TextAlign.end,
                       style:
                           TextStyle(color: HexColor("#777777"), fontSize: 10),
@@ -1696,6 +1708,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
       } else if (state is ChannelExchangeDepthState) {
         //订单深度
         // depthDebounceLater.debounceInterval(() {
+        print("[object] ---ChannelExchangeDepthState, response:${state.response}");
+
         _buyChartList.clear();
         _sellChartList.clear();
         dealDepthData(_buyChartList, _sellChartList, state.response,
@@ -1704,6 +1718,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
         _depthController.add(_depthRefresh);
         // }, 500);
       } else if (state is ChannelTradeDetailState) {
+        print("[object] ---ChannelTradeDetailState, response:${state.response}");
+
         //成交
         // tradeDebounceLater.debounceInterval(() {
         _dealTradeData(state.response, isReplace: false);
@@ -1716,7 +1732,18 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
 
 Widget delegationListView(BuildContext context,
     List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,
-    {limitNum = 20, enable = true, Function clickPrice}) {
+    {limitNum = 20, enable = true, Function clickPrice, String quote = 'USDT'}) {
+
+  var priceStr = S.of(context).kline_delegate_price;
+  var amountStr = S.of(context).kline_delegate_amount;
+  if (quote == 'USDT') {
+    priceStr = S.of(context).kline_delegate_price;
+    amountStr = S.of(context).kline_delegate_amount;
+  } else {
+    priceStr = '价格(HYN)';
+    amountStr = '数量(RP)';
+  }
+
   return Container(
     padding: const EdgeInsets.only(left: 14, right: 14, top: 14, bottom: 8),
     color: Colors.white,
@@ -1823,7 +1850,7 @@ Widget delegationListView(BuildContext context,
                     ),
                     Text(
                       //"价格(USDT)",
-                      S.of(context).kline_delegate_price,
+                      priceStr,
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontSize: 10,

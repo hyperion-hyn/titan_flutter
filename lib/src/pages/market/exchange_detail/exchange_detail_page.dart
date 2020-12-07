@@ -493,7 +493,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                   currentPriceStr = depthPrice;
                   priceEditController.text = currentPriceStr;
                   optionsController.add({contrOptionsTypePrice: ""});
-                }),
+                }, quote: widget.quote),
               ],
             );
           }),
