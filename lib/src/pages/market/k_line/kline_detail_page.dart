@@ -1642,8 +1642,11 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
   }
 
   // trade
+  String _tradeChannel = '';
+
   void _subTradeChannel() {
     var channel = SocketConfig.channelTradeDetail(widget.symbol);
+    _tradeChannel = channel;
     _subChannel(channel);
   }
 
@@ -1653,8 +1656,11 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
   }
 
   // depth
+  String _depthChannel = '';
+
   void _subDepthChannel() {
     var channel = SocketConfig.channelExchangeDepth(widget.symbol, -1);
+    _depthChannel = channel;
     _subChannel(channel);
   }
 
@@ -1707,34 +1713,24 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
         // }, 500);
 
       } else if (state is ChannelExchangeDepthState) {
+
         //订单深度
-        // depthDebounceLater.debounceInterval(() {
+        if (state.channel == _depthChannel && _depthChannel.isNotEmpty) {
+          _buyChartList.clear();
+          _sellChartList.clear();
+          dealDepthData(_buyChartList, _sellChartList, state.response,
+              enable: false);
+          _setupDepthWidget();
+          _depthController.add(_depthRefresh);
+        }
 
-        //var currentSymbol = "${widget.quote}/${widget.base}".toLowerCase();
-        //print("[object] ---ChannelExchangeDepthState, response:${state.response}, currentSymbol:$currentSymbol");
-
-
-        _buyChartList.clear();
-        _sellChartList.clear();
-        dealDepthData(_buyChartList, _sellChartList, state.response,
-            enable: false);
-        _setupDepthWidget();
-        _depthController.add(_depthRefresh);
-
-
-        // }, 500);
       } else if (state is ChannelTradeDetailState) {
 
-        //var currentSymbol = "${widget.quote}/${widget.base}".toLowerCase();
-        //print("[object] ---ChannelExchangeDepthState, state.symbol:${state.symbol}, currentSymbol:$currentSymbol, response:${state.response}");
-
-
         //成交
-        // tradeDebounceLater.debounceInterval(() {
-        _dealTradeData(state.response, isReplace: false);
-        _tradeController.add(_tradeRefresh);
-        // }, 500);
-
+        if (state.channel == _tradeChannel && _tradeChannel.isNotEmpty) {
+          _dealTradeData(state.response, isReplace: false);
+          _tradeController.add(_tradeRefresh);
+        }
 
       }
     });
