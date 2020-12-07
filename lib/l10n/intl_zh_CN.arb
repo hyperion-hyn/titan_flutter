@@ -704,6 +704,8 @@
   "@exchange": {},
   "exchange_24h_amount": "24H量",
   "@exchange_24h_amount": {},
+  "exchange_24h_vol": "24H额",
+  "@exchange_24h_vol": {},
   "exchange_account": "兑换账户",
   "@exchange_account": {},
   "exchange_account_balance": "账户余额",

@@ -215,13 +215,12 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
             consignListController.add(contrConsignTypeRefresh);
           }
           if (state is ChannelExchangeDepthState) {
-
-            //var currentSymbol = "${widget.quote}/${widget.base}".toLowerCase();
-            _buyChartList.clear();
-            _sailChartList.clear();
-            dealDepthData(_buyChartList, _sailChartList, state.response);
-            depthController.add(contrDepthTypeRefresh);
-
+            if (state.channel == depthChannel) {
+              _buyChartList.clear();
+              _sailChartList.clear();
+              dealDepthData(_buyChartList, _sailChartList, state.response);
+              depthController.add(contrDepthTypeRefresh);
+            }
           }
         },
         child: BlocListener<ExchangeDetailBloc, AllPageState>(
