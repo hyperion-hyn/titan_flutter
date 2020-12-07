@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
@@ -934,6 +935,18 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
   }
 
   Widget _detailHeaderWidget() {
+
+    var priceStr = S.of(context).kline_delegate_price;
+    var amountStr = S.of(context).kline_delegate_amount;
+    if (widget.quote == 'USDT') {
+      priceStr = S.of(context).kline_delegate_price;
+      amountStr = S.of(context).kline_delegate_amount;
+    } else {
+      priceStr = '价格(HYN)';
+      amountStr = '数量(RP)';
+    }
+
+
     return SliverToBoxAdapter(
       child: Container(
         padding: const EdgeInsets.only(
@@ -964,7 +977,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                   Expanded(
                     flex: 2,
                     child: Text(
-                      S.of(context).kline_delegate_price,
+                      priceStr,
                       textAlign: TextAlign.end,
                       style:
                           TextStyle(color: HexColor("#777777"), fontSize: 10),
@@ -973,7 +986,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                   Expanded(
                     flex: 2,
                     child: Text(
-                      S.of(context).kline_delegate_amount,
+                      amountStr,
                       textAlign: TextAlign.end,
                       style:
                           TextStyle(color: HexColor("#777777"), fontSize: 10),
@@ -1042,7 +1055,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
   }
 
   Widget _tradeListViewContent() {
-    print("_tradeItemList:${_tradeItemList.length}");
+    //print("_tradeItemList:${_tradeItemList.length}");
 
     return StreamBuilder<Object>(
         stream: _tradeController.stream,
@@ -1612,7 +1625,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
   _unSubChannels() {
     _unSubPeriodChannel();
     _unSubDepthChannel();
-//    _unSubTradeChannel();
+    _unSubTradeChannel();
   }
 
   // period
@@ -1629,19 +1642,25 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
   }
 
   // trade
+  String _tradeChannel = '';
+
   void _subTradeChannel() {
     var channel = SocketConfig.channelTradeDetail(widget.symbol);
+    _tradeChannel = channel;
     _subChannel(channel);
   }
 
-//  void _unSubTradeChannel() {
-//    var channel = SocketConfig.channelTradeDetail(widget.symbol);
-//    _unSubChannel(channel);
-//  }
+ void _unSubTradeChannel() {
+    var channel = SocketConfig.channelTradeDetail(widget.symbol);
+    _unSubChannel(channel);
+  }
 
   // depth
+  String _depthChannel = '';
+
   void _subDepthChannel() {
     var channel = SocketConfig.channelExchangeDepth(widget.symbol, -1);
+    _depthChannel = channel;
     _subChannel(channel);
   }
 
@@ -1694,21 +1713,25 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
         // }, 500);
 
       } else if (state is ChannelExchangeDepthState) {
+
         //订单深度
-        // depthDebounceLater.debounceInterval(() {
-        _buyChartList.clear();
-        _sellChartList.clear();
-        dealDepthData(_buyChartList, _sellChartList, state.response,
-            enable: false);
-        _setupDepthWidget();
-        _depthController.add(_depthRefresh);
-        // }, 500);
+        if (state.channel == _depthChannel && _depthChannel.isNotEmpty) {
+          _buyChartList.clear();
+          _sellChartList.clear();
+          dealDepthData(_buyChartList, _sellChartList, state.response,
+              enable: false);
+          _setupDepthWidget();
+          _depthController.add(_depthRefresh);
+        }
+
       } else if (state is ChannelTradeDetailState) {
+
         //成交
-        // tradeDebounceLater.debounceInterval(() {
-        _dealTradeData(state.response, isReplace: false);
-        _tradeController.add(_tradeRefresh);
-        // }, 500);
+        if (state.channel == _tradeChannel && _tradeChannel.isNotEmpty) {
+          _dealTradeData(state.response, isReplace: false);
+          _tradeController.add(_tradeRefresh);
+        }
+
       }
     });
   }
@@ -1716,7 +1739,18 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
 
 Widget delegationListView(BuildContext context,
     List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,
-    {limitNum = 20, enable = true, Function clickPrice}) {
+    {limitNum = 20, enable = true, Function clickPrice, String quote = 'USDT'}) {
+
+  var priceStr = S.of(context).kline_delegate_price;
+  var amountStr = S.of(context).kline_delegate_amount;
+  if (quote == 'USDT') {
+    priceStr = S.of(context).kline_delegate_price;
+    amountStr = S.of(context).kline_delegate_amount;
+  } else {
+    priceStr = '价格(HYN)';
+    amountStr = '数量(RP)';
+  }
+
   return Container(
     padding: const EdgeInsets.only(left: 14, right: 14, top: 14, bottom: 8),
     color: Colors.white,
@@ -1823,7 +1857,7 @@ Widget delegationListView(BuildContext context,
                     ),
                     Text(
                       //"价格(USDT)",
-                      S.of(context).kline_delegate_price,
+                      priceStr,
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontSize: 10,

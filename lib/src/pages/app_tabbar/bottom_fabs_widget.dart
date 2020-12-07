@@ -143,69 +143,74 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
   @override
   Widget build(BuildContext context) {
     if (_isShow == true) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Spacer(),
-                Container(
-                  width: 80,
-                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                  child: InkWell(
-                    child: Lottie.asset(
-                      'res/lottie/lottie_red_pocket.json',
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RedPocketPage(),
-                        ),
-                      );
-                    },
+      return Column(
+        children: [
+          Row(
+            children: [
+              Spacer(),
+              Container(
+                width: 80,
+                height: 80,
+                padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                child: InkWell(
+                  child: Lottie.asset(
+                    'res/lottie/lottie_red_pocket.json',
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 24,
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                if (widget.showBurnBtn == true)
-                  FloatingActionButton(
-                    onPressed: () => _showFireModalBottomSheet(context),
-                    mini: true,
-                    heroTag: 'cleanData',
-                    backgroundColor: Colors.white,
-                    child: Image.asset(
-                      'res/drawable/ic_logo.png',
-                      width: 24,
-                      color: Colors.black87,
-                    ),
-                  ),
-                Spacer(),
-                FloatingActionButton(
-                  onPressed: () {
-                    Application.eventBus.fire(ToMyLocationEvent());
-                    //BlocProvider.of<MapBloc>(context).add(MyLocationEvent());
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RedPocketPage(),
+                      ),
+                    );
                   },
-                  mini: true,
-                  heroTag: 'myLocation',
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.my_location,
-                    color: Colors.black87,
-                    size: 24,
-                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 24,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    if (widget.showBurnBtn == true)
+                      FloatingActionButton(
+                        onPressed: () => _showFireModalBottomSheet(context),
+                        mini: true,
+                        heroTag: 'cleanData',
+                        backgroundColor: Colors.white,
+                        child: Image.asset(
+                          'res/drawable/ic_logo.png',
+                          width: 24,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    Spacer(),
+                    FloatingActionButton(
+                      onPressed: () {
+                        Application.eventBus.fire(ToMyLocationEvent());
+                        //BlocProvider.of<MapBloc>(context).add(MyLocationEvent());
+                      },
+                      mini: true,
+                      heroTag: 'myLocation',
+                      backgroundColor: Colors.white,
+                      child: Icon(
+                        Icons.my_location,
+                        color: Colors.black87,
+                        size: 24,
+                      ),
+                    )
+                  ],
                 )
               ],
-            )
-          ],
-        ),
+            ),
+          ),
+        ],
       );
     } else {
       return Container();

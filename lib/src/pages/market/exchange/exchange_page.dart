@@ -211,7 +211,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
   _exchange() {
     var _selectedCoinToHYN = '--';
     var _hynToSelectedCoin = '--';
-    var _amount24H = '--';
+    var _vol24H = '--';
 
     try {
       _hynToSelectedCoin = FormatUtil.truncateDoubleNum(
@@ -220,8 +220,8 @@ class _ExchangePageState extends BaseState<ExchangePage>
       _selectedCoinToHYN = FormatUtil.truncateDecimalNum(
               (Decimal.fromInt(1) / Decimal.parse(_hynToSelectedCoin)), 4) ??
           '--';
-      _amount24H = FormatUtil.truncateDoubleNum(
-              _getMarketItem(_selectedCoin)?.kLineEntity?.amount, 2) ??
+      _vol24H = FormatUtil.truncateDoubleNum(
+              _getMarketItem(_selectedCoin)?.kLineEntity?.vol, 2) ??
           '--';
     } catch (e) {}
 
@@ -318,50 +318,50 @@ class _ExchangePageState extends BaseState<ExchangePage>
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: HexColor('#FFF2F2F2'),
-              borderRadius: BorderRadius.circular(3.0),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 8.0,
-                horizontal: 16.0,
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      '${S.of(context).exchange_24h_amount} ${_amount24H}',
-                      style: TextStyle(
-                        color: HexColor('#FF999999'),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        '${S.of(context).exchange_latest_quote} ${_exchangeType == ExchangeType.BUY ? '1HYN = $_hynToSelectedCoin $_selectedCoin' : '1$_selectedCoin = $_selectedCoinToHYN HYN'}',
-                        style: TextStyle(
-                          color: HexColor('#FF999999'),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        //   child: Container(
+        //     width: double.infinity,
+        //     decoration: BoxDecoration(
+        //       color: HexColor('#FFF2F2F2'),
+        //       borderRadius: BorderRadius.circular(3.0),
+        //     ),
+        //     child: Padding(
+        //       padding: const EdgeInsets.symmetric(
+        //         vertical: 8.0,
+        //         horizontal: 16.0,
+        //       ),
+        //       child: Row(
+        //         crossAxisAlignment: CrossAxisAlignment.start,
+        //         children: <Widget>[
+        //           Expanded(
+        //             flex: 1,
+        //             child: Text(
+        //               '${S.of(context).exchange_24h_amount} ${_amount24H}',
+        //               style: TextStyle(
+        //                 color: HexColor('#FF999999'),
+        //                 fontSize: 12,
+        //               ),
+        //             ),
+        //           ),
+        //           Expanded(
+        //             flex: 2,
+        //             child: Align(
+        //               alignment: Alignment.centerRight,
+        //               child: Text(
+        //                 '${S.of(context).exchange_latest_quote} ${_exchangeType == ExchangeType.BUY ? '1HYN = $_hynToSelectedCoin $_selectedCoin' : '1$_selectedCoin = $_selectedCoinToHYN HYN'}',
+        //                 style: TextStyle(
+        //                   color: HexColor('#FF999999'),
+        //                   fontSize: 12,
+        //                 ),
+        //               ),
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
         SizedBox(
           height: 16,
         )
@@ -712,9 +712,9 @@ class _ExchangePageState extends BaseState<ExchangePage>
     var quote = marketItemEntity?.quote;
 
     // 24hour
-    var _amount24Hour =
-        '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
-      marketItemEntity.kLineEntity?.amount,
+    var _vol24H =
+        '${S.of(context).exchange_24h_vol} ${FormatUtil.truncateDoubleNum(
+      marketItemEntity.kLineEntity?.vol,
       2,
     )}';
 
@@ -746,7 +746,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
           WalletInheritedModel.of(context).activatedQuoteVoAndSign(
         marketItemEntity?.base,
       );
-print("!!!!555 ${_selectedQuote?.quoteVo.symbol} ${_selectedQuote?.quoteVo.price}  $_latestPercentString");
       var _latestQuotePrice = FormatUtil.truncateDoubleNum(
         double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
         4,
@@ -820,7 +819,7 @@ print("!!!!555 ${_selectedQuote?.quoteVo.symbol} ${_selectedQuote?.quoteVo.price
                               height: 4,
                             ),
                             Text(
-                              _amount24Hour ?? '-',
+                              _vol24H ?? '-',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 12,

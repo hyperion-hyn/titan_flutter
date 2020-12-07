@@ -109,7 +109,7 @@ class LogUtil {
   }
 
   static printMessage(dynamic message){
-    if (env.buildType != BuildType.PROD) {
+    if (showLog) {
       print(message);
     }
   }

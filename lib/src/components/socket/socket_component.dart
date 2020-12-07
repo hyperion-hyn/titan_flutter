@@ -242,8 +242,8 @@ class _SocketState extends State<_SocketManager> {
             'high': double.parse(itemList[2].toString()),
             'low': double.parse(itemList[3].toString()),
             'close': double.parse(itemList[4].toString()),
-            'vol': double.parse(itemList[5].toString()),
-            'amount': double.parse(itemList[6].toString()),
+            'amount': double.parse(itemList[5].toString()),
+            'vol': double.parse(itemList[6].toString()),
             'count': 0,
             'id': int.parse(itemList[0].toString()) / 1000,
           };
@@ -314,7 +314,6 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
 
   String getRealTimePrice(String symbol) {
     var marketItem = getMarketItem(symbol);
-    print("!!!!123123 $symbol ${marketItem?.kLineEntity?.close?.toString() ?? "0"}");
     return marketItem?.kLineEntity?.close?.toString() ?? "0";
   }
 

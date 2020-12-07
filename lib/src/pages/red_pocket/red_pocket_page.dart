@@ -331,6 +331,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     ],
                   ),
                 ),
+                /*
                 Padding(
                   padding: const EdgeInsets.only(
                     left: 16,
@@ -401,7 +402,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       ),
                     ),
                   ],
-                )
+                ),
+                */
               ],
             ),
           ),
