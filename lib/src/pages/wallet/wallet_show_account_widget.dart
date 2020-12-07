@@ -69,7 +69,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 
   @override
   int getStartPage() {
-    return 1;
+    return 0;
   }
 
   @override
@@ -92,7 +92,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
-    var tempTransList = await getEthTransferList();
+    var tempTransList = await getEthTransferList(_accountTransferService);
     if (tempTransList.length > 0) {
       await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
     }
@@ -562,9 +562,13 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                         return;
                       }
 
-                      await widget.transactionInteractor.cancelTransaction(context, transactionDetail, password);
-                      Fluttertoast.showToast(
-                          msg: S.of(context).wallet_cancel_send_tips, toastLength: Toast.LENGTH_LONG);
+                      var txHash = await widget.transactionInteractor.cancelTransaction(context, transactionDetail, password);
+                      if(txHash != null) {
+                        Fluttertoast.showToast(
+                            msg: S
+                                .of(context)
+                                .wallet_cancel_send_tips, toastLength: Toast.LENGTH_LONG);
+                      }
                     } catch (exception) {
                       if (exception.toString().contains("nonce too low") ||
                           exception.toString().contains("known transaction")) {
@@ -597,8 +601,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                       if (password == null) {
                         return;
                       }
-                      await widget.transactionInteractor.speedTransaction(context, transactionDetail, password);
-                      Fluttertoast.showToast(msg: S.of(context).wallet_have_speed_tips, toastLength: Toast.LENGTH_LONG);
+                      var txHash = await widget.transactionInteractor.speedTransaction(context, transactionDetail, password);
+                      if(txHash != null) {
+                        Fluttertoast.showToast(msg: S
+                            .of(context)
+                            .wallet_have_speed_tips, toastLength: Toast.LENGTH_LONG);
+                      }
                     } catch (exception) {
                       if (exception.toString().contains("nonce too low") ||
                           exception.toString().contains("known transaction")) {
@@ -643,7 +651,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
 
       //delete local transaction
-      var tempTransList = await getEthTransferList();
+      var tempTransList = await getEthTransferList(_accountTransferService);
       if (tempTransList.length > 0) {
         await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
       }
@@ -661,19 +669,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       logger.e(e);
     }
     return retList;
-  }
-
-  Future<List<TransactionDetailVo>> getEthTransferList() async {
-    List<TransactionDetailVo> transferList = [];
-    try {
-      WalletVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-      String fromAddress = walletVo.wallet.getEthAccount().address;
-      var coinVo = CoinVo(symbol: "ETH", address: fromAddress);
-      transferList = await _accountTransferService.getTransferList(coinVo, 0);
-    } catch (e) {
-      logger.e(e);
-    }
-    return transferList;
   }
 
   Future<TransactionDetailVo> getLocalTransfer(bool isAllLocal) async {
@@ -694,4 +689,17 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 
     return localTransfer;
   }
+}
+
+Future<List<TransactionDetailVo>> getEthTransferList(AccountTransferService _accountTransferService) async {
+  List<TransactionDetailVo> transferList = [];
+  try {
+    WalletVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    String fromAddress = walletVo.wallet.getEthAccount().address;
+    var coinVo = CoinVo(symbol: "ETH", address: fromAddress);
+    transferList = await _accountTransferService.getTransferList(coinVo, 0);
+  } catch (e) {
+    logger.e(e);
+  }
+  return transferList;
 }

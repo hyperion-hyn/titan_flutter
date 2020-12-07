@@ -13,6 +13,7 @@ import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:web3dart/credentials.dart';
+import 'dart:math';
 
 class TransactionInteractor {
   Repository repository;
@@ -105,9 +106,9 @@ class TransactionInteractor {
     Decimal speedGasPrice = Decimal.parse(transactionDetailVo.gasPrice) * Decimal.parse("1.1");
     Decimal resultGasPrice;
     if(speedGasPrice < maxGasPrice){
-      resultGasPrice = speedGasPrice;
-    }else{
       resultGasPrice = maxGasPrice;
+    }else{
+      resultGasPrice = speedGasPrice;
     }
 
     if (transactionDetailVo.localTransferType == LocalTransferType.LOCAL_TRANSFER_ETH) {
@@ -119,6 +120,7 @@ class TransactionInteractor {
           gasPrice: BigInt.from(resultGasPrice.toInt()),
           nonce: int.parse(transactionDetailVo.nonce));
       logger.i('ETH交易已提交，交易hash $txHash');
+      return txHash;
     } else if (transactionDetailVo.localTransferType == LocalTransferType.LOCAL_TRANSFER_HYN_USDT) {
       var txHash = await walletVo.wallet.sendErc20Transaction(
           id: transactionDetailVo.id,
@@ -129,10 +131,11 @@ class TransactionInteractor {
           toAddress: transactionDetailVo.toAddress,
           nonce: int.parse(transactionDetailVo.nonce));
       logger.i('HYN USDT transaction committed，txhash $txHash ');
+      return txHash;
     }
   }
 
-  Future speedTransaction(BuildContext context, TransactionDetailVo transactionDetailVo,String password) async {
+  Future<String> speedTransaction(BuildContext context, TransactionDetailVo transactionDetailVo,String password) async {
     var gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).gasPriceRecommend;
     var walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
 
@@ -140,9 +143,9 @@ class TransactionInteractor {
     Decimal speedGasPrice = Decimal.parse(transactionDetailVo.gasPrice) * Decimal.parse("1.1");
     Decimal resultGasPrice;
     if(speedGasPrice < maxGasPrice){
-      resultGasPrice = speedGasPrice;
-    }else{
       resultGasPrice = maxGasPrice;
+    }else{
+      resultGasPrice = speedGasPrice;
     }
 
     if (transactionDetailVo.localTransferType == LocalTransferType.LOCAL_TRANSFER_ETH) {
@@ -155,6 +158,7 @@ class TransactionInteractor {
           gasPrice: BigInt.from(resultGasPrice.toInt()),
           nonce: int.parse(transactionDetailVo.nonce));
       logger.i('ETH交易已提交，交易hash $txHash');
+      return txHash;
     } else if (transactionDetailVo.localTransferType == LocalTransferType.LOCAL_TRANSFER_HYN_USDT) {
       int decimal;
       walletVo.coins.forEach((element) {
@@ -172,6 +176,7 @@ class TransactionInteractor {
           toAddress: transactionDetailVo.toAddress,
           nonce: int.parse(transactionDetailVo.nonce));
       logger.i('ETH交易已提交，交易hash $txHash');
+      return txHash;
     }
   }
 
