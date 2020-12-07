@@ -73,7 +73,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                 var symbol = responseMap['symbol'];
                 var data = responseMap['data'];
 
-                LogUtil.printMessage("[SocketBloc] mapEventToState, channelValue:$channelValue， symbol:$symbol, data:$data");
+                //LogUtil.printMessage("[SocketBloc] mapEventToState, channelValue:$channelValue， symbol:$symbol, data:$data");
 
                 if (channelValue == SocketConfig.channelKLine24Hour) {
 
