@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -32,8 +33,10 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   var _address = "";
   List<RpReleaseInfo> _dataList = [];
 
-  int lastDay;
   int _currentSelectedIndex;
+  int _currentLevel = 3;
+  int _lastMaxLevel = 1;
+  int _recommendLevel = 0;
 
   @override
   void initState() {
@@ -75,177 +78,10 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
       onRefresh: () async {
         getNetworkData();
       },
-      onLoadingMore: () {
-        getMoreNetworkData();
-      },
       child: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Text(
-                    '当前流通 20345 RP，百分比Y = 5%（5%单位粒度）',
-                    style: TextStyle(
-                      color: HexColor('#333333'),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: GridView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                ),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, //每行三列
-                  childAspectRatio: 1.5, //显示区域宽高相等
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 5,
-                ),
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  bool isRecommend = index == 0;
-                  bool isCurrent = index == 3;
-                  bool isLastMost = index == 1;
-                  String leftTagTitle = '';
-                  if (isLastMost) {
-                    leftTagTitle = '历史最高';
-                  }
-
-                  if (isCurrent) {
-                    leftTagTitle = '当前量级';
-                  }
-
-                  bool isSelected = (_currentSelectedIndex != null && _currentSelectedIndex == index);
-                  return Stack(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(
-                          top: 8,
-                        ),
-                        child: Stack(
-                          children: [
-                            InkWell(
-                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                              onTap: () {
-                                setState(() {
-                                  _currentSelectedIndex = index;
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? HexColor('#FFEAEA')
-                                      : HexColor('#F6F6F6'),
-                                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 8,
-                                      ),
-                                      child: Text(
-                                        '量级 ${index + 1}',
-                                        style: TextStyle(
-                                          color: HexColor('#333333'),
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 16,
-                                        left: 14,
-                                        bottom: 16,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 16,
-                                            ),
-                                            child: _columnWidget(
-                                              '5 RP',
-                                              '需燃烧',
-                                            ),
-                                            // child: _columnWidget('$totalTransmit RP', '总可传导'),
-                                          ),
-                                          Spacer(),
-                                          _columnWidget(
-                                            '5 RP',
-                                            '最低持币 5*(1+Y)',
-                                          ),
-                                          Spacer(),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            if (leftTagTitle?.isNotEmpty ?? false)
-                              Positioned(
-                                  left: 10,
-                                  top: 6,
-                                  child: Text(
-                                    leftTagTitle,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 10,
-                                      color: isLastMost ? HexColor('#FF4C3B') : HexColor('#999999'),
-                                    ),
-                                  )),
-                             Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(8, 3, 0, 0),
-                                child: Center(
-                                  child: Image.asset(
-                                    "res/drawable/red_pocket_level_${!isSelected ? 'un_check' : 'check'}.png",
-                                    width: 30,
-                                    height: 30,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (isRecommend)
-                        Positioned(
-                          right: 12,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: HexColor("#FF4C3B"), borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(8, 3, 8, 3),
-                              child: Center(
-                                child: Text(
-                                  '推荐',
-                                  style: TextStyle(
-                                      fontSize: 8, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  );
-                }),
-          ),
+          _levelHeaderView(),
+          _levelListView(),
           _confirmButtonWidget(),
         ],
       ),
@@ -280,6 +116,224 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     );
   }
 
+  Widget _levelHeaderView() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Text(
+              '当前流通 20345 RP，百分比Y = 5%（5%单位粒度）',
+              style: TextStyle(
+                color: HexColor('#333333'),
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _levelListView() {
+    return SliverToBoxAdapter(
+      child: GridView.builder(
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 18,
+          ),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, //每行三列
+            childAspectRatio: 1.5, //显示区域宽高相等
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 5,
+          ),
+          itemCount: 5,
+          itemBuilder: (context, index) {
+            return _itemBuilder(index);
+          }),
+    );
+  }
+
+  Widget _itemBuilder(int index) {
+    bool isRecommend = _recommendLevel == index;
+    bool isCurrent = _currentLevel == index;
+    bool isLastMost = _lastMaxLevel == index;
+    bool isSelected = (_currentSelectedIndex != null && _currentSelectedIndex == index);
+
+    String leftTagTitle = '';
+    if (isLastMost) {
+      leftTagTitle = '历史最高';
+    }
+
+    if (isCurrent) {
+      leftTagTitle = '当前量级';
+    }
+
+    var levelName = '量级 ${_levelValueToLevelName(index)}';
+    var burnTitle = '需燃烧';
+    var burnRpValue = '5 RP';
+
+    var stakingTitle = '最低持币 5*(1+Y)';
+    var stakingValue = '5 RP';
+
+    return Stack(
+      children: [
+        Container(
+          margin: const EdgeInsets.only(
+            top: 8,
+          ),
+          child: Stack(
+            children: [
+              InkWell(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                onTap: () {
+                  if (_currentSelectedIndex != null && _currentLevel < index) {
+                    Fluttertoast.showToast(
+                      msg: '选择的量级小于当前量级, 请重新选择！',
+                      gravity: ToastGravity.CENTER,
+                    );
+                    return;
+                  }
+
+                  setState(() {
+                    _currentSelectedIndex = index;
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isSelected ? HexColor('#FFEAEA') : HexColor('#F6F6F6'),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 8,
+                        ),
+                        child: Text(
+                          levelName,
+                          style: TextStyle(
+                            color: HexColor('#333333'),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 16,
+                          left: 14,
+                          bottom: 16,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                              ),
+                              child: _columnWidget(
+                                burnRpValue,
+                                burnTitle,
+                              ),
+                              // child: _columnWidget('$totalTransmit RP', '总可传导'),
+                            ),
+                            Spacer(),
+                            _columnWidget(
+                              stakingValue,
+                              stakingTitle,
+                            ),
+                            Spacer(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (leftTagTitle?.isNotEmpty ?? false)
+                Positioned(
+                    left: 10,
+                    top: 6,
+                    child: Text(
+                      leftTagTitle,
+                      style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 10,
+                        color: isLastMost ? HexColor('#FF4C3B') : HexColor('#999999'),
+                      ),
+                    )),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 3, 0, 0),
+                  child: Center(
+                    child: Visibility(
+                      visible: isCurrent || isSelected,
+                      child: Image.asset(
+                        "res/drawable/red_pocket_level_${isSelected ? 'check' : 'un_check'}.png",
+                        width: 30,
+                        height: 30,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (isRecommend)
+          Positioned(
+            right: 12,
+            child: Container(
+              decoration:
+                  BoxDecoration(color: HexColor("#FF4C3B"), borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(8, 3, 8, 3),
+                child: Center(
+                  child: Text(
+                    '推荐',
+                    style: TextStyle(fontSize: 8, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  String _levelValueToLevelName(int levelValue) {
+    String level = '';
+    switch (levelValue) {
+      case 0:
+        level = 'E';
+        break;
+
+      case 1:
+        level = 'D';
+        break;
+
+      case 2:
+        level = 'C';
+        break;
+
+      case 3:
+        level = 'B';
+        break;
+
+      case 4:
+        level = 'A';
+        break;
+    }
+    return level;
+  }
+
   Widget _confirmButtonWidget() {
     return SliverToBoxAdapter(
       child: Container(
@@ -298,7 +352,9 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                 btnColor: [HexColor('#2D99FF'), HexColor('#107EDC')],
                 //isLoading: !_canCancel,
               ),
-              SizedBox(width: 20,),
+              SizedBox(
+                width: 20,
+              ),
               ClickOvalButton(
                 '升级',
                 _navToLevelUpgradeAction,
@@ -325,6 +381,14 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   }
 
   _navToLevelUpgradeAction() {
+    if (_currentSelectedIndex != null && _currentLevel == _currentSelectedIndex) {
+      Fluttertoast.showToast(
+        msg: '选择的量级与当前量级相同, 请重新选择！',
+        gravity: ToastGravity.CENTER,
+      );
+      return;
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -351,22 +415,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
       }
     } catch (e) {
       _loadDataBloc.add(LoadFailEvent());
-    }
-  }
-
-  void getMoreNetworkData() async {
-    try {
-      _currentPage = _currentPage + 1;
-      var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
-
-      if (netData?.isNotEmpty ?? false) {
-        _dataList.addAll(netData);
-        _loadDataBloc.add(LoadingMoreSuccessEvent());
-      } else {
-        _loadDataBloc.add(LoadMoreEmptyEvent());
-      }
-    } catch (e) {
-      _loadDataBloc.add(LoadMoreFailEvent());
     }
   }
 }
