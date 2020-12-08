@@ -601,7 +601,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpLevelUnStakingPage(),
+        builder: (context) => RpLevelRetrievePage(),
       ),
     );
   }

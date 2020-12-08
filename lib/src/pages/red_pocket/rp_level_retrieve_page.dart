@@ -14,16 +14,16 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 
-class RpLevelUpgradePage extends StatefulWidget {
-  RpLevelUpgradePage();
+class RpLevelRetrievePage extends StatefulWidget {
+  RpLevelRetrievePage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RpLevelUpgradeState();
+    return _RpLevelRetrieveState();
   }
 }
 
-class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
+class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
   TextEditingController _textEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
   double minTotal = 0;
@@ -73,16 +73,23 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     }
   }
 
-  TextStyle _textStyle = TextStyle(
+  TextStyle _lightTextStyle = TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 14,
+    color: HexColor('#333333'),
   );
 
+  TextStyle _greyTextStyle = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 12,
+    color: HexColor('#999999'),
+  );
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '升级量级',
+        baseTitle: '取回持币',
       ),
       backgroundColor: Colors.white,
       body: Column(
@@ -106,11 +113,11 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                           padding: const EdgeInsets.only(top: 18),
                           child: Row(
                             children: <Widget>[
-                              Text('提升到 B 持币量级', style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
-                              )),
-
+                              Text('当前持币', style: _greyTextStyle),
+                              SizedBox(
+                                width: 16,
+                              ),
+                              Text('100 RP', style: _lightTextStyle),
                             ],
                           ),
                         ),
@@ -118,33 +125,19 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                           padding: const EdgeInsets.only(top: 20),
                           child: Row(
                             children: <Widget>[
-                              Text('需燃烧', style: _textStyle),
+                              Text('当前量级C需持币', style: _greyTextStyle),
                               SizedBox(
                                 width: 16,
                               ),
-                              Text('30 RP', style: _textStyle),
+                              Text('63 RP', style: _lightTextStyle),
                             ],
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only( top: 30),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
-                              Text('转入持币', style: _textStyle),
-                              SizedBox(width: 5,),
-                              Text('（至少31.5 RP）', style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 12,
-                                color: HexColor('#999999'),
-                              )),
-                              SizedBox(width: 20,),
-                              Text('当前持币 20 RP', style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 12,
-                                color: HexColor('#999999'),
-                              )),
+                              Text('取回持币', style: _lightTextStyle),
                             ],
                           ),
                         ),
@@ -197,7 +190,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                               width: 6,
                             ),
                             Text(
-                              '为防止因Y增长导致掉级，建议适当增加持币量',
+                              '为保证当前量级不下降，请保持持币量大于63RP',
                               style: TextStyle(
                                 color: HexColor('#333333'),
                                 fontSize: 12,
@@ -208,16 +201,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                       ],
                     ),
                   ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 60, left: 16, right: 16,),
-                        child: Text(
-                          '提示：因你还没有推荐人，系统将为你随机设定一个量级4以上的账户地址为推荐人',
-                          style: TextStyle(
-                            color: HexColor('#C3A16D'),
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
                       _confirmButtonWidget(),
                 ])),
               ),
@@ -233,10 +216,10 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(top: 30),
+        padding: const EdgeInsets.only(top: 60),
         child: Center(
           child: ClickOvalButton(
-            '马上提升',
+            '取回持币',
             _confirmAction,
             height: 42,
             width: MediaQuery.of(context).size.width - 37 * 2,
@@ -294,7 +277,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
           btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
         ),
       ],
-      content: '您要取回50RP到钱包，剩余持币不足当前量级3所需最低持币量，您的量级将掉到量级2，请谨慎操作',
+      content: '您要取回50RP到钱包，当前持币量级C，您的量级将掉到量级B，请谨慎操作',
       isInputValue: false,
     );
   }

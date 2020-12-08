@@ -7,21 +7,23 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 
-class RpLevelUnStakingPage extends StatefulWidget {
-  RpLevelUnStakingPage();
+class RpLevelAddStakingPage extends StatefulWidget {
+  RpLevelAddStakingPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RpLevelUnStakingState();
+    return _RpLevelAddStakingState();
   }
 }
 
-class _RpLevelUnStakingState extends BaseState<RpLevelUnStakingPage> {
+class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
   TextEditingController _textEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
   double minTotal = 0;
@@ -71,16 +73,17 @@ class _RpLevelUnStakingState extends BaseState<RpLevelUnStakingPage> {
     }
   }
 
-  TextStyle _textStyle = TextStyle(
+  TextStyle _lightTextStyle = TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 14,
   );
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '取回持币',
+        baseTitle: '增加持币',
       ),
       backgroundColor: Colors.white,
       body: Column(
@@ -96,44 +99,52 @@ class _RpLevelUnStakingState extends BaseState<RpLevelUnStakingPage> {
                 child: SingleChildScrollView(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16,),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
                     color: Colors.white,
                     child: Column(
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.only(top: 18),
+                          padding: const EdgeInsets.only(top: 60),
                           child: Row(
                             children: <Widget>[
-                              Text('当前持币', style: _textStyle),
+                              Text('当前量级', style: _lightTextStyle),
                               SizedBox(
                                 width: 16,
                               ),
-                              Text('100 RP', style: _textStyle),
+                              Text('C', style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                                color: HexColor('#999999'),
+                              )),
                             ],
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 20),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
-                              Text('当前量级C需持币', style: _textStyle),
+                              Text('转入持币', style: _lightTextStyle),
                               SizedBox(
-                                width: 16,
+                                width: 5,
                               ),
-                              Text('63 RP', style: _textStyle),
+                              Text('当前持币 20 RP',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 12,
+                                    color: HexColor('#999999'),
+                                  )),
                             ],
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only( top: 30),
-                          child: Row(
-                            children: <Widget>[
-                              Text('取回持币', style: _textStyle),
-                            ],
+                          padding: const EdgeInsets.only(
+                            top: 16,
+                            right: 50,
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16, right: 50,),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
@@ -148,10 +159,10 @@ class _RpLevelUnStakingState extends BaseState<RpLevelUnStakingPage> {
                                     controller: _textEditingController,
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                    hint: S.of(context).please_enter_withdraw_amount,
+                                    hint: '请输入增加数量',
                                     validator: (textStr) {
                                       if (textStr.length == 0) {
-                                        return S.of(context).please_input_hyn_count;
+                                        return '请输入增加数量';
                                       }
 
                                       var inputValue = Decimal.tryParse(textStr);
@@ -165,35 +176,28 @@ class _RpLevelUnStakingState extends BaseState<RpLevelUnStakingPage> {
                             ],
                           ),
                         ),
-                        Row(
-                          children: [
-                            Text(
-                              '*',
-                              style: TextStyle(
-                                color: HexColor('#FF4C3B'),
-                                fontSize: 24,
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Row(
+                            children: [
+                              Text(
+                                '适当增加持币可以防止因Y(发行量)增加而掉级',
+                                style: TextStyle(
+                                  color: HexColor('#999999'),
+                                  fontSize: 10,
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Text(
-                              '为保证当前量级不下降，请保持持币量大于63RP',
-                              style: TextStyle(
-                                color: HexColor('#333333'),
-                                fontSize: 12,
-                              ),
-                            )
-                          ],
+                            ],
+                          ),
                         )
                       ],
                     ),
                   ),
+                  _confirmButtonWidget(),
                 ])),
               ),
             ),
           ),
-          _confirmButtonWidget(),
         ],
       ),
     );
@@ -203,33 +207,67 @@ class _RpLevelUnStakingState extends BaseState<RpLevelUnStakingPage> {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 18.0, top: 10),
+        padding: const EdgeInsets.only(top: 100),
         child: Center(
           child: ClickOvalButton(
-            '取回持币',
+            S.of(context).confirm,
             _confirmAction,
-            height: 46,
+            height: 42,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
+            btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
           ),
         ),
       ),
     );
   }
 
-  _confirmAction() async {
+  _confirmAction() {
+    FocusScope.of(context).requestFocus(FocusNode());
+
     if (!_formKey.currentState.validate()) {
       return;
     }
 
-    /*
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Map3NodeConfirmPage(
-            message: 'message',
-          ),
-        ));
-        */
+    // Future.delayed(Duration(milliseconds: 111)).then((_) {
+    //   _showAlertView();
+    // });
+  }
+
+  _showAlertView() {
+    UiUtil.showAlertView(
+      context,
+      title: '重要提醒',
+      actions: [
+        ClickOvalButton(
+          '取回',
+          () async {
+            Navigator.pop(context, false);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+          fontColor: DefaultColors.color333,
+          btnColor: [Colors.transparent],
+        ),
+        SizedBox(
+          width: 20,
+        ),
+        ClickOvalButton(
+          '再想想',
+          () {
+            Navigator.pop(context, true);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+          btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
+        ),
+      ],
+      content: '您要取回50RP到钱包，剩余持币不足当前量级3所需最低持币量，您的量级将掉到量级2，请谨慎操作',
+      isInputValue: false,
+    );
   }
 }
