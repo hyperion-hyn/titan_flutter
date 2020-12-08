@@ -18,7 +18,7 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_retrieve_page.dart';
-import 'package:titan/src/pages/red_pocket/red_pocket_level_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -35,10 +35,10 @@ class RpMyLevelRecordsPage extends StatefulWidget {
   }
 }
 
-class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with RouteAware {
+class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
+    with RouteAware {
   final RPApi _rpApi = RPApi();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
-  final StreamController<String> _inputController = StreamController.broadcast();
 
   String get _address => _activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
@@ -53,7 +53,8 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
 
     _rpStatistics = widget.rpStatistics;
 
-    _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    _activeWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
   }
 
   @override
@@ -73,10 +74,8 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
   @override
   void dispose() {
     super.dispose();
-
     Application.routeObserver.unsubscribe(this);
     _loadDataBloc.close();
-    _inputController.close();
   }
 
   @override
@@ -100,7 +99,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
         child: CustomScrollView(
           slivers: [
             _notificationWidget(),
-            _myRPInfo(),
+            _myLevelInfo(),
             _myLevelRecordHeader(),
             _myLevelRecordList(),
           ],
@@ -151,27 +150,30 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     );
   }
 
-  _myRPInfo() {
+  _myLevelInfo() {
     int level = 0;
-    int index = 0;
-    if (level == 0) {
-      index = 0;
-    } else if ([1, 2, 3].contains(level)) {
-      index = 1;
-    } else if ([4, 5].contains(level)) {
-      index = 2;
-    }
+    var currentBurn = '--';
+    var holding = '--';
+
+    currentBurn = '30';
+    holding = '200';
+
     return SliverToBoxAdapter(
       child: Container(
         color: HexColor('#F8F8F8'),
         child: Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+          padding: const EdgeInsets.only(
+            left: 16.0,
+            right: 16.0,
+            top: 16.0,
+          ),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(16.0)),
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(
@@ -188,73 +190,53 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 30,
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Image.asset(
-                        "res/drawable/red_pocket_level_$index.png",
-                        width: 53,
-                        height: 53,
-                      ),
-                      Center(
-                        child: Text(
-                          'A',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 26,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                Image.asset(
+                  "res/drawable/ic_rp_level_$level.png",
+                  height: 100,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 20,
-                    left: 50,
-                    right: 50,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 4,
-                        ),
-                        child: Icon(
-                          Icons.warning_outlined,
-                          color: HexColor('#FF5041'),
-                          size: 16,
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
+                if (level == 0)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 20,
+                      left: 50,
+                      right: 50,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
                           padding: const EdgeInsets.only(
-                            left: 4,
+                            top: 4,
                           ),
-                          child: Text(
-                            '当前量级为0级，不能获得空投红包，请尽快升级',
-                            style: TextStyle(
-                              color: HexColor('#333333'),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              height: 1.5,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
+                          child: Icon(
+                            Icons.warning_outlined,
+                            color: HexColor('#FF5041'),
+                            size: 16,
                           ),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: 4,
+                            ),
+                            child: Text(
+                              '当前量级为0级，不能获得空投红包，请尽快升级',
+                              style: TextStyle(
+                                color: HexColor('#333333'),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                height: 1.5,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
                 Padding(
                   padding: const EdgeInsets.only(
                     top: 22,
@@ -268,14 +250,14 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                           left: 16,
                         ),
                         child: _columnWidget(
-                          '30RP',
+                          '$currentBurn RP',
                           '当前燃烧',
                         ),
                         // child: _columnWidget('$totalTransmit RP', '总可传导'),
                       ),
                       Spacer(),
                       _columnWidget(
-                        '200 RP',
+                        '$holding RP',
                         '当期持币',
                       ),
                       Spacer(),
@@ -372,10 +354,13 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
         child: Container(
           color: HexColor('#F8F8F8'),
           child: Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 160),
+            padding: const EdgeInsets.only(
+                left: 16.0, right: 16.0, top: 16.0, bottom: 160),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16.0),
-              child: emptyListWidget(title: S.of(context).rp_empty_staking_record, isAdapter: false),
+              child: emptyListWidget(
+                  title: S.of(context).rp_empty_staking_record,
+                  isAdapter: false),
             ),
           ),
         ),
@@ -396,7 +381,8 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     var model = _dataList[index];
     var status = model?.status ?? 0;
     var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
-    var hynPerRpBig = ConvertTokenUnit.strToBigInt(_rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
+    var hynPerRpBig = ConvertTokenUnit.strToBigInt(
+        _rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
     var amountBig = (hynAmountBig / hynPerRpBig);
 
     if (amountBig.isNaN || amountBig.isInfinite) {
@@ -408,8 +394,11 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
       amount = 1;
     }
 
-    var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
-    var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectRetrieveTime ?? '0', isSecond: true);
+    var stakingAt =
+        FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
+    var expectReleaseTime = FormatUtil.newFormatUTCDateStr(
+        model?.expectRetrieveTime ?? '0',
+        isSecond: true);
 
     bool isUp = index % 2 == 0;
 
@@ -542,14 +531,18 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
               right: 26,
               top: 4,
               child: Container(
-                decoration:
-                    BoxDecoration(color: HexColor("#FF4C3B"), borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                decoration: BoxDecoration(
+                    color: HexColor("#FF4C3B"),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(8, 1, 8, 3),
                   child: Center(
                     child: Text(
                       'new',
-                      style: TextStyle(fontSize: 10, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: HexColor("#FFFFFF"),
+                          fontWeight: FontWeight.normal),
                     ),
                   ),
                 ),
@@ -563,7 +556,10 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
   void getNetworkData() async {
     _currentPage = 1;
     try {
-      var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
+      var netData = await _rpApi.getRPStakingInfoList(
+        _address,
+        page: _currentPage,
+      );
 
       _rpStatistics = await _rpApi.getRPStatistics(_address);
 
@@ -587,7 +583,8 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
   void getMoreNetworkData() async {
     try {
       _currentPage = _currentPage + 1;
-      var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
+      var netData =
+          await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
       if (netData?.isNotEmpty ?? false) {
         _dataList.addAll(netData);
@@ -613,8 +610,9 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RedPocketLevelPage(),
+        builder: (context) => RpLevelUpgradePage(),
       ),
     );
+    return;
   }
 }
