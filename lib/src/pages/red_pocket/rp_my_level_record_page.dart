@@ -22,6 +22,7 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_un_staking_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_staking_detail_page.dart';
@@ -170,6 +171,16 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
   }
 
   _myRPInfo() {
+
+    int level = 0;
+    int index = 0;
+    if (level == 0) {
+      index = 0;
+    } else if ([1, 2, 3].contains(level)) {
+      index = 1;
+    } else if ([4,5].contains(level)) {
+      index = 2;
+    }
     return SliverToBoxAdapter(
       child: Container(
         color: HexColor('#F8F8F8'),
@@ -204,39 +215,25 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: <Color>[HexColor(('#E6ECFF')), HexColor(('#62A3FF'))],
-                          ),
-                          borderRadius: BorderRadius.circular(40),
-                        ),
+                      Image.asset(
+                        "res/drawable/red_pocket_level_$index.png",
+                        width: 53,
+                        height: 53,
                       ),
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: <Color>[HexColor(('#FFC8C8')), HexColor(('#FF1616'))],
-                          ),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '3',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 26,
-                              fontWeight: FontWeight.w600,
-                            ),
+                      Center(
+                        child: Text(
+                          'A',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 26,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.only(
                     top: 20,
@@ -247,14 +244,18 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.info,
-                        color: HexColor('#FF5041'),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4,),
+                        child: Icon(
+                          Icons.warning_outlined,
+                          color: HexColor('#FF5041'),
+                          size: 16,
+                        ),
                       ),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(
-                            left: 8,
+                            left: 4,
                           ),
                           child: Text(
                             '当前量级为0级，不能获得空投红包，请尽快升级',
@@ -312,7 +313,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                         children: <Widget>[
                           Container(
                             child: ClickOvalButton(
-                              '升级量级',
+                              '升级/增持',
                               _navToLevelUpgradeAction,
                               width: 120,
                               height: 32,
@@ -339,7 +340,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                       ),
                       ClickOvalButton(
                         '取回持币',
-                        _showCollectAlertView,
+                        _navToLevelUnStakingAction,
                         width: 120,
                         height: 32,
                         fontSize: 12,
@@ -621,6 +622,16 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
       _loadDataBloc.add(LoadMoreFailEvent());
     }
   }
+
+  _navToLevelUnStakingAction() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RpLevelUnStakingPage(),
+      ),
+    );
+  }
+
 
   _navToLevelUpgradeAction() {
     Navigator.push(

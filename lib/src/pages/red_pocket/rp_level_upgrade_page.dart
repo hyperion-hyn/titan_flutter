@@ -208,17 +208,13 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                              Positioned(
                               bottom: 0,
                               right: 0,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: !isSelected?HexColor(('#DEDEDE')):HexColor("#FF4C3B"), borderRadius: BorderRadius.only(bottomRight: Radius.circular(8.0))),
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(8, 3, 8, 3),
-                                  child: Center(
-                                    child: Text(
-                                      '✅',
-                                      style: TextStyle(
-                                          fontSize: 8, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
-                                    ),
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(8, 3, 0, 0),
+                                child: Center(
+                                  child: Image.asset(
+                                    "res/drawable/red_pocket_level_${!isSelected ? 'un_check' : 'check'}.png",
+                                    width: 30,
+                                    height: 30,
                                   ),
                                 ),
                               ),
@@ -288,16 +284,29 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
         color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.only(top: 60),
-          child: Center(
-            child: ClickOvalButton(
-              _currentSelectedIndex != null ?'升级':'选择想升到的量级',
-              _confirmAction,
-              height: 38,
-              width: 200,
-              fontSize: 16,
-              btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
-              //isLoading: !_canCancel,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ClickOvalButton(
+                '增加持币',
+                _confirmAction,
+                height: 34,
+                width: 120,
+                fontSize: 14,
+                btnColor: [HexColor('#2D99FF'), HexColor('#107EDC')],
+                //isLoading: !_canCancel,
+              ),
+              SizedBox(width: 20,),
+              ClickOvalButton(
+                '升级',
+                _confirmAction,
+                height: 34,
+                width: 120,
+                fontSize: 14,
+                btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
+                //isLoading: !_canCancel,
+              ),
+            ],
           ),
         ),
       ),
