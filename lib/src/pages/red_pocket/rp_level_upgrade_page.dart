@@ -1,17 +1,18 @@
-import 'package:flutter/cupertino.dart';
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'entity/rp_release_info.dart';
+import 'package:titan/src/widget/round_border_textfield.dart';
+import 'package:titan/src/utils/log_util.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 
 class RpLevelUpgradePage extends StatefulWidget {
   RpLevelUpgradePage();
@@ -23,332 +24,255 @@ class RpLevelUpgradePage extends StatefulWidget {
 }
 
 class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
-  final LoadDataBloc _loadDataBloc = LoadDataBloc();
-  final RPApi _rpApi = RPApi();
+  TextEditingController _textEditingController = new TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  double minTotal = 0;
+  double remainTotal = 0;
 
-  int _currentPage = 1;
-  var _address = "";
-  List<RpReleaseInfo> _dataList = [];
-
-  int lastDay;
-  int _currentSelectedIndex;
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   @override
   void initState() {
     super.initState();
-
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
-    _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   }
 
   @override
   void onCreated() {
-    _loadDataBloc.add(LoadingEvent());
+    // getNetworkData();
+
+    setState(() {
+      _loadDataBloc.add(RefreshSuccessEvent());
+    });
+
+    super.onCreated();
   }
 
   @override
   void dispose() {
+    print("[${widget.runtimeType}] dispose");
+
     _loadDataBloc.close();
     super.dispose();
   }
 
+  Future getNetworkData() async {
+    try {
+      if (mounted) {
+        setState(() {
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
+      }
+    } catch (e) {
+      LogUtil.toastException(e);
+
+      if (mounted) {
+        setState(() {
+          _loadDataBloc.add(RefreshFailEvent());
+        });
+      }
+    }
+  }
+
+  TextStyle _textStyle = TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: HexColor('#FFFFFF'),
       appBar: BaseAppBar(
-        baseTitle: '升级量级',
-        backgroundColor: HexColor('#FFFFFF'),
+        baseTitle: '取回持币',
       ),
-      body: _pageView(),
-    );
-  }
-
-  _pageView() {
-    return LoadDataContainer(
-      bloc: _loadDataBloc,
-      onLoadData: () async {
-        getNetworkData();
-      },
-      onRefresh: () async {
-        getNetworkData();
-      },
-      onLoadingMore: () {
-        getMoreNetworkData();
-      },
-      child: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Text(
-                    '当前流通 20345 RP，百分比Y = 5%（5%单位粒度）',
-                    style: TextStyle(
-                      color: HexColor('#333333'),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: GridView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                ),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, //每行三列
-                  childAspectRatio: 1.5, //显示区域宽高相等
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 5,
-                ),
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  bool isRecommend = index == 0;
-                  bool isCurrent = index == 3;
-                  bool isLastMost = index == 1;
-                  String leftTagTitle = '';
-                  if (isLastMost) {
-                    leftTagTitle = '历史最高';
-                  }
-
-                  if (isCurrent) {
-                    leftTagTitle = '当前量级';
-                  }
-
-                  bool isSelected = (_currentSelectedIndex != null && _currentSelectedIndex == index);
-                  return Stack(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(
-                          top: 8,
-                        ),
-                        child: Stack(
-                          children: [
-                            InkWell(
-                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                              onTap: () {
-                                setState(() {
-                                  _currentSelectedIndex = index;
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? HexColor('#FFEAEA')
-                                      : HexColor('#F6F6F6'),
-                                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 8,
-                                      ),
-                                      child: Text(
-                                        '量级 ${index + 1}',
-                                        style: TextStyle(
-                                          color: HexColor('#333333'),
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 16,
-                                        left: 14,
-                                        bottom: 16,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 16,
-                                            ),
-                                            child: _columnWidget(
-                                              '5 RP',
-                                              '需燃烧',
-                                            ),
-                                            // child: _columnWidget('$totalTransmit RP', '总可传导'),
-                                          ),
-                                          Spacer(),
-                                          _columnWidget(
-                                            '5 RP',
-                                            '最低持币 5*(1+Y)',
-                                          ),
-                                          Spacer(),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
+      backgroundColor: Colors.white,
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: LoadDataContainer(
+              bloc: _loadDataBloc,
+              enablePullUp: false,
+              onRefresh: getNetworkData,
+              isStartLoading: false,
+              child: BaseGestureDetector(
+                context: context,
+                child: SingleChildScrollView(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16,),
+                    color: Colors.white,
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(top: 18),
+                          child: Row(
+                            children: <Widget>[
+                              Text('当前持币', style: _textStyle),
+                              SizedBox(
+                                width: 16,
                               ),
-                            ),
-                            if (leftTagTitle?.isNotEmpty ?? false)
-                              Positioned(
-                                  left: 10,
-                                  top: 6,
-                                  child: Text(
-                                    leftTagTitle,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 10,
-                                      color: isLastMost ? HexColor('#FF4C3B') : HexColor('#999999'),
-                                    ),
-                                  )),
-                             Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(8, 3, 0, 0),
-                                child: Center(
-                                  child: Image.asset(
-                                    "res/drawable/red_pocket_level_${!isSelected ? 'un_check' : 'check'}.png",
-                                    width: 30,
-                                    height: 30,
+                              Text('100 RP', style: _textStyle),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20),
+                          child: Row(
+                            children: <Widget>[
+                              Text('当前量级C需持币', style: _textStyle),
+                              SizedBox(
+                                width: 16,
+                              ),
+                              Text('63 RP', style: _textStyle),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only( top: 30),
+                          child: Row(
+                            children: <Widget>[
+                              Text('取回持币', style: _textStyle),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16, right: 50,),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Flexible(
+                                flex: 1,
+                                child: Form(
+                                  key: _formKey,
+                                  child: RoundBorderTextField(
+                                    onChanged: (text) {
+                                      _formKey.currentState.validate();
+                                    },
+                                    controller: _textEditingController,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                    //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                                    hint: S.of(context).please_enter_withdraw_amount,
+                                    validator: (textStr) {
+                                      if (textStr.length == 0) {
+                                        return '请输入提币数量';
+                                      }
+
+                                      var inputValue = Decimal.tryParse(textStr);
+                                      if (inputValue == null) {
+                                        return S.of(context).please_enter_correct_amount;
+                                      }
+                                    },
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      if (isRecommend)
-                        Positioned(
-                          right: 12,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: HexColor("#FF4C3B"), borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(8, 3, 8, 3),
-                              child: Center(
-                                child: Text(
-                                  '推荐',
-                                  style: TextStyle(
-                                      fontSize: 8, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8,),
+                              child: Text(
+                                '*',
+                                style: TextStyle(
+                                  color: HexColor('#FF4C3B'),
+                                  fontSize: 24,
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                    ],
-                  );
-                }),
+                            SizedBox(
+                              width: 6,
+                            ),
+                            Text(
+                              '为保证当前量级不下降，请保持持币量大于63RP',
+                              style: TextStyle(
+                                color: HexColor('#333333'),
+                                fontSize: 12,
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                      _confirmButtonWidget(),
+                ])),
+              ),
+            ),
           ),
-          _confirmButtonWidget(),
+
         ],
       ),
     );
   }
 
-  Widget _columnWidget(
-    String amount,
-    String title,
-  ) {
-    return Column(
-      children: <Widget>[
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 10,
-            color: DefaultColors.color999,
-          ),
-        ),
-        SizedBox(
-          height: 2.0,
-        ),
-        Text(
-          '$amount',
-          style: TextStyle(
-            fontSize: 14,
-            color: DefaultColors.color333,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _confirmButtonWidget() {
-    return SliverToBoxAdapter(
-      child: Container(
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 60),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ClickOvalButton(
-                '增加持币',
-                _confirmAction,
-                height: 34,
-                width: 120,
-                fontSize: 14,
-                btnColor: [HexColor('#2D99FF'), HexColor('#107EDC')],
-                //isLoading: !_canCancel,
-              ),
-              SizedBox(width: 20,),
-              ClickOvalButton(
-                '升级',
-                _confirmAction,
-                height: 34,
-                width: 120,
-                fontSize: 14,
-                btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
-                //isLoading: !_canCancel,
-              ),
-            ],
+    return Container(
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 60),
+        child: Center(
+          child: ClickOvalButton(
+            '取回持币',
+            _confirmAction,
+            height: 42,
+            width: MediaQuery.of(context).size.width - 37 * 2,
+            fontSize: 18,
+            btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
           ),
         ),
       ),
     );
   }
 
-  _confirmAction() {}
+  _confirmAction() {
+    FocusScope.of(context).requestFocus(FocusNode());
 
-  void getNetworkData() async {
-    _currentPage = 1;
-
-    try {
-      var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
-
-      if (netData?.isNotEmpty ?? false) {
-        _dataList = netData;
-        if (mounted) {
-          setState(() {
-            _loadDataBloc.add(RefreshSuccessEvent());
-          });
-        }
-      } else {
-        _loadDataBloc.add(LoadEmptyEvent());
-      }
-    } catch (e) {
-      _loadDataBloc.add(LoadFailEvent());
+    if (!_formKey.currentState.validate()) {
+      return;
     }
+
+    Future.delayed(Duration(milliseconds: 111)).then((_) {
+      _showAlertView();
+    });
   }
 
-  void getMoreNetworkData() async {
-    try {
-      _currentPage = _currentPage + 1;
-      var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
+  _showAlertView() {
 
-      if (netData?.isNotEmpty ?? false) {
-        _dataList.addAll(netData);
-        _loadDataBloc.add(LoadingMoreSuccessEvent());
-      } else {
-        _loadDataBloc.add(LoadMoreEmptyEvent());
-      }
-    } catch (e) {
-      _loadDataBloc.add(LoadMoreFailEvent());
-    }
+    UiUtil.showAlertView(
+      context,
+      title: '重要提醒',
+      actions: [
+        ClickOvalButton(
+          '取回',
+              () async {
+            Navigator.pop(context, false);
+
+          },
+          width: 115,
+          height: 36,
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+          fontColor: DefaultColors.color333,
+          btnColor: [Colors.transparent],
+        ),
+        SizedBox(
+          width: 20,
+        ),
+        ClickOvalButton(
+          '再想想',
+              () {
+            Navigator.pop(context, true);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+          btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
+        ),
+      ],
+      content: '您要取回50RP到钱包，剩余持币不足当前量级3所需最低持币量，您的量级将掉到量级2，请谨慎操作',
+      isInputValue: false,
+    );
   }
+
 }

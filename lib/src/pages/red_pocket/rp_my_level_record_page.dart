@@ -1,13 +1,8 @@
 import 'dart:async';
 
-import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -22,16 +17,11 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
-import 'package:titan/src/pages/red_pocket/rp_level_un_staking_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_staking_detail_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_retrieve_page.dart';
+import 'package:titan/src/pages/red_pocket/red_pocket_level_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'package:titan/src/utils/log_util.dart';
-import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class RpMyLevelRecordsPage extends StatefulWidget {
@@ -47,18 +37,10 @@ class RpMyLevelRecordsPage extends StatefulWidget {
 
 class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with RouteAware {
   final RPApi _rpApi = RPApi();
-  final _formKey = GlobalKey<FormState>();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
-  final TextEditingController _textEditController = TextEditingController();
   final StreamController<String> _inputController = StreamController.broadcast();
 
   String get _address => _activeWallet?.wallet?.getEthAccount()?.address ?? "";
-
-  String get _hynPerRpStr => _rpStatistics?.rpContractInfo?.hynPerRpStr;
-
-  String get _hynPerRp => FormatUtil.stringFormatCoinNum(_hynPerRpStr) ?? '--';
-
-  double get _hynPerRpValue => double?.tryParse(_hynPerRpStr) ?? 0;
 
   WalletVo _activeWallet;
   RPStatistics _rpStatistics;
@@ -152,7 +134,6 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     );
   }
 
-
   _notificationWidget() {
     return SliverToBoxAdapter(
       child: Container(
@@ -171,14 +152,13 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
   }
 
   _myRPInfo() {
-
     int level = 0;
     int index = 0;
     if (level == 0) {
       index = 0;
     } else if ([1, 2, 3].contains(level)) {
       index = 1;
-    } else if ([4,5].contains(level)) {
+    } else if ([4, 5].contains(level)) {
       index = 2;
     }
     return SliverToBoxAdapter(
@@ -233,7 +213,6 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                     ],
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.only(
                     top: 20,
@@ -245,7 +224,9 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 4,),
+                        padding: const EdgeInsets.only(
+                          top: 4,
+                        ),
                         child: Icon(
                           Icons.warning_outlined,
                           color: HexColor('#FF5041'),
@@ -435,7 +416,6 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     return InkWell(
       child: Stack(
         children: [
-
           Container(
             color: HexColor('#F8F8F8'),
             child: Padding(
@@ -557,27 +537,24 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
               ),
             ),
           ),
-          if (index == 0) Positioned(
-            right: 26,
-            top: 4,
-            child: Container(
-              decoration: BoxDecoration(
-                  color: HexColor("#FF4C3B"),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 1, 8, 3),
-                child: Center(
-                  child: Text(
-                    'new',
-                    style: TextStyle(
-                        fontSize: 10,
-                        color: HexColor("#FFFFFF"),
-                        fontWeight: FontWeight.normal),
+          if (index == 0)
+            Positioned(
+              right: 26,
+              top: 4,
+              child: Container(
+                decoration:
+                    BoxDecoration(color: HexColor("#FF4C3B"), borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 1, 8, 3),
+                  child: Center(
+                    child: Text(
+                      'new',
+                      style: TextStyle(fontSize: 10, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -627,273 +604,17 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpLevelUnStakingPage(),
+        builder: (context) => RpLevelRetrievePage(),
       ),
     );
   }
-
 
   _navToLevelUpgradeAction() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpLevelUpgradePage(),
-      ),
-    );
-    return;
-    
-    var border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(30),
-      borderSide: BorderSide(
-        color: HexColor('#FFF2F2F2'),
-        width: 0.5,
-      ),
-    );
-
-    _textEditController.text = "";
-
-    UiUtil.showAlertView(
-      context,
-      title: S.of(context).rp_staking_amount,
-      isInputValue: true,
-      actions: [
-        ClickOvalButton(
-          S.of(context).confirm,
-          _stakingAction,
-          width: 200,
-          height: 38,
-          fontSize: 16,
-          fontWeight: FontWeight.normal,
-        ),
-      ],
-      detail: S.of(context).rp_hyn_locked_hint(_rpStatistics?.rpContractInfo?.stakingDay ?? 0),
-      contentItem: Material(
-        child: Form(
-          key: _formKey,
-          child: Container(
-            color: Colors.white,
-            padding: const EdgeInsets.only(
-              left: 22,
-              right: 22,
-              bottom: 16,
-            ),
-            child: Column(
-              children: <Widget>[
-                TextFormField(
-                  autofocus: true,
-                  controller: _textEditController,
-                  keyboardType: TextInputType.numberWithOptions(decimal: false),
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(18),
-                    FilteringTextInputFormatter.allow(RegExp("[0-9]"))
-                  ],
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return S.of(context).rp_input_staking_amount;
-                    }
-
-                    if ((value?.length ?? 0) > 18) {
-                      return S.of(context).rp_transmit_input_hint;
-                    }
-
-                    var hynToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-                      SupportedTokens.HYN_Atlas.symbol,
-                    );
-                    var hynTokenBalance = Decimal.parse(hynToken.balance.toString());
-                    var amount = int.tryParse(value) ?? 0;
-                    if (amount <= 0) {
-                      return S.of(context).rp_input_staking_amount;
-                    }
-
-                    var total = _hynPerRpValue * amount;
-                    var amountBig = ConvertTokenUnit.strToBigInt(total.toString());
-                    var inputValue = Decimal.parse(amountBig.toString());
-                    var isOver = inputValue > hynTokenBalance;
-                    // print(
-                    //     "[$runtimeType] isOver:$isOver, hynTokenBalance:$hynTokenBalance, inputValue:$inputValue, amount:$amount");
-                    if (isOver) {
-                      return S.of(context).rp_not_enough_hyn;
-                    }
-
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    isDense: true,
-                    filled: true,
-                    fillColor: HexColor('#FFF2F2F2'),
-                    hintText: S.of(context).rp_input_staking_amount_with_hyn(_hynPerRp),
-                    hintStyle: TextStyle(
-                      color: HexColor('#FF999999'),
-                      fontSize: 13,
-                    ),
-                    focusedBorder: border,
-                    focusedErrorBorder: border,
-                    enabledBorder: border,
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: Colors.red,
-                        width: 0.5,
-                      ),
-                    ),
-                    //contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  ),
-                  style: TextStyle(fontSize: 13),
-                  onSaved: (value) {
-                    // print("[$runtimeType] onSaved, inputValue:$value");
-                  },
-                  onChanged: (String value) {
-                    // print("[$runtimeType] onChanged, inputValue:$value");
-
-                    _inputController.add(value);
-                  },
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    StreamBuilder<Object>(
-                        stream: _inputController.stream,
-                        builder: (context, snapshot) {
-                          var inputText = snapshot?.data ?? '0';
-                          var total = (_hynPerRpValue.toInt()) * (int.tryParse(inputText) ?? 0);
-
-                          if (total <= 0) {
-                            total = 0;
-                          }
-
-                          return Padding(
-                            padding: const EdgeInsets.only(
-                              top: 4,
-                              left: 4,
-                            ),
-                            child: Text(
-                              '${S.of(context).rp_worth} $total HYN',
-                              style: TextStyle(
-                                color: HexColor('#333333'),
-                                fontSize: 12,
-                              ),
-                            ),
-                          );
-                        }),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
+        builder: (context) => RedPocketLevelPage(),
       ),
     );
   }
-
-  _showCollectAlertView() async {
-    int count = 0;
-    String hynSum = '0';
-
-    try {
-      var response = await _rpApi.getCanRetrieve(_address);
-      print("[$runtimeType] getCanRetrieve, response:$response");
-
-      var data = response;
-      if ((data != null) && (data is Map<String, dynamic>)) {
-        var json = data;
-
-        if (json.keys.contains('count')) {
-          count = json['count'] as int;
-        }
-
-        if (json.keys.contains('hyn_sum')) {
-          hynSum = json['hyn_sum'];
-          hynSum = FormatUtil.weiToEtherStr(hynSum ?? '0');
-        }
-      }
-    } catch (e) {
-      LogUtil.toastException(e);
-      return;
-    }
-    print("[$runtimeType] count:$count, hynSum:$hynSum");
-
-    if (count <= 0 || hynSum == '0') {
-      Fluttertoast.showToast(msg: '${S.of(context).rp_no_valid_contract}！');
-      return;
-    }
-
-    UiUtil.showAlertView(
-      context,
-      title: S.of(context).rp_retrieve_all_staking,
-      actions: [
-        ClickOvalButton(
-          S.of(context).cancel,
-          () {
-            Navigator.pop(context, false);
-          },
-          width: 115,
-          height: 36,
-          fontSize: 14,
-          fontWeight: FontWeight.normal,
-          fontColor: DefaultColors.color999,
-          btnColor: [Colors.transparent],
-        ),
-        SizedBox(
-          width: 20,
-        ),
-        ClickOvalButton(
-          S.of(context).confirm,
-          _retrieveAction,
-          width: 115,
-          height: 36,
-          fontSize: 16,
-          fontWeight: FontWeight.normal,
-        ),
-      ],
-      content: S.of(context).rp_retrieve_all_staking_confirm(count, hynSum),
-    );
-  }
-
-  void _retrieveAction() async {
-    Navigator.pop(context, true);
-
-    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
-    if (password == null) {
-      return;
-    }
-
-    try {
-      await _rpApi.postRetrieveHyn(activeWallet: _activeWallet, password: password);
-      Fluttertoast.showToast(msg: S.of(context).rp_retrieve_staking_request_success);
-      getNetworkData();
-    } catch (e) {
-      LogUtil.toastException(e);
-    }
-  }
-
-  void _stakingAction() async {
-    var valid = _formKey.currentState.validate();
-    if (!valid) {
-      return;
-    }
-
-    var inputText = _textEditController?.text ?? '';
-
-    if (inputText.isEmpty) {
-      return;
-    }
-
-    Navigator.pop(context, true);
-
-    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
-    if (password == null) {
-      return;
-    }
-
-    var total = _hynPerRpValue * (int.tryParse(inputText) ?? 0);
-    var amount = ConvertTokenUnit.strToBigInt(total.toString());
-    try {
-      await _rpApi.postStakingRp(amount: amount, activeWallet: _activeWallet, password: password);
-      getNetworkData();
-    } catch (e) {
-      LogUtil.toastException(e);
-    }
-  }
-
 }
-

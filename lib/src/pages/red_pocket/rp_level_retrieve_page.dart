@@ -7,21 +7,23 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 
-class RpLevelUnStakingPage extends StatefulWidget {
-  RpLevelUnStakingPage();
+class RpLevelRetrievePage extends StatefulWidget {
+  RpLevelRetrievePage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RpLevelUnStakingState();
+    return _RpLevelRetrieveState();
   }
 }
 
-class _RpLevelUnStakingState extends BaseState<RpLevelUnStakingPage> {
+class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
   TextEditingController _textEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
   double minTotal = 0;
@@ -151,7 +153,7 @@ class _RpLevelUnStakingState extends BaseState<RpLevelUnStakingPage> {
                                     hint: S.of(context).please_enter_withdraw_amount,
                                     validator: (textStr) {
                                       if (textStr.length == 0) {
-                                        return S.of(context).please_input_hyn_count;
+                                        return '请输入提币数量';
                                       }
 
                                       var inputValue = Decimal.tryParse(textStr);
@@ -167,11 +169,14 @@ class _RpLevelUnStakingState extends BaseState<RpLevelUnStakingPage> {
                         ),
                         Row(
                           children: [
-                            Text(
-                              '*',
-                              style: TextStyle(
-                                color: HexColor('#FF4C3B'),
-                                fontSize: 24,
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8,),
+                              child: Text(
+                                '*',
+                                style: TextStyle(
+                                  color: HexColor('#FF4C3B'),
+                                  fontSize: 24,
+                                ),
                               ),
                             ),
                             SizedBox(
@@ -189,11 +194,12 @@ class _RpLevelUnStakingState extends BaseState<RpLevelUnStakingPage> {
                       ],
                     ),
                   ),
+                      _confirmButtonWidget(),
                 ])),
               ),
             ),
           ),
-          _confirmButtonWidget(),
+
         ],
       ),
     );
@@ -203,33 +209,70 @@ class _RpLevelUnStakingState extends BaseState<RpLevelUnStakingPage> {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 18.0, top: 10),
+        padding: const EdgeInsets.only(top: 60),
         child: Center(
           child: ClickOvalButton(
             '取回持币',
             _confirmAction,
-            height: 46,
+            height: 42,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
+            btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
           ),
         ),
       ),
     );
   }
 
-  _confirmAction() async {
+  _confirmAction() {
+    FocusScope.of(context).requestFocus(FocusNode());
+
     if (!_formKey.currentState.validate()) {
       return;
     }
 
-    /*
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Map3NodeConfirmPage(
-            message: 'message',
-          ),
-        ));
-        */
+    Future.delayed(Duration(milliseconds: 111)).then((_) {
+      _showAlertView();
+    });
   }
+
+  _showAlertView() {
+
+    UiUtil.showAlertView(
+      context,
+      title: '重要提醒',
+      actions: [
+        ClickOvalButton(
+          '取回',
+              () async {
+            Navigator.pop(context, false);
+
+          },
+          width: 115,
+          height: 36,
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+          fontColor: DefaultColors.color333,
+          btnColor: [Colors.transparent],
+        ),
+        SizedBox(
+          width: 20,
+        ),
+        ClickOvalButton(
+          '再想想',
+              () {
+            Navigator.pop(context, true);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+          btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
+        ),
+      ],
+      content: '您要取回50RP到钱包，剩余持币不足当前量级3所需最低持币量，您的量级将掉到量级2，请谨慎操作',
+      isInputValue: false,
+    );
+  }
+
 }
