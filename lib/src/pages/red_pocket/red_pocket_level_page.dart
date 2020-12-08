@@ -334,6 +334,32 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     return level;
   }
 
+  int _levelNameToLevelValue(String levelName) {
+    int level;
+    switch (levelName) {
+      case 'E':
+        level = 0;
+        break;
+
+      case 'D':
+        level = 1;
+        break;
+
+      case 'C':
+        level = 2;
+        break;
+
+      case 'B':
+        level = 3;
+        break;
+
+      case 'A':
+        level = 4;
+        break;
+    }
+    return level;
+  }
+
   Widget _confirmButtonWidget() {
     return SliverToBoxAdapter(
       child: Container(
