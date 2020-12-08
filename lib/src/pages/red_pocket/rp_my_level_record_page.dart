@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -158,6 +159,8 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     currentBurn = '30';
     holding = '200';
 
+    var isShowDowngrade = false;
+
     return SliverToBoxAdapter(
       child: Container(
         color: HexColor('#F8F8F8'),
@@ -194,6 +197,24 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                   "res/drawable/ic_rp_level_$level.png",
                   height: 100,
                 ),
+                if (isShowDowngrade)
+                  Container(
+                    width: 50,
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'res/down-grade.png',
+                          width: 30,
+                        ),
+                        Container(
+                          width: 40,
+                          child: Text(
+                            '等级下降了',
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 if (level == 0)
                   Padding(
                     padding: const EdgeInsets.only(
@@ -370,39 +391,79 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          return _itemBuilder(index);
+          return _levelRecordItem(index);
         },
-        childCount: _dataList?.length ?? 0,
+        childCount: 4,
       ),
     );
   }
 
-  Widget _itemBuilder(index) {
-    var model = _dataList[index];
-    var status = model?.status ?? 0;
-    var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
-    var hynPerRpBig = ConvertTokenUnit.strToBigInt(
-        _rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
-    var amountBig = (hynAmountBig / hynPerRpBig);
+  Widget _levelRecordItem(index) {
+    bool isUpgrade = true;
+    var txHash = '';
 
-    if (amountBig.isNaN || amountBig.isInfinite) {
-      amountBig = 0;
+    var levelFrom = '--';
+    var levelTo = '--';
+    var recordType = index;
+    var recordStatus = index;
+
+    var detailStr = '';
+
+    var isShowStatus = false;
+
+    if (recordType == 0) {
+      detailStr = '燃烧 60.0 RP，增持 63 RP';
+      isShowStatus = true;
+    } else if (recordType == 1) {
+      detailStr = '取回持币 200 RP';
+      isShowStatus = true;
+    } else if (recordType == 2) {
+      detailStr = '全网发行增长调整';
+      isShowStatus = false;
+    } else if (recordType == 3) {
+      detailStr = '增持63RP';
+      isShowStatus = true;
     }
 
-    var amount = amountBig.toInt();
-    if (amount.isNaN) {
-      amount = 1;
+    var statusHint = '';
+    var statusColor = HexColor('#FFE4B300');
+    if (recordStatus == 0) {
+      statusHint = '进行中';
+      statusColor = HexColor('#FFE4B300');
+    } else if (recordStatus == 1) {
+      statusHint = '成功';
+      statusColor = HexColor('#FF999999');
+    } else if (recordStatus == 2) {
+      statusHint = '失败';
+      statusColor = HexColor('#FFEB3737');
     }
+    // var recordTime =
+    // FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
+    var recordTime = '2020/12/12 21:21';
 
-    var stakingAt =
-        FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
-    var expectReleaseTime = FormatUtil.newFormatUTCDateStr(
-        model?.expectRetrieveTime ?? '0',
-        isSecond: true);
-
-    bool isUp = index % 2 == 0;
+    var statusIcon = isShowStatus
+        ? Padding(
+            padding: EdgeInsets.only(left: 8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16.0),
+                color: HexColor('#FFF2F2F2'),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 2.0),
+                child: Text(
+                  statusHint,
+                  style: TextStyle(fontSize: 9, color: statusColor),
+                ),
+              ),
+            ),
+          )
+        : Container();
 
     return InkWell(
+      onTap: () {
+        _navToTxDetail(txHash);
+      },
       child: Stack(
         children: [
           Container(
@@ -424,37 +485,33 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                     Radius.circular(6.0),
                   ), //设置四周圆角 角度
                 ),
-                child: Column(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Row(
-                      children: <Widget>[
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
                         Padding(
                           padding: const EdgeInsets.only(
                             right: 10,
                           ),
                           child: Image.asset(
-                            "res/drawable/red_pocket_level_${isUp ? 'up' : 'down'}.png",
+                            "res/drawable/red_pocket_level_${isUpgrade ? 'up' : 'down'}.png",
                             width: 22,
                             height: 22,
                           ),
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Row(
                               children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: 6,
-                                  ),
-                                  child: Text(
-                                    '$amount 级',
-                                    style: TextStyle(
-                                      color: HexColor("#333333"),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                Text(
+                                  '$levelTo 级',
+                                  style: TextStyle(
+                                    color: HexColor("#333333"),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ],
@@ -463,34 +520,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                               height: 6,
                             ),
                             Text(
-                              '0 级-2 级',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: HexColor('#999999'),
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ],
-                        ),
-                        Spacer(),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              '燃烧 60RP，抵押63RP',
-                              style: TextStyle(
-                                color: HexColor("#333333"),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 6,
-                            ),
-                            Text(
-                              '${stakingAt ?? '--'}',
-                              //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(model?.createdAt)),
+                              '$levelFrom级 -> $levelTo级',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: HexColor('#999999'),
@@ -501,26 +531,48 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                         ),
                       ],
                     ),
-                    if (status >= 3 && status <= 5)
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 6,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            Text(
-                              '${expectReleaseTime ?? '--'}${S.of(context).rp_hyn_can_retrieved}',
-                              //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: HexColor('#999999'),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  detailStr,
+                                  style: TextStyle(
+                                    color: HexColor("#333333"),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.end,
+                                ),
                               ),
-                              textAlign: TextAlign.left,
+                              SizedBox(
+                                height: 6,
+                              ),
+                              statusIcon,
+                            ],
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            '${recordTime ?? '--'}',
+                            //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(model?.createdAt)),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: HexColor('#999999'),
                             ),
-                          ],
-                        ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ],
                       ),
+                    ),
                   ],
                 ),
               ),
@@ -596,6 +648,8 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
       _loadDataBloc.add(LoadMoreFailEvent());
     }
   }
+
+  _navToTxDetail(String txHash) {}
 
   _navToLevelUnStakingAction() {
     Navigator.push(
