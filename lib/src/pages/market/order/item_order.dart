@@ -37,7 +37,7 @@ class OrderItemState extends State<OrderItem> {
       _base = widget._order.market.split('/')[0];
       _quote = widget._order.market.split('/')[1];
     }
-    if(widget?.marketCoin != null){
+    if(widget?.marketCoin != null && (widget?.marketCoin?.isNotEmpty ?? false)){
       _base = widget.marketCoin.split('/')[0];
       _quote = widget.marketCoin.split('/')[1];
     }
