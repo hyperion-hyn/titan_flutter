@@ -14,16 +14,16 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 
-class RpLevelUpgradePage extends StatefulWidget {
-  RpLevelUpgradePage();
+class RpLevelAddStakingPage extends StatefulWidget {
+  RpLevelAddStakingPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RpLevelUpgradeState();
+    return _RpLevelAddStakingState();
   }
 }
 
-class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
+class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
   TextEditingController _textEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
   double minTotal = 0;
@@ -82,7 +82,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '升级量级',
+        baseTitle: '增加持币',
       ),
       backgroundColor: Colors.white,
       body: Column(
@@ -98,58 +98,36 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                 child: SingleChildScrollView(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16,),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
                     color: Colors.white,
                     child: Column(
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.only(top: 18),
-                          child: Row(
-                            children: <Widget>[
-                              Text('提升到 B 持币量级', style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
-                              )),
-
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20),
-                          child: Row(
-                            children: <Widget>[
-                              Text('需燃烧', style: _textStyle),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Text('30 RP', style: _textStyle),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only( top: 30),
+                          padding: const EdgeInsets.only(top: 60),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
                               Text('转入持币', style: _textStyle),
-                              SizedBox(width: 5,),
-                              Text('（至少31.5 RP）', style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 12,
-                                color: HexColor('#999999'),
-                              )),
-                              SizedBox(width: 20,),
-                              Text('当前持币 20 RP', style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 12,
-                                color: HexColor('#999999'),
-                              )),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text('当前持币 20 RP',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 12,
+                                    color: HexColor('#999999'),
+                                  )),
                             ],
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 16, right: 50,),
+                          padding: const EdgeInsets.only(
+                            top: 16,
+                            right: 50,
+                          ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
@@ -164,10 +142,10 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                     controller: _textEditingController,
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                    hint: S.of(context).please_enter_withdraw_amount,
+                                    hint: '请输入增加数量',
                                     validator: (textStr) {
                                       if (textStr.length == 0) {
-                                        return '请输入提币数量';
+                                        return '请输入增加数量';
                                       }
 
                                       var inputValue = Decimal.tryParse(textStr);
@@ -181,49 +159,28 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                             ],
                           ),
                         ),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8,),
-                              child: Text(
-                                '*',
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Row(
+                            children: [
+                              Text(
+                                '适当增加持币可以防止因Y',
                                 style: TextStyle(
-                                  color: HexColor('#FF4C3B'),
-                                  fontSize: 24,
+                                  color: HexColor('#999999'),
+                                  fontSize: 10,
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Text(
-                              '为防止因Y增长导致掉级，建议适当增加持币量',
-                              style: TextStyle(
-                                color: HexColor('#333333'),
-                                fontSize: 12,
-                              ),
-                            )
-                          ],
+                            ],
+                          ),
                         )
                       ],
                     ),
                   ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 60, left: 16, right: 16,),
-                        child: Text(
-                          '提示：因你还没有推荐人，系统将为你随机设定一个量级4以上的账户地址为推荐人',
-                          style: TextStyle(
-                            color: HexColor('#C3A16D'),
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                      _confirmButtonWidget(),
+                  _confirmButtonWidget(),
                 ])),
               ),
             ),
           ),
-
         ],
       ),
     );
@@ -233,10 +190,10 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(top: 30),
+        padding: const EdgeInsets.only(top: 100),
         child: Center(
           child: ClickOvalButton(
-            '马上提升',
+            S.of(context).confirm,
             _confirmAction,
             height: 42,
             width: MediaQuery.of(context).size.width - 37 * 2,
@@ -255,22 +212,20 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       return;
     }
 
-    Future.delayed(Duration(milliseconds: 111)).then((_) {
-      _showAlertView();
-    });
+    // Future.delayed(Duration(milliseconds: 111)).then((_) {
+    //   _showAlertView();
+    // });
   }
 
   _showAlertView() {
-
     UiUtil.showAlertView(
       context,
       title: '重要提醒',
       actions: [
         ClickOvalButton(
           '取回',
-              () async {
+          () async {
             Navigator.pop(context, false);
-
           },
           width: 115,
           height: 36,
@@ -284,7 +239,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
         ),
         ClickOvalButton(
           '再想想',
-              () {
+          () {
             Navigator.pop(context, true);
           },
           width: 115,
@@ -298,5 +253,4 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       isInputValue: false,
     );
   }
-
 }

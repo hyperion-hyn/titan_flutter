@@ -9,6 +9,8 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_add_staking_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'entity/rp_release_info.dart';
@@ -289,7 +291,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
             children: [
               ClickOvalButton(
                 '增加持币',
-                _confirmAction,
+                _navToLevelAddStakingAction,
                 height: 34,
                 width: 120,
                 fontSize: 14,
@@ -299,7 +301,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
               SizedBox(width: 20,),
               ClickOvalButton(
                 '升级',
-                _confirmAction,
+                _navToLevelUpgradeAction,
                 height: 34,
                 width: 120,
                 fontSize: 14,
@@ -313,7 +315,23 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     );
   }
 
-  _confirmAction() {}
+  _navToLevelAddStakingAction() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RpLevelAddStakingPage(),
+      ),
+    );
+  }
+
+  _navToLevelUpgradeAction() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RpLevelUpgradePage(),
+      ),
+    );
+  }
 
   void getNetworkData() async {
     _currentPage = 1;
