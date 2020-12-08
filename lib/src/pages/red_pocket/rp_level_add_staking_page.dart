@@ -73,10 +73,11 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
     }
   }
 
-  TextStyle _textStyle = TextStyle(
+  TextStyle _lightTextStyle = TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 14,
   );
+
 
   @override
   Widget build(BuildContext context) {
@@ -107,10 +108,26 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                         Padding(
                           padding: const EdgeInsets.only(top: 60),
                           child: Row(
+                            children: <Widget>[
+                              Text('当前量级', style: _lightTextStyle),
+                              SizedBox(
+                                width: 16,
+                              ),
+                              Text('C', style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                                color: HexColor('#999999'),
+                              )),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20),
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
-                              Text('转入持币', style: _textStyle),
+                              Text('转入持币', style: _lightTextStyle),
                               SizedBox(
                                 width: 5,
                               ),
@@ -164,7 +181,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                           child: Row(
                             children: [
                               Text(
-                                '适当增加持币可以防止因Y',
+                                '适当增加持币可以防止因Y(发行量)增加而掉级',
                                 style: TextStyle(
                                   color: HexColor('#999999'),
                                   fontSize: 10,

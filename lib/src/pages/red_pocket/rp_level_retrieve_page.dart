@@ -73,11 +73,18 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
     }
   }
 
-  TextStyle _textStyle = TextStyle(
+  TextStyle _lightTextStyle = TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 14,
+    color: HexColor('#333333'),
   );
 
+  TextStyle _greyTextStyle = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 12,
+    color: HexColor('#999999'),
+  );
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,11 +113,11 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                           padding: const EdgeInsets.only(top: 18),
                           child: Row(
                             children: <Widget>[
-                              Text('当前持币', style: _textStyle),
+                              Text('当前持币', style: _greyTextStyle),
                               SizedBox(
                                 width: 16,
                               ),
-                              Text('100 RP', style: _textStyle),
+                              Text('100 RP', style: _lightTextStyle),
                             ],
                           ),
                         ),
@@ -118,11 +125,11 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                           padding: const EdgeInsets.only(top: 20),
                           child: Row(
                             children: <Widget>[
-                              Text('当前量级C需持币', style: _textStyle),
+                              Text('当前量级C需持币', style: _greyTextStyle),
                               SizedBox(
                                 width: 16,
                               ),
-                              Text('63 RP', style: _textStyle),
+                              Text('63 RP', style: _lightTextStyle),
                             ],
                           ),
                         ),
@@ -130,7 +137,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                           padding: const EdgeInsets.only( top: 30),
                           child: Row(
                             children: <Widget>[
-                              Text('取回持币', style: _textStyle),
+                              Text('取回持币', style: _lightTextStyle),
                             ],
                           ),
                         ),
@@ -270,7 +277,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
           btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
         ),
       ],
-      content: '您要取回50RP到钱包，剩余持币不足当前量级3所需最低持币量，您的量级将掉到量级2，请谨慎操作',
+      content: '您要取回50RP到钱包，当前持币量级C，您的量级将掉到量级B，请谨慎操作',
       isInputValue: false,
     );
   }
