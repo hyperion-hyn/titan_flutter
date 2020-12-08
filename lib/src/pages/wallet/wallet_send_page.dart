@@ -41,8 +41,7 @@ class WalletSendPage extends StatefulWidget {
 }
 
 class _WalletSendState extends BaseState<WalletSendPage> {
-  final TextEditingController _receiverAddressController =
-      TextEditingController();
+  final TextEditingController _receiverAddressController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
 
   final _fromKey = GlobalKey<FormState>();
@@ -53,11 +52,9 @@ class _WalletSendState extends BaseState<WalletSendPage> {
   void initState() {
     super.initState();
     _amountController.addListener(() {
-      if (_amountController.text.trim() != null &&
-          _amountController.text.trim().length > 0) {
+      if (_amountController.text.trim() != null && _amountController.text.trim().length > 0) {
         var inputAmount = _amountController.text.trim();
-        var activatedQuoteSign = WalletInheritedModel.of(context)
-            .activatedQuoteVoAndSign(widget.coinVo.symbol);
+        var activatedQuoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
         var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
         setState(() {
           _notionalValue = double.parse(inputAmount) * quotePrice;
@@ -71,8 +68,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
 
   @override
   void onCreated() {
-    BlocProvider.of<WalletCmpBloc>(context)
-        .add(UpdateActivatedWalletBalanceEvent());
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
   }
 
   @override
@@ -83,26 +79,20 @@ class _WalletSendState extends BaseState<WalletSendPage> {
 
   @override
   Widget build(BuildContext context) {
-    var activatedQuoteSign = WalletInheritedModel.of(context)
-        .activatedQuoteVoAndSign(widget.coinVo.symbol);
+    var activatedQuoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var quoteSign = activatedQuoteSign?.sign?.sign;
 
     var addressHint = "";
-    RegExp _basicAddressReg =
-        RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
+    RegExp _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
     String addressErrorHint = "";
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
-      _basicAddressReg =
-          RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
+      _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
       addressHint = S.of(context).example + ': bc1q7fhqwluhcrs2ek...';
       addressErrorHint = S.of(context).legal_address_starting_1_or_bc_or_3;
     } else {
       _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
-      var addressExample =
-          widget.coinVo.coinType == CoinType.HYN_ATLAS
-              ? 'hyn1ntjklkvx9jlkrz9'
-              : '0x81e7A0529AC1726e';
+      var addressExample = widget.coinVo.coinType == CoinType.HYN_ATLAS ? 'hyn1ntjklkvx9jlkrz9' : '0x81e7A0529AC1726e';
       addressHint = S.of(context).example + ': $addressExample...';
       addressErrorHint = S.of(context).input_valid_address;
     }
@@ -141,17 +131,13 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                         children: <Widget>[
                           Text(
                             S.of(context).receiver_address,
-                            style: TextStyle(
-                                color: Color(0xFF333333),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500),
+                            style: TextStyle(color: Color(0xFF333333), fontSize: 16, fontWeight: FontWeight.w500),
                           ),
                           Spacer(),
                           InkWell(
                             onTap: onPaste,
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Image.asset(
                                 'res/drawable/ic_copy.png',
                                 height: 23,
@@ -162,8 +148,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                           InkWell(
                             onTap: () => onScan(quotePrice),
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Icon(
                                 ExtendsIconFont.qrcode_scan,
                                 color: Theme.of(context).primaryColor,
@@ -173,21 +158,15 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                         ],
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 0, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
                         child: TextFormField(
                             validator: (value) {
-                              var address = widget.coinVo.coinType ==
-                                      CoinType.HYN_ATLAS
+                              var address = widget.coinVo.coinType == CoinType.HYN_ATLAS
                                   ? WalletUtil.bech32ToEthAddress(value)
                                   : value;
                               if (address.isEmpty) {
-                                return S
-                                    .of(context)
-                                    .receiver_address_not_empty_hint;
-                              } else if (widget.coinVo.coinType ==
-                                  CoinType.HYN_ATLAS &&
-                                  !value.startsWith('hyn1')) {
+                                return S.of(context).receiver_address_not_empty_hint;
+                              } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS && !value.startsWith('hyn1')) {
                                 return addressErrorHint;
                               } else if (!_basicAddressReg.hasMatch(address)) {
                                 return addressErrorHint;
@@ -229,8 +208,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                                   width: 0.5,
                                 ),
                               ),
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                             ),
                             keyboardType: TextInputType.text),
                       ),
@@ -241,28 +219,19 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                         children: <Widget>[
                           Text(
                             S.of(context).send_count_label(widget.coinVo.symbol),
-                            style: TextStyle(
-                                color: Color(0xFF333333),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500),
+                            style: TextStyle(color: Color(0xFF333333), fontSize: 16, fontWeight: FontWeight.w500),
                           ),
                           Text(
-                            '(' +
-                                S.of(context).can_use +
-                                ' ${FormatUtil.coinBalanceHumanReadFormat(widget.coinVo)})',
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.black38),
+                            '(' + S.of(context).can_use + ' ${FormatUtil.coinBalanceHumanReadFormat(widget.coinVo)})',
+                            style: TextStyle(fontSize: 12, color: Colors.black38),
                           ),
                           Spacer(),
                           InkWell(
                             onTap: () {
-                              _amountController.text =
-                                  FormatUtil.coinBalanceHumanRead(
-                                      widget.coinVo);
+                              _amountController.text = FormatUtil.coinBalanceHumanRead(widget.coinVo);
                             },
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                               child: Text(
                                 S.of(context).all,
                                 style: TextStyle(
@@ -276,8 +245,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                         ],
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 0, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
                         child: TextFormField(
                           validator: (value) {
                             value = value.trim();
@@ -287,9 +255,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                             if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
                               return S.of(context).input_corrent_count_hint;
                             }
-                            if (Decimal.parse(value) >
-                                Decimal.parse(FormatUtil.coinBalanceHumanRead(
-                                    widget.coinVo))) {
+                            if (Decimal.parse(value) > Decimal.parse(FormatUtil.coinBalanceHumanRead(widget.coinVo))) {
                               return S.of(context).input_count_over_balance;
                             }
                             return null;
@@ -329,11 +295,9 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                                 width: 0.5,
                               ),
                             ),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           ),
-                          keyboardType:
-                              TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.numberWithOptions(decimal: true),
 //                        onChanged: (value) {
 //                          setState(() {
 //                            _notionalValue = double.parse(value) * quotePrice;
@@ -364,8 +328,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                   margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
                   constraints: BoxConstraints.expand(height: 48),
                   child: RaisedButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     disabledColor: Colors.grey[600],
                     color: Theme.of(context).primaryColor,
                     textColor: Colors.white,
@@ -378,8 +341,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                         children: <Widget>[
                           Text(
                             S.of(context).next,
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal, fontSize: 16),
+                            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                           ),
                         ],
                       ),
@@ -403,8 +365,11 @@ class _WalletSendState extends BaseState<WalletSendPage> {
         return;
       }
 
-      ///
-      if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+      var symbol = widget.coinVo.symbol.toUpperCase();
+
+      // todo: HRC30不需要预留币
+      if (widget.coinVo.coinType == CoinType.HYN_ATLAS && symbol == SupportedTokens.HYN_Atlas.symbol) {
+
         var balance = Decimal.parse(
           FormatUtil.coinBalanceDouble(
             widget.coinVo,
@@ -451,8 +416,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
           var value = valueMap["value"];
           var decimal = valueMap["decimal"];
           if (value != null && decimal != null && double.parse(value) > 0) {
-            var transferSize =
-                (double.parse(value) / (pow(10, int.parse(decimal))));
+            var transferSize = (double.parse(value) / (pow(10, int.parse(decimal))));
             _amountController.text = transferSize.toString();
             setState(() {
               _notionalValue = transferSize * price;
@@ -469,8 +433,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
       }
     } catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
-        Fluttertoast.showToast(
-            msg: S.of(context).open_camera, toastLength: Toast.LENGTH_SHORT);
+        Fluttertoast.showToast(msg: S.of(context).open_camera, toastLength: Toast.LENGTH_SHORT);
       } else {
         logger.e(e);
         _receiverAddressController.text = "";
