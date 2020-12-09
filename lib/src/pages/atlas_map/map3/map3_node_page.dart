@@ -153,15 +153,23 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         _myList = _map3homeEntity.myNodes;
         _pendingList = _map3stakingEntity.map3Nodes;
 
-        loadDataBloc.add(RefreshSuccessEvent());
+        if (mounted) {
+          loadDataBloc.add(RefreshSuccessEvent());
+        }
       } else {
-        loadDataBloc.add(LoadEmptyEvent());
+        if (mounted) {
+          loadDataBloc.add(LoadEmptyEvent());
+        }
       }
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     } catch (e) {
-      print(e);
 
-      loadDataBloc.add(RefreshFailEvent());
+      if (mounted) {
+        print(e);
+        loadDataBloc.add(RefreshFailEvent());
+      }
     }
   }
 
@@ -178,11 +186,17 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
         _pendingList = lastPendingList;
 
-        loadDataBloc.add(LoadingMoreSuccessEvent());
+        if (mounted) {
+          loadDataBloc.add(LoadingMoreSuccessEvent());
+        }
       } else {
-        loadDataBloc.add(LoadMoreEmptyEvent());
+        if (mounted) {
+          loadDataBloc.add(LoadMoreEmptyEvent());
+        }
       }
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     } catch (e) {
       print(e);
 

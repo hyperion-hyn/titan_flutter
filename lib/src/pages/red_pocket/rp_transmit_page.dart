@@ -980,7 +980,6 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   }
 
   _pushStakingInfoAction(int index) {
-
     Navigator.push(
       context,
       MaterialPageRoute(

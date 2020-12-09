@@ -40,7 +40,7 @@ class NewsPage extends StatefulWidget {
 //  }
 //}
 
-class NewsState extends InfoState<NewsPage> with AutomaticKeepAliveClientMixin{
+class NewsState extends InfoState<NewsPage> with AutomaticKeepAliveClientMixin {
   static const int LAST_NEWS_TAG = 26;
   static const int OFFICIAL_ANNOUNCEMENT_TAG = 22;
   static const int TUTORIAL_TAG = 30;
@@ -67,14 +67,22 @@ class NewsState extends InfoState<NewsPage> with AutomaticKeepAliveClientMixin{
   void initState() {
     super.initState();
 
-    SchedulerBinding.instance.addPostFrameCallback((_) async{
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
 //      activeTag(LAST_NEWS_TAG);
-    print("news init");
+      print("news init");
       selectedTag = LAST_NEWS_TAG;
-      _mapPageVoList = {LAST_NEWS_TAG: FIRST_PAGE,OFFICIAL_ANNOUNCEMENT_TAG: FIRST_PAGE
-        ,TUTORIAL_TAG: FIRST_PAGE,VIDEO_TAG: FIRST_PAGE};
-      _mapPageCompleteVoList = {LAST_NEWS_TAG: false,OFFICIAL_ANNOUNCEMENT_TAG: false
-        ,TUTORIAL_TAG: false,VIDEO_TAG: false};
+      _mapPageVoList = {
+        LAST_NEWS_TAG: FIRST_PAGE,
+        OFFICIAL_ANNOUNCEMENT_TAG: FIRST_PAGE,
+        TUTORIAL_TAG: FIRST_PAGE,
+        VIDEO_TAG: FIRST_PAGE
+      };
+      _mapPageCompleteVoList = {
+        LAST_NEWS_TAG: false,
+        OFFICIAL_ANNOUNCEMENT_TAG: false,
+        TUTORIAL_TAG: false,
+        VIDEO_TAG: false
+      };
       currentPage = FIRST_PAGE;
 
       loadDataBloc.add(LoadingEvent());
@@ -109,8 +117,7 @@ class NewsState extends InfoState<NewsPage> with AutomaticKeepAliveClientMixin{
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       _buildTag(S.of(context).latest_news, LAST_NEWS_TAG),
-                      _buildTag(S.of(context).official_announcement,
-                          OFFICIAL_ANNOUNCEMENT_TAG,
+                      _buildTag(S.of(context).official_announcement, OFFICIAL_ANNOUNCEMENT_TAG,
                           isUpdate: Application.isUpdateAnnounce),
                       _buildTag(S.of(context).information_guide, TUTORIAL_TAG),
                       _buildTag(S.of(context).information_video, VIDEO_TAG),
@@ -163,7 +170,7 @@ class NewsState extends InfoState<NewsPage> with AutomaticKeepAliveClientMixin{
                   }
                 }
               },
-              onLoadingMoreEmpty:() {
+              onLoadingMoreEmpty: () {
                 _mapPageCompleteVoList[selectedTag] = true;
               },
               child: ListView.separated(
@@ -181,29 +188,38 @@ class NewsState extends InfoState<NewsPage> with AutomaticKeepAliveClientMixin{
     );
   }
 
-  Future loadOrRefreshData() async{
-    _mapPageCompleteVoList = {LAST_NEWS_TAG: false,OFFICIAL_ANNOUNCEMENT_TAG: false
-      ,TUTORIAL_TAG: false,VIDEO_TAG: false};
+  Future loadOrRefreshData() async {
+    _mapPageCompleteVoList = {
+      LAST_NEWS_TAG: false,
+      OFFICIAL_ANNOUNCEMENT_TAG: false,
+      TUTORIAL_TAG: false,
+      VIDEO_TAG: false
+    };
     var newsList = await _getPowerList(CATEGORY, LAST_NEWS_TAG, FIRST_PAGE);
     var announcementList = await _getPowerList(CATEGORY, OFFICIAL_ANNOUNCEMENT_TAG, FIRST_PAGE);
     var tutorialList = await _getPowerList(CATEGORY, TUTORIAL_TAG, FIRST_PAGE);
     var videoList = await _getPowerList(CATEGORY, VIDEO_TAG, FIRST_PAGE);
-    _mapInfoItemVoList = {LAST_NEWS_TAG: newsList,OFFICIAL_ANNOUNCEMENT_TAG: announcementList
-      ,TUTORIAL_TAG: tutorialList,VIDEO_TAG: videoList};
+    _mapInfoItemVoList = {
+      LAST_NEWS_TAG: newsList,
+      OFFICIAL_ANNOUNCEMENT_TAG: announcementList,
+      TUTORIAL_TAG: tutorialList,
+      VIDEO_TAG: videoList
+    };
 
     _InfoItemVoList = _mapInfoItemVoList[selectedTag];
-    if (_InfoItemVoList.length == 0) {
-      loadDataBloc.add(LoadEmptyEvent());
-    } else {
-      loadDataBloc.add(RefreshSuccessEvent());
-    }
 
-    setState(() {});
+    if (mounted) {
+      if (_InfoItemVoList.length == 0) {
+        loadDataBloc.add(LoadEmptyEvent());
+      } else {
+        loadDataBloc.add(RefreshSuccessEvent());
+      }
+      setState(() {});
+    }
   }
 
   Widget _buildTag(String text, int value, {bool isUpdate = false}) {
-    return super.buildTag(text, value, selectedTag == value, activeTag,
-        isUpdate: isUpdate);
+    return super.buildTag(text, value, selectedTag == value, activeTag, isUpdate: isUpdate);
   }
 
   void activeTag(int tagId) {
@@ -211,40 +227,36 @@ class NewsState extends InfoState<NewsPage> with AutomaticKeepAliveClientMixin{
       return;
     }
 
-    setState(() {
+    if (mounted) {
+      setState(() {
+        var isUpdate = tagId == OFFICIAL_ANNOUNCEMENT_TAG && Application.isUpdateAnnounce;
 
-      var isUpdate = tagId == OFFICIAL_ANNOUNCEMENT_TAG && Application.isUpdateAnnounce;
+        if (isUpdate) {
+          Application.isUpdateAnnounce = false;
+          Application.eventBus.fire(ClearBadgeEvent());
+        }
 
-      if (isUpdate) {
-        Application.isUpdateAnnounce = false;
-        Application.eventBus.fire(ClearBadgeEvent());
-      }
+        selectedTag = tagId;
+        currentPage = _mapPageVoList[selectedTag];
+        if (_mapInfoItemVoList.containsKey(selectedTag)) {
+          _InfoItemVoList = _mapInfoItemVoList[selectedTag];
+        }
 
-      selectedTag = tagId;
-      currentPage = _mapPageVoList[selectedTag];
-      if(_mapInfoItemVoList.containsKey(selectedTag)) {
-        _InfoItemVoList = _mapInfoItemVoList[selectedTag];
-      }
-
-      var isComplete = _mapPageCompleteVoList[selectedTag];
-      if(isComplete){
-        loadDataBloc.add(LoadMoreEmptyEvent());
-      }else{
-        loadDataBloc.add(LoadingMoreSuccessEvent());
-      }
-    });
+        var isComplete = _mapPageCompleteVoList[selectedTag];
+        if (isComplete) {
+          loadDataBloc.add(LoadMoreEmptyEvent());
+        } else {
+          loadDataBloc.add(LoadingMoreSuccessEvent());
+        }
+      });
+    }
   }
 
-  Future<List<InfoItemVo>> _getPowerList(
-      String categories, int tags, int page) async {
-    var isZhLanguage =
-        SettingInheritedModel.of(context, aspect: SettingAspect.language)
-            ?.languageModel
-            ?.isZh()??true;
+  Future<List<InfoItemVo>> _getPowerList(String categories, int tags, int page) async {
+    var isZhLanguage = SettingInheritedModel.of(context, aspect: SettingAspect.language)?.languageModel?.isZh() ?? true;
     var requestCatetory = NewsTagUtils.getCategory(isZhLanguage, categories);
     var requestTags = NewsTagUtils.getNewsTag(isZhLanguage, tags);
-    var newsResponseList =
-        await _newsApi.getNewsList(requestCatetory, requestTags, page);
+    var newsResponseList = await _newsApi.getNewsList(requestCatetory, requestTags, page);
 
     var newsVoList = newsResponseList.map((newsResponse) {
       return InfoItemVo(

@@ -78,7 +78,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       appBar: BaseAppBar(
         baseTitle: S.of(context).rp_hrc30,
         backgroundColor: Colors.grey[50],
-        actions: <Widget>[
+        /*actions: <Widget>[
           FlatButton(
             onPressed: _navToMyRpRecords,
             child: Text(
@@ -90,7 +90,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
               ),
             ),
           ),
-        ],
+        ],*/
       ),
       body: LoadDataContainer(
           bloc: _loadDataBloc,
@@ -882,6 +882,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _navToMyRpRecords() {
+
+    return;
 
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
     if (activeWallet != null) {

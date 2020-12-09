@@ -266,7 +266,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Spacer(),
+                      /*Spacer(),
                       Padding(
                         padding: const EdgeInsets.only(
                           left: 16,
@@ -276,7 +276,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                           '当前燃烧',
                         ),
                         // child: _columnWidget('$totalTransmit RP', '总可传导'),
-                      ),
+                      ),*/
                       Spacer(),
                       _columnWidget(
                         '$holding RP',

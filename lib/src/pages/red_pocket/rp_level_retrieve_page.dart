@@ -206,7 +206,6 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
               ),
             ),
           ),
-
         ],
       ),
     );
@@ -253,7 +252,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
           '取回',
               () async {
             Navigator.pop(context, false);
-
+            Navigator.pop(context, false);
           },
           width: 115,
           height: 36,
