@@ -160,7 +160,7 @@ class WalletConfig {
       case EthereumNetType.main:
         return '0x6910E6F7fe7C8D5444E63F8285f5342FfC7FCA6b';
       case EthereumNetType.ropsten:
-        var address = '0x50fbbd77c23fe4e6e0d396f144e5d4550649fd4f';
+        var address = '0x8c9b248A587619b5757A705Ac103dD5bcFA5Ab20';
 
         print("[WalletConst] hynStakingContractAddress:$address");
         return address;
@@ -178,7 +178,7 @@ class WalletConfig {
       case EthereumNetType.main:
         return '0x6910E6F7fe7C8D5444E63F8285f5342FfC7FCA6b';
       case EthereumNetType.ropsten:
-        var address = '0xf178b26cdf4b0f22fcde5502e456266c8c71be91';
+        var address = '0x89713774640de7c7a82315b310D272ccD4854DF0';
 
         print("[WalletConst] rpHoldingContractAddress:$address");
         return address;

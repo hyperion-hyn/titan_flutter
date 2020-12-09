@@ -103,23 +103,23 @@ String getStateDesc(int status) {
 String levelValueToLevelName(int levelValue) {
   String level = '';
   switch (levelValue) {
-    case 0:
+    case 5:
       level = 'E';
       break;
 
-    case 1:
+    case 4:
       level = 'D';
       break;
 
-    case 2:
+    case 3:
       level = 'C';
       break;
 
-    case 3:
+    case 2:
       level = 'B';
       break;
 
-    case 4:
+    case 1:
       level = 'A';
       break;
   }
@@ -130,23 +130,23 @@ int levelNameToLevelValue(String levelName) {
   int level;
   switch (levelName) {
     case 'E':
-      level = 0;
+      level = 5;
       break;
 
     case 'D':
-      level = 1;
+      level = 4;
       break;
 
     case 'C':
-      level = 2;
-      break;
-
-    case 'B':
       level = 3;
       break;
 
+    case 'B':
+      level = 2;
+      break;
+
     case 'A':
-      level = 4;
+      level = 1;
       break;
   }
   return level;

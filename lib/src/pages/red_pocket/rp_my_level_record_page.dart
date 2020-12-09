@@ -13,8 +13,6 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_level_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_retrieve_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -24,9 +22,8 @@ import 'entity/rp_holding_record_entity.dart';
 import 'entity/rp_my_level_info.dart';
 
 class RpMyLevelRecordsPage extends StatefulWidget {
-  final RPStatistics rpStatistics;
 
-  RpMyLevelRecordsPage(this.rpStatistics);
+  RpMyLevelRecordsPage();
 
   @override
   State<StatefulWidget> createState() {
@@ -95,7 +92,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
         },
         child: CustomScrollView(
           slivers: [
-            _notificationWidget(),
+            //_notificationWidget(),
             _myLevelInfoWidget(),
             _myLevelRecordHeader(),
             _myLevelRecordList(),
@@ -150,7 +147,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
   _myLevelInfoWidget() {
     int level = _myLevelInfo?.currentLevel??0;
     var holding = '--';
-    holding = '${_myLevelInfo.currentHoldingStr}';
+    holding = '${_myLevelInfo?.currentHoldingStr}';
 
     var isShowDowngrade = false;
 
@@ -602,12 +599,14 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     _currentPage = 1;
 
     try {
+
+      // todo:   "msg": "Unknown error",
+      //_myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
+
       var netData = await _rpApi.getRpHoldingHistory(
         _address,
         page: _currentPage,
       );
-
-      _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
 
       if (mounted) {
         setState(() {
