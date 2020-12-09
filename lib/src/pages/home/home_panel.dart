@@ -24,6 +24,7 @@ import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/custom_click_oval_button.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 
@@ -747,7 +748,11 @@ class HomePanelState extends State<HomePanel> {
               ),
             ),
             GestureDetector(
-              onTap: _scanAction,
+              onTap: () {
+                UiUtil.showImagePickerSheet(context, callback: (String text) {
+                  _parseText(text);
+                });
+              },
               child: Padding(
                 padding: const EdgeInsets.only(left: 24.0, right: 24),
                 child: Icon(
@@ -914,8 +919,8 @@ class HomePanelState extends State<HomePanel> {
     Application.eventBus.fire(GoSearchEvent());
   }
 
-  Future _scanAction() async {
-    String scanStr = await BarcodeScanner.scan();
+  Future _parseText(String scanStr) async {
+
     print("[扫描结果] scanStr:$scanStr");
 
     if (scanStr == null) {

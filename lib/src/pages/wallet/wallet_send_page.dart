@@ -23,6 +23,7 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 import '../../global.dart';
 
@@ -146,7 +147,11 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                             ),
                           ),
                           InkWell(
-                            onTap: () => onScan(quotePrice),
+                            onTap: () async{
+                              UiUtil.showImagePickerSheet(context, callback: (String text) {
+                                _parseText(quotePrice, text);
+                              });
+                            },
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Icon(
@@ -394,9 +399,10 @@ class _WalletSendState extends BaseState<WalletSendPage> {
     }
   }
 
-  Future onScan(double price) async {
+  Future _parseText(double price , String barcode) async {
+
     try {
-      String barcode = await BarcodeScanner.scan();
+
       if (barcode.contains("ethereum")) {
         //imtoken style address
         var barcodeArray = barcode.split("?");
