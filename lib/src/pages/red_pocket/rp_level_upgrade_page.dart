@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -95,7 +96,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   @override
   Widget build(BuildContext context) {
-
     var wallet = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
@@ -164,8 +164,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                               SizedBox(
                                 width: 5,
                               ),
-                              Text('${S.of(context).mortgage_wallet_balance(walletName,
-                                  FormatUtil.coinBalanceHumanReadFormat(coinVo))}',
+                              Text(
+                                  '${S.of(context).mortgage_wallet_balance(walletName, FormatUtil.coinBalanceHumanReadFormat(coinVo))}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.normal,
                                     fontSize: 12,
@@ -215,9 +215,18 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                         return S.of(context).please_enter_correct_amount;
                                       }
 
-                                      var holdValue = Decimal.parse(widget?.levelRule?.holdingStr);
+                                      var holdValue =
+                                          Decimal.tryParse(widget?.levelRule?.holdingStr) ?? Decimal.fromInt(0);
                                       if (holdValue > inputValue) {
                                         return '至少${widget?.levelRule?.holdingStr} RP';
+                                      }
+
+                                      var balanceValue = Decimal.tryParse(FormatUtil.coinBalanceHumanRead(coinVo)) ??
+                                          Decimal.fromInt(0);
+                                      print("inputValue:$inputValue, balanceValue:$balanceValue");
+
+                                      if (inputValue > balanceValue) {
+                                        return '输入数量超过了钱包余额';
                                       }
                                     },
                                   ),
@@ -311,9 +320,27 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       return;
     }
 
-    var _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    // todo: 计算 holding + burning > balance;
+    var holdValue = Decimal.tryParse(inputText) ?? Decimal.fromInt(0);
+    var burnValue = Decimal.tryParse(widget?.levelRule?.burn) ?? Decimal.fromInt(0);
 
-    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
+    var wallet = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    );
+
+    var coinVo = wallet.getCoinVoBySymbol('RP');
+    var balanceValue = Decimal.tryParse(FormatUtil.coinBalanceHumanRead(coinVo)) ?? Decimal.fromInt(0);
+
+    if (holdValue + burnValue > balanceValue) {
+      Fluttertoast.showToast(
+        msg: '输入数量和需要燃烧的数量总和超过了钱包余额！',
+        gravity: ToastGravity.CENTER,
+      );
+      return;
+    }
+
+    var password = await UiUtil.showWalletPasswordDialogV2(context, wallet.activatedWallet.wallet);
     if (password == null) {
       return;
     }
@@ -327,7 +354,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
           level: widget.levelRule.level,
           depositAmount: depositAmount,
           burningAmount: burningAmount,
-          activeWallet: _activeWallet,
+          activeWallet: wallet.activatedWallet,
           password: password,
         );
         Navigator.pop(context, true);
@@ -336,5 +363,4 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       }
     });
   }
-
 }
