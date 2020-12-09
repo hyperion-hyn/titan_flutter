@@ -33,8 +33,8 @@ Map<String, dynamic> _$RpPromotionRuleEntityToJson(
 
 LevelRule _$LevelRuleFromJson(Map<String, dynamic> json) {
   return LevelRule(
-    json['burn'] as int,
-    json['holding'] as int,
+    json['burn'] as String,
+    json['holding'] as String,
     json['holding_formula'] as String,
     json['level'] as int,
     json['promotion_type'] as int,
@@ -51,8 +51,8 @@ Map<String, dynamic> _$LevelRuleToJson(LevelRule instance) => <String, dynamic>{
 
 SupplyInfo _$SupplyInfoFromJson(Map<String, dynamic> json) {
   return SupplyInfo(
-    json['promotion_supply_ratio'] as int,
-    json['total_supply'] as int,
+    json['promotion_supply_ratio'] as String,
+    json['total_supply'] as String,
   );
 }
 

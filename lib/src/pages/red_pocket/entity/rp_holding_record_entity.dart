@@ -1,19 +1,18 @@
-import 'package:json_annotation/json_annotation.dart'; 
-  
+import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/utils/format_util.dart';
+
 part 'rp_holding_record_entity.g.dart';
 
-
 @JsonSerializable()
-  class RpHoldingRecordEntity extends Object {
-
+class RpHoldingRecordEntity extends Object {
   @JsonKey(name: 'address')
   String address;
 
   @JsonKey(name: 'burning')
-  int burning;
+  String burning;
 
   @JsonKey(name: 'circulation')
-  int circulation;
+  String circulation;
 
   @JsonKey(name: 'created_at')
   String createdAt;
@@ -25,7 +24,7 @@ part 'rp_holding_record_entity.g.dart';
   int highestLevel;
 
   @JsonKey(name: 'holding')
-  int holding;
+  String holding;
 
   @JsonKey(name: 'id')
   int id;
@@ -37,7 +36,7 @@ part 'rp_holding_record_entity.g.dart';
   int to;
 
   @JsonKey(name: 'total_holding')
-  int totalHolding;
+  String totalHolding;
 
   @JsonKey(name: 'tx_hash')
   String txHash;
@@ -49,14 +48,37 @@ part 'rp_holding_record_entity.g.dart';
   String updatedAt;
 
   @JsonKey(name: 'withdraw')
-  int withdraw;
+  String withdraw;
 
-  RpHoldingRecordEntity(this.address,this.burning,this.circulation,this.createdAt,this.from,this.highestLevel,this.holding,this.id,this.state,this.to,this.totalHolding,this.txHash,this.type,this.updatedAt,this.withdraw,);
+  String get withdrawStr => FormatUtil.weiToEtherStr(withdraw) ?? '0';
+
+  String get burningStr => FormatUtil.weiToEtherStr(burning) ?? '0';
+
+  String get circulationStr => FormatUtil.weiToEtherStr(circulation) ?? '0';
+
+  String get holdingStr => FormatUtil.weiToEtherStr(holding) ?? '0';
+
+  String get totalHoldingStr => FormatUtil.weiToEtherStr(totalHolding) ?? '0';
+
+  RpHoldingRecordEntity(
+    this.address,
+    this.burning,
+    this.circulation,
+    this.createdAt,
+    this.from,
+    this.highestLevel,
+    this.holding,
+    this.id,
+    this.state,
+    this.to,
+    this.totalHolding,
+    this.txHash,
+    this.type,
+    this.updatedAt,
+    this.withdraw,
+  );
 
   factory RpHoldingRecordEntity.fromJson(Map<String, dynamic> srcJson) => _$RpHoldingRecordEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RpHoldingRecordEntityToJson(this);
-
 }
-
-  

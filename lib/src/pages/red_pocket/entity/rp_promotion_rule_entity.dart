@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 part 'rp_promotion_rule_entity.g.dart';
 
@@ -27,10 +28,10 @@ class RpPromotionRuleEntity extends Object {
 @JsonSerializable()
 class LevelRule extends Object {
   @JsonKey(name: 'burn')
-  int burn;
+  String burn;
 
   @JsonKey(name: 'holding')
-  int holding;
+  String holding;
 
   @JsonKey(name: 'holding_formula')
   String holdingFormula;
@@ -49,6 +50,9 @@ class LevelRule extends Object {
     this.promotionType,
   );
 
+  String get burnStr => FormatUtil.weiToEtherStr(burn) ?? '0';
+  String get holdingStr => FormatUtil.weiToEtherStr(holding) ?? '0';
+
   factory LevelRule.fromJson(Map<String, dynamic> srcJson) => _$LevelRuleFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$LevelRuleToJson(this);
@@ -57,15 +61,19 @@ class LevelRule extends Object {
 @JsonSerializable()
 class SupplyInfo extends Object {
   @JsonKey(name: 'promotion_supply_ratio')
-  int promotionSupplyRatio;
+  String promotionSupplyRatio;
 
   @JsonKey(name: 'total_supply')
-  int totalSupply;
+  String totalSupply;
 
   SupplyInfo(
     this.promotionSupplyRatio,
     this.totalSupply,
   );
+
+
+  String get promotionSupplyRatioStr => FormatUtil.weiToEtherStr(promotionSupplyRatio) ?? '0';
+  String get totalSupplyStr => FormatUtil.weiToEtherStr(totalSupply) ?? '0';
 
   factory SupplyInfo.fromJson(Map<String, dynamic> srcJson) => _$SupplyInfoFromJson(srcJson);
 

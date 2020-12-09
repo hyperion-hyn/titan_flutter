@@ -10,6 +10,8 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_add_staking_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -18,7 +20,9 @@ import 'entity/rp_release_info.dart';
 import 'entity/rp_util.dart';
 
 class RedPocketLevelPage extends StatefulWidget {
-  RedPocketLevelPage();
+  final RpMyLevelInfo rpMyLevelInfo;
+
+  RedPocketLevelPage(this.rpMyLevelInfo);
 
   @override
   State<StatefulWidget> createState() {
@@ -30,12 +34,13 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
-  int _currentPage = 1;
   var _address = "";
-  List<RpReleaseInfo> _dataList = [];
+  RpPromotionRuleEntity _promotionRuleEntity;
+  List<LevelRule> get _dynamicDataList => _promotionRuleEntity?.dynamicList ?? [];
+  List<LevelRule> get _staticDataList => _promotionRuleEntity?.static ?? [];
 
-  int _currentSelectedIndex;
-  int _currentLevel = 3;
+  int _currentSelectedLevel;
+  int get _currentLevel => widget?.rpMyLevelInfo?.currentLevel ?? 0;
   int _lastMaxLevel = 1;
   int _recommendLevel = 0;
 
@@ -124,7 +129,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
         child: Row(
           children: [
             Text(
-              '当前流通 20345 RP，百分比Y = 5%（5%单位粒度）',
+              '当前流通 ${_promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '--'} RP，百分比Y = ${_promotionRuleEntity?.supplyInfo?.promotionSupplyRatioStr ?? '--'}%（5%单位粒度）',
               style: TextStyle(
                 color: HexColor('#333333'),
                 fontSize: 12,
@@ -146,9 +151,20 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
           horizontal: 18,
         ),
         crossAxisCount: 4,
-        itemCount: 5,
+        itemCount: _staticDataList.length,
         itemBuilder: (BuildContext context, int index) {
-          if (index == 1 || index == 2) {
+          bool isOldLevel = false;
+          var model = _staticDataList[index];
+          if (_dynamicDataList.isNotEmpty) {
+            for (var old in _dynamicDataList) {
+              if (old.level == model.level && old.level > widget.rpMyLevelInfo.currentLevel) {
+                isOldLevel = true;
+                break;
+              }
+            }
+          }
+
+          if (isOldLevel) {
             return _itemBuilderOld(index);
           } else {
             return _itemBuilderDefault(index);
@@ -161,50 +177,24 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     );
   }
 
-  /*
-  Widget _levelListViewOld() {
-    return SliverToBoxAdapter(
-      child: GridView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 18,
-          ),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, //每行三列
-            childAspectRatio: 1.5, //显示区域宽高相等
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 5,
-          ),
-          itemCount: 5,
-          itemBuilder: (context, index) {
-            return _itemBuilderDefault(index);
-          }),
-    );
-  }
-  */
-
   Widget _itemBuilderDefault(int index) {
-    bool isRecommend = _recommendLevel == index;
-    bool isCurrent = _currentLevel == index;
-    bool isLastMost = _lastMaxLevel == index;
-    bool isSelected = (_currentSelectedIndex != null && _currentSelectedIndex == index);
+    var model = _staticDataList[index];
+
+    bool isRecommend = _recommendLevel == model.level;
+    bool isCurrent = _currentLevel == model.level;
+    bool isSelected = (_currentSelectedLevel != null && _currentSelectedLevel == model.level);
 
     String leftTagTitle = '';
-    if (isLastMost) {
-      leftTagTitle = '历史最高';
-    }
-
     if (isCurrent) {
       leftTagTitle = '当前量级';
     }
 
     var levelName = '量级 ${levelValueToLevelName(index)}';
     var burnTitle = '需燃烧';
-    var burnRpValue = '5 RP';
+    var burnRpValue = '${model?.burnStr} RP';
 
-    var stakingTitle = '最低持币 5*(1+Y)';
-    var stakingValue = '5 RP';
+    var stakingTitle = '最低持币 ${model.holdingFormula}';
+    var stakingValue = '${model?.holdingStr} RP';
 
     return Stack(
       children: [
@@ -218,7 +208,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
               InkWell(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
                 onTap: () {
-                  if (_currentSelectedIndex != null && _currentLevel < index) {
+                  if (_currentSelectedLevel != null && _currentLevel < index) {
                     Fluttertoast.showToast(
                       msg: '选择的量级小于当前量级, 请重新选择！',
                       gravity: ToastGravity.CENTER,
@@ -227,7 +217,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                   }
 
                   setState(() {
-                    _currentSelectedIndex = index;
+                    _currentSelectedLevel = index;
                   });
                 },
                 child: Container(
@@ -292,7 +282,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                       style: TextStyle(
                         fontWeight: FontWeight.normal,
                         fontSize: 10,
-                        color: isLastMost ? HexColor('#FF4C3B') : HexColor('#999999'),
+                        color: HexColor('#999999'),
                       ),
                     )),
               Positioned(
@@ -337,13 +327,22 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   }
 
   Widget _itemBuilderOld(int index) {
-    bool isRecommend = _recommendLevel == index;
-    bool isCurrent = _currentLevel == index;
-    bool isLastMost = _lastMaxLevel == index;
-    bool isSelected = (_currentSelectedIndex != null && _currentSelectedIndex == index);
+    var model = _staticDataList[index];
+
+    bool isRecommend = _recommendLevel == model.level;
+    bool isCurrent = _currentLevel == model.level;
+
+    bool isSelected = (_currentSelectedLevel != null && _currentSelectedLevel == model.level);
+
+    // 遍历出Old
+    LevelRule oldModel = _dynamicDataList.firstWhere((old) => old.level == model.level, orElse: () => null);
+    LevelRule oldModelMax = _dynamicDataList.firstWhere((old) => old.level > oldModel.level, orElse: () => null);
+
+    // 判断当前旧的量级是否为历史最高
+    bool isNotMax = (oldModelMax != null);
 
     String leftTagTitle = '';
-    if (index == 1) {
+    if (!isNotMax) {
       leftTagTitle = '可恢复最高量级';
     } else {
       leftTagTitle = '可恢复量级';
@@ -351,10 +350,10 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
     var levelName = '量级 ${levelValueToLevelName(index)}';
     var burnTitle = '需燃烧';
-    var burnRpValue = '5 RP';
+    var burnRpValue = '${model.burnStr} RP';
 
-    var stakingTitle = '最低持币 5*(1+Y)';
-    var stakingValue = '5 RP';
+    var stakingTitle = '最低持币 ${model.holdingFormula}';
+    var stakingValue = '${model.holdingStr} RP';
 
     String oldLevelDesc = '恢复至该量级需燃烧 5RP 增持10RP';
 
@@ -370,7 +369,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
               InkWell(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
                 onTap: () {
-                  if (_currentSelectedIndex != null && _currentLevel < index) {
+                  if (_currentSelectedLevel != null && _currentLevel < index) {
                     Fluttertoast.showToast(
                       msg: '选择的量级小于当前量级, 请重新选择！',
                       gravity: ToastGravity.CENTER,
@@ -379,7 +378,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                   }
 
                   setState(() {
-                    _currentSelectedIndex = index;
+                    _currentSelectedLevel = index;
                   });
                 },
                 child: Container(
@@ -565,7 +564,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   }
 
   _navToLevelUpgradeAction() {
-    if (_currentSelectedIndex != null && _currentLevel == _currentSelectedIndex) {
+    if (_currentSelectedLevel != null && _currentLevel == _currentSelectedLevel) {
       Fluttertoast.showToast(
         msg: '选择的量级与当前量级相同, 请重新选择！',
         gravity: ToastGravity.CENTER,
@@ -582,13 +581,12 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   }
 
   void getNetworkData() async {
-    _currentPage = 1;
-
     try {
-      var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
+      var netData = await _rpApi.getRPPromotionRule(_address);
 
-      if (netData?.isNotEmpty ?? false) {
-        _dataList = netData;
+      if (netData?.static?.isNotEmpty ?? false) {
+        _promotionRuleEntity = netData;
+
         if (mounted) {
           setState(() {
             _loadDataBloc.add(RefreshSuccessEvent());

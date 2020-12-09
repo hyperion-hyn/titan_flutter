@@ -8,7 +8,7 @@ part of 'rp_my_level_info.dart';
 
 RpMyLevelInfo _$RpMyLevelInfoFromJson(Map<String, dynamic> json) {
   return RpMyLevelInfo(
-    json['current_holding'] as int,
+    json['current_holding'] as String,
     json['current_level'] as int,
   );
 }

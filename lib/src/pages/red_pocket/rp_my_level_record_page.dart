@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -20,11 +17,11 @@ import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_level_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_retrieve_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+
+import 'entity/rp_holding_record_entity.dart';
+import 'entity/rp_my_level_info.dart';
 
 class RpMyLevelRecordsPage extends StatefulWidget {
   final RPStatistics rpStatistics;
@@ -45,15 +42,13 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
   String get _address => _activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
   WalletVo _activeWallet;
-  RPStatistics _rpStatistics;
+  RpMyLevelInfo _myLevelInfo;
   int _currentPage = 1;
-  List<RpStakingInfo> _dataList = [];
+  List<RpHoldingRecordEntity> _dataList = [];
 
   @override
   void initState() {
     super.initState();
-
-    _rpStatistics = widget.rpStatistics;
 
     _activeWallet =
         WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
@@ -101,7 +96,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
         child: CustomScrollView(
           slivers: [
             _notificationWidget(),
-            _myLevelInfo(),
+            _myLevelInfoWidget(),
             _myLevelRecordHeader(),
             _myLevelRecordList(),
           ],
@@ -152,13 +147,10 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     );
   }
 
-  _myLevelInfo() {
-    int level = 0;
-    var currentBurn = '--';
+  _myLevelInfoWidget() {
+    int level = _myLevelInfo?.currentLevel??0;
     var holding = '--';
-
-    currentBurn = '30';
-    holding = '200';
+    holding = '${_myLevelInfo.currentHoldingStr}';
 
     var isShowDowngrade = false;
 
@@ -394,39 +386,41 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
         (context, index) {
           return _levelRecordItem(index);
         },
-        childCount: 4,
+        childCount: _dataList.length,
       ),
     );
   }
 
   Widget _levelRecordItem(index) {
+
+    var model = _dataList[index];
     bool isUpgrade = true;
-    var txHash = '';
+    var txHash = model.txHash;
 
-    var levelFrom = '--';
-    var levelTo = '--';
-    var recordType = index;
-    var recordStatus = index;
+    var levelFrom = '${model.from}';
+    var levelTo = '${model.to}';
 
+
+    //主动降级、被动降级、升级、补偿升级、增持升级
+    var recordType = model.type;
     var detailStr = '';
-
     var isShowStatus = false;
-
     if (recordType == 0) {
-      detailStr = '燃烧 60.0 RP，增持 63 RP';
+      detailStr = '燃烧 ${model.holdingStr} RP，增持 ${model.burningStr} RP';
       isShowStatus = true;
     } else if (recordType == 1) {
-      detailStr = '取回持币 200 RP';
+      detailStr = '取回持币 ${model.withdrawStr} RP';
       isShowStatus = true;
     } else if (recordType == 2) {
       detailStr = '全网发行增长调整';
       isShowStatus = false;
     } else if (recordType == 3) {
-      detailStr = '增持63RP';
+      detailStr = '增持${model.holdingStr}RP';
       isShowStatus = true;
     }
 
-    var statusHint = '';
+    var recordStatus = model?.state??0;
+    var statusHint = '进行中';
     var statusColor = HexColor('#FFE4B300');
     if (recordStatus == 0) {
       statusHint = '进行中';
@@ -438,9 +432,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
       statusHint = '失败';
       statusColor = HexColor('#FFEB3737');
     }
-    // var recordTime =
-    // FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
-    var recordTime = '2020/12/12 21:21';
+    var recordTime = model.createdAt;
 
     var statusIcon = isShowStatus
         ? Padding(
@@ -608,13 +600,14 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
 
   void getNetworkData() async {
     _currentPage = 1;
+
     try {
-      var netData = await _rpApi.getRPStakingInfoList(
+      var netData = await _rpApi.getRpHoldingHistory(
         _address,
         page: _currentPage,
       );
 
-      _rpStatistics = await _rpApi.getRPStatistics(_address);
+      _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
 
       if (mounted) {
         setState(() {
@@ -625,9 +618,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
       if (netData?.isNotEmpty ?? false) {
         _dataList = netData;
       }
-      // } else {
-      //   _loadDataBloc.add(LoadEmptyEvent());
-      // }
+
     } catch (e) {
       _loadDataBloc.add(LoadFailEvent());
     }
@@ -637,7 +628,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     try {
       _currentPage = _currentPage + 1;
       var netData =
-          await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
+          await _rpApi.getRpHoldingHistory(_address, page: _currentPage);
 
       if (netData?.isNotEmpty ?? false) {
         _dataList.addAll(netData);
@@ -665,7 +656,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RedPocketLevelPage(),
+        builder: (context) => RedPocketLevelPage(_myLevelInfo),
       ),
     );
     return;
