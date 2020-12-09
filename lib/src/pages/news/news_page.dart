@@ -134,39 +134,49 @@ class NewsState extends InfoState<NewsPage> with AutomaticKeepAliveClientMixin {
                 try {
                   await loadOrRefreshData();
                 } catch (e) {
-                  logger.e(e);
-                  loadDataBloc.add(LoadFailEvent());
+                  if (mounted) {
+                    logger.e(e);
+                    loadDataBloc.add(LoadFailEvent());
+                  }
                 }
               },
               onRefresh: () async {
                 try {
                   await loadOrRefreshData();
                 } catch (e) {
-                  logger.e(e);
-                  loadDataBloc.add(RefreshFailEvent());
+                  if (mounted) {
+                    logger.e(e);
+                    loadDataBloc.add(RefreshFailEvent());
+                  }
                 }
               },
               onLoadingMore: () async {
                 try {
                   var loadMoreList = await _getPowerList(CATEGORY, selectedTag, _mapPageVoList[selectedTag] + 1);
                   if (loadMoreList.length == 0) {
-                    loadDataBloc.add(LoadMoreEmptyEvent());
+                    if (mounted) {
+                      loadDataBloc.add(LoadMoreEmptyEvent());
+                    }
                   } else {
                     var _tempInfoItemVoList = _mapInfoItemVoList[selectedTag];
                     _tempInfoItemVoList.addAll(loadMoreList);
                     _mapInfoItemVoList[selectedTag] = _tempInfoItemVoList;
                     _InfoItemVoList = _mapInfoItemVoList[selectedTag];
-                    loadDataBloc.add(LoadingMoreSuccessEvent());
+                    if (mounted) {
+                      loadDataBloc.add(LoadingMoreSuccessEvent());
 
-                    setState(() {});
+                      setState(() {});
+                    }
                   }
                 } catch (e) {
-                  logger.e(e);
-                  //hack for wordpress rest_post_invalid_page_number
-                  if (e is DioError && e.message == 'Http status error [400]') {
-                    loadDataBloc.add(LoadMoreEmptyEvent());
-                  } else {
-                    loadDataBloc.add(LoadMoreFailEvent());
+                  if (mounted) {
+                    logger.e(e);
+                    //hack for wordpress rest_post_invalid_page_number
+                    if (e is DioError && e.message == 'Http status error [400]') {
+                      loadDataBloc.add(LoadMoreEmptyEvent());
+                    } else {
+                      loadDataBloc.add(LoadMoreFailEvent());
+                    }
                   }
                 }
               },
