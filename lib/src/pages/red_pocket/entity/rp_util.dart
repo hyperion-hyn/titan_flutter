@@ -101,6 +101,8 @@ String getStateDesc(int status) {
 
 
 String levelValueToLevelName(int levelValue) {
+  if (levelValue == null) return '--';
+
   String level = '';
   switch (levelValue) {
     case 5:
@@ -121,6 +123,10 @@ String levelValueToLevelName(int levelValue) {
 
     case 1:
       level = 'A';
+      break;
+
+    default:
+      level = '0';
       break;
   }
   return level;

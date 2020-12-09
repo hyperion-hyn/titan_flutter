@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -42,6 +43,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
   RpMyLevelInfo _myLevelInfo;
   int _currentPage = 1;
   List<RpHoldingRecordEntity> _dataList = [];
+  int get _currentLevel => _myLevelInfo?.currentLevel ?? 0;
 
   @override
   void initState() {
@@ -147,7 +149,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
   _myLevelInfoWidget() {
     int level = _myLevelInfo?.currentLevel??0;
     var holding = '--';
-    holding = '${_myLevelInfo?.currentHoldingStr}';
+    holding = '${_myLevelInfo?.currentHoldingStr??'0'}';
 
     var isShowDowngrade = false;
 
@@ -643,10 +645,19 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
   _navToTxDetail(String txHash) {}
 
   _navToLevelUnStakingAction() {
+
+    if (_currentLevel == 0) {
+      Fluttertoast.showToast(
+        msg: '当前量级为0，可取回持币金额为0！',
+        gravity: ToastGravity.CENTER,
+      );
+      return;
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpLevelRetrievePage(),
+        builder: (context) => RpLevelRetrievePage(_myLevelInfo),
       ),
     );
   }

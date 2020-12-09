@@ -334,7 +334,6 @@ class RPApi {
   }
 
   Future<dynamic> postRpWithdraw({
-    int level,
     BigInt withdrawAmount,
     String password = '',
     WalletVo activeWallet,

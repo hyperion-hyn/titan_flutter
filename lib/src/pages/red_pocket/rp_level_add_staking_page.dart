@@ -7,6 +7,11 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -14,8 +19,12 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 
+import 'entity/rp_my_level_info.dart';
+
 class RpLevelAddStakingPage extends StatefulWidget {
-  RpLevelAddStakingPage();
+  final RpMyLevelInfo rpMyLevelInfo;
+
+  RpLevelAddStakingPage(this.rpMyLevelInfo);
 
   @override
   State<StatefulWidget> createState() {
@@ -26,6 +35,8 @@ class RpLevelAddStakingPage extends StatefulWidget {
 class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
   TextEditingController _textEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final RPApi _rpApi = RPApi();
+
   double minTotal = 0;
   double remainTotal = 0;
 
@@ -78,7 +89,6 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
     fontSize: 14,
   );
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,11 +123,12 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                               SizedBox(
                                 width: 16,
                               ),
-                              Text('C', style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
-                                color: HexColor('#999999'),
-                              )),
+                              Text('C',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                    color: HexColor('#999999'),
+                                  )),
                             ],
                           ),
                         ),
@@ -211,7 +222,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
         child: Center(
           child: ClickOvalButton(
             S.of(context).confirm,
-            _confirmAction,
+            _addAction,
             height: 42,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
@@ -222,52 +233,42 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
     );
   }
 
-  _confirmAction() {
+  _addAction() async {
     FocusScope.of(context).requestFocus(FocusNode());
 
     if (!_formKey.currentState.validate()) {
       return;
     }
 
-    // Future.delayed(Duration(milliseconds: 111)).then((_) {
-    //   _showAlertView();
-    // });
-  }
+    var inputText = _textEditingController?.text ?? '';
 
-  _showAlertView() {
-    UiUtil.showAlertView(
-      context,
-      title: '重要提醒',
-      actions: [
-        ClickOvalButton(
-          '取回',
-          () async {
-            Navigator.pop(context, false);
-          },
-          width: 115,
-          height: 36,
-          fontSize: 14,
-          fontWeight: FontWeight.normal,
-          fontColor: DefaultColors.color333,
-          btnColor: [Colors.transparent],
-        ),
-        SizedBox(
-          width: 20,
-        ),
-        ClickOvalButton(
-          '再想想',
-          () {
-            Navigator.pop(context, true);
-          },
-          width: 115,
-          height: 36,
-          fontSize: 16,
-          fontWeight: FontWeight.normal,
-          btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
-        ),
-      ],
-      content: '您要取回50RP到钱包，剩余持币不足当前量级3所需最低持币量，您的量级将掉到量级2，请谨慎操作',
-      isInputValue: false,
-    );
+    if (inputText.isEmpty) {
+      return;
+    }
+
+    var _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+
+    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
+    if (password == null) {
+      return;
+    }
+
+    var burningAmount = ConvertTokenUnit.strToBigInt('0');
+    var depositAmount = ConvertTokenUnit.strToBigInt(inputText);
+
+    Future.delayed(Duration(milliseconds: 111)).then((_) async {
+      try {
+        await _rpApi.postRpDepositAndBurn(
+          level: widget.rpMyLevelInfo.currentLevel,
+          depositAmount: depositAmount,
+          burningAmount: burningAmount,
+          activeWallet: _activeWallet,
+          password: password,
+        );
+        Navigator.pop(context, true);
+      } catch (e) {
+        LogUtil.toastException(e);
+      }
+    });
   }
 }

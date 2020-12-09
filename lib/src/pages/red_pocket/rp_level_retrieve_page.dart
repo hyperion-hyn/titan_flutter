@@ -7,6 +7,11 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -14,8 +19,13 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 
+import 'entity/rp_my_level_info.dart';
+import 'entity/rp_promotion_rule_entity.dart';
+
 class RpLevelRetrievePage extends StatefulWidget {
-  RpLevelRetrievePage();
+  final RpMyLevelInfo rpMyLevelInfo;
+
+  RpLevelRetrievePage(this.rpMyLevelInfo);
 
   @override
   State<StatefulWidget> createState() {
@@ -28,21 +38,38 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
   final _formKey = GlobalKey<FormState>();
   double minTotal = 0;
   double remainTotal = 0;
+  RpPromotionRuleEntity _promotionRuleEntity;
+  int get _currentLevel => widget?.rpMyLevelInfo?.currentLevel ?? 0;
+  List<LevelRule> get _staticDataList => (_promotionRuleEntity?.static ?? []).reversed.toList();
+  LevelRule get _currentLevelRule {
+    LevelRule current;
+
+    if (_staticDataList.isNotEmpty) {
+      for (var model in _staticDataList) {
+        if (model.level == _currentLevel && _currentLevel > 0) {
+          current = model;
+          break;
+        }
+      }
+    }
+    return current;
+  }
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
+  final RPApi _rpApi = RPApi();
+  var _address = "";
 
   @override
   void initState() {
     super.initState();
+
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   }
 
   @override
   void onCreated() {
-    // getNetworkData();
-
-    setState(() {
-      _loadDataBloc.add(RefreshSuccessEvent());
-    });
+    getNetworkData();
 
     super.onCreated();
   }
@@ -57,10 +84,19 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
 
   Future getNetworkData() async {
     try {
-      if (mounted) {
-        setState(() {
-          _loadDataBloc.add(RefreshSuccessEvent());
-        });
+      var netData = await _rpApi.getRPPromotionRule(_address);
+
+      if (netData?.static?.isNotEmpty ?? false) {
+        _promotionRuleEntity = netData;
+        print("[$runtimeType] getNetworkData, count:${_staticDataList.length}");
+
+        if (mounted) {
+          setState(() {
+            _loadDataBloc.add(RefreshSuccessEvent());
+          });
+        }
+      } else {
+        _loadDataBloc.add(LoadEmptyEvent());
       }
     } catch (e) {
       LogUtil.toastException(e);
@@ -84,7 +120,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
     fontSize: 12,
     color: HexColor('#999999'),
   );
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +141,9 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                 child: SingleChildScrollView(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16,),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
                     color: Colors.white,
                     child: Column(
                       children: <Widget>[
@@ -117,7 +155,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                               SizedBox(
                                 width: 16,
                               ),
-                              Text('100 RP', style: _lightTextStyle),
+                              Text('${widget?.rpMyLevelInfo?.currentHoldingStr??'0'} RP', style: _lightTextStyle),
                             ],
                           ),
                         ),
@@ -125,16 +163,16 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                           padding: const EdgeInsets.only(top: 20),
                           child: Row(
                             children: <Widget>[
-                              Text('当前量级C需持币', style: _greyTextStyle),
+                              Text('当前量级${levelValueToLevelName(_currentLevel)}需持币', style: _greyTextStyle),
                               SizedBox(
                                 width: 16,
                               ),
-                              Text('63 RP', style: _lightTextStyle),
+                              Text('${_currentLevelRule?.holdingStr} RP', style: _lightTextStyle),
                             ],
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only( top: 30),
+                          padding: const EdgeInsets.only(top: 30),
                           child: Row(
                             children: <Widget>[
                               Text('取回持币', style: _lightTextStyle),
@@ -142,7 +180,10 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 16, right: 50,),
+                          padding: const EdgeInsets.only(
+                            top: 16,
+                            right: 50,
+                          ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
@@ -177,7 +218,9 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                         Row(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(top: 8,),
+                              padding: const EdgeInsets.only(
+                                top: 8,
+                              ),
                               child: Text(
                                 '*',
                                 style: TextStyle(
@@ -190,7 +233,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                               width: 6,
                             ),
                             Text(
-                              '为保证当前量级不下降，请保持持币量大于63RP',
+                              '为保证当前量级不下降，请保持持币量大于${_currentLevelRule?.holdingStr}RP',
                               style: TextStyle(
                                 color: HexColor('#333333'),
                                 fontSize: 12,
@@ -201,7 +244,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                       ],
                     ),
                   ),
-                      _confirmButtonWidget(),
+                  _confirmButtonWidget(),
                 ])),
               ),
             ),
@@ -243,17 +286,13 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
   }
 
   _showAlertView() {
-
     UiUtil.showAlertView(
       context,
       title: '重要提醒',
       actions: [
         ClickOvalButton(
           '取回',
-              () async {
-            Navigator.pop(context, false);
-            Navigator.pop(context, false);
-          },
+          _retrieveAction,
           width: 115,
           height: 36,
           fontSize: 14,
@@ -266,7 +305,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
         ),
         ClickOvalButton(
           '再想想',
-              () {
+          () {
             Navigator.pop(context, true);
           },
           width: 115,
@@ -276,9 +315,39 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
           btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
         ),
       ],
-      content: '您要取回50RP到钱包，当前持币量级C，您的量级将掉到量级B，请谨慎操作',
+      content:
+          '您要取回${_textEditingController?.text ?? '0'}RP到钱包，当前持币量级${levelValueToLevelName(_currentLevel)}，您的量级将掉到量级${levelValueToLevelName(_currentLevel - 1)}，请谨慎操作',
       isInputValue: false,
     );
   }
 
+  _retrieveAction() async {
+    Navigator.pop(context, true);
+
+    
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+
+    var inputText = _textEditingController?.text ?? '';
+
+    if (inputText.isEmpty) {
+      return;
+    }
+
+    var _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+
+    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
+    if (password == null) {
+      return;
+    }
+
+    var withdrawAmount = ConvertTokenUnit.strToBigInt(inputText);
+    try {
+      await _rpApi.postRpWithdraw(withdrawAmount: withdrawAmount, activeWallet: _activeWallet, password: password);
+      Navigator.pop(context, true);
+    } catch (e) {
+      LogUtil.toastException(e);
+    }
+  }
 }
