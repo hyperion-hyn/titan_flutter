@@ -1,17 +1,26 @@
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/http/entity.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_http.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_detail_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_holding_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_miners_entity.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_promotion_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart' as WalletClass;
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:web3dart/credentials.dart';
+import 'package:web3dart/web3dart.dart';
 
 class RPApi {
   Future<dynamic> postStakingRp({
@@ -174,7 +183,7 @@ class RPApi {
   ///确认邀请
   Future<bool> postRpInviter(
     String inviterAddress,
-    Wallet wallet,
+    WalletClass.Wallet wallet,
   ) async {
     var myAddress = wallet?.getEthAccount()?.address ?? "";
     if (myAddress.isEmpty || (inviterAddress?.isEmpty ?? true)) {
@@ -215,72 +224,6 @@ class RPApi {
     );
   }
 
-  ///用户等级信息
-  Future<RpPromotionEntity> getRPPromotionInfo(String address) async {
-    return await RPHttpCore.instance.getEntity(
-        "/v1/rp/promotion/$address",
-        EntityFactory<RpPromotionEntity>(
-          (json) => RpPromotionEntity.fromJson(json),
-        ),
-        options: RequestOptions(contentType: "application/json"));
-  }
-
-  // 预提交升级
-  Future<dynamic> postLevelPromotion({
-    BigInt burning,
-    BigInt holding,
-    int level,
-    String password = '',
-    WalletVo activeWallet,
-  }) async {
-    var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
-    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(
-      HynContractMethod.STAKE,
-      password,
-      stakingAmount: burning + holding,
-    );
-    print("[Rp_api] postLevelPromotion, address:$address, txHash:$txHash");
-    if (txHash == null) {
-      return;
-    }
-
-    return await RPHttpCore.instance.postEntity("/v1/rp/level/promotion/submit", EntityFactory<dynamic>((json) => json),
-        params: {
-          "address": address,
-          "burning": burning.toString(),
-          "holding": holding.toString(),
-          "level": level,
-          "tx_hash": txHash,
-        },
-        options: RequestOptions(contentType: "application/json"));
-  }
-
-  // 预提交提取
-  Future<dynamic> postLevelWithdraw({
-    BigInt withdraw,
-    String password = '',
-    WalletVo activeWallet,
-  }) async {
-    var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
-    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(
-      HynContractMethod.STAKE,
-      password,
-      stakingAmount: withdraw,
-    );
-    print("[Rp_api] postLevelWithdraw, address:$address, txHash:$txHash");
-    if (txHash == null) {
-      return;
-    }
-
-    return await RPHttpCore.instance.postEntity("/v1/rp/level/withdraw/submit", EntityFactory<dynamic>((json) => json),
-        params: {
-          "address": address,
-          "level": withdraw.toString(),
-          "tx_hash": txHash,
-        },
-        options: RequestOptions(contentType: "application/json"));
-  }
-
   ///我的红包列表
   Future<RpDetailEntity> getMyRdList(
     String address, {
@@ -304,5 +247,140 @@ class RPApi {
         contentType: "application/json",
       ),
     );
+  }
+
+  ///用户量级记录
+  Future<RpHoldingRecordEntity> getRpHoldingHistory(
+    String address, {
+    int page = 1,
+    int size = 20,
+  }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/level/history/$address',
+      EntityFactory<RpHoldingRecordEntity>((json) {
+        return RpHoldingRecordEntity.fromJson(json['data']);
+      }),
+      params: {
+        'page': page,
+        'size': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  ///用户等级信息
+  Future<RpMyLevelInfo> getRPMyLevelInfo(String address) async {
+    return await RPHttpCore.instance.getEntity(
+        "/v1/rp/level/info/$address",
+        EntityFactory<RpMyLevelInfo>(
+          (json) => RpMyLevelInfo.fromJson(json),
+        ),
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  ///用户升级 燃烧以及抵押 需求
+  Future<RpPromotionRuleEntity> getRPPromotionRule(String address) async {
+    return await RPHttpCore.instance.getEntity(
+        "/v1/rp/level/promotion/$address",
+        EntityFactory<RpPromotionRuleEntity>(
+          (json) => RpPromotionRuleEntity.fromJson(json),
+        ),
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  ///预提交升级
+  Future<dynamic> postRpDepositAndBurn({
+    int level,
+    BigInt depositAmount,
+    BigInt burningAmount,
+    String password = '',
+    WalletVo activeWallet,
+  }) async {
+    var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
+
+    var approveHex = await postRpApprove(password: password, activeWallet: activeWallet);
+    print('[rp_api] postRpDepositAndBurn, approveHex: $approveHex');
+
+    var txHash = await activeWallet.wallet.sendRpHolding(
+      RpHoldingMethod.DEPOSIT_BURN,
+      password,
+      depositAmount: depositAmount,
+      burningAmount: burningAmount,
+    );
+
+    print("[Rp_api] postRpDepositAndBurn, sendRpHolding, address:$address, txHash:$txHash");
+    if (txHash == null) {
+      return;
+    }
+
+    return await RPHttpCore.instance.postEntity("/v1/rp/level/promotion/submit", EntityFactory<dynamic>((json) => json),
+        params: {
+          "address": address,
+          "burning": burningAmount.toString(),
+          "holding": depositAmount.toString(),
+          "level": level.toString(),
+          "tx_hash": txHash,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future<dynamic> postRpWithdraw({
+    int level,
+    BigInt withdrawAmount,
+    String password = '',
+    WalletVo activeWallet,
+  }) async {
+    var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
+
+    var approveHex = await postRpApprove(password: password, activeWallet: activeWallet);
+    print('[rp_api] postRpWithdraw, approveHex: $approveHex');
+
+    var txHash = await activeWallet.wallet.sendRpHolding(
+      RpHoldingMethod.WITHDRAW,
+      password,
+      withdrawAmount: withdrawAmount,
+    );
+
+    print("[Rp_api] postRpWithdraw, sendRpHolding, address:$address, txHash:$txHash");
+    if (txHash == null) {
+      return;
+    }
+
+    return await RPHttpCore.instance.postEntity("/v1/rp/level/withdraw/submit", EntityFactory<dynamic>((json) => json),
+        params: {
+          "address": address,
+          "withdraw": withdrawAmount.toString(),
+          "tx_hash": txHash,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  ///预提交 , 授权
+  Future<String> postRpApprove({
+    String password = '',
+    WalletVo activeWallet,
+  }) async {
+    var wallet = activeWallet?.wallet;
+    var context = Keys.rootKey.currentContext;
+    var address = wallet?.getEthAccount()?.address ?? "";
+
+    final client = WalletUtil.getWeb3Client(true);
+    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
+
+    var approveHex = await wallet.sendApproveErc20Token(
+      contractAddress: WalletConfig.hynRPHrc30Address,
+      approveToAddress: WalletConfig.rpHoldingContractAddress,
+      amount: null,
+      // amount: ConvertTokenUnit.decimalToWei(0),
+      password: password,
+      gasPrice: BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt()),
+      gasLimit: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20ApproveGasLimit,
+      nonce: nonce,
+    );
+    print('[rp_api] postRpApprove, approveHex: $approveHex');
+
+    return approveHex;
   }
 }
