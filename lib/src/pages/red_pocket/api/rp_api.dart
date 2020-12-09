@@ -155,7 +155,7 @@ class RPApi {
     );
   }
 
-  ///统计信息
+  ///可以取回的数量
   Future<Map<String, dynamic>> getCanRetrieve(String address) async {
     var data = await RPHttpCore.instance.getEntity(
       '/v1/rp/can_retrieve/$address',
