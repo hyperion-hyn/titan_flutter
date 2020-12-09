@@ -13,6 +13,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart'
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
@@ -94,6 +95,17 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    var wallet = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    );
+    var activatedWallet = wallet.activatedWallet;
+
+    var walletName = activatedWallet?.wallet?.keystore?.name ?? "";
+
+    var coinVo = wallet.getCoinVoBySymbol('RP');
+
     return Scaffold(
       appBar: BaseAppBar(
         baseTitle: '升级量级',
@@ -152,21 +164,24 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                               SizedBox(
                                 width: 5,
                               ),
-                              Text('（至少${widget?.levelRule?.holdingStr} RP）',
+                              Text('${S.of(context).mortgage_wallet_balance(walletName,
+                                  FormatUtil.coinBalanceHumanReadFormat(coinVo))}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.normal,
                                     fontSize: 12,
                                     color: HexColor('#999999'),
                                   )),
                               SizedBox(
-                                width: 20,
+                                width: 10,
                               ),
-                              Text('当前持币 ${widget?.rpMyLevelInfo?.currentHoldingStr ?? '0'} RP',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 12,
-                                    color: HexColor('#999999'),
-                                  )),
+                              Expanded(
+                                child: Text('当前持币 ${widget?.rpMyLevelInfo?.currentHoldingStr ?? '0'} RP ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 12,
+                                      color: HexColor('#999999'),
+                                    )),
+                              ),
                             ],
                           ),
                         ),
@@ -189,7 +204,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                     controller: _textEditingController,
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                    hint: S.of(context).please_enter_withdraw_amount,
+                                    hint: '至少${widget?.levelRule?.holdingStr} RP',
                                     validator: (textStr) {
                                       if (textStr.length == 0) {
                                         return '请输入数量';
@@ -198,6 +213,11 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                       var inputValue = Decimal.tryParse(textStr);
                                       if (inputValue == null) {
                                         return S.of(context).please_enter_correct_amount;
+                                      }
+
+                                      var holdValue = Decimal.parse(widget?.levelRule?.holdingStr);
+                                      if (holdValue > inputValue) {
+                                        return '至少${widget?.levelRule?.holdingStr} RP';
                                       }
                                     },
                                   ),
