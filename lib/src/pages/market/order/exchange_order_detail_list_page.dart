@@ -145,8 +145,12 @@ class ExchangeOrderDetailListPageState
       }
     }
 
-    _loadDataBloc.add(RefreshSuccessEvent());
-    if (mounted) setState(() {});
+    if (mounted) {
+      _loadDataBloc.add(RefreshSuccessEvent());
+
+      setState(() {});
+    }
+
     _refreshController.refreshCompleted();
   }
 
@@ -172,8 +176,12 @@ class ExchangeOrderDetailListPageState
         }
       }
     }
-    _loadDataBloc.add(LoadingMoreSuccessEvent());
-    if (mounted) setState(() {});
+    if (mounted) {
+      _loadDataBloc.add(LoadingMoreSuccessEvent());
+
+      setState(() {});
+    }
+
     _refreshController.refreshCompleted();
   }
 
