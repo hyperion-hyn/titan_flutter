@@ -32,6 +32,8 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
+import 'entity/rp_util.dart';
+
 class RpTransmitPage extends StatefulWidget {
   final RPStatistics rpStatistics;
 
@@ -183,21 +185,15 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
           padding: const EdgeInsets.only(
             top: 10,
             bottom: 6,
+            left: 26,
+            right: 16,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                  ),
-                  child: _columnWidget(
-                    '${_rpStatistics?.rpContractInfo?.poolPercent ?? '--'}${S.of(context).rp_million_rp}',
-                    S.of(context).rp_total_available_transmit,
-                  ),
-                  // child: _columnWidget('$totalTransmit RP', '总可传导'),
-                ),
+              _columnWidget(
+                '${_rpStatistics?.rpContractInfo?.poolPercent ?? '--'}${S.of(context).rp_million_rp}',
+                S.of(context).rp_total_available_transmit,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -219,7 +215,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                   S.of(context).rp_global_transmit,
                 ),
               ),
-              Spacer(),
+              //Spacer(),
             ],
           ),
         ),
@@ -984,6 +980,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   }
 
   _pushStakingInfoAction(int index) {
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -991,100 +988,4 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       ),
     );
   }
-}
-
-HexColor getStateColor(int status) {
-  HexColor stateColor = HexColor('#999999');
-  if (status == null) {
-    return stateColor;
-  }
-  //1:确认中 2:失败 3:成功 4:释放中 5:释放结束 6:可取回 7:取回中 8: 已提取
-
-  switch (status) {
-    case 1:
-      stateColor = HexColor('#FFC500');
-      break;
-
-    case 2:
-      stateColor = HexColor('#999999');
-      break;
-
-    case 3:
-      stateColor = HexColor('#333333');
-      break;
-
-    case 4:
-      stateColor = HexColor('#FFC500');
-      break;
-
-    case 5:
-      stateColor = HexColor('#333333');
-      break;
-
-    case 6:
-      stateColor = HexColor('#00C081');
-      break;
-
-    case 7:
-      stateColor = HexColor('#FFC500');
-      break;
-
-    case 8:
-      stateColor = HexColor('#999999');
-      break;
-
-    default:
-      stateColor = HexColor('#999999');
-      break;
-  }
-  return stateColor;
-}
-
-String getStateDesc(int status) {
-  if (status == null) {
-    return '';
-  }
-
-  String stateDesc = '运行中';
-
-  //1:确认中 2:失败 3:成功 4:释放中 5:释放结束 6:可取回 7:取回中 8: 已提取
-
-  switch (status) {
-    case 1:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_1;
-      break;
-
-    case 2:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_2;
-      break;
-
-    case 3:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_3;
-      break;
-
-    case 4:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_4;
-      break;
-
-    case 5:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_5;
-      break;
-
-    case 6:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_6;
-      break;
-
-    case 7:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_7;
-      break;
-
-    case 8:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_8;
-      break;
-
-    default:
-      stateDesc = '';
-      break;
-  }
-  return stateDesc;
 }

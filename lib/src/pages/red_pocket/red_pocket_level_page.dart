@@ -15,6 +15,7 @@ import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'entity/rp_release_info.dart';
+import 'entity/rp_util.dart';
 
 class RedPocketLevelPage extends StatefulWidget {
   RedPocketLevelPage();
@@ -172,7 +173,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
       leftTagTitle = '当前量级';
     }
 
-    var levelName = '量级 ${_levelValueToLevelName(index)}';
+    var levelName = '量级 ${levelValueToLevelName(index)}';
     var burnTitle = '需燃烧';
     var burnRpValue = '5 RP';
 
@@ -306,58 +307,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
           ),
       ],
     );
-  }
-
-  String _levelValueToLevelName(int levelValue) {
-    String level = '';
-    switch (levelValue) {
-      case 0:
-        level = 'E';
-        break;
-
-      case 1:
-        level = 'D';
-        break;
-
-      case 2:
-        level = 'C';
-        break;
-
-      case 3:
-        level = 'B';
-        break;
-
-      case 4:
-        level = 'A';
-        break;
-    }
-    return level;
-  }
-
-  int _levelNameToLevelValue(String levelName) {
-    int level;
-    switch (levelName) {
-      case 'E':
-        level = 0;
-        break;
-
-      case 'D':
-        level = 1;
-        break;
-
-      case 'C':
-        level = 2;
-        break;
-
-      case 'B':
-        level = 3;
-        break;
-
-      case 'A':
-        level = 4;
-        break;
-    }
-    return level;
   }
 
   Widget _confirmButtonWidget() {
