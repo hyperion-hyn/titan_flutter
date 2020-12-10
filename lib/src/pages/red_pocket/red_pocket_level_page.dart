@@ -85,6 +85,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
       onRefresh: () async {
         getNetworkData();
       },
+      enablePullUp: false,
       child: CustomScrollView(
         slivers: [
           _levelHeaderView(),

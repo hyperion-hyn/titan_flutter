@@ -388,7 +388,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
           msg: '升级请求已发送成功！',
           gravity: ToastGravity.CENTER,
         );
-        Navigator.pop(context, true);
+        Navigator.of(context)..pop()..pop();
       } catch (e) {
         LogUtil.toastException(e);
       }

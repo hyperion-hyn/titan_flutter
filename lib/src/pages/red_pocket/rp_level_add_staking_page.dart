@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -292,6 +293,14 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
       return;
     }
 
+    if (_myLevelInfo == null) {
+      Fluttertoast.showToast(
+        msg: '请先升级！',
+        gravity: ToastGravity.CENTER,
+      );
+      return;
+    }
+
     var inputText = _textEditingController?.text ?? '';
 
     if (inputText.isEmpty) {
@@ -309,13 +318,13 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
     Future.delayed(Duration(milliseconds: 111)).then((_) async {
       try {
         await _rpApi.postRpDepositAndBurn(
-          level: widget.rpMyLevelInfo.currentLevel,
+          level: _myLevelInfo?.currentLevel??0,
           depositAmount: depositAmount,
           burningAmount: burningAmount,
           activeWallet: _activatedWallet,
           password: password,
         );
-        Navigator.pop(context, true);
+        Navigator.of(context)..pop()..pop();
       } catch (e) {
         LogUtil.toastException(e);
       }
