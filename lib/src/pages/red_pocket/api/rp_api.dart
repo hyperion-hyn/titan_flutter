@@ -252,17 +252,17 @@ class RPApi {
   }
 
   ///用户量级记录
-  Future<List<RpHoldingRecordEntity>> getRpHoldingHistory(
+  Future<List<RPLevelHistory>> getRpHoldingHistory(
     String address, {
     int page = 1,
     int size = 20,
   }) async {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/level/history/$address',
-      EntityFactory<List<RpHoldingRecordEntity>>((json) {
+      EntityFactory<List<RPLevelHistory>>((json) {
 
         var data = (json['data'] as List).map((map) {
-          return RpHoldingRecordEntity.fromJson(map);
+          return RPLevelHistory.fromJson(map);
         }).toList();
 
         return data;

@@ -4,7 +4,7 @@ import 'package:titan/src/utils/format_util.dart';
 part 'rp_holding_record_entity.g.dart';
 
 @JsonSerializable()
-class RpHoldingRecordEntity extends Object {
+class RPLevelHistory extends Object {
   @JsonKey(name: 'address')
   String address;
 
@@ -60,7 +60,7 @@ class RpHoldingRecordEntity extends Object {
 
   String get totalHoldingStr => FormatUtil.weiToEtherStr(totalHolding) ?? '0';
 
-  RpHoldingRecordEntity(
+  RPLevelHistory(
     this.address,
     this.burning,
     this.circulation,
@@ -78,7 +78,7 @@ class RpHoldingRecordEntity extends Object {
     this.withdraw,
   );
 
-  factory RpHoldingRecordEntity.fromJson(Map<String, dynamic> srcJson) => _$RpHoldingRecordEntityFromJson(srcJson);
+  factory RPLevelHistory.fromJson(Map<String, dynamic> srcJson) => _$RpHoldingRecordEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RpHoldingRecordEntityToJson(this);
 }
