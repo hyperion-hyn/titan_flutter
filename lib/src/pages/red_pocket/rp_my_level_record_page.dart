@@ -603,7 +603,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     try {
 
       // todo:   "msg": "Unknown error",
-      //_myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
+      _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
 
       var netData = await _rpApi.getRpHoldingHistory(
         _address,
