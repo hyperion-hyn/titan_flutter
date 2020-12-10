@@ -609,7 +609,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                           height: 6,
                         ),
                         Text(
-                          '${S.of(context).rp_staking_id}：${model?.stakingId ?? 0}',
+                          '${S.of(context).rp_staking_id}：${(model?.stakingId ?? 0) == 0 ? '--' : model?.stakingId ?? 0}',
                           //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                           style: TextStyle(
                             fontSize: 12,

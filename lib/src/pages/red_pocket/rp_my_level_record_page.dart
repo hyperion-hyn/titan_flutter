@@ -711,7 +711,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     WalletShowAccountInfoPage.jumpToAccountInfoPage(
       context,
       txHash,
-      SupportedTokens.HYN_Atlas.symbol,
+      SupportedTokens.HYN_RP_HRC30.symbol,
     );
   }
 

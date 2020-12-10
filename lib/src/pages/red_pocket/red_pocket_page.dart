@@ -299,7 +299,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                               left: 8,
                             ),
                             child: Image.asset(
-                              'res/drawable/rp_add_friends_arrow.png',
+                              (_myLevelInfo?.currentLevel ?? 0) == 0?'res/drawable/error_rounded.png': 'res/drawable/rp_add_friends_arrow.png',
                               width: 15,
                               height: 15,
                             ),

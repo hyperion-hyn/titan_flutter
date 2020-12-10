@@ -166,7 +166,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
               Decimal.tryParse(dynamicModel?.holdingStr ?? '0') ?? zeroValue;
           bool isOldLevel = staticHoldValue > zeroValue && dynamicHoldValue > zeroValue && staticHoldValue > dynamicHoldValue;
 
-          print("[$runtimeType] _levelListView, level:${staticModel.level}, isOldLevel:$isOldLevel");
+          //print("[$runtimeType] _levelListView, level:${staticModel.level}, isOldLevel:$isOldLevel");
 
           //isOldLevel = true;
 
