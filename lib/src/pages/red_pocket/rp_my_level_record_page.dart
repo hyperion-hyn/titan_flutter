@@ -19,10 +19,12 @@ import 'package:titan/src/pages/red_pocket/rp_level_retrieve_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import 'entity/rp_holding_record_entity.dart';
 import 'entity/rp_my_level_info.dart';
+import 'entity/rp_util.dart';
 
 class RpMyLevelRecordsPage extends StatefulWidget {
   RpMyLevelRecordsPage();
@@ -108,8 +110,17 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
             _myLevelInfoWidget(),
             _myLevelRecordHeader(),
             _myLevelRecordList(),
+            _bottomPadding(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _bottomPadding() {
+    return SliverToBoxAdapter(
+      child: SizedBox(
+        height: 32,
       ),
     );
   }
@@ -158,7 +169,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
 
   _myLevelInfoWidget() {
     int currentLevel = _myLevelInfo?.currentLevel ?? 0;
-    int highestLevel = _myLevelInfo?.highestLevel ?? 1;
+    int highestLevel = _myLevelInfo?.highestLevel ?? 0;
 
     var holding = '--';
     try {
@@ -269,7 +280,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                           Spacer(),
                           _columnWidget(
                             '$holding RP',
-                            '当期持币',
+                            '当前持币',
                           ),
                           Spacer(),
                         ],
@@ -402,8 +413,9 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16.0),
               child: emptyListWidget(
-                  title: S.of(context).rp_empty_staking_record,
-                  isAdapter: false),
+                title: S.of(context).no_data,
+                isAdapter: false,
+              ),
             ),
           ),
         ),
@@ -422,11 +434,13 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
 
   Widget _levelRecordItem(index) {
     var model = _levelHistoryList[index];
-    bool isUpgrade = true;
+
     var txHash = model.txHash;
 
-    var levelFrom = '${model.from}';
-    var levelTo = '${model.to}';
+    var levelFrom = model?.from ?? 0;
+    var levelTo = model?.to ?? 0;
+
+    bool isUpgrade = levelTo > levelFrom;
 
     ///(1、主动降级 2、被动降级 3、升级 4、补偿燃烧升级 5增持升级)
     var recordType = model.type;
@@ -440,10 +454,10 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
       detailStr = '全网发行增长调整';
       isShowState = false;
     } else if (recordType == 3) {
-      detailStr = '燃烧 ${model.burning} RP，增持 ${model.holding} RP';
+      detailStr = '燃烧 ${model.burningStr} RP，增持 ${model.holdingStr} RP';
       isShowState = true;
     } else if (recordType == 4) {
-      detailStr = '燃烧 ${model.burning} RP';
+      detailStr = '燃烧 ${model.burningStr} RP';
       isShowState = true;
     } else if (recordType == 5) {
       detailStr = '增持 ${model.holdingStr} RP';
@@ -463,7 +477,10 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
       statusHint = '失败';
       statusColor = HexColor('#FFEB3737');
     }
-    var recordTime = model.createdAt;
+    var recordTime = FormatUtil.newFormatUTCDateStr(
+      model?.createdAt ?? '0',
+      isSecond: true,
+    );
 
     var statusIcon = isShowState
         ? Padding(
@@ -531,7 +548,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                             Row(
                               children: <Widget>[
                                 Text(
-                                  '$levelTo 级',
+                                  '${levelValueToLevelName(levelTo)} 级',
                                   style: TextStyle(
                                     color: HexColor("#333333"),
                                     fontSize: 14,
@@ -544,7 +561,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                               height: 6,
                             ),
                             Text(
-                              '$levelFrom级 -> $levelTo级',
+                              '${levelValueToLevelName(levelFrom)}级 -> ${levelValueToLevelName(levelTo)}级',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: HexColor('#999999'),
@@ -587,7 +604,6 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                           ),
                           Text(
                             '${recordTime ?? '--'}',
-                            //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(model?.createdAt)),
                             style: TextStyle(
                               fontSize: 12,
                               color: HexColor('#999999'),
@@ -631,9 +647,12 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
 
   void getNetworkData() async {
     _currentPage = 1;
+    _levelHistoryList.clear();
 
     try {
-      _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
+      _myLevelInfo = await _rpApi.getRPMyLevelInfo(
+        _address,
+      );
 
       var netData = await _rpApi.getRpHoldingHistory(
         _address,
