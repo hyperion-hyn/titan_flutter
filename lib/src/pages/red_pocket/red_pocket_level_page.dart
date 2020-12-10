@@ -168,6 +168,8 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
           print("[$runtimeType] _levelListView, level:${staticModel.level}, isOldLevel:$isOldLevel");
 
+          //isOldLevel = true;
+
           if (isOldLevel) {
             return _itemBuilderOld(index);
           } else {
@@ -196,7 +198,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
           margin: const EdgeInsets.only(
             top: 8,
           ),
-          height: 120,
+          // height: 120,
           child: Stack(
             children: [
               InkWell(
@@ -228,7 +230,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
       bool isOldLevel = staticHoldValue > zeroValue && dynamicHoldValue > zeroValue && staticHoldValue > dynamicHoldValue;
 
       return isOldLevel;
-    });
+    }).toList();
     LevelRule oldModelMax = oldModelList.firstWhere((element) => element.level > dynamicModel.level, orElse: () => null);
 
     // 判断当前旧的量级是否为历史最高
@@ -250,7 +252,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
           margin: const EdgeInsets.only(
             top: 8,
           ),
-          height: 160,
+          //height: 165,
           child: Stack(
             children: [
               InkWell(

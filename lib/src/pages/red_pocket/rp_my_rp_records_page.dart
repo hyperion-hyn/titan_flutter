@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -10,9 +9,9 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_detail_page.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'entity/rp_release_info.dart';
 
 class RpMyRpRecordsPage extends StatefulWidget {
   RpMyRpRecordsPage();
@@ -27,9 +26,10 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
-  int _currentPage = 1;
+  String _currentPageKey;
   var _address = "";
-  List<RpReleaseInfo> _dataList = [];
+  // RpMyRpRecordEntity _rpMyRecordEntity;
+  List<RpOpenRecordEntity> _dataList = [];
 
   int lastDay;
 
@@ -83,17 +83,18 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
             (context, index) {
               var model = _dataList[index];
 
-              var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
+              // var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
+              var currentDate = model.time;
 
               bool isNewDay = false;
-              if (index == 0) {
-                isNewDay = true;
-              } else {
-                if (currentDate.day != lastDay) {
-                  isNewDay = true;
-                }
-              }
-              lastDay = currentDate.day;
+              // if (index == 0) {
+              //   isNewDay = true;
+              // } else {
+              //   if (currentDate.day != lastDay) {
+              //     isNewDay = true;
+              //   }
+              // }
+              // lastDay = currentDate.day;
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +103,8 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                     Padding(
                       padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
                       child: Text(
-                        FormatUtil.humanReadableDay(model.updatedAt),
+                        //FormatUtil.humanReadableDay(model.time),
+                        model.time,
                         style: TextStyle(color: Color(0xff999999)),
                       ),
                     ),
@@ -120,31 +122,31 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   Widget _itemBuilder(int index) {
     var model = _dataList[index];
 
-    var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
+    var hynAmount = FormatUtil.weiToEtherStr(model?.amount ?? '0');
 
     var amount = model?.amount ?? 0;
 
-    var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
+    var rpAmount = FormatUtil.weiToEtherStr(model?.totalAmount ?? '0');
     // rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
     // rpAmount = '00000000000000000000000000000000000000000000000000000000000000';
 
-    var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
-    var updatedAt = DateFormat("HH:mm").format(currentDate);
+    // var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
+    // var updatedAt = DateFormat("HH:mm").format(currentDate);
 
     var title = '';
     var desc = '';
 
-    switch (index) {
+    switch (model.luck) {
       case 0:
-        desc = '最佳';
-        break;
-
-      case 1:
         desc = '错过';
         break;
 
-      case 2:
+      case 1:
         desc = '砸中';
+        break;
+
+      case 2:
+        desc = '最佳';
         break;
 
       default:
@@ -152,7 +154,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
         break;
     }
 
-    switch (index) {
+    switch (model.type) {
       case 0:
         title = '幸运红包';
         break;
@@ -166,7 +168,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
         break;
 
       default:
-        title = '幸运红包';
+        title = '';
         break;
     }
     return InkWell(
@@ -177,7 +179,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => RedPocketDetailPage(rpType: index,),
+            builder: (context) => RedPocketDetailPage(recordEntity: model),
           ),
         );
       },
@@ -243,7 +245,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                       height: 6,
                     ),
                     Text(
-                      updatedAt,
+                      model.time,
                       //'${S.of(context).rp_staking_id}：${model?.stakingId ?? 0}',
                       //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                       style: TextStyle(
@@ -299,13 +301,12 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   }
 
   void getNetworkData() async {
-    _currentPage = 1;
-
     try {
-      var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
+      var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
 
-      if (netData?.isNotEmpty ?? false) {
-        _dataList = netData;
+      if (netData?.data?.isNotEmpty ?? false) {
+        _currentPageKey = netData.pagingKey;
+        _dataList = netData.data;
         if (mounted) {
           setState(() {
             _loadDataBloc.add(RefreshSuccessEvent());
@@ -321,11 +322,11 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
 
   void getMoreNetworkData() async {
     try {
-      _currentPage = _currentPage + 1;
-      var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
+      var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
 
-      if (netData?.isNotEmpty ?? false) {
-        _dataList.addAll(netData);
+      if (netData?.data?.isNotEmpty ?? false) {
+        _currentPageKey = netData.pagingKey;
+        _dataList.addAll(netData.data);
         _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
