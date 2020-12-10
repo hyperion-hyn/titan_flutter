@@ -7,6 +7,7 @@ import 'package:titan/src/routes/routes.dart';
 class Map3NodeCreateWalletPage extends StatelessWidget {
   static const String CREATE_WALLET_PAGE_TYPE_CREATE = "create";
   static const String CREATE_WALLET_PAGE_TYPE_JOIN = "join";
+  static const String CREATE_WALLET_PAGE_TYPE_NORMAL = "normal";
 
   final String type;
   Map3NodeCreateWalletPage(this.type);
@@ -41,7 +42,9 @@ class Map3NodeCreateWalletPage extends StatelessWidget {
                   child: Text(
                     type == CREATE_WALLET_PAGE_TYPE_CREATE
                         ? S.of(context).create_map_node_must_have_block_account
-                        : S.of(context).join_map_node_must_have_block_account,
+                        : type == CREATE_WALLET_PAGE_TYPE_JOIN
+                        ? S.of(context).join_map_node_must_have_block_account
+                        : "你必须先拥有一个区块链钱包账户。",
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
