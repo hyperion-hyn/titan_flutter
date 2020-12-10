@@ -92,6 +92,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
         onLoadingMore: () {
           getMoreNetworkData();
         },
+        enablePullUp: _dataList.isNotEmpty,
         child: CustomScrollView(
           slivers: [
             //_notificationWidget(),
@@ -368,7 +369,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
           color: HexColor('#F8F8F8'),
           child: Padding(
             padding: const EdgeInsets.only(
-                left: 16.0, right: 16.0, top: 16.0, bottom: 160),
+                left: 16.0, right: 16.0, top: 16.0, bottom: 60),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16.0),
               child: emptyListWidget(
