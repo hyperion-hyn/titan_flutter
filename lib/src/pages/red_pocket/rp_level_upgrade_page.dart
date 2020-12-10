@@ -10,7 +10,10 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -47,20 +50,26 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
+  RpMyLevelInfo _myLevelInfo;
+  CoinVo _coinVo;
+  WalletVo _activatedWallet;
+  String get _address => _activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+  String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
+
   @override
   void initState() {
     super.initState();
+
+    _myLevelInfo = widget.rpMyLevelInfo;
+
+    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext);
+    _coinVo = wallet.getCoinVoBySymbol('RP');
+    _activatedWallet = wallet.activatedWallet;
   }
 
   @override
   void onCreated() {
-    // getNetworkData();
-
-    //_textEditingController.text = widget.levelRule.holdingStr;
-
-    setState(() {
-      _loadDataBloc.add(RefreshSuccessEvent());
-    });
+    getNetworkData();
 
     super.onCreated();
   }
@@ -77,6 +86,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   Future getNetworkData() async {
     try {
+      _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
+
       if (mounted) {
         setState(() {
           _loadDataBloc.add(RefreshSuccessEvent());
@@ -100,16 +111,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   @override
   Widget build(BuildContext context) {
-    var wallet = WalletInheritedModel.of(
-      context,
-      aspect: WalletAspect.activatedWallet,
-    );
-    var activatedWallet = wallet.activatedWallet;
-
-    var walletName = activatedWallet?.wallet?.keystore?.name ?? "";
-
-    var coinVo = wallet.getCoinVoBySymbol('RP');
-
     return Scaffold(
       appBar: BaseAppBar(
         baseTitle: '升级量级',
@@ -122,7 +123,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
               bloc: _loadDataBloc,
               enablePullUp: false,
               onRefresh: getNetworkData,
-              isStartLoading: false,
+              isStartLoading: true,
               child: BaseGestureDetector(
                 context: context,
                 child: SingleChildScrollView(
@@ -154,7 +155,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                               SizedBox(
                                 width: 16,
                               ),
-                              Text('${widget?.levelRule?.burnStr??'0'} RP', style: _textStyle),
+                              Text('${widget?.levelRule?.burnStr ?? '0'} RP', style: _textStyle),
                             ],
                           ),
                         ),
@@ -169,7 +170,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                 width: 5,
                               ),
                               Text(
-                                  '${S.of(context).mortgage_wallet_balance(walletName, FormatUtil.coinBalanceHumanReadFormat(coinVo))}',
+                                  '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.normal,
                                     fontSize: 12,
@@ -179,7 +180,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                 width: 10,
                               ),
                               Expanded(
-                                child: Text('当前持币 ${widget?.rpMyLevelInfo?.currentHoldingStr ?? '0'} RP ',
+                                child: Text('当前持币 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP ',
                                     style: TextStyle(
                                       fontWeight: FontWeight.normal,
                                       fontSize: 12,
@@ -205,15 +206,16 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                     onChanged: (text) {
                                       _formKey.currentState.validate();
 
-                                      var holdValue = Decimal.tryParse(text??'0') ?? Decimal.fromInt(0);
-                                      var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr??'0') ?? Decimal.fromInt(0);
+                                      var holdValue = Decimal.tryParse(text ?? '0') ?? Decimal.fromInt(0);
+                                      var burnValue =
+                                          Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.fromInt(0);
                                       totalValue = (holdValue + burnValue);
                                       _inputController.add(text);
                                     },
                                     controller: _textEditingController,
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                    hint: '至少${widget?.levelRule?.holdingStr??'0'} RP',
+                                    hint: '至少${widget?.levelRule?.holdingStr ?? '0'} RP',
                                     validator: (textStr) {
                                       if (textStr.length == 0) {
                                         return '请输入数量';
@@ -225,12 +227,12 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                       }
 
                                       var holdValue =
-                                          Decimal.tryParse(widget?.levelRule?.holdingStr??'0') ?? Decimal.fromInt(0);
+                                          Decimal.tryParse(widget?.levelRule?.holdingStr ?? '0') ?? Decimal.fromInt(0);
                                       if (holdValue > inputValue) {
-                                        return '至少${widget?.levelRule?.holdingStr??'0'} RP';
+                                        return '至少${widget?.levelRule?.holdingStr ?? '0'} RP';
                                       }
 
-                                      var balanceValue = Decimal.tryParse(FormatUtil.coinBalanceHumanRead(coinVo)) ??
+                                      var balanceValue = Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ??
                                           Decimal.fromInt(0);
                                       print("inputValue:$inputValue, balanceValue:$balanceValue");
 
@@ -272,21 +274,20 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                         ),
                         StreamBuilder<Object>(
                             stream: _inputController.stream,
-                          builder: (context, snapshot) {
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 20),
-                              child: Row(
-                                children: <Widget>[
-                                  Text('合计：', style: _textStyle),
-                                  SizedBox(
-                                    width: 16,
-                                  ),
-                                  Text('${totalValue??'0'} RP', style: _textStyle),
-                                ],
-                              ),
-                            );
-                          }
-                        ),
+                            builder: (context, snapshot) {
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text('合计：', style: _textStyle),
+                                    SizedBox(
+                                      width: 16,
+                                    ),
+                                    Text('${totalValue ?? '0'} RP', style: _textStyle),
+                                  ],
+                                ),
+                              );
+                            }),
                       ],
                     ),
                   ),
@@ -355,15 +356,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
     // todo: 计算 holding + burning > balance;
 
-    var wallet = WalletInheritedModel.of(
-      context,
-      aspect: WalletAspect.activatedWallet,
-    );
-
-    var activeWallet = wallet.activatedWallet;
-
-    var coinVo = wallet.getCoinVoBySymbol('RP');
-    var balanceValue = Decimal.tryParse(FormatUtil.coinBalanceHumanRead(coinVo)) ?? Decimal.fromInt(0);
+    var balanceValue = Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.fromInt(0);
 
     if (totalValue > balanceValue) {
       Fluttertoast.showToast(
@@ -373,7 +366,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       return;
     }
 
-    var password = await UiUtil.showWalletPasswordDialogV2(context, activeWallet.wallet);
+    var password = await UiUtil.showWalletPasswordDialogV2(context, _activatedWallet.wallet);
     if (password == null) {
       return;
     }
@@ -387,7 +380,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
           level: widget.levelRule.level,
           depositAmount: depositAmount,
           burningAmount: burningAmount,
-          activeWallet: activeWallet,
+          activeWallet: _activatedWallet,
           password: password,
         );
 

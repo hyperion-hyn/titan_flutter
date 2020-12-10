@@ -7,6 +7,8 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
@@ -14,6 +16,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart'
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
@@ -43,18 +46,26 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
+  RpMyLevelInfo _myLevelInfo;
+  CoinVo _coinVo;
+  WalletVo _activatedWallet;
+  String get _address => _activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+  String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
+
   @override
   void initState() {
     super.initState();
+
+    _myLevelInfo = widget.rpMyLevelInfo;
+
+    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext);
+    _coinVo = wallet.getCoinVoBySymbol('RP');
+    _activatedWallet = wallet.activatedWallet;
   }
 
   @override
   void onCreated() {
-    // getNetworkData();
-
-    setState(() {
-      _loadDataBloc.add(RefreshSuccessEvent());
-    });
+    getNetworkData();
 
     super.onCreated();
   }
@@ -69,6 +80,8 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
 
   Future getNetworkData() async {
     try {
+      _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
+
       if (mounted) {
         setState(() {
           _loadDataBloc.add(RefreshSuccessEvent());
@@ -104,7 +117,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
               bloc: _loadDataBloc,
               enablePullUp: false,
               onRefresh: getNetworkData,
-              isStartLoading: false,
+              isStartLoading: true,
               child: BaseGestureDetector(
                 context: context,
                 child: SingleChildScrollView(
@@ -124,7 +137,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                               SizedBox(
                                 width: 16,
                               ),
-                              Text('${levelValueToLevelName(widget?.rpMyLevelInfo?.currentLevel??0)}',
+                              Text('${levelValueToLevelName(widget?.rpMyLevelInfo?.currentLevel ?? 0)}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
@@ -143,12 +156,24 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                               SizedBox(
                                 width: 5,
                               ),
-                              Text('当前持币 ${widget?.rpMyLevelInfo?.currentHoldingStr??'0'} RP',
+                              Text(
+                                  '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.normal,
                                     fontSize: 12,
                                     color: HexColor('#999999'),
                                   )),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: Text('当前持币 ${widget?.rpMyLevelInfo?.currentHoldingStr ?? '0'} RP ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 12,
+                                      color: HexColor('#999999'),
+                                    )),
+                              ),
                             ],
                           ),
                         ),
@@ -181,6 +206,14 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                                       if (inputValue == null) {
                                         return S.of(context).please_enter_correct_amount;
                                       }
+
+                                      var balanceValue = Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ??
+                                          Decimal.fromInt(0);
+                                      print("inputValue:$inputValue, balanceValue:$balanceValue");
+
+                                      if (inputValue > balanceValue) {
+                                        return '输入数量超过了钱包余额';
+                                      }
                                     },
                                   ),
                                 ),
@@ -201,11 +234,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                               ),
                               Text(
                                 ' Y',
-                                style: TextStyle(
-                                  color: HexColor('#333333'),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600
-                                ),
+                                style: TextStyle(color: HexColor('#333333'), fontSize: 12, fontWeight: FontWeight.w600),
                               ),
                               Text(
                                 '（发行量）',
@@ -269,9 +298,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
       return;
     }
 
-    var _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
-
-    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
+    var password = await UiUtil.showWalletPasswordDialogV2(context, _activatedWallet.wallet);
     if (password == null) {
       return;
     }
@@ -285,7 +312,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
           level: widget.rpMyLevelInfo.currentLevel,
           depositAmount: depositAmount,
           burningAmount: burningAmount,
-          activeWallet: _activeWallet,
+          activeWallet: _activatedWallet,
           password: password,
         );
         Navigator.pop(context, true);
