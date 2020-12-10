@@ -150,7 +150,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                               SizedBox(
                                 width: 16,
                               ),
-                              Text('${widget?.levelRule?.burnStr} RP', style: _textStyle),
+                              Text('${widget?.levelRule?.burnStr??'0'} RP', style: _textStyle),
                             ],
                           ),
                         ),
@@ -204,7 +204,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                     controller: _textEditingController,
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                    hint: '至少${widget?.levelRule?.holdingStr} RP',
+                                    hint: '至少${widget?.levelRule?.holdingStr??'0'} RP',
                                     validator: (textStr) {
                                       if (textStr.length == 0) {
                                         return '请输入数量';
@@ -216,9 +216,9 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                       }
 
                                       var holdValue =
-                                          Decimal.tryParse(widget?.levelRule?.holdingStr) ?? Decimal.fromInt(0);
+                                          Decimal.tryParse(widget?.levelRule?.holdingStr??'0') ?? Decimal.fromInt(0);
                                       if (holdValue > inputValue) {
-                                        return '至少${widget?.levelRule?.holdingStr} RP';
+                                        return '至少${widget?.levelRule?.holdingStr??'0'} RP';
                                       }
 
                                       var balanceValue = Decimal.tryParse(FormatUtil.coinBalanceHumanRead(coinVo)) ??
@@ -314,15 +314,22 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       return;
     }
 
-    var inputText = _textEditingController?.text ?? '';
+    if (widget.levelRule == null) {
+      Fluttertoast.showToast(
+        msg: '请先选择想要升级的量级！',
+        gravity: ToastGravity.CENTER,
+      );
+      return;
+    }
 
+    var inputText = _textEditingController?.text ?? '';
     if (inputText.isEmpty) {
       return;
     }
 
     // todo: 计算 holding + burning > balance;
     var holdValue = Decimal.tryParse(inputText) ?? Decimal.fromInt(0);
-    var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr) ?? Decimal.fromInt(0);
+    var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr??'0') ?? Decimal.fromInt(0);
 
     var wallet = WalletInheritedModel.of(
       context,

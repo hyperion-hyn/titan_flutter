@@ -40,7 +40,9 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   List<LevelRule> get _staticDataList => (_promotionRuleEntity?.static ?? []).reversed.toList();
 
   LevelRule _currentSelectedLevelRule;
+  // int get _currentLevel => 2;
   int get _currentLevel => widget?.rpMyLevelInfo?.currentLevel ?? 0;
+
   int _recommendLevel = 5;
 
   @override
@@ -128,6 +130,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
         child: Row(
           children: [
             Text(
+              // TODO: 5% 服务器返回
               '当前流通 ${_promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '--'} RP，百分比Y = ${_promotionRuleEntity?.supplyInfo?.promotionSupplyRatioStr ?? '--'}%（5%单位粒度）',
               style: TextStyle(
                 color: HexColor('#333333'),
@@ -162,7 +165,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
               }
             }
           }
-          print("[$runtimeType] _levelListView, isOldLevel:${isOldLevel}");
+          print("[$runtimeType] _levelListView, isOldLevel:$isOldLevel");
 
           if (isOldLevel) {
             return _itemBuilderOld(index);
@@ -180,21 +183,11 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   Widget _itemBuilderDefault(int index) {
     var model = _staticDataList[index];
 
-    bool isRecommend = _recommendLevel == model.level;
     bool isCurrent = _currentLevel == model.level;
-    bool isSelected = ((_currentSelectedLevelRule?.level ?? 0) == model.level);
-
     String leftTagTitle = '';
     if (isCurrent) {
       leftTagTitle = '当前量级';
     }
-
-    var levelName = '量级 ${levelValueToLevelName(model.level)}';
-    var burnTitle = '需燃烧';
-    var burnRpValue = '${model?.burnStr} RP';
-
-    var stakingTitle = '最低持币 ${model.holdingFormula}';
-    var stakingValue = '${model?.holdingStr} RP';
 
     return Stack(
       children: [
@@ -207,127 +200,21 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
             children: [
               InkWell(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                onTap: () {
-                  if (_currentLevel < model.level && _currentLevel > 0) {
-                    Fluttertoast.showToast(
-                      msg: '选择的量级小于当前量级, 请重新选择！',
-                      gravity: ToastGravity.CENTER,
-                    );
-                    return;
-                  }
-
-                  setState(() {
-                    _currentSelectedLevelRule = model;
-                  });
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isSelected ? HexColor('#FFEAEA') : HexColor('#F6F6F6'),
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 28,
-                        ),
-                        child: Text(
-                          levelName,
-                          style: TextStyle(
-                            color: HexColor('#333333'),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 16,
-                          left: 14,
-                          right: 4,
-                          bottom: 16,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            _columnWidget(
-                              burnRpValue,
-                              burnTitle,
-                            ),
-                            Spacer(),
-                            _columnWidget(
-                              stakingValue,
-                              stakingTitle,
-                            ),
-                            Spacer(),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                onTap: () => _selectedLevelAction(model),
+                child: _itemContainer(model),
               ),
-              if (leftTagTitle?.isNotEmpty ?? false)
-                Positioned(
-                    left: 10,
-                    top: 6,
-                    child: Text(
-                      leftTagTitle,
-                      style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 10,
-                        color: HexColor('#999999'),
-                      ),
-                    )),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 3, 0, 0),
-                  child: Center(
-                    child: Visibility(
-                      visible: isCurrent || isSelected,
-                      child: Image.asset(
-                        "res/drawable/red_pocket_level_${isSelected ? 'check' : 'un_check'}.png",
-                        width: 30,
-                        height: 30,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              _tagContainer(leftTagTitle: leftTagTitle, color: HexColor('#FF4C3B')),
+              _selectedTagContainer(model),
             ],
           ),
         ),
-        if (isRecommend)
-          Positioned(
-            right: 12,
-            child: Container(
-              decoration:
-                  BoxDecoration(color: HexColor("#FF4C3B"), borderRadius: BorderRadius.all(Radius.circular(10.0))),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 3, 8, 3),
-                child: Center(
-                  child: Text(
-                    '推荐',
-                    style: TextStyle(fontSize: 8, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
-                  ),
-                ),
-              ),
-            ),
-          ),
+        _recommendContainer(model),
       ],
     );
   }
 
   Widget _itemBuilderOld(int index) {
     var model = _staticDataList[index];
-
-    bool isRecommend = _recommendLevel == model.level;
-    bool isCurrent = _currentLevel == model.level;
-
-    bool isSelected = ((_currentSelectedLevelRule?.level ?? 0) == model.level);
 
     // 遍历出Old
     LevelRule oldModel = _dynamicDataList.firstWhere((old) => old.level == model.level, orElse: () => null);
@@ -343,14 +230,8 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
       leftTagTitle = '可恢复量级';
     }
 
-    var levelName = '量级 ${levelValueToLevelName(index)}';
-    var burnTitle = '需燃烧';
-    var burnRpValue = '${model.burnStr} RP';
-
-    var stakingTitle = '最低持币 ${model.holdingFormula}';
-    var stakingValue = '${model.holdingStr} RP';
-
-    String oldLevelDesc = '恢复至该量级需燃烧 5RP 增持10RP';
+    // TODO：现在的计算不准确
+    String oldLevelDesc = '恢复至该量级需燃烧 ${oldModel?.burnStr??'0'}RP, 增持${oldModel?.holdingStr??'0'}RP';
 
     return Stack(
       children: [
@@ -363,19 +244,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
             children: [
               InkWell(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                onTap: () {
-                  if (_currentLevel < model.level && _currentLevel > 0) {
-                    Fluttertoast.showToast(
-                      msg: '选择的量级小于当前量级, 请重新选择！',
-                      gravity: ToastGravity.CENTER,
-                    );
-                    return;
-                  }
-
-                  setState(() {
-                    _currentSelectedLevelRule = model;
-                  });
-                },
+                onTap: () => _selectedLevelAction(model),
                 child: Container(
                   decoration: BoxDecoration(
                     color: HexColor('#DEDEDE'),
@@ -383,58 +252,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                   ),
                   child: Column(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: isSelected ? HexColor('#FFEAEA') : HexColor('#F6F6F6'),
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: 28,
-                              ),
-                              child: Text(
-                                levelName,
-                                style: TextStyle(
-                                  color: HexColor('#333333'),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: 16,
-                                left: 14,
-                                bottom: 16,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 16,
-                                    ),
-                                    child: _columnWidget(
-                                      burnRpValue,
-                                      burnTitle,
-                                    ),
-                                    // child: _columnWidget('$totalTransmit RP', '总可传导'),
-                                  ),
-                                  Spacer(),
-                                  _columnWidget(
-                                    stakingValue,
-                                    stakingTitle,
-                                  ),
-                                  Spacer(),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      _itemContainer(model),
                       Container(
                         decoration: BoxDecoration(
                           color: HexColor('#DEDEDE'),
@@ -459,57 +277,146 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                   ),
                 ),
               ),
-              if (leftTagTitle?.isNotEmpty ?? false)
-                Positioned(
-                    left: 10,
-                    top: 6,
-                    child: Text(
-                      leftTagTitle,
-                      style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 10,
-                        color: HexColor('#1F81FF'),
-                      ),
-                    )),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 3, 0, 0),
-                  child: Center(
-                    child: Visibility(
-                      visible: isCurrent || isSelected,
-                      child: Image.asset(
-                        "res/drawable/red_pocket_level_${isSelected ? 'check' : 'un_check'}.png",
-                        width: 30,
-                        height: 30,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              _tagContainer(leftTagTitle: leftTagTitle, color: HexColor('#1F81FF')),
+              _selectedTagContainer(model),
             ],
           ),
         ),
-        if (isRecommend)
-          Positioned(
-            right: 12,
-            child: Container(
-              decoration:
-                  BoxDecoration(color: HexColor("#FF4C3B"), borderRadius: BorderRadius.all(Radius.circular(10.0))),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 3, 8, 3),
-                child: Center(
-                  child: Text(
-                    '推荐',
-                    style: TextStyle(fontSize: 8, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
-                  ),
-                ),
+        _recommendContainer(model),
+      ],
+    );
+  }
+
+  Widget _tagContainer({String leftTagTitle, Color color}) {
+    if (leftTagTitle?.isNotEmpty ?? false)
+      return Positioned(
+          left: 10,
+          top: 6,
+          child: Text(
+            leftTagTitle,
+            style: TextStyle(
+              fontWeight: FontWeight.normal,
+              fontSize: 10,
+              color: color,
+            ),
+          ));
+
+    return Container();
+  }
+
+  Widget _selectedTagContainer(LevelRule model) {
+    bool isCurrent = _currentLevel == model.level;
+    bool isSelected = ((_currentSelectedLevelRule?.level ?? 0) == model.level);
+
+    return Positioned(
+      bottom: 0,
+      right: 0,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 3, 0, 0),
+        child: Center(
+          child: Visibility(
+            visible: isCurrent || isSelected,
+            child: Image.asset(
+              "res/drawable/red_pocket_level_${isSelected ? 'check' : 'un_check'}.png",
+              width: 30,
+              height: 30,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _recommendContainer(LevelRule model) {
+    bool isRecommend = _recommendLevel == model.level;
+
+    if (isRecommend)
+      return Positioned(
+        right: 12,
+        child: Container(
+          decoration: BoxDecoration(color: HexColor("#FF4C3B"), borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8, 3, 8, 3),
+            child: Center(
+              child: Text(
+                '推荐',
+                style: TextStyle(fontSize: 8, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
               ),
             ),
           ),
-      ],
+        ),
+      );
+
+    return Container();
+  }
+
+  Widget _itemContainer(LevelRule model) {
+    bool isSelected = ((_currentSelectedLevelRule?.level ?? 0) == model.level);
+
+    var levelName = '量级 ${levelValueToLevelName(model.level)}';
+    var burnTitle = '需燃烧';
+    var burnRpValue = '${model.burnStr} RP';
+
+    var stakingTitle = '最低持币 ${model.holdingFormula}';
+    var stakingValue = '${model.holdingStr} RP';
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isSelected ? HexColor('#FFEAEA') : HexColor('#F6F6F6'),
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 28,
+            ),
+            child: Text(
+              levelName,
+              style: TextStyle(
+                color: HexColor('#333333'),
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 16,
+              bottom: 16,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _columnWidget(
+                  burnRpValue,
+                  burnTitle,
+                ),
+                _columnWidget(
+                  stakingValue,
+                  stakingTitle,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  _selectedLevelAction(LevelRule model) {
+    if (_currentLevel > model.level && _currentLevel > 0) {
+      Fluttertoast.showToast(
+        msg: '升级的量级不能小于当前量级, 请重新选择！',
+        gravity: ToastGravity.CENTER,
+      );
+      return;
+    }
+
+    setState(() {
+      _currentSelectedLevelRule = model;
+    });
   }
 
   Widget _confirmButtonWidget() {
@@ -567,7 +474,15 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   }
 
   _navToLevelUpgradeAction() {
-    if (_currentSelectedLevelRule != null && _currentLevel == _currentSelectedLevelRule.level && _currentLevel > 0) {
+    if (_currentSelectedLevelRule == null) {
+      Fluttertoast.showToast(
+        msg: '请先选择想要升级的量级！',
+        gravity: ToastGravity.CENTER,
+      );
+      return;
+    }
+
+    if (_currentLevel == (_currentSelectedLevelRule?.level ?? 0) && _currentLevel > 0) {
       Fluttertoast.showToast(
         msg: '选择的量级与当前量级相同, 请重新选择！',
         gravity: ToastGravity.CENTER,

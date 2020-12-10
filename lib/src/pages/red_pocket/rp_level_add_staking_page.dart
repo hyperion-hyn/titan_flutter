@@ -11,6 +11,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -123,7 +124,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                               SizedBox(
                                 width: 16,
                               ),
-                              Text('C',
+                              Text('${levelValueToLevelName(widget?.rpMyLevelInfo?.currentLevel??0)}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
@@ -142,7 +143,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                               SizedBox(
                                 width: 5,
                               ),
-                              Text('当前持币 20 RP',
+                              Text('当前持币 ${widget?.rpMyLevelInfo?.currentHoldingStr??'0'} RP',
                                   style: TextStyle(
                                     fontWeight: FontWeight.normal,
                                     fontSize: 12,
@@ -192,7 +193,29 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                           child: Row(
                             children: [
                               Text(
-                                '适当增加持币可以防止因Y(发行量)增加而掉级',
+                                '适当增加持币可以防止因',
+                                style: TextStyle(
+                                  color: HexColor('#999999'),
+                                  fontSize: 10,
+                                ),
+                              ),
+                              Text(
+                                ' Y',
+                                style: TextStyle(
+                                  color: HexColor('#333333'),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600
+                                ),
+                              ),
+                              Text(
+                                '（发行量）',
+                                style: TextStyle(
+                                  color: HexColor('#999999'),
+                                  fontSize: 8,
+                                ),
+                              ),
+                              Text(
+                                '增加而掉级',
                                 style: TextStyle(
                                   color: HexColor('#999999'),
                                   fontSize: 10,
