@@ -94,9 +94,10 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
         });
       }
     } catch (e) {
-      LogUtil.toastException(e);
 
       if (mounted) {
+        LogUtil.toastException(e);
+
         setState(() {
           _loadDataBloc.add(RefreshFailEvent());
         });
@@ -214,7 +215,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                     },
                                     controller: _textEditingController,
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                    //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                                     hint: '至少${widget?.levelRule?.holdingStr ?? '0'} RP',
                                     validator: (textStr) {
                                       if (textStr.length == 0) {
@@ -275,6 +275,10 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                         StreamBuilder<Object>(
                             stream: _inputController.stream,
                             builder: (context, snapshot) {
+                              var balanceValue =
+                                  Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.fromInt(0);
+
+                              var isOver = totalValue != null && totalValue > balanceValue;
                               return Padding(
                                 padding: const EdgeInsets.only(top: 20),
                                 child: Row(
@@ -284,6 +288,17 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                       width: 16,
                                     ),
                                     Text('${totalValue ?? '0'} RP', style: _textStyle),
+                                    if (isOver)
+                                      SizedBox(
+                                        width: 16,
+                                      ),
+                                    if (isOver)
+                                      Text('（余额不足）',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                            color: HexColor('#FF4C3B'),
+                                          )),
                                   ],
                                 ),
                               );
@@ -388,7 +403,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
           msg: '升级请求已发送成功！',
           gravity: ToastGravity.CENTER,
         );
-        Navigator.pop(context, true);
+        Navigator.of(context)..pop()..pop();
       } catch (e) {
         LogUtil.toastException(e);
       }

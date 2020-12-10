@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -88,9 +89,9 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
         });
       }
     } catch (e) {
-      LogUtil.toastException(e);
-
       if (mounted) {
+        LogUtil.toastException(e);
+
         setState(() {
           _loadDataBloc.add(RefreshFailEvent());
         });
@@ -195,7 +196,6 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                                     },
                                     controller: _textEditingController,
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                    //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                                     hint: '请输入增加数量',
                                     validator: (textStr) {
                                       if (textStr.length == 0) {
@@ -292,6 +292,14 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
       return;
     }
 
+    if (_myLevelInfo?.currentLevel ?? 0 == 0) {
+      Fluttertoast.showToast(
+        msg: '请先升级！',
+        gravity: ToastGravity.CENTER,
+      );
+      return;
+    }
+
     var inputText = _textEditingController?.text ?? '';
 
     if (inputText.isEmpty) {
@@ -309,13 +317,13 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
     Future.delayed(Duration(milliseconds: 111)).then((_) async {
       try {
         await _rpApi.postRpDepositAndBurn(
-          level: widget.rpMyLevelInfo.currentLevel,
+          level: _myLevelInfo?.currentLevel ?? 0,
           depositAmount: depositAmount,
           burningAmount: burningAmount,
           activeWallet: _activatedWallet,
           password: password,
         );
-        Navigator.pop(context, true);
+        Navigator.of(context)..pop()..pop();
       } catch (e) {
         LogUtil.toastException(e);
       }
