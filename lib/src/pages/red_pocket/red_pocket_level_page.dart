@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -36,7 +37,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
   var _address = "";
   RpPromotionRuleEntity _promotionRuleEntity;
-  List<LevelRule> get _dynamicDataList => _promotionRuleEntity?.dynamicList ?? [];
+  List<LevelRule> get _dynamicDataList => (_promotionRuleEntity?.dynamicList ?? []).reversed.toList();
   List<LevelRule> get _staticDataList => (_promotionRuleEntity?.static ?? []).reversed.toList();
 
   LevelRule _currentSelectedLevelRule;
@@ -156,17 +157,17 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
         crossAxisCount: 4,
         itemCount: _staticDataList.length,
         itemBuilder: (BuildContext context, int index) {
-          bool isOldLevel = false;
-          var model = _staticDataList[index];
-          if (_dynamicDataList.isNotEmpty) {
-            for (var old in _dynamicDataList) {
-              if (old.level == model.level && old.level > _currentLevel && _currentLevel > 0) {
-                isOldLevel = true;
-                break;
-              }
-            }
-          }
-          // print("[$runtimeType] _levelListView, isOldLevel:$isOldLevel");
+          var staticModel = _staticDataList[index];
+          var dynamicModel = _dynamicDataList[index];
+
+          var zeroValue = Decimal.fromInt(0);
+          var staticHoldValue =
+              Decimal.tryParse(staticModel?.holdingStr ?? '0') ?? zeroValue;
+          var dynamicHoldValue =
+              Decimal.tryParse(dynamicModel?.holdingStr ?? '0') ?? zeroValue;
+          bool isOldLevel = staticHoldValue > zeroValue && dynamicHoldValue > zeroValue && staticHoldValue > dynamicHoldValue;
+
+          print("[$runtimeType] _levelListView, level:${staticModel.level}, isOldLevel:$isOldLevel");
 
           if (isOldLevel) {
             return _itemBuilderOld(index);
@@ -215,11 +216,21 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   }
 
   Widget _itemBuilderOld(int index) {
-    var model = _staticDataList[index];
+    var staticModel = _staticDataList[index];
+    var dynamicModel = _dynamicDataList[index];
 
-    // 遍历出Old
-    LevelRule oldModel = _dynamicDataList.firstWhere((old) => old.level == model.level, orElse: () => null);
-    LevelRule oldModelMax = _dynamicDataList.firstWhere((old) => old.level > oldModel.level, orElse: () => null);
+    // 过滤出Old
+    var zeroValue = Decimal.fromInt(0);
+    var staticHoldValue =
+        Decimal.tryParse(staticModel?.holdingStr ?? '0') ?? zeroValue;
+    List<LevelRule> oldModelList = _dynamicDataList.where((element) {
+      var dynamicHoldValue =
+          Decimal.tryParse(element?.holdingStr ?? '0') ?? zeroValue;
+      bool isOldLevel = staticHoldValue > zeroValue && dynamicHoldValue > zeroValue && staticHoldValue > dynamicHoldValue;
+
+      return isOldLevel;
+    });
+    LevelRule oldModelMax = oldModelList.firstWhere((element) => element.level > dynamicModel.level, orElse: () => null);
 
     // 判断当前旧的量级是否为历史最高
     bool isNotMax = (oldModelMax != null);
@@ -232,7 +243,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     }
 
     // TODO：现在的计算不准确
-    String oldLevelDesc = '恢复至该量级需燃烧 ${oldModel?.burnStr??'0'}RP, 增持${oldModel?.holdingStr??'0'}RP';
+    String oldLevelDesc = '恢复至该量级需燃烧 ${dynamicModel?.burnStr??'0'}RP, 增持${dynamicModel?.holdingStr??'0'}RP';
 
     return Stack(
       children: [
@@ -245,7 +256,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
             children: [
               InkWell(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                onTap: () => _selectedLevelAction(oldModel),
+                onTap: () => _selectedLevelAction(dynamicModel),
                 child: Container(
                   decoration: BoxDecoration(
                     color: HexColor('#DEDEDE'),
@@ -253,7 +264,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                   ),
                   child: Column(
                     children: [
-                      _itemContainer(model),
+                      _itemContainer(staticModel),
                       Container(
                         decoration: BoxDecoration(
                           color: HexColor('#DEDEDE'),
@@ -279,11 +290,11 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                 ),
               ),
               _tagContainer(leftTagTitle: leftTagTitle, color: HexColor('#1F81FF')),
-              _selectedTagContainer(model),
+              _selectedTagContainer(staticModel),
             ],
           ),
         ),
-        _recommendContainer(model),
+        _recommendContainer(staticModel),
       ],
     );
   }
