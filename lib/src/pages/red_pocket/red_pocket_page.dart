@@ -12,6 +12,8 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_level_record_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
@@ -42,6 +44,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   RPApi _rpApi = RPApi();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   RPStatistics _rpStatistics;
+  RpMyLevelInfo _myLevelInfo;
 
   @override
   void initState() {
@@ -273,7 +276,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           Column(
                             children: [
                               Text(
-                                activeWallet != null?'2':'-',
+                                activeWallet != null?'${levelValueToLevelName(_myLevelInfo?.currentLevel??0)}':'-',
                                 style: TextStyle(
                                   color: Colors.red,
                                   fontSize: 20,
@@ -914,10 +917,14 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   _requestData() async {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
+    var _address = activeWallet?.wallet?.getAtlasAccount()?.address;
     try {
       _rpStatistics = await _rpApi.getRPStatistics(
-        activeWallet?.wallet?.getAtlasAccount()?.address,
+        _address,
       );
+
+      _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
+
 
       if (context != null) {
         BlocProvider.of<WalletCmpBloc>(context)

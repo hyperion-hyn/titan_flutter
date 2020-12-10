@@ -330,24 +330,27 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     // todo: 计算 holding + burning > balance;
     var holdValue = Decimal.tryParse(inputText) ?? Decimal.fromInt(0);
     var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr??'0') ?? Decimal.fromInt(0);
+    var totalValue = (holdValue + burnValue);
 
     var wallet = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
     );
 
+    var activeWallet = wallet.activatedWallet;
+
     var coinVo = wallet.getCoinVoBySymbol('RP');
     var balanceValue = Decimal.tryParse(FormatUtil.coinBalanceHumanRead(coinVo)) ?? Decimal.fromInt(0);
 
-    if ((holdValue + burnValue) > balanceValue) {
+    if (totalValue > balanceValue) {
       Fluttertoast.showToast(
-        msg: '输入数量和需要燃烧的数量总和超过了钱包余额！',
+        msg: '钱包余额不足以升级到当前选中量级！',
         gravity: ToastGravity.CENTER,
       );
       return;
     }
 
-    var password = await UiUtil.showWalletPasswordDialogV2(context, wallet.activatedWallet.wallet);
+    var password = await UiUtil.showWalletPasswordDialogV2(context, activeWallet.wallet);
     if (password == null) {
       return;
     }
@@ -361,8 +364,13 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
           level: widget.levelRule.level,
           depositAmount: depositAmount,
           burningAmount: burningAmount,
-          activeWallet: wallet.activatedWallet,
+          activeWallet: activeWallet,
           password: password,
+        );
+
+        Fluttertoast.showToast(
+          msg: '升级请求已发送成功！',
+          gravity: ToastGravity.CENTER,
         );
         Navigator.pop(context, true);
       } catch (e) {
