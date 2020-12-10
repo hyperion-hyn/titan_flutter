@@ -245,7 +245,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
             children: [
               InkWell(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                onTap: () => _selectedLevelAction(model),
+                onTap: () => _selectedLevelAction(oldModel),
                 child: Container(
                   decoration: BoxDecoration(
                     color: HexColor('#DEDEDE'),

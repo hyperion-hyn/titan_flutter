@@ -89,9 +89,9 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
         });
       }
     } catch (e) {
-      LogUtil.toastException(e);
-
       if (mounted) {
+        LogUtil.toastException(e);
+
         setState(() {
           _loadDataBloc.add(RefreshFailEvent());
         });
@@ -196,7 +196,6 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                                     },
                                     controller: _textEditingController,
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                    //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                                     hint: '请输入增加数量',
                                     validator: (textStr) {
                                       if (textStr.length == 0) {
@@ -293,7 +292,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
       return;
     }
 
-    if (_myLevelInfo == null) {
+    if (_myLevelInfo?.currentLevel ?? 0 == 0) {
       Fluttertoast.showToast(
         msg: '请先升级！',
         gravity: ToastGravity.CENTER,
@@ -318,7 +317,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
     Future.delayed(Duration(milliseconds: 111)).then((_) async {
       try {
         await _rpApi.postRpDepositAndBurn(
-          level: _myLevelInfo?.currentLevel??0,
+          level: _myLevelInfo?.currentLevel ?? 0,
           depositAmount: depositAmount,
           burningAmount: burningAmount,
           activeWallet: _activatedWallet,
