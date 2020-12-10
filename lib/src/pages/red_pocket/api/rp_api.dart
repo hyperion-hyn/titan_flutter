@@ -310,7 +310,9 @@ class RPApi {
 
     var amount = depositAmount + burningAmount;
     var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount);
-
+    if (approveHex?.isEmpty??true) {
+      return;
+    }
     print('[rp_api] postRpDepositAndBurn, approveHex: $approveHex');
 
     var txHash = await activeWallet.wallet.sendRpHolding(
@@ -331,7 +333,7 @@ class RPApi {
           "address": address,
           "burning": burningAmount.toString(),
           "holding": depositAmount.toString(),
-          "level": level.toString(),
+          "level": level,
           "tx_hash": txHash,
         },
         options: RequestOptions(contentType: "application/json"));
