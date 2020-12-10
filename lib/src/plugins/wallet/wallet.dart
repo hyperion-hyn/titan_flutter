@@ -414,8 +414,9 @@ class Wallet {
     BigInt gasPrice,
     int gasLimit,
     int nonce,
+    bool isAtlas = false,
   }) async {
-    final client = WalletUtil.getWeb3Client();
+    final client = WalletUtil.getWeb3Client(isAtlas);
     var credentials = await getCredentials(password);
     var erc20Contract = WalletUtil.getHynErc20Contract(contractAddress);
     final txHash = await client.sendTransaction(
@@ -427,8 +428,9 @@ class Wallet {
         gasPrice: web3.EtherAmount.inWei(gasPrice),
         maxGas: gasLimit,
         nonce: nonce,
+        type: isAtlas ? MessageType.typeNormal : null,
       ),
-      fetchChainIdFromNetworkId: true,
+      fetchChainIdFromNetworkId: false,
     );
 
 //    await transactionInteractor.insertTransactionDB(

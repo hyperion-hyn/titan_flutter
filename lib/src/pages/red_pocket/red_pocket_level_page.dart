@@ -165,7 +165,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
               }
             }
           }
-          print("[$runtimeType] _levelListView, isOldLevel:$isOldLevel");
+          // print("[$runtimeType] _levelListView, isOldLevel:$isOldLevel");
 
           if (isOldLevel) {
             return _itemBuilderOld(index);

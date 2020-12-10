@@ -308,7 +308,9 @@ class RPApi {
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
-    var approveHex = await postRpApprove(password: password, activeWallet: activeWallet);
+    var amount = depositAmount + burningAmount;
+    var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount);
+
     print('[rp_api] postRpDepositAndBurn, approveHex: $approveHex');
 
     var txHash = await activeWallet.wallet.sendRpHolding(
@@ -342,7 +344,9 @@ class RPApi {
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
-    var approveHex = await postRpApprove(password: password, activeWallet: activeWallet);
+
+    var amount = withdrawAmount;
+    var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount);
     print('[rp_api] postRpWithdraw, approveHex: $approveHex');
 
     var txHash = await activeWallet.wallet.sendRpHolding(
@@ -368,6 +372,7 @@ class RPApi {
   ///预提交 , 授权
   Future<String> postRpApprove({
     String password = '',
+    BigInt amount,
     WalletVo activeWallet,
   }) async {
     var wallet = activeWallet?.wallet;
@@ -376,18 +381,22 @@ class RPApi {
 
     final client = WalletUtil.getWeb3Client(true);
     var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
+    var gasLimit = 100000;
+    var gasPrice = BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt());
+    print('[rp_api] postRpApprove, address:$address, amount:$amount, nonce:$nonce, gasPrice:$gasPrice, gasLimit:$gasLimit');
 
     var approveHex = await wallet.sendApproveErc20Token(
       contractAddress: WalletConfig.hynRPHrc30Address,
       approveToAddress: WalletConfig.rpHoldingContractAddress,
-      //amount: null,
-      amount: BigInt.from(0),
+      amount: amount,
       password: password,
-      gasPrice: BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt()),
-      gasLimit: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20ApproveGasLimit,
+      gasPrice: gasPrice,
+      gasLimit: gasLimit,
+      //gasLimit: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20ApproveGasLimit,
       nonce: nonce,
+      isAtlas: true,
     );
-    print('[rp_api] postRpApprove, approveHex: $approveHex');
+    print('[rp_api] postRpApprove, amount:$amount, approveHex: $approveHex');
 
     return approveHex;
   }

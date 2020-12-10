@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,11 +11,9 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -42,6 +42,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   double minTotal = 0;
   double remainTotal = 0;
   final RPApi _rpApi = RPApi();
+  Decimal totalValue;
+  final StreamController<String> _inputController = StreamController.broadcast();
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
@@ -68,6 +70,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     print("[${widget.runtimeType}] dispose");
 
     _loadDataBloc.close();
+    _inputController.close();
+
     super.dispose();
   }
 
@@ -200,6 +204,11 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                   child: RoundBorderTextField(
                                     onChanged: (text) {
                                       _formKey.currentState.validate();
+
+                                      var holdValue = Decimal.tryParse(text??'0') ?? Decimal.fromInt(0);
+                                      var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr??'0') ?? Decimal.fromInt(0);
+                                      totalValue = (holdValue + burnValue);
+                                      _inputController.add(text);
                                     },
                                     controller: _textEditingController,
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -260,7 +269,24 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                               ),
                             )
                           ],
-                        )
+                        ),
+                        StreamBuilder<Object>(
+                            stream: _inputController.stream,
+                          builder: (context, snapshot) {
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: Row(
+                                children: <Widget>[
+                                  Text('合计：', style: _textStyle),
+                                  SizedBox(
+                                    width: 16,
+                                  ),
+                                  Text('${totalValue??'0'} RP', style: _textStyle),
+                                ],
+                              ),
+                            );
+                          }
+                        ),
                       ],
                     ),
                   ),
@@ -328,9 +354,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     }
 
     // todo: 计算 holding + burning > balance;
-    var holdValue = Decimal.tryParse(inputText) ?? Decimal.fromInt(0);
-    var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr??'0') ?? Decimal.fromInt(0);
-    var totalValue = (holdValue + burnValue);
 
     var wallet = WalletInheritedModel.of(
       context,
