@@ -17,7 +17,6 @@ import 'package:titan/src/pages/red_pocket/rp_level_add_staking_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'entity/rp_release_info.dart';
 import 'entity/rp_util.dart';
 
 class RedPocketLevelPage extends StatefulWidget {

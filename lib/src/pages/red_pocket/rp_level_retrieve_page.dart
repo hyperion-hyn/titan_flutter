@@ -140,7 +140,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
               bloc: _loadDataBloc,
               enablePullUp: false,
               onRefresh: getNetworkData,
-              isStartLoading: false,
+              isStartLoading: true,
               child: BaseGestureDetector(
                 context: context,
                 child: SingleChildScrollView(
@@ -178,7 +178,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                                   SizedBox(
                                     width: 16,
                                   ),
-                                  Text('${_currentLevelRule?.holdingStr} RP',
+                                  Text('${_currentLevelRule?.holdingStr??'0'} RP',
                                       style: _lightTextStyle),
                                 ],
                               ),
@@ -227,7 +227,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
 
                                           var holding = Decimal.tryParse(widget
                                                   ?.rpMyLevelInfo
-                                                  ?.currentHoldingStr) ??
+                                                  ?.currentHoldingStr??'0') ??
                                               0;
 
                                           if (textStr.length == 0 ||
@@ -263,7 +263,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                                   width: 6,
                                 ),
                                 Text(
-                                  '为保证当前量级不下降，请保持持币量大于${_currentLevelRule?.holdingStr}RP',
+                                  '为保证当前量级不下降，请保持持币量大于${_currentLevelRule?.holdingStr??'0'}RP',
                                   style: TextStyle(
                                     color: HexColor('#333333'),
                                     fontSize: 12,
@@ -321,7 +321,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
         ) ??
         Decimal.fromInt(0);
     var holding = Decimal.tryParse(
-          widget?.rpMyLevelInfo?.currentHoldingStr,
+          widget?.rpMyLevelInfo?.currentHoldingStr??'0',
         ) ??
         Decimal.fromInt(0);
 
@@ -411,7 +411,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
       for (int i = 0; i < _staticDataList.length - 1; i++) {
         var levelRule = _staticDataList[i];
         var holding = Decimal.tryParse(
-              levelRule.holdingStr,
+              levelRule.holdingStr??'0',
             ) ??
             Decimal.fromInt(0);
         if (value >= holding) {
