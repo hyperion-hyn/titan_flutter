@@ -916,7 +916,17 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _requestData() async {
+
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
+
+    if (activeWallet == null) {
+      if (mounted) {
+        _loadDataBloc.add(RefreshSuccessEvent());
+        setState(() {});
+      }
+      return;
+    }
+
     var _address = activeWallet?.wallet?.getAtlasAccount()?.address;
     try {
       _rpStatistics = await _rpApi.getRPStatistics(
@@ -932,10 +942,11 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       }
 
       if (mounted) {
+        _loadDataBloc.add(RefreshSuccessEvent());
         setState(() {});
       }
 
-      _loadDataBloc.add(RefreshSuccessEvent());
+
     } catch (e) {
       _loadDataBloc.add(RefreshFailEvent());
     }
