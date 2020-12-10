@@ -276,7 +276,9 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           Column(
                             children: [
                               Text(
-                                activeWallet != null?'${levelValueToLevelName(_myLevelInfo?.currentLevel??0)}':'-',
+                                activeWallet != null
+                                    ? '${levelValueToLevelName(_myLevelInfo?.currentLevel ?? 0)}'
+                                    : '-',
                                 style: TextStyle(
                                   color: Colors.red,
                                   fontSize: 20,
@@ -293,7 +295,9 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                             ],
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 8,),
+                            padding: const EdgeInsets.only(
+                              left: 8,
+                            ),
                             child: Image.asset(
                               'res/drawable/rp_add_friends_arrow.png',
                               width: 15,
@@ -318,8 +322,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       ),
                       _verticalLine(),
                       Expanded(
-                        child:
-                            _contentColumn(rpTodayStr, S.of(context).rp_today_rp),
+                        child: _contentColumn(
+                            rpTodayStr, S.of(context).rp_today_rp),
                       ),
                       _verticalLine(),
                       Expanded(
@@ -328,8 +332,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       ),
                       _verticalLine(),
                       Expanded(
-                        child:
-                            _contentColumn(rpMissedStr, S.of(context).rp_missed),
+                        child: _contentColumn(
+                            rpMissedStr, S.of(context).rp_missed),
                       ),
                     ],
                   ),
@@ -346,65 +350,66 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     color: HexColor('#F2F2F2'),
                   ),
                 ),
-                if (activeWallet != null)Row(
-                  children: <Widget>[
-                    InkWell(
-                      onTap: _navToMyFriends,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              right: 8,
-                              left: 12,
-                            ),
-                            child: _contentColumn(
-                              '${_rpStatistics?.self?.friends ?? 0}',
-                              S.of(context).rp_friends,
-                              contentFontSize: 16,
-                            ),
-                          ),
-                          Image.asset(
-                            'res/drawable/rp_add_friends_arrow.png',
-                            width: 15,
-                            height: 15,
-                          ),
-                        ],
-                      ),
-                    ),
-                    //Spacer(),
-                    Expanded(
-                      child: InkWell(
-                        onTap: _navToRPInviteFriends,
+                if (activeWallet != null)
+                  Row(
+                    children: <Widget>[
+                      InkWell(
+                        onTap: _navToMyFriends,
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.only(
-                                left: 12,
                                 right: 8,
+                                left: 12,
                               ),
-                              child: Text(
-                                S.of(context).rp_invite_to_collect,
-                                style: TextStyle(
-                                  color: HexColor('#333333'),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                maxLines: 2,
+                              child: _contentColumn(
+                                '${_rpStatistics?.self?.friends ?? 0}',
+                                S.of(context).rp_friends,
+                                contentFontSize: 16,
                               ),
                             ),
                             Image.asset(
-                              'res/drawable/rp_add_friends.png',
-                              width: 17,
-                              height: 17,
+                              'res/drawable/rp_add_friends_arrow.png',
+                              width: 15,
+                              height: 15,
                             ),
                           ],
-                          mainAxisAlignment: MainAxisAlignment.end,
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                      //Spacer(),
+                      Expanded(
+                        child: InkWell(
+                          onTap: _navToRPInviteFriends,
+                          child: Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 12,
+                                  right: 8,
+                                ),
+                                child: Text(
+                                  S.of(context).rp_invite_to_collect,
+                                  style: TextStyle(
+                                    color: HexColor('#333333'),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  maxLines: 2,
+                                ),
+                              ),
+                              Image.asset(
+                                'res/drawable/rp_add_friends.png',
+                                width: 17,
+                                height: 17,
+                              ),
+                            ],
+                            mainAxisAlignment: MainAxisAlignment.end,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),
@@ -885,7 +890,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _navToMyRpRecords() {
-
     return;
 
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
@@ -916,7 +920,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _requestData() async {
-
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
 
     if (activeWallet == null) {
@@ -935,7 +938,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
       _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
 
-
       if (context != null) {
         BlocProvider.of<WalletCmpBloc>(context)
             .add(UpdateActivatedWalletBalanceEvent());
@@ -945,8 +947,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         _loadDataBloc.add(RefreshSuccessEvent());
         setState(() {});
       }
-
-
     } catch (e) {
       _loadDataBloc.add(RefreshFailEvent());
     }
