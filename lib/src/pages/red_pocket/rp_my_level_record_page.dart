@@ -442,7 +442,9 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
 
     bool isUpgrade = levelTo > levelFrom;
 
-    ///(1、主动降级 2、被动降级 3、升级 4、补偿燃烧升级 5增持升级)
+    bool isSameLevel = levelTo == levelFrom;
+
+    ///(1、主动降级 2.被动降级 3.升级 4.补偿燃烧升级 5.增持升级 6.平级增持 7.平级提币)
     var recordType = model.type;
     var detailStr = '';
     var isShowState = false;
@@ -462,14 +464,21 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     } else if (recordType == 5) {
       detailStr = '增持 ${model.holdingStr} RP';
       isShowState = true;
+    } else if (recordType == 6) {
+      detailStr = '增持 ${model.holdingStr} RP';
+      isShowState = true;
+    } else if (recordType == 7) {
+      detailStr = '取回持币 ${model.withdrawStr} RP';
+      isShowState = true;
     }
-
     var recordStatus = model?.state ?? 0;
     var statusHint = '进行中';
     var statusColor = HexColor('#FFE4B300');
     if (recordStatus == 0) {
       statusHint = '待确认';
       statusColor = HexColor('#FFE4B300');
+      levelTo = null;
+      levelFrom = null;
     } else if (recordStatus == 1) {
       statusHint = '已确认';
       statusColor = HexColor('#FF999999');
@@ -536,11 +545,16 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                           padding: const EdgeInsets.only(
                             right: 10,
                           ),
-                          child: Image.asset(
-                            "res/drawable/red_pocket_level_${isUpgrade ? 'up' : 'down'}.png",
-                            width: 22,
-                            height: 22,
-                          ),
+                          child: isSameLevel
+                              ? SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                )
+                              : Image.asset(
+                                  "res/drawable/red_pocket_level_${isUpgrade ? 'up' : 'down'}.png",
+                                  width: 22,
+                                  height: 22,
+                                ),
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
