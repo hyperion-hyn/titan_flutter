@@ -15,6 +15,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as WalletClass;
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -322,6 +323,7 @@ class RPApi {
       return;
     }
 
+    // todo: {"code":-10001,"msg":"Invalid request params","data":null,"subMsg":""}
     return await RPHttpCore.instance.postEntity("/v1/rp/level/promotion/submit", EntityFactory<dynamic>((json) => json),
         params: {
           "address": address,
@@ -378,8 +380,8 @@ class RPApi {
     var approveHex = await wallet.sendApproveErc20Token(
       contractAddress: WalletConfig.hynRPHrc30Address,
       approveToAddress: WalletConfig.rpHoldingContractAddress,
-      amount: null,
-      // amount: ConvertTokenUnit.decimalToWei(0),
+      //amount: null,
+      amount: BigInt.from(0),
       password: password,
       gasPrice: BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt()),
       gasLimit: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20ApproveGasLimit,

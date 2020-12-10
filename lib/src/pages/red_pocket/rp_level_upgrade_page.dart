@@ -322,7 +322,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
     // todo: 计算 holding + burning > balance;
     var holdValue = Decimal.tryParse(inputText) ?? Decimal.fromInt(0);
-    var burnValue = Decimal.tryParse(widget?.levelRule?.burn) ?? Decimal.fromInt(0);
+    var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr) ?? Decimal.fromInt(0);
 
     var wallet = WalletInheritedModel.of(
       context,
@@ -332,7 +332,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     var coinVo = wallet.getCoinVoBySymbol('RP');
     var balanceValue = Decimal.tryParse(FormatUtil.coinBalanceHumanRead(coinVo)) ?? Decimal.fromInt(0);
 
-    if (holdValue + burnValue > balanceValue) {
+    if ((holdValue + burnValue) > balanceValue) {
       Fluttertoast.showToast(
         msg: '输入数量和需要燃烧的数量总和超过了钱包余额！',
         gravity: ToastGravity.CENTER,
@@ -345,7 +345,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       return;
     }
 
-    var burningAmount = ConvertTokenUnit.strToBigInt(widget.levelRule.burn);
+    var burningAmount = ConvertTokenUnit.strToBigInt(widget.levelRule.burnStr);
     var depositAmount = ConvertTokenUnit.strToBigInt(inputText);
 
     Future.delayed(Duration(milliseconds: 111)).then((_) async {
