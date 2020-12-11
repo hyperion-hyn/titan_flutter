@@ -2878,7 +2878,7 @@
   "@wallet_test": {},
   "wallet_transaction_finish_tips": "交易即將完成，無法取消。",
   "@wallet_transaction_finish_tips": {},
-  "wallet_transfer_title": "妳有未確認的轉賬，繼續轉賬將被覆蓋。",
+  "wallet_transfer_title": "你有未确认的交易，请等待原交易成功后再发起新的交易。",
   "@wallet_transfer_title": {},
   "wallet_translation_finish_not_speed_tips": "交易即將完成，無法加速。",
   "@wallet_translation_finish_not_speed_tips": {},
