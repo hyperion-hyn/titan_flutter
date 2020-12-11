@@ -41,6 +41,9 @@ Map<String, dynamic> _$RpMyRpSplitRecordEntityToJson(RpMyRpSplitRecordEntity ins
       'paging_key': instance.pagingKey,
     };
 
+
+
+
 RpOpenRecordEntity _$RpOpenRecordEntityFromJson(Map<String, dynamic> json) {
   return RpOpenRecordEntity(
     json['address'] as String,
@@ -48,7 +51,7 @@ RpOpenRecordEntity _$RpOpenRecordEntityFromJson(Map<String, dynamic> json) {
     json['id'] as String,
     json['luck'] as int,
     json['red_pocket_id'] as int,
-    json['time'] as String,
+    json['created_at'] as int,
     json['total_amount'] as String,
     json['type'] as int,
     json['username'] as String,
@@ -56,6 +59,9 @@ RpOpenRecordEntity _$RpOpenRecordEntityFromJson(Map<String, dynamic> json) {
     json['to'] as int,
     json['other_user_count'] as int,
     json['other_user_amount'] as String,
+    json['role'] as int,
+    json['level'] as int,
+    json['tx_hash'] as String,
   );
 }
 
@@ -66,7 +72,7 @@ Map<String, dynamic> _$RpOpenRecordEntityToJson(RpOpenRecordEntity instance) =>
       'id': instance.id,
       'luck': instance.luck,
       'red_pocket_id': instance.redPocketId,
-      'time': instance.time,
+      'created_at': instance.createdAt,
       'total_amount': instance.totalAmount,
       'type': instance.type,
       'username': instance.username,
@@ -74,4 +80,6 @@ Map<String, dynamic> _$RpOpenRecordEntityToJson(RpOpenRecordEntity instance) =>
       'to': instance.to,
       'other_user_count': instance.otherUserCount,
       'other_user_amount': instance.otherUserAmount,
+      'role': instance.role,
+      'level': instance.level,
     };

@@ -247,7 +247,7 @@ class RPApi {
 
   Future<RpOpenRecordEntity> getMyRpOpenInfo(
     String address,
-    String redPocketId,
+    int redPocketId,
     int redPocketType,
   ) async {
     return await RPHttpCore.instance.getEntity(

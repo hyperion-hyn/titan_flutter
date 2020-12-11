@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -83,31 +84,29 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
             (context, index) {
               var model = _dataList[index];
 
-              // var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
-              var currentDate = model.time;
+              var currentDate = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
 
               bool isNewDay = false;
-              // if (index == 0) {
-              //   isNewDay = true;
-              // } else {
-              //   if (currentDate.day != lastDay) {
-              //     isNewDay = true;
-              //   }
-              // }
-              // lastDay = currentDate.day;
+              if (index == 0) {
+                isNewDay = true;
+              } else {
+                if (currentDate.day != lastDay) {
+                  isNewDay = true;
+                }
+              }
+              lastDay = currentDate.day;
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /*if (isNewDay)
+                  if (isNewDay)
                     Padding(
                       padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
                       child: Text(
-                        //FormatUtil.humanReadableDay(model.time),
-                        model.time,
+                        FormatUtil.humanReadableDay(model.createdAt),
                         style: TextStyle(color: Color(0xff999999)),
                       ),
-                    ),*/
+                    ),
                   _itemBuilder(index),
                 ],
               );
@@ -122,9 +121,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   Widget _itemBuilder(int index) {
     var model = _dataList[index];
 
-    var title = '';
     var desc = '';
-
     switch (model.luck) {
       case 0:
         desc = '错过';
@@ -143,6 +140,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
         break;
     }
 
+    var title = '';
     switch (model.type) {
       case 0:
         title = '幸运红包';
@@ -160,6 +158,10 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
         title = '';
         break;
     }
+
+    var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
+    var createdAtStr = DateFormat("HH:mm").format(createdAt);
+
     return InkWell(
       onTap: () {
         // WalletShowAccountInfoPage.jumpToAccountInfoPage(
@@ -234,9 +236,8 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                       height: 6,
                     ),
                     Text(
-                      model.time,
-                      //'${S.of(context).rp_staking_id}：${model?.stakingId ?? 0}',
-                      //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+
+                      createdAtStr,
                       style: TextStyle(
                         fontSize: 10,
                         color: HexColor('#999999'),
@@ -257,7 +258,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        '+ ${model?.amount??'0'} RP',
+                        '+ ${model?.amountStr??'0'} RP',
                         style: TextStyle(
                           color: HexColor("#333333"),
                           fontSize: 14,
@@ -310,6 +311,12 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   }
 
   void getMoreNetworkData() async {
+
+    if (_currentPageKey?.isEmpty??true) {
+      _loadDataBloc.add(LoadMoreEmptyEvent());
+      return;
+    }
+
     try {
       var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
 

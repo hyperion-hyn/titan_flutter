@@ -30,9 +30,9 @@ class RpMyRpSplitRecordEntity extends Object {
   String pagingKey;
 
   RpMyRpSplitRecordEntity(
-      this.data,
-      this.pagingKey,
-      );
+    this.data,
+    this.pagingKey,
+  );
 
   factory RpMyRpSplitRecordEntity.fromJson(Map<String, dynamic> srcJson) => _$RpMyRpSplitRecordEntityFromJson(srcJson);
 
@@ -56,8 +56,8 @@ class RpOpenRecordEntity extends Object {
   @JsonKey(name: 'red_pocket_id')
   int redPocketId;
 
-  @JsonKey(name: 'time')
-  String time;
+  @JsonKey(name: 'created_at')
+  int createdAt;
 
   @JsonKey(name: 'total_amount')
   String totalAmount;
@@ -80,6 +80,16 @@ class RpOpenRecordEntity extends Object {
   @JsonKey(name: 'other_user_amount')
   String otherUserAmount;
 
+  @JsonKey(name: 'role')
+  int role;
+
+  @JsonKey(name: 'level')
+  int level;
+
+  @JsonKey(name: 'tx_hash')
+  String txHash;
+
+
   String get otherUserAmountStr => FormatUtil.weiToEtherStr(otherUserAmount) ?? '0';
 
   String get totalAmountStr => FormatUtil.weiToEtherStr(totalAmount) ?? '0';
@@ -92,7 +102,7 @@ class RpOpenRecordEntity extends Object {
     this.id,
     this.luck,
     this.redPocketId,
-    this.time,
+    this.createdAt,
     this.totalAmount,
     this.type,
     this.username,
@@ -100,6 +110,9 @@ class RpOpenRecordEntity extends Object {
     this.to,
     this.otherUserCount,
     this.otherUserAmount,
+    this.role,
+    this.level,
+    this.txHash,
   );
 
   factory RpOpenRecordEntity.fromJson(Map<String, dynamic> srcJson) => _$RpOpenRecordEntityFromJson(srcJson);
