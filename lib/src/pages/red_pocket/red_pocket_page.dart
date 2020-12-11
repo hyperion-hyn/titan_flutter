@@ -361,7 +361,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                               ),
                               Expanded(
                                 flex: 2,
-                                child: true
+                                child: isShowDowngrade
                                     ? Padding(
                                         padding: const EdgeInsets.only(
                                           top: 32,
