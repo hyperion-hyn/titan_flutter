@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/http/entity.dart';
-import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -10,12 +9,12 @@ import 'package:titan/src/pages/red_pocket/entity/rp_detail_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_holding_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_miners_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as WalletClass;
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -24,7 +23,6 @@ import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart';
 
 class RPApi {
-
   Future<dynamic> postStakingRp({
     BigInt amount,
     String password = '',
@@ -227,6 +225,67 @@ class RPApi {
   }
 
   ///我的红包列表
+  Future<RpMyRpRecordEntity> getMyRpRecordList(
+    String address, {
+    int size = 20,
+    pagingKey = '',
+  }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/redpocket/list/$address',
+      EntityFactory<RpMyRpRecordEntity>((json) {
+        return RpMyRpRecordEntity.fromJson(json);
+      }),
+      params: {
+        'paging_key': pagingKey,
+        'size': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  Future<RpOpenRecordEntity> getMyRpOpenInfo(
+    String address,
+    String redPocketId,
+    int redPocketType,
+  ) async {
+    return await RPHttpCore.instance.getEntity(
+        "/v1/rp/redpocket/info/$address",
+        EntityFactory<RpOpenRecordEntity>(
+          (json) => RpOpenRecordEntity.fromJson(json),
+        ),
+        params: {
+          'id': redPocketId,
+          'type': redPocketType,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future<RpMyRpSplitRecordEntity> getMySlitRpRecordList(
+    String address, {
+    int size = 20,
+    pagingKey = '',
+    int redPocketId,
+    int redPocketType,
+  }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/redpocket/split/$address',
+      EntityFactory<RpMyRpSplitRecordEntity>((json) {
+        return RpMyRpSplitRecordEntity.fromJson(json);
+      }),
+      params: {
+        'paging_key': pagingKey,
+        'id': redPocketId,
+        'type': redPocketType,
+        'size': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
   Future<RpDetailEntity> getMyRdList(
     String address, {
     int id = 0,
@@ -260,13 +319,11 @@ class RPApi {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/level/history/$address',
       EntityFactory<List<RPLevelHistory>>((json) {
-
         var data = (json['data'] as List).map((map) {
           return RPLevelHistory.fromJson(map);
         }).toList();
 
         return data;
-
       }),
       params: {
         'page': page,
@@ -310,7 +367,7 @@ class RPApi {
 
     var amount = depositAmount + burningAmount;
     var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount);
-    if (approveHex?.isEmpty??true) {
+    if (approveHex?.isEmpty ?? true) {
       return;
     }
     print('[rp_api] postRpDepositAndBurn, approveHex: $approveHex');
@@ -345,7 +402,6 @@ class RPApi {
     WalletVo activeWallet,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
-
 
     var amount = withdrawAmount;
     var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount);
@@ -385,7 +441,8 @@ class RPApi {
     var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
     var gasLimit = 100000;
     var gasPrice = BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt());
-    print('[rp_api] postRpApprove, address:$address, amount:$amount, nonce:$nonce, gasPrice:$gasPrice, gasLimit:$gasLimit');
+    print(
+        '[rp_api] postRpApprove, address:$address, amount:$amount, nonce:$nonce, gasPrice:$gasPrice, gasLimit:$gasLimit');
 
     var approveHex = await wallet.sendApproveErc20Token(
       contractAddress: WalletConfig.hynRPHrc30Address,
