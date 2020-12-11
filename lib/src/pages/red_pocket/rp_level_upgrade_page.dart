@@ -344,11 +344,14 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
             btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
+            isLoading: _isLoading,
           ),
         ),
       ),
     );
   }
+
+  bool _isLoading = false;
 
   _upgradeAction() async {
     FocusScope.of(context).requestFocus(FocusNode());
@@ -390,6 +393,11 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     var burningAmount = ConvertTokenUnit.strToBigInt(widget.levelRule.burnStr);
     var depositAmount = ConvertTokenUnit.strToBigInt(inputText);
 
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
     Future.delayed(Duration(milliseconds: 111)).then((_) async {
       try {
         await _rpApi.postRpDepositAndBurn(
@@ -405,7 +413,18 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
           gravity: ToastGravity.CENTER,
         );
         Navigator.of(context)..pop()..pop();
+
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       } catch (e) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
         LogUtil.toastException(e);
       }
     });

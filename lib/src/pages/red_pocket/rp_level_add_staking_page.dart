@@ -279,11 +279,14 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
             btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
+            isLoading: _isLoading,
           ),
         ),
       ),
     );
   }
+
+  bool _isLoading = false;
 
   _addAction() async {
     FocusScope.of(context).requestFocus(FocusNode());
@@ -314,6 +317,11 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
     var burningAmount = ConvertTokenUnit.strToBigInt('0');
     var depositAmount = ConvertTokenUnit.strToBigInt(inputText);
 
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
     Future.delayed(Duration(milliseconds: 111)).then((_) async {
       try {
         await _rpApi.postRpDepositAndBurn(
@@ -330,8 +338,21 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
         );
 
         Navigator.of(context)..pop()..pop();
+
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+
       } catch (e) {
-        LogUtil.toastException(e);
+        if (mounted) {
+          LogUtil.toastException(e);
+
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     });
   }

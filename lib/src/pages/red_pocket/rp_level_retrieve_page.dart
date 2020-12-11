@@ -297,6 +297,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
             btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
+            isLoading: _isLoading,
           ),
         ),
       ),
@@ -314,6 +315,8 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
       _showAlertView();
     });
   }
+
+  bool _isLoading = false;
 
   _showAlertView() {
     var inputValue = Decimal.tryParse(
@@ -351,11 +354,11 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
           fontColor: DefaultColors.color333,
           btnColor: [Colors.transparent],
         ),
-        SizedBox(
-          width: 20,
-        ),
+        // SizedBox(
+        //   width: 10,
+        // ),
         ClickOvalButton(
-          '确定取回',
+          '确认取回',
           () {
             _retrieveAction(true);
           },
@@ -394,6 +397,12 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
       return;
     }
 
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
     var withdrawAmount = ConvertTokenUnit.strToBigInt(inputText);
     try {
       await _rpApi.postRpWithdraw(
@@ -401,8 +410,20 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
           activeWallet: _activeWallet,
           password: password);
       Navigator.pop(context, true);
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     } catch (e) {
       LogUtil.toastException(e);
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
