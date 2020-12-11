@@ -315,6 +315,18 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
+
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8,),
+                                  child: Text(
+                                    '当前持币 ${_myLevelInfo?.currentHoldingStr??'0'} RP',
+                                    style: TextStyle(
+                                      color: HexColor('#999999'),
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -325,7 +337,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              '去查看',
+                              '去升级',
                               style: TextStyle(
                                 color: Colors.blue,
                               ),
