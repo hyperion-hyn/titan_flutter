@@ -28,7 +28,6 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
       value: 0,
       vsync: this,
     );
-    _animationController.reverse();
   }
 
   @override
@@ -50,13 +49,11 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 500,
       child: Stack(
         children: [
-          _airdropView(),
+          _content(),
           Lottie.asset(
             'res/lottie/rp_airdrop.json',
-            reverse: true,
           ),
           Container(
             width: double.infinity,
@@ -71,6 +68,15 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
   }
 
   ///views
+
+  _content() {
+    var isAirdropping = true;
+    if (isAirdropping) {
+      return _airdropView();
+    } else {
+      return _countDownView();
+    }
+  }
 
   _airdropView() {
     return Container(
@@ -92,12 +98,15 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
 
   _countDownView() {
     var nextRoundTime = '';
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text('12：00'),
-        Text('下一轮 $nextRoundTime'),
-      ],
+    return Container(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text('12：00'),
+          Text('下一轮 $nextRoundTime'),
+        ],
+      ),
     );
   }
 
@@ -108,22 +117,43 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
         width: double.infinity,
         decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(
-              4.0,
-            )),
+            borderRadius: BorderRadius.circular(4.0)),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             vertical: 8.0,
             horizontal: 16.0,
           ),
-          child: Row(
+          child: Wrap(
             children: [
-              Text(
-                '我获得的红包 ',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.white,
-                ),
+              Row(
+                children: [
+                  Text(
+                    '我获得的红包 ',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Spacer(),
+                  Text(
+                    '+100 RP ',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text(
+                    '本轮已空投 600RP',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -135,7 +165,10 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
   ///
 
   _setUpTimer() {
-    _timer = Timer.periodic(Duration(seconds: 5), (t) {});
+    _timer = Timer.periodic(Duration(seconds: 5), (t) {
+      _getLatestAirdrop();
+      _getLatestRedPocket();
+    });
   }
 
   _getLatestAirdrop() {}

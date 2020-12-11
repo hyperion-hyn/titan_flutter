@@ -2878,7 +2878,7 @@
   "@wallet_test": {},
   "wallet_transaction_finish_tips": "Unable to cancel the transaction request。",
   "@wallet_transaction_finish_tips": {},
-  "wallet_transfer_title": "There’s an unconfirmed transfer. If continue, the existing transfer request will be cancelled.",
+  "wallet_transfer_title": "You have unconfirmed transactions, please wait for the original deal to be successful before launching a new one.",
   "@wallet_transfer_title": {},
   "wallet_translation_finish_not_speed_tips": "Unable to speed up for current transaction.",
   "@wallet_translation_finish_not_speed_tips": {},

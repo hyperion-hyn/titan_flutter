@@ -578,8 +578,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           height: 24,
                         ),
                         Container(
-                          width: 200,
-                          height: 200,
+                          height: 250,
                           child: RPAirdropWidget(),
                         ),
                         Container(

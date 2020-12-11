@@ -2878,7 +2878,7 @@
   "@wallet_test": {},
   "wallet_transaction_finish_tips": "Unable to cancel the transaction request。",
   "@wallet_transaction_finish_tips": {},
-  "wallet_transfer_title": "There’s an unconfirmed transfer. If continue, the existing transfer request will be cancelled.",
+  "wallet_transfer_title": "확인되지 않은 거래가 있습니다. 새 딜을 시작하기 전에 원래 딜이 성공할 때까지 기다리십시오.",
   "@wallet_transfer_title": {},
   "wallet_translation_finish_not_speed_tips": "Unable to speed up for current transaction.",
   "@wallet_translation_finish_not_speed_tips": {},

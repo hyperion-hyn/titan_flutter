@@ -14,6 +14,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_miners_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -79,11 +80,9 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         backgroundColor: HexColor('#F8F8F8'),
         actions: <Widget>[
           FlatButton(
-            onPressed: () {
-              WalletShowAccountInfoPage.jumpToAccountInfoPage(context, '', SupportedTokens.HYN_RP_HRC30.symbol);
-            },
+            onPressed: _navToDetailAction,
             child: Text(
-              '查看交易',
+              (_detailEntity?.txHash ?? '').isEmpty ? '' : '查看交易',
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
@@ -96,6 +95,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       body: _pageView(),
     );
   }
+
+
 
   _pageView() {
     return LoadDataContainer(
@@ -128,13 +129,19 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   Widget _infoDetailWidget() {
     var title = '';
     var subTitle = '';
+
+    var name = _detailEntity?.username ?? '';
+    if (name.isEmpty) {
+      name = '未知用户';
+      name = '用户';
+    }
     print("[$runtimeType] _infoDetailBuilder, rpType:$_rpType");
 
-    var amount = '-- RP';
+    var amount = '${_detailEntity?.amountStr ?? '0'} RP';
 
     switch (_rpType) {
       case 0:
-        title = '${_detailEntity?.username ?? ''}的幸运红包';
+        title = '$name 的幸运红包';
         break;
 
       case 1:
@@ -156,6 +163,9 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       _detailEntity?.address ?? '',
     );
     var address = shortBlockChainAddress(beach32Address);
+
+    var from = levelValueToLevelName(_detailEntity?.from ?? 0);
+    var to = levelValueToLevelName(_detailEntity?.to ?? 0);
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -215,7 +225,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '${_detailEntity?.username ?? '--'}',
+                      name,
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 12,
@@ -245,7 +255,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '量级${_detailEntity?.from} - 量级${_detailEntity?.to}',
+                      '量级$from - 量级$to',
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 10,
@@ -330,6 +340,10 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 
   _rpListHeaderWidget() {
+    var createdAt = _detailEntity?.createdAt ?? 0;
+    var createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt * 1000);
+    var createdAtStr = Const.DATE_FORMAT.format(createdAtDate);
+
     return Padding(
       padding: const EdgeInsets.only(
         top: 16,
@@ -349,7 +363,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
           ),
           Spacer(),
           Text(
-            _detailEntity?.time ?? '--',
+            createdAtStr ?? '--',
             style: TextStyle(
               color: Color(0xff999999),
               fontWeight: FontWeight.normal,
@@ -392,8 +406,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     } else {
       return SliverList(
         delegate: SliverChildBuilderDelegate(
-              (context, index) {
-            if ((index + 1) == _dataList.length && _rpType == 2) {
+          (context, index) {
+            if ((index + 1) == _dataList.length && _rpType == 1) {
               return _defaultItem(index);
             }
             return _itemBuilder(index);
@@ -407,7 +421,11 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   Widget _itemBuilder(int index) {
     var model = _dataList[index];
     var name = model?.username ?? '';
-    var level = model?.type ?? 0; // todo: 缺少量级
+    if (name.isEmpty) {
+      name = '未知用户';
+      name = '用户';
+    }
+    var level = levelValueToLevelName(model?.level ?? 0);
     var beach32Address = WalletUtil.ethAddressToBech32Address(
       model?.address ?? '',
     );
@@ -420,17 +438,20 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         break;
 
       case 1:
-        desc = '量级不足，错过机会';
+        //desc = '量级不足，错过机会';
+        desc = '砸中';
+        desc = '';
         break;
 
       default:
-        desc = '';
+        desc = '错过';
         break;
     }
 
     return InkWell(
       onTap: () {
-        AtlasApi.goToHynScanPage(context, beach32Address);
+        _navToDetailAction();
+        //AtlasApi.goToHynScanPage(context, beach32Address);
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -644,14 +665,26 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     );
   }
 
+  _navToDetailAction() {
+    if ((_detailEntity?.txHash ?? '').isEmpty) return;
+
+    WalletShowAccountInfoPage.jumpToAccountInfoPage(
+      context,
+      _detailEntity?.txHash,
+      SupportedTokens.HYN_RP_HRC30.symbol,
+    );
+  }
+
   void getNetworkData() async {
     _dataList.clear();
 
     try {
-      _detailEntity = await _rpApi.getMyRpOpenInfo(_address, _detailEntity?.id ?? 0, _detailEntity?.type ?? 0);
-
-      var netData = await _rpApi.getMySlitRpRecordList(_address, pagingKey: _currentPageKey);
-
+      var netData = await _rpApi.getMySlitRpRecordList(
+        _address,
+        pagingKey: _currentPageKey,
+        redPocketId: _detailEntity?.redPocketId ?? 0,
+        redPocketType: _detailEntity?.type ?? 0,
+      );
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
         _dataList = netData.data;
@@ -666,11 +699,32 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     } catch (e) {
       _loadDataBloc.add(LoadFailEvent());
     }
+
+    _detailEntity = await _rpApi.getMyRpOpenInfo(
+      _address,
+      _detailEntity?.redPocketId ?? 0,
+      _detailEntity?.type ?? 0,
+    );
+    if (mounted) {
+      setState(() {
+        _loadDataBloc.add(RefreshSuccessEvent());
+      });
+    }
   }
 
   void getMoreNetworkData() async {
+    if (_currentPageKey?.isEmpty ?? true) {
+      _loadDataBloc.add(LoadMoreEmptyEvent());
+      return;
+    }
+
     try {
-      var netData = await _rpApi.getMySlitRpRecordList(_address, pagingKey: _currentPageKey);
+      var netData = await _rpApi.getMySlitRpRecordList(
+        _address,
+        pagingKey: _currentPageKey,
+        redPocketId: _detailEntity?.redPocketId ?? 0,
+        redPocketType: _detailEntity?.type ?? 0,
+      );
 
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;

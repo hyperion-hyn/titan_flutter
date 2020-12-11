@@ -195,19 +195,19 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                             await UiUtil.showDialogWidget(context,
                                                 content: Text(S.of(context).wallet_transfer_title),
                                                 actions: [
-                                                  FlatButton(
-                                                      child: Text(S.of(context).cancel),
-                                                      onPressed: () async {
-                                                        Navigator.pop(context);
-                                                      }),
+//                                                  FlatButton(
+//                                                      child: Text(S.of(context).cancel),
+//                                                      onPressed: () async {
+//                                                        Navigator.pop(context);
+//                                                      }),
                                                   FlatButton(
                                                       child: Text(S.of(context).confirm),
                                                       onPressed: () async {
                                                         Navigator.pop(context);
-                                                        Application.router.navigateTo(
-                                                            context,
-                                                            Routes.wallet_account_send_transaction +
-                                                                '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
+//                                                        Application.router.navigateTo(
+//                                                            context,
+//                                                            Routes.wallet_account_send_transaction +
+//                                                                '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
                                                       }),
                                                 ]);
                                             return;

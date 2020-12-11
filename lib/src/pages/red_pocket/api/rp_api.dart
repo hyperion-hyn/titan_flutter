@@ -181,26 +181,26 @@ class RPApi {
   }
 
   ///确认邀请
-  Future<bool> postRpInviter(
+  Future<String> postRpInviter(
     String inviterAddress,
     WalletClass.Wallet wallet,
   ) async {
     var myAddress = wallet?.getEthAccount()?.address ?? "";
     if (myAddress.isEmpty || (inviterAddress?.isEmpty ?? true)) {
-      return false;
+      return null;
     }
     inviterAddress = WalletUtil.bech32ToEthAddress(inviterAddress);
     if (myAddress.toLowerCase() == inviterAddress.toLowerCase()) {
       Fluttertoast.showToast(msg: "不能邀请自己");
-      return false;
+      return null;
     }
-    await RPHttpCore.instance.postEntity("/v1/rp/confirm_invite", EntityFactory<dynamic>((json) => json),
+    var result = await RPHttpCore.instance.postEntity("/v1/rp/confirm_invite", EntityFactory<dynamic>((json) => json),
         params: {
           "invitee": myAddress,
           "inviter": inviterAddress,
         },
         options: RequestOptions(contentType: "application/json"));
-    return true;
+    return result['identify'];
   }
 
   ///邀请列表
@@ -247,7 +247,7 @@ class RPApi {
 
   Future<RpOpenRecordEntity> getMyRpOpenInfo(
     String address,
-    String redPocketId,
+    int redPocketId,
     int redPocketType,
   ) async {
     return await RPHttpCore.instance.getEntity(
