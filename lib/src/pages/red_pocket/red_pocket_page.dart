@@ -346,10 +346,10 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                                     padding: const EdgeInsets.only(
                                       top: 4,
                                     ),
-                                    child: Icon(
-                                      Icons.warning_outlined,
-                                      color: HexColor('#FF5041'),
-                                      size: 16,
+                                    child:Image.asset(
+                                      'res/drawable/error_rounded.png',
+                                      width: 15,
+                                      height: 15,
                                     ),
                                   ),
                                   Expanded(
