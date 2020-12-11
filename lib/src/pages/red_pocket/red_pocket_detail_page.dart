@@ -420,11 +420,37 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
   Widget _itemBuilder(int index) {
     var model = _dataList[index];
+
+    var role = '';
+    switch (model.role) {
+
+      case 1:
+      //desc = '量级不足，错过机会';
+
+        role = '燃烧';
+        break;
+
+      case 2:
+
+        role = '管理费';
+        break;
+
+      case 3:
+        role = '';
+        break;
+
+      default:
+        role = '';
+        break;
+    }
+
     var name = model?.username ?? '';
     if (name.isEmpty) {
       name = '未知用户';
       name = '用户';
     }
+    name += role;
+
     var level = levelValueToLevelName(model?.level ?? 0);
     var beach32Address = WalletUtil.ethAddressToBech32Address(
       model?.address ?? '',
