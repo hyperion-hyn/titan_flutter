@@ -91,6 +91,8 @@ Rp_holding_contract_info _$Rp_holding_contract_infoFromJson(Map<String, dynamic>
     json['total_burning'] as String,
     json['total_holding'] as String,
     json['total_supply'] as String,
+    json['random_min_level'] as int,
+    json['gradient_ratio'] as String,
   );
 }
 
@@ -100,4 +102,6 @@ Map<String, dynamic> _$Rp_holding_contract_infoToJson(Rp_holding_contract_info i
       'total_burning': instance.totalBurning,
       'total_holding': instance.totalHolding,
       'total_supply': instance.totalSupply,
+      'random_min_level': instance.randomMinLevel,
+      'gradient_ratio': instance.gradientRatio,
     };

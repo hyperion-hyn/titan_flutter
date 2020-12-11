@@ -66,9 +66,17 @@ class SupplyInfo extends Object {
   @JsonKey(name: 'total_supply')
   String totalSupply;
 
+  @JsonKey(name: 'random_min_level')
+  int randomMinLevel;
+
+  @JsonKey(name: 'gradient_ratio')
+  String gradientRatio;
+
   SupplyInfo(
     this.promotionSupplyRatio,
     this.totalSupply,
+      this.randomMinLevel,
+      this.gradientRatio,
   );
 
 

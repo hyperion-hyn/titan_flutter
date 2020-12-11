@@ -13,9 +13,11 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_add_staking_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'entity/rp_util.dart';
 
@@ -40,7 +42,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   List<LevelRule> get _staticDataList => (_promotionRuleEntity?.static ?? []).reversed.toList();
 
   LevelRule _currentSelectedLevelRule;
-  // int get _currentLevel => 2;
   int get _currentLevel => widget?.rpMyLevelInfo?.currentLevel ?? 0;
 
   int _recommendLevel = 5;
@@ -125,6 +126,9 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   }
 
   Widget _levelHeaderView() {
+
+    var stepPercent = FormatUtil.formatPercent(double.parse(_promotionRuleEntity?.supplyInfo?.gradientRatio));
+
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -132,7 +136,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
           children: [
             Text(
               // todo: 配置 5% 服务器返回
-              '当前已发行 ${_promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '--'} RP，百分比Y = ${_promotionRuleEntity?.supplyInfo?.promotionSupplyRatioStr ?? '--'}%（5%为1梯度）',
+              '当前已发行 ${_promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '--'} RP，百分比Y = ${_promotionRuleEntity?.supplyInfo?.promotionSupplyRatioStr ?? '--'}%（$stepPercent为1梯度）',
               style: TextStyle(
                 color: HexColor('#333333'),
                 fontSize: 12,
@@ -519,7 +523,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpLevelUpgradePage(widget.rpMyLevelInfo, _currentSelectedLevelRule),
+        builder: (context) => RpLevelUpgradePage(widget.rpMyLevelInfo, _currentSelectedLevelRule, _promotionRuleEntity),
       ),
     );
   }
@@ -527,6 +531,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   void getNetworkData() async {
     try {
       var netData = await _rpApi.getRPPromotionRule(_address);
+
 
       if (netData?.static?.isNotEmpty ?? false) {
         _promotionRuleEntity = netData;

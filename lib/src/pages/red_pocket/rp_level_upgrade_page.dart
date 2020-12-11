@@ -30,8 +30,9 @@ import 'entity/rp_my_level_info.dart';
 class RpLevelUpgradePage extends StatefulWidget {
   final RpMyLevelInfo rpMyLevelInfo;
   final LevelRule levelRule;
+  final RpPromotionRuleEntity promotionRuleEntity;
 
-  RpLevelUpgradePage(this.rpMyLevelInfo, this.levelRule);
+  RpLevelUpgradePage(this.rpMyLevelInfo, this.levelRule, this.promotionRuleEntity);
 
   @override
   State<StatefulWidget> createState() {
@@ -94,7 +95,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
         });
       }
     } catch (e) {
-
       if (mounted) {
         LogUtil.toastException(e);
 
@@ -314,7 +314,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                     ),
                     child: Text(
                       // todo: 配置量级4
-                      '提示：如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(4)} 以上的账户地址为推荐人',
+                      '提示：如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4)} 以上的账户地址为推荐人',
                       style: TextStyle(
                         color: HexColor('#C3A16D'),
                         fontSize: 12,
