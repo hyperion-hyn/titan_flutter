@@ -127,7 +127,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
   Widget _levelHeaderView() {
 
-    var stepPercent = FormatUtil.formatPercent(double.parse(_promotionRuleEntity?.supplyInfo?.gradientRatio));
+    var stepPercent = FormatUtil.formatPercent(_promotionRuleEntity?.supplyInfo?.gradientRatio??0);
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -531,7 +531,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   void getNetworkData() async {
     try {
       var netData = await _rpApi.getRPPromotionRule(_address);
-
 
       if (netData?.static?.isNotEmpty ?? false) {
         _promotionRuleEntity = netData;

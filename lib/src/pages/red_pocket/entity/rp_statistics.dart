@@ -151,7 +151,7 @@ class Rp_holding_contract_info extends Object {
   int randomMinLevel;
 
   @JsonKey(name: 'gradient_ratio')
-  String gradientRatio;
+  double gradientRatio;
 
   String get totalBurningStr => FormatUtil.weiToEtherStr(totalBurning) ?? '0';
 

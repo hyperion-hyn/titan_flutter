@@ -54,7 +54,7 @@ SupplyInfo _$SupplyInfoFromJson(Map<String, dynamic> json) {
     json['promotion_supply_ratio'] as String,
     json['total_supply'] as String,
     json['random_min_level'] as int,
-    json['gradient_ratio'] as String,
+    json['gradient_ratio'] as double,
   );
 }
 

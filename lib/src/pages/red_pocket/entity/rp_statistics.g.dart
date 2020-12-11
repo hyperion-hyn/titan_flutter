@@ -92,7 +92,7 @@ Rp_holding_contract_info _$Rp_holding_contract_infoFromJson(Map<String, dynamic>
     json['total_holding'] as String,
     json['total_supply'] as String,
     json['random_min_level'] as int,
-    json['gradient_ratio'] as String,
+    json['gradient_ratio'] as double,
   );
 }
 
