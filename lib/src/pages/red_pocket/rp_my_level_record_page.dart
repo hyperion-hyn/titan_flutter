@@ -207,7 +207,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                           style: TextStyle(
                             color: HexColor('#333333'),
                             fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),

@@ -19,6 +19,8 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 
+import 'entity/rp_util.dart';
+
 class RpMyFriendsPage extends StatefulWidget {
   RpMyFriendsPage();
 
@@ -275,7 +277,7 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
 
   Widget _itemBuilder(RpMinerInfo info) {
     var name = info?.name ?? '';
-    var level = info?.level ?? 0;
+    var level = levelValueToLevelName(info?.level ?? 0);
     var bech32Address = WalletUtil.ethAddressToBech32Address(
       info?.address ?? '',
     );
@@ -345,14 +347,14 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
                               )
                             : SizedBox(),
                       ),
-                      // Text(
-                      //   ' $level 级',
-                      //   style: TextStyle(
-                      //     color: HexColor("#999999"),
-                      //     fontSize: 12,
-                      //     fontWeight: FontWeight.normal,
-                      //   ),
-                      // ),
+                      Text(
+                        ' $level 级',
+                        style: TextStyle(
+                          color: HexColor("#999999"),
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
                     ],
                   ),
                   Text(

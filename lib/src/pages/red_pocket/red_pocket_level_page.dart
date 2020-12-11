@@ -132,7 +132,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
           children: [
             Text(
               // todo: 配置 5% 服务器返回
-              '当前流通 ${_promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '--'} RP，百分比Y = ${_promotionRuleEntity?.supplyInfo?.promotionSupplyRatioStr ?? '--'}%（5%单位粒度）',
+              '当前已发行 ${_promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '--'} RP，百分比Y = ${_promotionRuleEntity?.supplyInfo?.promotionSupplyRatioStr ?? '--'}%（5%为1梯度）',
               style: TextStyle(
                 color: HexColor('#333333'),
                 fontSize: 12,
@@ -438,7 +438,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                 width: 20,
               ),
               ClickOvalButton(
-                '升级',
+                '提升量级',
                 _navToLevelUpgradeAction,
                 height: 34,
                 width: 120,
@@ -477,7 +477,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   _navToLevelAddStakingAction() {
     if (_currentLevel == 0) {
       Fluttertoast.showToast(
-        msg: '当前量级为0, 请先升级！',
+        msg: '当前量级为0, 请先提升量级！',
         gravity: ToastGravity.CENTER,
       );
       return;

@@ -114,7 +114,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '升级量级',
+        baseTitle: '提升量级',
       ),
       backgroundColor: Colors.white,
       body: Column(
@@ -140,7 +140,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                           padding: const EdgeInsets.only(top: 18),
                           child: Row(
                             children: <Widget>[
-                              Text('提升到 ${levelValueToLevelName(widget?.levelRule?.level)} 持币量级',
+                              Text('提升到量级 ${levelValueToLevelName(widget?.levelRule?.level)} ',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
@@ -314,7 +314,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                     ),
                     child: Text(
                       // todo: 配置量级4
-                      '提示：因你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(4)} 以上的账户地址为推荐人',
+                      '提示：如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(4)} 以上的账户地址为推荐人',
                       style: TextStyle(
                         color: HexColor('#C3A16D'),
                         fontSize: 12,
