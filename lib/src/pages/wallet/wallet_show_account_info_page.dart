@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -16,6 +17,7 @@ import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'model/hyn_transfer_history.dart';
@@ -143,13 +145,13 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     }
 
     _accountInfoViewList.add(AccountInfoItemView(
-      AccountInfoType.TEXT_TEXT,
+      AccountInfoType.TEXT_TEXT_COPY,
       fromAddressTitle,
       rightStr: WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
     ));
 
     _accountInfoViewList.add(AccountInfoItemView(
-      AccountInfoType.TEXT_TEXT,
+      AccountInfoType.TEXT_TEXT_COPY,
       toAddressTitle,
       rightStr: _toAddress,
     ));
@@ -162,7 +164,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
       ));
     }else{
       _accountInfoViewList.add(AccountInfoItemView(
-        AccountInfoType.TEXT_TEXT_LAST,
+        AccountInfoType.TEXT_TEXT_LAST_COPY,
         S.of(context).transfer_id,
         rightStr: transDetail.hash,
       ));
@@ -191,7 +193,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
   }
 
   Widget accountInfoItem(AccountInfoItemView accountInfoItemView,
-      {String bottomText, bool normalLine = true, bool isBillItem = false}) {
+      {String bottomText, bool normalLine = true, bool isBillItem = false, bool hasCopy = false}) {
     return Container(
       color: Colors.white,
       child: Column(
@@ -231,6 +233,21 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                           padding: const EdgeInsets.only(top: 2.0),
                           child: Text("${S.of(context).reward} ${transactionDetail.getBillReward()} HYN",
                               style: TextStyles.textC999S11, textAlign: TextAlign.end),
+                        ),
+                      if (hasCopy)
+                        InkWell(
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: accountInfoItemView.rightStr ?? ""));
+                            UiUtil.toast(S.of(context).copyed);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 7.0, left: 7, bottom: 7),
+                            child: Image.asset(
+                              "res/drawable/ic_copy.png",
+                              width: 18,
+                              height: 17,
+                            ),
+                          ),
                         ),
                     ],
                   ),
@@ -317,6 +334,8 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                 switch(accountViewItem.type){
                   case AccountInfoType.TEXT_TEXT:
                     return accountInfoItem(accountViewItem);
+                  case AccountInfoType.TEXT_TEXT_COPY:
+                    return accountInfoItem(accountViewItem,hasCopy: true);
                   case AccountInfoType.TEXT_TEXT_BILL:
                     return accountInfoItem(accountViewItem,isBillItem: true);
                   case AccountInfoType.TEXT_TEXT_BOTTOM:
@@ -325,6 +344,8 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                     return accountInfoItem(accountViewItem,bottomText: bottomText);
                   case AccountInfoType.TEXT_TEXT_LAST:
                     return accountInfoItem(accountViewItem, normalLine: false);
+                  case AccountInfoType.TEXT_TEXT_LAST_COPY:
+                    return accountInfoItem(accountViewItem, normalLine: false,hasCopy: true);
                   case AccountInfoType.DETAIL_INFO:
                     return detailInfoView(accountViewItem);
                 }
@@ -412,7 +433,9 @@ enum AccountInfoType {
   TEXT_TEXT_BILL,
   TEXT_TEXT_BOTTOM,
   TEXT_TEXT,
+  TEXT_TEXT_COPY,
   TEXT_TEXT_LAST,
+  TEXT_TEXT_LAST_COPY,
   DETAIL_INFO,
 }
 
