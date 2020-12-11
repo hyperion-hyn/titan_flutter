@@ -349,18 +349,18 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Expanded(
-                                flex: 1,
+                                flex: 2,
                                 child: SizedBox(),
                               ),
                               Expanded(
-                                flex: 2,
+                                flex: 3,
                                 child: Image.asset(
                                   "res/drawable/ic_rp_level_$currentLevel.png",
                                   height: 100,
                                 ),
                               ),
                               Expanded(
-                                flex: 1,
+                                flex: 2,
                                 child: true
                                     ? Padding(
                                         padding: const EdgeInsets.only(
@@ -373,10 +373,9 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                                               width: 20,
                                             ),
                                             SizedBox(
-                                              width: 4,
+                                              width: 2,
                                             ),
-                                            Container(
-                                              width: 45,
+                                            Expanded(
                                               child: Text(
                                                 '等级下降了',
                                                 textAlign: TextAlign.center,
