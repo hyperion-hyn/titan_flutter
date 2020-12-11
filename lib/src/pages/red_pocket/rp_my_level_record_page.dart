@@ -716,13 +716,13 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
   }
 
   _navToLevelUnStakingAction() {
-    // if (_currentLevel == 0) {
-    //   Fluttertoast.showToast(
-    //     msg: '当前量级为0，可取回持币金额为0！',
-    //     gravity: ToastGravity.CENTER,
-    //   );
-    //   return;
-    // }
+    if (_currentLevel == 0) {
+      Fluttertoast.showToast(
+        msg: '当前量级为0，可取回持币金额为0！',
+        gravity: ToastGravity.CENTER,
+      );
+      return;
+    }
 
     Navigator.push(
       context,
