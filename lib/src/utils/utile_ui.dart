@@ -1,13 +1,17 @@
 import 'dart:io';
 
 import 'package:android_intent/android_intent.dart';
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_pickers/UIConfig.dart';
+import 'package:image_pickers/image_pickers.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:r_scan/r_scan.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
@@ -667,7 +671,79 @@ class UiUtil {
       ],
     );
   }
+  static Future<T> showDialogsNoCallback<T>(BuildContext context, String title, String content, {String confirm = ""}) {
+    return showDialogWidget<T>(
+      context,
+      title: Text(title),
+      content: Text(content),
+      actions: <Widget>[
+        FlatButton(
+          child: Text(S.of(context).cancel),
+          onPressed: () => Navigator.pop(context, false),
+        ),
+        FlatButton(
+          child: Text(confirm.isNotEmpty ? confirm : S.of(context).setting),
+          onPressed: () => Navigator.pop(context, true),
+        ),
+      ],
+    );
+  }
+
+
+  static Future<bool> showImagePickerSheet(BuildContext context, {ImageCallback callback}) async {
+    return await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return Wrap(
+            children: <Widget>[
+              ListTile(
+                title: Text(S.of(context).camera_scan, textAlign: TextAlign.center),
+                onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    Navigator.pop(dialogContext, true);
+                  });
+
+                  String mnemonicWords = await BarcodeScanner.scan();
+                  callback(mnemonicWords);
+                },
+              ),
+              ListTile(
+                title: Text(S.of(context).import_from_album, textAlign: TextAlign.center),
+                onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    Navigator.pop(dialogContext, true);
+                  });
+
+                  var tempListImagePaths = await ImagePickers.pickerPaths(
+                    galleryMode: GalleryMode.image,
+                    selectCount: 1,
+                    showCamera: true,
+                    cropConfig: null,
+                    compressSize: 500,
+                    uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
+                  );
+                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
+                    RScanResult mnemonicWords = await RScan.scanImagePath(tempListImagePaths[0].path);
+                    String mnemonicWord = mnemonicWords?.message;
+                    callback(mnemonicWord);
+                  }
+                },
+              ),
+              ListTile(
+                title: Text(S.of(context).cancel, textAlign: TextAlign.center),
+                onTap: () {
+                  Navigator.pop(dialogContext, false);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
 }
+
+typedef ImageCallback = void Function(String text);
+
 
 void callLater(FrameCallback callback) {
   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {

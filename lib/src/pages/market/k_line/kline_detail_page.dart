@@ -936,17 +936,17 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
 
   Widget _detailHeaderWidget() {
 
-    var priceStr = S.of(context).kline_delegate_price;
-    var amountStr = S.of(context).kline_delegate_amount;
-    print("quote:${widget.quote}, base:${widget.base}");
+    var amountStr = S.of(context).k_line_amount_func('${widget.quote.toUpperCase()}');
+    var priceStr = S.of(context).k_line_price_func('${widget.base.toUpperCase()}');
+    //print("[$runtimeType] quote:${widget.quote}, base:${widget.base}");
 
-    if (widget.base.toUpperCase() == 'USDT') {
+    /*if (widget.base.toUpperCase() == 'USDT') {
       priceStr = S.of(context).kline_delegate_price;
       amountStr = S.of(context).kline_delegate_amount;
     } else {
       priceStr = '价格(HYN)';
       amountStr = '数量(RP)';
-    }
+    }*/
 
 
     return SliverToBoxAdapter(

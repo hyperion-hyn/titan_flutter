@@ -27,9 +27,13 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
       _updateDataListOnReceive(list, currentPage);
 
       if (dataList.length == 0) {
-        loadDataBloc.add(LoadEmptyEvent());
+        if (mounted) {
+          loadDataBloc.add(LoadEmptyEvent());
+        }
       } else {
-        loadDataBloc.add(RefreshSuccessEvent());
+        if (mounted) {
+          loadDataBloc.add(RefreshSuccessEvent());
+        }
       }
 //    } catch (e) {
 //      logger.e(e);
@@ -44,13 +48,19 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
       _updateDataListOnReceive(list, currentPage);
 
       if (dataList.length == 0) {
-        loadDataBloc.add(LoadEmptyEvent());
+        if (mounted) {
+          loadDataBloc.add(LoadEmptyEvent());
+        }
       } else {
-        loadDataBloc.add(RefreshSuccessEvent());
+        if (mounted) {
+          loadDataBloc.add(RefreshSuccessEvent());
+        }
       }
     } catch (e) {
-      logger.e(e);
-      loadDataBloc.add(RefreshFailEvent());
+      if(mounted) {
+        logger.e(e);
+        loadDataBloc.add(RefreshFailEvent());
+      }
     }
   }
 
@@ -63,13 +73,19 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
       _updateDataListOnReceive(list, currentPage);
 
       if (dataList.length == lastSize) {
-        loadDataBloc.add(LoadMoreEmptyEvent());
+        if (mounted) {
+          loadDataBloc.add(LoadMoreEmptyEvent());
+        }
       } else {
-        loadDataBloc.add(LoadingMoreSuccessEvent());
+        if (mounted) {
+          loadDataBloc.add(LoadingMoreSuccessEvent());
+        }
       }
     } catch (e) {
-      logger.e(e);
-      loadDataBloc.add(LoadMoreFailEvent());
+      if (mounted) {
+        logger.e(e);
+        loadDataBloc.add(LoadMoreFailEvent());
+      }
     }
   }
 

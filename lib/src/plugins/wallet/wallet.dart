@@ -405,6 +405,7 @@ class Wallet {
     return credentials;
   }
 
+
   Future<String> sendApproveErc20Token({
     String contractAddress,
     String approveToAddress,
@@ -413,8 +414,9 @@ class Wallet {
     BigInt gasPrice,
     int gasLimit,
     int nonce,
+    bool isAtlas = false,
   }) async {
-    final client = WalletUtil.getWeb3Client();
+    final client = WalletUtil.getWeb3Client(isAtlas);
     var credentials = await getCredentials(password);
     var erc20Contract = WalletUtil.getHynErc20Contract(contractAddress);
     final txHash = await client.sendTransaction(
@@ -426,8 +428,9 @@ class Wallet {
         gasPrice: web3.EtherAmount.inWei(gasPrice),
         maxGas: gasLimit,
         nonce: nonce,
+        type: isAtlas ? MessageType.typeNormal : null,
       ),
-      fetchChainIdFromNetworkId: true,
+      fetchChainIdFromNetworkId: false,
     );
 
 //    await transactionInteractor.insertTransactionDB(
@@ -521,6 +524,55 @@ class Wallet {
           contract: stakingContract,
           function: stakingContract.function(methodName),
           parameters: [],
+          gasPrice: web3.EtherAmount.inWei(gasPrice),
+          maxGas: gasLimit,
+          type: web3.MessageType.typeNormal),
+      fetchChainIdFromNetworkId: false,
+    );
+  }
+
+  Future<String> sendRpHolding(
+      RpHoldingMethod methodType,
+      String password, {
+        BigInt depositAmount,
+        BigInt burningAmount,
+        BigInt withdrawAmount,
+        BigInt gasPrice,
+        int gasLimit,
+      }) async {
+
+
+    if (gasPrice == null) {
+      gasPrice = BigInt.from(1 * TokenUnit.G_WEI);
+    }
+    if (gasLimit == null) {
+      gasLimit = 300000;
+    }
+    BigInt stakingAmount;
+    if(!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)){
+      return null;
+    }
+
+    String methodName;
+    List<dynamic> parameters;
+
+    if (methodType == RpHoldingMethod.DEPOSIT_BURN) {
+      methodName = 'depositAndBurn';
+      parameters = [depositAmount, burningAmount];
+    } else {
+      methodName = 'withdraw';
+      parameters = [withdrawAmount];
+    }
+
+    final client = WalletUtil.getWeb3Client(true);
+    var credentials = await getCredentials(password);
+    var rpHoldingContract = WalletUtil.getRpHoldingContract(WalletConfig.rpHoldingContractAddress);
+    return await client.sendTransaction(
+      credentials,
+      web3.Transaction.callContract(
+          contract: rpHoldingContract,
+          function: rpHoldingContract.function(methodName),
+          parameters: parameters,
           gasPrice: web3.EtherAmount.inWei(gasPrice),
           maxGas: gasLimit,
           type: web3.MessageType.typeNormal),
@@ -683,3 +735,6 @@ class Wallet {
 }
 
 enum HynContractMethod { STAKE, WITHDRAW }
+
+
+enum RpHoldingMethod { DEPOSIT_BURN, WITHDRAW }

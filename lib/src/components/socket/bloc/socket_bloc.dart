@@ -53,7 +53,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
 
       try {
         Map<String, dynamic> dataMap = json.decode(receivedData);
-        LogUtil.printMessage("[SocketBloc] mapEventToState, dataMap:$dataMap");
+        //LogUtil.printMessage("[SocketBloc] mapEventToState, dataMap:$dataMap");
 
         var status = dataMap["status"];
         var eventAction = dataMap["event"];
@@ -123,13 +123,13 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
           }
         } else if (status == 200 || status == 500) {
           if (errMsg != null && status == 500) {
-            LogUtil.printMessage("[SocketBloc] 接收心跳,正常");
+            //LogUtil.printMessage("[SocketBloc] 接收心跳,正常");
 
             yield HeartSuccessState();
           }
         } else {
-          LogUtil.printMessage(
-              "[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
+          // LogUtil.printMessage(
+          //     "[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
 
           if (eventAction == SocketConfig.sub) {
             yield SubChannelFailState();

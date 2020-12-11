@@ -82,7 +82,7 @@ class _SocketState extends State<_SocketManager> {
     _bloc.setSocketChannel(_socketChannel);
 
     _socketChannel.stream.listen((data) {
-      LogUtil.printMessage('[WS]  listen..., data');
+      //LogUtil.printMessage('[WS]  listen..., data');
 
       if (!_connecting) {
         _connecting = true;

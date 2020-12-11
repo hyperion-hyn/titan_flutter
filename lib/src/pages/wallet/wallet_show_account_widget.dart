@@ -23,6 +23,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
@@ -341,7 +342,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                           ],
                         ),
                       ),
-                      if (dataList.length > 1)
+                      dataList.length > 1?
                         ListView.builder(
                           primary: false,
                           shrinkWrap: true,
@@ -354,6 +355,15 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                             }
                           },
                           itemCount: max<int>(0, dataList.length),
+                        ):Padding(
+                          padding: const EdgeInsets.only(top: 20,),
+                          child: Container(
+                          width: double.infinity,
+                          child: emptyListWidget(
+                            title: S.of(context).no_data,
+                            isAdapter: false,
+                          ),
+                      ),
                         )
                     ]),
               ),
