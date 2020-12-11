@@ -25,9 +25,9 @@ import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 
 class RedPocketDetailPage extends StatefulWidget {
-  final RpOpenRecordEntity recordEntity;
+  final RpOpenRecordEntity rpOpenRecordEntity;
 
-  RedPocketDetailPage({this.recordEntity});
+  RedPocketDetailPage({this.rpOpenRecordEntity});
 
   @override
   State<StatefulWidget> createState() {
@@ -42,9 +42,10 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   var _address = "";
 
   List<RpOpenRecordEntity> _dataList = List();
-  RpOpenRecordEntity _rpOpenRecordEntity;
+  RpOpenRecordEntity _detailEntity;
 
-  int _rpType = Random().nextInt(3);
+  // int _rpType = Random().nextInt(3);
+  int get _rpType => _detailEntity?.type ?? 0;
 
   String _currentPageKey;
 
@@ -52,7 +53,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   void initState() {
     super.initState();
 
-    _rpOpenRecordEntity = widget.recordEntity;
+    _detailEntity = widget.rpOpenRecordEntity;
 
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
@@ -113,7 +114,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
           SliverToBoxAdapter(
             child: Column(
               children: [
-                _infoDetailBuilder(),
+                _infoDetailWidget(),
                 _rpListHeaderWidget(),
               ],
             ),
@@ -124,24 +125,22 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     );
   }
 
-  Widget _infoDetailBuilder() {
+  Widget _infoDetailWidget() {
     var title = '';
     var subTitle = '';
     print("[$runtimeType] _infoDetailBuilder, rpType:$_rpType");
 
-    var rpAmount = '12 RP';
-
-    var isIgnored = _rpType == 1;
+    var amount = '-- RP';
 
     switch (_rpType) {
       case 0:
-        title = '幸运红包';
+        title = '${_detailEntity?.username ?? ''}的幸运红包';
         break;
 
       case 1:
         title = '量级红包';
-        subTitle = '（量级1）';
-        rpAmount = '0 RP';
+        subTitle = '（量级${_detailEntity?.to}）';
+        amount = '${_detailEntity?.amount} RP';
         break;
 
       case 2:
@@ -149,9 +148,14 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         break;
 
       default:
-        title = '幸运红包';
+        title = '';
         break;
     }
+
+    var beach32Address = WalletUtil.ethAddressToBech32Address(
+      _detailEntity?.address ?? '',
+    );
+    var address = shortBlockChainAddress(beach32Address);
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -211,7 +215,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '派大星',
+                      '${_detailEntity?.username ?? '--'}',
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 12,
@@ -222,7 +226,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                       width: 6,
                     ),
                     Text(
-                      'hyn19493…43222',
+                      address,
                       style: TextStyle(
                         color: HexColor("#999999"),
                         fontSize: 10,
@@ -241,7 +245,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '量级1 - 量级3',
+                      '量级${_detailEntity?.from} - 量级${_detailEntity?.to}',
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 10,
@@ -274,7 +278,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                     ),
                   ),
                   Text(
-                    rpAmount,
+                    amount,
                     style: TextStyle(
                       color: HexColor("#E3A900"),
                       fontSize: 26,
@@ -289,7 +293,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 ],
               ),
             ),
-            if (isIgnored)
+            if (_detailEntity.luck == 0)
               Padding(
                 padding: const EdgeInsets.only(
                   top: 16,
@@ -336,7 +340,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       child: Row(
         children: [
           Text(
-            '红包共 303 RP',
+            '红包共 ${_detailEntity?.totalAmountStr ?? "0"} RP',
             style: TextStyle(
               color: Color(0xff333333),
               fontWeight: FontWeight.w500,
@@ -345,7 +349,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
           ),
           Spacer(),
           Text(
-            '2020/12/12 21:21:21',
+            _detailEntity?.time ?? '--',
             style: TextStyle(
               color: Color(0xff999999),
               fontWeight: FontWeight.normal,
@@ -389,7 +393,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       return SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
-            if ((index + 1) == _dataList.length && _rpType == 1) {
+            if ((index + 1) == _dataList.length && _rpType == 2) {
               return _defaultItem(index);
             }
             return _itemBuilder(index);
@@ -401,32 +405,22 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 
   Widget _itemBuilder(int index) {
-    var info = _dataList[index];
-    var name = info?.username ?? '';
-    var level = info?.type ?? 0;
-    var bech32Address = WalletUtil.ethAddressToBech32Address(
-      info?.address ?? '',
+    var model = _dataList[index];
+    var name = model?.username ?? '';
+    var level = model?.type ?? 0; // todo: 缺少量级
+    var beach32Address = WalletUtil.ethAddressToBech32Address(
+      model?.address ?? '',
     );
-    var address = shortBlockChainAddress(bech32Address);
-
-    var inviteTimeStr = info.time;
-
-    var rpAmount = FormatUtil.weiToEtherStr('0');
-    // rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
-    // rpAmount = '00000000000000000000000000000000000000000000000000000000000000';
+    var address = shortBlockChainAddress(beach32Address);
 
     var desc = '';
-    switch (index) {
-      case 0:
+    switch (model.luck) {
+      case 2:
         desc = '最佳';
         break;
 
       case 1:
         desc = '量级不足，错过机会';
-        break;
-
-      case 2:
-        desc = '';
         break;
 
       default:
@@ -436,7 +430,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
     return InkWell(
       onTap: () {
-        AtlasApi.goToHynScanPage(context, bech32Address);
+        AtlasApi.goToHynScanPage(context, beach32Address);
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -463,7 +457,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                   width: 40,
                   child: walletHeaderWidget(
                     name,
-                    address: info?.address ?? '',
+                    address: model?.address ?? '',
                     isCircle: true,
                     isShowShape: false,
                     size: 32,
@@ -526,7 +520,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        '+ $rpAmount RP',
+                        '+ ${model?.amountStr ?? '0'} RP',
                         style: TextStyle(
                           color: HexColor("#333333"),
                           fontSize: 14,
@@ -543,7 +537,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                         desc,
                         style: TextStyle(
                           fontSize: 10,
-                          color: index == 0 ? HexColor('#F0BE00') : HexColor('#999999'),
+                          color: model?.luck == 2 ? HexColor('#F0BE00') : HexColor('#999999'),
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -559,119 +553,92 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 
   Widget _defaultItem(int index) {
-    var info = _dataList[index];
-    var name = info?.username ?? '';
-    var level = info?.type ?? 0;
-    var bech32Address = WalletUtil.ethAddressToBech32Address(
-      info?.address ?? '',
-    );
-    var address = shortBlockChainAddress(bech32Address);
-
-    var rpAmount = FormatUtil.weiToEtherStr('0');
-    // rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
-    rpAmount = '00000000000000000000000000000000000000000000000000000000000000';
-    rpAmount = '300';
-
-    return InkWell(
-      onTap: () {
-        AtlasApi.goToHynScanPage(context, bech32Address);
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 12,
-          ),
-          decoration: BoxDecoration(
-            color: HexColor('#FFFFFF'),
-            borderRadius: BorderRadius.all(
-              Radius.circular(6.0),
-            ), //设置四周圆角 角度
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(
-                  right: 10,
-                ),
-                child: Image.asset(
-                  'res/drawable/red_pocket_default_icon.png',
-                  width: 32,
-                  height: 32,
-                ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 12,
+        ),
+        decoration: BoxDecoration(
+          color: HexColor('#FFFFFF'),
+          borderRadius: BorderRadius.all(
+            Radius.circular(6.0),
+          ), //设置四周圆角 角度
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(
+                right: 10,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          right: 6,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6.0),
-                          child: Text(
-                            '其他相同量级账户',
-                            style: TextStyle(
-                              color: HexColor("#333333"),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
+              child: Image.asset(
+                'res/drawable/red_pocket_default_icon.png',
+                width: 32,
+                height: 32,
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 6,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                        child: Text(
+                          '其他相同量级账户',
+                          style: TextStyle(
+                            color: HexColor("#333333"),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                      Text(
-                        ' 12 个',
-                        style: TextStyle(
-                          color: HexColor("#999999"),
-                          fontSize: 12,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                  /*Text(
-                    '${UiUtil.shortEthAddress(address)}',
-                    //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: HexColor('#999999'),
                     ),
-                    textAlign: TextAlign.left,
-                  ),*/
-                ],
-              ),
-              //Spacer(),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 12,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        '+ $rpAmount RP',
-                        style: TextStyle(
-                          color: HexColor("#333333"),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 3,
-                        textAlign: TextAlign.right,
-                        overflow: TextOverflow.ellipsis,
+                    Text(
+                      ' ${_detailEntity?.otherUserAmount ?? 0} 个',
+                      style: TextStyle(
+                        color: HexColor("#999999"),
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            //Spacer(),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 12,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      '+ ${_detailEntity.otherUserAmountStr ?? '0'} RP',
+                      style: TextStyle(
+                        color: HexColor("#333333"),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 3,
+                      textAlign: TextAlign.right,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -681,8 +648,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     _dataList.clear();
 
     try {
-      _rpOpenRecordEntity =
-          await _rpApi.getMyRpOpenInfo(_address, _rpOpenRecordEntity?.id ?? 0, _rpOpenRecordEntity?.type ?? 0);
+      _detailEntity = await _rpApi.getMyRpOpenInfo(_address, _detailEntity?.id ?? 0, _detailEntity?.type ?? 0);
 
       var netData = await _rpApi.getMySlitRpRecordList(_address, pagingKey: _currentPageKey);
 

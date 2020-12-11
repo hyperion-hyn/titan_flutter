@@ -99,7 +99,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (isNewDay)
+                  /*if (isNewDay)
                     Padding(
                       padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
                       child: Text(
@@ -107,7 +107,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                         model.time,
                         style: TextStyle(color: Color(0xff999999)),
                       ),
-                    ),
+                    ),*/
                   _itemBuilder(index),
                 ],
               );
@@ -121,17 +121,6 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
 
   Widget _itemBuilder(int index) {
     var model = _dataList[index];
-
-    var hynAmount = FormatUtil.weiToEtherStr(model?.amount ?? '0');
-
-    var amount = model?.amount ?? 0;
-
-    var rpAmount = FormatUtil.weiToEtherStr(model?.totalAmount ?? '0');
-    // rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
-    // rpAmount = '00000000000000000000000000000000000000000000000000000000000000';
-
-    // var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
-    // var updatedAt = DateFormat("HH:mm").format(currentDate);
 
     var title = '';
     var desc = '';
@@ -179,7 +168,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => RedPocketDetailPage(recordEntity: model),
+            builder: (context) => RedPocketDetailPage(rpOpenRecordEntity: model),
           ),
         );
       },
@@ -229,7 +218,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                           ),
                         ),
                         Text(
-                          '${S.of(context).rp_total_pretext} $rpAmount RP',
+                          '${S.of(context).rp_total_pretext} ${model?.totalAmountStr??'0'} RP',
                           style: TextStyle(
                             color: HexColor("#999999"),
                             fontSize: 12,
@@ -268,7 +257,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        '+ $rpAmount RP',
+                        '+ ${model?.amount??'0'} RP',
                         style: TextStyle(
                           color: HexColor("#333333"),
                           fontSize: 14,
@@ -285,7 +274,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                         desc,
                         style: TextStyle(
                           fontSize: 10,
-                          color: index == 0 ? HexColor('#F0BE00') : HexColor('#999999'),
+                          color: model.luck == 2 ? HexColor('#F0BE00') : HexColor('#999999'),
                         ),
                         textAlign: TextAlign.right,
                       ),

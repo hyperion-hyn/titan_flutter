@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 part 'rp_my_rp_record_entity.g.dart';
 
@@ -78,6 +79,12 @@ class RpOpenRecordEntity extends Object {
 
   @JsonKey(name: 'other_user_amount')
   String otherUserAmount;
+
+  String get otherUserAmountStr => FormatUtil.weiToEtherStr(otherUserAmount) ?? '0';
+
+  String get totalAmountStr => FormatUtil.weiToEtherStr(totalAmount) ?? '0';
+
+  String get amountStr => FormatUtil.weiToEtherStr(amount) ?? '0';
 
   RpOpenRecordEntity(
     this.address,

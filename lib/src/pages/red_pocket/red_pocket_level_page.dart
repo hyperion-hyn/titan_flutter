@@ -420,6 +420,13 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
   _selectedLevelAction(LevelRule model) {
     if (_currentLevel > model.level && _currentLevel > 0) {
+      if (_currentLevel == 5) {
+        Fluttertoast.showToast(
+          msg: '当前量级已经是最高量级！',
+          gravity: ToastGravity.CENTER,
+        );
+        return;
+      }
       Fluttertoast.showToast(
         msg: '升级的量级不能小于当前量级, 请重新选择！',
         gravity: ToastGravity.CENTER,
@@ -487,6 +494,14 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   }
 
   _navToLevelUpgradeAction() {
+    if (_currentLevel == 5) {
+      Fluttertoast.showToast(
+        msg: '当前量级已经是最高量级！',
+        gravity: ToastGravity.CENTER,
+      );
+      return;
+    }
+
     if (_currentSelectedLevelRule == null) {
       Fluttertoast.showToast(
         msg: '请先选择想要升级的量级！',
