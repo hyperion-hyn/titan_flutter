@@ -313,7 +313,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                       right: 16,
                     ),
                     child: Text(
-                      '提示：因你还没有推荐人，系统将为你随机设定一个量级4以上的账户地址为推荐人',
+                      // todo: 配置量级4
+                      '提示：因你还没有推荐人，系统将为你随机设定一个量级${levelValueToLevelName(4)}以上的账户地址为推荐人',
                       style: TextStyle(
                         color: HexColor('#C3A16D'),
                         fontSize: 12,
