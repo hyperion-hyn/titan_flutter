@@ -234,22 +234,22 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                                 children: [
                                   Image.asset(
                                     'res/drawable/ic_rp_level_down.png',
-                                    width: 20,
+                                    width: 15,
                                   ),
                                   SizedBox(
-                                    width: 2,
+                                    width: 4,
                                   ),
                                   Expanded(
                                     child: Text(
                                       '等级下降了',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 13,
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 4,
+                                    width: 6,
                                   ),
                                 ],
                               ),
