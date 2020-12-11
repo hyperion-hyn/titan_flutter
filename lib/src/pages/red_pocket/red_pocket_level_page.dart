@@ -131,7 +131,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
         child: Row(
           children: [
             Text(
-              // TODO: 5% 服务器返回
+              // todo: 配置 5% 服务器返回
               '当前流通 ${_promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '--'} RP，百分比Y = ${_promotionRuleEntity?.supplyInfo?.promotionSupplyRatioStr ?? '--'}%（5%单位粒度）',
               style: TextStyle(
                 color: HexColor('#333333'),

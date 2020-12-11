@@ -292,7 +292,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
       return;
     }
 
-    if (_myLevelInfo?.currentLevel ?? 0 == 0) {
+    if ((_myLevelInfo?.currentLevel ?? 0) == 0) {
       Fluttertoast.showToast(
         msg: '请先升级！',
         gravity: ToastGravity.CENTER,
