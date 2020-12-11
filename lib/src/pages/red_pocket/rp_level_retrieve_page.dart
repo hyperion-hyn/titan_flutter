@@ -36,8 +36,7 @@ class RpLevelRetrievePage extends StatefulWidget {
 class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
   TextEditingController _textEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  double minTotal = 0;
-  double remainTotal = 0;
+
   RpPromotionRuleEntity _promotionRuleEntity;
 
   int get _currentLevel => widget?.rpMyLevelInfo?.currentLevel ?? 0;
@@ -61,6 +60,52 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
   var _address = "";
+
+  bool _isLoading = false;
+
+  Decimal get _inputValue =>
+      Decimal.tryParse(
+        _textEditingController?.text ?? '0',
+      ) ??
+      Decimal.zero;
+
+  int get _toLevel {
+    var holding = Decimal.tryParse(
+          widget?.rpMyLevelInfo?.currentHoldingStr ?? '0',
+        ) ??
+        Decimal.zero;
+
+    var remainHolding = holding - _inputValue;
+    var needHolding = Decimal.tryParse(
+          _currentLevelRule?.holdingStr ?? '0',
+        ) ??
+        Decimal.zero;
+    var level = 0;
+
+    // 1.先和当前量级需持币比较
+    if ((needHolding > Decimal.zero) && (remainHolding > Decimal.zero) && (remainHolding >= needHolding)) {
+      level = _currentLevel;
+    } else {
+      // 2.不然，从筛选出对应下降量级
+      var filterDataList = _staticDataList.where((element) => element.level < _currentLevel).toList().reversed.toList();
+      if (filterDataList?.isNotEmpty ?? false) {
+        level = filterDataList.firstWhere((levelRule) {
+              var holding = Decimal.tryParse(
+                    levelRule.holdingStr ?? '0',
+                  ) ??
+                  Decimal.zero;
+              print(
+                  '[_getLevelByHolding] inputValue: $_inputValue， holding $holding level ${levelRule.level}, remainHolding $remainHolding');
+
+              return remainHolding >= holding;
+            })?.level ??
+            0;
+      }
+    }
+    print('[_getLevelByHolding] inputValue: $_inputValue， level：$level');
+
+    return level;
+  }
 
   @override
   void initState() {
@@ -296,24 +341,8 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
     });
   }
 
-  bool _isLoading = false;
-  int _toLevel;
   _showAlertView() {
-    var inputValue = Decimal.tryParse(
-          _textEditingController?.text,
-        ) ??
-        Decimal.fromInt(0);
-    var holding = Decimal.tryParse(
-          widget?.rpMyLevelInfo?.currentHoldingStr ?? '0',
-        ) ??
-        Decimal.fromInt(0);
-
-    var remainHolding = holding - inputValue;
-
-    var toLevelAfterWithdraw = _getLevelByHolding(remainHolding);
-    _toLevel = toLevelAfterWithdraw;
-
-    if (toLevelAfterWithdraw == _currentLevel) {
+    if (_toLevel == _currentLevel) {
       _retrieveAction(false);
       return;
     }
@@ -326,7 +355,6 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
           '取消',
           () {
             Navigator.pop(context, true);
-            //_retrieveAction(true);
           },
           width: 115,
           height: 36,
@@ -335,9 +363,6 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
           fontColor: DefaultColors.color333,
           btnColor: [Colors.transparent],
         ),
-        // SizedBox(
-        //   width: 10,
-        // ),
         ClickOvalButton(
           '确认取回',
           () {
@@ -351,7 +376,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
         ),
       ],
       content:
-          '您要取回${inputValue}RP到钱包，当前持币量级${levelValueToLevelName(_currentLevel)}，您的量级将掉到量级${levelValueToLevelName(toLevelAfterWithdraw)}，请谨慎操作',
+          '您要取回${_inputValue}RP到钱包，当前持币量级${levelValueToLevelName(_currentLevel)}，您的量级将掉到量级${levelValueToLevelName(_toLevel)}，请谨慎操作',
       isInputValue: false,
     );
   }
@@ -399,31 +424,13 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
         });
       }
     } catch (e) {
-      LogUtil.toastException(e);
-
       if (mounted) {
+        LogUtil.toastException(e);
+
         setState(() {
           _isLoading = false;
         });
       }
     }
-  }
-
-  _getLevelByHolding(Decimal value) {
-    var level = 0;
-    if (_staticDataList.isNotEmpty) {
-      for (int i = 0; i < _staticDataList.length - 1; i++) {
-        var levelRule = _staticDataList[i];
-        var holding = Decimal.tryParse(
-              levelRule.holdingStr ?? '0',
-            ) ??
-            Decimal.fromInt(0);
-        if (value >= holding) {
-          level = levelRule.level;
-        }
-        print('[_getLevelByHolding] value: $value holding $holding level $level holding ${levelRule.holding}');
-      }
-    }
-    return level;
   }
 }

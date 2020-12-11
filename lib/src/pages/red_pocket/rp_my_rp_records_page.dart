@@ -164,9 +164,6 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
 
     return InkWell(
       onTap: () {
-        // WalletShowAccountInfoPage.jumpToAccountInfoPage(
-        //     context, model?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
-
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -220,7 +217,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                           ),
                         ),
                         Text(
-                          '${S.of(context).rp_total_pretext} ${model?.totalAmountStr??'0'} RP',
+                          '${S.of(context).rp_total_pretext} ${model?.totalAmountStr ?? '0'} RP',
                           style: TextStyle(
                             color: HexColor("#999999"),
                             fontSize: 12,
@@ -236,7 +233,6 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                       height: 6,
                     ),
                     Text(
-
                       createdAtStr,
                       style: TextStyle(
                         fontSize: 10,
@@ -258,7 +254,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        '+ ${model?.amountStr??'0'} RP',
+                        model.luck == 0 ? '0 RP' : '+ ${model?.amountStr ?? '0'} RP',
                         style: TextStyle(
                           color: HexColor("#333333"),
                           fontSize: 14,
@@ -311,8 +307,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   }
 
   void getMoreNetworkData() async {
-
-    if (_currentPageKey?.isEmpty??true) {
+    if (_currentPageKey?.isEmpty ?? true) {
       _loadDataBloc.add(LoadMoreEmptyEvent());
       return;
     }

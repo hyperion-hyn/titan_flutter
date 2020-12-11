@@ -479,7 +479,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
       detailStr = '燃烧 ${model.burningStr} RP，增持 ${model.holdingStr} RP';
       isShowState = true;
     } else if (recordType == 4) {
-      detailStr = '燃烧 ${model.burningStr} RP';
+      detailStr = '燃烧 ${model.burningStr} RP，增持 ${model.holdingStr} RP';
       isShowState = true;
     } else if (recordType == 5) {
       detailStr = '增持 ${model.holdingStr} RP';

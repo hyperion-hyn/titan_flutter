@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
@@ -16,6 +17,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_miners_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -43,12 +45,16 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   var _address = "";
 
   List<RpOpenRecordEntity> _dataList = List();
+  List<RpOpenRecordEntity> get _filterDataList => _dataList.where((element) => element.role == 3).toList();
+  List<RpOpenRecordEntity> get _manageDataList => _dataList.where((element) => element.role != 3).toList();
+
   RpOpenRecordEntity _detailEntity;
 
-  // int _rpType = Random().nextInt(3);
   int get _rpType => _detailEntity?.type ?? 0;
 
   String _currentPageKey;
+  String _manageFeeAmount = '-- RP';
+  bool get _txHashIsEmpty => (_detailEntity?.txHash ?? '').isEmpty;
 
   @override
   void initState() {
@@ -80,9 +86,9 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         backgroundColor: HexColor('#F8F8F8'),
         actions: <Widget>[
           FlatButton(
-            onPressed: _navToDetailAction,
+            onPressed: _txHashIsEmpty ? null : _navToDetailAction,
             child: Text(
-              (_detailEntity?.txHash ?? '').isEmpty ? '' : '查看交易',
+              _txHashIsEmpty ? '' : '查看交易',
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
@@ -95,8 +101,6 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       body: _pageView(),
     );
   }
-
-
 
   _pageView() {
     return LoadDataContainer(
@@ -137,7 +141,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     }
     print("[$runtimeType] _infoDetailBuilder, rpType:$_rpType");
 
-    var amount = '${_detailEntity?.amountStr ?? '0'} RP';
+    var amount = '-- RP';
 
     switch (_rpType) {
       case 0:
@@ -147,11 +151,13 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       case 1:
         title = '量级红包';
         subTitle = '（量级${_detailEntity?.to}）';
-        amount = '${_detailEntity?.amount} RP';
+        amount = '${_detailEntity?.amountStr ?? '0'} RP';
         break;
 
       case 2:
         title = '晋升红包';
+
+        amount = _detailEntity.luck == 0 ? '0 RP' : '${_detailEntity?.amountStr ?? '0'} RP';
         break;
 
       default:
@@ -255,7 +261,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '量级$from - 量级$to',
+                      '量级$from -> 量级$to',
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 10,
@@ -404,34 +410,43 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         ),
       );
     } else {
+      var childCount = _rpType == 0 ? _filterDataList.length : _filterDataList.length + 1;
       return SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
-            if ((index + 1) == _dataList.length && _rpType == 1) {
-              return _defaultItem(index);
-            }
             return _itemBuilder(index);
           },
-          childCount: _dataList.length,
+          childCount: childCount,
         ),
       );
     }
   }
 
   Widget _itemBuilder(int index) {
-    var model = _dataList[index];
+    if (index == _filterDataList.length) {
+      switch (_rpType) {
+        case 1:
+          return _levelWidget();
+
+          break;
+
+        case 2:
+          return _promotionWidget();
+          break;
+      }
+    }
+
+    var model = _filterDataList[index];
 
     var role = '';
     switch (model.role) {
-
       case 1:
-      //desc = '量级不足，错过机会';
+        //desc = '量级不足，错过机会';
 
         role = '燃烧';
         break;
 
       case 2:
-
         role = '管理费';
         break;
 
@@ -474,11 +489,10 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         break;
     }
 
+    var amount = model.luck == 0 ? '0 RP' : '${model?.amountStr ?? '0'} RP';
+
     return InkWell(
-      onTap: () {
-        _navToDetailAction();
-        //AtlasApi.goToHynScanPage(context, beach32Address);
-      },
+      onTap: _txHashIsEmpty ? null : _navToDetailAction,
       child: Padding(
         padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
         child: Container(
@@ -567,7 +581,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        '+ ${model?.amountStr ?? '0'} RP',
+                        amount,
                         style: TextStyle(
                           color: HexColor("#333333"),
                           fontSize: 14,
@@ -599,7 +613,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     );
   }
 
-  Widget _defaultItem(int index) {
+  Widget _levelWidget() {
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
       child: Container(
@@ -691,8 +705,102 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     );
   }
 
+  Widget _promotionWidget() {
+    var _totalAmount = Decimal.fromInt(0);
+    _manageDataList.forEach((item) {
+      var bigIntValue = BigInt.tryParse(item.amount) ?? BigInt.from(0);
+      Decimal valueByDecimal = ConvertTokenUnit.weiToEther(
+        weiBigInt: bigIntValue,
+      );
+      _totalAmount = _totalAmount + valueByDecimal;
+    });
+    _manageFeeAmount = FormatUtil.stringFormatCoinNum(_totalAmount.toString()) + 'RP';
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 12,
+        ),
+        decoration: BoxDecoration(
+          color: HexColor('#FFFFFF'),
+          borderRadius: BorderRadius.all(
+            Radius.circular(6.0),
+          ), //设置四周圆角 角度
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(
+                right: 10,
+              ),
+              child: Image.asset(
+                'res/drawable/red_pocket_default_icon.png',
+                width: 32,
+                height: 32,
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 6,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                        child: Text(
+                          '燃烧 + 管理费',
+                          style: TextStyle(
+                            color: HexColor("#333333"),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            //Spacer(),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 12,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      _manageFeeAmount,
+                      style: TextStyle(
+                        color: HexColor("#333333"),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 3,
+                      textAlign: TextAlign.right,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   _navToDetailAction() {
-    if ((_detailEntity?.txHash ?? '').isEmpty) return;
+    if (_txHashIsEmpty) return;
 
     WalletShowAccountInfoPage.jumpToAccountInfoPage(
       context,
@@ -702,9 +810,13 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 
   void getNetworkData() async {
-    _dataList.clear();
-
     try {
+      _detailEntity = await _rpApi.getMyRpOpenInfo(
+        _address,
+        _detailEntity?.redPocketId ?? 0,
+        _detailEntity?.type ?? 0,
+      );
+
       var netData = await _rpApi.getMySlitRpRecordList(
         _address,
         pagingKey: _currentPageKey,
@@ -714,6 +826,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
         _dataList = netData.data;
+
         if (mounted) {
           setState(() {
             _loadDataBloc.add(RefreshSuccessEvent());
@@ -724,17 +837,6 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       }
     } catch (e) {
       _loadDataBloc.add(LoadFailEvent());
-    }
-
-    _detailEntity = await _rpApi.getMyRpOpenInfo(
-      _address,
-      _detailEntity?.redPocketId ?? 0,
-      _detailEntity?.type ?? 0,
-    );
-    if (mounted) {
-      setState(() {
-        _loadDataBloc.add(RefreshSuccessEvent());
-      });
     }
   }
 
