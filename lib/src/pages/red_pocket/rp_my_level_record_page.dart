@@ -482,8 +482,6 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     if (recordStatus == 0) {
       statusHint = '待确认';
       statusColor = HexColor('#FFE4B300');
-      levelTo = null;
-      levelFrom = null;
     } else if (recordStatus == 1) {
       statusHint = '已确认';
       statusColor = HexColor('#FF999999');
