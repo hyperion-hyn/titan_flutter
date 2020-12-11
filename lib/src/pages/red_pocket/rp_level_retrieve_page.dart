@@ -107,6 +107,18 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
     return level;
   }
 
+  TextStyle _lightTextStyle = TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+    color: HexColor('#333333'),
+  );
+
+  TextStyle _greyTextStyle = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 12,
+    color: HexColor('#999999'),
+  );
+
   @override
   void initState() {
     super.initState();
@@ -129,45 +141,6 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
     _loadDataBloc.close();
     super.dispose();
   }
-
-  Future getNetworkData() async {
-    try {
-      var netData = await _rpApi.getRPPromotionRule(_address);
-
-      if (netData?.static?.isNotEmpty ?? false) {
-        _promotionRuleEntity = netData;
-        print("[$runtimeType] getNetworkData, count:${_staticDataList.length}");
-
-        if (mounted) {
-          setState(() {
-            _loadDataBloc.add(RefreshSuccessEvent());
-          });
-        }
-      } else {
-        _loadDataBloc.add(LoadEmptyEvent());
-      }
-    } catch (e) {
-      LogUtil.toastException(e);
-
-      if (mounted) {
-        setState(() {
-          _loadDataBloc.add(RefreshFailEvent());
-        });
-      }
-    }
-  }
-
-  TextStyle _lightTextStyle = TextStyle(
-    fontWeight: FontWeight.w500,
-    fontSize: 14,
-    color: HexColor('#333333'),
-  );
-
-  TextStyle _greyTextStyle = TextStyle(
-    fontWeight: FontWeight.normal,
-    fontSize: 12,
-    color: HexColor('#999999'),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -429,6 +402,33 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
 
         setState(() {
           _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future getNetworkData() async {
+    try {
+      var netData = await _rpApi.getRPPromotionRule(_address);
+
+      if (netData?.static?.isNotEmpty ?? false) {
+        _promotionRuleEntity = netData;
+        print("[$runtimeType] getNetworkData, count:${_staticDataList.length}");
+
+        if (mounted) {
+          setState(() {
+            _loadDataBloc.add(RefreshSuccessEvent());
+          });
+        }
+      } else {
+        _loadDataBloc.add(LoadEmptyEvent());
+      }
+    } catch (e) {
+      if (mounted) {
+        LogUtil.toastException(e);
+
+        setState(() {
+          _loadDataBloc.add(RefreshFailEvent());
         });
       }
     }
