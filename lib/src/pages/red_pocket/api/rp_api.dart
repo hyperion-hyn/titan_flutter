@@ -398,6 +398,7 @@ class RPApi {
   }
 
   Future<dynamic> postRpWithdraw({
+    int toLevel,
     BigInt withdrawAmount,
     String password = '',
     WalletVo activeWallet,
@@ -424,6 +425,7 @@ class RPApi {
           "address": address,
           "withdraw": withdrawAmount.toString(),
           "raw_tx": rawTxHash,
+          "to": toLevel,
         },
         options: RequestOptions(contentType: "application/json"));
   }
