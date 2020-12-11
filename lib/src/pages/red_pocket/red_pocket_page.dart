@@ -398,7 +398,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                             height: 2,
                           ),
                           Text(
-                            currentLevel != 5 ? '去升级' : '去查看',
+                            currentLevel < 5 ? '去升级' : '去查看',
                             style: TextStyle(
                               color: Colors.blue,
                             ),
