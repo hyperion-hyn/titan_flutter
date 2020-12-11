@@ -294,169 +294,156 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     ),
                   ],
                 ),
-                InkWell(
-                  onTap: _navToLevel,
-                  child: Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          InkWell(
-                            onTap: _navToLevel,
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 0,
-                                    right: 0,
-                                    top: 16,
-                                    bottom: 10,
-                                  ),
-                                  child: Container(
-                                    height: 0.5,
-                                    color: HexColor('#F2F2F2'),
-                                  ),
+                Stack(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: _navToLevel,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 0,
+                                  right: 0,
+                                  top: 16,
+                                  bottom: 10,
                                 ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      '持币量级',
-                                      style: TextStyle(
-                                        color: HexColor('#333333'),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                                child: Container(
+                                  height: 0.5,
+                                  color: HexColor('#F2F2F2'),
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    '持币量级',
+                                    style: TextStyle(
+                                      color: HexColor('#333333'),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 8,
-                                      ),
-                                      child: Text(
-                                        '当前持币 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
-                                        style: TextStyle(
-                                          color: HexColor('#999999'),
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Image.asset(
-                                  "res/drawable/ic_rp_level_$currentLevel.png",
-                                  height: 100,
-                                ),
-                                Text(
-                                  currentLevel != 5 ? '去升级' : '去查看',
-                                  style: TextStyle(
-                                    color: Colors.blue,
                                   ),
-                                ),
-                                if (currentLevel == 0)
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                      top: 20,
-                                      left: 50,
-                                      right: 50,
+                                      left: 8,
                                     ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
+                                    child: Text(
+                                      '当前持币 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
+                                      style: TextStyle(
+                                        color: HexColor('#999999'),
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Image.asset(
+                                "res/drawable/ic_rp_level_$currentLevel.png",
+                                height: 100,
+                              ),
+                              Text(
+                                currentLevel != 5 ? '去升级' : '去查看',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                ),
+                              ),
+                              if (currentLevel == 0)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 20, left: 50, right: 50, bottom: 8),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 4,
+                                        ),
+                                        child: Image.asset(
+                                          'res/drawable/error_rounded.png',
+                                          width: 15,
+                                          height: 15,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Padding(
                                           padding: const EdgeInsets.only(
-                                            top: 4,
+                                            left: 4,
                                           ),
-                                          child: Image.asset(
-                                            'res/drawable/error_rounded.png',
-                                            width: 15,
-                                            height: 15,
+                                          child: Text(
+                                            '当前量级为0级，不能获得空投红包，请尽快升级',
+                                            style: TextStyle(
+                                              color: HexColor('#333333'),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              height: 1.5,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.center,
                                           ),
                                         ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 4,
-                                            ),
-                                            child: Text(
-                                              '当前量级为0级，不能获得空投红包，请尽快升级',
-                                              style: TextStyle(
-                                                color: HexColor('#333333'),
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                height: 1.5,
-                                              ),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                SizedBox(
-                                  height: 16,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: double.infinity,
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: _toolTipColumn(
-                                    rpBalanceStr,
-                                    '全网已发行量',
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                Expanded(
-                                  child: _toolTipColumn(
-                                    rpBalanceStr,
-                                    '全网持币',
-                                  ),
-                                ),
-                                Expanded(
-                                  child: _toolTipColumn(
-                                    rpBalanceStr,
-                                    '全网燃烧',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (isShowDowngrade)
-                        Positioned(
-                          top: 70,
-                          right: 36,
-                          child: Container(
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'res/drawable/ic_rp_level_down.png',
-                                  width: 20,
-                                ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                Container(
-                                  width: 45,
-                                  child: Text(
-                                    '等级下降了',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )
-                              ],
-                            ),
+                              SizedBox(
+                                height: 16,
+                              ),
+                            ],
                           ),
                         ),
-                    ],
-                  ),
+                        Container(
+                          width: double.infinity,
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: _toolTipColumn(
+                                    rpBalanceStr, '全网已发行量', '全网已发行量'),
+                              ),
+                              Expanded(
+                                child: _toolTipColumn(
+                                    rpBalanceStr, '全网持币', '全网持币'),
+                              ),
+                              Expanded(
+                                child: _toolTipColumn(
+                                    rpBalanceStr, '全网燃烧', '全网燃烧'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (isShowDowngrade)
+                      Positioned(
+                        top: 70,
+                        right: 36,
+                        child: Container(
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                'res/drawable/ic_rp_level_down.png',
+                                width: 20,
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Container(
+                                width: 45,
+                                child: Text(
+                                  '等级下降了',
+                                  textAlign: TextAlign.center,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -880,43 +867,62 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   Widget _toolTipColumn(
     String content,
     String subContent,
+    String toolTipMsg,
   ) {
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                content,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: DefaultColors.color999,
-                  fontWeight: FontWeight.w500,
+    GlobalKey _toolTipKey = GlobalKey();
+    return InkWell(
+      onTap: () {
+        final dynamic tooltip = _toolTipKey.currentState;
+        tooltip.ensureTooltipVisible();
+      },
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  content,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: DefaultColors.color999,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 4.0,
-              ),
-              Text(
-                subContent,
-                style: TextStyle(
-                  fontSize: 8,
-                  color: DefaultColors.color999,
+                SizedBox(
+                  height: 4.0,
                 ),
-              ),
-            ],
+                Row(
+                  children: [
+                    Spacer(),
+                    Text(
+                      subContent,
+                      style: TextStyle(
+                        fontSize: 8,
+                        color: DefaultColors.color999,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 2,
+                    ),
+                    Tooltip(
+                      key: _toolTipKey,
+                      verticalOffset: 16,
+                      message: toolTipMsg,
+                      child: Image.asset(
+                        'res/drawable/ic_tooltip.png',
+                        width: 10,
+                        height: 10,
+                      ),
+                    ),
+                    Spacer(),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        Tooltip(
-          message: "Hello World",
-          child: Image.asset(
-            'res/drawable/ic_tooltip.png',
-            width: 10,
-            height: 10,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
