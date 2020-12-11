@@ -388,7 +388,8 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
         withdrawAmount: withdrawAmount,
         activeWallet: _activeWallet,
         password: password,
-        toLevel: _toLevel,
+        from: _currentLevel,
+        to: _toLevel,
       );
       Navigator.pop(context, true);
 

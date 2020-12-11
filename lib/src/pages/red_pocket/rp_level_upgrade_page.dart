@@ -401,7 +401,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     Future.delayed(Duration(milliseconds: 111)).then((_) async {
       try {
         await _rpApi.postRpDepositAndBurn(
-          level: widget.levelRule.level,
+          from: _myLevelInfo?.currentLevel ?? 0,
+          to: widget.levelRule.level,
           depositAmount: depositAmount,
           burningAmount: burningAmount,
           activeWallet: _activatedWallet,

@@ -515,6 +515,9 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
 
     return InkWell(
       onTap: () {
+        if ((model?.state ?? 0) == 0) {
+          return;
+        }
         _navToTxDetail(txHash);
       },
       child: Stack(

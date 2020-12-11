@@ -357,7 +357,8 @@ class RPApi {
 
   ///预提交升级
   Future<dynamic> postRpDepositAndBurn({
-    int level,
+    int from,
+    int to,
     BigInt depositAmount,
     BigInt burningAmount,
     String password = '',
@@ -390,7 +391,8 @@ class RPApi {
           "address": address,
           "burning": burningAmount.toString(),
           "holding": depositAmount.toString(),
-          "level": level,
+          "from": from,
+          "to": to,
           // "tx_hash": txHash,
           'raw_tx': rawTxHash,
         },
@@ -398,7 +400,8 @@ class RPApi {
   }
 
   Future<dynamic> postRpWithdraw({
-    int toLevel,
+    int from,
+    int to,
     BigInt withdrawAmount,
     String password = '',
     WalletVo activeWallet,
@@ -425,7 +428,8 @@ class RPApi {
           "address": address,
           "withdraw": withdrawAmount.toString(),
           "raw_tx": rawTxHash,
-          "to": toLevel,
+          "from": from,
+          "to": to,
         },
         options: RequestOptions(contentType: "application/json"));
   }

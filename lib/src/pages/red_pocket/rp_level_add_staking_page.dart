@@ -325,7 +325,8 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
     Future.delayed(Duration(milliseconds: 111)).then((_) async {
       try {
         await _rpApi.postRpDepositAndBurn(
-          level: _myLevelInfo?.currentLevel ?? 0,
+          from: _myLevelInfo?.currentLevel ?? 0,
+          to: _myLevelInfo?.currentLevel ?? 0,
           depositAmount: depositAmount,
           burningAmount: burningAmount,
           activeWallet: _activatedWallet,
