@@ -60,7 +60,8 @@ class ShowAccountHynPage extends StatefulWidget {
   }
 }
 
-class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with RouteAware {
+class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
+    with RouteAware {
   DateFormat _dateFormat = new DateFormat("HH:mm MM/dd");
 
   AccountTransferService _accountTransferService = AccountTransferService();
@@ -92,7 +93,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
-    if(!HYNApi.isHynHrc30ContractAddress(widget.coinVo.contractAddress)){
+    if (!HYNApi.isHynHrc30ContractAddress(widget.coinVo.contractAddress)) {
       getWhiteList();
     }
   }
@@ -142,11 +143,12 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
   @override
   Widget build(BuildContext context) {
     //activated quote sign
-    ActiveQuoteVoAndSign activeQuoteVoAndSign =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+    ActiveQuoteVoAndSign activeQuoteVoAndSign = WalletInheritedModel.of(context)
+        .activatedQuoteVoAndSign(widget.coinVo.symbol);
 
     var coinVo =
-        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).getCoinVoBySymbol(widget.coinVo.symbol);
+        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
+            .getCoinVoBySymbol(widget.coinVo.symbol);
 
     return Scaffold(
         appBar: AppBar(
@@ -163,8 +165,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
           ),
         ),
         body: BlocListener<WalletCmpBloc, WalletCmpState>(
-          listener: (context, state) {
-          },
+          listener: (context, state) {},
           child: Container(
             color: Colors.white,
             child: LoadDataContainer(
@@ -181,7 +182,8 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
                         child: Column(
                           children: <Widget>[
                             Padding(
-                              padding: const EdgeInsets.only(top: 32, bottom: 24),
+                              padding:
+                                  const EdgeInsets.only(top: 32, bottom: 24),
                               child: Container(
                                 alignment: Alignment.center,
                                 width: 80,
@@ -191,35 +193,46 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
                             ),
                             Text(
                               "${FormatUtil.coinBalanceHumanReadFormat(coinVo)} ${coinVo.symbol}",
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coinVo) * (activeQuoteVoAndSign?.quoteVo?.price ?? 0))}",
-                                style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
+                                style: TextStyle(
+                                    fontSize: 14, color: Color(0xFF6D6D6D)),
                               ),
                             ),
                             Container(
                               height: 61,
                               padding: const EdgeInsets.symmetric(vertical: 13),
-                              margin: const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 34),
+                              margin: const EdgeInsets.only(
+                                  right: 16, left: 16, bottom: 16, top: 34),
                               decoration: BoxDecoration(
                                 color: DefaultColors.colorf8f8f8,
-                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8.0)),
                               ),
                               child: IntrinsicHeight(
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   children: <Widget>[
                                     InkWell(
                                       onTap: () async {
-                                        if(widget.coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol){
-                                          Fluttertoast.showToast(msg: S.of(context).feature_available_soon);
-                                          return;
-                                        }
-                                        
+                                        // if (widget.coinVo.symbol ==
+                                        //     SupportedTokens
+                                        //         .HYN_RP_HRC30.symbol) {
+                                        //   Fluttertoast.showToast(
+                                        //       msg: S
+                                        //           .of(context)
+                                        //           .feature_available_soon);
+                                        //   return;
+                                        // }
+
                                         shouldRefresh = true;
                                         Application.router.navigateTo(
                                             context,
@@ -243,7 +256,9 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
                                           ),
                                           Text(
                                             S.of(context).send,
-                                            style: TextStyle(color: DefaultColors.color333, fontSize: 14),
+                                            style: TextStyle(
+                                                color: DefaultColors.color333,
+                                                fontSize: 14),
                                           )
                                         ],
                                       ),
@@ -255,12 +270,20 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        if(widget.coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol){
-                                          Fluttertoast.showToast(msg: S.of(context).feature_available_soon);
-                                          return;
-                                        }
-                                        Navigator.push(context,
-                                            MaterialPageRoute(builder: (context) => WalletReceivePage(coinVo)));
+                                        // if (widget.coinVo.symbol ==
+                                        //     SupportedTokens
+                                        //         .HYN_RP_HRC30.symbol) {
+                                        //   Fluttertoast.showToast(
+                                        //       msg: S
+                                        //           .of(context)
+                                        //           .feature_available_soon);
+                                        //   return;
+                                        // }
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    WalletReceivePage(coinVo)));
                                       },
                                       child: Row(
                                         children: <Widget>[
@@ -279,7 +302,9 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
                                           ),
                                           Text(
                                             S.of(context).receiver,
-                                            style: TextStyle(color: DefaultColors.color333, fontSize: 14),
+                                            style: TextStyle(
+                                                color: DefaultColors.color333,
+                                                fontSize: 14),
                                           )
                                         ],
                                       ),
@@ -293,14 +318,40 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
                                       builder: (BuildContext context) {
                                         return InkWell(
                                           onTap: () {
-                                            if (widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol) {
+                                            if ((widget.coinVo.symbol ==
+                                                SupportedTokens
+                                                    .HYN_Atlas.symbol) ||
+                                                (widget.coinVo.symbol ==
+                                                    SupportedTokens
+                                                        .HYN_RP_HRC30.symbol)
+                                            ) {
+
+                                              var base = 'USDT';
+                                              var quote = 'HYN';
+                                              if (widget.coinVo.symbol ==
+                                                  SupportedTokens
+                                                      .HYN_RP_HRC30.symbol) {
+                                                base = 'HYN';
+                                                quote = 'RP';
+                                              }
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                      builder: (context) => ExchangeDetailPage(
-                                                          selectedCoin: 'USDT', exchangeType: ExchangeType.BUY)));
+                                                      builder: (context) =>
+                                                          ExchangeDetailPage(
+                                                            base: base,
+                                                            quote: quote,
+                                                            exchangeType:
+                                                                ExchangeType
+                                                                    .BUY,
+                                                          )));
                                             } else {
-                                              Fluttertoast.showToast(msg: S.of(context).exchange_is_not_yet_open(widget.coinVo.symbol));
+                                              Fluttertoast.showToast(
+                                                  msg: S
+                                                      .of(context)
+                                                      .exchange_is_not_yet_open(
+                                                          widget
+                                                              .coinVo.symbol));
                                             }
                                             /*Clipboard.setData(ClipboardData(text: coinVo.address));
                                             Scaffold.of(context)
@@ -349,7 +400,8 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
                               return SizedBox.shrink();
                             } else {
                               var currentTransactionDetail = dataList[index];
-                              return _buildTransactionItem(context, currentTransactionDetail);
+                              return _buildTransactionItem(
+                                  context, currentTransactionDetail);
                             }
                           },
                           itemCount: max<int>(0, dataList.length),
@@ -361,7 +413,8 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
         ));
   }
 
-  Widget _buildTransactionItem(BuildContext context, TransactionDetailVo transactionDetail) {
+  Widget _buildTransactionItem(
+      BuildContext context, TransactionDetailVo transactionDetail) {
     var iconPath;
     var title = "";
     var titleColor = DefaultColors.color333;
@@ -369,12 +422,14 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
     var amountColor;
     var amountText = "";
     var amountSubText = "";
-    amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)} ${transactionDetail.symbol}";
+    amountText =
+        "${FormatUtil.formatCoinNum(transactionDetail.amount)} ${transactionDetail.symbol}";
 
     if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
       amountText =
           "${HYNApi.getValueByHynType(transactionDetail.hynType, transactionDetail: transactionDetail, getAmountStr: true, isWallet: true)}";
-      amountSubText = " ${HYNApi.getValueByHynType(transactionDetail.hynType, getTypeStr: true, isWallet: true)}";
+      amountSubText =
+          " ${HYNApi.getValueByHynType(transactionDetail.hynType, getTypeStr: true, isWallet: true)}";
     } else if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       if (transactionDetail.amount > 0) {
         amountColor = HexColor("#FF259B24");
@@ -396,7 +451,8 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
         widget.coinVo,
         transactionDetail.fromAddress,
       );
-      describe = "From: " + shortBlockChainAddress(fromAddress, limitCharsLength: limitLength);
+      describe = "From: " +
+          shortBlockChainAddress(fromAddress, limitCharsLength: limitLength);
     } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
       iconPath = "res/drawable/ic_wallet_account_list_send.png";
       if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
@@ -406,15 +462,18 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
         );
 
         toAddress = _toAddress(transactionDetail);
-        describe = "To: " + shortBlockChainAddress(toAddress, limitCharsLength: limitLength);
+        describe = "To: " +
+            shortBlockChainAddress(toAddress, limitCharsLength: limitLength);
       } else {
-        describe = "To: " + shortBlockChainAddress(transactionDetail.toAddress, limitCharsLength: limitLength);
+        describe = "To: " +
+            shortBlockChainAddress(transactionDetail.toAddress,
+                limitCharsLength: limitLength);
       }
     }
 
-    if(AtlasApi.isTransferBill(transactionDetail.hynType)){
+    if (AtlasApi.isTransferBill(transactionDetail.hynType)) {
       iconPath = "res/drawable/ic_wallet_account_list_bill.png";
-    }else if(AtlasApi.isTransferMap3Atlas(transactionDetail.hynType)){
+    } else if (AtlasApi.isTransferMap3Atlas(transactionDetail.hynType)) {
       iconPath = "res/drawable/ic_wallet_account_list_map3_atlas.png";
     }
 
@@ -424,8 +483,8 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
       title = S.of(context).pending;
     } else if (transactionDetail.state == 3) {
       title = S.of(context).completed;
-      if (HYNApi.isContractTokenAddress(transactionDetail.toAddress)
-      || HYNApi.isHynHrc30ContractAddress(transactionDetail.toAddress)) {
+      if (HYNApi.isContractTokenAddress(transactionDetail.toAddress) ||
+          HYNApi.isHynHrc30ContractAddress(transactionDetail.toAddress)) {
         title = S.of(context).contract_call;
         iconPath = "res/drawable/ic_hyn_wallet_contract.png";
       }
@@ -434,7 +493,8 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
       titleColor = DefaultColors.colorf23524;
     }
 
-    var time = _dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transactionDetail.time));
+    var time = _dateFormat
+        .format(DateTime.fromMillisecondsSinceEpoch(transactionDetail.time));
 
     return Ink(
       color: Color(0xFFF5F5F5),
@@ -452,7 +512,9 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
                       context,
                       MaterialPageRoute(
                           builder: (context) => InAppWebViewContainer(
-                                initUrl: WalletConfig.BITCOIN_TRANSATION_DETAIL + transactionDetail.hash,
+                                initUrl:
+                                    WalletConfig.BITCOIN_TRANSATION_DETAIL +
+                                        transactionDetail.hash,
                                 title: '',
                               )));
                 } else {
@@ -466,8 +528,12 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
                                   isContain: _isContain(transactionDetail),
                                 )));
                   } else {
-                    var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland ?? true == true;
-                    var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
+                    var isChinaMainland = SettingInheritedModel.of(context)
+                            .areaModel
+                            ?.isChinaMainland ??
+                        true == true;
+                    var url = EtherscanApi.getTxDetailUrl(
+                        transactionDetail.hash, isChinaMainland);
                     if (url != null) {
                       Navigator.push(
                           context,
@@ -502,8 +568,10 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
                             children: <Widget>[
                               Text(
                                 amountText,
-                                style:
-                                    TextStyle(color: DefaultColors.color333, fontSize: 16, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    color: DefaultColors.color333,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
                               ),
                               if (amountSubText.isNotEmpty)
                                 Text(
@@ -516,7 +584,10 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
                               Spacer(),
                               Text(
                                 title,
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: titleColor),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: titleColor),
                               ),
                             ],
                           ),
@@ -526,10 +597,13 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
                           Row(
                             children: <Widget>[
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
                                 child: Text(
                                   describe,
-                                  style: TextStyle(fontSize: 14, color: DefaultColors.color999),
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: DefaultColors.color999),
                                 ),
                               ),
                               Spacer(),
@@ -577,15 +651,16 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
       retList.add('header');
 
       //update balance
-      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent(
+      BlocProvider.of<WalletCmpBloc>(context)
+          .add(UpdateActivatedWalletBalanceEvent(
         symbol: widget.coinVo.symbol,
         contractAddress: widget.coinVo.contractAddress,
       ));
     }
 
-    List<TransactionDetailVo> transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
+    List<TransactionDetailVo> transferList =
+        await _accountTransferService.getTransferList(widget.coinVo, page);
     retList.addAll(transferList);
     return retList;
   }
-
 }

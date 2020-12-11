@@ -820,12 +820,18 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
     if (rets is List && rets.length > 0) {
       mmList.clear();
       for (var ret in rets) {
+        var rp = Decimal.zero;
+        try {
+          rp = Decimal.parse(ret['assets']['RP']['total']);
+        } catch (e) {
+          print(e);
+        }
         var mmData = MMData(
           uid: ret['uid'],
           key: ret['key'],
           hynBalance: Decimal.parse(ret['assets']['HYN']['total']),
           usdtBalance: Decimal.parse(ret['assets']['USDT']['total']),
-          rpBalance: Decimal.parse(ret['assets']['RP']['total']),
+          rpBalance: rp,
         );
         mmList.add(mmData);
       }

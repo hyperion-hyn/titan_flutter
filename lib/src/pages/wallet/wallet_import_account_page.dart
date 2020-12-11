@@ -57,14 +57,9 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
           actions: <Widget>[
             InkWell(
               onTap: () async {
-                _openModalBottomSheet();
-                /*String mnemonicWords = await BarcodeScanner.scan();
-                if (!bip39.validateMnemonic(mnemonicWords)) {
-                  Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
-                  return;
-                } else {
-                  _mnemonicController.text = mnemonicWords;
-                }*/
+                UiUtil.showImagePickerSheet(context, callback: (String text) {
+                  _parseText(text);
+                });
               },
               child: Padding(
                 padding: const EdgeInsets.only(
@@ -75,41 +70,6 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                 ),
               ),
             ),
-            /*InkWell(
-              onTap: () async {
-                var themeColor = '#${Theme.of(context).primaryColor.value.toRadixString(16)}';
-                List<Asset> resultList = await MultiImagePicker.pickImages(
-                  maxImages: 1,
-                  enableCamera: true,
-                  cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
-                  materialOptions: MaterialOptions(
-                    actionBarColor: themeColor,
-                    actionBarTitle: "选择二维码图片",
-                    allViewTitle: "All Photos",
-                    useDetailsView: false,
-                    selectCircleStrokeColor: "#ffffff",
-                  ),
-                );
-                if(resultList.length > 0){
-                  var filePath = await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
-                  RScanResult mnemonicWords = await RScan.scanImagePath(filePath);
-                  if (mnemonicWords == null || !bip39.validateMnemonic(mnemonicWords.message)) {
-                    Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
-                    return;
-                  } else {
-                    _mnemonicController.text = mnemonicWords.message;
-                  }
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.image,
-                  size: 30,
-                  color: Colors.white,
-                ),
-              ),
-            )*/
           ],
         ),
         body: BaseGestureDetector(
@@ -319,90 +279,11 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
         ));
   }
 
-  Future _openModalBottomSheet() async {
-    final option = await showModalBottomSheet(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return Wrap(
-            children: <Widget>[
-              ListTile(
-                title: Text(S.of(context).camera_scan,
-                    textAlign: TextAlign.center),
-                onTap: () async {
-                  Future.delayed(Duration(milliseconds: 500), () {
-                    Navigator.pop(dialogContext);
-                  });
-                  String mnemonicWords = await BarcodeScanner.scan();
-                  if (!bip39.validateMnemonic(mnemonicWords)) {
-                    Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
-                  } else {
-                    _mnemonicController.text = mnemonicWords;
-                  }
-                },
-              ),
-              ListTile(
-                title: Text(S.of(context).import_from_album,
-                    textAlign: TextAlign.center),
-                onTap: () async {
-                  Future.delayed(Duration(milliseconds: 500), () {
-                    Navigator.pop(dialogContext);
-                  });
-
-                  var tempListImagePaths = await ImagePickers.pickerPaths(
-                    galleryMode: GalleryMode.image,
-                    selectCount: 1,
-                    showCamera: true,
-                    cropConfig: null,
-                    compressSize: 500,
-                    uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
-                  );
-                  if (tempListImagePaths != null &&
-                      tempListImagePaths.length == 1) {
-                    RScanResult mnemonicWords =
-                        await RScan.scanImagePath(tempListImagePaths[0].path);
-                    if (mnemonicWords == null ||
-                        !bip39.validateMnemonic(mnemonicWords.message)) {
-                      Fluttertoast.showToast(
-                          msg: S.of(context).illegal_mnemonic);
-                    } else {
-                      _mnemonicController.text = mnemonicWords.message;
-                    }
-                  }
-
-                  /*var themeColor = '#${Theme.of(context).primaryColor.value.toRadixString(16)}';
-                  List<Asset> resultList = await MultiImagePicker.pickImages(
-                    maxImages: 1,
-                    enableCamera: true,
-                    cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
-                    materialOptions: MaterialOptions(
-                      statusBarColor: themeColor,
-                      actionBarColor: themeColor,
-                      actionBarTitle: S.of(context).select_qrcode_picture,
-                      allViewTitle: S.of(context).all_picture,
-                      useDetailsView: false,
-                      selectCircleStrokeColor: "#ffffff",
-                    ),
-                  );
-
-                  if(resultList.length > 0){
-                  var filePath = await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
-                    RScanResult mnemonicWords = await RScan.scanImagePath(filePath);
-                    if (mnemonicWords == null || !bip39.validateMnemonic(mnemonicWords.message)) {
-                      Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
-                    } else {
-                      _mnemonicController.text = mnemonicWords.message;
-                    }
-                  }*/
-                },
-              ),
-              ListTile(
-                title: Text(S.of(context).cancel, textAlign: TextAlign.center),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
-        });
+  void _parseText(String text) async {
+    if (text.isEmpty || (text.isNotEmpty && !bip39.validateMnemonic(text))) {
+      Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
+    } else {
+      _mnemonicController.text = text;
+    }
   }
 }

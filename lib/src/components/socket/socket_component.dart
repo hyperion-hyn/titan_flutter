@@ -8,6 +8,7 @@ import 'package:k_chart/flutter_k_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -81,7 +82,7 @@ class _SocketState extends State<_SocketManager> {
     _bloc.setSocketChannel(_socketChannel);
 
     _socketChannel.stream.listen((data) {
-      LogUtil.printMessage('[WS]  listen..., data');
+      //LogUtil.printMessage('[WS]  listen..., data');
 
       if (!_connecting) {
         _connecting = true;
@@ -146,8 +147,9 @@ class _SocketState extends State<_SocketManager> {
   _getCacheMarketSymbolList() async {
     _marketItemList.clear();
     var sharePref = await SharedPreferences.getInstance();
-    List<String> emptyMarketItemStrList =
-        sharePref.getStringList('cache_market_item_list');
+    List<String> emptyMarketItemStrList = sharePref.getStringList(
+      PrefsKey.CACHE_MARKET_ITEM_LIST,
+    );
     emptyMarketItemStrList?.forEach((element) {
       try {
         var emptyMarketItem = MarketItemEntity.fromJson(jsonDecode(element));
@@ -213,12 +215,15 @@ class _SocketState extends State<_SocketManager> {
       var marketItemJsonStr = json.encode(MarketItemEntity(
         element.symbol,
         KLineEntity.fromCustom(),
-        symbolName: element.symbolName,
+        base: element.base,
+        quote: element.quote,
       ).toJson());
       _emptyMarketItemStrList.add(marketItemJsonStr);
     });
     await sharePref.setStringList(
-        'cache_market_item_list', _emptyMarketItemStrList);
+      PrefsKey.CACHE_MARKET_ITEM_LIST,
+      _emptyMarketItemStrList,
+    );
   }
 
   _updateMarketItemList(dynamic data, {String symbol = ''}) {
@@ -237,8 +242,8 @@ class _SocketState extends State<_SocketManager> {
             'high': double.parse(itemList[2].toString()),
             'low': double.parse(itemList[3].toString()),
             'close': double.parse(itemList[4].toString()),
-            'vol': double.parse(itemList[5].toString()),
-            'amount': double.parse(itemList[6].toString()),
+            'amount': double.parse(itemList[5].toString()),
+            'vol': double.parse(itemList[6].toString()),
             'count': 0,
             'id': int.parse(itemList[0].toString()) / 1000,
           };
@@ -267,7 +272,8 @@ class _SocketState extends State<_SocketManager> {
         var element = MarketItemEntity(
           lastElement.symbol,
           kLineDataList.first,
-          symbolName: lastElement.symbolName,
+          base: lastElement.base,
+          quote: lastElement.quote,
         );
         _marketItemList[index] = element;
       }

@@ -276,6 +276,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
   Widget build(BuildContext context) {
     if (_currentState != null || _accountDetailViewList.length == 0) {
       return Scaffold(
+        appBar: BaseAppBar(baseTitle: "Hynscan"),
         body: AllPageStateContainer(_currentState, () {
           setState(() {
             _currentState = LoadingState();

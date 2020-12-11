@@ -371,13 +371,13 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         builder: (BuildContext context) {
           return Container(
-            height: 170,
+            height: 210,
             child: Column(
               children: <Widget>[
                 _coinItem('HYN'),
                 // _coinItem('ETH'),
                 _coinItem('USDT'),
-                //   _coinItem('RP'),
+                _coinItem('RP'),
 
                 InkWell(
                   child: Padding(

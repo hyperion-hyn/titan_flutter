@@ -122,7 +122,7 @@ class HYNApi {
       gasLimit: gasLimit,
     );
 
-    logger.i('HYN transaction committed，txhash $txHash ');
+    logger.i('HYN transaction committed，value(==amount):$amount, txHash $txHash ');
     return txHash;
   }
 

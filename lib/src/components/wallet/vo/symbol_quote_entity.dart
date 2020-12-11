@@ -2,10 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'symbol_quote_entity.g.dart';
 
-
 @JsonSerializable()
 class SymbolQuoteEntity extends Object {
-
   @JsonKey(name: 'id')
   int id;
 
@@ -63,12 +61,46 @@ class SymbolQuoteEntity extends Object {
   @JsonKey(name: 'usdt_percent_change_usd24h')
   double usdtPercentChangeUsd24h;
 
-  SymbolQuoteEntity(this.id,this.createdAt,this.updatedAt,this.btcCnyPrice,this.btcUsdPrice,this.btcPercentChangeCny24h,this.btcPercentChangeUsd24h,this.ethCnyPrice,this.ethUsdPrice,this.ethPercentChangeCny24h,this.ethPercentChangeUsd24h,this.hynCnyPrice,this.hynUsdPrice,this.hynPercentChangeCny24h,this.hynPercentChangeUsd24h,this.usdtCnyPrice,this.usdtUsdPrice,this.usdtPercentChangeCny24h,this.usdtPercentChangeUsd24h,);
+  @JsonKey(name: 'rp_cny_price')
+  double rpCnyPrice;
 
-  factory SymbolQuoteEntity.fromJson(Map<String, dynamic> srcJson) => _$SymbolQuoteEntityFromJson(srcJson);
+  @JsonKey(name: 'rp_usd_price')
+  double rpUsdPrice;
+
+  @JsonKey(name: 'rp_percent_change_cny24h')
+  double rpPercentChangeCny24h;
+
+  @JsonKey(name: 'rp_percent_change_usd24h')
+  double rpPercentChangeUsd24h;
+
+  SymbolQuoteEntity(
+    this.id,
+    this.createdAt,
+    this.updatedAt,
+    this.btcCnyPrice,
+    this.btcUsdPrice,
+    this.btcPercentChangeCny24h,
+    this.btcPercentChangeUsd24h,
+    this.ethCnyPrice,
+    this.ethUsdPrice,
+    this.ethPercentChangeCny24h,
+    this.ethPercentChangeUsd24h,
+    this.hynCnyPrice,
+    this.hynUsdPrice,
+    this.hynPercentChangeCny24h,
+    this.hynPercentChangeUsd24h,
+    this.usdtCnyPrice,
+    this.usdtUsdPrice,
+    this.usdtPercentChangeCny24h,
+    this.usdtPercentChangeUsd24h,
+    this.rpCnyPrice,
+    this.rpUsdPrice,
+    this.rpPercentChangeCny24h,
+    this.rpPercentChangeUsd24h,
+  );
+
+  factory SymbolQuoteEntity.fromJson(Map<String, dynamic> srcJson) =>
+      _$SymbolQuoteEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$SymbolQuoteEntityToJson(this);
-
 }
-
-

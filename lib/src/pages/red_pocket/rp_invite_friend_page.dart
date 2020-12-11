@@ -23,8 +23,9 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:titan/src/widget/widget_shot.dart';
-
+import 'package:flutter_html/flutter_html.dart';
 import 'api/rp_api.dart';
+import 'package:flutter_html/style.dart';
 
 class RpInviteFriendPage extends StatefulWidget {
   static String shareDomain = "https://h.hyn.space/share";
@@ -58,6 +59,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
     String ethWalletAddress = activityWallet.wallet.getAtlasAccount().address;
     String walletAddress = WalletUtil.ethAddressToBech32Address(ethWalletAddress);
     String walletName = activityWallet.wallet.keystore.name;
+
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -135,6 +137,21 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                   ),
                                   SizedBox(
                                     width: 230,
+                                    child: Html(
+                                      data: S.of(context).invite_come_receive_red_pocket,
+                                      style: {
+                                        "p": Style(
+                                          textAlign: TextAlign.center
+                                        ),
+                                        "span": Style(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: FontSize(22),
+                                        )
+                                      },
+                                    ),
+                                  ),
+                                  /*SizedBox(
+                                    width: 230,
                                     child: RichText(
                                       textAlign: TextAlign.center,
                                       text: TextSpan(
@@ -163,7 +180,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                             ),
                                           ]),
                                     ),
-                                  ),
+                                  ),*/
                                   Padding(
                                     padding: const EdgeInsets.only(top: 14, bottom: 21.0),
                                     child: Stack(

@@ -20,7 +20,6 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/pages/atlas_map/event/node_event.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_reward_tabs_page.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
@@ -513,7 +512,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         var _endRemainEpochValue = _endRemainEpoch.toInt();
         if (_endRemainEpochValue > 0) {
-          _map3StatusDesc = S.of(Keys.rootKey.currentContext).map3_notification_expired_left_epoch(_endRemainEpochValue);
+          _map3StatusDesc =
+              S.of(Keys.rootKey.currentContext).map3_notification_expired_left_epoch(_endRemainEpochValue);
         } else {
           //_map3StatusDesc = "距离到期仅剩1个纪元";
           _map3StatusDesc = "";
@@ -544,7 +544,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         } else {
           var remain = startMin - staking;
           var remainDelegation = FormatUtil.formatPrice(remain);
-          _map3StatusDesc = S.of(Keys.rootKey.currentContext).remain + remainDelegation + S.of(Keys.rootKey.currentContext).active;
+          _map3StatusDesc =
+              S.of(Keys.rootKey.currentContext).remain + remainDelegation + S.of(Keys.rootKey.currentContext).active;
         }
 
         break;
@@ -634,8 +635,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             fontSize: 16,
           ),
         ],
-        content:
-            _isCreator ? S.of(context).map3_renew_content_creator : S.of(context).map3_renew_content_joiner,
+        content: _isCreator ? S.of(context).map3_renew_content_creator : S.of(context).map3_renew_content_joiner,
       );
     }
   }
@@ -1277,7 +1277,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
                             Spacer(),
-                            Text(S.of(context).map3_node_edit, style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                            Text(S.of(context).map3_node_edit,
+                                style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                           ],
                         ),
                         //style: TextStyles.textC906b00S13),
@@ -1345,7 +1346,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             alertColor = _canRenewNextPeriod ? HexColor('#FF5041') : HexColor('#FEC500');
           }
 
-          alertContent = "（${S.of(context).map_renew_setting_date_func(periodEpoch14 + 1,periodEpoch7)}）";
+          alertContent = "（${S.of(context).map_renew_setting_date_func(periodEpoch14 + 1, periodEpoch7)}）";
 
           if (_canRenewNextPeriod) {
             _renewRemainEpoch = periodEpoch7 - _currentEpoch + 1;
@@ -1367,7 +1368,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
           var periodEpoch7Add = periodEpoch7 + 1;
           var releaseEpoch = _releaseEpoch;
-          alertContent = "（${S.of(context).map_renew_setting_date_func(periodEpoch7Add,releaseEpoch)}）";
+          alertContent = "（${S.of(context).map_renew_setting_date_func(periodEpoch7Add, releaseEpoch)}）";
 
           if (_canRenewNextPeriod) {
             _renewRemainEpoch = _releaseEpoch - _currentEpoch + 1;
@@ -1432,7 +1433,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             Row(
               children: <Widget>[
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: S.of(context).map3_renew_next_period, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                  TextSpan(
+                      text: S.of(context).map3_renew_next_period,
+                      style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 ])),
                 Visibility(
                   visible: isShowAlert,
@@ -1561,7 +1564,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                   top: 16,
                 ),
                 child: Text.rich(TextSpan(children: [
-                  TextSpan(text: "${S.of(context).atlas_current_age} ", style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
+                  TextSpan(
+                      text: "${S.of(context).atlas_current_age} ",
+                      style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
                   TextSpan(
                       text: '$_currentEpoch',
                       style: TextStyle(
@@ -1578,7 +1583,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                 ),
                 child: Text.rich(TextSpan(children: [
                   TextSpan(
-                      text: _canRenewNextPeriod ? '${S.of(context).map3_setting_epoch_left} ' : '${S.of(context).map3_setting_epoch_need} ',
+                      text: _canRenewNextPeriod
+                          ? '${S.of(context).map3_setting_epoch_left} '
+                          : '${S.of(context).map3_setting_epoch_need} ',
                       style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
                   TextSpan(
                       text: '$_renewRemainEpoch',
@@ -1798,7 +1805,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             Row(
               children: <Widget>[
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: S.of(context).map3_node_service, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                  TextSpan(
+                      text: S.of(context).map3_node_service,
+                      style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 ])),
                 Spacer(),
                 Visibility(
@@ -1807,7 +1816,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                     height: 30,
                     child: InkWell(
                       onTap: _pushNodeInfoAction,
-                      child: Center(child: Text(S.of(context).click_view_detail, style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
+                      child: Center(
+                          child: Text(S.of(context).click_view_detail,
+                              style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
                       //style: TextStyles.textC906b00S13),
                     ),
                   ),
@@ -1838,7 +1849,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                       child: Column(
                         children: [0, 1].map((index) {
                           var titles = [S.of(context).map3_node_device, S.of(context).position];
-                          var details = [_selectProviderEntity?.name ?? S.of(context).amazon_cloud, _selectedRegion?.name ?? ""];
+                          var details = [
+                            _selectProviderEntity?.name ?? S.of(context).amazon_cloud,
+                            _selectedRegion?.name ?? ""
+                          ];
 
                           return Padding(
                             padding: const EdgeInsets.only(top: 12),
@@ -1983,7 +1997,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                 [
                   {S.of(context).node_cumulative_reward: totalRewardString},
                   {S.of(context).atlas_fee_rate: feeRate},
-                  {S.of(context).my_staking: (_isDelegate || myDelegationString != '0') ? myDelegationString : S.of(context).map3_node_un_staking},
+                  {
+                    S.of(context).my_staking: (_isDelegate || myDelegationString != '0')
+                        ? myDelegationString
+                        : S.of(context).map3_node_un_staking
+                  },
                 ],
               ),
             ),
@@ -2303,7 +2321,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         */
         ListView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: BouncingScrollPhysics(),
           scrollDirection: Axis.vertical,
           itemBuilder: (context, index) {
             return delegateRecordItemWidget(
@@ -2353,7 +2371,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         ),
         ListView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: BouncingScrollPhysics(),
           scrollDirection: Axis.vertical,
           itemBuilder: (context, index) {
             var item = _userList[index];
@@ -2374,7 +2392,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                 children: <Widget>[
                   InkWell(
                     onTap: () {
-                      AtlasApi.goToHynScanPage(context,item.address);
+                      AtlasApi.goToHynScanPage(context, item.address);
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
