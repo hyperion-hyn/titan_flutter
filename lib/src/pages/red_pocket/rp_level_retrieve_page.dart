@@ -339,9 +339,10 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
       title: '重要提醒',
       actions: [
         ClickOvalButton(
-          '取回',
+          '取消',
           () {
-            _retrieveAction(true);
+            Navigator.pop(context, true);
+            //_retrieveAction(true);
           },
           width: 115,
           height: 36,
@@ -354,15 +355,15 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
           width: 20,
         ),
         ClickOvalButton(
-          '再想想',
+          '确定取回',
           () {
-            Navigator.pop(context, true);
+            _retrieveAction(true);
           },
           width: 115,
           height: 36,
           fontSize: 16,
           fontWeight: FontWeight.normal,
-          btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
+          //btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
         ),
       ],
       content:

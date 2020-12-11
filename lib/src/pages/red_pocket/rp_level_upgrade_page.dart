@@ -401,7 +401,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
         );
 
         Fluttertoast.showToast(
-          msg: '升级请求已发送成功！',
+          msg: '提升量级请求已广播！',
           gravity: ToastGravity.CENTER,
         );
         Navigator.of(context)..pop()..pop();

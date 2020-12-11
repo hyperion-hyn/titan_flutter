@@ -323,6 +323,12 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
           activeWallet: _activatedWallet,
           password: password,
         );
+
+        Fluttertoast.showToast(
+          msg: '增加持币请求已广播！',
+          gravity: ToastGravity.CENTER,
+        );
+
         Navigator.of(context)..pop()..pop();
       } catch (e) {
         LogUtil.toastException(e);

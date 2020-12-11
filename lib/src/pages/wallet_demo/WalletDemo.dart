@@ -238,7 +238,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     .contractAddress;
                 var approveToAddress = WalletConfig.map3ContractAddress;
                 try {
-                  var ret = await wallet0.getAllowance(hynErc20ContractAddress, wallet0.getEthAccount().address, approveToAddress);
+                  var ret = await wallet0.getAllowance(hynErc20ContractAddress, wallet0.getEthAccount().address, approveToAddress, false);
                   print(ret);
 
                   // var signedHex = await wallet0.signApproveErc20Token(
