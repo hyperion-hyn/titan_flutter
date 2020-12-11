@@ -313,7 +313,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                       right: 16,
                     ),
                     child: Text(
-                      // todo: 配置量级4
+
                       '提示：如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4)} 以上的账户地址为推荐人',
                       style: TextStyle(
                         color: HexColor('#C3A16D'),

@@ -126,8 +126,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   }
 
   Widget _levelHeaderView() {
-
-    var stepPercent = FormatUtil.formatPercent(_promotionRuleEntity?.supplyInfo?.gradientRatio??0);
+    var stepPercent = FormatUtil.formatPercent(_promotionRuleEntity?.supplyInfo?.gradientRatio ?? 0);
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -135,7 +134,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
         child: Row(
           children: [
             Text(
-              // todo: 配置 5% 服务器返回
               '当前已发行 ${_promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '--'} RP，百分比Y = ${_promotionRuleEntity?.supplyInfo?.promotionSupplyRatioStr ?? '--'}%（$stepPercent为1梯度）',
               style: TextStyle(
                 color: HexColor('#333333'),
@@ -161,17 +159,17 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
         itemCount: _staticDataList.length,
         itemBuilder: (BuildContext context, int index) {
           var staticModel = _staticDataList[index];
-          var dynamicModel = _dynamicDataList[index];
 
-          var zeroValue = Decimal.fromInt(0);
-          var staticHoldValue = Decimal.tryParse(staticModel?.burnStr ?? '0') ?? zeroValue;
-          var dynamicHoldValue = Decimal.tryParse(dynamicModel?.burnStr ?? '0') ?? zeroValue;
-          bool isOldLevel =
-              staticHoldValue > zeroValue && dynamicHoldValue > zeroValue && staticHoldValue > dynamicHoldValue;
-
+          var isOldLevel = false;
+          if (_oldModelList.isNotEmpty) {
+            for (var element in _oldModelList) {
+              if (element.level == staticModel.level) {
+                isOldLevel = true;
+                break;
+              }
+            }
+          }
           //print("[$runtimeType] _levelListView, level:${staticModel.level}, isOldLevel:$isOldLevel");
-
-          //isOldLevel = true;
 
           if (isOldLevel) {
             return _itemBuilderOld(index);
@@ -219,22 +217,21 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     );
   }
 
+  List<LevelRule> _oldModelList = [];
+
   Widget _itemBuilderOld(int index) {
     var staticModel = _staticDataList[index];
-    var dynamicModel = _dynamicDataList[index];
 
     // 过滤出Old
-    var zeroValue = Decimal.fromInt(0);
-    var staticHoldValue = Decimal.tryParse(staticModel?.burnStr ?? '0') ?? zeroValue;
-    List<LevelRule> oldModelList = _dynamicDataList.where((element) {
-      var dynamicHoldValue = Decimal.tryParse(element?.burnStr ?? '0') ?? zeroValue;
-      bool isOldLevel =
-          staticHoldValue > zeroValue && dynamicHoldValue > zeroValue && staticHoldValue > dynamicHoldValue;
+    LevelRule dynamicModel =
+        _oldModelList.firstWhere((element) => element.level == staticModel.level, orElse: () => null);
 
-      return isOldLevel;
-    }).toList();
     LevelRule oldModelMax =
-        oldModelList.firstWhere((element) => element.level > dynamicModel.level, orElse: () => null);
+        _oldModelList.firstWhere((element) => element.level > dynamicModel.level, orElse: () => null);
+    // for (var element in _oldModelList) {
+    //   print(
+    //       "[$runtimeType] oldModelList.length:${_oldModelList.length}, level:${element.level} , index:$index, oldModelMax:$oldModelMax");
+    // }
 
     // 判断当前旧的量级是否为历史最高
     bool isNotMax = (oldModelMax != null);
@@ -534,6 +531,21 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
       if (netData?.static?.isNotEmpty ?? false) {
         _promotionRuleEntity = netData;
+
+        for (int index = 0; index < _staticDataList.length; index++) {
+          var staticModel = _staticDataList[index];
+          var dynamicModel = _dynamicDataList[index];
+
+          var zeroValue = Decimal.fromInt(0);
+          var staticBurnValue = Decimal.tryParse(staticModel?.burnStr ?? '0') ?? zeroValue;
+          var dynamicBurnValue = Decimal.tryParse(dynamicModel?.burnStr ?? '0') ?? zeroValue;
+          bool isOldLevel =
+              staticBurnValue > zeroValue && dynamicBurnValue > zeroValue && staticBurnValue > dynamicBurnValue;
+          if (isOldLevel) {
+            _oldModelList.add(dynamicModel);
+          }
+        }
+
         print("[$runtimeType] getNetworkData, count:${_staticDataList.length}");
 
         if (mounted) {

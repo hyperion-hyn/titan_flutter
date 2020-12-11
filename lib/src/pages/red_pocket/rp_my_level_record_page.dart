@@ -667,7 +667,6 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
 
   void getNetworkData() async {
     _currentPage = 1;
-    _levelHistoryList.clear();
 
     try {
       _myLevelInfo = await _rpApi.getRPMyLevelInfo(
