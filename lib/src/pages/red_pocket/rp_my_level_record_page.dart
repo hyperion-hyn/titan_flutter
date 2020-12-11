@@ -231,11 +231,16 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                               padding: const EdgeInsets.only(
                                 top: 4,
                               ),
-                              child: Icon(
+                              child:Image.asset(
+                                'res/drawable/error_rounded.png',
+                                width: 15,
+                                height: 15,
+                              ),
+                              /*child: Icon(
                                 Icons.warning_outlined,
                                 color: HexColor('#FF5041'),
                                 size: 16,
-                              ),
+                              ),*/
                             ),
                             Expanded(
                               child: Padding(
