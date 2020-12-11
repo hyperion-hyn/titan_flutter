@@ -346,7 +346,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                                     padding: const EdgeInsets.only(
                                       top: 4,
                                     ),
-                                    child:Image.asset(
+                                    child: Image.asset(
                                       'res/drawable/error_rounded.png',
                                       width: 15,
                                       height: 15,
@@ -381,15 +381,21 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                             child: Row(
                               children: <Widget>[
                                 Expanded(
-                                  child: _infoColumn(
+                                  child: _toolTipColumn(
+                                    rpBalanceStr,
+                                    '全网流通量',
+                                  ),
+                                ),
+                                Expanded(
+                                  child: _toolTipColumn(
                                     rpBalanceStr,
                                     '全网持币',
                                   ),
                                 ),
                                 Expanded(
-                                  child: _infoColumn(
+                                  child: _toolTipColumn(
                                     rpBalanceStr,
-                                    '全网量级燃烧',
+                                    '全网燃烧',
                                   ),
                                 ),
                               ],
@@ -844,30 +850,34 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
   }
 
-  Widget _infoColumn(
+  Widget _toolTipColumn(
     String content,
     String subContent,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Text(
-          content,
-          style: TextStyle(
-            fontSize: 12,
-            color: DefaultColors.color999,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        SizedBox(
-          height: 4.0,
-        ),
-        Text(
-          subContent,
-          style: TextStyle(
-            fontSize: 8,
-            color: DefaultColors.color999,
-          ),
+    return Row(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              content,
+              style: TextStyle(
+                fontSize: 12,
+                color: DefaultColors.color999,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(
+              height: 4.0,
+            ),
+            Text(
+              subContent,
+              style: TextStyle(
+                fontSize: 8,
+                color: DefaultColors.color999,
+              ),
+            ),
+          ],
         ),
       ],
     );
