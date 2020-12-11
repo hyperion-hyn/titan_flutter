@@ -15,7 +15,7 @@ Widget walletHeaderWidget(
     shortName = shortName.characters.first;
   }
   String hexColor = address;
-  if (address.length > 6) {
+  if (address.length > 6 && !address.contains('@')) {
     hexColor = "#" + address.substring(address.length - 6);
   } else {
     hexColor = "#BFBFBF";
