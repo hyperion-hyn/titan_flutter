@@ -170,7 +170,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
     var userName = activeWallet?.wallet?.keystore?.name ?? '--';
 
-    var walletAddress = activeWallet?.wallet?.getEthAccount()?.address ?? "";
+    var walletAddress = activeWallet?.wallet?.getAtlasAccount()?.address ?? "";
 
     var userAddress = shortBlockChainAddress(
       WalletUtil.ethAddressToBech32Address(
@@ -344,6 +344,9 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                                 "res/drawable/ic_rp_level_$currentLevel.png",
                                 height: 100,
                               ),
+                              SizedBox(
+                                height: 2,
+                              ),
                               Text(
                                 currentLevel != 5 ? '去升级' : '去查看',
                                 style: TextStyle(
@@ -353,7 +356,11 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                               if (currentLevel == 0)
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 20, left: 50, right: 50, bottom: 8),
+                                    top: 20,
+                                    left: 50,
+                                    right: 50,
+                                    bottom: 8,
+                                  ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
@@ -403,15 +410,24 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                             children: <Widget>[
                               Expanded(
                                 child: _toolTipColumn(
-                                    rpBalanceStr, '全网已发行量', '全网已发行量'),
+                                  rpBalanceStr,
+                                  '全网已发行量',
+                                  null,
+                                ),
                               ),
                               Expanded(
                                 child: _toolTipColumn(
-                                    rpBalanceStr, '全网持币', '全网持币'),
+                                  rpBalanceStr,
+                                  '全网持币',
+                                  '参与量级持币的总量',
+                                ),
                               ),
                               Expanded(
                                 child: _toolTipColumn(
-                                    rpBalanceStr, '全网燃烧', '全网燃烧'),
+                                  rpBalanceStr,
+                                  '全网燃烧',
+                                  null,
+                                ),
                               ),
                             ],
                           ),
@@ -905,16 +921,17 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     SizedBox(
                       width: 2,
                     ),
-                    Tooltip(
-                      key: _toolTipKey,
-                      verticalOffset: 16,
-                      message: toolTipMsg,
-                      child: Image.asset(
-                        'res/drawable/ic_tooltip.png',
-                        width: 10,
-                        height: 10,
+                    if (toolTipMsg != null)
+                      Tooltip(
+                        key: _toolTipKey,
+                        verticalOffset: 16,
+                        message: toolTipMsg,
+                        child: Image.asset(
+                          'res/drawable/ic_tooltip.png',
+                          width: 10,
+                          height: 10,
+                        ),
                       ),
-                    ),
                     Spacer(),
                   ],
                 ),
