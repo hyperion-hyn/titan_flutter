@@ -813,11 +813,11 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
   void getNetworkData() async {
     try {
-      // _detailEntity = await _rpApi.getMyRpOpenInfo(
-      //   _address,
-      //   _detailEntity?.redPocketId ?? 0,
-      //   _detailEntity?.type ?? 0,
-      // );
+      _detailEntity = await _rpApi.getMyRpOpenInfo(
+        _address,
+        _detailEntity?.redPocketId ?? 0,
+        _detailEntity?.type ?? 0,
+      );
 
       var netData = await _rpApi.getMySlitRpRecordList(
         _address,
