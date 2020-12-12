@@ -128,9 +128,11 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
         break;
 
       case 1:
-        // todo: 幸运红包-专属
-        desc = '砸中';
-        desc = '';
+        if (model.type == 0) {
+          desc = '砸中';
+        } else {
+          desc = '';
+        }
         break;
 
       case 2:
@@ -322,6 +324,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
         _dataList.addAll(netData.data);
         if (mounted) {
           setState(() {
+            // todo: 不应该调用set state
             _loadDataBloc.add(LoadingMoreSuccessEvent());
           });
         }

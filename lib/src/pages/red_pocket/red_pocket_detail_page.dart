@@ -50,7 +50,6 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   int get _rpType => _detailEntity?.type ?? 0;
 
   Map<String,dynamic> _currentPageKey;
-  String _manageFeeAmount = '-- RP';
   bool get _txHashIsEmpty => (_detailEntity?.txHash ?? '').isEmpty;
 
   @override
@@ -496,8 +495,11 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
       case 1:
         //desc = '量级不足，错过机会';
-        desc = '砸中';
-        desc = '';
+        if (_rpType == 0) {
+          desc = '砸中';
+        } else {
+          desc = '';
+        }
         break;
 
       default:
