@@ -633,7 +633,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           child: Text(
                             '即将空投',
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 15,
                               color: Colors.white,
                             ),
                           ),
