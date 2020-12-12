@@ -755,8 +755,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         _manageFeeAmount = valueByDecimal;
       }
     });
-    var _manageFeeAmountStr = '管理费 ' + FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + 'RP';
-    var _burnAmountStr = '燃烧 ' + FormatUtil.stringFormatCoinNum(_burnAmount.toString()) + 'RP';
+    var _manageFeeAmountStr = '管理费 ' + FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + ' RP';
+    var _burnAmountStr = '燃烧 ' + FormatUtil.stringFormatCoinNum(_burnAmount.toString()) + ' RP';
     var totalStr = _manageFeeAmountStr + '，' + _burnAmountStr;
 
     return Padding(
