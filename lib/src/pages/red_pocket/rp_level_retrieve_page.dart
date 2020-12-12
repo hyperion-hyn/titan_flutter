@@ -97,7 +97,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                   Decimal.zero;
 
               return remainHolding >= holding;
-            });
+            }, orElse: () => null);
 
         //print("firstObj:${firstObj?.level??0}");
 
