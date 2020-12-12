@@ -22,6 +22,9 @@ RPStatistics _$RPStatisticsFromJson(Map<String, dynamic> json) {
         ? null
         : Rp_holding_contract_info.fromJson(
             json['rp_holding_contract_info'] as Map<String, dynamic>),
+    json['airdrop_info'] == null
+        ? null
+        : Airdrop_info.fromJson(json['airdrop_info'] as Map<String, dynamic>),
   );
 }
 
@@ -30,6 +33,7 @@ Map<String, dynamic> _$RPStatisticsToJson(RPStatistics instance) =>
       'global': instance.global,
       'self': instance.self,
       'rp_contract_info': instance.rpContractInfo,
+      'airdrop_info': instance.airdropInfo,
     };
 
 Global _$GlobalFromJson(Map<String, dynamic> json) {
@@ -85,7 +89,8 @@ Map<String, dynamic> _$Rp_contract_infoToJson(Rp_contract_info instance) =>
       'pool_percent': instance.poolPercent,
     };
 
-Rp_holding_contract_info _$Rp_holding_contract_infoFromJson(Map<String, dynamic> json) {
+Rp_holding_contract_info _$Rp_holding_contract_infoFromJson(
+    Map<String, dynamic> json) {
   return Rp_holding_contract_info(
     json['promotion_supply_ratio'] as String,
     json['total_burning'] as String,
@@ -96,7 +101,8 @@ Rp_holding_contract_info _$Rp_holding_contract_infoFromJson(Map<String, dynamic>
   );
 }
 
-Map<String, dynamic> _$Rp_holding_contract_infoToJson(Rp_holding_contract_info instance) =>
+Map<String, dynamic> _$Rp_holding_contract_infoToJson(
+        Rp_holding_contract_info instance) =>
     <String, dynamic>{
       'promotion_supply_ratio': instance.promotionSupplyRatio,
       'total_burning': instance.totalBurning,
@@ -104,4 +110,19 @@ Map<String, dynamic> _$Rp_holding_contract_infoToJson(Rp_holding_contract_info i
       'total_supply': instance.totalSupply,
       'random_min_level': instance.randomMinLevel,
       'gradient_ratio': instance.gradientRatio,
+    };
+
+Airdrop_info _$Airdrop_infoFromJson(Map<String, dynamic> json) {
+  return Airdrop_info(
+    json['miss_rp_amount'] as String,
+    json['today_amount'] as String,
+    json['yesterday_amount'] as String,
+  );
+}
+
+Map<String, dynamic> _$Airdrop_infoToJson(Airdrop_info instance) =>
+    <String, dynamic>{
+      'miss_rp_amount': instance.missRpAmount,
+      'today_amount': instance.todayAmount,
+      'yesterday_amount': instance.yesterdayAmount,
     };
