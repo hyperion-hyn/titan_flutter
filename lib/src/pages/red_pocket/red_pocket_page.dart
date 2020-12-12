@@ -659,7 +659,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      S.of(context).rp_airdrop,
+                      '红包',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,

@@ -124,7 +124,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
     var desc = '';
     switch (model.luck) {
       case 0:
-        desc = '错过';
+        desc = '错过 ${model?.amountStr ?? '0'} RP';
         break;
 
       case 1:

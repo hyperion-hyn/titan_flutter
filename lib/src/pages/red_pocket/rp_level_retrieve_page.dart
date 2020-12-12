@@ -88,21 +88,25 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
     } else {
       // 2.不然，从筛选出对应下降量级
       var filterDataList = _staticDataList.where((element) => element.level < _currentLevel).toList().reversed.toList();
-      if (filterDataList?.isNotEmpty ?? false) {
-        level = filterDataList.firstWhere((levelRule) {
+      if ((filterDataList?.isNotEmpty ?? false) && remainHolding > Decimal.zero) {
+        var firstObj = filterDataList?.firstWhere((levelRule) {
+
               var holding = Decimal.tryParse(
-                    levelRule.holdingStr ?? '0',
+                    levelRule?.holdingStr ?? '0',
                   ) ??
                   Decimal.zero;
-              print(
-                  '[_getLevelByHolding] inputValue: $_inputValue， holding $holding level ${levelRule.level}, remainHolding $remainHolding');
 
               return remainHolding >= holding;
-            })?.level ??
-            0;
+            });
+
+        //print("firstObj:${firstObj?.level??0}");
+
+        level = firstObj?.level ?? 0;
+      } else {
+        level = 0;
       }
     }
-    print('[_getLevelByHolding] inputValue: $_inputValue， level：$level');
+    //print('[_getLevelByHolding] inputValue: $_inputValue， level：$level');
 
     return level;
   }

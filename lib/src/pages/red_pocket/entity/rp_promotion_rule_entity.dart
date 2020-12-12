@@ -80,7 +80,7 @@ class SupplyInfo extends Object {
   );
 
 
-  String get promotionSupplyRatioStr => FormatUtil.weiToEtherStr(promotionSupplyRatio) ?? '0';
+  // String get promotionSupplyRatioStr => FormatUtil.weiToEtherStr(promotionSupplyRatio) ?? '0';
   String get totalSupplyStr => FormatUtil.weiToEtherStr(totalSupply) ?? '0';
 
   factory SupplyInfo.fromJson(Map<String, dynamic> srcJson) => _$SupplyInfoFromJson(srcJson);
