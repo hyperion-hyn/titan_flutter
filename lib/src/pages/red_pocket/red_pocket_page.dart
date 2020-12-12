@@ -587,37 +587,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Stack(
+            child: Column(
               children: [
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 16.0,
-                      bottom: 8.0,
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 24,
-                        ),
-                        Image.asset(
-                          'res/drawable/img_rp_airdrop.png',
-                          width: 80,
-                          height: 80,
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Text(
-                          S.of(context).rp_available_soon,
-                          style: TextStyle(
-                            fontSize: 13,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -642,6 +613,54 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       ),
                     ),
                   ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 16.0,
+                    bottom: 8.0,
+                  ),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'res/drawable/img_rp_airdrop.png',
+                        width: 80,
+                        height: 80,
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        S.of(context).rp_available_soon,
+                        style: TextStyle(
+                          fontSize: 13,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                InkWell(
+                  onTap: _navToMyRpRecords,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _contentColumn(
+                            rpTodayStr, S.of(context).rp_today_rp),
+                      ),
+                      _verticalLine(),
+                      Expanded(
+                        child: _contentColumn(
+                            rpYesterdayStr, S.of(context).rp_yesterday_rp),
+                      ),
+                      _verticalLine(),
+                      Expanded(
+                        child: _contentColumn(
+                            rpMissedStr, S.of(context).rp_missed),
+                      ),
+                    ],
+                  ),
                 )
               ],
             ),
@@ -880,7 +899,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     return InkWell(
       onTap: () {
         final dynamic tooltip = _toolTipKey.currentState;
-        tooltip.ensureTooltipVisible();
+        tooltip?.ensureTooltipVisible();
       },
       child: Row(
         children: [
