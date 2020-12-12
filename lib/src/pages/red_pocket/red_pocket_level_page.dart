@@ -177,9 +177,9 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
           //print("[$runtimeType] _levelListView, level:${staticModel.level}, isOldLevel:$isOldLevel");
 
           if (isOldLevel) {
-            return _itemBuilderOld(index);
+            return _itemBuilderDynamic(index);
           } else {
-            return _itemBuilderDefault(index);
+            return _itemBuilderStatic(index);
           }
         },
         staggeredTileBuilder: (int index) => new StaggeredTile.fit(2),
@@ -189,7 +189,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     );
   }
 
-  Widget _itemBuilderDefault(int index) {
+  Widget _itemBuilderStatic(int index) {
     var model = _staticDataList[index];
 
     bool isCurrent = _currentLevel == model.level;
@@ -246,7 +246,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     }
   }
 
-  Widget _itemBuilderOld(int index) {
+  Widget _itemBuilderDynamic(int index) {
     var staticModel = _staticDataList[index];
 
     // 过滤出Old
@@ -270,7 +270,13 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
       leftTagTitle = '可恢复量级';
     }
 
-    String oldLevelDesc = '恢复至该量级需燃烧 ${dynamicModel?.burnStr ?? '0'}RP, 增持${dynamicModel?.holdingStr ?? '0'}RP';
+
+    var zeroValue = Decimal.zero;
+    var holdValue = Decimal.tryParse(dynamicModel?.holdingStr ?? '0') ?? zeroValue;
+    var currentHoldValue = Decimal.tryParse(widget?.rpMyLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
+    var remainValue = holdValue - currentHoldValue;
+    remainValue = remainValue > zeroValue ? remainValue : zeroValue;
+    String oldLevelDesc = '恢复至该量级需燃烧 ${dynamicModel?.burnStr ?? '0'}RP, 增持${remainValue.toString()}RP';
 
     return Stack(
       children: [
