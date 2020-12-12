@@ -387,7 +387,6 @@ class RPApi {
       return;
     }
 
-    // todo: {"code":-10001,"msg":"Invalid request params","data":null,"subMsg":""}
     return await RPHttpCore.instance.postEntity("/v1/rp/level/promotion/submit", EntityFactory<dynamic>((json) => json),
         params: {
           "address": address,
@@ -461,7 +460,7 @@ class RPApi {
     );
 
     print('[rp_api] postRpApprove, getAllowance, res:$ret');
-    // todo: getAllowance
+    // getAllowance
     if (ret >= amount) {
       return '200';
     }
