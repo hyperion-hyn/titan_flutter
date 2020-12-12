@@ -845,7 +845,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       );
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
-        _dataList = netData.data;
+
+        _dataList = filterRpOpenDataList(netData.data);
 
         if (mounted) {
           setState(() {
@@ -876,7 +877,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
-        _dataList.addAll(netData.data);
+
+        _dataList.addAll(filterRpOpenDataList(netData.data));
 
         if (mounted) {
           setState(() {
@@ -890,4 +892,14 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       _loadDataBloc.add(LoadMoreFailEvent());
     }
   }
+}
+
+List<RpOpenRecordEntity> filterRpOpenDataList(List<RpOpenRecordEntity> dataList) {
+  List<RpOpenRecordEntity> tempList = dataList?.where((element) {
+        var amountValue = Decimal.tryParse(element?.amountStr ?? '0') ?? Decimal.zero;
+        var luck = (element?.luck ?? 0);
+        return !(luck == 0 && amountValue <= Decimal.zero);
+      })?.toList() ?? [];
+
+  return tempList;
 }

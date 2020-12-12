@@ -296,7 +296,8 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
 
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
-        _dataList = netData.data;
+        _dataList = filterRpOpenDataList(netData.data);
+
         if (mounted) {
           setState(() {
             _loadDataBloc.add(RefreshSuccessEvent());
@@ -321,7 +322,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
 
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
-        _dataList.addAll(netData.data);
+        _dataList.addAll(filterRpOpenDataList(netData.data));
         if (mounted) {
           setState(() {
             // todo: 不应该调用set state

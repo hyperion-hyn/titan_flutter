@@ -239,7 +239,7 @@ class RPApi {
       }),
       params: {
         'paging_key': json.encode(pagingKey),
-        // 'size': size,
+        'size': size,
       },
       options: RequestOptions(
         contentType: "application/json",
@@ -266,7 +266,7 @@ class RPApi {
 
   Future<RpMyRpSplitRecordEntity> getMySlitRpRecordList(
     String address, {
-    int size = 20,
+    int size = 200,
     pagingKey = '',
     int redPocketId,
     int redPocketType,
@@ -280,7 +280,7 @@ class RPApi {
         'paging_key': json.encode(pagingKey),
         'id': redPocketId,
         'type': redPocketType,
-        // 'size': size,
+        'size': size,
       },
       options: RequestOptions(
         contentType: "application/json",
