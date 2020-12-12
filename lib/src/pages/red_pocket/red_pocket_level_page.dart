@@ -12,6 +12,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_add_staking_page.dart';
@@ -126,7 +127,11 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   }
 
   Widget _levelHeaderView() {
+    var promotionSupplyRatioValue = double.tryParse(_promotionRuleEntity?.supplyInfo?.promotionSupplyRatio ?? '0')??0;
+    var promotionSupplyRatioPercent = FormatUtil.formatPercent(promotionSupplyRatioValue);
+
     var stepPercent = FormatUtil.formatPercent(_promotionRuleEntity?.supplyInfo?.gradientRatio ?? 0);
+    //print("stepPercent:$stepPercent, promotionSupplyRatioValue:$promotionSupplyRatioValue, _promotionRuleEntity?.supplyInfo?.gradientRatio:${_promotionRuleEntity?.supplyInfo?.gradientRatio}");
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -134,7 +139,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
         child: Row(
           children: [
             Text(
-              '当前已发行 ${_promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '--'} RP，百分比Y = ${_promotionRuleEntity?.supplyInfo?.promotionSupplyRatioStr ?? '--'}%（$stepPercent为1梯度）',
+              '当前已发行 ${_promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '--'} RP，百分比Y = $promotionSupplyRatioPercent（$stepPercent为1梯度）',
               style: TextStyle(
                 color: HexColor('#333333'),
                 fontSize: 12,
@@ -218,6 +223,28 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   }
 
   List<LevelRule> _oldModelList = [];
+  void _setupOldModelList()  {
+
+    _oldModelList.clear();
+
+    for (int index = 0; index < _staticDataList.length; index++) {
+
+      var zeroValue = Decimal.zero;
+      var staticModel = _staticDataList[index];
+      var staticBurnValue = Decimal.tryParse(staticModel?.burnStr ?? '0') ?? zeroValue;
+
+      var dynamicModel = _dynamicDataList[index];
+      var dynamicBurnValue = Decimal.tryParse(dynamicModel?.burnStr ?? '0') ?? zeroValue;
+
+      bool isOldLevel =
+          staticBurnValue > zeroValue && dynamicBurnValue >= zeroValue && staticBurnValue > dynamicBurnValue && dynamicModel.level > _currentLevel;
+      print("[$runtimeType] _setupOldModelList, isOldLevel:$isOldLevel");
+
+      if (isOldLevel) {
+        _oldModelList.add(dynamicModel);
+      }
+    }
+  }
 
   Widget _itemBuilderOld(int index) {
     var staticModel = _staticDataList[index];
@@ -532,21 +559,9 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
       if (netData?.static?.isNotEmpty ?? false) {
         _promotionRuleEntity = netData;
 
-        for (int index = 0; index < _staticDataList.length; index++) {
-          var staticModel = _staticDataList[index];
-          var dynamicModel = _dynamicDataList[index];
+        _setupOldModelList();
 
-          var zeroValue = Decimal.fromInt(0);
-          var staticBurnValue = Decimal.tryParse(staticModel?.burnStr ?? '0') ?? zeroValue;
-          var dynamicBurnValue = Decimal.tryParse(dynamicModel?.burnStr ?? '0') ?? zeroValue;
-          bool isOldLevel =
-              staticBurnValue > zeroValue && dynamicBurnValue > zeroValue && staticBurnValue > dynamicBurnValue;
-          if (isOldLevel) {
-            _oldModelList.add(dynamicModel);
-          }
-        }
-
-        print("[$runtimeType] getNetworkData, count:${_staticDataList.length}");
+        print("[$runtimeType] getNetworkData, count:${_staticDataList.length}, old.length:${_oldModelList.length}");
 
         if (mounted) {
           setState(() {
