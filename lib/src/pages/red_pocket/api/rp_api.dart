@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/http/entity.dart';
@@ -227,7 +229,7 @@ class RPApi {
   ///我的红包列表
   Future<RpMyRpRecordEntity> getMyRpRecordList(
     String address, {
-    int size = 20,
+    int size = 200,
     pagingKey = '',
   }) async {
     return await RPHttpCore.instance.getEntity(
@@ -236,8 +238,8 @@ class RPApi {
         return RpMyRpRecordEntity.fromJson(json);
       }),
       params: {
-        'paging_key': pagingKey,
-        'size': size,
+        'paging_key': json.encode(pagingKey),
+        // 'size': size,
       },
       options: RequestOptions(
         contentType: "application/json",
@@ -275,10 +277,10 @@ class RPApi {
         return RpMyRpSplitRecordEntity.fromJson(json);
       }),
       params: {
-        'paging_key': pagingKey,
+        'paging_key': json.encode(pagingKey),
         'id': redPocketId,
         'type': redPocketType,
-        'size': size,
+        // 'size': size,
       },
       options: RequestOptions(
         contentType: "application/json",
@@ -385,7 +387,6 @@ class RPApi {
       return;
     }
 
-    // todo: {"code":-10001,"msg":"Invalid request params","data":null,"subMsg":""}
     return await RPHttpCore.instance.postEntity("/v1/rp/level/promotion/submit", EntityFactory<dynamic>((json) => json),
         params: {
           "address": address,
@@ -459,7 +460,7 @@ class RPApi {
     );
 
     print('[rp_api] postRpApprove, getAllowance, res:$ret');
-    // todo: getAllowance
+    // getAllowance
     if (ret >= amount) {
       return '200';
     }

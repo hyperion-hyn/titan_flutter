@@ -728,6 +728,9 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
   }
 
   _navToTxDetail(String txHash) {
+    if (txHash == null || txHash.isEmpty) {
+      return;
+    }
     WalletShowAccountInfoPage.jumpToAccountInfoPage(
       context,
       txHash,

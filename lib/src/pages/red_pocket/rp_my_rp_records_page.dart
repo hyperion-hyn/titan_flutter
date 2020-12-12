@@ -27,7 +27,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
-  String _currentPageKey;
+  Map<String, dynamic> _currentPageKey;
   var _address = "";
   // RpMyRpRecordEntity _rpMyRecordEntity;
   List<RpOpenRecordEntity> _dataList = [];
@@ -124,11 +124,15 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
     var desc = '';
     switch (model.luck) {
       case 0:
-        desc = '错过';
+        desc = '错过 ${model?.amountStr ?? '0'} RP';
         break;
 
       case 1:
-        desc = '砸中';
+        if (model.type == 0) {
+          desc = '砸中';
+        } else {
+          desc = '';
+        }
         break;
 
       case 2:
@@ -318,7 +322,12 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
         _dataList.addAll(netData.data);
-        _loadDataBloc.add(LoadingMoreSuccessEvent());
+        if (mounted) {
+          setState(() {
+            // todo: 不应该调用set state
+            _loadDataBloc.add(LoadingMoreSuccessEvent());
+          });
+        }
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }

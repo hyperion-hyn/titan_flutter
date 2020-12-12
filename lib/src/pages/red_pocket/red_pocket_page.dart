@@ -13,7 +13,6 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_level_record_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
@@ -568,13 +567,10 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _airdropWidget() {
-    var rpToday = '--';
-    var rpYesterday = '--';
-    var rpMissed = '--';
-
-    var rpTodayStr = '$rpToday RP';
-    var rpYesterdayStr = '$rpYesterday RP';
-    var rpMissedStr = '$rpMissed RP';
+    var rpTodayStr = '${_rpStatistics?.airdropInfo?.todayAmountStr} RP';
+    var rpYesterdayStr =
+        '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr} RP';
+    //var rpMissedStr = '${_rpStatistics?.airdropInfo?.missRpAmountStr} RP';
 
     var airDropPercent = _rpStatistics?.rpContractInfo?.dropOnPercent ?? '--';
     return SliverToBoxAdapter(
@@ -593,7 +589,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      S.of(context).rp_airdrop,
+                      '红包',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
@@ -630,13 +626,14 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           ),
                           child: Image.asset(
                             'res/drawable/bg_rp_airdrop.png',
+                            height: 150,
                           ),
                         ),
                         Center(
                           child: Text(
                             '即将空投',
                             style: TextStyle(
-                              fontSize: 13,
+                              fontSize: 15,
                               color: Colors.white,
                             ),
                           ),
@@ -661,11 +658,11 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         child: _contentColumn(
                             rpYesterdayStr, S.of(context).rp_yesterday_rp),
                       ),
-                      _verticalLine(),
-                      Expanded(
-                        child: _contentColumn(
-                            rpMissedStr, S.of(context).rp_missed),
-                      ),
+                      // _verticalLine(),
+                      // Expanded(
+                      //   child: _contentColumn(
+                      //       rpMissedStr, S.of(context).rp_missed),
+                      // ),
                     ],
                   ),
                 )

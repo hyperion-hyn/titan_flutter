@@ -399,7 +399,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       return;
     }
 
-    // todo: 计算 holding + burning > balance;
+    //  计算 holding + burning > balance + remain;
     if (_totalValue > _balanceValue) {
       Fluttertoast.showToast(
         msg: '钱包余额不足以升级到当前选中量级！',
