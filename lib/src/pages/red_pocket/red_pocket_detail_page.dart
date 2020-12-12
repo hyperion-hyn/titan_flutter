@@ -127,6 +127,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     );
   }
 
+  GlobalKey _toolTipKey = GlobalKey();
+
   Widget _infoDetailWidget() {
     var title = '';
     var subTitle = '';
@@ -307,30 +309,47 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
               ),
             ),
             if (_detailEntity.luck == 0)
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 16,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '你已错过红包机会',
-                      style: TextStyle(
-                        color: HexColor("#999999"),
-                        fontSize: 12,
-                        fontWeight: FontWeight.normal,
+              InkWell(
+                onTap: () {
+                  final dynamic tooltip = _toolTipKey.currentState;
+                  tooltip.ensureTooltipVisible();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 16,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '你已错过红包机会',
+                        style: TextStyle(
+                          color: HexColor("#999999"),
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 6,
-                    ),
-                    Image.asset(
-                      'res/drawable/red_pocket_detail_info.png',
-                      width: 12,
-                      height: 12,
-                    ),
-                  ],
+                      SizedBox(
+                        width: 6,
+                      ),
+                      Tooltip(
+                        key: _toolTipKey,
+                        verticalOffset: 20,
+                        //padding: const EdgeInsets.only(right: 8,),
+                        message: '因量级过低，你错过获得${_detailEntity?.amountStr ?? '0'} RP 机会',
+                        child: Image.asset(
+                          'res/drawable/ic_tooltip.png',
+                          width: 10,
+                          height: 10,
+                        ),
+                      )
+                      // Image.asset(
+                      //   'res/drawable/red_pocket_detail_info.png',
+                      //   width: 12,
+                      //   height: 12,
+                      // ),
+                    ],
+                  ),
                 ),
               ),
             SizedBox(
@@ -482,7 +501,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         break;
 
       default:
-        desc = '错过';
+        desc = '错过 ${model?.amountStr ?? '0'} RP';
         break;
     }
 
@@ -704,15 +723,23 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 
   Widget _promotionWidget() {
-    var _totalAmount = Decimal.fromInt(0);
+    var _manageFeeAmount = Decimal.fromInt(0);
+    var _burnAmount = Decimal.fromInt(0);
+
     _manageDataList.forEach((item) {
       var bigIntValue = BigInt.tryParse(item.amount) ?? BigInt.from(0);
       Decimal valueByDecimal = ConvertTokenUnit.weiToEther(
         weiBigInt: bigIntValue,
       );
-      _totalAmount = _totalAmount + valueByDecimal;
+      if (item.role == 1) {
+        _burnAmount = valueByDecimal;
+      } else if (item.role == 2) {
+        _manageFeeAmount = valueByDecimal;
+      }
     });
-    _manageFeeAmount = FormatUtil.stringFormatCoinNum(_totalAmount.toString()) + 'RP';
+    var _manageFeeAmountStr = '管理费 '+ FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + 'RP';
+    var _burnAmountStr = '燃烧 '+ FormatUtil.stringFormatCoinNum(_burnAmount.toString()) + 'RP';
+    var totalStr = _manageFeeAmountStr + '，' + _burnAmountStr;
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -732,14 +759,16 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(
-                right: 10,
+                left: 6,
               ),
               child: Image.asset(
-                'res/drawable/red_pocket_default_icon.png',
+                'res/drawable/ic_burn.png',
                 width: 32,
                 height: 32,
+                color: HexColor('#FFFF5151'),
               ),
             ),
+            Spacer(),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -753,7 +782,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6.0),
                         child: Text(
-                          '燃烧 + 管理费',
+                          totalStr,
                           style: TextStyle(
                             color: HexColor("#333333"),
                             fontSize: 14,
@@ -765,31 +794,6 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                   ],
                 ),
               ],
-            ),
-            //Spacer(),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 12,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      _manageFeeAmount,
-                      style: TextStyle(
-                        color: HexColor("#333333"),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 3,
-                      textAlign: TextAlign.right,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
             ),
           ],
         ),
