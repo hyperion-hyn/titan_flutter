@@ -23,7 +23,6 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 
-
 class RedPocketDetailPage extends StatefulWidget {
   final RpOpenRecordEntity rpOpenRecordEntity;
 
@@ -49,7 +48,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
   int get _rpType => _detailEntity?.type ?? 0;
 
-  Map<String,dynamic> _currentPageKey;
+  Map<String, dynamic> _currentPageKey;
   bool get _txHashIsEmpty => (_detailEntity?.txHash ?? '').isEmpty;
 
   @override
@@ -509,6 +508,9 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
     var amount = model.luck == 0 ? '0 RP' : '${model?.amountStr ?? '0'} RP';
 
+    var userAddress = model?.address ?? '';
+    bool isMe = _address.isNotEmpty && userAddress.isNotEmpty && (userAddress.toLowerCase() == _address.toLowerCase());
+
     return InkWell(
       onTap: _txHashIsEmpty ? null : _navToDetailAction,
       child: Padding(
@@ -553,20 +555,34 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.only(
-                            right: 6,
+                          padding: EdgeInsets.only(
+                            right: isMe ? 2 : 6,
                           ),
                           child: name.isNotEmpty
                               ? Text(
-                                name,
-                                style: TextStyle(
-                                  color: HexColor("#333333"),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              )
+                                  name,
+                                  style: TextStyle(
+                                    color: HexColor("#333333"),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                )
                               : SizedBox(),
                         ),
+                        if (isMe)
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              right: 6,
+                            ),
+                            child: Text(
+                              '(我)',
+                              style: TextStyle(
+                                color: HexColor("#999999"),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
                         Text(
                           '当时量级 $level ',
                           style: TextStyle(
@@ -739,8 +755,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         _manageFeeAmount = valueByDecimal;
       }
     });
-    var _manageFeeAmountStr = '管理费 '+ FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + 'RP';
-    var _burnAmountStr = '燃烧 '+ FormatUtil.stringFormatCoinNum(_burnAmount.toString()) + 'RP';
+    var _manageFeeAmountStr = '管理费 ' + FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + 'RP';
+    var _burnAmountStr = '燃烧 ' + FormatUtil.stringFormatCoinNum(_burnAmount.toString()) + 'RP';
     var totalStr = _manageFeeAmountStr + '，' + _burnAmountStr;
 
     return Padding(
@@ -830,7 +846,6 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
         _dataList = netData.data;
-
 
         if (mounted) {
           setState(() {
