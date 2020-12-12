@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/http/entity.dart';
@@ -236,7 +238,7 @@ class RPApi {
         return RpMyRpRecordEntity.fromJson(json);
       }),
       params: {
-        'paging_key': pagingKey,
+        'paging_key': json.encode(pagingKey),
         'size': size,
       },
       options: RequestOptions(
@@ -275,7 +277,7 @@ class RPApi {
         return RpMyRpSplitRecordEntity.fromJson(json);
       }),
       params: {
-        'paging_key': pagingKey,
+        'paging_key': json.encode(pagingKey),
         'id': redPocketId,
         'type': redPocketType,
         'size': size,

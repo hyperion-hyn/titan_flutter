@@ -49,7 +49,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
   int get _rpType => _detailEntity?.type ?? 0;
 
-  String _currentPageKey;
+  Map<String,dynamic> _currentPageKey;
   String _manageFeeAmount = '-- RP';
   bool get _txHashIsEmpty => (_detailEntity?.txHash ?? '').isEmpty;
 
@@ -813,11 +813,11 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
   void getNetworkData() async {
     try {
-      _detailEntity = await _rpApi.getMyRpOpenInfo(
-        _address,
-        _detailEntity?.redPocketId ?? 0,
-        _detailEntity?.type ?? 0,
-      );
+      // _detailEntity = await _rpApi.getMyRpOpenInfo(
+      //   _address,
+      //   _detailEntity?.redPocketId ?? 0,
+      //   _detailEntity?.type ?? 0,
+      // );
 
       var netData = await _rpApi.getMySlitRpRecordList(
         _address,
@@ -828,6 +828,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
         _dataList = netData.data;
+
 
         if (mounted) {
           setState(() {
@@ -859,7 +860,12 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
         _dataList.addAll(netData.data);
-        _loadDataBloc.add(LoadingMoreSuccessEvent());
+
+        if (mounted) {
+          setState(() {
+            _loadDataBloc.add(LoadingMoreSuccessEvent());
+          });
+        }
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }

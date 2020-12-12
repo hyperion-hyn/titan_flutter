@@ -27,7 +27,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
-  String _currentPageKey;
+  Map<String, dynamic> _currentPageKey;
   var _address = "";
   // RpMyRpRecordEntity _rpMyRecordEntity;
   List<RpOpenRecordEntity> _dataList = [];
@@ -128,7 +128,9 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
         break;
 
       case 1:
+        // todo: 幸运红包-专属
         desc = '砸中';
+        desc = '';
         break;
 
       case 2:
@@ -318,7 +320,11 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
         _dataList.addAll(netData.data);
-        _loadDataBloc.add(LoadingMoreSuccessEvent());
+        if (mounted) {
+          setState(() {
+            _loadDataBloc.add(LoadingMoreSuccessEvent());
+          });
+        }
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }
