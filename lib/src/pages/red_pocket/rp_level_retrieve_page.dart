@@ -36,14 +36,12 @@ class RpLevelRetrievePage extends StatefulWidget {
 class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
   TextEditingController _textEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  double minTotal = 0;
-  double remainTotal = 0;
+
   RpPromotionRuleEntity _promotionRuleEntity;
 
   int get _currentLevel => widget?.rpMyLevelInfo?.currentLevel ?? 0;
 
-  List<LevelRule> get _staticDataList =>
-      (_promotionRuleEntity?.static ?? []).toList();
+  List<LevelRule> get _staticDataList => (_promotionRuleEntity?.static ?? []).toList();
 
   LevelRule get _currentLevelRule {
     LevelRule current;
@@ -63,12 +61,69 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
   final RPApi _rpApi = RPApi();
   var _address = "";
 
+  bool _isLoading = false;
+
+  Decimal get _inputValue =>
+      Decimal.tryParse(
+        _textEditingController?.text ?? '0',
+      ) ??
+      Decimal.zero;
+
+  int get _toLevel {
+    var holding = Decimal.tryParse(
+          widget?.rpMyLevelInfo?.currentHoldingStr ?? '0',
+        ) ??
+        Decimal.zero;
+
+    var remainHolding = holding - _inputValue;
+    var needHolding = Decimal.tryParse(
+          _currentLevelRule?.holdingStr ?? '0',
+        ) ??
+        Decimal.zero;
+    var level = 0;
+
+    // 1.先和当前量级需持币比较
+    if ((needHolding > Decimal.zero) && (remainHolding > Decimal.zero) && (remainHolding >= needHolding)) {
+      level = _currentLevel;
+    } else {
+      // 2.不然，从筛选出对应下降量级
+      var filterDataList = _staticDataList.where((element) => element.level < _currentLevel).toList().reversed.toList();
+      if (filterDataList?.isNotEmpty ?? false) {
+        level = filterDataList.firstWhere((levelRule) {
+              var holding = Decimal.tryParse(
+                    levelRule.holdingStr ?? '0',
+                  ) ??
+                  Decimal.zero;
+              print(
+                  '[_getLevelByHolding] inputValue: $_inputValue， holding $holding level ${levelRule.level}, remainHolding $remainHolding');
+
+              return remainHolding >= holding;
+            })?.level ??
+            0;
+      }
+    }
+    print('[_getLevelByHolding] inputValue: $_inputValue， level：$level');
+
+    return level;
+  }
+
+  TextStyle _lightTextStyle = TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+    color: HexColor('#333333'),
+  );
+
+  TextStyle _greyTextStyle = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 12,
+    color: HexColor('#999999'),
+  );
+
   @override
   void initState() {
     super.initState();
 
-    var activatedWallet =
-        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   }
 
@@ -86,45 +141,6 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
     _loadDataBloc.close();
     super.dispose();
   }
-
-  Future getNetworkData() async {
-    try {
-      var netData = await _rpApi.getRPPromotionRule(_address);
-
-      if (netData?.static?.isNotEmpty ?? false) {
-        _promotionRuleEntity = netData;
-        print("[$runtimeType] getNetworkData, count:${_staticDataList.length}");
-
-        if (mounted) {
-          setState(() {
-            _loadDataBloc.add(RefreshSuccessEvent());
-          });
-        }
-      } else {
-        _loadDataBloc.add(LoadEmptyEvent());
-      }
-    } catch (e) {
-      LogUtil.toastException(e);
-
-      if (mounted) {
-        setState(() {
-          _loadDataBloc.add(RefreshFailEvent());
-        });
-      }
-    }
-  }
-
-  TextStyle _lightTextStyle = TextStyle(
-    fontWeight: FontWeight.w500,
-    fontSize: 14,
-    color: HexColor('#333333'),
-  );
-
-  TextStyle _greyTextStyle = TextStyle(
-    fontWeight: FontWeight.normal,
-    fontSize: 12,
-    color: HexColor('#999999'),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -144,138 +160,120 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
               child: BaseGestureDetector(
                 context: context,
                 child: SingleChildScrollView(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
+                    color: Colors.white,
                     child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(top: 18),
+                          child: Row(
+                            children: <Widget>[
+                              Text('当前持币', style: _greyTextStyle),
+                              SizedBox(
+                                width: 16,
+                              ),
+                              Text('${widget?.rpMyLevelInfo?.currentHoldingStr ?? '0'} RP', style: _lightTextStyle),
+                            ],
+                          ),
                         ),
-                        color: Colors.white,
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(top: 18),
-                              child: Row(
-                                children: <Widget>[
-                                  Text('当前持币', style: _greyTextStyle),
-                                  SizedBox(
-                                    width: 16,
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20),
+                          child: Row(
+                            children: <Widget>[
+                              Text('当前量级${levelValueToLevelName(_currentLevel)}需持币', style: _greyTextStyle),
+                              SizedBox(
+                                width: 16,
+                              ),
+                              Text('${_currentLevelRule?.holdingStr ?? '0'} RP', style: _lightTextStyle),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 30),
+                          child: Row(
+                            children: <Widget>[
+                              Text('取回持币', style: _lightTextStyle),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 16,
+                            right: 50,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Flexible(
+                                flex: 1,
+                                child: Form(
+                                  key: _formKey,
+                                  child: RoundBorderTextField(
+                                    onChanged: (text) {
+                                      _formKey.currentState.validate();
+                                    },
+                                    controller: _textEditingController,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                    //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                                    hint: S.of(context).please_enter_withdraw_amount,
+                                    validator: (textStr) {
+                                      var inputValue = Decimal.tryParse(textStr);
+
+                                      if (inputValue == null) {
+                                        return S.of(context).please_enter_correct_amount;
+                                      }
+
+                                      var holding =
+                                          Decimal.tryParse(widget?.rpMyLevelInfo?.currentHoldingStr ?? '0') ?? 0;
+
+                                      if (textStr.length == 0 || inputValue == Decimal.fromInt(0)) {
+                                        return '请输入有效提币数量';
+                                      }
+                                      if (inputValue > holding) {
+                                        return '大于当前持币';
+                                      }
+                                    },
                                   ),
-                                  Text(
-                                      '${widget?.rpMyLevelInfo?.currentHoldingStr ?? '0'} RP',
-                                      style: _lightTextStyle),
-                                ],
+                                ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                      '当前量级${levelValueToLevelName(_currentLevel)}需持币',
-                                      style: _greyTextStyle),
-                                  SizedBox(
-                                    width: 16,
-                                  ),
-                                  Text('${_currentLevelRule?.holdingStr??'0'} RP',
-                                      style: _lightTextStyle),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 30),
-                              child: Row(
-                                children: <Widget>[
-                                  Text('取回持币', style: _lightTextStyle),
-                                ],
-                              ),
-                            ),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          children: [
                             Padding(
                               padding: const EdgeInsets.only(
-                                top: 16,
-                                right: 50,
+                                top: 8,
                               ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Flexible(
-                                    flex: 1,
-                                    child: Form(
-                                      key: _formKey,
-                                      child: RoundBorderTextField(
-                                        onChanged: (text) {
-                                          _formKey.currentState.validate();
-                                        },
-                                        controller: _textEditingController,
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                decimal: true),
-                                        //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                        hint: S
-                                            .of(context)
-                                            .please_enter_withdraw_amount,
-                                        validator: (textStr) {
-                                          var inputValue =
-                                              Decimal.tryParse(textStr);
-
-                                          if (inputValue == null) {
-                                            return S
-                                                .of(context)
-                                                .please_enter_correct_amount;
-                                          }
-
-                                          var holding = Decimal.tryParse(widget
-                                                  ?.rpMyLevelInfo
-                                                  ?.currentHoldingStr??'0') ??
-                                              0;
-
-                                          if (textStr.length == 0 ||
-                                              inputValue ==
-                                                  Decimal.fromInt(0)) {
-                                            return '请输入有效提币数量';
-                                          }
-                                          if (inputValue > holding) {
-                                            return '大于当前持币';
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              child: Text(
+                                '*',
+                                style: TextStyle(
+                                  color: HexColor('#FF4C3B'),
+                                  fontSize: 24,
+                                ),
                               ),
                             ),
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 8,
-                                  ),
-                                  child: Text(
-                                    '*',
-                                    style: TextStyle(
-                                      color: HexColor('#FF4C3B'),
-                                      fontSize: 24,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 6,
-                                ),
-                                Text(
-                                  '为保证当前量级不下降，请保持持币量大于${_currentLevelRule?.holdingStr??'0'}RP',
-                                  style: TextStyle(
-                                    color: HexColor('#333333'),
-                                    fontSize: 12,
-                                  ),
-                                )
-                              ],
+                            SizedBox(
+                              width: 6,
+                            ),
+                            Text(
+                              '为保证当前量级不下降，请保持持币量大于${_currentLevelRule?.holdingStr ?? '0'}RP',
+                              style: TextStyle(
+                                color: HexColor('#333333'),
+                                fontSize: 12,
+                              ),
                             )
                           ],
-                        ),
-                      ),
-                      _confirmButtonWidget(),
-                    ])),
+                        )
+                      ],
+                    ),
+                  ),
+                  _confirmButtonWidget(),
+                ])),
               ),
             ),
           ),
@@ -297,6 +295,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
             btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
+            isLoading: _isLoading,
           ),
         ),
       ),
@@ -316,20 +315,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
   }
 
   _showAlertView() {
-    var inputValue = Decimal.tryParse(
-          _textEditingController?.text,
-        ) ??
-        Decimal.fromInt(0);
-    var holding = Decimal.tryParse(
-          widget?.rpMyLevelInfo?.currentHoldingStr??'0',
-        ) ??
-        Decimal.fromInt(0);
-
-    var remainHolding = holding - inputValue;
-
-    var toLevelAfterWithdraw = _getLevelByHolding(remainHolding);
-
-    if (toLevelAfterWithdraw == _currentLevel) {
+    if (_toLevel == _currentLevel) {
       _retrieveAction(false);
       return;
     }
@@ -339,9 +325,9 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
       title: '重要提醒',
       actions: [
         ClickOvalButton(
-          '取回',
+          '取消',
           () {
-            _retrieveAction(true);
+            Navigator.pop(context, true);
           },
           width: 115,
           height: 36,
@@ -350,23 +336,20 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
           fontColor: DefaultColors.color333,
           btnColor: [Colors.transparent],
         ),
-        SizedBox(
-          width: 20,
-        ),
         ClickOvalButton(
-          '再想想',
+          '确认取回',
           () {
-            Navigator.pop(context, true);
+            _retrieveAction(true);
           },
           width: 115,
           height: 36,
           fontSize: 16,
           fontWeight: FontWeight.normal,
-          btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
+          //btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
         ),
       ],
       content:
-          '您要取回${inputValue}RP到钱包，当前持币量级${levelValueToLevelName(_currentLevel)}，您的量级将掉到量级${levelValueToLevelName(toLevelAfterWithdraw)}，请谨慎操作',
+          '您要取回${_inputValue}RP到钱包，当前持币量级${levelValueToLevelName(_currentLevel)}，您的量级将掉到量级${levelValueToLevelName(_toLevel)}，请谨慎操作',
       isInputValue: false,
     );
   }
@@ -384,42 +367,70 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
       return;
     }
 
-    var _activeWallet =
-        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
 
-    var password =
-        await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
+    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
     if (password == null) {
       return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
     }
 
     var withdrawAmount = ConvertTokenUnit.strToBigInt(inputText);
     try {
       await _rpApi.postRpWithdraw(
-          withdrawAmount: withdrawAmount,
-          activeWallet: _activeWallet,
-          password: password);
+        withdrawAmount: withdrawAmount,
+        activeWallet: _activeWallet,
+        password: password,
+        from: _currentLevel,
+        to: _toLevel,
+      );
       Navigator.pop(context, true);
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      LogUtil.toastException(e);
+      if (mounted) {
+        LogUtil.toastException(e);
+
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
-  _getLevelByHolding(Decimal value) {
-    var level = 0;
-    if (_staticDataList.isNotEmpty) {
-      for (int i = 0; i < _staticDataList.length - 1; i++) {
-        var levelRule = _staticDataList[i];
-        var holding = Decimal.tryParse(
-              levelRule.holdingStr??'0',
-            ) ??
-            Decimal.fromInt(0);
-        if (value >= holding) {
-          level = levelRule.level;
+  Future getNetworkData() async {
+    try {
+      var netData = await _rpApi.getRPPromotionRule(_address);
+
+      if (netData?.static?.isNotEmpty ?? false) {
+        _promotionRuleEntity = netData;
+        print("[$runtimeType] getNetworkData, count:${_staticDataList.length}");
+
+        if (mounted) {
+          setState(() {
+            _loadDataBloc.add(RefreshSuccessEvent());
+          });
         }
-        print('[_getLevelByHolding] value: $value holding $holding level $level holding ${levelRule.holding}');
+      } else {
+        _loadDataBloc.add(LoadEmptyEvent());
+      }
+    } catch (e) {
+      if (mounted) {
+        LogUtil.toastException(e);
+
+        setState(() {
+          _loadDataBloc.add(RefreshFailEvent());
+        });
       }
     }
-    return level;
   }
 }

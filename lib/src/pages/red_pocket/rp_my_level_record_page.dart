@@ -192,182 +192,197 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(16.0)),
             ),
-            child: Stack(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Column(
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 20,
+                  ),
+                  child: Container(
+                    child: Text(
+                      '当前量级',
+                      style: TextStyle(
+                        color: HexColor('#333333'),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 20,
-                      ),
-                      child: Container(
-                        child: Text(
-                          '当前量级',
-                          style: TextStyle(
-                            color: HexColor('#333333'),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                    Expanded(
+                      flex: 2,
+                      child: SizedBox(),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Image.asset(
+                        "res/drawable/ic_rp_level_$currentLevel.png",
+                        height: 100,
                       ),
                     ),
-                    Image.asset(
-                      "res/drawable/ic_rp_level_$currentLevel.png",
-                      height: 100,
-                    ),
-                    if (currentLevel == 0)
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 20,
-                          left: 50,
-                          right: 50,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: 4,
-                              ),
-                              child:Image.asset(
-                                'res/drawable/error_rounded.png',
-                                width: 15,
-                                height: 15,
-                              ),
-                              /*child: Icon(
-                                Icons.warning_outlined,
-                                color: HexColor('#FF5041'),
-                                size: 16,
-                              ),*/
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 4,
-                                ),
-                                child: Text(
-                                  '当前量级为0级，不能获得空投红包，请尽快升级',
-                                  style: TextStyle(
-                                    color: HexColor('#333333'),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1.5,
+                    Expanded(
+                      flex: 2,
+                      child: isShowDowngrade
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 32, right: 16),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    'res/drawable/ic_rp_level_down.png',
+                                    width: 15,
                                   ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
-                                ),
+                                  SizedBox(
+                                    width: 4,
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      '等级下降了',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 6,
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 22,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          /*Spacer(),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 16,
-                            ),
-                            child: _columnWidget(
-                              '$currentBurn RP',
-                              '当前燃烧',
-                            ),
-                            // child: _columnWidget('$totalTransmit RP', '总可传导'),
-                          ),*/
-                          Spacer(),
-                          _columnWidget(
-                            '$holding RP',
-                            '当前持币',
-                          ),
-                          Spacer(),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 24,
-                        bottom: 16,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Stack(
-                            children: <Widget>[
-                              Container(
-                                child: ClickOvalButton(
-                                  '升级/增持',
-                                  _navToLevelUpgradeAction,
-                                  width: 120,
-                                  height: 32,
-                                  fontSize: 12,
-                                  btnColor: [
-                                    HexColor('#00B97C'),
-                                  ],
-                                ),
-                                padding: const EdgeInsets.all(16),
-                              ),
-                              Positioned(
-                                top: 6,
-                                right: 6,
-                                child: Image.asset(
-                                  "res/drawable/red_pocket_exchange_hot.png",
-                                  width: 35,
-                                  height: 20,
-                                ),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: 14,
-                          ),
-                          ClickOvalButton(
-                            '取回持币',
-                            _navToLevelUnStakingAction,
-                            width: 120,
-                            height: 32,
-                            fontSize: 12,
-                            btnColor: [
-                              HexColor('#107EDC'),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                            )
+                          : SizedBox(),
+                    )
                   ],
                 ),
-                if (isShowDowngrade)
-                  Positioned(
-                    top: 70,
-                    right: 36,
-                    child: Container(
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            'res/drawable/ic_rp_level_down.png',
-                            width: 20,
+                if (currentLevel == 0)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 20,
+                      left: 50,
+                      right: 50,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 4,
                           ),
-                          SizedBox(
-                            width: 4,
+                          child: Image.asset(
+                            'res/drawable/error_rounded.png',
+                            width: 15,
+                            height: 15,
                           ),
-                          Container(
-                            width: 45,
+                          /*child: Icon(
+                            Icons.warning_outlined,
+                            color: HexColor('#FF5041'),
+                            size: 16,
+                          ),*/
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: 4,
+                            ),
                             child: Text(
-                              '等级下降了',
+                              '当前量级为0级，不能获得空投红包，请尽快升级',
+                              style: TextStyle(
+                                color: HexColor('#333333'),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                height: 1.5,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 22,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      /*Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                        ),
+                        child: _columnWidget(
+                          '$currentBurn RP',
+                          '当前燃烧',
+                        ),
+                        // child: _columnWidget('$totalTransmit RP', '总可传导'),
+                      ),*/
+                      Spacer(),
+                      _columnWidget(
+                        '$holding RP',
+                        '当前持币',
+                      ),
+                      Spacer(),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 24,
+                    bottom: 16,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Stack(
+                        children: <Widget>[
+                          Container(
+                            child: ClickOvalButton(
+                              '升级/增持',
+                              _navToLevelUpgradeAction,
+                              width: 120,
+                              height: 32,
+                              fontSize: 12,
+                              btnColor: [
+                                HexColor('#00B97C'),
+                              ],
+                            ),
+                            padding: const EdgeInsets.all(16),
+                          ),
+                          Positioned(
+                            top: 6,
+                            right: 6,
+                            child: Image.asset(
+                              "res/drawable/red_pocket_exchange_hot.png",
+                              width: 35,
+                              height: 20,
                             ),
                           )
                         ],
                       ),
-                    ),
+                      SizedBox(
+                        width: 14,
+                      ),
+                      ClickOvalButton(
+                        '取回持币',
+                        _navToLevelUnStakingAction,
+                        width: 120,
+                        height: 32,
+                        fontSize: 12,
+                        btnColor: [
+                          HexColor('#107EDC'),
+                        ],
+                      ),
+                    ],
                   ),
+                ),
               ],
             ),
           ),
@@ -464,7 +479,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
       detailStr = '燃烧 ${model.burningStr} RP，增持 ${model.holdingStr} RP';
       isShowState = true;
     } else if (recordType == 4) {
-      detailStr = '燃烧 ${model.burningStr} RP';
+      detailStr = '燃烧 ${model.burningStr} RP，增持 ${model.holdingStr} RP';
       isShowState = true;
     } else if (recordType == 5) {
       detailStr = '增持 ${model.holdingStr} RP';
@@ -482,8 +497,6 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     if (recordStatus == 0) {
       statusHint = '待确认';
       statusColor = HexColor('#FFE4B300');
-      levelTo = null;
-      levelFrom = null;
     } else if (recordStatus == 1) {
       statusHint = '已确认';
       statusColor = HexColor('#FF999999');
@@ -517,6 +530,9 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
 
     return InkWell(
       onTap: () {
+        if ((model?.state ?? 0) == 0) {
+          return;
+        }
         _navToTxDetail(txHash);
       },
       child: Stack(
@@ -666,7 +682,6 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
 
   void getNetworkData() async {
     _currentPage = 1;
-    _levelHistoryList.clear();
 
     try {
       _myLevelInfo = await _rpApi.getRPMyLevelInfo(

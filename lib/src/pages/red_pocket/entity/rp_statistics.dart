@@ -14,10 +14,14 @@ class RPStatistics extends Object {
   @JsonKey(name: 'rp_contract_info')
   Rp_contract_info rpContractInfo;
 
+  @JsonKey(name: 'rp_holding_contract_info')
+  Rp_holding_contract_info rpHoldingContractInfo;
+
   RPStatistics(
     this.global,
     this.self,
     this.rpContractInfo,
+    this.rpHoldingContractInfo,
   );
 
   factory RPStatistics.fromJson(Map<String, dynamic> srcJson) => _$RPStatisticsFromJson(srcJson);
@@ -112,6 +116,7 @@ class Rp_contract_info extends Object {
   int poolPercent;
 
   String get hynPerRpStr => FormatUtil.weiToEtherStr(hynPerRp) ?? '0';
+
   String get baseRpStr => FormatUtil.weiToEtherStr(baseRp) ?? '0';
 
   Rp_contract_info(
@@ -126,4 +131,45 @@ class Rp_contract_info extends Object {
   factory Rp_contract_info.fromJson(Map<String, dynamic> srcJson) => _$Rp_contract_infoFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$Rp_contract_infoToJson(this);
+}
+
+@JsonSerializable()
+class Rp_holding_contract_info extends Object {
+  @JsonKey(name: 'promotion_supply_ratio')
+  String promotionSupplyRatio;
+
+  @JsonKey(name: 'total_burning')
+  String totalBurning;
+
+  @JsonKey(name: 'total_holding')
+  String totalHolding;
+
+  @JsonKey(name: 'total_supply')
+  String totalSupply;
+
+  @JsonKey(name: 'random_min_level')
+  int randomMinLevel;
+
+  @JsonKey(name: 'gradient_ratio')
+  double gradientRatio;
+
+  String get totalBurningStr => FormatUtil.weiToEtherStr(totalBurning) ?? '0';
+
+  String get totalHoldingStr => FormatUtil.weiToEtherStr(totalHolding) ?? '0';
+
+  String get totalSupplyStr => FormatUtil.weiToEtherStr(totalSupply) ?? '0';
+
+  Rp_holding_contract_info(
+    this.promotionSupplyRatio,
+    this.totalBurning,
+    this.totalHolding,
+    this.totalSupply,
+    this.randomMinLevel,
+    this.gradientRatio,
+  );
+
+  factory Rp_holding_contract_info.fromJson(Map<String, dynamic> srcJson) =>
+      _$Rp_holding_contract_infoFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$Rp_holding_contract_infoToJson(this);
 }

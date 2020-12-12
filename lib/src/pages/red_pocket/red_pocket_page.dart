@@ -105,6 +105,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             _requestData();
           },
           child: CustomScrollView(
+            physics: BouncingScrollPhysics(),
             slivers: <Widget>[
               _myRPInfo(),
               _airdropWidget(),
@@ -156,6 +157,13 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
 
     var rpBalance = '--';
+    var totalBurning =
+        '${_rpStatistics?.rpHoldingContractInfo?.totalBurningStr} RP';
+    var totalHolding =
+        '${_rpStatistics?.rpHoldingContractInfo?.totalHoldingStr} RP';
+    var totalSupply =
+        '${_rpStatistics?.rpHoldingContractInfo?.totalSupplyStr} RP';
+
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
       SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
     );
@@ -170,7 +178,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
     var userName = activeWallet?.wallet?.keystore?.name ?? '--';
 
-    var walletAddress = activeWallet?.wallet?.getEthAccount()?.address ?? "";
+    var walletAddress = activeWallet?.wallet?.getAtlasAccount()?.address ?? "";
 
     var userAddress = shortBlockChainAddress(
       WalletUtil.ethAddressToBech32Address(
@@ -294,41 +302,106 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     ),
                   ],
                 ),
-                InkWell(
-                  onTap: _navToLevel,
-                  child: Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      onTap: _navToLevel,
+                      child: Column(
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(
-                              top: 20,
+                              left: 0,
+                              right: 0,
+                              top: 16,
+                              bottom: 10,
                             ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  '持币量级',
+                            child: Container(
+                              height: 0.5,
+                              color: HexColor('#F2F2F2'),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                '持币量级',
+                                style: TextStyle(
+                                  color: HexColor('#333333'),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 8,
+                                ),
+                                child: Text(
+                                  '当前持币 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
                                   style: TextStyle(
-                                    color: HexColor('#333333'),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
+                                    color: HexColor('#999999'),
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.normal,
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                          Image.asset(
-                            "res/drawable/ic_rp_level_$currentLevel.png",
-                            height: 100,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              '去查看',
-                              style: TextStyle(
-                                color: Colors.blue,
                               ),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: SizedBox(),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Image.asset(
+                                  "res/drawable/ic_rp_level_$currentLevel.png",
+                                  height: 100,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: isShowDowngrade
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 32,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Image.asset(
+                                              'res/drawable/ic_rp_level_down.png',
+                                              width: 15,
+                                            ),
+                                            SizedBox(
+                                              width: 6,
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                '等级下降了',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 6,
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : SizedBox(),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            currentLevel < 5 ? '去升级' : '去查看',
+                            style: TextStyle(
+                              color: Colors.blue,
                             ),
                           ),
                           if (currentLevel == 0)
@@ -337,6 +410,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                                 top: 20,
                                 left: 50,
                                 right: 50,
+                                bottom: 8,
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -346,10 +420,10 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                                     padding: const EdgeInsets.only(
                                       top: 4,
                                     ),
-                                    child: Icon(
-                                      Icons.warning_outlined,
-                                      color: HexColor('#FF5041'),
-                                      size: 16,
+                                    child: Image.asset(
+                                      'res/drawable/error_rounded.png',
+                                      width: 15,
+                                      height: 15,
                                     ),
                                   ),
                                   Expanded(
@@ -377,58 +451,46 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           SizedBox(
                             height: 16,
                           ),
-                          Container(
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: _infoColumn(
-                                    rpBalanceStr,
-                                    '全网持币',
-                                  ),
-                                ),
-                                Expanded(
-                                  child: _infoColumn(
-                                    rpBalanceStr,
-                                    '全网量级燃烧',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                         ],
                       ),
-                      if (isShowDowngrade)
-                        Positioned(
-                          top: 70,
-                          right: 36,
-                          child: Container(
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'res/drawable/ic_rp_level_down.png',
-                                  width: 20,
-                                ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                Container(
-                                  width: 45,
-                                  child: Text(
-                                    '等级下降了',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )
-                              ],
+                    ),
+                    Container(
+                      width: double.infinity,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: _toolTipColumn(
+                                totalSupply,
+                                '全网已发行量',
+                                null,
+                              ),
                             ),
-                          ),
+                            Expanded(
+                              child: _toolTipColumn(
+                                totalHolding,
+                                '全网持币',
+                                '参与量级持币的总量',
+                              ),
+                            ),
+                            Expanded(
+                              child: _toolTipColumn(
+                                totalBurning,
+                                '全网燃烧',
+                                null,
+                              ),
+                            ),
+                          ],
                         ),
-                    ],
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
+                    left: 0,
+                    right: 0,
                     top: 16,
                     bottom: 10,
                   ),
@@ -506,48 +568,13 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _airdropWidget() {
-    //var rpToday = _rpStatistics?.self? ?? '--';
-    //var rpYesterday = _rpInfo?.rpYesterday ?? '--';
-    // var rpMissed = _rpInfo?.rpMissed ?? '--';
+    var rpToday = '--';
+    var rpYesterday = '--';
+    var rpMissed = '--';
 
-    // var rpTodayStr = '$rpToday RP';
-    // var rpYesterdayStr = '$rpYesterday RP';
-    // var rpMissedStr = '$rpMissed RP';
-
-    var rpTodayStr = S.of(context).rp_not_airdrop_1;
-    var rpYesterdayStr = S.of(context).rp_not_airdrop_2;
-    var rpMissedStr = S.of(context).rp_not_airdrop_3;
-
-    // var avatarPath = activeWallet != null
-    //     ? 'res/drawable/ic_map3_node_default_icon.png'
-    //     : 'res/drawable/img_avatar_default.png';
-
-    // InkWell(
-    //   onTap: _navToMyRpRecords,
-    //   child: Row(
-    //     children: [
-    //       Expanded(
-    //         child: _contentColumn(
-    //             rpBalanceStr, S.of(context).rp_balance),
-    //       ),
-    //       _verticalLine(),
-    //       Expanded(
-    //         child: _contentColumn(
-    //             rpTodayStr, S.of(context).rp_today_rp),
-    //       ),
-    //       _verticalLine(),
-    //       Expanded(
-    //         child: _contentColumn(
-    //             rpYesterdayStr, S.of(context).rp_yesterday_rp),
-    //       ),
-    //       _verticalLine(),
-    //       Expanded(
-    //         child: _contentColumn(
-    //             rpMissedStr, S.of(context).rp_missed),
-    //       ),
-    //     ],
-    //   ),
-    // ),
+    var rpTodayStr = '$rpToday RP';
+    var rpYesterdayStr = '$rpYesterday RP';
+    var rpMissedStr = '$rpMissed RP';
 
     var airDropPercent = _rpStatistics?.rpContractInfo?.dropOnPercent ?? '--';
     return SliverToBoxAdapter(
@@ -560,37 +587,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Stack(
+            child: Column(
               children: [
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 16.0,
-                      bottom: 8.0,
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 24,
-                        ),
-                        Image.asset(
-                          'res/drawable/img_rp_airdrop.png',
-                          width: 80,
-                          height: 80,
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Text(
-                          S.of(context).rp_available_soon,
-                          style: TextStyle(
-                            fontSize: 13,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -615,6 +613,54 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       ),
                     ),
                   ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 16.0,
+                    bottom: 8.0,
+                  ),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'res/drawable/img_rp_airdrop.png',
+                        width: 80,
+                        height: 80,
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        S.of(context).rp_available_soon,
+                        style: TextStyle(
+                          fontSize: 13,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                InkWell(
+                  onTap: _navToMyRpRecords,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _contentColumn(
+                            rpTodayStr, S.of(context).rp_today_rp),
+                      ),
+                      _verticalLine(),
+                      Expanded(
+                        child: _contentColumn(
+                            rpYesterdayStr, S.of(context).rp_yesterday_rp),
+                      ),
+                      _verticalLine(),
+                      Expanded(
+                        child: _contentColumn(
+                            rpMissedStr, S.of(context).rp_missed),
+                      ),
+                    ],
+                  ),
                 )
               ],
             ),
@@ -844,32 +890,66 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
   }
 
-  Widget _infoColumn(
+  Widget _toolTipColumn(
     String content,
     String subContent,
+    String toolTipMsg,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Text(
-          content,
-          style: TextStyle(
-            fontSize: 12,
-            color: DefaultColors.color999,
-            fontWeight: FontWeight.w500,
+    GlobalKey _toolTipKey = GlobalKey();
+    return InkWell(
+      onTap: () {
+        final dynamic tooltip = _toolTipKey.currentState;
+        tooltip?.ensureTooltipVisible();
+      },
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  content,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: DefaultColors.color999,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(
+                  height: 4.0,
+                ),
+                Row(
+                  children: [
+                    Spacer(),
+                    Text(
+                      subContent,
+                      style: TextStyle(
+                        fontSize: 8,
+                        color: DefaultColors.color999,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 2,
+                    ),
+                    if (toolTipMsg != null)
+                      Tooltip(
+                        key: _toolTipKey,
+                        verticalOffset: 16,
+                        message: toolTipMsg,
+                        child: Image.asset(
+                          'res/drawable/ic_tooltip.png',
+                          width: 10,
+                          height: 10,
+                        ),
+                      ),
+                    Spacer(),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        SizedBox(
-          height: 4.0,
-        ),
-        Text(
-          subContent,
-          style: TextStyle(
-            fontSize: 8,
-            color: DefaultColors.color999,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

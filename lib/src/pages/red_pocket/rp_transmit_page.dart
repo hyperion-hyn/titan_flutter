@@ -692,11 +692,11 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       if (netData?.isNotEmpty ?? false) {
         _dataList = netData;
       }
-      // } else {
-      //   _loadDataBloc.add(LoadEmptyEvent());
-      // }
+
     } catch (e) {
-      _loadDataBloc.add(LoadFailEvent());
+      if (mounted) {
+        _loadDataBloc.add(LoadFailEvent());
+      }
     }
   }
 
@@ -712,7 +712,9 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }
     } catch (e) {
-      _loadDataBloc.add(LoadMoreFailEvent());
+      if (mounted) {
+        _loadDataBloc.add(LoadMoreFailEvent());
+      }
     }
   }
 

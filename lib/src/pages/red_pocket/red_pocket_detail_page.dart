@@ -1,9 +1,8 @@
-import 'dart:math';
 import 'dart:ui';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -12,10 +11,10 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_miners_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -23,7 +22,7 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
-import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+
 
 class RedPocketDetailPage extends StatefulWidget {
   final RpOpenRecordEntity rpOpenRecordEntity;
@@ -43,12 +42,16 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   var _address = "";
 
   List<RpOpenRecordEntity> _dataList = List();
+  List<RpOpenRecordEntity> get _filterDataList => _dataList.where((element) => element.role == 3).toList();
+  List<RpOpenRecordEntity> get _manageDataList => _dataList.where((element) => element.role != 3).toList();
+
   RpOpenRecordEntity _detailEntity;
 
-  // int _rpType = Random().nextInt(3);
   int get _rpType => _detailEntity?.type ?? 0;
 
   String _currentPageKey;
+  String _manageFeeAmount = '-- RP';
+  bool get _txHashIsEmpty => (_detailEntity?.txHash ?? '').isEmpty;
 
   @override
   void initState() {
@@ -80,9 +83,9 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         backgroundColor: HexColor('#F8F8F8'),
         actions: <Widget>[
           FlatButton(
-            onPressed: _navToDetailAction,
+            onPressed: _txHashIsEmpty ? null : _navToDetailAction,
             child: Text(
-              (_detailEntity?.txHash ?? '').isEmpty ? '' : '查看交易',
+              _txHashIsEmpty ? '' : '查看交易',
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
@@ -95,8 +98,6 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       body: _pageView(),
     );
   }
-
-
 
   _pageView() {
     return LoadDataContainer(
@@ -126,6 +127,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     );
   }
 
+  GlobalKey _toolTipKey = GlobalKey();
+
   Widget _infoDetailWidget() {
     var title = '';
     var subTitle = '';
@@ -137,7 +140,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     }
     print("[$runtimeType] _infoDetailBuilder, rpType:$_rpType");
 
-    var amount = '${_detailEntity?.amountStr ?? '0'} RP';
+    var amount = '-- RP';
 
     switch (_rpType) {
       case 0:
@@ -147,11 +150,13 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       case 1:
         title = '量级红包';
         subTitle = '（量级${_detailEntity?.to}）';
-        amount = '${_detailEntity?.amount} RP';
+        amount = '${_detailEntity?.amountStr ?? '0'} RP';
         break;
 
       case 2:
         title = '晋升红包';
+
+        amount = _detailEntity.luck == 0 ? '0 RP' : '${_detailEntity?.amountStr ?? '0'} RP';
         break;
 
       default:
@@ -255,7 +260,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '量级$from - 量级$to',
+                      '量级$from -> 量级$to',
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 10,
@@ -304,30 +309,47 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
               ),
             ),
             if (_detailEntity.luck == 0)
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 16,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '你已错过红包机会',
-                      style: TextStyle(
-                        color: HexColor("#999999"),
-                        fontSize: 12,
-                        fontWeight: FontWeight.normal,
+              InkWell(
+                onTap: () {
+                  final dynamic tooltip = _toolTipKey.currentState;
+                  tooltip.ensureTooltipVisible();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 16,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '你已错过红包机会',
+                        style: TextStyle(
+                          color: HexColor("#999999"),
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 6,
-                    ),
-                    Image.asset(
-                      'res/drawable/red_pocket_detail_info.png',
-                      width: 12,
-                      height: 12,
-                    ),
-                  ],
+                      SizedBox(
+                        width: 6,
+                      ),
+                      Tooltip(
+                        key: _toolTipKey,
+                        verticalOffset: 20,
+                        //padding: const EdgeInsets.only(right: 8,),
+                        message: '因量级过低，你错过获得${_detailEntity?.amountStr ?? '0'} RP 机会',
+                        child: Image.asset(
+                          'res/drawable/ic_tooltip.png',
+                          width: 10,
+                          height: 10,
+                        ),
+                      )
+                      // Image.asset(
+                      //   'res/drawable/red_pocket_detail_info.png',
+                      //   width: 12,
+                      //   height: 12,
+                      // ),
+                    ],
+                  ),
                 ),
               ),
             SizedBox(
@@ -404,27 +426,62 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         ),
       );
     } else {
+      var childCount = _rpType == 0 ? _filterDataList.length : _filterDataList.length + 1;
       return SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
-            if ((index + 1) == _dataList.length && _rpType == 1) {
-              return _defaultItem(index);
-            }
             return _itemBuilder(index);
           },
-          childCount: _dataList.length,
+          childCount: childCount,
         ),
       );
     }
   }
 
   Widget _itemBuilder(int index) {
-    var model = _dataList[index];
+    if (index == _filterDataList.length) {
+      switch (_rpType) {
+        case 1:
+          return _levelWidget();
+
+          break;
+
+        case 2:
+          return _promotionWidget();
+          break;
+      }
+    }
+
+    var model = _filterDataList[index];
+
+    var role = '';
+    switch (model.role) {
+      case 1:
+        //desc = '量级不足，错过机会';
+
+        role = '燃烧';
+        break;
+
+      case 2:
+        role = '管理费';
+        break;
+
+      case 3:
+        role = '';
+        break;
+
+      default:
+        role = '';
+        break;
+    }
+
     var name = model?.username ?? '';
     if (name.isEmpty) {
       name = '未知用户';
       name = '用户';
     }
+    name += role;
+
     var level = levelValueToLevelName(model?.level ?? 0);
     var beach32Address = WalletUtil.ethAddressToBech32Address(
       model?.address ?? '',
@@ -444,15 +501,14 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         break;
 
       default:
-        desc = '错过';
+        desc = '错过 ${model?.amountStr ?? '0'} RP';
         break;
     }
 
+    var amount = model.luck == 0 ? '0 RP' : '${model?.amountStr ?? '0'} RP';
+
     return InkWell(
-      onTap: () {
-        _navToDetailAction();
-        //AtlasApi.goToHynScanPage(context, beach32Address);
-      },
+      onTap: _txHashIsEmpty ? null : _navToDetailAction,
       child: Padding(
         padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
         child: Container(
@@ -489,35 +545,36 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          right: 6,
-                        ),
-                        child: name.isNotEmpty
-                            ? Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 6.0),
-                                child: Text(
-                                  name,
-                                  style: TextStyle(
-                                    color: HexColor("#333333"),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            right: 6,
+                          ),
+                          child: name.isNotEmpty
+                              ? Text(
+                                name,
+                                style: TextStyle(
+                                  color: HexColor("#333333"),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               )
-                            : SizedBox(),
-                      ),
-                      Text(
-                        ' $level 级',
-                        style: TextStyle(
-                          color: HexColor("#999999"),
-                          fontSize: 12,
-                          fontWeight: FontWeight.normal,
+                              : SizedBox(),
                         ),
-                      ),
-                    ],
+                        Text(
+                          '当时量级 $level ',
+                          style: TextStyle(
+                            color: HexColor("#999999"),
+                            fontSize: 10,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   Text(
                     '${UiUtil.shortEthAddress(address)}',
@@ -541,7 +598,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        '+ ${model?.amountStr ?? '0'} RP',
+                        amount,
                         style: TextStyle(
                           color: HexColor("#333333"),
                           fontSize: 14,
@@ -573,7 +630,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     );
   }
 
-  Widget _defaultItem(int index) {
+  Widget _levelWidget() {
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
       child: Container(
@@ -665,8 +722,87 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     );
   }
 
+  Widget _promotionWidget() {
+    var _manageFeeAmount = Decimal.fromInt(0);
+    var _burnAmount = Decimal.fromInt(0);
+
+    _manageDataList.forEach((item) {
+      var bigIntValue = BigInt.tryParse(item.amount) ?? BigInt.from(0);
+      Decimal valueByDecimal = ConvertTokenUnit.weiToEther(
+        weiBigInt: bigIntValue,
+      );
+      if (item.role == 1) {
+        _burnAmount = valueByDecimal;
+      } else if (item.role == 2) {
+        _manageFeeAmount = valueByDecimal;
+      }
+    });
+    var _manageFeeAmountStr = '管理费 '+ FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + 'RP';
+    var _burnAmountStr = '燃烧 '+ FormatUtil.stringFormatCoinNum(_burnAmount.toString()) + 'RP';
+    var totalStr = _manageFeeAmountStr + '，' + _burnAmountStr;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 12,
+        ),
+        decoration: BoxDecoration(
+          color: HexColor('#FFFFFF'),
+          borderRadius: BorderRadius.all(
+            Radius.circular(6.0),
+          ), //设置四周圆角 角度
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 6,
+              ),
+              child: Image.asset(
+                'res/drawable/ic_burn.png',
+                width: 32,
+                height: 32,
+                color: HexColor('#FFFF5151'),
+              ),
+            ),
+            Spacer(),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 6,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                        child: Text(
+                          totalStr,
+                          style: TextStyle(
+                            color: HexColor("#333333"),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   _navToDetailAction() {
-    if ((_detailEntity?.txHash ?? '').isEmpty) return;
+    if (_txHashIsEmpty) return;
 
     WalletShowAccountInfoPage.jumpToAccountInfoPage(
       context,
@@ -676,9 +812,13 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 
   void getNetworkData() async {
-    _dataList.clear();
-
     try {
+      _detailEntity = await _rpApi.getMyRpOpenInfo(
+        _address,
+        _detailEntity?.redPocketId ?? 0,
+        _detailEntity?.type ?? 0,
+      );
+
       var netData = await _rpApi.getMySlitRpRecordList(
         _address,
         pagingKey: _currentPageKey,
@@ -688,6 +828,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
         _dataList = netData.data;
+
         if (mounted) {
           setState(() {
             _loadDataBloc.add(RefreshSuccessEvent());
@@ -698,17 +839,6 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       }
     } catch (e) {
       _loadDataBloc.add(LoadFailEvent());
-    }
-
-    _detailEntity = await _rpApi.getMyRpOpenInfo(
-      _address,
-      _detailEntity?.redPocketId ?? 0,
-      _detailEntity?.type ?? 0,
-    );
-    if (mounted) {
-      setState(() {
-        _loadDataBloc.add(RefreshSuccessEvent());
-      });
     }
   }
 
