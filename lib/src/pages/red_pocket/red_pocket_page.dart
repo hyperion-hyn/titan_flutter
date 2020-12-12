@@ -619,23 +619,30 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     top: 16.0,
                     bottom: 8.0,
                   ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'res/drawable/img_rp_airdrop.png',
-                        width: 80,
-                        height: 80,
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Text(
-                        S.of(context).rp_available_soon,
-                        style: TextStyle(
-                          fontSize: 13,
+                  child: Container(
+                    height: 150,
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8.0,
+                            horizontal: 16.0,
+                          ),
+                          child: Image.asset(
+                            'res/drawable/bg_rp_airdrop.png',
+                          ),
                         ),
-                      )
-                    ],
+                        Center(
+                          child: Text(
+                            '即将空投',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(
