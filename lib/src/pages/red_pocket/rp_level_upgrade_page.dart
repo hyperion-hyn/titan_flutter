@@ -41,12 +41,18 @@ class RpLevelUpgradePage extends StatefulWidget {
 }
 
 class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
-  TextEditingController _textEditingController = new TextEditingController();
+  final TextEditingController _textEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  double minTotal = 0;
-  double remainTotal = 0;
   final RPApi _rpApi = RPApi();
+  final StreamController<String> _inputController = StreamController.broadcast();
+  final LoadDataBloc _loadDataBloc = LoadDataBloc();
+
+  RpMyLevelInfo _myLevelInfo;
+  CoinVo _coinVo;
+  WalletVo _activatedWallet;
+
   Decimal _totalValue;
+
   Decimal get _totalNeedValue {
     var zeroValue = Decimal.zero;
     var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? zeroValue;
@@ -55,13 +61,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
 
-  final StreamController<String> _inputController = StreamController.broadcast();
-
-  LoadDataBloc _loadDataBloc = LoadDataBloc();
-
-  RpMyLevelInfo _myLevelInfo;
-  CoinVo _coinVo;
-  WalletVo _activatedWallet;
   String get _address => _activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
 
@@ -254,11 +253,9 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                         return _remainStr;
                                       }
 
-                                      var balanceValue = Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ??
-                                          Decimal.fromInt(0);
                                       //print("2, inputValue:$inputValue, balanceValue:$balanceValue");
 
-                                      if (inputValue > balanceValue) {
+                                      if (inputValue > _balanceValue) {
                                         return '输入数量超过了钱包余额';
                                       }
                                     },
@@ -299,6 +296,21 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                             builder: (context, snapshot) {
                               var isOver = _totalValue != null && _totalValue > _balanceValue;
                               var isFull = _totalValue != null && _totalValue >= _totalNeedValue;
+                              var content = '';
+                              Color textColor;
+
+                              if (isOver) {
+                                content = '（余额不足）';
+                                textColor = HexColor('#FF4C3B');
+                              } else {
+                                if (isFull) {
+                                  content = '（满足要求）';
+                                  textColor = Theme.of(context).primaryColor;
+                                } else {
+                                  content = '（未满足要求）';
+                                  textColor = HexColor('#999999');
+                                }
+                              }
                               return Padding(
                                 padding: const EdgeInsets.only(top: 20),
                                 child: Row(
@@ -311,26 +323,14 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                     SizedBox(
                                       width: 16,
                                     ),
-                                    isOver
-                                        ? Text('（余额不足）',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12,
-                                              color: HexColor('#FF4C3B'),
-                                            ))
-                                        : isFull
-                                            ? Text('（满足要求）',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 12,
-                                                  color: Theme.of(context).primaryColor,
-                                                ))
-                                            : Text('（未满足要求）',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 12,
-                                                  color: HexColor('#999999'),
-                                                )),
+                                    Text(
+                                      content,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                        color: textColor,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               );
