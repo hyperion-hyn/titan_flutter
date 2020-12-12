@@ -568,48 +568,13 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _airdropWidget() {
-    //var rpToday = _rpStatistics?.self? ?? '--';
-    //var rpYesterday = _rpInfo?.rpYesterday ?? '--';
-    // var rpMissed = _rpInfo?.rpMissed ?? '--';
+    var rpToday = '--';
+    var rpYesterday = '--';
+    var rpMissed = '--';
 
-    // var rpTodayStr = '$rpToday RP';
-    // var rpYesterdayStr = '$rpYesterday RP';
-    // var rpMissedStr = '$rpMissed RP';
-
-    var rpTodayStr = S.of(context).rp_not_airdrop_1;
-    var rpYesterdayStr = S.of(context).rp_not_airdrop_2;
-    var rpMissedStr = S.of(context).rp_not_airdrop_3;
-
-    // var avatarPath = activeWallet != null
-    //     ? 'res/drawable/ic_map3_node_default_icon.png'
-    //     : 'res/drawable/img_avatar_default.png';
-
-    // InkWell(
-    //   onTap: _navToMyRpRecords,
-    //   child: Row(
-    //     children: [
-    //       Expanded(
-    //         child: _contentColumn(
-    //             rpBalanceStr, S.of(context).rp_balance),
-    //       ),
-    //       _verticalLine(),
-    //       Expanded(
-    //         child: _contentColumn(
-    //             rpTodayStr, S.of(context).rp_today_rp),
-    //       ),
-    //       _verticalLine(),
-    //       Expanded(
-    //         child: _contentColumn(
-    //             rpYesterdayStr, S.of(context).rp_yesterday_rp),
-    //       ),
-    //       _verticalLine(),
-    //       Expanded(
-    //         child: _contentColumn(
-    //             rpMissedStr, S.of(context).rp_missed),
-    //       ),
-    //     ],
-    //   ),
-    // ),
+    var rpTodayStr = '$rpToday RP';
+    var rpYesterdayStr = '$rpYesterday RP';
+    var rpMissedStr = '$rpMissed RP';
 
     var airDropPercent = _rpStatistics?.rpContractInfo?.dropOnPercent ?? '--';
     return SliverToBoxAdapter(
