@@ -526,35 +526,36 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          right: 6,
-                        ),
-                        child: name.isNotEmpty
-                            ? Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 6.0),
-                                child: Text(
-                                  name,
-                                  style: TextStyle(
-                                    color: HexColor("#333333"),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            right: 6,
+                          ),
+                          child: name.isNotEmpty
+                              ? Text(
+                                name,
+                                style: TextStyle(
+                                  color: HexColor("#333333"),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               )
-                            : SizedBox(),
-                      ),
-                      Text(
-                        ' $level 级',
-                        style: TextStyle(
-                          color: HexColor("#999999"),
-                          fontSize: 12,
-                          fontWeight: FontWeight.normal,
+                              : SizedBox(),
                         ),
-                      ),
-                    ],
+                        Text(
+                          '当时量级 $level ',
+                          style: TextStyle(
+                            color: HexColor("#999999"),
+                            fontSize: 10,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   Text(
                     '${UiUtil.shortEthAddress(address)}',

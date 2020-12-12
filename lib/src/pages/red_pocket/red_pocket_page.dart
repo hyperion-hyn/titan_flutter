@@ -105,6 +105,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             _requestData();
           },
           child: CustomScrollView(
+            physics: BouncingScrollPhysics(),
             slivers: <Widget>[
               _myRPInfo(),
               _airdropWidget(),

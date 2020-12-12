@@ -202,8 +202,8 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                                         return '请输入增加数量';
                                       }
 
-                                      var inputValue = Decimal.tryParse(textStr);
-                                      if (inputValue == null) {
+                                      var inputValue = Decimal.tryParse(textStr??'0');
+                                      if (inputValue == null || inputValue <= Decimal.zero) {
                                         return S.of(context).please_enter_correct_amount;
                                       }
 
