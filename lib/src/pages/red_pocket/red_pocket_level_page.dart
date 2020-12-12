@@ -42,6 +42,30 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   List<LevelRule> get _dynamicDataList => (_promotionRuleEntity?.dynamicList ?? []).reversed.toList();
   List<LevelRule> get _staticDataList => (_promotionRuleEntity?.static ?? []).reversed.toList();
 
+  List<LevelRule> get _oldModelList {
+    List<LevelRule> list = [];
+
+    for (int index = 0; index < _staticDataList.length; index++) {
+      var zeroValue = Decimal.zero;
+      var staticModel = _staticDataList[index];
+      var staticBurnValue = Decimal.tryParse(staticModel?.burnStr ?? '0') ?? zeroValue;
+
+      var dynamicModel = _dynamicDataList[index];
+      var dynamicBurnValue = Decimal.tryParse(dynamicModel?.burnStr ?? '0') ?? zeroValue;
+
+      bool isOldLevel = staticBurnValue > zeroValue &&
+          dynamicBurnValue >= zeroValue &&
+          staticBurnValue > dynamicBurnValue &&
+          dynamicModel.level > _currentLevel;
+      //print("[$runtimeType] _setupOldModelList, isOldLevel:$isOldLevel");
+
+      if (isOldLevel) {
+        list.add(dynamicModel);
+      }
+    }
+    return list;
+  }
+
   LevelRule _currentSelectedLevelRule;
   int get _currentLevel => widget?.rpMyLevelInfo?.currentLevel ?? 0;
 
@@ -127,7 +151,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   }
 
   Widget _levelHeaderView() {
-    var promotionSupplyRatioValue = double.tryParse(_promotionRuleEntity?.supplyInfo?.promotionSupplyRatio ?? '0')??0;
+    var promotionSupplyRatioValue = double.tryParse(_promotionRuleEntity?.supplyInfo?.promotionSupplyRatio ?? '0') ?? 0;
     var promotionSupplyRatioPercent = FormatUtil.formatPercent(promotionSupplyRatioValue);
 
     var stepPercent = FormatUtil.formatPercent(_promotionRuleEntity?.supplyInfo?.gradientRatio ?? 0);
@@ -222,30 +246,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     );
   }
 
-  List<LevelRule> _oldModelList = [];
-  void _setupOldModelList()  {
-
-    _oldModelList.clear();
-
-    for (int index = 0; index < _staticDataList.length; index++) {
-
-      var zeroValue = Decimal.zero;
-      var staticModel = _staticDataList[index];
-      var staticBurnValue = Decimal.tryParse(staticModel?.burnStr ?? '0') ?? zeroValue;
-
-      var dynamicModel = _dynamicDataList[index];
-      var dynamicBurnValue = Decimal.tryParse(dynamicModel?.burnStr ?? '0') ?? zeroValue;
-
-      bool isOldLevel =
-          staticBurnValue > zeroValue && dynamicBurnValue >= zeroValue && staticBurnValue > dynamicBurnValue && dynamicModel.level > _currentLevel;
-      print("[$runtimeType] _setupOldModelList, isOldLevel:$isOldLevel");
-
-      if (isOldLevel) {
-        _oldModelList.add(dynamicModel);
-      }
-    }
-  }
-
   Widget _itemBuilderDynamic(int index) {
     var staticModel = _staticDataList[index];
 
@@ -269,7 +269,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     } else {
       leftTagTitle = '可恢复量级';
     }
-
 
     var zeroValue = Decimal.zero;
     var holdValue = Decimal.tryParse(dynamicModel?.holdingStr ?? '0') ?? zeroValue;
@@ -564,8 +563,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
       if (netData?.static?.isNotEmpty ?? false) {
         _promotionRuleEntity = netData;
-
-        _setupOldModelList();
 
         print("[$runtimeType] getNetworkData, count:${_staticDataList.length}, old.length:${_oldModelList.length}");
 
