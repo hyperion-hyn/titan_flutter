@@ -229,7 +229,7 @@ class RPApi {
   ///我的红包列表
   Future<RpMyRpRecordEntity> getMyRpRecordList(
     String address, {
-    int size = 20,
+    int size = 200,
     pagingKey = '',
   }) async {
     return await RPHttpCore.instance.getEntity(
@@ -239,7 +239,7 @@ class RPApi {
       }),
       params: {
         'paging_key': json.encode(pagingKey),
-        'size': size,
+        // 'size': size,
       },
       options: RequestOptions(
         contentType: "application/json",
@@ -280,7 +280,7 @@ class RPApi {
         'paging_key': json.encode(pagingKey),
         'id': redPocketId,
         'type': redPocketType,
-        'size': size,
+        // 'size': size,
       },
       options: RequestOptions(
         contentType: "application/json",
