@@ -47,6 +47,14 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   double remainTotal = 0;
   final RPApi _rpApi = RPApi();
   Decimal _totalValue;
+  Decimal get _totalNeedValue {
+    var zeroValue = Decimal.zero;
+    var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? zeroValue;
+    return _remainValue + burnValue;
+  }
+
+  Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
+
   final StreamController<String> _inputController = StreamController.broadcast();
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
@@ -217,17 +225,16 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                   key: _formKey,
                                   child: RoundBorderTextField(
                                     onChanged: (text) {
-
-                                      if (text?.isNotEmpty??false) {
+                                      if (text?.isNotEmpty ?? false) {
                                         _formKey.currentState.validate();
                                       }
 
-                                      var holdValue = Decimal.tryParse(text ?? '0') ?? Decimal.zero;
+                                      var inputValue = Decimal.tryParse(text ?? '0') ?? Decimal.zero;
                                       var burnValue =
                                           Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.zero;
                                       //print("1, text:$text, holdValue:$holdValue");
 
-                                      _totalValue = (holdValue + burnValue);
+                                      _totalValue = (inputValue + burnValue);
                                       _inputController.add(text);
                                     },
                                     controller: _textEditingController,
@@ -290,10 +297,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                         StreamBuilder<Object>(
                             stream: _inputController.stream,
                             builder: (context, snapshot) {
-                              var balanceValue =
-                                  Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.fromInt(0);
-
-                              var isOver = _totalValue != null && _totalValue > balanceValue;
+                              var isOver = _totalValue != null && _totalValue > _balanceValue;
+                              var isFull = _totalValue != null && _totalValue >= _totalNeedValue;
                               return Padding(
                                 padding: const EdgeInsets.only(top: 20),
                                 child: Row(
@@ -313,12 +318,19 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                               fontSize: 12,
                                               color: HexColor('#FF4C3B'),
                                             ))
-                                        : Text('（满足要求）',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12,
-                                              color: Theme.of(context).primaryColor,
-                                            )),
+                                        : isFull
+                                            ? Text('（满足要求）',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12,
+                                                  color: Theme.of(context).primaryColor,
+                                                ))
+                                            : Text('（未满足要求）',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12,
+                                                  color: HexColor('#999999'),
+                                                )),
                                   ],
                                 ),
                               );
@@ -388,10 +400,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     }
 
     // todo: 计算 holding + burning > balance;
-
-    var balanceValue = Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
-
-    if (_totalValue > balanceValue) {
+    if (_totalValue > _balanceValue) {
       Fluttertoast.showToast(
         msg: '钱包余额不足以升级到当前选中量级！',
         gravity: ToastGravity.CENTER,
