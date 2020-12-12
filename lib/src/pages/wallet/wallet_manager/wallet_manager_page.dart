@@ -24,7 +24,10 @@ import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:characters/characters.dart';
 
@@ -219,15 +222,53 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                 child: InkWell(
                   onTap: () {
                     if (!isSelected) {
-                      isRefresh = true;
-                      setState(() {
-                      });
-                      BlocProvider.of<WalletCmpBloc>(context)
-                          .add(ActiveWalletEvent(wallet: wallet));
+                      UiUtil.showAlertView(
+                        context,
+                        title: S.of(context).tips,
+                        actions: [
+                          ClickOvalButton(
+                            S.of(context).cancel,
+                                () {
+                              Navigator.pop(context);
+                            },
+                            width: 120,
+                            height: 32,
+                            fontSize: 14,
+                            fontColor: DefaultColors.color999,
+                            btnColor: [Colors.transparent],
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          ClickOvalButton(
+                            "切换钱包",
+                                () async {
+                              Navigator.pop(context);
 
-                      ///Clear exchange account when switch wallet
-                      BlocProvider.of<ExchangeCmpBloc>(context)
-                          .add(ClearExchangeAccountEvent());
+                              var password = await UiUtil.showWalletPasswordDialogV2(
+                                context,
+                                wallet,
+                              );
+                              if(password == null || password.isEmpty){
+                                return;
+                              }
+                              isRefresh = true;
+                              setState(() {
+                              });
+
+                              BlocProvider.of<WalletCmpBloc>(context)
+                                  .add(ActiveWalletEvent(wallet: wallet));
+                              ///Clear exchange account when switch wallet
+                              BlocProvider.of<ExchangeCmpBloc>(context)
+                                  .add(ClearExchangeAccountEvent());
+                            },
+                            width: 120,
+                            height: 38,
+                            fontSize: 16,
+                          ),
+                        ],
+                        content: "你将要切换${walletKeyStore.name}为当前钱包，继续切换吗？",
+                      );
                     }
                   },
                   child: Row(
