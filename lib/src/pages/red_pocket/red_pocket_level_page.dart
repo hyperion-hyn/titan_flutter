@@ -13,9 +13,11 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_add_staking_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'entity/rp_util.dart';
 
@@ -40,7 +42,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   List<LevelRule> get _staticDataList => (_promotionRuleEntity?.static ?? []).reversed.toList();
 
   LevelRule _currentSelectedLevelRule;
-  // int get _currentLevel => 2;
   int get _currentLevel => widget?.rpMyLevelInfo?.currentLevel ?? 0;
 
   int _recommendLevel = 5;
@@ -125,14 +126,15 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   }
 
   Widget _levelHeaderView() {
+    var stepPercent = FormatUtil.formatPercent(_promotionRuleEntity?.supplyInfo?.gradientRatio ?? 0);
+
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
             Text(
-              // todo: 配置 5% 服务器返回
-              '当前流通 ${_promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '--'} RP，百分比Y = ${_promotionRuleEntity?.supplyInfo?.promotionSupplyRatioStr ?? '--'}%（5%单位粒度）',
+              '当前已发行 ${_promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '--'} RP，百分比Y = ${_promotionRuleEntity?.supplyInfo?.promotionSupplyRatioStr ?? '--'}%（$stepPercent为1梯度）',
               style: TextStyle(
                 color: HexColor('#333333'),
                 fontSize: 12,
@@ -157,18 +159,17 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
         itemCount: _staticDataList.length,
         itemBuilder: (BuildContext context, int index) {
           var staticModel = _staticDataList[index];
-          var dynamicModel = _dynamicDataList[index];
 
-          var zeroValue = Decimal.fromInt(0);
-          var staticHoldValue =
-              Decimal.tryParse(staticModel?.holdingStr ?? '0') ?? zeroValue;
-          var dynamicHoldValue =
-              Decimal.tryParse(dynamicModel?.holdingStr ?? '0') ?? zeroValue;
-          bool isOldLevel = staticHoldValue > zeroValue && dynamicHoldValue > zeroValue && staticHoldValue > dynamicHoldValue;
-
+          var isOldLevel = false;
+          if (_oldModelList.isNotEmpty) {
+            for (var element in _oldModelList) {
+              if (element.level == staticModel.level) {
+                isOldLevel = true;
+                break;
+              }
+            }
+          }
           //print("[$runtimeType] _levelListView, level:${staticModel.level}, isOldLevel:$isOldLevel");
-
-          //isOldLevel = true;
 
           if (isOldLevel) {
             return _itemBuilderOld(index);
@@ -216,22 +217,21 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     );
   }
 
+  List<LevelRule> _oldModelList = [];
+
   Widget _itemBuilderOld(int index) {
     var staticModel = _staticDataList[index];
-    var dynamicModel = _dynamicDataList[index];
 
     // 过滤出Old
-    var zeroValue = Decimal.fromInt(0);
-    var staticHoldValue =
-        Decimal.tryParse(staticModel?.holdingStr ?? '0') ?? zeroValue;
-    List<LevelRule> oldModelList = _dynamicDataList.where((element) {
-      var dynamicHoldValue =
-          Decimal.tryParse(element?.holdingStr ?? '0') ?? zeroValue;
-      bool isOldLevel = staticHoldValue > zeroValue && dynamicHoldValue > zeroValue && staticHoldValue > dynamicHoldValue;
+    LevelRule dynamicModel =
+        _oldModelList.firstWhere((element) => element.level == staticModel.level, orElse: () => null);
 
-      return isOldLevel;
-    }).toList();
-    LevelRule oldModelMax = oldModelList.firstWhere((element) => element.level > dynamicModel.level, orElse: () => null);
+    LevelRule oldModelMax =
+        _oldModelList.firstWhere((element) => element.level > dynamicModel.level, orElse: () => null);
+    // for (var element in _oldModelList) {
+    //   print(
+    //       "[$runtimeType] oldModelList.length:${_oldModelList.length}, level:${element.level} , index:$index, oldModelMax:$oldModelMax");
+    // }
 
     // 判断当前旧的量级是否为历史最高
     bool isNotMax = (oldModelMax != null);
@@ -243,8 +243,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
       leftTagTitle = '可恢复量级';
     }
 
-    // TODO：现在的计算不准确
-    String oldLevelDesc = '恢复至该量级需燃烧 ${dynamicModel?.burnStr??'0'}RP, 增持${dynamicModel?.holdingStr??'0'}RP';
+    String oldLevelDesc = '恢复至该量级需燃烧 ${dynamicModel?.burnStr ?? '0'}RP, 增持${dynamicModel?.holdingStr ?? '0'}RP';
 
     return Stack(
       children: [
@@ -418,27 +417,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     );
   }
 
-  _selectedLevelAction(LevelRule model) {
-    if (_currentLevel > model.level && _currentLevel > 0) {
-      if (_currentLevel == 5) {
-        Fluttertoast.showToast(
-          msg: '当前量级已经是最高量级！',
-          gravity: ToastGravity.CENTER,
-        );
-        return;
-      }
-      Fluttertoast.showToast(
-        msg: '升级的量级不能小于当前量级, 请重新选择！',
-        gravity: ToastGravity.CENTER,
-      );
-      return;
-    }
-
-    setState(() {
-      _currentSelectedLevelRule = model;
-    });
-  }
-
   Widget _confirmButtonWidget() {
     return SliverToBoxAdapter(
       child: Container(
@@ -461,7 +439,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                 width: 20,
               ),
               ClickOvalButton(
-                '升级',
+                '提升量级',
                 _navToLevelUpgradeAction,
                 height: 34,
                 width: 120,
@@ -476,10 +454,31 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     );
   }
 
+  _selectedLevelAction(LevelRule model) {
+    if (_currentLevel > model.level && _currentLevel > 0) {
+      if (_currentLevel == 5) {
+        Fluttertoast.showToast(
+          msg: '当前量级已经是最高量级！',
+          gravity: ToastGravity.CENTER,
+        );
+        return;
+      }
+      Fluttertoast.showToast(
+        msg: '升级的量级不能小于当前量级, 请重新选择！',
+        gravity: ToastGravity.CENTER,
+      );
+      return;
+    }
+
+    setState(() {
+      _currentSelectedLevelRule = model;
+    });
+  }
+
   _navToLevelAddStakingAction() {
     if (_currentLevel == 0) {
       Fluttertoast.showToast(
-        msg: '当前量级为0, 请先升级！',
+        msg: '当前量级为0, 请先提升量级！',
         gravity: ToastGravity.CENTER,
       );
       return;
@@ -521,7 +520,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpLevelUpgradePage(widget.rpMyLevelInfo, _currentSelectedLevelRule),
+        builder: (context) => RpLevelUpgradePage(widget.rpMyLevelInfo, _currentSelectedLevelRule, _promotionRuleEntity),
       ),
     );
   }
@@ -532,6 +531,21 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
       if (netData?.static?.isNotEmpty ?? false) {
         _promotionRuleEntity = netData;
+
+        for (int index = 0; index < _staticDataList.length; index++) {
+          var staticModel = _staticDataList[index];
+          var dynamicModel = _dynamicDataList[index];
+
+          var zeroValue = Decimal.fromInt(0);
+          var staticBurnValue = Decimal.tryParse(staticModel?.burnStr ?? '0') ?? zeroValue;
+          var dynamicBurnValue = Decimal.tryParse(dynamicModel?.burnStr ?? '0') ?? zeroValue;
+          bool isOldLevel =
+              staticBurnValue > zeroValue && dynamicBurnValue > zeroValue && staticBurnValue > dynamicBurnValue;
+          if (isOldLevel) {
+            _oldModelList.add(dynamicModel);
+          }
+        }
+
         print("[$runtimeType] getNetworkData, count:${_staticDataList.length}");
 
         if (mounted) {

@@ -9,7 +9,7 @@ class RpMyRpRecordEntity extends Object {
   List<RpOpenRecordEntity> data;
 
   @JsonKey(name: 'paging_key')
-  String pagingKey;
+  Map<String,dynamic> pagingKey;
 
   RpMyRpRecordEntity(
     this.data,
@@ -27,7 +27,7 @@ class RpMyRpSplitRecordEntity extends Object {
   List<RpOpenRecordEntity> data;
 
   @JsonKey(name: 'paging_key')
-  String pagingKey;
+  Map<String,dynamic> pagingKey;
 
   RpMyRpSplitRecordEntity(
     this.data,

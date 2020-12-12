@@ -10,12 +10,19 @@ Widget walletHeaderWidget(
   bool isShowShape = true,
   String address = "#000000",
   bool isCircle = true,
+      bool isShowImage = false,
 }) {
   if (shortName.isNotEmpty) {
     shortName = shortName.characters.first;
+  } else {
+    return Image.asset(
+      'res/drawable/ic_empty_contract.png',
+      width: 32,
+      height: 32,
+    );
   }
   String hexColor = address;
-  if (address.length > 6) {
+  if (address.length > 6 && !address.contains('@')) {
     hexColor = "#" + address.substring(address.length - 6);
   } else {
     hexColor = "#BFBFBF";

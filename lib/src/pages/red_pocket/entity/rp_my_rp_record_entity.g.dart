@@ -13,7 +13,7 @@ RpMyRpRecordEntity _$RpMyRpRecordEntityFromJson(Map<String, dynamic> json) {
             ? null
             : RpOpenRecordEntity.fromJson(e as Map<String, dynamic>))
         ?.toList(),
-    json['paging_key'] as String,
+    json['paging_key'] as Map<String, dynamic>,
   );
 }
 
@@ -31,7 +31,7 @@ RpMyRpSplitRecordEntity _$RpMyRpSplitRecordEntityFromJson(Map<String, dynamic> j
         ? null
         : RpOpenRecordEntity.fromJson(e as Map<String, dynamic>))
         ?.toList(),
-    json['paging_key'] as String,
+    json['paging_key'] as Map<String, dynamic>,
   );
 }
 

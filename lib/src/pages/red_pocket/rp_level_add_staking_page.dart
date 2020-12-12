@@ -202,8 +202,8 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                                         return '请输入增加数量';
                                       }
 
-                                      var inputValue = Decimal.tryParse(textStr);
-                                      if (inputValue == null) {
+                                      var inputValue = Decimal.tryParse(textStr??'0');
+                                      if (inputValue == null || inputValue <= Decimal.zero) {
                                         return S.of(context).please_enter_correct_amount;
                                       }
 
@@ -279,11 +279,14 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
             btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
+            isLoading: _isLoading,
           ),
         ),
       ),
     );
   }
+
+  bool _isLoading = false;
 
   _addAction() async {
     FocusScope.of(context).requestFocus(FocusNode());
@@ -294,7 +297,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
 
     if ((_myLevelInfo?.currentLevel ?? 0) == 0) {
       Fluttertoast.showToast(
-        msg: '请先升级！',
+        msg: '请先提升量级！',
         gravity: ToastGravity.CENTER,
       );
       return;
@@ -314,18 +317,43 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
     var burningAmount = ConvertTokenUnit.strToBigInt('0');
     var depositAmount = ConvertTokenUnit.strToBigInt(inputText);
 
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
     Future.delayed(Duration(milliseconds: 111)).then((_) async {
       try {
         await _rpApi.postRpDepositAndBurn(
-          level: _myLevelInfo?.currentLevel ?? 0,
+          from: _myLevelInfo?.currentLevel ?? 0,
+          to: _myLevelInfo?.currentLevel ?? 0,
           depositAmount: depositAmount,
           burningAmount: burningAmount,
           activeWallet: _activatedWallet,
           password: password,
         );
+
+        Fluttertoast.showToast(
+          msg: '增加持币请求已广播！',
+          gravity: ToastGravity.CENTER,
+        );
+
         Navigator.of(context)..pop()..pop();
+
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+
       } catch (e) {
-        LogUtil.toastException(e);
+        if (mounted) {
+          LogUtil.toastException(e);
+
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     });
   }

@@ -122,7 +122,13 @@ class AtlasApi {
   }
 
   static goToHynScanPage(BuildContext context,String walletAddress) {
-    if(walletAddress != null && walletAddress.startsWith("0x")){
+    if(walletAddress == null){
+      return;
+    }
+    if(walletAddress.contains("@")){
+      return;
+    }
+    if(walletAddress.startsWith("0x")){
       walletAddress = WalletUtil.ethAddressToBech32Address(walletAddress);
     }
     String webUrl;

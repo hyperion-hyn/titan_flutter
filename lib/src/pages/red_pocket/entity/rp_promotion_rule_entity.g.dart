@@ -53,6 +53,8 @@ SupplyInfo _$SupplyInfoFromJson(Map<String, dynamic> json) {
   return SupplyInfo(
     json['promotion_supply_ratio'] as String,
     json['total_supply'] as String,
+    json['random_min_level'] as int,
+    json['gradient_ratio'] as double,
   );
 }
 
@@ -60,4 +62,6 @@ Map<String, dynamic> _$SupplyInfoToJson(SupplyInfo instance) =>
     <String, dynamic>{
       'promotion_supply_ratio': instance.promotionSupplyRatio,
       'total_supply': instance.totalSupply,
+      'random_min_level': instance.randomMinLevel,
+      'gradient_ratio': instance.gradientRatio,
     };

@@ -27,7 +27,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
-  String _currentPageKey;
+  Map<String, dynamic> _currentPageKey;
   var _address = "";
   // RpMyRpRecordEntity _rpMyRecordEntity;
   List<RpOpenRecordEntity> _dataList = [];
@@ -128,7 +128,11 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
         break;
 
       case 1:
-        desc = '砸中';
+        if (model.type == 0) {
+          desc = '砸中';
+        } else {
+          desc = '';
+        }
         break;
 
       case 2:
@@ -164,9 +168,6 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
 
     return InkWell(
       onTap: () {
-        // WalletShowAccountInfoPage.jumpToAccountInfoPage(
-        //     context, model?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
-
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -220,7 +221,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                           ),
                         ),
                         Text(
-                          '${S.of(context).rp_total_pretext} ${model?.totalAmountStr??'0'} RP',
+                          '${S.of(context).rp_total_pretext} ${model?.totalAmountStr ?? '0'} RP',
                           style: TextStyle(
                             color: HexColor("#999999"),
                             fontSize: 12,
@@ -236,7 +237,6 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                       height: 6,
                     ),
                     Text(
-
                       createdAtStr,
                       style: TextStyle(
                         fontSize: 10,
@@ -258,7 +258,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        '+ ${model?.amountStr??'0'} RP',
+                        model.luck == 0 ? '0 RP' : '+ ${model?.amountStr ?? '0'} RP',
                         style: TextStyle(
                           color: HexColor("#333333"),
                           fontSize: 14,
@@ -311,8 +311,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   }
 
   void getMoreNetworkData() async {
-
-    if (_currentPageKey?.isEmpty??true) {
+    if (_currentPageKey?.isEmpty ?? true) {
       _loadDataBloc.add(LoadMoreEmptyEvent());
       return;
     }
@@ -323,7 +322,12 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
         _dataList.addAll(netData.data);
-        _loadDataBloc.add(LoadingMoreSuccessEvent());
+        if (mounted) {
+          setState(() {
+            // todo: 不应该调用set state
+            _loadDataBloc.add(LoadingMoreSuccessEvent());
+          });
+        }
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }

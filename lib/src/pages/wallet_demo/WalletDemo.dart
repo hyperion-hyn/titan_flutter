@@ -10,6 +10,9 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -93,6 +96,8 @@ class _WalletDemoState extends State<WalletDemo> {
               var wallet = await WalletUtil.storeByMnemonic(
                   name: walletName, password: password, mnemonic: _mnemonic);
               if (wallet != null) {
+                var userPayload = UserPayloadWithAddressEntity(Payload(userName: wallet.keystore.name),wallet.getAtlasAccount().address);
+                AtlasApi.postUserSync(userPayload);
                 _mnemonic = null;
                 BlocProvider.of<WalletCmpBloc>(context)
                     .add(ActiveWalletEvent(wallet: wallet));
@@ -238,7 +243,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     .contractAddress;
                 var approveToAddress = WalletConfig.map3ContractAddress;
                 try {
-                  var ret = await wallet0.getAllowance(hynErc20ContractAddress, wallet0.getEthAccount().address, approveToAddress);
+                  var ret = await wallet0.getAllowance(hynErc20ContractAddress, wallet0.getEthAccount().address, approveToAddress, false);
                   print(ret);
 
                   // var signedHex = await wallet0.signApproveErc20Token(

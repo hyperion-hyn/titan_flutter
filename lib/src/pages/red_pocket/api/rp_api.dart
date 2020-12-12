@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/http/entity.dart';
@@ -236,7 +238,7 @@ class RPApi {
         return RpMyRpRecordEntity.fromJson(json);
       }),
       params: {
-        'paging_key': pagingKey,
+        'paging_key': json.encode(pagingKey),
         'size': size,
       },
       options: RequestOptions(
@@ -275,7 +277,7 @@ class RPApi {
         return RpMyRpSplitRecordEntity.fromJson(json);
       }),
       params: {
-        'paging_key': pagingKey,
+        'paging_key': json.encode(pagingKey),
         'id': redPocketId,
         'type': redPocketType,
         'size': size,
@@ -357,7 +359,8 @@ class RPApi {
 
   ///预提交升级
   Future<dynamic> postRpDepositAndBurn({
-    int level,
+    int from,
+    int to,
     BigInt depositAmount,
     BigInt burningAmount,
     String password = '',
@@ -372,15 +375,15 @@ class RPApi {
     }
     print('[rp_api] postRpDepositAndBurn, approveHex: $approveHex');
 
-    var txHash = await activeWallet.wallet.sendRpHolding(
+    var rawTxHash = await activeWallet.wallet.signRpHolding(
       RpHoldingMethod.DEPOSIT_BURN,
       password,
       depositAmount: depositAmount,
       burningAmount: burningAmount,
     );
 
-    print("[Rp_api] postRpDepositAndBurn, sendRpHolding, address:$address, txHash:$txHash");
-    if (txHash == null) {
+    print("[Rp_api] postRpDepositAndBurn, sendRpHolding, address:$address, txHash:$rawTxHash");
+    if (rawTxHash == null) {
       return;
     }
 
@@ -390,31 +393,35 @@ class RPApi {
           "address": address,
           "burning": burningAmount.toString(),
           "holding": depositAmount.toString(),
-          "level": level,
-          "tx_hash": txHash,
+          "from": from,
+          "to": to,
+          // "tx_hash": txHash,
+          'raw_tx': rawTxHash,
         },
         options: RequestOptions(contentType: "application/json"));
   }
 
   Future<dynamic> postRpWithdraw({
+    int from,
+    int to,
     BigInt withdrawAmount,
     String password = '',
     WalletVo activeWallet,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
-    var amount = withdrawAmount;
-    var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount);
-    print('[rp_api] postRpWithdraw, approveHex: $approveHex');
+    // var amount = withdrawAmount;
+    // var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount);
+    // print('[rp_api] postRpWithdraw, approveHex: $approveHex');
 
-    var txHash = await activeWallet.wallet.sendRpHolding(
+    var rawTxHash = await activeWallet.wallet.signRpHolding(
       RpHoldingMethod.WITHDRAW,
       password,
       withdrawAmount: withdrawAmount,
     );
 
-    print("[Rp_api] postRpWithdraw, sendRpHolding, address:$address, txHash:$txHash");
-    if (txHash == null) {
+    print("[Rp_api] postRpWithdraw, sendRpHolding, address:$address, rawTxHash:$rawTxHash");
+    if (rawTxHash == null) {
       return;
     }
 
@@ -422,7 +429,9 @@ class RPApi {
         params: {
           "address": address,
           "withdraw": withdrawAmount.toString(),
-          "tx_hash": txHash,
+          "raw_tx": rawTxHash,
+          "from": from,
+          "to": to,
         },
         options: RequestOptions(contentType: "application/json"));
   }
@@ -444,6 +453,18 @@ class RPApi {
     print(
         '[rp_api] postRpApprove, address:$address, amount:$amount, nonce:$nonce, gasPrice:$gasPrice, gasLimit:$gasLimit');
 
+    var ret = await wallet.getAllowance(
+      WalletConfig.hynRPHrc30Address,
+      address,
+      WalletConfig.rpHoldingContractAddress,
+      true,
+    );
+
+    print('[rp_api] postRpApprove, getAllowance, res:$ret');
+    // todo: getAllowance
+    if (ret >= amount) {
+      return '200';
+    }
     var approveHex = await wallet.sendApproveErc20Token(
       contractAddress: WalletConfig.hynRPHrc30Address,
       approveToAddress: WalletConfig.rpHoldingContractAddress,
