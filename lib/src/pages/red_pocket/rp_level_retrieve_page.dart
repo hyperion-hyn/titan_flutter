@@ -2,11 +2,15 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/rp/bloc/bloc.dart';
+import 'package:titan/src/components/rp/bloc/redpocket_bloc.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
@@ -23,9 +27,8 @@ import 'entity/rp_my_level_info.dart';
 import 'entity/rp_promotion_rule_entity.dart';
 
 class RpLevelRetrievePage extends StatefulWidget {
-  final RpMyLevelInfo rpMyLevelInfo;
 
-  RpLevelRetrievePage(this.rpMyLevelInfo);
+  RpLevelRetrievePage();
 
   @override
   State<StatefulWidget> createState() {
@@ -38,8 +41,9 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
   final _formKey = GlobalKey<FormState>();
 
   RpPromotionRuleEntity _promotionRuleEntity;
+  RpMyLevelInfo _myLevelInfo;
 
-  int get _currentLevel => widget?.rpMyLevelInfo?.currentLevel ?? 0;
+  int get _currentLevel => _myLevelInfo?.currentLevel ?? 0;
 
   List<LevelRule> get _staticDataList => (_promotionRuleEntity?.static ?? []).toList();
 
@@ -71,7 +75,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
 
   int get _toLevel {
     var holding = Decimal.tryParse(
-          widget?.rpMyLevelInfo?.currentHoldingStr ?? '0',
+          _myLevelInfo?.currentHoldingStr ?? '0',
         ) ??
         Decimal.zero;
 
@@ -139,6 +143,13 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
+  }
+
+  @override
   void dispose() {
     print("[${widget.runtimeType}] dispose");
 
@@ -180,7 +191,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                               SizedBox(
                                 width: 16,
                               ),
-                              Text('${widget?.rpMyLevelInfo?.currentHoldingStr ?? '0'} RP', style: _lightTextStyle),
+                              Text('${_myLevelInfo?.currentHoldingStr ?? '0'} RP', style: _lightTextStyle),
                             ],
                           ),
                         ),
@@ -232,7 +243,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                                       }
 
                                       var holding =
-                                          Decimal.tryParse(widget?.rpMyLevelInfo?.currentHoldingStr ?? '0') ?? 0;
+                                          Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? 0;
 
                                       if (textStr.length == 0 || inputValue == Decimal.fromInt(0)) {
                                         return '请输入有效提币数量';
@@ -413,6 +424,12 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
 
   Future getNetworkData() async {
     try {
+
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context)
+            .add(UpdateMyLevelInfoEntityEvent());
+      }
+
       var netData = await _rpApi.getRPPromotionRule(_address);
 
       if (netData?.static?.isNotEmpty ?? false) {

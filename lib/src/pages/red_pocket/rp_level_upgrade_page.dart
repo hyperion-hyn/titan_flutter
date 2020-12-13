@@ -4,12 +4,15 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/rp/bloc/bloc.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -28,11 +31,10 @@ import 'api/rp_api.dart';
 import 'entity/rp_my_level_info.dart';
 
 class RpLevelUpgradePage extends StatefulWidget {
-  final RpMyLevelInfo rpMyLevelInfo;
   final LevelRule levelRule;
   final RpPromotionRuleEntity promotionRuleEntity;
 
-  RpLevelUpgradePage(this.rpMyLevelInfo, this.levelRule, this.promotionRuleEntity);
+  RpLevelUpgradePage(this.levelRule, this.promotionRuleEntity);
 
   @override
   State<StatefulWidget> createState() {
@@ -61,13 +63,12 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
 
-  String get _address => _activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
 
   Decimal get _remainValue {
     var zeroValue = Decimal.zero;
     var holdValue = Decimal.tryParse(widget?.levelRule?.holdingStr ?? '0') ?? zeroValue;
-    var currentHoldValue = Decimal.tryParse(widget?.rpMyLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
+    var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
     var remainValue = holdValue - currentHoldValue;
     return remainValue > zeroValue ? remainValue : zeroValue;
   }
@@ -81,12 +82,9 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     fontSize: 14,
   );
 
-
   @override
   void initState() {
     super.initState();
-
-    _myLevelInfo = widget.rpMyLevelInfo;
 
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext);
     _coinVo = wallet.getCoinVoBySymbol('RP');
@@ -100,6 +98,13 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     getNetworkData();
 
     super.onCreated();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
   }
 
   @override
@@ -126,7 +131,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
               bloc: _loadDataBloc,
               enablePullUp: false,
               onRefresh: getNetworkData,
-              isStartLoading: true,
+              isStartLoading: false,
               child: BaseGestureDetector(
                 context: context,
                 child: SingleChildScrollView(
@@ -365,27 +370,16 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     );
   }
 
-
   Future getNetworkData() async {
-    try {
-      _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
+    if (context != null) {
+      BlocProvider.of<RedPocketBloc>(context)
+          .add(UpdateMyLevelInfoEntityEvent());
+    }
 
-      if (mounted) {
-        setState(() {
-          _loadDataBloc.add(RefreshSuccessEvent());
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        LogUtil.toastException(e);
-
-        setState(() {
-          _loadDataBloc.add(RefreshFailEvent());
-        });
-      }
+    if (mounted) {
+      _loadDataBloc.add(RefreshSuccessEvent());
     }
   }
-
 
   _upgradeAction() async {
     if (widget.levelRule == null) {

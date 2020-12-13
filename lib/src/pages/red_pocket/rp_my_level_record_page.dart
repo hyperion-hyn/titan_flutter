@@ -8,6 +8,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -71,6 +72,13 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     );
 
     super.onCreated();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
   }
 
   @override
@@ -684,9 +692,6 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     _currentPage = 1;
 
     try {
-      _myLevelInfo = await _rpApi.getRPMyLevelInfo(
-        _address,
-      );
 
       var netData = await _rpApi.getRpHoldingHistory(
         _address,
@@ -750,7 +755,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpLevelRetrievePage(_myLevelInfo),
+        builder: (context) => RpLevelRetrievePage(),
       ),
     );
   }
@@ -759,7 +764,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RedPocketLevelPage(_myLevelInfo),
+        builder: (context) => RedPocketLevelPage(),
       ),
     );
     return;

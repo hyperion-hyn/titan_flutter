@@ -8,6 +8,8 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/rp/bloc/bloc.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -59,6 +61,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
   }
 
   @override
@@ -1174,7 +1178,10 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         _address,
       );
 
-      _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context)
+            .add(UpdateMyLevelInfoEntityEvent());
+      }
 
       if (context != null) {
         BlocProvider.of<WalletCmpBloc>(context)

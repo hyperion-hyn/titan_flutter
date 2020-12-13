@@ -8,6 +8,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
@@ -23,9 +24,7 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'entity/rp_util.dart';
 
 class RedPocketLevelPage extends StatefulWidget {
-  final RpMyLevelInfo rpMyLevelInfo;
-
-  RedPocketLevelPage(this.rpMyLevelInfo);
+  RedPocketLevelPage();
 
   @override
   State<StatefulWidget> createState() {
@@ -67,7 +66,9 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   }
 
   LevelRule _currentSelectedLevelRule;
-  int get _currentLevel => widget?.rpMyLevelInfo?.currentLevel ?? 0;
+  RpMyLevelInfo _myLevelInfo;
+
+  int get _currentLevel => _myLevelInfo?.currentLevel ?? 0;
 
   int _recommendLevel = 5;
 
@@ -82,6 +83,13 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   @override
   void onCreated() {
     _loadDataBloc.add(LoadingEvent());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
   }
 
   @override
@@ -162,7 +170,12 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     );
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16, right: 16,),
+        padding: const EdgeInsets.only(
+          left: 16,
+          top: 16,
+          bottom: 16,
+          right: 16,
+        ),
         child: Wrap(
           children: [
             Text(
@@ -275,7 +288,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
     var zeroValue = Decimal.zero;
     var holdValue = Decimal.tryParse(dynamicModel?.holdingStr ?? '0') ?? zeroValue;
-    var currentHoldValue = Decimal.tryParse(widget?.rpMyLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
+    var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
     var remainValue = holdValue - currentHoldValue;
     remainValue = remainValue > zeroValue ? remainValue : zeroValue;
     String oldLevelDesc = '恢复至该量级需燃烧 ${dynamicModel?.burnStr ?? '0'}RP, 增持${remainValue.toString()}RP';
@@ -522,7 +535,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpLevelAddStakingPage(widget.rpMyLevelInfo),
+        builder: (context) => RpLevelAddStakingPage(),
       ),
     );
   }
@@ -555,7 +568,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpLevelUpgradePage(widget.rpMyLevelInfo, _currentSelectedLevelRule, _promotionRuleEntity),
+        builder: (context) => RpLevelUpgradePage(_currentSelectedLevelRule, _promotionRuleEntity),
       ),
     );
   }
