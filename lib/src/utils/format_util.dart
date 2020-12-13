@@ -17,8 +17,12 @@ class FormatUtil {
     return NumberFormat("#,###,###,###").format(int.parse(numValue));
   }
 
-  static String stringFormatCoinNum(String numValue) {
-    return NumberFormat("#,###,###,###.######")
+  static String stringFormatCoinNum(String numValue,  {int decimal = 6}) {
+    var format = '#,###,###,###.';
+    for (int i = 0; i<decimal; i++) {
+      format += '#';
+    }
+    return NumberFormat(format)
         .format(Decimal.tryParse(numValue ?? '0').toDouble());
   }
 

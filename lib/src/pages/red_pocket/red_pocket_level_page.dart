@@ -157,13 +157,16 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     var stepPercent = FormatUtil.formatPercent(_promotionRuleEntity?.supplyInfo?.gradientRatio ?? 0);
     //print("stepPercent:$stepPercent, promotionSupplyRatioValue:$promotionSupplyRatioValue, _promotionRuleEntity?.supplyInfo?.gradientRatio:${_promotionRuleEntity?.supplyInfo?.gradientRatio}");
 
+    var totalSupplyStr = FormatUtil.stringFormatCoinNum(
+      _promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '0',
+    );
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
+        padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16, right: 16,),
+        child: Wrap(
           children: [
             Text(
-              '当前已发行 ${_promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '--'} RP，百分比Y = $promotionSupplyRatioPercent（$stepPercent为1梯度）',
+              '当前已发行 $totalSupplyStr RP，百分比Y = $promotionSupplyRatioPercent（$stepPercent为1梯度）',
               style: TextStyle(
                 color: HexColor('#333333'),
                 fontSize: 12,
