@@ -25,7 +25,7 @@ class ClickOvalButton extends StatefulWidget {
     this.btnColor,
     this.radius,
     this.isLoading = false,
-    this.loadingText,
+    this.loadingText = '提交请求中...',
     this.fontWeight,
   });
 
@@ -45,34 +45,74 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
         borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
         gradient: getGradient(),
       ),
-      child: FlatButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
+      child: widget.isLoading
+          ? Stack(
+              children: [
+                _flatBtnWidget(),
+                _loadingWidget(
+                  visible: widget.isLoading,
+                ),
+              ],
+            )
+          : _flatBtnWidget(),
+    );
+  }
+
+  Widget _flatBtnWidget() {
+    return FlatButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
+        ),
+        padding: const EdgeInsets.all(0.0),
+        child: Center(
+          child: Text(
+            widget.isLoading ? widget.loadingText ?? widget.text : widget.text,
+            style: TextStyle(
+              fontWeight: widget.fontWeight,
+              fontSize: widget.fontSize,
+              color: widget.isLoading
+                  ? DefaultColors.color999
+                  : widget.fontColor != null
+                      ? widget.fontColor
+                      : Colors.white,
+            ),
+            textAlign: TextAlign.center,
           ),
-          padding: const EdgeInsets.all(0.0),
-          child: Text(widget.isLoading ? widget.loadingText ?? widget.text : widget.text,
-              style: TextStyle(
-                fontWeight: widget.fontWeight,
-                fontSize: widget.fontSize,
-                color: widget.isLoading
-                    ? DefaultColors.color999
-                    : widget.fontColor != null ? widget.fontColor : Colors.white,
-              )),
-          onPressed: (widget.onTap == null || widget.isLoading)
-              ? null
-              : () async {
-                  if (mounted) {
-                    setState(() {
-                      widget.isLoading = true;
-                    });
-                  }
-                  await widget.onTap();
-                  if (mounted) {
-                    setState(() {
-                      widget.isLoading = false;
-                    });
-                  }
-                }),
+        ),
+        onPressed: (widget.onTap == null || widget.isLoading)
+            ? null
+            : () async {
+                if (mounted) {
+                  setState(() {
+                    widget.isLoading = true;
+                  });
+                }
+                await widget.onTap();
+                if (mounted) {
+                  setState(() {
+                    widget.isLoading = false;
+                  });
+                }
+              });
+  }
+
+  Widget _loadingWidget({
+    bool visible = false,
+  }) {
+    return Visibility(
+      visible: visible,
+      child: Positioned(
+        width: 20,
+        height: 20,
+        top: (widget.height - 20) * 0.5,
+        right: (widget.width - 20) * 0.25,
+        child: CircularProgressIndicator(
+          strokeWidth: 1.5,
+          valueColor: AlwaysStoppedAnimation<Color>(
+            DefaultColors.color999,
+          ),
+        ),
+      ),
     );
   }
 
@@ -83,7 +123,7 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
       );
     } else {
       if (widget.btnColor != null) {
-        if(widget.btnColor.length == 1){
+        if (widget.btnColor.length == 1) {
           widget.btnColor.add(widget.btnColor[0]);
         }
         return LinearGradient(
