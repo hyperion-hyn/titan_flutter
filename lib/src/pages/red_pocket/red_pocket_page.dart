@@ -160,8 +160,12 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         '${_rpStatistics?.rpHoldingContractInfo?.totalBurningStr} RP';
     var totalHolding =
         '${_rpStatistics?.rpHoldingContractInfo?.totalHoldingStr} RP';
-    var totalSupply =
-        '${_rpStatistics?.rpHoldingContractInfo?.totalSupplyStr} RP';
+
+    var totalSupplyStr = FormatUtil.stringFormatCoinNum(
+      _rpStatistics?.rpHoldingContractInfo?.totalSupplyStr ?? '0',
+      decimal: 4,
+    );
+    var totalSupply =  '$totalSupplyStr RP';
 
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
       SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
@@ -1161,15 +1165,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _requestData() async {
-    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
 
-    /*if (activeWallet == null) {
-      if (mounted) {
-        _loadDataBloc.add(RefreshSuccessEvent());
-        setState(() {});
-      }
-      return;
-    }*/
+    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
 
     var _address = activeWallet?.wallet?.getAtlasAccount()?.address;
     try {

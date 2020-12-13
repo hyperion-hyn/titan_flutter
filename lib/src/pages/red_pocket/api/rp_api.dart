@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/http/entity.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -370,8 +371,8 @@ class RPApi {
 
     var amount = depositAmount + burningAmount;
     var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount);
-    if (approveHex?.isEmpty ?? true) {
-      return;
+    if (approveHex?.isEmpty ?? true ) {
+      throw HttpResponseCodeNotSuccess(-30011, 'HYN余额不足支付网络费用!');
     }
     print('[rp_api] postRpDepositAndBurn, approveHex: $approveHex');
 
@@ -381,10 +382,9 @@ class RPApi {
       depositAmount: depositAmount,
       burningAmount: burningAmount,
     );
-
     print("[Rp_api] postRpDepositAndBurn, sendRpHolding, address:$address, txHash:$rawTxHash");
     if (rawTxHash == null) {
-      return;
+      throw HttpResponseCodeNotSuccess(-30012, 'RP余额不足!');
     }
 
     return await RPHttpCore.instance.postEntity("/v1/rp/level/promotion/submit", EntityFactory<dynamic>((json) => json),
@@ -394,7 +394,6 @@ class RPApi {
           "holding": depositAmount.toString(),
           "from": from,
           "to": to,
-          // "tx_hash": txHash,
           'raw_tx': rawTxHash,
         },
         options: RequestOptions(contentType: "application/json"));
@@ -409,10 +408,6 @@ class RPApi {
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
-    // var amount = withdrawAmount;
-    // var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount);
-    // print('[rp_api] postRpWithdraw, approveHex: $approveHex');
-
     var rawTxHash = await activeWallet.wallet.signRpHolding(
       RpHoldingMethod.WITHDRAW,
       password,
@@ -421,7 +416,7 @@ class RPApi {
 
     print("[Rp_api] postRpWithdraw, sendRpHolding, address:$address, rawTxHash:$rawTxHash");
     if (rawTxHash == null) {
-      return;
+      throw HttpResponseCodeNotSuccess(-30012, 'RP余额不足!');
     }
 
     return await RPHttpCore.instance.postEntity("/v1/rp/level/withdraw/submit", EntityFactory<dynamic>((json) => json),
