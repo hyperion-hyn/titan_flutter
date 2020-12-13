@@ -228,7 +228,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               _bitcoinEmptyView(context),
 //            _exchangeHYNView(context),
 //            if (env.buildType == BuildType.DEV) _testWalletView(context),
-            Wrap(
+            /*Wrap(
               children: [
                 Text(
                   S.of(context).atlas_mapping_completed,
@@ -251,7 +251,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                   ),
                 ),
               ],
-            ),
+            ),*/
             SizedBox(
               height: 16,
             ),
