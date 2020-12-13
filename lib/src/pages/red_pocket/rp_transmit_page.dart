@@ -232,7 +232,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     String baseRp = _rpStatistics?.rpContractInfo?.baseRpStr ?? '--';
     var baseRpStr = _rpStatistics?.rpContractInfo?.baseRpStr??'0';
     var baseRpValue = Decimal.tryParse(baseRpStr)??Decimal.zero;
-    if (baseRpValue > Decimal.zero) {
+    if (baseRpValue > Decimal.one) {
       baseRp = FormatUtil.stringFormatCoinNum(baseRpStr, decimal: 4) ?? '--';
     }
     else {
