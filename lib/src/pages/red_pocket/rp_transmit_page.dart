@@ -176,7 +176,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   _poolInfo() {
     String totalStakingHyn = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalStakingHynStr) ?? '--';
     String transmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.transmitStr) ?? '--';
-    String totalTransmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalTransmitStr) ?? '--';
+    //String totalTransmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalTransmitStr) ?? '--';
 
     return SliverToBoxAdapter(
       child: Container(
@@ -229,8 +229,15 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     String totalRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalRpStr) ?? '--';
     String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
 
-    // String baseRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.rpContractInfo?.baseRpStr) ?? '--';
     String baseRp = _rpStatistics?.rpContractInfo?.baseRpStr ?? '--';
+    var baseRpStr = _rpStatistics?.rpContractInfo?.baseRpStr??'0';
+    var baseRpValue = Decimal.tryParse(baseRpStr)??Decimal.zero;
+    if (baseRpValue > Decimal.zero) {
+      baseRp = FormatUtil.stringFormatCoinNum(baseRpStr, decimal: 4) ?? '--';
+    }
+    else {
+      baseRp = FormatUtil.stringFormatCoinNum(baseRpStr, decimal: 8) ?? '--';
+    }
 
     var releaseDay = (_rpStatistics?.rpContractInfo?.releaseDay ?? '0');
     var stakingDay = (_rpStatistics?.rpContractInfo?.stakingDay ?? '0');
