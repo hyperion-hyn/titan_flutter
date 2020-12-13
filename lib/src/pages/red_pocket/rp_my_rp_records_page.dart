@@ -29,7 +29,6 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
 
   Map<String, dynamic> _currentPageKey;
   var _address = "";
-  // RpMyRpRecordEntity _rpMyRecordEntity;
   List<RpOpenRecordEntity> _dataList = [];
 
   int lastDay;
@@ -121,40 +120,23 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   Widget _itemBuilder(int index) {
     var model = _dataList[index];
 
-    var desc = '';
-    switch (model.luck) {
-      case 0:
-        desc = '错过 ${model?.amountStr ?? '0'} RP';
-        break;
-
-      case 1:
-        if (model.type == 0) {
-          desc = '砸中';
-        } else {
-          desc = '';
-        }
-        break;
-
-      case 2:
-        desc = '最佳';
-        break;
-
-      default:
-        desc = '';
-        break;
-    }
-
+    var luckState = RpLuckState.values[(model?.luck ?? 0)];
+    var rpInfoModel = getRpLuckStateInfo(model);
+    var desc = rpInfoModel.desc;
+    var amount = rpInfoModel.amount;
+    
     var title = '';
-    switch (model.type) {
-      case 0:
+    RedPocketType rpType = RedPocketType.values[model.type];
+    switch (rpType) {
+      case RedPocketType.LUCKY:
         title = '幸运红包';
         break;
 
-      case 1:
+      case RedPocketType.LEVEL:
         title = '量级红包';
         break;
 
-      case 2:
+      case RedPocketType.PROMOTION:
         title = '晋升红包';
         break;
 
@@ -258,7 +240,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        model.luck == 0 ? '0 RP' : '+ ${model?.amountStr ?? '0'} RP',
+                        amount,
                         style: TextStyle(
                           color: HexColor("#333333"),
                           fontSize: 14,
@@ -275,7 +257,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                         desc,
                         style: TextStyle(
                           fontSize: 10,
-                          color: model.luck == 2 ? HexColor('#F0BE00') : HexColor('#999999'),
+                          color: luckState == RpLuckState.BEST ? HexColor('#F0BE00') : HexColor('#999999'),
                         ),
                         textAlign: TextAlign.right,
                       ),

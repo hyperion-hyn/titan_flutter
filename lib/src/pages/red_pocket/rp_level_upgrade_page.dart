@@ -74,6 +74,14 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   String get _remainStr => '至少' + FormatUtil.stringFormatCoinNum(_remainValue.toString()) + ' RP';
 
+  bool _isLoading = false;
+
+  TextStyle _textStyle = TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+  );
+
+
   @override
   void initState() {
     super.initState();
@@ -103,31 +111,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
     super.dispose();
   }
-
-  Future getNetworkData() async {
-    try {
-      _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
-
-      if (mounted) {
-        setState(() {
-          _loadDataBloc.add(RefreshSuccessEvent());
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        LogUtil.toastException(e);
-
-        setState(() {
-          _loadDataBloc.add(RefreshFailEvent());
-        });
-      }
-    }
-  }
-
-  TextStyle _textStyle = TextStyle(
-    fontWeight: FontWeight.w500,
-    fontSize: 14,
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -382,7 +365,27 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     );
   }
 
-  bool _isLoading = false;
+
+  Future getNetworkData() async {
+    try {
+      _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
+
+      if (mounted) {
+        setState(() {
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        LogUtil.toastException(e);
+
+        setState(() {
+          _loadDataBloc.add(RefreshFailEvent());
+        });
+      }
+    }
+  }
+
 
   _upgradeAction() async {
     if (widget.levelRule == null) {
