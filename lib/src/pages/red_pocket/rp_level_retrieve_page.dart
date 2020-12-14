@@ -11,6 +11,7 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/bloc/redpocket_bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -441,6 +442,11 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
     try {
       if (context != null) {
         BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent());
+      }
+
+      if (context != null) {
+        BlocProvider.of<WalletCmpBloc>(context)
+            .add(UpdateActivatedWalletBalanceEvent());
       }
 
       var netData = await _rpApi.getRPPromotionRule(_address);

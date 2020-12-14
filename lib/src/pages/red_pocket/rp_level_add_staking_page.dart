@@ -11,6 +11,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -92,6 +93,11 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
   Future getNetworkData() async {
     if (context != null) {
       BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent());
+    }
+
+    if (context != null) {
+      BlocProvider.of<WalletCmpBloc>(context)
+          .add(UpdateActivatedWalletBalanceEvent());
     }
 
     if (mounted) {
