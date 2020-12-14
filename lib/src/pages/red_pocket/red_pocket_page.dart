@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -624,33 +625,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _contentColumn(
-                                '20RP',
-                                S.of(context).rp_today_rp,
-                              ),
-                            ),
-                            _verticalLine(),
-                            Expanded(
-                              child: _contentColumn(
-                                '20',
-                                S.of(context).rp_yesterday_rp,
-                              ),
-                            ),
-                            _verticalLine(),
-                            Expanded(
-                              child: _contentColumn(
-                                '100',
-                                S.of(context).rp_missed,
-                              ),
-                            ),
-                          ],
-                        )
                       ],
                     ),
                   ),
@@ -708,14 +682,23 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           ),
                         ),
                         Center(
-                          child: Text(
-                            '即将空投',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.white,
+                          child: SpinPerfect(
+                            duration: const Duration(milliseconds: 400),
+                            infinite: true,
+                            child: Image.asset(
+                              'res/drawable/rp_airdrop_vertex.png',
+                              width: 100,
+                              height: 100,
                             ),
                           ),
-                        )
+                        ),
+                        Center(
+                          child: Image.asset(
+                            'res/drawable/red_pocket_logo.png',
+                            width: 50,
+                            height: 50,
+                          ),
+                        ),
                       ],
                     ),
                   ),
