@@ -14,6 +14,7 @@ class ClickOvalButton extends StatefulWidget {
   double radius;
   String loadingText;
   FontWeight fontWeight = FontWeight.w500;
+  bool isDisable;
 
   ClickOvalButton(
     this.text,
@@ -27,6 +28,7 @@ class ClickOvalButton extends StatefulWidget {
     this.isLoading = false,
     this.loadingText = '提交请求中...',
     this.fontWeight,
+    this.isDisable = false,
   });
 
   @override
@@ -45,7 +47,7 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
         borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
         gradient: getGradient(),
       ),
-      child: widget.isLoading
+      child: (widget.isLoading && !widget.isDisable)
           ? Stack(
               children: [
                 _flatBtnWidget(),
@@ -59,6 +61,20 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
   }
 
   Widget _flatBtnWidget() {
+    var title = '';
+    Color color;
+    if (widget.isDisable) {
+      title = widget.text;
+      color = DefaultColors.color999;
+    } else {
+      if (widget.isLoading) {
+        title = widget.loadingText ?? widget.text;
+        color = DefaultColors.color999;
+      } else {
+        title = widget.text;
+        color = widget?.fontColor ?? Colors.white;
+      }
+    }
     return FlatButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
@@ -66,31 +82,27 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
         padding: const EdgeInsets.all(0.0),
         child: Center(
           child: Text(
-            widget.isLoading ? widget.loadingText ?? widget.text : widget.text,
+            title,
             style: TextStyle(
               fontWeight: widget.fontWeight,
               fontSize: widget.fontSize,
-              color: widget.isLoading
-                  ? DefaultColors.color999
-                  : widget.fontColor != null
-                      ? widget.fontColor
-                      : Colors.white,
+              color: color,
             ),
             textAlign: TextAlign.center,
           ),
         ),
-        onPressed: (widget.onTap == null || widget.isLoading)
+        onPressed: (widget.onTap == null || widget.isLoading || widget.isDisable)
             ? null
             : () async {
                 if (mounted) {
                   setState(() {
-                    widget.isLoading = true;
+                    widget.isDisable = true;
                   });
                 }
                 await widget.onTap();
                 if (mounted) {
                   setState(() {
-                    widget.isLoading = false;
+                    widget.isDisable = false;
                   });
                 }
               });
@@ -117,7 +129,7 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
   }
 
   LinearGradient getGradient() {
-    if (widget.isLoading) {
+    if (widget.isLoading || widget.isDisable) {
       return LinearGradient(
         colors: <Color>[Color(0xffDEDEDE), Color(0xffDEDEDE)],
       );
