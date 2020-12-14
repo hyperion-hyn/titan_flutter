@@ -232,13 +232,6 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                                 style: TextStyle(color: HexColor('#333333'), fontSize: 12, fontWeight: FontWeight.w600),
                               ),
                               Text(
-                                '（发行量）',
-                                style: TextStyle(
-                                  color: HexColor('#999999'),
-                                  fontSize: 8,
-                                ),
-                              ),
-                              Text(
                                 '增加而掉级',
                                 style: TextStyle(
                                   color: HexColor('#999999'),
