@@ -370,17 +370,23 @@ class RPApi {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
     var amount = depositAmount + burningAmount;
-    var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount);
+    final client = WalletUtil.getWeb3Client(true);
+    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
+    var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount, nonce: nonce);
     if (approveHex?.isEmpty ?? true ) {
       throw HttpResponseCodeNotSuccess(-30011, 'HYN余额不足支付网络费用!');
     }
     print('[rp_api] postRpDepositAndBurn, approveHex: $approveHex');
 
+    if(approveHex != '200'){
+      nonce = nonce + 1;
+    }
     var rawTxHash = await activeWallet.wallet.signRpHolding(
       RpHoldingMethod.DEPOSIT_BURN,
       password,
       depositAmount: depositAmount,
       burningAmount: burningAmount,
+      nonce: nonce
     );
     print("[Rp_api] postRpDepositAndBurn, sendRpHolding, address:$address, txHash:$rawTxHash");
     if (rawTxHash == null) {
@@ -435,17 +441,16 @@ class RPApi {
     String password = '',
     BigInt amount,
     WalletVo activeWallet,
+    int nonce,
   }) async {
     var wallet = activeWallet?.wallet;
     var context = Keys.rootKey.currentContext;
     var address = wallet?.getEthAccount()?.address ?? "";
 
-    final client = WalletUtil.getWeb3Client(true);
-    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
     var gasLimit = 100000;
     var gasPrice = BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt());
     print(
-        '[rp_api] postRpApprove, address:$address, amount:$amount, nonce:$nonce, gasPrice:$gasPrice, gasLimit:$gasLimit');
+        '[rp_api] postRpApprove, address:$address, amount:$amount, gasPrice:$gasPrice, gasLimit:$gasLimit');
 
     var ret = await wallet.getAllowance(
       WalletConfig.hynRPHrc30Address,

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -8,6 +9,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -77,7 +79,6 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
   }
 
@@ -689,9 +690,15 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
   }
 
   void getNetworkData() async {
+
     _currentPage = 1;
 
     try {
+      ///Update level info
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context)
+            .add(UpdateMyLevelInfoEntityEvent());
+      }
 
       var netData = await _rpApi.getRpHoldingHistory(
         _address,

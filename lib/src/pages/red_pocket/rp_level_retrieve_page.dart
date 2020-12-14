@@ -11,12 +11,16 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/bloc/redpocket_bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
@@ -27,7 +31,6 @@ import 'entity/rp_my_level_info.dart';
 import 'entity/rp_promotion_rule_entity.dart';
 
 class RpLevelRetrievePage extends StatefulWidget {
-
   RpLevelRetrievePage();
 
   @override
@@ -63,7 +66,10 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
-  var _address = "";
+  CoinVo _coinVo;
+  WalletVo _activatedWallet;
+  String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
+  String get _address => _activatedWallet?.wallet?.getAtlasAccount()?.address;
 
   bool _isLoading = false;
 
@@ -94,14 +100,13 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
       var filterDataList = _staticDataList.where((element) => element.level < _currentLevel).toList().reversed.toList();
       if ((filterDataList?.isNotEmpty ?? false) && remainHolding > Decimal.zero) {
         var firstObj = filterDataList?.firstWhere((levelRule) {
+          var holding = Decimal.tryParse(
+                levelRule?.holdingStr ?? '0',
+              ) ??
+              Decimal.zero;
 
-              var holding = Decimal.tryParse(
-                    levelRule?.holdingStr ?? '0',
-                  ) ??
-                  Decimal.zero;
-
-              return remainHolding >= holding;
-            }, orElse: () => null);
+          return remainHolding >= holding;
+        }, orElse: () => null);
 
         //print("firstObj:${firstObj?.level??0}");
 
@@ -131,8 +136,10 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
   void initState() {
     super.initState();
 
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
-    _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+
+    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext);
+    _coinVo = wallet.getCoinVoBySymbol('RP');
+    _activatedWallet = wallet.activatedWallet;
   }
 
   @override
@@ -212,6 +219,16 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                           child: Row(
                             children: <Widget>[
                               Text('取回持币', style: _lightTextStyle),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                  '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 12,
+                                    color: HexColor('#999999'),
+                                  )),
                             ],
                           ),
                         ),
@@ -242,8 +259,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                                         return S.of(context).please_enter_correct_amount;
                                       }
 
-                                      var holding =
-                                          Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? 0;
+                                      var holding = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? 0;
 
                                       if (textStr.length == 0 || inputValue == Decimal.fromInt(0)) {
                                         return '请输入有效提币数量';
@@ -424,10 +440,13 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
 
   Future getNetworkData() async {
     try {
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent());
+      }
 
       if (context != null) {
-        BlocProvider.of<RedPocketBloc>(context)
-            .add(UpdateMyLevelInfoEntityEvent());
+        BlocProvider.of<WalletCmpBloc>(context)
+            .add(UpdateActivatedWalletBalanceEvent());
       }
 
       var netData = await _rpApi.getRPPromotionRule(_address);

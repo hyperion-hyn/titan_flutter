@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
@@ -70,9 +71,17 @@ class _RedPocketState extends BaseState<_RedPocketManager> {
   }
 
   _initData() {
-    if (context != null) {
-      BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent());
-    }
+    BlocProvider.of<WalletCmpBloc>(context).listen((state) {
+      if (state is ActivatedWalletState) {
+        var _activatedWallet = state.walletVo;
+        var _address = _activatedWallet?.wallet?.getAtlasAccount()?.address ?? '';
+        //print("[RedPocketComponent] ActivatedWalletState, _address:$_address");
+
+        if (context != null) {
+          BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent(address: _address));
+        }
+      }
+    });
   }
 }
 

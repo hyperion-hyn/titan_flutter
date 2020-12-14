@@ -431,7 +431,7 @@ class Wallet {
         nonce: nonce,
         type: isAtlas ? MessageType.typeNormal : null,
       ),
-      fetchChainIdFromNetworkId: false,
+      fetchChainIdFromNetworkId: !isAtlas,
     );
 
 //    await transactionInteractor.insertTransactionDB(
@@ -591,6 +591,7 @@ class Wallet {
         BigInt withdrawAmount,
         BigInt gasPrice,
         int gasLimit,
+        int nonce,
       }) async {
 
 
@@ -627,6 +628,7 @@ class Wallet {
           parameters: parameters,
           gasPrice: web3.EtherAmount.inWei(gasPrice),
           maxGas: gasLimit,
+          nonce: nonce,
           type: web3.MessageType.typeNormal),
       fetchChainIdFromNetworkId: false,
     );

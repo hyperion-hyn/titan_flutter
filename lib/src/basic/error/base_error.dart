@@ -3,6 +3,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/config/consts.dart';
 
 class BaseError{
+  //HYN Error toast
   static Map<String, String> errorMap = {
     "already known" : S.of(Keys.rootKey.currentContext).transaction_contained_within_pool,
     "invalid sender" : S.of(Keys.rootKey.currentContext).sender_signature_error,
