@@ -17,8 +17,14 @@ class RedPocketBloc extends Bloc<RedPocketEvent, RedPocketState> {
   ) async* {
 
     if (event is UpdateMyLevelInfoEntityEvent) {
+
       try {
-        var _address = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getAtlasAccount()?.address ?? '';
+        var _address = event.address;
+        //print("[RedPocketBloc] UpdateMyLevelInfoEntityEvent, _address:$_address");
+        if (_address?.isEmpty??true) {
+          var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+          _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+        }
         var _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
 
         yield UpdateMyLevelInfoEntityState(_myLevelInfo);

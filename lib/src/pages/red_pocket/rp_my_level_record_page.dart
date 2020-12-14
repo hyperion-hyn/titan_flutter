@@ -690,15 +690,16 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
   }
 
   void getNetworkData() async {
-    ///Update level info
-    if (context != null) {
-      BlocProvider.of<RedPocketBloc>(context)
-          .add(UpdateMyLevelInfoEntityEvent());
-    }
 
     _currentPage = 1;
 
     try {
+      ///Update level info
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context)
+            .add(UpdateMyLevelInfoEntityEvent());
+      }
+
       var netData = await _rpApi.getRpHoldingHistory(
         _address,
         page: _currentPage,

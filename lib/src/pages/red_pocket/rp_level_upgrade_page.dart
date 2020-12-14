@@ -270,12 +270,30 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                             SizedBox(
                               width: 6,
                             ),
-                            Text(
-                              '为防止因Y增长导致掉级，建议适当增加持币量',
-                              style: TextStyle(
-                                color: HexColor('#333333'),
-                                fontSize: 12,
-                              ),
+                            Text.rich(
+                              TextSpan(
+                                  text: '为防止因',
+                                  style: TextStyle(
+                                    color: HexColor('#333333'),
+                                    fontSize: 12,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: ' Y ',
+                                      style: TextStyle(
+                                        color: HexColor('#333333'),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: '增长导致掉级，建议适当增加持币量',
+                                      style: TextStyle(
+                                        color: HexColor('#333333'),
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ]),
                             )
                           ],
                         ),
@@ -372,8 +390,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   Future getNetworkData() async {
     if (context != null) {
-      BlocProvider.of<RedPocketBloc>(context)
-          .add(UpdateMyLevelInfoEntityEvent());
+      BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent());
     }
 
     if (mounted) {
