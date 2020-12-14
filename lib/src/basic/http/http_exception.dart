@@ -88,6 +88,10 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
     S.of(Keys.rootKey.currentContext).already_your_friend_cannot_be_referrer,
   ),
   HttpResponseCodeNotSuccess(
+    -2007,
+    "邀请人数已满",
+  ),
+  HttpResponseCodeNotSuccess(
     -3001,
     "存在处理中的交易，请稍后重试",
   ),
