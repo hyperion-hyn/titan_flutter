@@ -431,7 +431,7 @@ class Wallet {
         nonce: nonce,
         type: isAtlas ? MessageType.typeNormal : null,
       ),
-      fetchChainIdFromNetworkId: false,
+      fetchChainIdFromNetworkId: !isAtlas,
     );
 
 //    await transactionInteractor.insertTransactionDB(
