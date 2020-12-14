@@ -27,7 +27,6 @@ import 'entity/rp_my_level_info.dart';
 import 'entity/rp_promotion_rule_entity.dart';
 
 class RpLevelRetrievePage extends StatefulWidget {
-
   RpLevelRetrievePage();
 
   @override
@@ -94,14 +93,13 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
       var filterDataList = _staticDataList.where((element) => element.level < _currentLevel).toList().reversed.toList();
       if ((filterDataList?.isNotEmpty ?? false) && remainHolding > Decimal.zero) {
         var firstObj = filterDataList?.firstWhere((levelRule) {
+          var holding = Decimal.tryParse(
+                levelRule?.holdingStr ?? '0',
+              ) ??
+              Decimal.zero;
 
-              var holding = Decimal.tryParse(
-                    levelRule?.holdingStr ?? '0',
-                  ) ??
-                  Decimal.zero;
-
-              return remainHolding >= holding;
-            }, orElse: () => null);
+          return remainHolding >= holding;
+        }, orElse: () => null);
 
         //print("firstObj:${firstObj?.level??0}");
 
@@ -242,8 +240,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                                         return S.of(context).please_enter_correct_amount;
                                       }
 
-                                      var holding =
-                                          Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? 0;
+                                      var holding = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? 0;
 
                                       if (textStr.length == 0 || inputValue == Decimal.fromInt(0)) {
                                         return '请输入有效提币数量';
@@ -424,10 +421,8 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
 
   Future getNetworkData() async {
     try {
-
       if (context != null) {
-        BlocProvider.of<RedPocketBloc>(context)
-            .add(UpdateMyLevelInfoEntityEvent());
+        BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent());
       }
 
       var netData = await _rpApi.getRPPromotionRule(_address);
