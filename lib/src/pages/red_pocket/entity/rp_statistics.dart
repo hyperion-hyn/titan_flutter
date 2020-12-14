@@ -167,7 +167,7 @@ class Rp_holding_contract_info extends Object {
 
   String get totalHoldingStr => FormatUtil.weiToEtherStr(totalHolding) ?? '--';
 
-  String get totalSupplyStr => FormatUtil.weiToEtherStr(totalSupply) ?? '--';
+  String get totalSupplyStr => FormatUtil.weiToEtherStr(totalSupply) ?? '0';
 
   Rp_holding_contract_info(
     this.promotionSupplyRatio,
