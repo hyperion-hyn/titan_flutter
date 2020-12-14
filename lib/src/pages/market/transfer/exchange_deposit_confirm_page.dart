@@ -32,11 +32,19 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:web3dart/json_rpc.dart';
+import 'package:titan/src/domain/transaction_interactor.dart';
+import 'package:titan/src/components/inject/injector.dart';
+import 'package:titan/src/config/consts.dart';
+import '../../../pages/wallet/model/transtion_detail_vo.dart';
+import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
+import '../../wallet/wallet_show_account_widget.dart';
 
 class ExchangeDepositConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
   final String transferAmount;
   final String exchangeAddress;
+  TransactionInteractor transactionInteractor =
+      Injector.of(Keys.rootKey.currentContext).transactionInteractor;
 
   ExchangeDepositConfirmPage(
     String coinVo,
@@ -54,6 +62,7 @@ class _ExchangeDepositConfirmPageState
     extends BaseState<ExchangeDepositConfirmPage> {
   var isTransferring = false;
   var isLoadingGasFee = false;
+  AccountTransferService _accountTransferService = AccountTransferService();
 
   int selectedPriceLevel = 1;
 
@@ -120,7 +129,6 @@ class _ExchangeDepositConfirmPageState
       gasPriceEstimateStr =
           "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
     } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      //var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
       var hynQuotePrice = WalletInheritedModel.of(context)
               .activatedQuoteVoAndSign('HYN')
               ?.quoteVo
@@ -354,7 +362,7 @@ class _ExchangeDepositConfirmPageState
                       ],
                     ),
                   ),
-                  if (widget.coinVo.symbol != SupportedTokens.HYN_Atlas.symbol)
+                  if (widget.coinVo.coinType != CoinType.HYN_ATLAS)
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 0, vertical: 12),
@@ -532,6 +540,81 @@ class _ExchangeDepositConfirmPageState
   }
 
   Future _transfer() async {
+    if (widget.coinVo.coinType == CoinType.ETHEREUM) {
+      var tempTransList = await getEthTransferList(_accountTransferService);
+      if (tempTransList.length > 0) {
+        await widget.transactionInteractor
+            .deleteSameNonce(tempTransList[0].nonce);
+      }
+
+      bool isShowDialog = false;
+      if (widget.coinVo.contractAddress != null) {
+        var localTransfer = await widget.transactionInteractor
+            .getShareTransaction(
+                LocalTransferType.LOCAL_TRANSFER_HYN_USDT, false,
+                contractAddress: widget.coinVo.contractAddress);
+        if (localTransfer != null) {
+          isShowDialog = true;
+        }
+      } else {
+        var localTransfer = await widget.transactionInteractor
+            .getShareTransaction(LocalTransferType.LOCAL_TRANSFER_ETH, false);
+        if (localTransfer != null) {
+          isShowDialog = true;
+        }
+      }
+
+      if (isShowDialog) {
+        await UiUtil.showDialogWidget(context,
+            content: Text("你有未确认的转账，如果需要加快转账速度，你可以尝试增加矿工费加快打包速度。"),
+            actions: [
+              FlatButton(
+                  child: Text("查看"),
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    var coinVo = widget.coinVo;
+                    var coinVoJsonStr =
+                        FluroConvertUtils.object2string(coinVo.toJson());
+                    Application.router.navigateTo(
+                        context,
+                        Routes.wallet_account_detail +
+                            '?coinVo=$coinVoJsonStr');
+                  }),
+            ]);
+        return;
+      }
+    } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+      bool isShowDialog = false;
+      WalletVo walletVo =
+          WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+      String fromAddress = walletVo.wallet.getEthAccount().address;
+      var coinVo = CoinVo(
+          symbol: "HYN", address: fromAddress, coinType: CoinType.HYN_ATLAS);
+      //只获取hyn的交易历史，hrc30的交易列表中没有pending状态
+      var transferList =
+          await _accountTransferService.getTransferList(coinVo, 1);
+      if (transferList != null && transferList.length > 0) {
+        var transactionDetailVo = transferList[0];
+        if ((transactionDetailVo.state == 1 ||
+            transactionDetailVo.state == 2)) {
+          isShowDialog = true;
+        }
+      }
+
+      if (isShowDialog) {
+        await UiUtil.showDialogWidget(context,
+            content: Text("你有未确认的转账，请稍等片刻。"),
+            actions: [
+              FlatButton(
+                  child: Text(S.of(context).confirm),
+                  onPressed: () async {
+                    Navigator.pop(context);
+                  }),
+            ]);
+        return;
+      }
+    }
+
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
       activatedWallet.wallet,

@@ -9,6 +9,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/components/style/theme.dart';
 
@@ -37,6 +38,7 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       key: Keys.componentKey,
       child: OKToast(
@@ -46,6 +48,7 @@ class _AppState extends State<App> {
               child: WalletComponent(
                 child: SocketComponent(
                   child: AtlasComponent(
+                  child: RedPocketComponent(
                     child: MultiBlocProvider(
                       providers: [
                         BlocProvider<UpdateBloc>(create: (context) => UpdateBloc(context: context)),

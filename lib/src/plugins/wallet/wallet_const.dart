@@ -165,7 +165,21 @@ class WalletConfig {
       case EthereumNetType.main:
         return '0x6910E6F7fe7C8D5444E63F8285f5342FfC7FCA6b';
       case EthereumNetType.ropsten:
-        return '0x193b8996843227D963eceF73F17F93cE61d02454';
+        var address = '0x8c9b248A587619b5757A705Ac103dD5bcFA5Ab20';
+        return address;
+      case EthereumNetType.local:
+        return "0x2190490FEcA5D47290CFA4a762b1889718913319";
+    }
+    return '';
+  }
+
+  static String get rpHoldingContractAddress {
+    switch (netType) {
+      case EthereumNetType.main:
+        return '0xc4d64aba40481c3c012d57089828fa0bc4c63633';
+      case EthereumNetType.ropsten:
+        var address = '0xc73d5d9cc5120eb588b5d517d1853a0299447a64';
+        return address;
       case EthereumNetType.local:
         return "0x2190490FEcA5D47290CFA4a762b1889718913319";
     }

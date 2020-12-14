@@ -67,10 +67,18 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
             if (response != null) {
               if (channel != null && channel is String) {
                 String channelValue = channel;
+
+
+                //LogUtil.printMessage("[SocketBloc] mapEventToState, channelValue:$channelValue");
+
+
                 if (channelValue == SocketConfig.channelKLine24Hour) {
+
                   var responseMap = response as Map;
                   var symbol = responseMap['symbol'];
                   var data = responseMap['data'];
+                  //LogUtil.printMessage("[SocketBloc] mapEventToState, channelValue:$channelValue， symbol:$symbol, data:$data");
+
                   /*{
                     status: 0,
                     channel: ws.market.allsymbol.kline.24hour,
@@ -88,16 +96,15 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                     }
                   }*/
 
-                  //LogUtil.printMessage("[SocketBloc] mapEventToState, channelValue:$channelValue， symbol:$symbol, data:$data");
 
                   yield ChannelKLine24HourState(symbol: symbol, response: data);
                 } else if (channelValue.contains("depth")) {
-                  yield ChannelExchangeDepthState(response: response);
+                  yield ChannelExchangeDepthState(channel: channelValue ,response: response,);
                 } else if (channelValue.contains("trade.detail")) {
-                  yield ChannelTradeDetailState(response: response);
+                  yield ChannelTradeDetailState(channel: channelValue ,response: response,);
                 } else if (channelValue.startsWith("user") &&
                     channelValue.contains("tick")) {
-                  yield ChannelUserTickState(response: response);
+                  yield ChannelUserTickState(channel: channelValue,response: response);
                 } else {
                   yield ChannelKLinePeriodState(
                       channel: channelValue, response: response);
@@ -116,13 +123,13 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
           }
         } else if (status == 200 || status == 500) {
           if (errMsg != null && status == 500) {
-            LogUtil.printMessage("[SocketBloc] 接收心跳,正常");
+            //LogUtil.printMessage("[SocketBloc] 接收心跳,正常");
 
             yield HeartSuccessState();
           }
         } else {
-          LogUtil.printMessage(
-              "[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
+          // LogUtil.printMessage(
+          //     "[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
 
           if (eventAction == SocketConfig.sub) {
             yield SubChannelFailState();

@@ -356,8 +356,8 @@ void showInviteDialog(BuildContext context, String inviterAddress, String wallet
             }
 
             try {
-              bool inviteResult = await _rpApi.postRpInviter(inviterAddress, walletVo.wallet);
-              if (inviteResult) {
+              String inviteResult = await _rpApi.postRpInviter(inviterAddress, walletVo.wallet);
+              if (inviteResult != null && inviteResult.isNotEmpty) {
                 Fluttertoast.showToast(msg: S.of(context).invitation_success);
                 Navigator.push(
                   context,

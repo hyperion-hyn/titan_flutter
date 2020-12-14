@@ -20,7 +20,7 @@ class MarketInfoEntity extends Object {
   int amountMax;
 
   @JsonKey(name: 'amount_min')
-  int amountMin;
+  double amountMin;
 
   @JsonKey(name: 'fee_rate')
   double feeRate;

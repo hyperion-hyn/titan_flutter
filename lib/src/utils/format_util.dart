@@ -17,9 +17,13 @@ class FormatUtil {
     return NumberFormat("#,###,###,###").format(int.parse(numValue));
   }
 
-  static String stringFormatCoinNum(String numValue) {
-    return NumberFormat("#,###,###,###.######")
-        .format(Decimal.tryParse(numValue ?? '0').toDouble());
+  static String stringFormatCoinNum(String numValue, {int decimal = 6}) {
+    var format = '#,###,###,###.';
+    for (int i = 0; i < decimal; i++) {
+      format += '#';
+    }
+    return NumberFormat(format).format(
+        (Decimal.tryParse(numValue ?? '0') ?? Decimal.fromInt(0)).toDouble());
   }
 
   static String stringFormatCoinNum10(String numValue) {
@@ -384,23 +388,27 @@ class FormatUtil {
   }
 
   static String weiToEtherStr(dynamic entityParam) {
-    if (entityParam == null) {
-      return entityParam;
-    }
-    if (entityParam is String) {
-      var arr = entityParam.split('.');
-      bool isContainerPoint = (arr?.length ?? 0) > 1;
-      String pendingValue = entityParam;
-      if (isContainerPoint) {
-        pendingValue = arr?.first ?? '0';
+    try {
+      if (entityParam == null) {
+        return entityParam;
       }
-      var weiBigInt = (BigInt.tryParse(pendingValue) ??
-          BigInt.from(int.tryParse(pendingValue) ?? 0));
-      return ConvertTokenUnit.weiToEther(weiBigInt: weiBigInt).toString();
-    } else if (entityParam is int) {
-      return ConvertTokenUnit.weiToEther(weiInt: entityParam).toString();
-    } else {
-      return "0";
+      if (entityParam is String) {
+        var arr = entityParam.split('.');
+        bool isContainerPoint = (arr?.length ?? 0) > 1;
+        String pendingValue = entityParam;
+        if (isContainerPoint) {
+          pendingValue = arr?.first ?? '0';
+        }
+        var weiBigInt = (BigInt.tryParse(pendingValue) ??
+            BigInt.from(int.tryParse(pendingValue) ?? 0));
+        return ConvertTokenUnit.weiToEther(weiBigInt: weiBigInt).toString();
+      } else if (entityParam is int) {
+        return ConvertTokenUnit.weiToEther(weiInt: entityParam).toString();
+      } else {
+        return "0";
+      }
+    } catch (e) {
+      return '0';
     }
   }
 }

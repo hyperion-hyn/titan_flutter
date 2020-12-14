@@ -114,10 +114,11 @@ class Wallet {
     String contractAddress,
     String ownAddress,
     String approveToAddress,
+      bool isAtlas,
   ) async {
     final contract = WalletUtil.getHynErc20Contract(contractAddress);
     final balanceFun = contract.function('allowance');
-    final allowance = await WalletUtil.getWeb3Client().call(
+    final allowance = await WalletUtil.getWeb3Client(isAtlas).call(
         contract: contract,
         function: balanceFun,
         params: [web3.EthereumAddress.fromHex(ownAddress), web3.EthereumAddress.fromHex(approveToAddress)]);
@@ -405,6 +406,7 @@ class Wallet {
     return credentials;
   }
 
+
   Future<String> sendApproveErc20Token({
     String contractAddress,
     String approveToAddress,
@@ -413,8 +415,9 @@ class Wallet {
     BigInt gasPrice,
     int gasLimit,
     int nonce,
+    bool isAtlas = false,
   }) async {
-    final client = WalletUtil.getWeb3Client();
+    final client = WalletUtil.getWeb3Client(isAtlas);
     var credentials = await getCredentials(password);
     var erc20Contract = WalletUtil.getHynErc20Contract(contractAddress);
     final txHash = await client.sendTransaction(
@@ -426,8 +429,9 @@ class Wallet {
         gasPrice: web3.EtherAmount.inWei(gasPrice),
         maxGas: gasLimit,
         nonce: nonce,
+        type: isAtlas ? MessageType.typeNormal : null,
       ),
-      fetchChainIdFromNetworkId: true,
+      fetchChainIdFromNetworkId: !isAtlas,
     );
 
 //    await transactionInteractor.insertTransactionDB(
@@ -444,8 +448,9 @@ class Wallet {
     BigInt gasPrice,
     int gasLimit,
     int nonce,
+    bool isAtlas = false,
   }) async {
-    final client = WalletUtil.getWeb3Client();
+    final client = WalletUtil.getWeb3Client(isAtlas);
     var credentials = await getCredentials(password);
     var erc20Contract = WalletUtil.getHynErc20Contract(contractAddress);
     var signed = await client.signTransaction(
@@ -457,6 +462,7 @@ class Wallet {
         gasPrice: web3.EtherAmount.inWei(gasPrice),
         maxGas: gasLimit,
         nonce: nonce,
+        type: isAtlas ? MessageType.typeNormal : null,
       ),
       fetchChainIdFromNetworkId: true,
     );
@@ -526,6 +532,107 @@ class Wallet {
           type: web3.MessageType.typeNormal),
       fetchChainIdFromNetworkId: false,
     );
+  }
+
+  Future<String> sendRpHolding(
+      RpHoldingMethod methodType,
+      String password, {
+        BigInt depositAmount,
+        BigInt burningAmount,
+        BigInt withdrawAmount,
+        BigInt gasPrice,
+        int gasLimit,
+      }) async {
+
+
+    if (gasPrice == null) {
+      gasPrice = BigInt.from(1 * TokenUnit.G_WEI);
+    }
+    if (gasLimit == null) {
+      gasLimit = 300000;
+    }
+    BigInt stakingAmount;
+    if(!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)){
+      return null;
+    }
+
+    String methodName;
+    List<dynamic> parameters;
+
+    if (methodType == RpHoldingMethod.DEPOSIT_BURN) {
+      methodName = 'depositAndBurn';
+      parameters = [depositAmount, burningAmount];
+    } else {
+      methodName = 'withdraw';
+      parameters = [withdrawAmount];
+    }
+
+    final client = WalletUtil.getWeb3Client(true);
+    var credentials = await getCredentials(password);
+    var rpHoldingContract = WalletUtil.getRpHoldingContract(WalletConfig.rpHoldingContractAddress);
+    return await client.sendTransaction(
+      credentials,
+      web3.Transaction.callContract(
+          contract: rpHoldingContract,
+          function: rpHoldingContract.function(methodName),
+          parameters: parameters,
+          gasPrice: web3.EtherAmount.inWei(gasPrice),
+          maxGas: gasLimit,
+          type: web3.MessageType.typeNormal),
+      fetchChainIdFromNetworkId: false,
+    );
+  }
+
+  Future<String> signRpHolding(
+      RpHoldingMethod methodType,
+      String password, {
+        BigInt depositAmount,
+        BigInt burningAmount,
+        BigInt withdrawAmount,
+        BigInt gasPrice,
+        int gasLimit,
+        int nonce,
+      }) async {
+
+
+    if (gasPrice == null) {
+      gasPrice = BigInt.from(1 * TokenUnit.G_WEI);
+    }
+    if (gasLimit == null) {
+      gasLimit = 300000;
+    }
+    BigInt stakingAmount;
+    if(!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)){
+      throw HttpResponseCodeNotSuccess(-30011, 'HYN余额不足支付网络费用!');
+    }
+
+    String methodName;
+    List<dynamic> parameters;
+
+    if (methodType == RpHoldingMethod.DEPOSIT_BURN) {
+      methodName = 'depositAndBurn';
+      parameters = [depositAmount, burningAmount];
+    } else {
+      methodName = 'withdraw';
+      parameters = [withdrawAmount];
+    }
+
+    final client = WalletUtil.getWeb3Client(true);
+    var credentials = await getCredentials(password);
+    var rpHoldingContract = WalletUtil.getRpHoldingContract(WalletConfig.rpHoldingContractAddress);
+    var signedRaw = await client.signTransaction(
+      credentials,
+      web3.Transaction.callContract(
+          contract: rpHoldingContract,
+          function: rpHoldingContract.function(methodName),
+          parameters: parameters,
+          gasPrice: web3.EtherAmount.inWei(gasPrice),
+          maxGas: gasLimit,
+          nonce: nonce,
+          type: web3.MessageType.typeNormal),
+      fetchChainIdFromNetworkId: false,
+    );
+    return bytesToHex(signedRaw, include0x: true, padToEvenLength: true);
   }
 
   /// stakingAmount: how many amount of hyn do you what to stake.
@@ -683,3 +790,6 @@ class Wallet {
 }
 
 enum HynContractMethod { STAKE, WITHDRAW }
+
+
+enum RpHoldingMethod { DEPOSIT_BURN, WITHDRAW }

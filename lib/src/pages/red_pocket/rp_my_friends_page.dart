@@ -19,6 +19,8 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 
+import 'entity/rp_util.dart';
+
 class RpMyFriendsPage extends StatefulWidget {
   RpMyFriendsPage();
 
@@ -199,7 +201,7 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
 
   _inviterWidget() {
     var inviterName = _inviter?.name ?? '';
-    var inviterLevel = _inviter?.level ?? '';
+    var inviterLevel = levelValueToLevelName(_inviter?.level ?? 0);
     var bech32Address = WalletUtil.ethAddressToBech32Address(_inviter?.address ?? '');
     var address = shortBlockChainAddress(bech32Address,);
     if (_inviter != null) {
@@ -213,11 +215,15 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
               padding: const EdgeInsets.only(
                 right: 10,
               ),
-              child: walletHeaderWidget(inviterName,
-                  isShowShape: false,
-                  address: _inviter?.address,
-                  isCircle: true,
-                  size: 32),
+              child: SizedBox(
+                width: 40,
+                height: 40,
+                child: walletHeaderWidget(inviterName,
+                    isShowShape: false,
+                    address: _inviter?.address,
+                    isCircle: true,
+                    size: 32),
+              ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,28 +235,46 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
                       padding: const EdgeInsets.only(
                         right: 6,
                       ),
-                      child: Text(
-                        inviterName,
-                        style: TextStyle(
-                          color: HexColor("#333333"),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+                      child: inviterName.isNotEmpty
+                          ? Padding(
+                        padding:
+                        const EdgeInsets.symmetric(vertical: 6.0),
+                        child: Text(
+                          inviterName,
+                          style: TextStyle(
+                            color: HexColor("#333333"),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
+                      )
+                          : SizedBox(),
+                    ),
+                    Text(
+                      ' $inviterLevel 级',
+                      style: TextStyle(
+                        color: HexColor("#999999"),
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
                       ),
                     ),
-                    // Text(
-                    //   '$inviterLevel',
-                    //   style: TextStyle(
-                    //     color: HexColor("#999999"),
-                    //     fontSize: 12,
-                    //     fontWeight: FontWeight.normal,
-                    //   ),
-                    // ),
                   ],
                 ),
-                SizedBox(
-                  height: 6,
-                ),
+                /*if(inviterName.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        right: 6,
+                        bottom: 6
+                    ),
+                    child: Text(
+                      inviterName,
+                      style: TextStyle(
+                        color: HexColor("#333333"),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),*/
                 Text(
                   '$address',
                   style: TextStyle(
@@ -275,7 +299,7 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
 
   Widget _itemBuilder(RpMinerInfo info) {
     var name = info?.name ?? '';
-    var level = info?.level ?? 0;
+    var level = levelValueToLevelName(info?.level ?? 0);
     var bech32Address = WalletUtil.ethAddressToBech32Address(
       info?.address ?? '',
     );
@@ -345,14 +369,14 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
                               )
                             : SizedBox(),
                       ),
-                      // Text(
-                      //   ' $level 级',
-                      //   style: TextStyle(
-                      //     color: HexColor("#999999"),
-                      //     fontSize: 12,
-                      //     fontWeight: FontWeight.normal,
-                      //   ),
-                      // ),
+                      Text(
+                        ' $level 级',
+                        style: TextStyle(
+                          color: HexColor("#999999"),
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
                     ],
                   ),
                   Text(

@@ -39,18 +39,18 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        print('[webview]  -->11111');
+        //print('[webview]  -->11111');
         if (webView != null) {
-          print('[webview]  -->3333');
+          //print('[webview]  -->3333');
 
           if (await webView.canGoBack()) {
-            print('[webview]  -->4444');
+            //print('[webview]  -->4444');
 
             webView.goBack();
             return false;
           }
         }
-        print('[webview]  -->2222');
+        //print('[webview]  -->2222');
 
         return true;
       },
@@ -158,7 +158,7 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
   }
 
   Widget _body() {
-    print('[inapp] --> webView, url:${widget.initUrl}');
+    //print('[inapp] --> webView, url:${widget.initUrl}');
 
     return InAppWebView(
       initialUrl: widget.initUrl,
@@ -171,14 +171,14 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
         webView = controller;
       },
       onLoadStart: (InAppWebViewController controller, String url) {
-        print("onLoadStart $url");
+        //print("onLoadStart $url");
         setState(() {
           this.url = url;
         });
       },
       onLoadStop: (InAppWebViewController controller, String url) async {
         isLoading = false;
-        print("onLoadStop $url");
+        //print("onLoadStop $url");
         setState(() {
           this.url = url;
         });
@@ -186,7 +186,7 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
         updateBackOrForward();
       },
       onProgressChanged: (InAppWebViewController controller, int progress) {
-        print("onProgressChanged $url");
+        //print("onProgressChanged $url");
 
         setState(() {
           this.progress = progress / 100;
@@ -220,7 +220,7 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
     if (webView != null && !isLoading) {
       webView.takeScreenshot().then((imageByte) async {
         var len = imageByte.lengthInBytes;
-        debugPrint("screenshot taken bytes $len");
+        //debugPrint("screenshot taken bytes $len");
 
         await Share.file(
             S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');

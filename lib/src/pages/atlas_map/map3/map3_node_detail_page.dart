@@ -2322,7 +2322,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         */
         ListView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: BouncingScrollPhysics(),
           scrollDirection: Axis.vertical,
           itemBuilder: (context, index) {
             return delegateRecordItemWidget(
@@ -2372,7 +2372,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         ),
         ListView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: BouncingScrollPhysics(),
           scrollDirection: Axis.vertical,
           itemBuilder: (context, index) {
             var item = _userList[index];

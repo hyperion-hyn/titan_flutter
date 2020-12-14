@@ -26,6 +26,7 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
@@ -110,84 +111,76 @@ class _ExchangeWithdrawConfirmPageState
     var _amountQuotePriceString =
         "≈ $_quoteSign ${FormatUtil.formatPrice(double.parse(widget.amount) * _quotePrice)}";
 
-    var _gasPriceEstimateStr = "";
-    var _gasPriceEstimate;
-    if (widget.coinVo.coinType == CoinType.BITCOIN) {
-      gasPriceRecommend = WalletInheritedModel.of(
-        context,
-        aspect: WalletAspect.gasPrice,
-      ).btcGasPriceRecommend;
-      var fees = ConvertTokenUnit.weiToDecimal(
-        BigInt.parse((gasPrice * Decimal.fromInt(BitcoinConst.BTC_RAWTX_SIZE))
-            .toString()),
-        8,
-      );
-      _gasPriceEstimate = fees * Decimal.parse(_quotePrice.toString());
-      _gasPriceEstimateStr =
-          "$fees BTC (≈ $_quoteSign${FormatUtil.formatPrice(_gasPriceEstimate.toDouble())})";
-    } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      //var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
-      var hynQuotePrice = WalletInheritedModel.of(context)
-              .activatedQuoteVoAndSign('HYN')
-              ?.quoteVo
-              ?.price ??
-          0;
-      var gasLimit = SettingInheritedModel.ofConfig(context)
-          .systemConfigEntity
-          .ethTransferGasLimit;
-      var gasPriceEstimate = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(
-              (gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
-      _gasPriceEstimate =
-          gasPriceEstimate * Decimal.parse(hynQuotePrice.toString());
-      _gasPriceEstimateStr =
-          '${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} G_DUST (≈ $_quoteSign${FormatUtil.formatCoinNum(_gasPriceEstimate.toDouble())})';
-    } else {
-      var ethQuotePrice = WalletInheritedModel.of(context)
-              .activatedQuoteVoAndSign('ETH')
-              ?.quoteVo
-              ?.price ??
-          0;
-      gasPriceRecommend =
-          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
-              .gasPriceRecommend;
-      var gasLimit = widget.coinVo.symbol == "ETH"
-          ? SettingInheritedModel.ofConfig(context)
-              .systemConfigEntity
-              .ethTransferGasLimit
-          : SettingInheritedModel.ofConfig(context)
-              .systemConfigEntity
-              .erc20TransferGasLimit;
-      var gasEstimate = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(
-              (gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+    var _gasPriceEstimateStr;
 
-      _gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
-
-      _gasPriceEstimateStr =
-          "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $_quoteSign${FormatUtil.formatPrice(_gasPriceEstimate.toDouble())})";
-    }
-
-    ///Actual withdrawFee:
-    ///[withdrawFeeByGas] * _gasPriceEstimate
-    _gasPriceEstimate =
-        Decimal.parse(widget.withdrawFeeByGas) * _gasPriceEstimate;
-
-    print(
-        'WithdrawConfirm: gasPriceEstimate: $_gasPriceEstimate quotePrice: $_quotePrice');
-
-    Decimal _gasPriceByToken = Decimal.fromInt(0);
+    Decimal _gasFeeByToken = Decimal.fromInt(0);
 
     try {
-      _gasPriceByToken = Decimal.parse(FormatUtil.truncateDoubleNum(
-          _gasPriceEstimate.toDouble() / _quotePrice, 8));
+      if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+        var hynQuotePrice = WalletInheritedModel.of(context)
+                .activatedQuoteVoAndSign('HYN')
+                ?.quoteVo
+                ?.price ??
+            0;
+
+        ///Contract tokens
+        var gasLimit = widget.coinVo.contractAddress != null
+            ? SettingInheritedModel.ofConfig(context)
+                .systemConfigEntity
+                .erc20TransferGasLimit
+            : SettingInheritedModel.ofConfig(context)
+                .systemConfigEntity
+                .ethTransferGasLimit;
+
+        var gasPriceEstimate = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse(
+                (gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+
+        var gasFeeQuotePrice = gasPriceEstimate *
+            Decimal.parse(hynQuotePrice.toString()) *
+            Decimal.parse(widget.withdrawFeeByGas);
+
+        _gasFeeByToken = (Decimal.parse('$gasFeeQuotePrice') /
+            Decimal.parse('$_quotePrice'));
+
+        _gasPriceEstimateStr =
+            " ${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GDUST ($gasPriceEstimate HYN)";
+      } else {
+        var ethQuotePrice = WalletInheritedModel.of(context)
+                .activatedQuoteVoAndSign('ETH')
+                ?.quoteVo
+                ?.price ??
+            0;
+        gasPriceRecommend =
+            WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
+                .gasPriceRecommend;
+        var gasLimit = widget.coinVo.symbol == "ETH"
+            ? SettingInheritedModel.ofConfig(context)
+                .systemConfigEntity
+                .ethTransferGasLimit
+            : SettingInheritedModel.ofConfig(context)
+                .systemConfigEntity
+                .erc20TransferGasLimit;
+        var gasEstimate = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse(
+                (gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+
+        var gasFeeQuotePrice = gasEstimate *
+            Decimal.parse(ethQuotePrice.toString()) *
+            Decimal.parse(widget.withdrawFeeByGas);
+
+        _gasFeeByToken = Decimal.parse(FormatUtil.truncateDecimalNum(
+          Decimal.parse('$gasFeeQuotePrice') / Decimal.parse('$_quotePrice'),
+          8,
+        ));
+
+        _gasPriceEstimateStr =
+            "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI ($gasEstimate ETH) ";
+      }
     } catch (e) {}
 
-    _gasPriceEstimateStr =
-        " $_gasPriceByToken ${widget.coinVo.symbol} (≈ $_quoteSign${_gasPriceEstimate.toDouble()})";
-
-    var _actualAmount = Decimal.parse(widget.amount) -
-        Decimal.parse(_gasPriceByToken.toString());
+    var _actualAmount =
+        Decimal.parse(widget.amount) - Decimal.parse(_gasFeeByToken.toString());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -359,27 +352,52 @@ class _ExchangeWithdrawConfirmPageState
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 4.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          height: 24,
-                          child: Text(
-                            _gasPriceEstimateStr,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF333333),
-                              fontWeight: FontWeight.bold,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              alignment: Alignment.centerLeft,
+                              child: _gasPriceEstimateStr != null
+                                  ? Text(
+                                      _gasPriceEstimateStr,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Color(0xFF333333),
+                                          fontWeight: FontWeight.bold,
+                                          height: 1.6),
+                                    )
+                                  : SizedBox(),
                             ),
-                          ),
+                            if (isLoadingGasFee)
+                              Container(
+                                width: 24,
+                                height: 24,
+                                child: CupertinoActivityIndicator(),
+                              )
+                          ],
                         ),
-                        if (isLoadingGasFee)
-                          Container(
-                            width: 24,
-                            height: 24,
-                            child: CupertinoActivityIndicator(),
-                          )
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: widget.coinVo.symbol != 'HYN'
+                              ? Text(
+                                  '≈ $_gasFeeByToken ${widget.coinVo.symbol}',
+                                  style: TextStyle(
+                                    color: DefaultColors.color999,
+                                    fontSize: 13,
+                                  ),
+                                )
+                              : SizedBox(),
+                        ),
+                        Text(
+                          '实际扣除的矿工费将以${widget.coinVo.symbol}来抵除',
+                          style: TextStyle(
+                            color: DefaultColors.color999,
+                            fontSize: 12,
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -449,7 +467,7 @@ class _ExchangeWithdrawConfirmPageState
                     : () async {
                         await _transfer(
                           _actualAmount.toString(),
-                          '$_gasPriceByToken',
+                          '$_gasFeeByToken',
                         );
                       },
                 child: Padding(

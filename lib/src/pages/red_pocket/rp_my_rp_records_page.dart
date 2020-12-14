@@ -10,11 +10,9 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_detail_page.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'entity/rp_release_info.dart';
 
 class RpMyRpRecordsPage extends StatefulWidget {
   RpMyRpRecordsPage();
@@ -29,9 +27,9 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
-  int _currentPage = 1;
+  Map<String, dynamic> _currentPageKey;
   var _address = "";
-  List<RpReleaseInfo> _dataList = [];
+  List<RpOpenRecordEntity> _dataList = [];
 
   int lastDay;
 
@@ -85,7 +83,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
             (context, index) {
               var model = _dataList[index];
 
-              var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
+              var currentDate = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
 
               bool isNewDay = false;
               if (index == 0) {
@@ -104,7 +102,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                     Padding(
                       padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
                       child: Text(
-                        FormatUtil.humanReadableDay(model.updatedAt),
+                        FormatUtil.humanReadableDay(model.createdAt),
                         style: TextStyle(color: Color(0xff999999)),
                       ),
                     ),
@@ -122,64 +120,40 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   Widget _itemBuilder(int index) {
     var model = _dataList[index];
 
-    var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
-
-    var amount = model?.amount ?? 0;
-
-    var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
-    // rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
-    // rpAmount = '00000000000000000000000000000000000000000000000000000000000000';
-
-    var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
-    var updatedAt = DateFormat("HH:mm").format(currentDate);
-
+    var luckState = RpLuckState.values[(model?.luck ?? 0)];
+    var rpInfoModel = getRpLuckStateInfo(model);
+    var desc = rpInfoModel.desc;
+    var amount = rpInfoModel.amount;
+    
     var title = '';
-    var desc = '';
-
-    switch (index) {
-      case 0:
-        desc = '最佳';
-        break;
-
-      case 1:
-        desc = '错过';
-        break;
-
-      case 2:
-        desc = '砸中';
-        break;
-
-      default:
-        desc = '';
-        break;
-    }
-
-    switch (index) {
-      case 0:
+    RedPocketType rpType = RedPocketType.values[model.type];
+    switch (rpType) {
+      case RedPocketType.LUCKY:
         title = '幸运红包';
         break;
 
-      case 1:
+      case RedPocketType.LEVEL:
         title = '量级红包';
         break;
 
-      case 2:
+      case RedPocketType.PROMOTION:
         title = '晋升红包';
         break;
 
       default:
-        title = '幸运红包';
+        title = '';
         break;
     }
+
+    var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
+    var createdAtStr = DateFormat("HH:mm").format(createdAt);
+
     return InkWell(
       onTap: () {
-        // WalletShowAccountInfoPage.jumpToAccountInfoPage(
-        //     context, model?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
-
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => RedPocketDetailPage(rpType: index,),
+            builder: (context) => RedPocketDetailPage(rpOpenRecordEntity: model),
           ),
         );
       },
@@ -229,7 +203,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                           ),
                         ),
                         Text(
-                          '${S.of(context).rp_total_pretext} $rpAmount RP',
+                          '${S.of(context).rp_total_pretext} ${model?.totalAmountStr ?? '0'} RP',
                           style: TextStyle(
                             color: HexColor("#999999"),
                             fontSize: 12,
@@ -245,9 +219,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                       height: 6,
                     ),
                     Text(
-                      updatedAt,
-                      //'${S.of(context).rp_staking_id}：${model?.stakingId ?? 0}',
-                      //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                      createdAtStr,
                       style: TextStyle(
                         fontSize: 10,
                         color: HexColor('#999999'),
@@ -268,7 +240,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        '+ $rpAmount RP',
+                        amount,
                         style: TextStyle(
                           color: HexColor("#333333"),
                           fontSize: 14,
@@ -285,7 +257,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                         desc,
                         style: TextStyle(
                           fontSize: 10,
-                          color: index == 0 ? HexColor('#F0BE00') : HexColor('#999999'),
+                          color: luckState == RpLuckState.BEST ? HexColor('#F0BE00') : HexColor('#999999'),
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -301,13 +273,13 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   }
 
   void getNetworkData() async {
-    _currentPage = 1;
-
     try {
-      var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
+      var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
 
-      if (netData?.isNotEmpty ?? false) {
-        _dataList = netData;
+      if (netData?.data?.isNotEmpty ?? false) {
+        _currentPageKey = netData.pagingKey;
+        _dataList = filterRpOpenDataList(netData.data);
+
         if (mounted) {
           setState(() {
             _loadDataBloc.add(RefreshSuccessEvent());
@@ -322,13 +294,23 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   }
 
   void getMoreNetworkData() async {
-    try {
-      _currentPage = _currentPage + 1;
-      var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
+    if (_currentPageKey?.isEmpty ?? true) {
+      _loadDataBloc.add(LoadMoreEmptyEvent());
+      return;
+    }
 
-      if (netData?.isNotEmpty ?? false) {
-        _dataList.addAll(netData);
-        _loadDataBloc.add(LoadingMoreSuccessEvent());
+    try {
+      var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
+
+      if (netData?.data?.isNotEmpty ?? false) {
+        _currentPageKey = netData.pagingKey;
+        _dataList.addAll(filterRpOpenDataList(netData.data));
+        if (mounted) {
+          setState(() {
+            // todo: 不应该调用set state
+            _loadDataBloc.add(LoadingMoreSuccessEvent());
+          });
+        }
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }

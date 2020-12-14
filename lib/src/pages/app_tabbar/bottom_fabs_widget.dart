@@ -153,9 +153,7 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
                 height: 80,
                 padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                 child: InkWell(
-                  child: Lottie.asset(
-                    'res/lottie/lottie_red_pocket.json',
-                  ),
+                  child: Image.asset('res/drawable/red_pocket.png'),
                   onTap: () {
                     Navigator.push(
                       context,

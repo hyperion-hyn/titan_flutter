@@ -88,6 +88,10 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
     S.of(Keys.rootKey.currentContext).already_your_friend_cannot_be_referrer,
   ),
   HttpResponseCodeNotSuccess(
+    -3001,
+    "存在处理中的交易，请稍后重试",
+  ),
+  HttpResponseCodeNotSuccess(
     -20001,
     S.of(Keys.rootKey.currentContext).create_account_fail,
   ),
@@ -122,6 +126,14 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
   HttpResponseCodeNotSuccess(
     -20010,
     S.of(Keys.rootKey.currentContext).check_interval_less_thirty_minutes,
+  ),
+  HttpResponseCodeNotSuccess(
+    -30011,
+    'HYN余额不足支付网络费用!',
+  ),
+  HttpResponseCodeNotSuccess(
+    -30012,
+    'RP余额不足!',
   ),
   ERROR_FUND_PASSWORD
 ];

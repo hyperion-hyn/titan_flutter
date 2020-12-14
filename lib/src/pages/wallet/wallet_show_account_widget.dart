@@ -23,6 +23,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
@@ -69,7 +70,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 
   @override
   int getStartPage() {
-    return 1;
+    return 0;
   }
 
   @override
@@ -92,7 +93,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
-    var tempTransList = await getEthTransferList();
+    var tempTransList = await getEthTransferList(_accountTransferService);
     if (tempTransList.length > 0) {
       await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
     }
@@ -194,19 +195,19 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                             await UiUtil.showDialogWidget(context,
                                                 content: Text(S.of(context).wallet_transfer_title),
                                                 actions: [
-                                                  FlatButton(
-                                                      child: Text(S.of(context).cancel),
-                                                      onPressed: () async {
-                                                        Navigator.pop(context);
-                                                      }),
+//                                                  FlatButton(
+//                                                      child: Text(S.of(context).cancel),
+//                                                      onPressed: () async {
+//                                                        Navigator.pop(context);
+//                                                      }),
                                                   FlatButton(
                                                       child: Text(S.of(context).confirm),
                                                       onPressed: () async {
                                                         Navigator.pop(context);
-                                                        Application.router.navigateTo(
-                                                            context,
-                                                            Routes.wallet_account_send_transaction +
-                                                                '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
+//                                                        Application.router.navigateTo(
+//                                                            context,
+//                                                            Routes.wallet_account_send_transaction +
+//                                                                '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
                                                       }),
                                                 ]);
                                             return;
@@ -341,7 +342,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                           ],
                         ),
                       ),
-                      if (dataList.length > 1)
+                      dataList.length > 1?
                         ListView.builder(
                           primary: false,
                           shrinkWrap: true,
@@ -354,6 +355,15 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                             }
                           },
                           itemCount: max<int>(0, dataList.length),
+                        ):Padding(
+                          padding: const EdgeInsets.only(top: 20,),
+                          child: Container(
+                          width: double.infinity,
+                          child: emptyListWidget(
+                            title: S.of(context).no_data,
+                            isAdapter: false,
+                          ),
+                      ),
                         )
                     ]),
               ),
@@ -562,9 +572,13 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                         return;
                       }
 
-                      await widget.transactionInteractor.cancelTransaction(context, transactionDetail, password);
-                      Fluttertoast.showToast(
-                          msg: S.of(context).wallet_cancel_send_tips, toastLength: Toast.LENGTH_LONG);
+                      var txHash = await widget.transactionInteractor.cancelTransaction(context, transactionDetail, password);
+                      if(txHash != null) {
+                        Fluttertoast.showToast(
+                            msg: S
+                                .of(context)
+                                .wallet_cancel_send_tips, toastLength: Toast.LENGTH_LONG);
+                      }
                     } catch (exception) {
                       if (exception.toString().contains("nonce too low") ||
                           exception.toString().contains("known transaction")) {
@@ -597,8 +611,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                       if (password == null) {
                         return;
                       }
-                      await widget.transactionInteractor.speedTransaction(context, transactionDetail, password);
-                      Fluttertoast.showToast(msg: S.of(context).wallet_have_speed_tips, toastLength: Toast.LENGTH_LONG);
+                      var txHash = await widget.transactionInteractor.speedTransaction(context, transactionDetail, password);
+                      if(txHash != null) {
+                        Fluttertoast.showToast(msg: S
+                            .of(context)
+                            .wallet_have_speed_tips, toastLength: Toast.LENGTH_LONG);
+                      }
                     } catch (exception) {
                       if (exception.toString().contains("nonce too low") ||
                           exception.toString().contains("known transaction")) {
@@ -643,7 +661,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
 
       //delete local transaction
-      var tempTransList = await getEthTransferList();
+      var tempTransList = await getEthTransferList(_accountTransferService);
       if (tempTransList.length > 0) {
         await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
       }
@@ -661,19 +679,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       logger.e(e);
     }
     return retList;
-  }
-
-  Future<List<TransactionDetailVo>> getEthTransferList() async {
-    List<TransactionDetailVo> transferList = [];
-    try {
-      WalletVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-      String fromAddress = walletVo.wallet.getEthAccount().address;
-      var coinVo = CoinVo(symbol: "ETH", address: fromAddress);
-      transferList = await _accountTransferService.getTransferList(coinVo, 0);
-    } catch (e) {
-      logger.e(e);
-    }
-    return transferList;
   }
 
   Future<TransactionDetailVo> getLocalTransfer(bool isAllLocal) async {
@@ -694,4 +699,17 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 
     return localTransfer;
   }
+}
+
+Future<List<TransactionDetailVo>> getEthTransferList(AccountTransferService _accountTransferService) async {
+  List<TransactionDetailVo> transferList = [];
+  try {
+    WalletVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    String fromAddress = walletVo.wallet.getEthAccount().address;
+    var coinVo = CoinVo(symbol: "ETH", address: fromAddress);
+    transferList = await _accountTransferService.getTransferList(coinVo, 0);
+  } catch (e) {
+    logger.e(e);
+  }
+  return transferList;
 }

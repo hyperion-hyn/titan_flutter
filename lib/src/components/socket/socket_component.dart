@@ -82,7 +82,7 @@ class _SocketState extends State<_SocketManager> {
     _bloc.setSocketChannel(_socketChannel);
 
     _socketChannel.stream.listen((data) {
-      LogUtil.printMessage('[WS]  listen..., data');
+      //LogUtil.printMessage('[WS]  listen..., data');
 
       if (!_connecting) {
         _connecting = true;
@@ -242,8 +242,8 @@ class _SocketState extends State<_SocketManager> {
             'high': double.parse(itemList[2].toString()),
             'low': double.parse(itemList[3].toString()),
             'close': double.parse(itemList[4].toString()),
-            'vol': double.parse(itemList[5].toString()),
-            'amount': double.parse(itemList[6].toString()),
+            'amount': double.parse(itemList[5].toString()),
+            'vol': double.parse(itemList[6].toString()),
             'count': 0,
             'id': int.parse(itemList[0].toString()) / 1000,
           };

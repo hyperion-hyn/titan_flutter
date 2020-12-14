@@ -260,7 +260,7 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
   void _pop(BuildContext context) {
     switch (widget.actionEvent) {
       case Map3NodeActionEvent.MAP3_CREATE:
-        print("[pop] -----> _pop, contractNodeItem:${widget.infoEntity.toJson()}");
+        //print("[pop] -----> _pop, contractNodeItem:${widget.infoEntity.toJson()}");
 
         Routes.popUntilCachedEntryRouteName(context, widget.infoEntity);
         break;
@@ -274,7 +274,7 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
         */
 
       default:
-        print("[pop] -----> _pop, contractNodeItem");
+        //print("[pop] -----> _pop, contractNodeItem");
 
         Routes.popUntilCachedEntryRouteName(context, true);
         break;

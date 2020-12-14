@@ -87,7 +87,7 @@ class _RoundBorderTextFieldState extends State<RoundBorderTextField> {
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide(
-            color: Colors.red,
+            color: HexColor('#FF4C3B'),
             width: 0.5,
           ),
         ),

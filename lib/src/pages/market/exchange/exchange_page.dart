@@ -210,7 +210,7 @@ class _ExchangePageState extends BaseState<ExchangePage>  {
 
     var _selectedCoinToHYN = '--';
     var _hynToSelectedCoin = '--';
-    var _amount24H = '--';
+    var _vol24H = '--';
 
     try {
       _hynToSelectedCoin = FormatUtil.truncateDoubleNum(
@@ -219,8 +219,8 @@ class _ExchangePageState extends BaseState<ExchangePage>  {
       _selectedCoinToHYN = FormatUtil.truncateDecimalNum(
               (Decimal.fromInt(1) / Decimal.parse(_hynToSelectedCoin)), 4) ??
           '--';
-      _amount24H = FormatUtil.truncateDoubleNum(
-              _getMarketItem(_selectedCoin)?.kLineEntity?.amount, 2) ??
+      _vol24H = FormatUtil.truncateDoubleNum(
+              _getMarketItem(_selectedCoin)?.kLineEntity?.vol, 2) ??
           '--';
     } catch (e) {}
 
@@ -712,9 +712,9 @@ class _ExchangePageState extends BaseState<ExchangePage>  {
     var quote = marketItemEntity?.quote;
 
     // 24hour
-    var _amount24Hour =
-        '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
-      marketItemEntity.kLineEntity?.amount,
+    var _vol24H =
+        '${S.of(context).exchange_24h_vol} ${FormatUtil.truncateDoubleNum(
+      marketItemEntity.kLineEntity?.vol,
       2,
     )}';
 
@@ -819,7 +819,7 @@ class _ExchangePageState extends BaseState<ExchangePage>  {
                               height: 4,
                             ),
                             Text(
-                              _amount24Hour ?? '-',
+                              _vol24H ?? '-',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 12,
