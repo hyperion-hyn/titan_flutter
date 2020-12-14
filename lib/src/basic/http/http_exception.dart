@@ -123,6 +123,14 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
     -20010,
     S.of(Keys.rootKey.currentContext).check_interval_less_thirty_minutes,
   ),
+  HttpResponseCodeNotSuccess(
+    -30011,
+    'HYN余额不足支付网络费用!',
+  ),
+  HttpResponseCodeNotSuccess(
+    -30012,
+    'RP余额不足!',
+  ),
   ERROR_FUND_PASSWORD
 ];
 
