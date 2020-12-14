@@ -535,7 +535,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,
         fontSize: 18,
-        isLoading: !_canRenew,
+        isDisable: !_canRenew,
       ),
     );
   }
