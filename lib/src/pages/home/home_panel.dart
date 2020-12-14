@@ -414,7 +414,7 @@ class HomePanelState extends State<HomePanel> {
                           height: 4,
                         ),
                         Text(
-                          '拆红包，攒RP，与朋友圈分享更多空投奖励',
+                          '拆红包，攒RP，与朋友圈分享更多红包奖励',
                           style: TextStyle(
                             fontSize: 13,
                             color: DefaultColors.color999,
