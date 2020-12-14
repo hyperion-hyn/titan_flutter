@@ -40,18 +40,16 @@ class _AppState extends State<App> {
     return Container(
       key: Keys.componentKey,
       child: OKToast(
-          child: AuthComponent(
-            child: SettingComponent(
-                child: ExchangeComponent(
-                    child: WalletComponent(
-              child: SocketComponent(
+        child: AuthComponent(
+          child: SettingComponent(
+            child: ExchangeComponent(
+              child: WalletComponent(
+                child: SocketComponent(
                   child: AtlasComponent(
                     child: MultiBlocProvider(
                       providers: [
-                        BlocProvider<UpdateBloc>(
-                            create: (context) => UpdateBloc(context: context)),
-                        BlocProvider<RootPageControlBloc>(
-                            create: (context) => RootPageControlBloc()),
+                        BlocProvider<UpdateBloc>(create: (context) => UpdateBloc(context: context)),
+                        BlocProvider<RootPageControlBloc>(create: (context) => RootPageControlBloc()),
                       ],
                       child: Builder(
                         builder: (context) {
@@ -71,8 +69,7 @@ class _AppState extends State<App> {
                             child: MaterialApp(
                               key: Keys.materialAppKey,
                               debugShowCheckedModeBanner: false,
-                              locale: SettingInheritedModel.of(context,
-                                      aspect: SettingAspect.language)
+                              locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
                                   .languageModel
                                   ?.locale,
                               title: 'titan',
@@ -93,11 +90,11 @@ class _AppState extends State<App> {
                       ),
                     ),
                   ),
+                ),
               ),
             ),
-                ),
-            ),
           ),
+        ),
       ),
     );
   }
