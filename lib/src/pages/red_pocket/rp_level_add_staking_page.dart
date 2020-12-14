@@ -2,12 +2,15 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/rp/bloc/bloc.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -27,9 +30,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'entity/rp_my_level_info.dart';
 
 class RpLevelAddStakingPage extends StatefulWidget {
-  final RpMyLevelInfo rpMyLevelInfo;
-
-  RpLevelAddStakingPage(this.rpMyLevelInfo);
+  RpLevelAddStakingPage();
 
   @override
   State<StatefulWidget> createState() {
@@ -50,14 +51,16 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
   RpMyLevelInfo _myLevelInfo;
   CoinVo _coinVo;
   WalletVo _activatedWallet;
-  String get _address => _activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
+
+  TextStyle _lightTextStyle = TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+  );
 
   @override
   void initState() {
     super.initState();
-
-    _myLevelInfo = widget.rpMyLevelInfo;
 
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext);
     _coinVo = wallet.getCoinVoBySymbol('RP');
@@ -72,6 +75,13 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
+  }
+
+  @override
   void dispose() {
     print("[${widget.runtimeType}] dispose");
 
@@ -80,29 +90,14 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
   }
 
   Future getNetworkData() async {
-    try {
-      _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
+    if (context != null) {
+      BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent());
+    }
 
-      if (mounted) {
-        setState(() {
-          _loadDataBloc.add(RefreshSuccessEvent());
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        LogUtil.toastException(e);
-
-        setState(() {
-          _loadDataBloc.add(RefreshFailEvent());
-        });
-      }
+    if (mounted) {
+      _loadDataBloc.add(RefreshSuccessEvent());
     }
   }
-
-  TextStyle _lightTextStyle = TextStyle(
-    fontWeight: FontWeight.w500,
-    fontSize: 14,
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +113,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
               bloc: _loadDataBloc,
               enablePullUp: false,
               onRefresh: getNetworkData,
-              isStartLoading: true,
+              isStartLoading: false,
               child: BaseGestureDetector(
                 context: context,
                 child: SingleChildScrollView(
@@ -138,7 +133,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                               SizedBox(
                                 width: 16,
                               ),
-                              Text('${levelValueToLevelName(widget?.rpMyLevelInfo?.currentLevel ?? 0)}',
+                              Text('${levelValueToLevelName(_myLevelInfo?.currentLevel ?? 0)}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
@@ -168,7 +163,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                                 width: 10,
                               ),
                               Expanded(
-                                child: Text('当前持币 ${widget?.rpMyLevelInfo?.currentHoldingStr ?? '0'} RP ',
+                                child: Text('当前持币 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP ',
                                     style: TextStyle(
                                       fontWeight: FontWeight.normal,
                                       fontSize: 12,
@@ -202,7 +197,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                                         return '请输入增加数量';
                                       }
 
-                                      var inputValue = Decimal.tryParse(textStr??'0');
+                                      var inputValue = Decimal.tryParse(textStr ?? '0');
                                       if (inputValue == null || inputValue <= Decimal.zero) {
                                         return S.of(context).please_enter_correct_amount;
                                       }
@@ -345,7 +340,6 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
             _isLoading = false;
           });
         }
-
       } catch (e) {
         if (mounted) {
           LogUtil.toastException(e);

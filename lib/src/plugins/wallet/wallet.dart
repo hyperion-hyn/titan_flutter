@@ -602,7 +602,7 @@ class Wallet {
     }
     BigInt stakingAmount;
     if(!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)){
-      return null;
+      throw HttpResponseCodeNotSuccess(-30011, 'HYN余额不足支付网络费用!');
     }
 
     String methodName;

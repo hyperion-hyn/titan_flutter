@@ -10,6 +10,8 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/rp/bloc/bloc.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -62,6 +64,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
   }
 
   @override
@@ -163,8 +167,12 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         '${_rpStatistics?.rpHoldingContractInfo?.totalBurningStr} RP';
     var totalHolding =
         '${_rpStatistics?.rpHoldingContractInfo?.totalHoldingStr} RP';
-    var totalSupply =
-        '${_rpStatistics?.rpHoldingContractInfo?.totalSupplyStr} RP';
+
+    var totalSupplyStr = FormatUtil.stringFormatCoinNum(
+      _rpStatistics?.rpHoldingContractInfo?.totalSupplyStr ?? '0',
+      decimal: 4,
+    );
+    var totalSupply =  '$totalSupplyStr RP';
 
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
       SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
@@ -1222,15 +1230,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _requestData() async {
-    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
 
-    if (activeWallet == null) {
-      if (mounted) {
-        _loadDataBloc.add(RefreshSuccessEvent());
-        setState(() {});
-      }
-      return;
-    }
+    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
 
     var _address = activeWallet?.wallet?.getAtlasAccount()?.address;
     try {
@@ -1238,7 +1239,10 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         _address,
       );
 
-      _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context)
+            .add(UpdateMyLevelInfoEntityEvent());
+      }
 
       if (context != null) {
         BlocProvider.of<WalletCmpBloc>(context)

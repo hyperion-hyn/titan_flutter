@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:k_chart/utils/date_format_util.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -46,7 +47,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
   RpOpenRecordEntity _detailEntity;
 
-  int get _rpType => _detailEntity?.type ?? 0;
+  RedPocketType get _rpType => RedPocketType.values[_detailEntity?.type ?? 0];
 
   Map<String, dynamic> _currentPageKey;
   bool get _txHashIsEmpty => (_detailEntity?.txHash ?? '').isEmpty;
@@ -133,32 +134,41 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
     var name = _detailEntity?.username ?? '';
     if (name.isEmpty) {
-      name = '未知用户';
       name = '用户';
     }
     print("[$runtimeType] _infoDetailBuilder, rpType:$_rpType");
 
     var amount = '-- RP';
+    var amountStr = '${_detailEntity?.amountStr ?? '0'} RP';
+    var zeroAmountStr = '0 RP';
+    var luckState = RpLuckState.values[(_detailEntity?.luck ?? 0)];
+
+    var from = levelValueToLevelName(_detailEntity?.from ?? 0);
+    var to = levelValueToLevelName(_detailEntity?.to ?? 0);
 
     switch (_rpType) {
-      case 0:
+      case RedPocketType.LUCKY:
         title = '$name 的幸运红包';
+
+        amount = luckState == RpLuckState.UN_LUCKY ? zeroAmountStr : amountStr;
         break;
 
-      case 1:
+      case RedPocketType.LEVEL:
         title = '量级红包';
-        subTitle = '（量级${_detailEntity?.to}）';
-        amount = '${_detailEntity?.amountStr ?? '0'} RP';
+        subTitle = '（量级$to）';
+
+        amount = amountStr;
         break;
 
-      case 2:
+      case RedPocketType.PROMOTION:
         title = '晋升红包';
 
-        amount = _detailEntity.luck == 0 ? '0 RP' : '${_detailEntity?.amountStr ?? '0'} RP';
+        amount = luckState == RpLuckState.UN_LUCKY ? zeroAmountStr : amountStr;
         break;
 
       default:
         title = '';
+        amount = '-- RP';
         break;
     }
 
@@ -167,8 +177,6 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     );
     var address = shortBlockChainAddress(beach32Address);
 
-    var from = levelValueToLevelName(_detailEntity?.from ?? 0);
-    var to = levelValueToLevelName(_detailEntity?.to ?? 0);
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -219,7 +227,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 ],
               ),
             ),
-            if (_rpType == 2)
+            if (_rpType == RedPocketType.PROMOTION)
               Padding(
                 padding: const EdgeInsets.only(
                   top: 6,
@@ -249,7 +257,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                   ],
                 ),
               ),
-            if (_rpType == 2)
+            if (_rpType == RedPocketType.PROMOTION)
               Padding(
                 padding: const EdgeInsets.only(
                   top: 2,
@@ -333,19 +341,13 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                       Tooltip(
                         key: _toolTipKey,
                         verticalOffset: 20,
-                        //padding: const EdgeInsets.only(right: 8,),
-                        message: '因量级过低，你错过获得${_detailEntity?.amountStr ?? '0'} RP 机会',
+                        message: '因量级过低，你错过获得$amountStr 机会',
                         child: Image.asset(
                           'res/drawable/ic_tooltip.png',
                           width: 10,
                           height: 10,
                         ),
-                      )
-                      // Image.asset(
-                      //   'res/drawable/red_pocket_detail_info.png',
-                      //   width: 12,
-                      //   height: 12,
-                      // ),
+                      ),
                     ],
                   ),
                 ),
@@ -424,7 +426,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         ),
       );
     } else {
-      var childCount = _rpType == 0 ? _filterDataList.length : _filterDataList.length + 1;
+      var childCount = _rpType == RedPocketType.LUCKY ? _filterDataList.length : _filterDataList.length + 1;
       return SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
@@ -439,13 +441,16 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   Widget _itemBuilder(int index) {
     if (index == _filterDataList.length) {
       switch (_rpType) {
-        case 1:
+        case RedPocketType.LEVEL:
           return _levelWidget();
 
           break;
 
-        case 2:
+        case RedPocketType.PROMOTION:
           return _promotionWidget();
+          break;
+
+        case RedPocketType.LUCKY:
           break;
       }
     }
@@ -453,21 +458,18 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     var model = _filterDataList[index];
 
     var role = '';
-    switch (model.role) {
-      case 1:
+    switch (RpAddressRoleType.values[model.role]) {
+      case RpAddressRoleType.BURN:
         //desc = '量级不足，错过机会';
 
         role = '燃烧';
         break;
 
-      case 2:
+      case RpAddressRoleType.MANAGE_FEE:
         role = '管理费';
         break;
 
-      case 3:
-        role = '';
-        break;
-
+      case RpAddressRoleType.NORMAL:
       default:
         role = '';
         break;
@@ -475,7 +477,6 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
     var name = model?.username ?? '';
     if (name.isEmpty) {
-      name = '未知用户';
       name = '用户';
     }
     name += role;
@@ -486,27 +487,10 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     );
     var address = shortBlockChainAddress(beach32Address);
 
-    var desc = '';
-    switch (model.luck) {
-      case 2:
-        desc = '最佳';
-        break;
-
-      case 1:
-        //desc = '量级不足，错过机会';
-        if (_rpType == 0) {
-          desc = '砸中';
-        } else {
-          desc = '';
-        }
-        break;
-
-      default:
-        desc = '错过 ${model?.amountStr ?? '0'} RP';
-        break;
-    }
-
-    var amount = model.luck == 0 ? '0 RP' : '${model?.amountStr ?? '0'} RP';
+    var luckState = RpLuckState.values[(model?.luck ?? 0)];
+    var rpInfoModel = getRpLuckStateInfo(model);
+    var desc = rpInfoModel.desc;
+    var amount = rpInfoModel.amount;
 
     var userAddress = model?.address ?? '';
     bool isMe = _address.isNotEmpty && userAddress.isNotEmpty && (userAddress.toLowerCase() == _address.toLowerCase());
@@ -633,7 +617,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                         desc,
                         style: TextStyle(
                           fontSize: 10,
-                          color: model?.luck == 2 ? HexColor('#F0BE00') : HexColor('#999999'),
+                          color: luckState == RpLuckState.BEST ? HexColor('#F0BE00') : HexColor('#999999'),
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -845,7 +829,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       );
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
-        _dataList = netData.data;
+
+        _dataList = filterRpOpenDataList(netData.data);
 
         if (mounted) {
           setState(() {
@@ -876,7 +861,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
-        _dataList.addAll(netData.data);
+
+        _dataList.addAll(filterRpOpenDataList(netData.data));
 
         if (mounted) {
           setState(() {
@@ -890,4 +876,78 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       _loadDataBloc.add(LoadMoreFailEvent());
     }
   }
+}
+
+List<RpOpenRecordEntity> filterRpOpenDataList(List<RpOpenRecordEntity> dataList) {
+  List<RpOpenRecordEntity> tempList = dataList?.where((element) {
+        var amountValue = Decimal.tryParse(element?.amountStr ?? '0') ?? Decimal.zero;
+        var luckState = RpLuckState.values[(element?.luck ?? 0)];
+        return !(luckState == RpLuckState.UN_LUCKY && amountValue <= Decimal.zero);
+      })?.toList() ??
+      [];
+
+  return tempList;
+}
+
+class RpStateInfoModel extends Object {
+  final String desc;
+  final String amount;
+
+  RpStateInfoModel({this.desc, this.amount});
+}
+
+RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
+  if (entity == null) return RpStateInfoModel(desc: '', amount: '');
+
+  RedPocketType rpType = RedPocketType.values[entity.type];
+
+  var desc = '';
+
+  var amount = '--';
+  var amountStr = (entity?.amountStr ?? '0') + ' RP';
+
+  var luckState = RpLuckState.values[(entity?.luck ?? 0)];
+  switch (luckState) {
+    case RpLuckState.UN_LUCKY:
+      desc = '错过 $amountStr';
+      amount = '0 RP';
+      break;
+
+    case RpLuckState.LUCKY:
+      if (rpType == RedPocketType.LUCKY) {
+        desc = '砸中';
+      } else {
+        desc = '';
+      }
+      amount = amountStr;
+      break;
+
+    case RpLuckState.BEST:
+      desc = '最佳';
+      amount = amountStr;
+      break;
+
+    default:
+      desc = '';
+      amount = '';
+      break;
+  }
+  return RpStateInfoModel(desc: desc, amount: amount);
+}
+
+// 1、燃烧 2、管理费 3、正常
+enum RpAddressRoleType { ZERO, BURN, MANAGE_FEE, NORMAL }
+
+// 0:Lucky 1:Level 2:Promotion
+enum RedPocketType {
+  LUCKY,
+  LEVEL,
+  PROMOTION,
+}
+
+// 0：错过 1：砸中 2：最佳
+enum RpLuckState {
+  UN_LUCKY,
+  LUCKY,
+  BEST,
 }
