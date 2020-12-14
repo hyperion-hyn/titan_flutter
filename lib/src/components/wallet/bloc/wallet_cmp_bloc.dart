@@ -6,6 +6,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import '../coin_market_api.dart';
 import '../vo/symbol_quote_vo.dart';
 import 'package:titan/src/config/consts.dart';
@@ -78,6 +81,9 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         }
 //        _nodeApi.postWallets(_activatedWalletVo);
 
+        var userPayload = UserPayloadWithAddressEntity(
+            Payload(userName: event?.wallet?.keystore?.name ?? ""), event?.wallet?.getAtlasAccount()?.address ?? "");
+        AtlasApi.postUserSync(userPayload);
       }
 
       yield ActivatedWalletState(walletVo: _activatedWalletVo?.copyWith());
@@ -151,7 +157,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           yield UpdateWalletPageState(sign: quotesSign, quoteModel: currentQuotesModel);
         }
 
-        if(event.updateGasPrice){
+        if (event.updateGasPrice) {
           BlocProvider.of<WalletCmpBloc>(Keys.rootKey.currentContext).add(UpdateGasPriceEvent());
         }
       } catch (e) {
