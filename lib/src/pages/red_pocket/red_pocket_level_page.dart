@@ -72,6 +72,8 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
   int _recommendLevel = 5;
 
+  bool _isStatic = true;
+
   @override
   void initState() {
     super.initState();
@@ -249,7 +251,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
             children: [
               InkWell(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                onTap: () => _selectedLevelAction(model),
+                onTap: () => _selectedLevelAction(model, isStatic: true),
                 child: _itemContainer(model),
               ),
               _tagContainer(leftTagTitle: leftTagTitle, color: HexColor('#FF4C3B')),
@@ -304,7 +306,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
             children: [
               InkWell(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                onTap: () => _selectedLevelAction(dynamicModel),
+                onTap: () => _selectedLevelAction(dynamicModel, isStatic: false),
                 child: Container(
                   decoration: BoxDecoration(
                     color: HexColor('#DEDEDE'),
@@ -500,7 +502,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     );
   }
 
-  _selectedLevelAction(LevelRule model) {
+  _selectedLevelAction(LevelRule model, {bool isStatic = true}) {
     if (_currentLevel > model.level && _currentLevel > 0) {
       if (_currentLevel == 5) {
         Fluttertoast.showToast(
@@ -518,6 +520,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
     setState(() {
       _currentSelectedLevelRule = model;
+      _isStatic = isStatic;
     });
   }
 
@@ -566,7 +569,11 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpLevelUpgradePage(_currentSelectedLevelRule, _promotionRuleEntity),
+        builder: (context) => RpLevelUpgradePage(
+          _currentSelectedLevelRule,
+          _promotionRuleEntity,
+          isStatic: _isStatic,
+        ),
       ),
     );
   }
