@@ -16,7 +16,7 @@ Widget walletHeaderWidget(
     shortName = shortName.characters.first;
   } else {
     return Image.asset(
-      'res/drawable/ic_empty_contract.png',
+      'res/drawable/ic_robot_head.png',
       width: 32,
       height: 32,
     );

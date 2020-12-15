@@ -481,7 +481,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                 width: 120,
                 fontSize: 14,
                 btnColor: [HexColor('#2D99FF'), HexColor('#107EDC')],
-                //isLoading: !_canCancel,
               ),
               SizedBox(
                 width: 20,
@@ -493,7 +492,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                 width: 120,
                 fontSize: 14,
                 btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
-                //isLoading: !_canCancel,
               ),
             ],
           ),

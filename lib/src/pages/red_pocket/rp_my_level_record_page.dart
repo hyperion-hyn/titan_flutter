@@ -299,7 +299,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                               left: 4,
                             ),
                             child: Text(
-                              '当前量级为0级，不能获得空投红包，请尽快升级',
+                              '当前量级为0级，不能获得红包，请尽快升级',
                               style: TextStyle(
                                 color: HexColor('#333333'),
                                 fontSize: 14,

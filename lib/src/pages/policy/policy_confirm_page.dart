@@ -205,7 +205,7 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
                   await _confirmPolicy();
                 },
                 fontSize: 16,
-                isLoading: !_checked,
+                isDisable: !_checked,
               ),
             ),
             SizedBox(

@@ -407,7 +407,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,
         fontSize: 18,
-        isLoading: lastTxIsPending,
+        isDisable: lastTxIsPending,
       ),
     );
   }

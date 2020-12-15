@@ -133,7 +133,7 @@ class SkeletonNodeTabsContent extends StatelessWidget {
                       );
                     },
                     fontSize: 16,
-                    isLoading: true,
+                    isDisable: true,
                   ),
                 ),
                 Expanded(

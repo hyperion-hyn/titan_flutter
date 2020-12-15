@@ -308,7 +308,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       );
                     },
                     fontSize: 16,
-                    isLoading: true,
+                    isDisable: true,
                   ),
                 ),
                 Expanded(
