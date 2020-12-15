@@ -598,38 +598,43 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Column(
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '红包',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: HexColor('#333333'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '红包',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: HexColor('#333333'),
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 4,
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 4,
+                        ),
+                        child: Text(
+                          S.of(context).rp_total_amount_percent(airDropPercent),
+                          style: TextStyle(
+                            color: DefaultColors.color999,
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
-                      child: Text(
-                        S.of(context).rp_total_amount_percent(airDropPercent),
+                      Spacer(),
+                      Text(
+                        '已累计空投 $alreadyAirdrop万 RP',
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,
                         ),
-                      ),
-                    ),
-                    Spacer(),
-                    Text(
-                      '已累计空投 $alreadyAirdrop万 RP',
-                      style: TextStyle(
-                        color: DefaultColors.color999,
-                        fontSize: 12,
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -640,24 +645,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  _airdropWidgetV2() {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: _cardPadding(),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(16.0)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: RPAirdropWidget(),
           ),
         ),
       ),
