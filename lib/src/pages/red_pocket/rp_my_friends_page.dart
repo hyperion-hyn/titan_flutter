@@ -44,8 +44,7 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
   void initState() {
     super.initState();
 
-    var activatedWallet =
-        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   }
 
@@ -203,11 +202,13 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
     var inviterName = _inviter?.name ?? '';
     var inviterLevel = levelValueToLevelName(_inviter?.level ?? 0);
     var bech32Address = WalletUtil.ethAddressToBech32Address(_inviter?.address ?? '');
-    var address = shortBlockChainAddress(bech32Address,);
+    var address = shortBlockChainAddress(
+      bech32Address,
+    );
     if (_inviter != null) {
       return InkWell(
-        onTap: (){
-          AtlasApi.goToHynScanPage(context,bech32Address);
+        onTap: () {
+          AtlasApi.goToHynScanPage(context, bech32Address);
         },
         child: Row(
           children: [
@@ -219,10 +220,7 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
                 width: 40,
                 height: 40,
                 child: walletHeaderWidget(inviterName,
-                    isShowShape: false,
-                    address: _inviter?.address,
-                    isCircle: true,
-                    size: 32),
+                    isShowShape: false, address: _inviter?.address, isCircle: true, size: 32),
               ),
             ),
             Column(
@@ -237,17 +235,16 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
                       ),
                       child: inviterName.isNotEmpty
                           ? Padding(
-                        padding:
-                        const EdgeInsets.symmetric(vertical: 6.0),
-                        child: Text(
-                          inviterName,
-                          style: TextStyle(
-                            color: HexColor("#333333"),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      )
+                              padding: const EdgeInsets.symmetric(vertical: 6.0),
+                              child: Text(
+                                inviterName,
+                                style: TextStyle(
+                                  color: HexColor("#333333"),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            )
                           : SizedBox(),
                     ),
                     Text(
@@ -309,8 +306,8 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
     var inviteTimeStr = Const.DATE_FORMAT.format(inviteTimeDate);
 
     return InkWell(
-      onTap: (){
-        AtlasApi.goToHynScanPage(context,bech32Address);
+      onTap: () {
+        AtlasApi.goToHynScanPage(context, bech32Address);
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -356,8 +353,7 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
                         ),
                         child: name.isNotEmpty
                             ? Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 6.0),
+                                padding: const EdgeInsets.symmetric(vertical: 6.0),
                                 child: Text(
                                   name,
                                   style: TextStyle(
@@ -436,7 +432,6 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
           _loadDataBloc.add(RefreshSuccessEvent());
         });
       }
-      setState(() {});
     } catch (e) {
       _loadDataBloc.add(LoadFailEvent());
     }
@@ -451,8 +446,12 @@ class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
       );
 
       if (netData?.miners?.isNotEmpty ?? false) {
-        _myInviteList.addAll(netData.miners);
-        _loadDataBloc.add(LoadingMoreSuccessEvent());
+        if (mounted) {
+          setState(() {
+            _myInviteList.addAll(netData.miners);
+            _loadDataBloc.add(LoadingMoreSuccessEvent());
+          });
+        }
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }
