@@ -18,7 +18,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_level_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_level_retrieve_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_withdraw_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -454,14 +454,14 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          return _levelRecordItem(index);
+          return _itemBuilder(index);
         },
         childCount: _levelHistoryList.length,
       ),
     );
   }
 
-  Widget _levelRecordItem(index) {
+  Widget _itemBuilder(index) {
     var model = _levelHistoryList[index];
 
     var txHash = model.txHash;
@@ -762,7 +762,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpLevelRetrievePage(),
+        builder: (context) => RpLevelWithdrawPage(),
       ),
     );
   }

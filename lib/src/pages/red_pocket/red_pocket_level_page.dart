@@ -415,7 +415,8 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   Widget _itemContainer(LevelRule model) {
     bool isSelected = ((_currentSelectedLevelRule?.level ?? 0) == model.level);
 
-    var levelName = '量级 ${levelValueToLevelName(model.level)}';
+    var level = model.level ?? 0;
+    var levelName = '量级 ${levelValueToLevelName(level)}';
     var burnTitle = '需燃烧';
     var burnRpValue = '${model.burnStr} RP';
 
