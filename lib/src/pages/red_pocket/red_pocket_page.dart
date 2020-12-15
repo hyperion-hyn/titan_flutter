@@ -172,7 +172,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       _rpStatistics?.rpHoldingContractInfo?.totalSupplyStr ?? '0',
       decimal: 4,
     );
-    var totalSupply =  '$totalSupplyStr RP';
+    var totalSupply = '$totalSupplyStr RP';
 
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
       SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
@@ -595,48 +595,9 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             borderRadius: BorderRadius.all(Radius.circular(16.0)),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Column(
               children: [
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 16.0,
-                      bottom: 8.0,
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 24,
-                        ),
-                        Container(
-                          height: 250,
-                          child: RPAirdropWidget(),
-                        ),
-                        Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                              color: HexColor('#FFFFF7F8'),
-                              borderRadius: BorderRadius.circular(
-                                4.0,
-                              )),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 8.0,
-                              horizontal: 16.0,
-                            ),
-                            child: Text(
-                              '最近一轮 ',
-                              style: TextStyle(
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -675,68 +636,28 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     top: 16.0,
                     bottom: 8.0,
                   ),
-                  child: Container(
-                    height: 150,
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8.0,
-                            horizontal: 16.0,
-                          ),
-                          child: Image.asset(
-                            'res/drawable/bg_rp_airdrop.png',
-                            height: 150,
-                          ),
-                        ),
-                        Center(
-                          child: SpinPerfect(
-                            duration: const Duration(milliseconds: 400),
-                            infinite: true,
-                            child: Image.asset(
-                              'res/drawable/rp_airdrop_vertex.png',
-                              width: 100,
-                              height: 100,
-                            ),
-                          ),
-                        ),
-                        Center(
-                          child: Image.asset(
-                            'res/drawable/red_pocket_logo.png',
-                            width: 50,
-                            height: 50,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: RPAirdropWidget(),
                 ),
-                SizedBox(
-                  height: 8,
-                ),
-                InkWell(
-                  onTap: _navToMyRpRecords,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _contentColumn(
-                            rpTodayStr, S.of(context).rp_today_rp),
-                      ),
-                      _verticalLine(),
-                      Expanded(
-                        child: _contentColumn(
-                            rpYesterdayStr, S.of(context).rp_yesterday_rp),
-                      ),
-                      // _verticalLine(),
-                      // Expanded(
-                      //   child: _contentColumn(
-                      //       rpMissedStr, S.of(context).rp_missed),
-                      // ),
-                    ],
-                  ),
-                )
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  _airdropWidgetV2() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: _cardPadding(),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(16.0)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: RPAirdropWidget(),
           ),
         ),
       ),
@@ -1230,7 +1151,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _requestData() async {
-
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
 
     var _address = activeWallet?.wallet?.getAtlasAccount()?.address;
