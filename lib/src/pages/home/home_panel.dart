@@ -366,7 +366,7 @@ class HomePanelState extends State<HomePanel> {
             ),
           ),
           Text(
-            'RP 红包币',
+            '应用类',
             style: TextStyle(
               color: Colors.grey,
             ),
@@ -405,7 +405,7 @@ class HomePanelState extends State<HomePanel> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'RP',
+                          'RP 红包',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
@@ -414,7 +414,7 @@ class HomePanelState extends State<HomePanel> {
                           height: 4,
                         ),
                         Text(
-                          '拆红包，攒RP，与朋友圈分享更多红包奖励',
+                          '全球首个基于海伯利安地图底层公链的HRC30交易结构范例',
                           style: TextStyle(
                             fontSize: 13,
                             color: DefaultColors.color999,
