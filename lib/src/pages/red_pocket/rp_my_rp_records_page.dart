@@ -23,7 +23,7 @@ class RpMyRpRecordsPage extends StatefulWidget {
   }
 }
 
-class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
+class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKeepAliveClientMixin {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
@@ -32,6 +32,9 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   List<RpOpenRecordEntity> _dataList = [];
 
   int lastDay;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -56,10 +59,10 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: HexColor('#F8F8F8'),
-      appBar: BaseAppBar(
-        baseTitle: '我的红包',
-        backgroundColor: HexColor('#F8F8F8'),
-      ),
+      // appBar: BaseAppBar(
+      //   baseTitle: '我的红包',
+      //   backgroundColor: HexColor('#F8F8F8'),
+      // ),
       body: _pageView(),
     );
   }
