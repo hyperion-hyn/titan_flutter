@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +17,7 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -34,8 +34,9 @@ import 'entity/rp_my_level_info.dart';
 class RpLevelUpgradePage extends StatefulWidget {
   final LevelRule levelRule;
   final RpPromotionRuleEntity promotionRuleEntity;
+  final bool isStatic;
 
-  RpLevelUpgradePage(this.levelRule, this.promotionRuleEntity);
+  RpLevelUpgradePage(this.levelRule, this.promotionRuleEntity, {this.isStatic});
 
   @override
   State<StatefulWidget> createState() {
@@ -54,27 +55,40 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   CoinVo _coinVo;
   WalletVo _activatedWallet;
 
-  Decimal _totalValue;
-
-  Decimal get _totalNeedValue {
+  Decimal get _inputValue {
     var zeroValue = Decimal.zero;
-    var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? zeroValue;
-    return _remainValue + burnValue;
+    var inputValue = Decimal.tryParse(_textEditingController?.text ?? '0') ?? zeroValue;
+    return inputValue;
   }
 
   Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
 
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
 
-  Decimal get _remainValue {
+  Decimal get _needTotalMinValue {
     var zeroValue = Decimal.zero;
     var holdValue = Decimal.tryParse(widget?.levelRule?.holdingStr ?? '0') ?? zeroValue;
+    var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? zeroValue;
+
     var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
-    var remainValue = holdValue - currentHoldValue;
+    var remainHoldValue = (holdValue - currentHoldValue);
+    remainHoldValue = remainHoldValue > zeroValue ? remainHoldValue : zeroValue;
+
+    var remainValue = remainHoldValue + burnValue;
     return remainValue > zeroValue ? remainValue : zeroValue;
   }
 
-  String get _remainStr => '至少' + FormatUtil.stringFormatCoinNum(_remainValue.toString()) + ' RP';
+  Decimal get _needHoldMinValue {
+    var zeroValue = Decimal.zero;
+    var holdValue = Decimal.tryParse(widget?.levelRule?.holdingStr ?? '0') ?? zeroValue;
+
+    var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
+    var remainHoldValue = (holdValue - currentHoldValue);
+
+    return remainHoldValue > zeroValue ? remainHoldValue : zeroValue;
+  }
+
+  String get _needTotalMinValueStr => '至少' + FormatUtil.stringFormatCoinNum(_needTotalMinValue.toString()) + ' RP';
 
   bool _isLoading = false;
 
@@ -91,7 +105,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     _coinVo = wallet.getCoinVoBySymbol('RP');
     _activatedWallet = wallet.activatedWallet;
 
-    _totalValue = Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.fromInt(0);
+    // _totalValue = Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.fromInt(0);
   }
 
   @override
@@ -148,33 +162,62 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                           padding: const EdgeInsets.only(top: 18),
                           child: Row(
                             children: <Widget>[
-                              Text('提升到量级 ${levelValueToLevelName(widget?.levelRule?.level)} ',
+                              SizedBox(
+                                width: 100,
+                                child: Text('提升量级',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 12,
+                                      color: HexColor('#999999'),
+                                    )),
+                              ),
+                              Text(
+                                '${levelValueToLevelName(_myLevelInfo?.currentLevel)}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                  color: HexColor('#999999'),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 12,
+                                  right: 20,
+                                ),
+                                child: Text(
+                                  '->',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 12,
+                                    color: HexColor('#999999'),
+                                  ),
+                                ),
+                              ),
+                              Text('${levelValueToLevelName(widget?.levelRule?.level)} ',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
-                                    fontSize: 16,
+                                    fontSize: 18,
                                   )),
                             ],
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20),
-                          child: Row(
-                            children: <Widget>[
-                              Text('需燃烧', style: _textStyle),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Text('${widget?.levelRule?.burnStr ?? '0'} RP', style: _textStyle),
-                            ],
-                          ),
+                        rpRowText(
+                          title: '需燃烧',
+                          amount: '${widget?.levelRule?.burnStr ?? '--'} RP',
                         ),
+                        rpRowText(
+                          title: widget.isStatic ? '最小持币' : '需增加持币',
+                          amount:
+                              widget.isStatic ? '${widget?.levelRule?.holdingStr ?? '--'} RP' : '$_needHoldMinValue RP',
+                        ),
+
                         Padding(
                           padding: const EdgeInsets.only(top: 30),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
-                              Text('转入持币', style: _textStyle),
+                              Text('输入金额', style: _textStyle),
                               SizedBox(
                                 width: 5,
                               ),
@@ -217,32 +260,28 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                         _formKey.currentState.validate();
                                       }
 
-                                      var inputValue = Decimal.tryParse(text ?? '0') ?? Decimal.zero;
-                                      var burnValue =
-                                          Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.zero;
-                                      //print("1, text:$text, holdValue:$holdValue");
-
-                                      _totalValue = (inputValue + burnValue);
                                       _inputController.add(text);
                                     },
                                     controller: _textEditingController,
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                    hint: _remainStr,
+                                    inputFormatters: [
+                                      LengthLimitingTextInputFormatter(18),
+                                      FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
+                                    ],
+                                    hint: _needTotalMinValueStr,
                                     validator: (textStr) {
-                                      if (textStr.length == 0 && _remainValue > Decimal.zero) {
+                                      if (textStr.length == 0 && _needTotalMinValue > Decimal.zero) {
                                         return '请输入数量';
                                       }
 
                                       var inputValue = Decimal.tryParse(textStr);
-                                      if (inputValue == null && _remainValue > Decimal.zero) {
+                                      if (inputValue == null) {
                                         return S.of(context).please_enter_correct_amount;
                                       }
 
-                                      if (_remainValue > inputValue) {
-                                        return _remainStr;
+                                      if (_needTotalMinValue > inputValue) {
+                                        return _needTotalMinValueStr;
                                       }
-
-                                      //print("2, inputValue:$inputValue, balanceValue:$balanceValue");
 
                                       if (inputValue > _balanceValue) {
                                         return '输入数量超过了钱包余额';
@@ -301,8 +340,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                         StreamBuilder<Object>(
                             stream: _inputController.stream,
                             builder: (context, snapshot) {
-                              var isOver = _totalValue != null && _totalValue > _balanceValue;
-                              var isFull = _totalValue != null && _totalValue >= _totalNeedValue;
+                              var isOver = _inputValue > _balanceValue;
+
                               var content = '';
                               Color textColor;
 
@@ -310,23 +349,21 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                 content = '（余额不足）';
                                 textColor = HexColor('#FF4C3B');
                               } else {
-                                if (isFull) {
-                                  content = '（满足要求）';
-                                  textColor = Theme.of(context).primaryColor;
-                                } else {
-                                  content = '（未满足要求）';
-                                  textColor = HexColor('#999999');
-                                }
+                                content = '';
+                                textColor = Theme.of(context).primaryColor;
                               }
+
+                              var inputValue = _inputValue > Decimal.zero ? _inputValue : Decimal.zero;
+
                               return Padding(
-                                padding: const EdgeInsets.only(top: 20),
+                                padding: const EdgeInsets.only(top: 30),
                                 child: Row(
                                   children: <Widget>[
                                     Text('合计：', style: _textStyle),
                                     SizedBox(
                                       width: 16,
                                     ),
-                                    Text('${_totalValue ?? '0'} RP', style: _textStyle),
+                                    Text('$inputValue RP', style: _textStyle),
                                     SizedBox(
                                       width: 16,
                                     ),
@@ -342,6 +379,32 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                 ),
                               );
                             }),
+                        StreamBuilder<Object>(
+                            stream: _inputController.stream,
+                            builder: (context, snapshot) {
+                              var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.zero;
+                              var isFullBurn = _inputValue > burnValue;
+                              var preBurnStr = isFullBurn ? widget?.levelRule?.burnStr : '0';
+
+                              //var holdingValue = Decimal.tryParse(widget?.levelRule?.holdingStr ?? '0') ?? Decimal.zero;
+                              var inputHoldValue = (_inputValue - burnValue);
+                              var isFullHold = inputHoldValue > Decimal.zero;
+                              var preHoldingStr = isFullHold ? inputHoldValue.toString() : '0';
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 2, left: 50, right: 12),
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Text(
+                                        '(其中：燃烧:$preBurnStr RP, 持币:$preHoldingStr RP)',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.normal, fontSize: 12, color: HexColor('#999999')),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
                       ],
                     ),
                   ),
@@ -351,12 +414,18 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                       left: 16,
                       right: 16,
                     ),
-                    child: Text(
-                      '提示：如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4)} 以上的账户地址为推荐人',
-                      style: TextStyle(
-                        color: HexColor('#C3A16D'),
-                        fontSize: 12,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0, bottom: 8),
+                          child: Text(S.of(context).precautions,
+                              style: TextStyle(color: HexColor("#333333"), fontSize: 16,)),
+                        ),
+                        rowTipsItem('如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4)} 以上的账户地址为推荐人'),
+                        rowTipsItem('燃烧不累计，每次升级都要重新燃烧，除了因 Y 增长而掉级'),
+
+                      ],
                     ),
                   ),
                   _confirmButtonWidget(),
@@ -393,10 +462,9 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     if (context != null) {
       BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent());
     }
-    
+
     if (context != null) {
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateActivatedWalletBalanceEvent());
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
     }
 
     if (mounted) {
@@ -415,12 +483,12 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
     FocusScope.of(context).requestFocus(FocusNode());
 
-    if ((_remainValue > Decimal.zero) && (!_formKey.currentState.validate())) {
+    if ((_needTotalMinValue > Decimal.zero) && (!_formKey.currentState.validate())) {
       return;
     }
 
     //  计算 holding + burning > balance + remain;
-    if (_totalValue > _balanceValue) {
+    if (_inputValue > _balanceValue) {
       Fluttertoast.showToast(
         msg: '钱包余额不足以升级到当前选中量级！',
         gravity: ToastGravity.CENTER,
@@ -473,4 +541,29 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       }
     });
   }
+}
+
+Widget rpRowText({String title, String amount, double width = 100,}) {
+  return Padding(
+    padding: const EdgeInsets.only(top: 18),
+    child: Row(
+      children: <Widget>[
+        SizedBox(
+          width: width,
+          child: Text(title,
+              style: TextStyle(
+                fontWeight: FontWeight.normal,
+                fontSize: 12,
+                color: HexColor('#999999'),
+              )),
+        ),
+        Text(amount,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+              color: HexColor('#333333'),
+            )),
+      ],
+    ),
+  );
 }

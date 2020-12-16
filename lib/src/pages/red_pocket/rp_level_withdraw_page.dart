@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +20,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -30,18 +33,19 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'entity/rp_my_level_info.dart';
 import 'entity/rp_promotion_rule_entity.dart';
 
-class RpLevelRetrievePage extends StatefulWidget {
-  RpLevelRetrievePage();
+class RpLevelWithdrawPage extends StatefulWidget {
+  RpLevelWithdrawPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RpLevelRetrieveState();
+    return _RpLevelWithdrawState();
   }
 }
 
-class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
+class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
   TextEditingController _textEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final StreamController<String> _inputController = StreamController.broadcast();
 
   RpPromotionRuleEntity _promotionRuleEntity;
   RpMyLevelInfo _myLevelInfo;
@@ -77,6 +81,11 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
       Decimal.tryParse(
         _textEditingController?.text ?? '0',
       ) ??
+      Decimal.zero;
+
+  Decimal get _currentHoldValue => Decimal.tryParse(
+    _myLevelInfo?.currentHoldingStr ?? '0',
+  ) ??
       Decimal.zero;
 
   int get _toLevel {
@@ -136,7 +145,6 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
   void initState() {
     super.initState();
 
-
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext);
     _coinVo = wallet.getCoinVoBySymbol('RP');
     _activatedWallet = wallet.activatedWallet;
@@ -161,6 +169,8 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
     print("[${widget.runtimeType}] dispose");
 
     _loadDataBloc.close();
+    _inputController.close();
+
     super.dispose();
   }
 
@@ -184,35 +194,21 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                 child: SingleChildScrollView(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
+                    padding: const EdgeInsets.only(
+                      left: 16,
                     ),
                     color: Colors.white,
                     child: Column(
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(top: 18),
-                          child: Row(
-                            children: <Widget>[
-                              Text('当前持币', style: _greyTextStyle),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Text('${_myLevelInfo?.currentHoldingStr ?? '0'} RP', style: _lightTextStyle),
-                            ],
-                          ),
+                        rpRowText(
+                          title: '当前量级${levelValueToLevelName(_currentLevel)}需持币',
+                          amount: '${_currentLevelRule?.holdingStr ?? '0'} RP',
+                          width: 110,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20),
-                          child: Row(
-                            children: <Widget>[
-                              Text('当前量级${levelValueToLevelName(_currentLevel)}需持币', style: _greyTextStyle),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Text('${_currentLevelRule?.holdingStr ?? '0'} RP', style: _lightTextStyle),
-                            ],
-                          ),
+                        rpRowText(
+                          title: '当前持币',
+                          amount: '${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
+                          width: 110,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 30),
@@ -235,22 +231,27 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                         Padding(
                           padding: const EdgeInsets.only(
                             top: 16,
-                            right: 50,
+                            right: 16,
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Flexible(
+                              Expanded(
                                 flex: 1,
                                 child: Form(
                                   key: _formKey,
                                   child: RoundBorderTextField(
                                     onChanged: (text) {
                                       _formKey.currentState.validate();
+
+                                      _inputController.add(text);
                                     },
                                     controller: _textEditingController,
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                    //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                                    inputFormatters: [
+                                      LengthLimitingTextInputFormatter(18),
+                                      FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
+                                    ],
                                     hint: S.of(context).please_enter_withdraw_amount,
                                     validator: (textStr) {
                                       var inputValue = Decimal.tryParse(textStr);
@@ -271,6 +272,49 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
                                   ),
                                 ),
                               ),
+                              StreamBuilder<Object>(
+                                  stream: _inputController.stream,
+                                  builder: (context, snapshot) {
+                                    bool isShowDown = (_toLevel < _currentLevel && _currentHoldValue > _inputValue && _inputValue > Decimal.zero);
+                                    return
+                                      isShowDown? Row(
+                                            // crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  left: 16,
+                                                  right: 16,
+                                                ),
+                                                child: Image.asset(
+                                                  'res/drawable/ic_rp_level_down.png',
+                                                  width: 15,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  right: 4,
+                                                ),
+                                                child: Text(
+                                                  '量级',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.normal,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ),
+                                              Text(
+                                                '${levelValueToLevelName(_toLevel)} ',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Container(
+                                            width: 60,
+                                          );
+                                  }),
                             ],
                           ),
                         ),
@@ -347,7 +391,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
 
   _showAlertView() {
     if (_toLevel == _currentLevel) {
-      _retrieveAction(false);
+      _withdrawAction(false);
       return;
     }
 
@@ -370,7 +414,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
         ClickOvalButton(
           '确认取回',
           () {
-            _retrieveAction(true);
+            _withdrawAction(true);
           },
           width: 115,
           height: 36,
@@ -385,7 +429,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
     );
   }
 
-  _retrieveAction(bool isPop) async {
+  _withdrawAction(bool isPop) async {
     if (isPop) Navigator.pop(context, true);
 
     if (!_formKey.currentState.validate()) {
@@ -445,8 +489,7 @@ class _RpLevelRetrieveState extends BaseState<RpLevelRetrievePage> {
       }
 
       if (context != null) {
-        BlocProvider.of<WalletCmpBloc>(context)
-            .add(UpdateActivatedWalletBalanceEvent());
+        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
       }
 
       var netData = await _rpApi.getRPPromotionRule(_address);

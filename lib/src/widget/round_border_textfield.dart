@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 
 typedef RoundBorderTextFieldOnChanged = void Function(String text);
@@ -17,6 +18,7 @@ class RoundBorderTextField extends StatefulWidget {
   final bool isDense;
   final Color bgColor;
   final int maxLength;
+  final List<TextInputFormatter> inputFormatters;
 
   RoundBorderTextField({
     this.keyboardType,
@@ -32,6 +34,7 @@ class RoundBorderTextField extends StatefulWidget {
     this.isDense = true,
     this.bgColor,
     this.maxLength,
+    this.inputFormatters,
   });
 
   @override
@@ -47,6 +50,7 @@ class _RoundBorderTextFieldState extends State<RoundBorderTextField> {
       validator: widget.validator,
       controller: widget.controller,
       keyboardType: widget.keyboardType,
+      inputFormatters: widget.inputFormatters,
       focusNode: widget.focusNode,
       maxLength: widget.maxLength,
       decoration: InputDecoration(

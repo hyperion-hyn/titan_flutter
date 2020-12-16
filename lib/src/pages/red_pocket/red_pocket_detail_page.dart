@@ -177,7 +177,6 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     );
     var address = shortBlockChainAddress(beach32Address);
 
-
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
       child: Container(
@@ -426,7 +425,19 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         ),
       );
     } else {
-      var childCount = _rpType == RedPocketType.LUCKY ? _filterDataList.length : _filterDataList.length + 1;
+      var childCount = 0;
+      switch (_rpType) {
+        case RedPocketType.LEVEL:
+          childCount = _filterDataList.length + 2;
+
+          break;
+
+        case RedPocketType.PROMOTION:
+        case RedPocketType.LUCKY:
+          childCount = _filterDataList.length + 1;
+          break;
+      }
+
       return SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
@@ -439,20 +450,24 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 
   Widget _itemBuilder(int index) {
-    if (index == _filterDataList.length) {
-      switch (_rpType) {
-        case RedPocketType.LEVEL:
+    switch (_rpType) {
+      case RedPocketType.LUCKY:
+        if (index == _filterDataList.length) {
           return _levelWidget();
+        } else if (index == (_filterDataList.length + 1)) {
+          return _manageWidget();
+        }
 
-          break;
+        break;
 
-        case RedPocketType.PROMOTION:
+      case RedPocketType.PROMOTION:
+      case RedPocketType.LEVEL:
+        if (index == _filterDataList.length) {
+          //return _manageWidget();
           return _promotionWidget();
-          break;
+        }
 
-        case RedPocketType.LUCKY:
-          break;
-      }
+        break;
     }
 
     var model = _filterDataList[index];
@@ -739,9 +754,92 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         _manageFeeAmount = valueByDecimal;
       }
     });
+    var _manageFeeAmountStr = FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + ' RP';
+    var _burnAmountStr = FormatUtil.stringFormatCoinNum(_burnAmount.toString()) + ' RP';
+
+
+    Widget rowText(String imageName, String title, String amount, {bool isRebuild = false}) {
+      return Expanded(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Image.asset(
+              'res/drawable/$imageName.png',
+              width: 16,
+              height: 16,
+              color: isRebuild?HexColor('#FFFF5151'):null,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 4,
+              ),
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: HexColor("#999999"),
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 4,
+                ),
+                child: Text(
+                  amount,
+                  style: TextStyle(
+                    color: HexColor("#333333"),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 20,
+        ),
+        decoration: BoxDecoration(
+          color: HexColor('#FFFFFF'),
+          borderRadius: BorderRadius.all(
+            Radius.circular(6.0),
+          ), //设置四周圆角 角度
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            rowText('rp_manage_fee', '管理费', _manageFeeAmountStr),
+            SizedBox(width: 20,),
+            rowText('ic_burn', '燃烧', _burnAmountStr, isRebuild: true),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _manageWidget() {
+    var _manageFeeAmount = Decimal.fromInt(0);
+
+    _manageDataList.forEach((item) {
+      var bigIntValue = BigInt.tryParse(item.amount) ?? BigInt.from(0);
+      Decimal valueByDecimal = ConvertTokenUnit.weiToEther(
+        weiBigInt: bigIntValue,
+      );
+      if (item.role == 2) {
+        _manageFeeAmount = valueByDecimal;
+      }
+    });
     var _manageFeeAmountStr = '管理费 ' + FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + ' RP';
-    var _burnAmountStr = '燃烧 ' + FormatUtil.stringFormatCoinNum(_burnAmount.toString()) + ' RP';
-    var totalStr = _manageFeeAmountStr + '，' + _burnAmountStr;
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -764,10 +862,10 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 left: 6,
               ),
               child: Image.asset(
-                'res/drawable/ic_burn.png',
-                width: 32,
-                height: 32,
-                color: HexColor('#FFFF5151'),
+                'res/drawable/rp_manage_fee.png',
+                width: 24,
+                height: 24,
+                //color: HexColor('#FFFF5151'),
               ),
             ),
             Spacer(),
@@ -784,7 +882,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6.0),
                         child: Text(
-                          totalStr,
+                          _manageFeeAmountStr,
                           style: TextStyle(
                             color: HexColor("#333333"),
                             fontSize: 14,
