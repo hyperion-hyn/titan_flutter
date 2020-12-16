@@ -20,10 +20,6 @@ import 'package:titan/src/widget/widget_shot.dart';
 
 class PromoteQrCodePage extends StatefulWidget {
   static String downloadDomain = "https://h.hyn.space/download";
-//  static String downloadDomain = "http://10.10.1.124:8091/download";
-
-//  final String url;
-//   final String userId;
 
   PromoteQrCodePage();
 
@@ -50,8 +46,6 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
   @override
   Widget build(BuildContext context) {
     if (shareAppImage.isEmpty) {
-      var languageCode = Localizations.localeOf(context).languageCode;
-
       shareAppImage = "res/drawable/bg_invitation_bg_image_1.png";
       imagesList.add("res/drawable/bg_invitation_bg_image_1.png");
       imagesList.add("res/drawable/bg_invitation_bg_image_2.png");
@@ -133,32 +127,6 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
                                           ))
                                     ]),
                               ),
-                              /*child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Text(
-                                      "${walletVo.wallet.keystore.name}",
-                                      maxLines: 2,
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 16,
-                                  ),
-                                  Text("${shortBlockChainAddress(walletVo.wallet.getAtlasAccount().address)}",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.white,
-                                      )),
-                                ],
-                              ),*/
                             ),
                             Text(
                               "邀请你加入泰坦",
@@ -284,7 +252,6 @@ void showRichInviteDialog(BuildContext context, String inviterAddress, String wa
       ClickOvalButton(
         S.of(context).confirm,
         () async {
-
           Navigator.pop(context);
 
           try {
