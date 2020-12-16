@@ -574,7 +574,7 @@ class HYNApi {
   static String getTransRecordAmount(String value) {
     var recordAmountStr = "";
     if (Decimal.parse(value) > Decimal.fromInt(0)) {
-      recordAmountStr = FormatUtil.stringFormatCoinNumWithFour(value);
+      recordAmountStr = FormatUtil.stringFormatCoinNum(value, decimal: 4);
     }
     return recordAmountStr;
   }

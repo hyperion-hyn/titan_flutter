@@ -38,8 +38,7 @@ class RpMyLevelRecordsPage extends StatefulWidget {
   }
 }
 
-class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
-    with RouteAware {
+class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with RouteAware {
   final RPApi _rpApi = RPApi();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
 
@@ -134,7 +133,32 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     );
   }
 
-  Widget _columnWidget(String amount, String title, {bool isBold = true}) {
+  Widget _columnWidget(String amount, String title, {bool isBold = true, bool isSmall = false}) {
+    if (isSmall) {
+      return Column(
+        children: <Widget>[
+          Text(
+            '$amount',
+            style: TextStyle(
+              fontSize: 14,
+              color: DefaultColors.color333,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(
+            height: 4.0,
+          ),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 10,
+              color: DefaultColors.color999,
+            ),
+          ),
+        ],
+      );
+    }
+
     return Column(
       children: <Widget>[
         Text(
@@ -159,6 +183,40 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     );
   }
 
+  Widget _levelInfoWidget() {
+    return Container(
+      color: HexColor('#FFFFFF'),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+        ),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: 8,
+            horizontal: 2,
+          ),
+          decoration: BoxDecoration(
+            color: HexColor('#F6F6F6'),
+            borderRadius: BorderRadius.all(
+              Radius.circular(6.0),
+            ), //设置四周圆角 角度
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [1, 2, 3, 4, 5].map((index) {
+              return _columnWidget(
+                '---',
+                '全网${levelValueToLevelName(index)}级',
+                isSmall: true,
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /*
   _notificationWidget() {
     return SliverToBoxAdapter(
       child: Container(
@@ -175,6 +233,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
       ),
     );
   }
+  */
 
   _myLevelInfoWidget() {
     int currentLevel = _myLevelInfo?.currentLevel ?? 0;
@@ -237,8 +296,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                       flex: 2,
                       child: isShowDowngrade
                           ? Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 32, right: 16),
+                              padding: const EdgeInsets.only(top: 32, right: 16),
                               child: Row(
                                 children: [
                                   Image.asset(
@@ -341,6 +399,12 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
                       Spacer(),
                     ],
                   ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 18,
+                  ),
+                  child: _levelInfoWidget(),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -667,18 +731,14 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
               right: 26,
               top: 4,
               child: Container(
-                decoration: BoxDecoration(
-                    color: HexColor("#FF4C3B"),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                decoration:
+                    BoxDecoration(color: HexColor("#FF4C3B"), borderRadius: BorderRadius.all(Radius.circular(10.0))),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(8, 1, 8, 3),
                   child: Center(
                     child: Text(
                       'new',
-                      style: TextStyle(
-                          fontSize: 10,
-                          color: HexColor("#FFFFFF"),
-                          fontWeight: FontWeight.normal),
+                      style: TextStyle(fontSize: 10, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
                     ),
                   ),
                 ),
@@ -690,14 +750,12 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
   }
 
   void getNetworkData() async {
-
     _currentPage = 1;
 
     try {
       ///Update level info
       if (context != null) {
-        BlocProvider.of<RedPocketBloc>(context)
-            .add(UpdateMyLevelInfoEntityEvent());
+        BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent());
       }
 
       var netData = await _rpApi.getRpHoldingHistory(
