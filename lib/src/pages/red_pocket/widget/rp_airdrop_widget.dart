@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:animate_do/animate_do.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -243,10 +244,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                     children: [
                       Text(
                         '下一轮',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 12),
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 4),
@@ -512,6 +510,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
       if (_now - _lastTimeCelebrateBegin < RP_Celebrate_Duration) {
         if (_lastAirdropState != null && _lastAirdropState != AirdropState.Received) {
           rpMachineStreamController.add(AirdropState.Received);
+          AssetsAudioPlayer.newPlayer().open(
+            Audio("res/voice/coin.mp3"),
+          );
         }
       } else if (_lastAirdropState != AirdropState.NotReceived) {
         rpMachineStreamController.add(AirdropState.NotReceived);
