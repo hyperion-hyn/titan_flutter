@@ -10,9 +10,11 @@ import 'package:lottie/lottie.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_airdrop_round_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/animation/custom_shake_animation_widget.dart';
@@ -83,7 +85,6 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
 
       _zoomInController?.reset();
       _zoomInController?.forward();
-
 
       ///
       if (_nextRoundRemainTime >= 1) {
@@ -259,7 +260,7 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
     var myRpCount = _latestRoundInfo?.myRpCount ?? '--';
     var myRpAmount = _latestRoundInfo?.myRpAmountStr ?? '--';
     var totalAmount = _latestRoundInfo?.totalRpAmountStr ?? '--';
-
+    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: 16.0,
@@ -308,34 +309,66 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
                       SizedBox(
                         height: 4,
                       ),
-                      Text.rich(TextSpan(children: [
-                        TextSpan(
-                          text: '我获得',
-                          style: TextStyle(fontSize: 13),
-                        ),
-                        TextSpan(
-                          text: ' $myRpCount ',
-                          style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        TextSpan(
-                          text: '个红包 共',
-                          style: TextStyle(fontSize: 13),
-                        ),
-                        TextSpan(
-                          text: ' $myRpAmount ',
-                          style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        TextSpan(
-                          text: 'RP',
-                          style: TextStyle(fontSize: 13),
-                        )
-                      ])),
+                      activeWallet != null
+                          ? Text.rich(TextSpan(children: [
+                              TextSpan(
+                                text: '我获得',
+                                style: TextStyle(fontSize: 13),
+                              ),
+                              TextSpan(
+                                text: ' $myRpCount ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              TextSpan(
+                                text: '个红包 共',
+                                style: TextStyle(fontSize: 13),
+                              ),
+                              TextSpan(
+                                text: ' $myRpAmount ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              TextSpan(
+                                text: 'RP',
+                                style: TextStyle(fontSize: 13),
+                              )
+                            ]))
+                          : Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    Application.router
+                                        .navigateTo(
+                                          context,
+                                          Routes.wallet_manager,
+                                        )
+                                        .then((value) => () {
+                                              if (mounted) {
+                                                setState(() {});
+                                              }
+                                            });
+                                  },
+                                  child: Text(
+                                    ' 创建/导入 ',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  '钱包后参与领红包',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
                     ],
                   ),
                 ),
@@ -411,13 +444,14 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
           ?.getAtlasAccount()
           ?.address;
 
-      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
-        _address,
-      );
-
-      _rpStatistics = await _rpApi.getRPStatistics(
-        _address,
-      );
+      if (_address != null) {
+        _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
+          _address,
+        );
+        _rpStatistics = await _rpApi.getRPStatistics(
+          _address,
+        );
+      }
     } catch (e) {}
   }
 
