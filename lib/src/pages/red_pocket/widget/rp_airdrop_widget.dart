@@ -3,11 +3,16 @@ import 'dart:async';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_airdrop_round_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/animation/custom_shake_animation_widget.dart';
@@ -22,7 +27,13 @@ enum AirdropState {
 }
 
 class RPAirdropWidget extends StatefulWidget {
-  RPAirdropWidget();
+  final RpAirdropRoundInfo rpAirdropRoundInfo;
+  final RPStatistics rpStatistics;
+
+  RPAirdropWidget({
+    this.rpAirdropRoundInfo,
+    this.rpStatistics,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -37,26 +48,32 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
 
   AnimationController _pulseController;
   AnimationController _zoomInController;
-
   AnimationController _rouletteController;
 
   AirdropState _currentAirdropState = AirdropState.Waiting;
 
-  int _airdropRemainTime = 0;
-  int _nextRoundStartTime = 0;
-  int _nextRoundEndTime = 0;
+  int _nextRoundRemainTime = 0;
+  int _previousRoundStartTime = 0;
+
+  RpAirdropRoundInfo _latestRoundInfo;
+  RPStatistics _rpStatistics;
+
+  RPApi _rpApi = RPApi();
 
   @override
   void initState() {
     super.initState();
-    _getLatestAirdropInfo();
+    _latestRoundInfo = widget.rpAirdropRoundInfo;
+    _rpStatistics = widget.rpStatistics;
+
+    _requestData();
     _setUpTimer();
     _setUpController();
   }
 
   _setUpTimer() {
     _airdropInfoTimer = Timer.periodic(Duration(seconds: 30), (t) {
-      _getLatestAirdropInfo();
+      _requestData();
       _updateAirdropState();
     });
 
@@ -72,8 +89,8 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
       _rouletteController?.forward();
 
       ///
-      if (_airdropRemainTime >= 1) {
-        _airdropRemainTime--;
+      if (_nextRoundRemainTime >= 1) {
+        _nextRoundRemainTime--;
       }
       _updateAirdropState();
       if (mounted) setState(() {});
@@ -142,7 +159,7 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
   }
 
   _waitingView() {
-    var nextRoundText = '下轮预估 ${FormatUtil.formatTimer(_airdropRemainTime)}';
+    var nextRoundText = '下轮预估 ${FormatUtil.formatTimer(_nextRoundRemainTime)}';
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -159,7 +176,7 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
                 ),
                 Center(
                   child: Text(
-                    '尚未空投',
+                    '暂未空投',
                     style: TextStyle(
                       color: Colors.white,
                     ),
@@ -169,7 +186,7 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
               ],
             ),
           ),
-          _airdropRemainTime != 0 ? Text(nextRoundText) : SizedBox()
+          _nextRoundRemainTime != 0 ? Text(nextRoundText) : SizedBox()
         ],
       ),
     );
@@ -248,25 +265,11 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
     );
   }
 
-  _countDownView() {
-    var nextRoundTime = '';
-    return Container(
-      width: double.infinity,
-      child: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('12：00'),
-              Text('下一轮 $nextRoundTime'),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   _airdropDetailView() {
+    var myRpCount = _latestRoundInfo?.myRpCount ?? '--';
+    var myRpAmount = _latestRoundInfo?.myRpAmountStr ?? '--';
+    var totalAmount = _latestRoundInfo?.totalRpAmountStr ?? '--';
+
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: 16.0,
@@ -280,38 +283,71 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
-            vertical: 8.0,
+            vertical: 4.0,
           ),
           child: Row(
             children: [
-              Image.asset(
-                'res/drawable/red_pocket.png',
-                width: 50,
-                height: 50,
-              ),
-              SizedBox(
-                width: 16.0,
+              Padding(
+                padding:
+                    const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 8),
+                child: Image.asset(
+                  'res/drawable/red_pocket.png',
+                  width: 40,
+                  height: 40,
+                ),
               ),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '我获得10个红包 共 200 RP',
-                      style: TextStyle(
-                        fontSize: 12,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text.rich(TextSpan(children: [
+                        TextSpan(
+                          text: '幸运红包',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: ' 最近一轮 ( ${totalAmount} RP)',
+                          style: TextStyle(fontSize: 13),
+                        )
+                      ])),
+                      SizedBox(
+                        height: 4,
                       ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Text(
-                      '本轮已空投 600RP',
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+                      Text.rich(TextSpan(children: [
+                        TextSpan(
+                          text: '我获得',
+                          style: TextStyle(fontSize: 13),
+                        ),
+                        TextSpan(
+                          text: ' $myRpCount ',
+                          style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        TextSpan(
+                          text: '个红包 共',
+                          style: TextStyle(fontSize: 13),
+                        ),
+                        TextSpan(
+                          text: ' $myRpAmount ',
+                          style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        TextSpan(
+                          text: 'RP',
+                          style: TextStyle(fontSize: 13),
+                        )
+                      ])),
+                    ],
+                  ),
                 ),
               )
             ],
@@ -322,13 +358,10 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
   }
 
   _rpInfoView() {
-    var rpTodayStr = '-- RP';
-    var rpYesterdayStr = '-- RP';
-
-    //var rpTodayStr = '${_rpStatistics?.airdropInfo?.todayAmountStr} RP';
-    //var rpYesterdayStr =
-    //    '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr} RP';
-    //var rpMissedStr = '${_rpStatistics?.airdropInfo?.missRpAmountStr} RP';
+    var rpTodayStr = '${_rpStatistics?.airdropInfo?.todayAmountStr ?? '--'} RP';
+    var rpYesterdayStr =
+        '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr ?? '--'} RP';
+    //var rpMissedStr = '${rpStatistics?.airdropInfo?.missRpAmountStr} RP';
 
     return InkWell(
       onTap: _navToMyRpRecords,
@@ -358,17 +391,39 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
   }
 
   _updateAirdropState() {
-    int _systemTime = DateTime.now().millisecondsSinceEpoch;
+    int _systemTime = DateTime.now().second;
+    int _latestRoundStartTime = _latestRoundInfo?.startTime ?? 0;
+    int _latestRoundEndTime = _latestRoundInfo?.endTime ?? 0;
+    int remainTime = _latestRoundStartTime - _systemTime;
 
-    if (_systemTime > _nextRoundStartTime && _systemTime < _nextRoundEndTime) {
+    if (_latestRoundStartTime > _systemTime &&
+        _previousRoundStartTime != _latestRoundStartTime) {
+      _nextRoundRemainTime = remainTime;
+    }
+    if (_systemTime > _latestRoundStartTime &&
+        _systemTime < _latestRoundEndTime) {
       _currentAirdropState = AirdropState.NotReceived;
     } else {
       _currentAirdropState = AirdropState.Waiting;
     }
   }
 
-  _getLatestAirdropInfo() {
-    try {} catch (e) {}
+  _requestData() async {
+    try {
+      var _address = WalletInheritedModel.of(context)
+          .activatedWallet
+          ?.wallet
+          ?.getAtlasAccount()
+          ?.address;
+
+      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
+        _address,
+      );
+
+      _rpStatistics = await _rpApi.getRPStatistics(
+        _address,
+      );
+    } catch (e) {}
   }
 
   _navToMyRpRecords() {
