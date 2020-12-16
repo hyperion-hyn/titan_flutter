@@ -33,6 +33,7 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
+import 'entity/rp_airdrop_round_info.dart';
 import 'entity/rp_statistics.dart';
 import 'rp_record_tab_page.dart';
 
@@ -50,6 +51,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   RPStatistics _rpStatistics;
   RpMyLevelInfo _myLevelInfo;
+  RpAirdropRoundInfo _latestRoundInfo;
 
   @override
   void initState() {
@@ -642,7 +644,10 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     top: 16.0,
                     bottom: 8.0,
                   ),
-                  child: RPAirdropWidget(),
+                  child: RPAirdropWidget(
+                    rpStatistics: _rpStatistics,
+                    rpAirdropRoundInfo: _latestRoundInfo,
+                  ),
                 ),
               ],
             ),
@@ -1162,6 +1167,10 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         _loadDataBloc.add(RefreshSuccessEvent());
         setState(() {});
       }
+
+      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
+        _address,
+      );
     } catch (e) {
       _loadDataBloc.add(RefreshFailEvent());
     }
