@@ -43,9 +43,11 @@ class RpLevelWithdrawPage extends StatefulWidget {
 }
 
 class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
-  TextEditingController _textEditingController = new TextEditingController();
+  final TextEditingController _textEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final StreamController<String> _inputController = StreamController.broadcast();
+  final LoadDataBloc _loadDataBloc = LoadDataBloc();
+  final RPApi _rpApi = RPApi();
 
   RpPromotionRuleEntity _promotionRuleEntity;
   RpMyLevelInfo _myLevelInfo;
@@ -68,8 +70,6 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
     return current;
   }
 
-  LoadDataBloc _loadDataBloc = LoadDataBloc();
-  final RPApi _rpApi = RPApi();
   CoinVo _coinVo;
   WalletVo _activatedWallet;
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
@@ -83,9 +83,10 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
       ) ??
       Decimal.zero;
 
-  Decimal get _currentHoldValue => Decimal.tryParse(
-    _myLevelInfo?.currentHoldingStr ?? '0',
-  ) ??
+  Decimal get _currentHoldValue =>
+      Decimal.tryParse(
+        _myLevelInfo?.currentHoldingStr ?? '0',
+      ) ??
       Decimal.zero;
 
   int get _toLevel {
@@ -128,18 +129,6 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
 
     return level;
   }
-
-  TextStyle _lightTextStyle = TextStyle(
-    fontWeight: FontWeight.w500,
-    fontSize: 14,
-    color: HexColor('#333333'),
-  );
-
-  TextStyle _greyTextStyle = TextStyle(
-    fontWeight: FontWeight.normal,
-    fontSize: 12,
-    color: HexColor('#999999'),
-  );
 
   @override
   void initState() {
@@ -214,7 +203,14 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                           padding: const EdgeInsets.only(top: 30),
                           child: Row(
                             children: <Widget>[
-                              Text('取回持币', style: _lightTextStyle),
+                              Text(
+                                '取回持币',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                  color: HexColor('#333333'),
+                                ),
+                              ),
                               SizedBox(
                                 width: 5,
                               ),
@@ -275,9 +271,11 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                               StreamBuilder<Object>(
                                   stream: _inputController.stream,
                                   builder: (context, snapshot) {
-                                    bool isShowDown = (_toLevel < _currentLevel && _currentHoldValue > _inputValue && _inputValue > Decimal.zero);
-                                    return
-                                      isShowDown? Row(
+                                    bool isShowDown = (_toLevel < _currentLevel &&
+                                        _currentHoldValue > _inputValue &&
+                                        _inputValue > Decimal.zero);
+                                    return isShowDown
+                                        ? Row(
                                             // crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Padding(
