@@ -47,21 +47,12 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
   final RPApi _rpApi = RPApi();
   final StreamController<String> _inputController = StreamController.broadcast();
 
-  double minTotal = 0;
-  double remainTotal = 0;
-
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   RpMyLevelInfo _myLevelInfo;
   CoinVo _coinVo;
   WalletVo _activatedWallet;
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
-
-  TextStyle _lightTextStyle = TextStyle(
-    fontWeight: FontWeight.w500,
-    fontSize: 14,
-  );
-
 
   Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
 
@@ -71,14 +62,16 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
     return inputValue;
   }
 
-  Decimal get _preTotaHoldValue {
+  Decimal get _preTotalHoldValue {
     var zeroValue = Decimal.zero;
 
     var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
     var totalHoldValue = (_inputValue + currentHoldValue);
 
-     return totalHoldValue > zeroValue ? totalHoldValue : currentHoldValue;
+    return totalHoldValue > zeroValue ? totalHoldValue : currentHoldValue;
   }
+
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -119,8 +112,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
     }
 
     if (context != null) {
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateActivatedWalletBalanceEvent());
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
     }
 
     if (mounted) {
@@ -154,16 +146,27 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                     color: Colors.white,
                     child: Column(
                       children: <Widget>[
-                        rpRowText(title: '当前量级', amount:levelValueToLevelName(_myLevelInfo?.currentLevel ?? 0),),
-                        rpRowText(title: '当前持币', amount:'${_myLevelInfo?.currentHoldingStr ?? '0'} RP',),
-
+                        rpRowText(
+                          title: '当前量级',
+                          amount: levelValueToLevelName(_myLevelInfo?.currentLevel ?? 0),
+                        ),
+                        rpRowText(
+                          title: '当前持币',
+                          amount: '${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
+                        ),
                         Padding(
                           padding: const EdgeInsets.only(top: 20),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
-                              Text('转入持币', style: _lightTextStyle),
+                              Text(
+                                '转入持币',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                ),
+                              ),
                               SizedBox(
                                 width: 5,
                               ),
@@ -174,7 +177,6 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                                     fontSize: 12,
                                     color: HexColor('#999999'),
                                   )),
-
                             ],
                           ),
                         ),
@@ -228,49 +230,49 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                                   stream: _inputController.stream,
                                   builder: (context, snapshot) {
                                     bool isShowUp = (_balanceValue > _inputValue && _inputValue > Decimal.zero);
-                                    return
-                                      isShowUp? Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            left: 16,
-                                            right: 16,
-                                          ),
-                                          child: Transform.rotate(
-                                            angle:math.pi ,
-                                            child: Image.asset(
-                                              'res/drawable/ic_rp_level_down.png',
-                                              width: 15,
-                                              color: Theme.of(context).primaryColor,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            right: 4,
-                                          ),
-                                          child: Text(
-                                            '预计总持币',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.normal,
-                                              fontSize: 10,
-                                              color: HexColor('#999999'),
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          '$_preTotaHoldValue RP',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ],
-                                    )
+                                    return isShowUp
+                                        ? Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  left: 16,
+                                                  right: 16,
+                                                ),
+                                                child: Transform.rotate(
+                                                  angle: math.pi,
+                                                  child: Image.asset(
+                                                    'res/drawable/ic_rp_level_down.png',
+                                                    width: 15,
+                                                    color: Theme.of(context).primaryColor,
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  right: 4,
+                                                ),
+                                                child: Text(
+                                                  '预计总持币',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.normal,
+                                                    fontSize: 10,
+                                                    color: HexColor('#999999'),
+                                                  ),
+                                                ),
+                                              ),
+                                              Text(
+                                                '$_preTotalHoldValue RP',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                            ],
+                                          )
                                         : Container(
-                                      width: 60,
-                                    );
+                                            width: 60,
+                                          );
                                   }),
                             ],
                           ),
@@ -280,7 +282,9 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                           child: Row(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(right: 6,),
+                                padding: const EdgeInsets.only(
+                                  right: 6,
+                                ),
                                 child: Image.asset(
                                   "res/drawable/add_position_image_detail.png",
                                   width: 12,
@@ -341,8 +345,6 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
       ),
     );
   }
-
-  bool _isLoading = false;
 
   _addAction() async {
     FocusScope.of(context).requestFocus(FocusNode());

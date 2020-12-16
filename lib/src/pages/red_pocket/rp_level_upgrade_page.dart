@@ -104,8 +104,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext);
     _coinVo = wallet.getCoinVoBySymbol('RP');
     _activatedWallet = wallet.activatedWallet;
-
-    // _totalValue = Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.fromInt(0);
   }
 
   @override
