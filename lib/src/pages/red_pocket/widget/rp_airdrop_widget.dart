@@ -394,15 +394,20 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
     int _systemTime = DateTime.now().second;
     int _latestRoundStartTime = _latestRoundInfo?.startTime ?? 0;
     int _latestRoundEndTime = _latestRoundInfo?.endTime ?? 0;
-    int remainTime = _latestRoundStartTime - _systemTime;
+    int _remainTime = _latestRoundStartTime - _systemTime;
+    bool _isReceived = (_latestRoundInfo?.myRpCount ?? 0) > 0;
 
     if (_latestRoundStartTime > _systemTime &&
         _previousRoundStartTime != _latestRoundStartTime) {
-      _nextRoundRemainTime = remainTime;
+      _nextRoundRemainTime = _remainTime;
     }
     if (_systemTime > _latestRoundStartTime &&
         _systemTime < _latestRoundEndTime) {
-      _currentAirdropState = AirdropState.NotReceived;
+      if (_isReceived) {
+        _currentAirdropState = AirdropState.Received;
+      } else {
+        _currentAirdropState = AirdropState.NotReceived;
+      }
     } else {
       _currentAirdropState = AirdropState.Waiting;
     }
