@@ -136,30 +136,36 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                       ],
                                     ),
                                   ),
-                                  Html(
-                                    data: S.of(context).invite_come_receive_red_pocket,
-                                    style: {
-                                      "p": Style(textAlign: TextAlign.center),
-                                      "span": Style(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: FontSize(20),
-                                      )
-                                    },
+                                  Container(
+                                    //color: Colors.red,
+                                    child: Html(
+                                      data: S.of(context).invite_come_receive_red_pocket,
+                                      style: {
+                                        "p": Style(textAlign: TextAlign.center),
+                                        "span": Style(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: FontSize(20),
+                                        )
+                                      },
+                                    ),
                                   ),
 
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 0.0),
+                                    padding: const EdgeInsets.only(top: 10.0),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: <Widget>[
-                                        Image.asset(
-                                          "res/drawable/ic_rp_invite_friend_red_package.png",
-                                          width: 208,
-                                          height: 390,
-                                          fit: BoxFit.contain,
+                                        Container(
+                                          //color: Colors.red,
+                                          child: Image.asset(
+                                            "res/drawable/ic_rp_invite_friend_red_package.png",
+                                            width: 238,
+                                            height: 336,
+                                            fit: BoxFit.fill,
+                                          ),
                                         ),
                                         Positioned(
-                                          top: 183,
+                                          top: 162,
                                           child: Container(
                                             decoration: BoxDecoration(
                                                 color: Colors.white,
@@ -175,7 +181,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                           ),
                                         ),
                                         Positioned(
-                                          top: 275,
+                                          bottom: 36,
                                           left: 29,
                                           right: 29,
                                           child: Text(

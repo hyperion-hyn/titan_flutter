@@ -56,7 +56,7 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
                         ),
                         Tab(
                           child: Text(
-                              '确认中',
+                            '确认中',
                           ),
                         ),
                       ],
