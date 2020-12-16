@@ -42,19 +42,24 @@ class RPAirdropWidget extends StatefulWidget {
   }
 }
 
-class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTickerProviderStateMixin {
+class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
+    with SingleTickerProviderStateMixin {
   Timer _airdropInfoTimer;
   Timer _countDownTimer;
   Timer _animTimer;
 
   AnimationController _pulseController;
-  AnimationController _zoomInController;
+  AnimationController _spinController;
   AnimationController _fadeAnimController;
 
   // AirdropState _currentAirdropState = AirdropState.Waiting;
 
-  StreamController<AirdropState> rpMachineStreamController = StreamController.broadcast();
-  StreamController<int> nextRoundStreamController = StreamController.broadcast();
+  StreamController<AirdropState> rpMachineStreamController =
+      StreamController.broadcast();
+  StreamController<int> nextRoundStreamController =
+      StreamController.broadcast();
+  StreamController<bool> machineLightOnController =
+      StreamController.broadcast();
 
   int _nextRoundRemainTime = 0; // 下一轮剩余时间
 
@@ -66,6 +71,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
   final RP_Celebrate_Duration = 5;
 
   var _lastAirdropState;
+  var _isLightOn = false;
 
   RPApi _rpApi = RPApi();
 
@@ -108,25 +114,28 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
     // 倒计时、切换空投机状态
     _countDownTimer = Timer.periodic(Duration(seconds: 1), (t) {
-      ///
-      _pulseController?.reset();
-      _pulseController?.forward();
-
-      _zoomInController?.reset();
-      _zoomInController?.forward();
-
       /// 刷新倒计时
       if (_nextRoundRemainTime >= 1) {
         _nextRoundRemainTime--;
         nextRoundStreamController.add(_nextRoundRemainTime);
       }
+
+      _isLightOn = !_isLightOn;
+      machineLightOnController.add(_isLightOn);
+
       _updateAirdropState();
       // if (mounted) setState(() {});
     });
 
     _animTimer = Timer.periodic(Duration(seconds: 2), (t) async {
+      _pulseController?.reset();
+      _pulseController?.forward();
+
       _fadeAnimController?.reset();
       _fadeAnimController?.forward();
+
+      _spinController?.reset();
+      _spinController?.forward();
     });
   }
 
@@ -163,11 +172,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     }
 
     _pulseController?.dispose();
-    _zoomInController?.dispose();
 
     rpMachineStreamController?.close();
     nextRoundStreamController?.close();
-
+    machineLightOnController?.close();
     super.dispose();
   }
 
@@ -206,8 +214,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     return StreamBuilder<AirdropState>(
         stream: rpMachineStreamController.stream,
         builder: (context, snapshot) {
-          _zoomInController = null;
           _pulseController = null;
+          _spinController = null;
           _lastAirdropState = snapshot.data;
           var _currentAirdropState = snapshot.data;
           /*if (_currentAirdropState == AirdropState.Waiting) {
@@ -274,7 +282,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                 } else if (snapshot?.data == 0) {
                   return Text('准备开始...');
                 } else {
-                  var nextRoundText = '下轮预估 ${FormatUtil.formatTimer(_nextRoundRemainTime)}';
+                  var nextRoundText =
+                      '下轮预估 ${FormatUtil.formatTimer(_nextRoundRemainTime)}';
                   return Text(nextRoundText);
                 }
               }),
@@ -291,8 +300,27 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
         child: Stack(
           children: [
             Center(
-              child: Image.asset(
-                'res/drawable/bg_rp_airdrop.png',
+              child: StreamBuilder(
+                  stream: machineLightOnController.stream,
+                  builder: (context, snapshot) {
+                    var imgPath = 'res/drawable/bg_rp_airdrop_light_on.png';
+                    if ((snapshot?.data ?? false)) {
+                      imgPath = 'res/drawable/bg_rp_airdrop_light_off.png';
+                    }
+                    return Image.asset(imgPath);
+                  }),
+            ),
+            SpinPerfect(
+              manualTrigger: true,
+              controller: (controller) {
+                _spinController = controller;
+              },
+              child: Center(
+                child: Image.asset(
+                  'res/drawable/rp_airdrop_vertex.png',
+                  height: 50,
+                  width: 50,
+                ),
               ),
             ),
             Center(
@@ -327,9 +355,15 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
         child: Stack(
           children: [
             Center(
-              child: Image.asset(
-                'res/drawable/bg_rp_airdrop.png',
-              ),
+              child: StreamBuilder(
+                  stream: machineLightOnController.stream,
+                  builder: (context, snapshot) {
+                    var imgPath = 'res/drawable/bg_rp_airdrop_light_on.png';
+                    if ((snapshot?.data ?? false)) {
+                      imgPath = 'res/drawable/bg_rp_airdrop_light_off.png';
+                    }
+                    return Image.asset(imgPath);
+                  }),
             ),
             Center(
               child: FadeAnim(
@@ -354,7 +388,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
       ),
       child: Container(
         width: double.infinity,
-        decoration: BoxDecoration(color: HexColor('#FFFFF5F5'), borderRadius: BorderRadius.circular(4.0)),
+        decoration: BoxDecoration(
+            color: HexColor('#FFFFF5F5'),
+            borderRadius: BorderRadius.circular(4.0)),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
@@ -367,7 +403,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                   _mockReqTime();
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 8),
+                  padding: const EdgeInsets.only(
+                      left: 8, top: 8, bottom: 8, right: 8),
                   child: Image.asset(
                     'res/drawable/red_pocket.png',
                     width: 40,
@@ -405,7 +442,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                               ),
                               TextSpan(
                                 text: ' $myRpCount ',
-                                style: TextStyle(fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: '个红包 共',
@@ -413,7 +453,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                               ),
                               TextSpan(
                                 text: ' $myRpAmount ',
-                                style: TextStyle(fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: 'RP',
@@ -464,7 +507,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   _rpInfoView() {
     var rpTodayStr = '${_rpStatistics?.airdropInfo?.todayAmountStr ?? '--'} RP';
-    var rpYesterdayStr = '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr ?? '--'} RP';
+    var rpYesterdayStr =
+        '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr ?? '--'} RP';
     //var rpMissedStr = '${rpStatistics?.airdropInfo?.missRpAmountStr} RP';
 
     return InkWell(
@@ -499,7 +543,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     int _now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     int _latestRoundStartTime = _latestRoundInfo?.startTime ?? 0;
     int _latestRoundEndTime = _latestRoundInfo?.endTime ?? 0;
-    int _currentRoundReceivedCount = _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
+    int _currentRoundReceivedCount =
+        _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
     if (_currentRoundReceivedCount > _lastMinuteRpCount) {
       _lastMinuteRpCount = _currentRoundReceivedCount;
       _lastTimeCelebrateBegin = _now;
@@ -508,7 +553,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     // 在showtime时间段内
     if (_now >= _latestRoundStartTime && _now < _latestRoundEndTime) {
       if (_now - _lastTimeCelebrateBegin < RP_Celebrate_Duration) {
-        if (_lastAirdropState != null && _lastAirdropState != AirdropState.Received) {
+        if (_lastAirdropState != null &&
+            _lastAirdropState != AirdropState.Received) {
           rpMachineStreamController.add(AirdropState.Received);
           AssetsAudioPlayer.newPlayer().open(
             Audio("res/voice/coin.mp3"),
@@ -524,7 +570,11 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   _requestData() async {
     try {
-      var _address = WalletInheritedModel.of(context).activatedWallet?.wallet?.getAtlasAccount()?.address;
+      var _address = WalletInheritedModel.of(context)
+          .activatedWallet
+          ?.wallet
+          ?.getAtlasAccount()
+          ?.address;
 
       if (_address != null) {
         _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
