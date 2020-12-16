@@ -95,12 +95,14 @@ class RPApi {
     // test hack data
     await Future.delayed(Duration(milliseconds: 100));
     count++;
+    var t = 1;
+    var rcount = count - t > 0 ? count - t : 0;
     return RpAirdropRoundInfo.fromJson({
       'start_time': startTime,
       'end_time': endTime,
-      'my_rp_count': count,
-      'my_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (count * 10).ceilToDouble())}',
-      'total_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (count * 100).ceilToDouble())}',
+      'my_rp_count': rcount,
+      'my_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (rcount * 10).ceilToDouble())}',
+      'total_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (rcount * 100).ceilToDouble())}',
       'current_time': DateTime.now().millisecondsSinceEpoch ~/ 1000,
     });
 
