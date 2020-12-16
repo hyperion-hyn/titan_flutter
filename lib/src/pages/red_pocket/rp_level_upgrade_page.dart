@@ -17,6 +17,7 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -413,31 +414,17 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                       left: 16,
                       right: 16,
                     ),
-                    child: Row(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(
-                            top: 4,
-                            right: 8,
-                          ),
-                          child: Image.asset(
-                            'res/drawable/error_rounded.png',
-                            width: 12,
-                            height: 12,
-                            color: HexColor('#C3A16D'),
-                          ),
+                          padding: const EdgeInsets.only(top: 16.0, bottom: 8),
+                          child: Text(S.of(context).precautions,
+                              style: TextStyle(color: HexColor("#333333"), fontSize: 16,)),
                         ),
-                        Expanded(
-                          child: Text(
-                            '如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4)} 以上的账户地址为推荐人',
-                            style: TextStyle(
-                              color: HexColor('#C3A16D'),
-                              // color: Theme.of(context).primaryColor,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
+                        rowTipsItem('如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4)} 以上的账户地址为推荐人'),
+                        rowTipsItem('燃烧不累计，每次升级都要重新燃烧，除了因 Y 增长而掉级'),
+
                       ],
                     ),
                   ),

@@ -754,16 +754,60 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         _manageFeeAmount = valueByDecimal;
       }
     });
-    var _manageFeeAmountStr = '管理费 ' + FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + ' RP';
-    var _burnAmountStr = '燃烧 ' + FormatUtil.stringFormatCoinNum(_burnAmount.toString()) + ' RP';
-    var totalStr = _manageFeeAmountStr + '，' + _burnAmountStr;
+    var _manageFeeAmountStr = FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + ' RP';
+    var _burnAmountStr = FormatUtil.stringFormatCoinNum(_burnAmount.toString()) + ' RP';
+
+
+    Widget rowText(String imageName, String title, String amount, {bool isRebuild = false}) {
+      return Expanded(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Image.asset(
+              'res/drawable/$imageName.png',
+              width: 16,
+              height: 16,
+              color: isRebuild?HexColor('#FFFF5151'):null,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 4,
+              ),
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: HexColor("#999999"),
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 4,
+                ),
+                child: Text(
+                  amount,
+                  style: TextStyle(
+                    color: HexColor("#333333"),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
       child: Container(
         padding: const EdgeInsets.symmetric(
           vertical: 16,
-          horizontal: 12,
+          horizontal: 20,
         ),
         decoration: BoxDecoration(
           color: HexColor('#FFFFFF'),
@@ -773,45 +817,10 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 6,
-              ),
-              child: Image.asset(
-                'res/drawable/ic_burn.png',
-                width: 32,
-                height: 32,
-                color: HexColor('#FFFF5151'),
-              ),
-            ),
-            Spacer(),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        right: 6,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6.0),
-                        child: Text(
-                          totalStr,
-                          style: TextStyle(
-                            color: HexColor("#333333"),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+          children: [
+            rowText('rp_manage_fee', '管理费', _manageFeeAmountStr),
+            SizedBox(width: 20,),
+            rowText('ic_burn', '燃烧', _burnAmountStr, isRebuild: true),
           ],
         ),
       ),
@@ -853,10 +862,10 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 left: 6,
               ),
               child: Image.asset(
-                'res/drawable/ic_robot_head.png',
-                width: 40,
-                height: 40,
-                color: HexColor('#FFFF5151'),
+                'res/drawable/rp_manage_fee.png',
+                width: 24,
+                height: 24,
+                //color: HexColor('#FFFF5151'),
               ),
             ),
             Spacer(),

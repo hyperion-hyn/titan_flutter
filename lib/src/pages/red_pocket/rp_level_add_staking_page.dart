@@ -279,6 +279,15 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                           padding: const EdgeInsets.only(top: 10),
                           child: Row(
                             children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 6,),
+                                child: Image.asset(
+                                  "res/drawable/add_position_image_detail.png",
+                                  width: 12,
+                                  height: 12,
+                                  color: HexColor('#999999'),
+                                ),
+                              ),
                               Text(
                                 '适当增加持币可以防止因',
                                 style: TextStyle(

@@ -178,14 +178,26 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
           bottom: 16,
           right: 16,
         ),
-        child: Wrap(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '当前已发行 $totalSupplyStr RP，百分比Y = $promotionSupplyRatioPercent（$stepPercent为1梯度）',
-              style: TextStyle(
+            Padding(
+              padding: const EdgeInsets.only(top: 2, right: 10,),
+              child: Image.asset(
+                "res/drawable/volume.png",
+                width: 15,
+                height: 14,
                 color: HexColor('#333333'),
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Expanded(
+              child: Text(
+                '当前已发行 $totalSupplyStr RP，百分比Y = $promotionSupplyRatioPercent（$stepPercent为1梯度）',
+                style: TextStyle(
+                  color: HexColor('#333333'),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             )
           ],
