@@ -45,7 +45,8 @@ class RPAirdropWidget extends StatefulWidget {
   }
 }
 
-class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTickerProviderStateMixin {
+class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
+    with SingleTickerProviderStateMixin {
   Timer _airdropInfoTimer;
   Timer _countDownTimer;
 
@@ -54,8 +55,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   // AirdropState _currentAirdropState = AirdropState.Waiting;
 
-  StreamController<AirdropState> rpMachineStreamController = StreamController.broadcast();
-  StreamController<int> nextRoundStreamController = StreamController.broadcast();
+  StreamController<AirdropState> rpMachineStreamController =
+      StreamController.broadcast();
+  StreamController<int> nextRoundStreamController =
+      StreamController.broadcast();
 
   int _nextRoundRemainTime = 0; // 下一轮剩余时间
 
@@ -64,7 +67,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   int _lastMinuteRpCount = 0;
   int _lastTimeCelebrateBegin = 0;
-  int _newRpCelebrateDuration = 3;
+  int _newRpCelebrateDuration = 10;
+
+  var _lastAirdropState;
 
   RPApi _rpApi = RPApi();
 
@@ -83,7 +88,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
   void onCreated() async {
     _rpApi.count = 0;
     _rpApi.startTime = DateTime.now().millisecondsSinceEpoch ~/ 1000 + 15;
-    _rpApi.endTime = DateTime.now().millisecondsSinceEpoch ~/ 1000 + 195;
+    _rpApi.endTime = DateTime.now().millisecondsSinceEpoch ~/ 1000 + 60;
     await _requestData();
     _resetNextRoundTimeLeft();
 
@@ -102,6 +107,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     // 倒计时、切换空投机状态
     _countDownTimer = Timer.periodic(Duration(seconds: 1), (t) {
       print('xxx _countDownTimer, _nextRoundRemainTime $_nextRoundRemainTime');
+
       ///
       _pulseController?.reset();
       _pulseController?.forward();
@@ -120,10 +126,13 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
   }
 
   void _resetNextRoundTimeLeft() {
-    if (_latestRoundInfo?.startTime != null && _latestRoundInfo?.currentTime != null) {
-      print('bbb _latestRoundInfo.startTime ${_latestRoundInfo.startTime}, _latestRoundInfo.currentTime ${_latestRoundInfo.currentTime}, ${_latestRoundInfo.startTime - _latestRoundInfo.currentTime}');
-      if(_latestRoundInfo.startTime - _latestRoundInfo.currentTime > 0) {
-        _nextRoundRemainTime = _latestRoundInfo.startTime - _latestRoundInfo.currentTime;
+    if (_latestRoundInfo?.startTime != null &&
+        _latestRoundInfo?.currentTime != null) {
+      print(
+          'bbb _latestRoundInfo.startTime ${_latestRoundInfo.startTime}, _latestRoundInfo.currentTime ${_latestRoundInfo.currentTime}, ${_latestRoundInfo.startTime - _latestRoundInfo.currentTime}');
+      if (_latestRoundInfo.startTime - _latestRoundInfo.currentTime > 0) {
+        _nextRoundRemainTime =
+            _latestRoundInfo.startTime - _latestRoundInfo.currentTime;
         nextRoundStreamController.add(_nextRoundRemainTime);
       }
     }
@@ -148,8 +157,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     _pulseController?.dispose();
     _zoomInController?.dispose();
 
-    rpMachineStreamController.close();
-    nextRoundStreamController.close();
+    rpMachineStreamController?.close();
+    nextRoundStreamController?.close();
 
     super.dispose();
   }
@@ -189,6 +198,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     return StreamBuilder<AirdropState>(
         stream: rpMachineStreamController.stream,
         builder: (context, snapshot) {
+          _lastAirdropState = snapshot.data;
           var _currentAirdropState = snapshot.data;
           if (_currentAirdropState == AirdropState.Waiting) {
             return _waitingView();
@@ -233,7 +243,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
               stream: nextRoundStreamController.stream,
               builder: (context, snapshot) {
                 if (snapshot?.data != 0) {
-                  var nextRoundText = '下轮预估 ${FormatUtil.formatTimer(_nextRoundRemainTime)}';
+                  var nextRoundText =
+                      '下轮预估 ${FormatUtil.formatTimer(_nextRoundRemainTime)}';
                   return Text(nextRoundText);
                 }
                 return SizedBox();
@@ -324,7 +335,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
       ),
       child: Container(
         width: double.infinity,
-        decoration: BoxDecoration(color: HexColor('#FFFFF5F5'), borderRadius: BorderRadius.circular(4.0)),
+        decoration: BoxDecoration(
+            color: HexColor('#FFFFF5F5'),
+            borderRadius: BorderRadius.circular(4.0)),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
@@ -333,7 +346,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
           child: Row(
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 8),
+                padding:
+                    const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 8),
                 child: Image.asset(
                   'res/drawable/red_pocket.png',
                   width: 40,
@@ -370,7 +384,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                               ),
                               TextSpan(
                                 text: ' $myRpCount ',
-                                style: TextStyle(fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: '个红包 共',
@@ -378,7 +395,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                               ),
                               TextSpan(
                                 text: ' $myRpAmount ',
-                                style: TextStyle(fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: 'RP',
@@ -429,7 +449,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   _rpInfoView() {
     var rpTodayStr = '${_rpStatistics?.airdropInfo?.todayAmountStr ?? '--'} RP';
-    var rpYesterdayStr = '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr ?? '--'} RP';
+    var rpYesterdayStr =
+        '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr ?? '--'} RP';
     //var rpMissedStr = '${rpStatistics?.airdropInfo?.missRpAmountStr} RP';
 
     return InkWell(
@@ -461,11 +482,13 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   /// 更新空投机器状态
   _updateAirdropState() {
-    int _serverTime = _latestRoundInfo?.currentTime ?? 0;
+    int _serverTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     int _latestRoundStartTime = _latestRoundInfo?.startTime ?? 0;
     int _latestRoundEndTime = _latestRoundInfo?.endTime ?? 0;
-    int _currentRoundReceivedCount = _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
-    print('xxx 0-0 _currentRoundReceivedCount $_currentRoundReceivedCount, _lastMinuteRpCount $_lastMinuteRpCount');
+    int _currentRoundReceivedCount =
+        _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
+    print(
+        'xxx 0-0 _currentRoundReceivedCount $_currentRoundReceivedCount, _lastMinuteRpCount $_lastMinuteRpCount');
     if (_currentRoundReceivedCount > _lastMinuteRpCount) {
       print('xxx 0-1');
       _lastMinuteRpCount = _currentRoundReceivedCount;
@@ -474,19 +497,17 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
     int nowTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     // 在showtime时间段内
-    print('xxx 1 _serverTime $_serverTime, _latestRoundStartTime $_latestRoundStartTime, _latestRoundEndTime $_latestRoundEndTime');
-    if (_serverTime > _latestRoundStartTime && _serverTime < _latestRoundEndTime) {
+    print(
+        'xxx 1 _serverTime $_serverTime, _latestRoundStartTime $_latestRoundStartTime, _latestRoundEndTime $_latestRoundEndTime');
+    if (_serverTime > _latestRoundStartTime &&
+        _serverTime < _latestRoundEndTime) {
       print('xxx 2');
       if (nowTime - _lastTimeCelebrateBegin < _newRpCelebrateDuration) {
         print('xxx 3');
-        rpMachineStreamController.stream.last.then((value) => () {
-          print('xxx 4 $value');
-              // 如果没开始庆祝，则开始庆祝
-              if (value != AirdropState.Received) {
-                print('xxx 5');
-                rpMachineStreamController.add(AirdropState.Received);
-              }
-            });
+        if (_lastAirdropState != null &&
+            _lastAirdropState != AirdropState.Received) {
+          rpMachineStreamController.add(AirdropState.Received);
+        }
       } else {
         print('xxx 6');
         rpMachineStreamController.add(AirdropState.NotReceived);
@@ -499,7 +520,11 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   _requestData() async {
     try {
-      var _address = WalletInheritedModel.of(context).activatedWallet?.wallet?.getAtlasAccount()?.address;
+      var _address = WalletInheritedModel.of(context)
+          .activatedWallet
+          ?.wallet
+          ?.getAtlasAccount()
+          ?.address;
 
       if (_address != null) {
         _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
