@@ -5,25 +5,27 @@ part 'rp_airdrop_round_info.g.dart';
 
 @JsonSerializable()
 class RpAirdropRoundInfo extends Object {
-  @JsonKey(name: 'startTime')
+  @JsonKey(name: 'start_time')
   int startTime;
 
-  @JsonKey(name: 'endTime')
+  @JsonKey(name: 'end_time')
   int endTime;
 
-  @JsonKey(name: 'myRpCount')
+  @JsonKey(name: 'my_rp_count')
   int myRpCount;
 
-  @JsonKey(name: 'myRpAmount')
+  @JsonKey(name: 'my_rp_amount')
   String myRpAmount;
 
-  @JsonKey(name: 'totalRpAmount')
+  @JsonKey(name: 'total_rp_amount')
   String totalRpAmount;
+
+  @JsonKey(name: 'current_time')
+  int currentTime;
 
   String get myRpAmountStr => FormatUtil.weiToEtherStr(myRpAmount) ?? '--';
 
   String get totalRpAmountStr => FormatUtil.weiToEtherStr(totalRpAmount) ?? '--';
-
 
   RpAirdropRoundInfo(
     this.startTime,
@@ -31,10 +33,10 @@ class RpAirdropRoundInfo extends Object {
     this.myRpCount,
     this.myRpAmount,
     this.totalRpAmount,
+    this.currentTime,
   );
 
-  factory RpAirdropRoundInfo.fromJson(Map<String, dynamic> srcJson) =>
-      _$RpAirdropRoundInfoFromJson(srcJson);
+  factory RpAirdropRoundInfo.fromJson(Map<String, dynamic> srcJson) => _$RpAirdropRoundInfoFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RpAirdropRoundInfoToJson(this);
 }
