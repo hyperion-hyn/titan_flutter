@@ -35,6 +35,7 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'entity/rp_airdrop_round_info.dart';
 import 'entity/rp_statistics.dart';
+import 'rp_record_tab_page.dart';
 
 class RedPocketPage extends StatefulWidget {
   RedPocketPage();
@@ -1120,7 +1121,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpMyRpRecordsPage(),
+          builder: (context) => RpRecordTabPage(),
+          // builder: (context) => RpMyRpRecordsPage(),
         ),
       );
     } else {
