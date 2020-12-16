@@ -229,12 +229,28 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                   ),
                 ),
                 Center(
-                  child: Text(
-                    '暂未空投',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '下一轮',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        '12:00',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
               ],
