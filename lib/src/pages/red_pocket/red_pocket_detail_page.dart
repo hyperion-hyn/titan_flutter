@@ -177,7 +177,6 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     );
     var address = shortBlockChainAddress(beach32Address);
 
-
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
       child: Container(
@@ -426,7 +425,19 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         ),
       );
     } else {
-      var childCount = _rpType == RedPocketType.LUCKY ? _filterDataList.length : _filterDataList.length + 1;
+      var childCount = 0;
+      switch (_rpType) {
+        case RedPocketType.LEVEL:
+          childCount = _filterDataList.length + 2;
+
+          break;
+
+        case RedPocketType.PROMOTION:
+        case RedPocketType.LUCKY:
+          childCount = _filterDataList.length + 1;
+          break;
+      }
+
       return SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
@@ -439,20 +450,24 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 
   Widget _itemBuilder(int index) {
-    if (index == _filterDataList.length) {
-      switch (_rpType) {
-        case RedPocketType.LEVEL:
+    switch (_rpType) {
+      case RedPocketType.LUCKY:
+        if (index == _filterDataList.length) {
           return _levelWidget();
+        } else if (index == (_filterDataList.length + 1)) {
+          return _manageWidget();
+        }
 
-          break;
+        break;
 
-        case RedPocketType.PROMOTION:
+      case RedPocketType.PROMOTION:
+      case RedPocketType.LEVEL:
+        if (index == _filterDataList.length) {
+          //return _manageWidget();
           return _promotionWidget();
-          break;
+        }
 
-        case RedPocketType.LUCKY:
-          break;
-      }
+        break;
     }
 
     var model = _filterDataList[index];
@@ -785,6 +800,80 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                         padding: const EdgeInsets.symmetric(vertical: 6.0),
                         child: Text(
                           totalStr,
+                          style: TextStyle(
+                            color: HexColor("#333333"),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _manageWidget() {
+    var _manageFeeAmount = Decimal.fromInt(0);
+
+    _manageDataList.forEach((item) {
+      var bigIntValue = BigInt.tryParse(item.amount) ?? BigInt.from(0);
+      Decimal valueByDecimal = ConvertTokenUnit.weiToEther(
+        weiBigInt: bigIntValue,
+      );
+      if (item.role == 2) {
+        _manageFeeAmount = valueByDecimal;
+      }
+    });
+    var _manageFeeAmountStr = '管理费 ' + FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + ' RP';
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 12,
+        ),
+        decoration: BoxDecoration(
+          color: HexColor('#FFFFFF'),
+          borderRadius: BorderRadius.all(
+            Radius.circular(6.0),
+          ), //设置四周圆角 角度
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 6,
+              ),
+              child: Image.asset(
+                'res/drawable/ic_robot_head.png',
+                width: 40,
+                height: 40,
+                color: HexColor('#FFFF5151'),
+              ),
+            ),
+            Spacer(),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 6,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                        child: Text(
+                          _manageFeeAmountStr,
                           style: TextStyle(
                             color: HexColor("#333333"),
                             fontSize: 14,
