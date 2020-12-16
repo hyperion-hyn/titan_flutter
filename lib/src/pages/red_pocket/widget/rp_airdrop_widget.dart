@@ -48,7 +48,6 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
 
   AnimationController _pulseController;
   AnimationController _zoomInController;
-  AnimationController _rouletteController;
 
   AirdropState _currentAirdropState = AirdropState.Waiting;
 
@@ -85,8 +84,6 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
       _zoomInController?.reset();
       _zoomInController?.forward();
 
-      _rouletteController?.reset();
-      _rouletteController?.forward();
 
       ///
       if (_nextRoundRemainTime >= 1) {
@@ -120,7 +117,6 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
 
     _pulseController?.dispose();
     _zoomInController?.dispose();
-    _rouletteController?.dispose();
 
     super.dispose();
   }
@@ -241,21 +237,15 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
               ),
             ),
             Center(
-              child: Roulette(
+              child: ZoomIn(
                 manualTrigger: true,
                 controller: (controller) {
-                  _rouletteController = controller;
+                  _zoomInController = controller;
                 },
-                child: ZoomIn(
-                  manualTrigger: true,
-                  controller: (controller) {
-                    _zoomInController = controller;
-                  },
-                  child: Image.asset(
-                    'res/drawable/red_pocket_logo.png',
-                    width: 40,
-                    height: 40,
-                  ),
+                child: Image.asset(
+                  'res/drawable/red_pocket_logo.png',
+                  width: 40,
+                  height: 40,
                 ),
               ),
             ),
