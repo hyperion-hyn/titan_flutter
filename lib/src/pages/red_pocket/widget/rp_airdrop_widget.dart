@@ -9,8 +9,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_airdrop_round_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
@@ -43,42 +45,63 @@ class RPAirdropWidget extends StatefulWidget {
   }
 }
 
-class _RPAirdropWidgetState extends State<RPAirdropWidget>
-    with SingleTickerProviderStateMixin {
+class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTickerProviderStateMixin {
   Timer _airdropInfoTimer;
   Timer _countDownTimer;
 
   AnimationController _pulseController;
   AnimationController _zoomInController;
 
-  AirdropState _currentAirdropState = AirdropState.Waiting;
+  // AirdropState _currentAirdropState = AirdropState.Waiting;
 
-  int _nextRoundRemainTime = 0;
-  int _previousRoundStartTime = 0;
+  StreamController<AirdropState> rpMachineStreamController = StreamController.broadcast();
+  StreamController<int> nextRoundStreamController = StreamController.broadcast();
+
+  int _nextRoundRemainTime = 0; // 下一轮剩余时间
 
   RpAirdropRoundInfo _latestRoundInfo;
   RPStatistics _rpStatistics;
 
+  int _lastMinuteRpCount = 0;
+  int _lastTimeCelebrateBegin = 0;
+  int _newRpCelebrateDuration = 3;
+
   RPApi _rpApi = RPApi();
 
   @override
-  void initState() {
-    super.initState();
-    _latestRoundInfo = widget.rpAirdropRoundInfo;
-    _rpStatistics = widget.rpStatistics;
+  void didChangeDependencies() {
+    // _latestRoundInfo = widget.rpAirdropRoundInfo;
+    // _rpStatistics = widget.rpStatistics;
+    //
+    // _resetNextRoundTimeLeft();
+    // _updateAirdropState();
 
-    _requestData();
-    _setUpTimer();
+    super.didChangeDependencies();
+  }
+
+  @override
+  void onCreated() async {
+    _rpApi.count = 0;
+    _rpApi.startTime = DateTime.now().millisecondsSinceEpoch ~/ 1000 + 15;
+    _rpApi.endTime = DateTime.now().millisecondsSinceEpoch ~/ 1000 + 195;
+    await _requestData();
+    _resetNextRoundTimeLeft();
+
     _setUpController();
+    _setUpTimer();
   }
 
   _setUpTimer() {
-    _airdropInfoTimer = Timer.periodic(Duration(seconds: 30), (t) {
-      _requestData();
-      _updateAirdropState();
+    // 定时检查是否获得新红包
+    _airdropInfoTimer = Timer.periodic(Duration(seconds: 30), (t) async {
+      print('xxx _airdropInfoTimer');
+      await _requestData();
+      _resetNextRoundTimeLeft();
     });
 
+    // 倒计时、切换空投机状态
     _countDownTimer = Timer.periodic(Duration(seconds: 1), (t) {
+      print('xxx _countDownTimer, _nextRoundRemainTime $_nextRoundRemainTime');
       ///
       _pulseController?.reset();
       _pulseController?.forward();
@@ -86,21 +109,27 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
       _zoomInController?.reset();
       _zoomInController?.forward();
 
-      ///
+      /// 刷新倒计时
       if (_nextRoundRemainTime >= 1) {
         _nextRoundRemainTime--;
+        nextRoundStreamController.add(_nextRoundRemainTime);
       }
       _updateAirdropState();
-      if (mounted) setState(() {});
+      // if (mounted) setState(() {});
     });
   }
 
-  _setUpController() {}
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void _resetNextRoundTimeLeft() {
+    if (_latestRoundInfo?.startTime != null && _latestRoundInfo?.currentTime != null) {
+      print('bbb _latestRoundInfo.startTime ${_latestRoundInfo.startTime}, _latestRoundInfo.currentTime ${_latestRoundInfo.currentTime}, ${_latestRoundInfo.startTime - _latestRoundInfo.currentTime}');
+      if(_latestRoundInfo.startTime - _latestRoundInfo.currentTime > 0) {
+        _nextRoundRemainTime = _latestRoundInfo.startTime - _latestRoundInfo.currentTime;
+        nextRoundStreamController.add(_nextRoundRemainTime);
+      }
+    }
   }
+
+  _setUpController() {}
 
   @override
   void dispose() {
@@ -118,6 +147,9 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
 
     _pulseController?.dispose();
     _zoomInController?.dispose();
+
+    rpMachineStreamController.close();
+    nextRoundStreamController.close();
 
     super.dispose();
   }
@@ -141,22 +173,36 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
     );
   }
 
+  @override
+  void reassemble() {
+    super.reassemble();
+
+    _pulseController?.dispose();
+    _pulseController = null;
+    _zoomInController?.dispose();
+    _zoomInController = null;
+  }
+
   ///views
 
   _airdropAnim() {
-    if (_currentAirdropState == AirdropState.Waiting) {
-      return _waitingView();
-    } else if (_currentAirdropState == AirdropState.NotReceived) {
-      return _airdropNotReceivedView();
-    } else if (_currentAirdropState == AirdropState.Received) {
-      return _airdropReceivedView();
-    } else {
-      return Container();
-    }
+    return StreamBuilder<AirdropState>(
+        stream: rpMachineStreamController.stream,
+        builder: (context, snapshot) {
+          var _currentAirdropState = snapshot.data;
+          if (_currentAirdropState == AirdropState.Waiting) {
+            return _waitingView();
+          } else if (_currentAirdropState == AirdropState.NotReceived) {
+            return _airdropNotReceivedView();
+          } else if (_currentAirdropState == AirdropState.Received) {
+            return _airdropReceivedView();
+          } else {
+            return Container();
+          }
+        });
   }
 
   _waitingView() {
-    var nextRoundText = '下轮预估 ${FormatUtil.formatTimer(_nextRoundRemainTime)}';
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -183,7 +229,15 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
               ],
             ),
           ),
-          _nextRoundRemainTime != 0 ? Text(nextRoundText) : SizedBox()
+          StreamBuilder(
+              stream: nextRoundStreamController.stream,
+              builder: (context, snapshot) {
+                if (snapshot?.data != 0) {
+                  var nextRoundText = '下轮预估 ${FormatUtil.formatTimer(_nextRoundRemainTime)}';
+                  return Text(nextRoundText);
+                }
+                return SizedBox();
+              }),
         ],
       ),
     );
@@ -205,6 +259,8 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
               child: Pulse(
                 manualTrigger: true,
                 controller: (controller) {
+                  print(
+                      '_pulseController?.hashCode: ${_pulseController?.hashCode}, controller.hashCode: ${controller.hashCode}');
                   _pulseController = controller;
                 },
                 child: Image.asset(
@@ -268,9 +324,7 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
       ),
       child: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
-            color: HexColor('#FFFFF5F5'),
-            borderRadius: BorderRadius.circular(4.0)),
+        decoration: BoxDecoration(color: HexColor('#FFFFF5F5'), borderRadius: BorderRadius.circular(4.0)),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
@@ -279,8 +333,7 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
           child: Row(
             children: [
               Padding(
-                padding:
-                    const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 8),
+                padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 8),
                 child: Image.asset(
                   'res/drawable/red_pocket.png',
                   width: 40,
@@ -317,10 +370,7 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
                               ),
                               TextSpan(
                                 text: ' $myRpCount ',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: '个红包 共',
@@ -328,10 +378,7 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
                               ),
                               TextSpan(
                                 text: ' $myRpAmount ',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: 'RP',
@@ -382,8 +429,7 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
 
   _rpInfoView() {
     var rpTodayStr = '${_rpStatistics?.airdropInfo?.todayAmountStr ?? '--'} RP';
-    var rpYesterdayStr =
-        '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr ?? '--'} RP';
+    var rpYesterdayStr = '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr ?? '--'} RP';
     //var rpMissedStr = '${rpStatistics?.airdropInfo?.missRpAmountStr} RP';
 
     return InkWell(
@@ -413,46 +459,60 @@ class _RPAirdropWidgetState extends State<RPAirdropWidget>
     );
   }
 
+  /// 更新空投机器状态
   _updateAirdropState() {
-    int _systemTime = DateTime.now().second;
+    int _serverTime = _latestRoundInfo?.currentTime ?? 0;
     int _latestRoundStartTime = _latestRoundInfo?.startTime ?? 0;
     int _latestRoundEndTime = _latestRoundInfo?.endTime ?? 0;
-    int _remainTime = _latestRoundStartTime - _systemTime;
-    bool _isReceived = (_latestRoundInfo?.myRpCount ?? 0) > 0;
-
-    if (_latestRoundStartTime > _systemTime &&
-        _previousRoundStartTime != _latestRoundStartTime) {
-      _nextRoundRemainTime = _remainTime;
+    int _currentRoundReceivedCount = _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
+    print('xxx 0-0 _currentRoundReceivedCount $_currentRoundReceivedCount, _lastMinuteRpCount $_lastMinuteRpCount');
+    if (_currentRoundReceivedCount > _lastMinuteRpCount) {
+      print('xxx 0-1');
+      _lastMinuteRpCount = _currentRoundReceivedCount;
+      _lastTimeCelebrateBegin = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     }
-    if (_systemTime > _latestRoundStartTime &&
-        _systemTime < _latestRoundEndTime) {
-      if (_isReceived) {
-        _currentAirdropState = AirdropState.Received;
+
+    int nowTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    // 在showtime时间段内
+    print('xxx 1 _serverTime $_serverTime, _latestRoundStartTime $_latestRoundStartTime, _latestRoundEndTime $_latestRoundEndTime');
+    if (_serverTime > _latestRoundStartTime && _serverTime < _latestRoundEndTime) {
+      print('xxx 2');
+      if (nowTime - _lastTimeCelebrateBegin < _newRpCelebrateDuration) {
+        print('xxx 3');
+        rpMachineStreamController.stream.last.then((value) => () {
+          print('xxx 4 $value');
+              // 如果没开始庆祝，则开始庆祝
+              if (value != AirdropState.Received) {
+                print('xxx 5');
+                rpMachineStreamController.add(AirdropState.Received);
+              }
+            });
       } else {
-        _currentAirdropState = AirdropState.NotReceived;
+        print('xxx 6');
+        rpMachineStreamController.add(AirdropState.NotReceived);
       }
     } else {
-      _currentAirdropState = AirdropState.Waiting;
+      print('xxx 7');
+      rpMachineStreamController.add(AirdropState.Waiting);
     }
   }
 
   _requestData() async {
     try {
-      var _address = WalletInheritedModel.of(context)
-          .activatedWallet
-          ?.wallet
-          ?.getAtlasAccount()
-          ?.address;
+      var _address = WalletInheritedModel.of(context).activatedWallet?.wallet?.getAtlasAccount()?.address;
 
       if (_address != null) {
         _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
           _address,
         );
+
         _rpStatistics = await _rpApi.getRPStatistics(
           _address,
         );
       }
-    } catch (e) {}
+    } catch (e) {
+      logger.e(e);
+    }
   }
 
   _navToMyRpRecords() {

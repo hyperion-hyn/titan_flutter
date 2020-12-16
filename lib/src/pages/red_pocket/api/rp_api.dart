@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:decimal/decimal.dart';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/http/entity.dart';
@@ -19,6 +20,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as WalletClass;
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -83,9 +85,25 @@ class RPApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
+  int count = 0;
+  int startTime = 0;
+  int endTime = 0;
+
   Future<RpAirdropRoundInfo> getLatestRpAirdropRoundInfo(
     String address,
   ) async {
+    // test hack data
+    await Future.delayed(Duration(milliseconds: 100));
+    count++;
+    return RpAirdropRoundInfo.fromJson({
+      'start_time': startTime,
+      'end_time': endTime,
+      'my_rp_count': count,
+      'my_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (count * 10).ceilToDouble())}',
+      'total_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (count * 100).ceilToDouble())}',
+      'current_time': DateTime.now().millisecondsSinceEpoch ~/ 1000,
+    });
+
     return await RPHttpCore.instance.getEntity(
         "/v1/rp/statistics/$address",
         EntityFactory<RpAirdropRoundInfo>(
