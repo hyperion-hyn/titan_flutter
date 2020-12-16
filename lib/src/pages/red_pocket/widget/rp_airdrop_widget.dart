@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:titan/generated/l10n.dart';
@@ -19,8 +17,6 @@ import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'package:titan/src/widget/animation/custom_shake_animation_widget.dart';
-import 'package:titan/src/widget/animation/shake_animation_type.dart';
 
 import '../rp_my_rp_records_page.dart';
 
@@ -48,9 +44,11 @@ class RPAirdropWidget extends StatefulWidget {
 class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTickerProviderStateMixin {
   Timer _airdropInfoTimer;
   Timer _countDownTimer;
+  Timer _animTimer;
 
   AnimationController _pulseController;
   AnimationController _zoomInController;
+  AnimationController _fadeAnimController;
 
   // AirdropState _currentAirdropState = AirdropState.Waiting;
 
@@ -124,6 +122,11 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
       _updateAirdropState();
       // if (mounted) setState(() {});
     });
+
+    _animTimer = Timer.periodic(Duration(seconds: 2), (t) async {
+      _fadeAnimController?.reset();
+      _fadeAnimController?.forward();
+    });
   }
 
   void _resetNextRoundTimeLeft() {
@@ -136,7 +139,13 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     }
   }
 
-  _setUpController() {}
+  _setUpController() {
+    _fadeAnimController = AnimationController(
+        vsync: this,
+        duration: Duration(
+          milliseconds: 2000,
+        ));
+  }
 
   @override
   void dispose() {
@@ -256,6 +265,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
               ],
             ),
           ),
+          SizedBox(
+            height: 8,
+          ),
           StreamBuilder(
               stream: nextRoundStreamController.stream,
               builder: (context, snapshot) {
@@ -322,16 +334,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
               ),
             ),
             Center(
-              child: ZoomIn(
-                manualTrigger: true,
-                controller: (controller) {
-                  _zoomInController = controller;
-                },
-                child: Image.asset(
-                  'res/drawable/red_pocket_logo.png',
-                  width: 40,
-                  height: 40,
-                ),
+              child: FadeAnim(
+                controller: _fadeAnimController,
               ),
             ),
           ],
@@ -598,4 +602,50 @@ Widget _verticalLine({
           : null,
     ),
   );
+}
+
+class FadeAnim extends StatelessWidget {
+  final Animation<double> controller;
+  final Animation<double> bezier;
+  final Animation<double> size;
+
+  FadeAnim({Key key, this.controller})
+      : bezier = Tween<double>(
+          begin: 1.0,
+          end: 0.0,
+        ).animate(CurvedAnimation(
+          parent: controller,
+          curve: Interval(0.2, 1, curve: Curves.fastOutSlowIn),
+        )),
+        size = Tween<double>(
+          begin: 0.0,
+          end: 50.0,
+        ).animate(CurvedAnimation(
+          parent: controller,
+          curve: Interval(0.1, 0.2, curve: Curves.ease),
+        )),
+        super(key: key);
+
+  Widget _buildAnimation(BuildContext context, Widget child) {
+    return Container(
+      child: Opacity(
+        opacity: bezier.value,
+        child: Container(
+          width: size.value,
+          height: size.value,
+          child: Image.asset(
+            'res/drawable/red_pocket_logo.png',
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      builder: _buildAnimation,
+      animation: controller,
+    );
+  }
 }
