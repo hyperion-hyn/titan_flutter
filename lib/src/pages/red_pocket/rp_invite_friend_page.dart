@@ -42,6 +42,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
   WalletVo activityWallet;
   final ShotController _shotController = new ShotController();
   ScrollController scrollController = ScrollController();
+  bool _isSharing = false;
 
   @override
   void initState() {
@@ -89,7 +90,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   SizedBox(
-                                    height: 21,
+                                    height: 25,
                                   ),
                                   Container(
                                       width: 60,
@@ -136,30 +137,36 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                       ],
                                     ),
                                   ),
-                                  Html(
-                                    data: S.of(context).invite_come_receive_red_pocket,
-                                    style: {
-                                      "p": Style(textAlign: TextAlign.center),
-                                      "span": Style(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: FontSize(20),
-                                      )
-                                    },
+                                  Container(
+                                    //color: Colors.red,
+                                    child: Html(
+                                      data: S.of(context).invite_come_receive_red_pocket,
+                                      style: {
+                                        "p": Style(textAlign: TextAlign.center),
+                                        "span": Style(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: FontSize(20),
+                                        )
+                                      },
+                                    ),
                                   ),
 
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 0.0),
+                                    padding: const EdgeInsets.only(top: 10.0),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: <Widget>[
-                                        Image.asset(
-                                          "res/drawable/ic_rp_invite_friend_red_package.png",
-                                          width: 208,
-                                          height: 390,
-                                          fit: BoxFit.contain,
+                                        Container(
+                                          //color: Colors.red,
+                                          child: Image.asset(
+                                            "res/drawable/ic_rp_invite_friend_red_package.png",
+                                            width: 238,
+                                            height: 336,
+                                            fit: BoxFit.fill,
+                                          ),
                                         ),
                                         Positioned(
-                                          top: 183,
+                                          top: 162,
                                           child: Container(
                                             decoration: BoxDecoration(
                                                 color: Colors.white,
@@ -175,7 +182,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                           ),
                                         ),
                                         Positioned(
-                                          top: 275,
+                                          bottom: 36,
                                           left: 29,
                                           right: 29,
                                           child: Text(
@@ -193,7 +200,32 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                     ),
                                   ),
                                   SizedBox(
-                                    height: 30,
+                                    height: 25,
+                                  ),
+                                  Visibility(
+                                    visible: !_isSharing,
+                                    child: ClickOvalButton(
+                                      S.of(context).share,
+                                      () async {
+                                        if (mounted) {
+                                          setState(() {
+                                            scrollController.jumpTo(scrollController.position.maxScrollExtent);
+                                            _isSharing = true;
+                                          });
+                                        }
+
+                                        Future.delayed(Duration(milliseconds: 111)).then((_) async {
+                                          await _shareQr(context);
+                                        });
+                                      },
+                                      btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
+                                      fontSize: 16,
+                                      width: 200,
+                                      height: 38,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 25,
                                   ),
                                 ],
                               ),
@@ -203,20 +235,10 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                       ],
                     ),
                   ),
-                  ClickOvalButton(
-                    S.of(context).share,
-                    () async {
-                      scrollController.jumpTo(scrollController.position.maxScrollExtent);
-                      await _shareQr(context);
-                    },
-                    btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
-                    fontSize: 16,
-                    width: 200,
-                    height: 38,
-                  )
                 ],
               ),
             ),
+            /*
             Container(
               height: 60,
               child: Stack(
@@ -240,7 +262,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                   )*/
                 ],
               ),
-            )
+            ),*/
           ],
         ));
   }
@@ -248,6 +270,12 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
   Future _shareQr(BuildContext context) async {
     Uint8List imageByte = await _shotController.makeImageUint8List();
     await Share.file(S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
+
+    if (mounted) {
+      setState(() {
+        _isSharing = false;
+      });
+    }
   }
 }
 
