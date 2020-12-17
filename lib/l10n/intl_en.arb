@@ -2358,7 +2358,7 @@
   "@rp_swap_pool_transmit_func": {},
   "rp_today_rp": "Today's Red Pack",
   "@rp_today_rp": {},
-  "rp_total_amount_percent": "Total{percent}0K RP",
+  "rp_total_amount_percent": "Total(RP): {percent}0K ",
   "@rp_total_amount_percent": {},
   "rp_total_available_transmit": "Totally available redeem",
   "@rp_total_available_transmit": {},

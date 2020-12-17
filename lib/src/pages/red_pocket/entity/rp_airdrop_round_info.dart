@@ -11,6 +11,9 @@ class RpAirdropRoundInfo extends Object {
   @JsonKey(name: 'end_time')
   int endTime;
 
+  @JsonKey(name: 'next_round_start_time')
+  int nextRoundStartTime;
+
   @JsonKey(name: 'my_rp_count')
   int myRpCount;
 
@@ -25,18 +28,20 @@ class RpAirdropRoundInfo extends Object {
 
   String get myRpAmountStr => FormatUtil.weiToEtherStr(myRpAmount) ?? '--';
 
-  String get totalRpAmountStr => FormatUtil.weiToEtherStr(totalRpAmount) ?? '--';
+  String get totalRpAmountStr => FormatUtil.weiToEtherStr(totalRpAmount) ?? '0';
 
   RpAirdropRoundInfo(
     this.startTime,
     this.endTime,
+    this.nextRoundStartTime,
     this.myRpCount,
     this.myRpAmount,
     this.totalRpAmount,
     this.currentTime,
   );
 
-  factory RpAirdropRoundInfo.fromJson(Map<String, dynamic> srcJson) => _$RpAirdropRoundInfoFromJson(srcJson);
+  factory RpAirdropRoundInfo.fromJson(Map<String, dynamic> srcJson) =>
+      _$RpAirdropRoundInfoFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RpAirdropRoundInfoToJson(this);
 }

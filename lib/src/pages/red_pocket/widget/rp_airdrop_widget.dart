@@ -42,7 +42,8 @@ class RPAirdropWidget extends StatefulWidget {
   }
 }
 
-class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTickerProviderStateMixin {
+class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
+    with SingleTickerProviderStateMixin {
   Timer _airdropInfoTimer;
   Timer _countDownTimer;
   Timer _animTimer;
@@ -53,19 +54,21 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   // AirdropState _currentAirdropState = AirdropState.Waiting;
 
-  StreamController<AirdropState> rpMachineStreamController = StreamController.broadcast();
-  StreamController<int> nextRoundStreamController = StreamController.broadcast();
-  StreamController<bool> machineLightOnController = StreamController.broadcast();
+  StreamController<AirdropState> rpMachineStreamController =
+      StreamController.broadcast();
+  StreamController<int> nextRoundStreamController =
+      StreamController.broadcast();
+  StreamController<bool> machineLightOnController =
+      StreamController.broadcast();
 
   int _nextRoundRemainTime = 0; // 下一轮剩余时间
-  bool _isPassedLatestRound = true;
 
   RpAirdropRoundInfo _latestRoundInfo;
   RPStatistics _rpStatistics;
 
   int _lastMinuteRpCount = 0; //最近一次获得的rp总奖励
   int _lastTimeCelebrateBegin = 0;
-  final RP_Celebrate_Duration = 6;
+  final _rpCelebrateDuration = 6;
 
   var _lastAirdropState;
   var _isLightOn = false;
@@ -92,7 +95,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   @override
   void onCreated() async {
-    await _mockReqTime();
+    //await _mockReqTime();
+    await _requestData();
 
     _setUpController();
     _setUpTimer();
@@ -101,16 +105,16 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     // bgmAudioPlayer.open(bgmAudio, autoStart: false, loopMode: LoopMode.single);
   }
 
-  Future _mockReqTime() async {
-    _lastMinuteRpCount = 0;
-    _lastTimeCelebrateBegin = 0;
-    _rpApi.count = 0;
-    _rpApi.startTime = DateTime.now().millisecondsSinceEpoch ~/ 1000 + 10;
-    _rpApi.endTime = DateTime.now().millisecondsSinceEpoch ~/ 1000 + 30;
-
-    await _requestData();
-    _resetNextRoundTime();
-  }
+  // Future _mockReqTime() async {
+  //   _lastMinuteRpCount = 0;
+  //   _lastTimeCelebrateBegin = 0;
+  //   _rpApi.count = 0;
+  //   _rpApi.startTime = DateTime.now().millisecondsSinceEpoch ~/ 1000 + 10;
+  //   _rpApi.endTime = DateTime.now().millisecondsSinceEpoch ~/ 1000 + 30;
+  //
+  //   await _requestData();
+  //   _resetNextRoundTime();
+  // }
 
   _setUpTimer() {
     // 定时检查是否获得新红包
@@ -148,17 +152,21 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   void _resetNextRoundTime() {
     var now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    if (_latestRoundInfo?.startTime != null) {
-      if (_latestRoundInfo.startTime - now > 0) {
-        _nextRoundRemainTime = _latestRoundInfo.startTime - now;
-        nextRoundStreamController.add(_nextRoundRemainTime);
-      }
+    var currentRoundStartTime = _latestRoundInfo?.startTime ?? 0;
+    var currentRoundEndTime = _latestRoundInfo?.endTime ?? 0;
+    var nextRoundStartTime = _latestRoundInfo?.nextRoundStartTime ?? 0;
+
+    if (currentRoundStartTime - now > 0) {
+      _nextRoundRemainTime = currentRoundStartTime - now;
+      nextRoundStreamController.add(_nextRoundRemainTime);
     }
-    if ((_latestRoundInfo?.endTime ?? 0) > now) {
-      _isPassedLatestRound = false;
-    } else {
-      _isPassedLatestRound = true;
+
+    ///已过当前轮，使用下一轮的startTime
+    if (now > currentRoundEndTime && now < nextRoundStartTime) {
+      _nextRoundRemainTime = nextRoundStartTime - now;
+      nextRoundStreamController.add(_nextRoundRemainTime);
     }
+
     if (mounted) setState(() {});
   }
 
@@ -187,9 +195,11 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
         _animTimer.cancel();
       }
     }
-    // _pulseController?.dispose();
-    // _spinController?.dispose();
+
+    _pulseController?.dispose();
     _fadeAnimController?.dispose();
+    _spinController?.dispose();
+
     rpMachineStreamController?.close();
     nextRoundStreamController?.close();
     machineLightOnController?.close();
@@ -209,6 +219,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
         children: [
           Column(
             children: [
+              _globalStaticsView(),
               _airdropAnim(),
               _airdropDetailView(),
               _rpInfoView(),
@@ -231,38 +242,152 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   ///views
 
+  _globalStaticsView() {
+    var airDropPercent = _rpStatistics?.rpContractInfo?.dropOnPercent ?? '--';
+    var alreadyAirdrop = '--';
+
+    try {
+      alreadyAirdrop = FormatUtil.stringFormatCoinNum(
+        _rpStatistics?.airdropInfo?.totalAmountStr ?? '0',
+        decimal: 4,
+      );
+    } catch (e) {}
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16.0,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            '红包',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              color: HexColor('#333333'),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 4,
+            ),
+            child: Text(
+              S.of(context).rp_total_amount_percent(airDropPercent),
+              style: TextStyle(
+                color: DefaultColors.color999,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                '已累计红包(RP): $alreadyAirdrop ',
+                style: TextStyle(
+                  color: DefaultColors.color999,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   _airdropAnim() {
-    return StreamBuilder<AirdropState>(
-        stream: rpMachineStreamController.stream,
-        builder: (context, snapshot) {
-          _pulseController = null;
-          _spinController = null;
-          // _fadeAnimController = null;
-          _lastAirdropState = snapshot.data;
-          var _currentAirdropState = snapshot.data;
-          /*if (_currentAirdropState == AirdropState.Waiting) {
-            return _waitingView();
-          } else */
-          if (_currentAirdropState == AirdropState.NotReceived) {
-            return _airdropNotReceivedView();
-          } else if (_currentAirdropState == AirdropState.Received) {
-            return _airdropReceivedView();
-          } else {
-            return _waitingView();
-          }
-        });
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: StreamBuilder<AirdropState>(
+          stream: rpMachineStreamController.stream,
+          builder: (context, snapshot) {
+            _pulseController = null;
+            _spinController = null;
+            _lastAirdropState = snapshot.data;
+            var _currentAirdropState = snapshot.data;
+            /*if (_currentAirdropState == AirdropState.Waiting) {
+              return _waitingView();
+            } else */
+            if (_currentAirdropState == AirdropState.NotReceived) {
+              // if (!bgmAudioPlayerPlaying) {
+              //   bgmAudioPlayer.play();
+              //   bgmAudioPlayerPlaying = true;
+              // }
+              // if (rewardAudioPlayerPlaying) {
+              //   rewardAudioPlayer.pause();
+              //   rewardAudioPlayerPlaying = false;
+              // }
+              return _airdropNotReceivedView();
+            } else if (_currentAirdropState == AirdropState.Received) {
+              // if (bgmAudioPlayerPlaying) {
+              //   bgmAudioPlayer.pause();
+              //   bgmAudioPlayerPlaying = false;
+              // }
+              // if (!rewardAudioPlayerPlaying) {
+              //   rewardAudioPlayer.seek(Duration(milliseconds: 0));
+              //   rewardAudioPlayer.play();
+              //   rewardAudioPlayerPlaying = true;
+              // }
+              return _airdropReceivedView();
+            } else if (_currentAirdropState == AirdropState.Waiting) {
+              // if (bgmAudioPlayerPlaying) {
+              //   bgmAudioPlayer.pause();
+              //   bgmAudioPlayerPlaying = false;
+              // }
+              // if (rewardAudioPlayerPlaying) {
+              //   rewardAudioPlayer.pause();
+              //   rewardAudioPlayerPlaying = false;
+              // }
+              return _waitingView();
+            } else {
+              return _loadingView();
+            }
+          }),
+    );
+  }
+
+  _loadingView() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        height: 160,
+        child: Stack(
+          children: [
+            Center(
+              child: Image.asset(
+                'res/drawable/bg_rp_airdrop.png',
+              ),
+            ),
+            Center(
+                child: Text(
+              '加载中...',
+              style: TextStyle(color: Colors.white),
+            )),
+          ],
+        ),
+      ),
+    );
   }
 
   _waitingView() {
-    var _nextRoundStartTimeMillieSecond =
-        (_latestRoundInfo?.startTime ?? 0) * 1000;
+    var now = DateTime.now().millisecondsSinceEpoch;
+    var _nextRoundStartTimeMillieSecond = 0;
 
-    var _nextRoundTimeText =
-        _nextRoundStartTimeMillieSecond != 0 && !_isPassedLatestRound
-            ? FormatUtil.formatMinuteDate(
-                _nextRoundStartTimeMillieSecond,
-              )
-            : '--';
+    if (now > (_latestRoundInfo?.endTime ?? 0)) {
+      _nextRoundStartTimeMillieSecond =
+          (_latestRoundInfo?.nextRoundStartTime ?? 0) * 1000;
+    } else {
+      _nextRoundStartTimeMillieSecond =
+          (_latestRoundInfo?.startTime ?? 0) * 1000;
+    }
+
+    var _nextRoundTimeText = _nextRoundStartTimeMillieSecond != 0
+        ? FormatUtil.formatMinuteDate(
+            _nextRoundStartTimeMillieSecond,
+          )
+        : '--';
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -341,19 +466,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                     return Image.asset(imgPath);
                   }),
             ),
-            SpinPerfect(
-              manualTrigger: true,
-              controller: (controller) {
-                _spinController = controller;
-              },
-              child: Center(
-                child: Image.asset(
-                  'res/drawable/rp_airdrop_vertex.png',
-                  height: 50,
-                  width: 50,
-                ),
-              ),
-            ),
+            //SpinVertexAnim(),
             Center(
               child: Pulse(
                 manualTrigger: true,
@@ -397,7 +510,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                   }),
             ),
             Center(
-              child: FadeAnim(
+              child: FadeAnimRP(
                 controller: _fadeAnimController,
               ),
             ),
@@ -409,17 +522,30 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   _airdropDetailView() {
     var myRpCount = _latestRoundInfo?.myRpCount ?? '--';
-    var myRpAmount = _latestRoundInfo?.myRpAmountStr ?? '--';
-    var totalAmount = _latestRoundInfo?.totalRpAmountStr ?? '--';
+    var myRpAmount = '--';
+    var totalAmount = '--';
+    try {
+      myRpAmount = FormatUtil.stringFormatCoinNum(
+        _latestRoundInfo?.myRpAmountStr ?? '0',
+        decimal: 4,
+      );
+      totalAmount = FormatUtil.stringFormatCoinNum(
+        _latestRoundInfo?.totalRpAmountStr ?? '0',
+        decimal: 4,
+      );
+    } catch (e) {}
+
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: 16.0,
-        horizontal: 8.0,
+        horizontal: 16.0,
       ),
       child: Container(
         width: double.infinity,
-        decoration: BoxDecoration(color: HexColor('#FFFFF5F5'), borderRadius: BorderRadius.circular(4.0)),
+        decoration: BoxDecoration(
+            color: HexColor('#FFFFF5F5'),
+            borderRadius: BorderRadius.circular(4.0)),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
@@ -429,10 +555,11 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
             children: [
               InkWell(
                 onTap: () {
-                  _mockReqTime();
+                  //_mockReqTime();
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 8),
+                  padding: const EdgeInsets.only(
+                      left: 8, top: 8, bottom: 8, right: 8),
                   child: Image.asset(
                     'res/drawable/red_pocket.png',
                     width: 40,
@@ -470,7 +597,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                               ),
                               TextSpan(
                                 text: ' $myRpCount ',
-                                style: TextStyle(fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: '个红包 共',
@@ -478,7 +608,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                               ),
                               TextSpan(
                                 text: ' $myRpAmount ',
-                                style: TextStyle(fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: 'RP',
@@ -528,9 +661,22 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
   }
 
   _rpInfoView() {
-    var rpTodayStr = '${_rpStatistics?.airdropInfo?.todayAmountStr ?? '--'} RP';
-    var rpYesterdayStr = '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr ?? '--'} RP';
-    //var rpMissedStr = '${rpStatistics?.airdropInfo?.missRpAmountStr} RP';
+    var rpToday = '--';
+    var rpYesterday = '--';
+
+    try {
+      rpToday = FormatUtil.stringFormatCoinNum(
+        _rpStatistics?.airdropInfo?.todayAmountStr ?? '0',
+        decimal: 4,
+      );
+      rpYesterday = FormatUtil.stringFormatCoinNum(
+        _rpStatistics?.airdropInfo?.yesterdayRpAmountStr ?? '0',
+        decimal: 4,
+      );
+    } catch (e) {}
+
+    var rpTodayStr = '$rpToday RP';
+    var rpYesterdayStr = '$rpYesterday RP';
 
     return InkWell(
       onTap: _navToMyRpRecords,
@@ -564,7 +710,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     int _now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     int _latestRoundStartTime = _latestRoundInfo?.startTime ?? 0;
     int _latestRoundEndTime = _latestRoundInfo?.endTime ?? 0;
-    int _currentRoundReceivedCount = _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
+    int _currentRoundReceivedCount =
+        _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
     if (_currentRoundReceivedCount > _lastMinuteRpCount) {
       _lastMinuteRpCount = _currentRoundReceivedCount;
       _lastTimeCelebrateBegin = _now;
@@ -572,9 +719,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
     // 在showtime时间段内
     if (_now >= _latestRoundStartTime && _now < _latestRoundEndTime) {
-      if (_now - _lastTimeCelebrateBegin < RP_Celebrate_Duration) {
-        if (_lastAirdropState != null && _lastAirdropState != AirdropState.Received) {
-          AssetsAudioPlayer.playAndForget(rewardAudio);
+      if ((_now - _lastTimeCelebrateBegin) < _rpCelebrateDuration) {
+        if (_lastAirdropState != null &&
+            _lastAirdropState != AirdropState.Received) {
           rpMachineStreamController.add(AirdropState.Received);
         }
       } else if (_lastAirdropState != AirdropState.NotReceived) {
@@ -587,7 +734,11 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   _requestData() async {
     try {
-      var _address = WalletInheritedModel.of(context).activatedWallet?.wallet?.getAtlasAccount()?.address;
+      var _address = WalletInheritedModel.of(context)
+          .activatedWallet
+          ?.wallet
+          ?.getAtlasAccount()
+          ?.address;
 
       if (_address != null) {
         _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
@@ -670,12 +821,12 @@ Widget _verticalLine({
   );
 }
 
-class FadeAnim extends StatelessWidget {
+class FadeAnimRP extends StatelessWidget {
   final Animation<double> controller;
   final Animation<double> bezier;
   final Animation<double> size;
 
-  FadeAnim({Key key, this.controller})
+  FadeAnimRP({Key key, this.controller})
       : bezier = Tween<double>(
           begin: 1.0,
           end: 0.0,
@@ -713,5 +864,55 @@ class FadeAnim extends StatelessWidget {
       builder: _buildAnimation,
       animation: controller,
     );
+  }
+}
+
+class SpinVertexAnim extends StatefulWidget {
+  SpinVertexAnim({Key key, this.title}) : super(key: key);
+  final String title;
+
+  @override
+  _SpinVertexAnimState createState() => _SpinVertexAnimState();
+}
+
+class _SpinVertexAnimState extends State<SpinVertexAnim>
+    with TickerProviderStateMixin {
+  AnimationController controller;
+  Animation animation;
+
+  @override
+  void initState() {
+    super.initState();
+    controller =
+        AnimationController(duration: const Duration(seconds: 3), vsync: this);
+    animation = Tween(begin: 0.0, end: 0.25).animate(controller);
+    controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        controller.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        controller.forward();
+      } else if (status == AnimationStatus.forward) {
+      } else if (status == AnimationStatus.reverse) {}
+    });
+    controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RotationTransition(
+      alignment: Alignment.center,
+      turns: animation,
+      child: Image.asset(
+        'res/drawable/rp_airdrop_vertex.png',
+        height: 50,
+        width: 50,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
   }
 }

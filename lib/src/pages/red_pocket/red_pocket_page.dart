@@ -69,6 +69,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     super.didChangeDependencies();
 
     _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
+    _rpStatistics = RedPocketInheritedModel.of(context).rpStatistics;
   }
 
   @override
@@ -581,14 +582,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _airdropWidget() {
-    var rpTodayStr = '${_rpStatistics?.airdropInfo?.todayAmountStr} RP';
-    var rpYesterdayStr =
-        '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr} RP';
-    //var rpMissedStr = '${_rpStatistics?.airdropInfo?.missRpAmountStr} RP';
-
-    var airDropPercent = _rpStatistics?.rpContractInfo?.dropOnPercent ?? '--';
-    var alreadyAirdrop = '1';
-
     return SliverToBoxAdapter(
       child: Padding(
         padding: _cardPadding(),
@@ -599,57 +592,9 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '红包',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: HexColor('#333333'),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 4,
-                        ),
-                        child: Text(
-                          S.of(context).rp_total_amount_percent(airDropPercent),
-                          style: TextStyle(
-                            color: DefaultColors.color999,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                      Spacer(),
-                      Text(
-                        '已累计红包 $alreadyAirdrop RP',
-                        style: TextStyle(
-                          color: DefaultColors.color999,
-                          fontSize: 12,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 16.0,
-                    bottom: 8.0,
-                  ),
-                  child: RPAirdropWidget(
-                    rpStatistics: _rpStatistics,
-                    rpAirdropRoundInfo: _latestRoundInfo,
-                  ),
-                ),
-              ],
+            child: RPAirdropWidget(
+              rpStatistics: _rpStatistics,
+              rpAirdropRoundInfo: _latestRoundInfo,
             ),
           ),
         ),
@@ -1065,7 +1010,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpTransmitPage(_rpStatistics),
+          builder: (context) => RpTransmitPage(),
         ),
       );
     } else {
@@ -1079,7 +1024,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpTransmitRecordsPage(_rpStatistics),
+          builder: (context) => RpTransmitRecordsPage(),
         ),
       );
     } else {
@@ -1146,16 +1091,15 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   _requestData() async {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
-
     var _address = activeWallet?.wallet?.getAtlasAccount()?.address;
+
     try {
-      _rpStatistics = await _rpApi.getRPStatistics(
-        _address,
-      );
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(UpdateStatisticsEvent());
+      }
 
       if (context != null) {
-        BlocProvider.of<RedPocketBloc>(context)
-            .add(UpdateMyLevelInfoEntityEvent());
+        BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEvent());
       }
 
       if (context != null) {
@@ -1163,14 +1107,13 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             .add(UpdateActivatedWalletBalanceEvent());
       }
 
+      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
+        _address,
+      );
       if (mounted) {
         _loadDataBloc.add(RefreshSuccessEvent());
         setState(() {});
       }
-
-      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
-        _address,
-      );
     } catch (e) {
       _loadDataBloc.add(RefreshFailEvent());
     }

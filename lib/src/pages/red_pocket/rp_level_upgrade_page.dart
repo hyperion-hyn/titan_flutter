@@ -411,26 +411,26 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                       top: 60,
                       left: 16,
                       right: 16,
+                      bottom: 16,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(top: 16.0, bottom: 8),
+                          padding: const EdgeInsets.only(top: 16.0, bottom:8,),
                           child: Text(S.of(context).precautions,
                               style: TextStyle(color: HexColor("#333333"), fontSize: 16,)),
                         ),
                         rowTipsItem('如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4)} 以上的账户地址为推荐人'),
                         rowTipsItem('燃烧不累计，每次升级都要重新燃烧，除了因 Y 增长而掉级'),
-
                       ],
                     ),
                   ),
-                  _confirmButtonWidget(),
                 ])),
               ),
             ),
           ),
+          _confirmButtonWidget(),
         ],
       ),
     );
@@ -440,7 +440,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(top: 30),
+        padding: const EdgeInsets.only(top: 30, bottom: 30,),
         child: Center(
           child: ClickOvalButton(
             '马上提升',
@@ -458,7 +458,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   Future getNetworkData() async {
     if (context != null) {
-      BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent());
+      BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEvent());
     }
 
     if (context != null) {
