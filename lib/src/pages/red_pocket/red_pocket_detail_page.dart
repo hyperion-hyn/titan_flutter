@@ -366,6 +366,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     var createdAt = _detailEntity?.createdAt ?? 0;
     var createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt * 1000);
     var createdAtStr = Const.DATE_FORMAT.format(createdAtDate);
+    String totalAmountStr = FormatUtil.stringFormatCoinNum(_detailEntity?.totalAmountStr ?? "0") ?? '--';
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -377,7 +378,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       child: Row(
         children: [
           Text(
-            '红包共 ${_detailEntity?.totalAmountStr ?? "0"} RP',
+            '红包共 $totalAmountStr RP',
             style: TextStyle(
               color: Color(0xff333333),
               fontWeight: FontWeight.w500,
@@ -1008,7 +1009,8 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
   var desc = '';
 
   var amount = '--';
-  var amountStr = (entity?.amountStr ?? '0') + ' RP';
+  String amountStr = FormatUtil.stringFormatCoinNum(entity?.amountStr ?? '0') ?? '--';
+   amountStr += ' RP';
 
   var luckState = RpLuckState.values[(entity?.luck ?? 0)];
   switch (luckState) {

@@ -20,6 +20,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_level_record_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_my_rp_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
@@ -581,6 +582,109 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _airdropWidget() {
+    var rpToday = '--';
+    var rpYesterday = '--';
+    var rpMissed = '--';
+
+    var rpTodayStr = '$rpToday RP';
+    var rpYesterdayStr = '$rpYesterday RP';
+    var rpMissedStr = '$rpMissed RP';
+
+    var airDropPercent = _rpStatistics?.rpContractInfo?.dropOnPercent ?? '--';
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: _cardPadding(),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(16.0)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      S.of(context).rp_airdrop,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: HexColor('#333333'),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 4,
+                      ),
+                      child: Text(
+                        S.of(context).rp_total_amount_percent(airDropPercent),
+                        style: TextStyle(
+                          color: DefaultColors.color999,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 16.0,
+                    bottom: 8.0,
+                  ),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'res/drawable/img_rp_airdrop.png',
+                        width: 80,
+                        height: 80,
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        S.of(context).rp_available_soon,
+                        style: TextStyle(
+                          fontSize: 13,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                InkWell(
+                  onTap: _navToMyRpRecords,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _contentColumn(
+                            rpTodayStr, S.of(context).rp_today_rp),
+                      ),
+                      _verticalLine(),
+                      Expanded(
+                        child: _contentColumn(
+                            rpYesterdayStr, S.of(context).rp_yesterday_rp),
+                      ),
+                      _verticalLine(),
+                      Expanded(
+                        child: _contentColumn(
+                            rpMissedStr, S.of(context).rp_missed),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  _airdropWidgetNew() {
     var rpTodayStr = '${_rpStatistics?.airdropInfo?.todayAmountStr} RP';
     var rpYesterdayStr =
         '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr} RP';
@@ -1121,7 +1225,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpRecordTabPage(),
+          builder: (context) => RpMyRpRecordsPage(),
           // builder: (context) => RpMyRpRecordsPage(),
         ),
       );

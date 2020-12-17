@@ -59,10 +59,10 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: HexColor('#F8F8F8'),
-      // appBar: BaseAppBar(
-      //   baseTitle: '我的红包',
-      //   backgroundColor: HexColor('#F8F8F8'),
-      // ),
+      appBar: BaseAppBar(
+        baseTitle: '我的红包',
+        backgroundColor: HexColor('#F8F8F8'),
+      ),
       body: _pageView(),
     );
   }
@@ -151,6 +151,8 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
 
+    String totalAmountStr = FormatUtil.stringFormatCoinNum(model?.totalAmountStr ?? "0") ?? '--';
+
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -185,52 +187,50 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
                   height: 28,
                 ),
               ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Wrap(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            right: 6,
-                          ),
-                          child: Text(
-                            title,
-                            style: TextStyle(
-                              color: HexColor("#333333"),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          right: 6,
                         ),
-                        Text(
-                          '${S.of(context).rp_total_pretext} ${model?.totalAmountStr ?? '0'} RP',
+                        child: Text(
+                          title,
                           style: TextStyle(
-                            color: HexColor("#999999"),
-                            fontSize: 12,
-                            fontWeight: FontWeight.normal,
+                            color: HexColor("#333333"),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
                           ),
-                          maxLines: 3,
-                          textAlign: TextAlign.right,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 6,
-                    ),
-                    Text(
-                      createdAtStr,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: HexColor('#999999'),
                       ),
-                      textAlign: TextAlign.left,
+                      Text(
+                        '${S.of(context).rp_total_pretext} $totalAmountStr RP',
+                        style: TextStyle(
+                          color: HexColor("#999999"),
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                        ),
+                        maxLines: 3,
+                        textAlign: TextAlign.right,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 6,
+                  ),
+                  Text(
+                    createdAtStr,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: HexColor('#999999'),
                     ),
-                  ],
-                ),
+                    textAlign: TextAlign.left,
+                  ),
+                ],
               ),
               // Spacer(),
               Expanded(
