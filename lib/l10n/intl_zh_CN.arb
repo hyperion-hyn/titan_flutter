@@ -2358,7 +2358,7 @@
   "@rp_swap_pool_transmit_func": {},
   "rp_today_rp": "今日红包",
   "@rp_today_rp": {},
-  "rp_total_amount_percent": "总量{percent}万RP",
+  "rp_total_amount_percent": "总量(RP): {percent}万",
   "@rp_total_amount_percent": {},
   "rp_total_available_transmit": "总可传导",
   "@rp_total_available_transmit": {},

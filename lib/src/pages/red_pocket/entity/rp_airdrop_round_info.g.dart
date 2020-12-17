@@ -10,6 +10,7 @@ RpAirdropRoundInfo _$RpAirdropRoundInfoFromJson(Map<String, dynamic> json) {
   return RpAirdropRoundInfo(
     json['start_time'] as int,
     json['end_time'] as int,
+    json['next_round_start_time'] as int,
     json['my_rp_count'] as int,
     json['my_rp_amount'] as String,
     json['total_rp_amount'] as String,
@@ -17,9 +18,11 @@ RpAirdropRoundInfo _$RpAirdropRoundInfoFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$RpAirdropRoundInfoToJson(RpAirdropRoundInfo instance) => <String, dynamic>{
+Map<String, dynamic> _$RpAirdropRoundInfoToJson(RpAirdropRoundInfo instance) =>
+    <String, dynamic>{
       'start_time': instance.startTime,
       'end_time': instance.endTime,
+      'next_round_start_time': instance.nextRoundStartTime,
       'my_rp_count': instance.myRpCount,
       'my_rp_amount': instance.myRpAmount,
       'total_rp_amount': instance.totalRpAmount,

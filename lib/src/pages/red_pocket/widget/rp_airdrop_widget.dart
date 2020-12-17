@@ -62,7 +62,6 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       StreamController.broadcast();
 
   int _nextRoundRemainTime = 0; // 下一轮剩余时间
-  bool _isPassedLatestRound = false;
 
   RpAirdropRoundInfo _latestRoundInfo;
   RPStatistics _rpStatistics;
@@ -154,17 +153,21 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
   void _resetNextRoundTime() {
     var now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    if (_latestRoundInfo?.startTime != null) {
-      if (_latestRoundInfo.startTime - now > 0) {
-        _nextRoundRemainTime = _latestRoundInfo.startTime - now;
-        nextRoundStreamController.add(_nextRoundRemainTime);
-      }
+    var currentRoundStartTime = _latestRoundInfo?.startTime ?? 0;
+    var currentRoundEndTime = _latestRoundInfo?.endTime ?? 0;
+    var nextRoundStartTime = _latestRoundInfo?.nextRoundStartTime ?? 0;
+
+    if (currentRoundStartTime - now > 0) {
+      _nextRoundRemainTime = currentRoundStartTime - now;
+      nextRoundStreamController.add(_nextRoundRemainTime);
     }
-    if ((_latestRoundInfo?.endTime ?? 0) >= now) {
-      _isPassedLatestRound = false;
-    } else {
-      _isPassedLatestRound = true;
+
+    ///已过当前轮，使用下一轮的startTime
+    if (now > currentRoundEndTime && now < nextRoundStartTime) {
+      _nextRoundRemainTime = nextRoundStartTime - now;
+      nextRoundStreamController.add(_nextRoundRemainTime);
     }
+
     if (mounted) setState(() {});
   }
 
@@ -217,6 +220,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
         children: [
           Column(
             children: [
+              _globalStaticsView(),
               _airdropAnim(),
               _airdropDetailView(),
               _rpInfoView(),
@@ -239,62 +243,127 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
   ///views
 
+  _globalStaticsView() {
+    var airDropPercent = _rpStatistics?.rpContractInfo?.dropOnPercent ?? '--';
+    var alreadyAirdrop = '--';
+
+    try {
+      alreadyAirdrop = FormatUtil.stringFormatCoinNum(
+        _rpStatistics?.airdropInfo?.totalAmountStr ?? '0',
+        decimal: 4,
+      );
+    } catch (e) {}
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16.0,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            '红包',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              color: HexColor('#333333'),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 4,
+            ),
+            child: Text(
+              S.of(context).rp_total_amount_percent(airDropPercent),
+              style: TextStyle(
+                color: DefaultColors.color999,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                '已累计红包(RP): $alreadyAirdrop ',
+                style: TextStyle(
+                  color: DefaultColors.color999,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   _airdropAnim() {
-    return StreamBuilder<AirdropState>(
-        stream: rpMachineStreamController.stream,
-        builder: (context, snapshot) {
-          _pulseController = null;
-          _spinController = null;
-          _lastAirdropState = snapshot.data;
-          var _currentAirdropState = snapshot.data;
-          /*if (_currentAirdropState == AirdropState.Waiting) {
-            return _waitingView();
-          } else */
-          if (_currentAirdropState == AirdropState.NotReceived) {
-            if (!bgmAudioPlayerPlaying) {
-              bgmAudioPlayer.play();
-              bgmAudioPlayerPlaying = true;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: StreamBuilder<AirdropState>(
+          stream: rpMachineStreamController.stream,
+          builder: (context, snapshot) {
+            _pulseController = null;
+            _spinController = null;
+            _lastAirdropState = snapshot.data;
+            var _currentAirdropState = snapshot.data;
+            /*if (_currentAirdropState == AirdropState.Waiting) {
+              return _waitingView();
+            } else */
+            if (_currentAirdropState == AirdropState.NotReceived) {
+              if (!bgmAudioPlayerPlaying) {
+                bgmAudioPlayer.play();
+                bgmAudioPlayerPlaying = true;
+              }
+              if (rewardAudioPlayerPlaying) {
+                rewardAudioPlayer.pause();
+                rewardAudioPlayerPlaying = false;
+              }
+              return _airdropNotReceivedView();
+            } else if (_currentAirdropState == AirdropState.Received) {
+              if (bgmAudioPlayerPlaying) {
+                bgmAudioPlayer.pause();
+                bgmAudioPlayerPlaying = false;
+              }
+              if (!rewardAudioPlayerPlaying) {
+                rewardAudioPlayer.seek(Duration(milliseconds: 0));
+                rewardAudioPlayer.play();
+                rewardAudioPlayerPlaying = true;
+              }
+              return _airdropReceivedView();
+            } else {
+              if (bgmAudioPlayerPlaying) {
+                bgmAudioPlayer.pause();
+                bgmAudioPlayerPlaying = false;
+              }
+              if (rewardAudioPlayerPlaying) {
+                rewardAudioPlayer.pause();
+                rewardAudioPlayerPlaying = false;
+              }
+              return _waitingView();
             }
-            if (rewardAudioPlayerPlaying) {
-              rewardAudioPlayer.pause();
-              rewardAudioPlayerPlaying = false;
-            }
-            return _airdropNotReceivedView();
-          } else if (_currentAirdropState == AirdropState.Received) {
-            if (bgmAudioPlayerPlaying) {
-              bgmAudioPlayer.pause();
-              bgmAudioPlayerPlaying = false;
-            }
-            if (!rewardAudioPlayerPlaying) {
-              rewardAudioPlayer.seek(Duration(milliseconds: 0));
-              rewardAudioPlayer.play();
-              rewardAudioPlayerPlaying = true;
-            }
-            return _airdropReceivedView();
-          } else {
-            if (bgmAudioPlayerPlaying) {
-              bgmAudioPlayer.pause();
-              bgmAudioPlayerPlaying = false;
-            }
-            if (rewardAudioPlayerPlaying) {
-              rewardAudioPlayer.pause();
-              rewardAudioPlayerPlaying = false;
-            }
-            return _waitingView();
-          }
-        });
+          }),
+    );
   }
 
   _waitingView() {
-    var _nextRoundStartTimeMillieSecond =
-        (_latestRoundInfo?.startTime ?? 0) * 1000;
+    var now = DateTime.now().millisecondsSinceEpoch;
+    var _nextRoundStartTimeMillieSecond = 0;
 
-    var _nextRoundTimeText =
-        _nextRoundStartTimeMillieSecond != 0 && !_isPassedLatestRound
-            ? FormatUtil.formatMinuteDate(
-                _nextRoundStartTimeMillieSecond,
-              )
-            : '--';
+    if (now > (_latestRoundInfo?.endTime ?? 0)) {
+      _nextRoundStartTimeMillieSecond =
+          (_latestRoundInfo?.nextRoundStartTime ?? 0) * 1000;
+    } else {
+      _nextRoundStartTimeMillieSecond =
+          (_latestRoundInfo?.startTime ?? 0) * 1000;
+    }
+
+    var _nextRoundTimeText = _nextRoundStartTimeMillieSecond != 0
+        ? FormatUtil.formatMinuteDate(
+            _nextRoundStartTimeMillieSecond,
+          )
+        : '--';
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -429,9 +498,13 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
   _airdropDetailView() {
     var myRpCount = _latestRoundInfo?.myRpCount ?? '--';
-    var myRpAmount = _latestRoundInfo?.myRpAmountStr ?? '--';
+    var myRpAmount = '--';
     var totalAmount = '--';
     try {
+      myRpAmount = FormatUtil.stringFormatCoinNum(
+        _latestRoundInfo?.myRpAmountStr ?? '0',
+        decimal: 4,
+      );
       totalAmount = FormatUtil.stringFormatCoinNum(
         _latestRoundInfo?.totalRpAmountStr ?? '0',
         decimal: 4,
@@ -442,7 +515,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: 16.0,
-        horizontal: 8.0,
+        horizontal: 16.0,
       ),
       child: Container(
         width: double.infinity,
@@ -564,10 +637,22 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
   }
 
   _rpInfoView() {
-    var rpTodayStr = '${_rpStatistics?.airdropInfo?.todayAmountStr ?? '--'} RP';
-    var rpYesterdayStr =
-        '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr ?? '--'} RP';
-    //var rpMissedStr = '${rpStatistics?.airdropInfo?.missRpAmountStr} RP';
+    var rpToday = '--';
+    var rpYesterday = '--';
+
+    try {
+      rpToday = FormatUtil.stringFormatCoinNum(
+        _rpStatistics?.airdropInfo?.todayAmountStr ?? '0',
+        decimal: 4,
+      );
+      rpYesterday = FormatUtil.stringFormatCoinNum(
+        _rpStatistics?.airdropInfo?.yesterdayRpAmountStr ?? '0',
+        decimal: 4,
+      );
+    } catch (e) {}
+
+    var rpTodayStr = '$rpToday RP';
+    var rpYesterdayStr = '$rpYesterday RP';
 
     return InkWell(
       onTap: _navToMyRpRecords,
@@ -610,7 +695,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
     // 在showtime时间段内
     if (_now >= _latestRoundStartTime && _now < _latestRoundEndTime) {
-      if (_now - _lastTimeCelebrateBegin < _rpCelebrateDuration) {
+      if ((_now - _lastTimeCelebrateBegin) < _rpCelebrateDuration) {
         if (_lastAirdropState != null &&
             _lastAirdropState != AirdropState.Received) {
           rpMachineStreamController.add(AirdropState.Received);
