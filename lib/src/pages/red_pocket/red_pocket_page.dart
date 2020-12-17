@@ -325,14 +325,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     ),
                   ],
                 ),
-                Text(
-                  '持币量级',
-                  style: TextStyle(
-                    color: HexColor('#333333'),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
                 Padding(
                   padding: const EdgeInsets.only(
                     left: 0,
@@ -486,7 +478,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       Row(
                         children: [
                           Text(
-                            '持币量级',
+                            '量级',
                             style: TextStyle(
                               color: HexColor('#333333'),
                               fontSize: 14,
