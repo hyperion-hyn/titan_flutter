@@ -495,28 +495,34 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
   _airdropNotReceivedView() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Container(
-        height: 160,
-        child: Stack(
-          children: [
-            Center(
-              child: StreamBuilder(
-                  stream: machineLightOnController.stream,
-                  builder: (context, snapshot) {
-                    var imgPath = 'res/drawable/bg_rp_airdrop_light_on.png';
-                    if ((snapshot?.data ?? false)) {
-                      imgPath = 'res/drawable/bg_rp_airdrop_light_off.png';
-                    }
-                    return Image.asset(imgPath);
-                  }),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            height: 160,
+            child: Stack(
+              children: [
+                Center(
+                  child: StreamBuilder(
+                      stream: machineLightOnController.stream,
+                      builder: (context, snapshot) {
+                        var imgPath = 'res/drawable/bg_rp_airdrop_light_on.png';
+                        if ((snapshot?.data ?? false)) {
+                          imgPath = 'res/drawable/bg_rp_airdrop_light_off.png';
+                        }
+                        return Image.asset(imgPath);
+                      }),
+                ),
+                Center(
+                  child: FadeAnimRP(
+                    controller: _fadeAnimController,
+                  ),
+                ),
+              ],
             ),
-            Center(
-              child: FadeAnimRP(
-                controller: _fadeAnimController,
-              ),
-            ),
-          ],
-        ),
+          ),
+          Text('正在空投中...')
+        ],
       ),
     );
   }
