@@ -931,7 +931,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
         ),
         ClickOvalButton(
           S.of(context).confirm,
-          _retrieveAction,
+          _withdrawAction,
           width: 115,
           height: 36,
           fontSize: 16,
@@ -942,7 +942,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     );
   }
 
-  void _retrieveAction() async {
+  void _withdrawAction() async {
     Navigator.pop(context, true);
 
     var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
