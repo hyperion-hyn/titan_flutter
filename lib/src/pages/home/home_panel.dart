@@ -18,6 +18,7 @@ import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/global_data/global_data.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
+import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
@@ -945,6 +946,14 @@ class HomePanelState extends State<HomePanel> {
         fromArr = fromArr[1].split("&name=");
         if(fromArr[0].length > 0 && fromArr[1].length > 0){
           showInviteDialog(context,fromArr[0],fromArr[1]);
+        }
+      }
+    } else if (scanStr.contains(PromoteQrCodePage.downloadDomain)) {
+      var fromArr = scanStr.split("from=");
+      if (fromArr[1].length > 0) {
+        fromArr = fromArr[1].split("&name=");
+        if (fromArr[0].length > 0 && fromArr[1].length > 0) {
+          showRichInviteDialog(context, fromArr[0], fromArr[1], '');
         }
       }
     } else if (scanStr.contains("http") || scanStr.contains("https")) {

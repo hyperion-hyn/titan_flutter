@@ -18,11 +18,11 @@ import 'package:url_launcher/url_launcher.dart';
 class AboutMePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _AboueMeState();
+    return _AboutMeState();
   }
 }
 
-class _AboueMeState extends BaseState<AboutMePage> {
+class _AboutMeState extends BaseState<AboutMePage> {
   String version = "";
 
   @override

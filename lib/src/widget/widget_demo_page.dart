@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:titan/src/pages/atlas_map/atlas/atlas_node_tabs_page.dart';
-import 'package:titan/src/widget/clip_tab_bar.dart';
-import 'package:titan/src/widget/map3_nodes_widget.dart';
+import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
 
 import 'atlas_map_widget.dart';
+import 'clip_tab_bar.dart';
 
 class WidgetDemoPage extends StatefulWidget {
   WidgetDemoPage();
@@ -14,10 +13,12 @@ class WidgetDemoPage extends StatefulWidget {
   }
 }
 
-class _WidgetDemoPageState extends State<WidgetDemoPage> {
+class _WidgetDemoPageState extends State<WidgetDemoPage>
+    with SingleTickerProviderStateMixin {
   ///
   Widget child = Container();
   String content = '';
+  bool isShow = false;
 
   @override
   void initState() {
@@ -42,27 +43,46 @@ class _WidgetDemoPageState extends State<WidgetDemoPage> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            _tabsView(),
-            Container(
-              color: Colors.black.withOpacity(0.5),
-              child: _tab(),
-            ),
-            ClipTabBar(
-              children: [
-                Text('0'),
-                Text('1'),
-              ],
-              onTabChanged: (index) {
-                setState(() {
-                  content = index.toString();
-                });
-              },
-            ),
-            Text(content)
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              _tabsView(),
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: _tab(),
+              ),
+              ClipTabBar(
+                children: [
+                  Text('0'),
+                  Text('1'),
+                ],
+                onTabChanged: (index) {
+                  setState(() {
+                    content = index.toString();
+                  });
+                },
+              ),
+              Text(content),
+              Container(
+                child: Visibility(
+                  visible: isShow,
+                  child: Image.asset(
+                    'res/drawable/rp_airdrop_anim.gif',
+                  ),
+                ),
+              ),
+              RaisedButton(
+                onPressed: () {
+                  setState(() {
+                    isShow = !isShow;
+                  });
+                },
+                child: Text('Anim'),
+              ),
+              RPAirdropWidget()
+            ],
+          ),
         ),
       ),
     );

@@ -1,12 +1,11 @@
 import 'dart:async';
-
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -14,6 +13,8 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/rp/bloc/bloc.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -35,9 +36,8 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'entity/rp_util.dart';
 
 class RpTransmitPage extends StatefulWidget {
-  final RPStatistics rpStatistics;
 
-  RpTransmitPage(this.rpStatistics);
+  RpTransmitPage();
 
   @override
   State<StatefulWidget> createState() {
@@ -65,11 +65,10 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   int _currentPage = 1;
   List<RpStakingInfo> _dataList = [];
 
+
   @override
   void initState() {
     super.initState();
-
-    _rpStatistics = widget.rpStatistics;
 
     _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
   }
@@ -81,6 +80,13 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
     super.onCreated();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _rpStatistics = RedPocketInheritedModel.of(context).rpStatistics;
   }
 
   @override
@@ -686,9 +692,12 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   void getNetworkData() async {
     _currentPage = 1;
     try {
-      var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
-      _rpStatistics = await _rpApi.getRPStatistics(_address);
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(UpdateStatisticsEvent());
+      }
+
+      var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
       if (mounted) {
         setState(() {
@@ -922,7 +931,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
         ),
         ClickOvalButton(
           S.of(context).confirm,
-          _retrieveAction,
+          _withdrawAction,
           width: 115,
           height: 36,
           fontSize: 16,
@@ -933,7 +942,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     );
   }
 
-  void _retrieveAction() async {
+  void _withdrawAction() async {
     Navigator.pop(context, true);
 
     var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
@@ -983,7 +992,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpTransmitRecordsPage(_rpStatistics),
+        builder: (context) => RpTransmitRecordsPage(),
       ),
     );
   }

@@ -57,13 +57,13 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
               if (_lastCancelBuildNumber != newBuildNumber && !_lastHaveVisible) {
                 _showUpdateDialog(state.appData.updateEntity);
               } else {
-                print(
-                    "_lastHaveVisible:$_lastHaveVisible, _lastCancelBuildNumber:$_lastCancelBuildNumber, newBuildNumber:$newBuildNumber");
+                // print(
+                //     "_lastHaveVisible:$_lastHaveVisible, _lastCancelBuildNumber:$_lastCancelBuildNumber, newBuildNumber:$newBuildNumber");
               }
             } else {
               print('[updater] 已经是最新版本');
               if (state.isManual) {
-                Fluttertoast.showToast(msg: S.of(context).latest_version_tip);
+                Fluttertoast.showToast(msg: S.of(context).latest_version_tip, gravity: ToastGravity.CENTER,);
               }
             }
           }

@@ -684,7 +684,7 @@ class _ExchangeDepositConfirmPageState
           );
         }
       } else {
-        await _transferErc20(
+        String txHash = await _transferErc20(
           walletPassword,
           ConvertTokenUnit.strToBigInt(
             widget.transferAmount,
@@ -693,6 +693,12 @@ class _ExchangeDepositConfirmPageState
           widget.exchangeAddress,
           activatedWallet.wallet,
         );
+        if(txHash == null){
+          setState(() {
+            isTransferring = false;
+          });
+          return;
+        }
       }
 
       var msg;
@@ -742,7 +748,7 @@ class _ExchangeDepositConfirmPageState
         'ETH transaction committed，txhash $txHash exchangeAddress: $toAddress walletAddress: ${activatedWallet.wallet.getEthAccount().address}');
   }
 
-  Future _transferErc20(
+  Future<String> _transferErc20(
     String password,
     BigInt amount,
     String toAddress,
@@ -760,5 +766,6 @@ class _ExchangeDepositConfirmPageState
 
     logger.i(
         'HYN transaction committed，txhash $txHash exchangeAddress: $toAddress walletAddress: ${activatedWallet.wallet.getEthAccount().address}');
+    return txHash;
   }
 }

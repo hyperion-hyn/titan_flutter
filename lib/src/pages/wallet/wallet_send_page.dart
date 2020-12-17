@@ -46,7 +46,6 @@ class _WalletSendState extends BaseState<WalletSendPage> {
   final TextEditingController _amountController = TextEditingController();
 
   final _fromKey = GlobalKey<FormState>();
-
   double _notionalValue = 0;
 
   @override
@@ -81,6 +80,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
   @override
   Widget build(BuildContext context) {
     var activatedQuoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var quoteSign = activatedQuoteSign?.sign?.sign;
 
@@ -175,6 +175,8 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                                 return addressErrorHint;
                               } else if (!_basicAddressReg.hasMatch(address)) {
                                 return addressErrorHint;
+                              } else if (((activatedWallet?.wallet?.getAtlasAccount()?.address ?? null) != null) && WalletUtil.ethAddressToBech32Address(activatedWallet.wallet.getAtlasAccount().address) == value) {
+                                return "不能转给自己";
                               }
                               return null;
                             },

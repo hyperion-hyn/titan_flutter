@@ -42,6 +42,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
   WalletVo activityWallet;
   final ShotController _shotController = new ShotController();
   ScrollController scrollController = ScrollController();
+  bool _isSharing = false;
 
   @override
   void initState() {
@@ -59,7 +60,6 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
     String ethWalletAddress = activityWallet.wallet.getAtlasAccount().address;
     String walletAddress = WalletUtil.ethAddressToBech32Address(ethWalletAddress);
     String walletName = activityWallet.wallet.keystore.name;
-
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -90,7 +90,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   SizedBox(
-                                    height: 21,
+                                    height: 25,
                                   ),
                                   Container(
                                       width: 60,
@@ -111,7 +111,9 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                     height: 60,
                                   ),*/
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 2, bottom: 17.0),
+                                    padding: const EdgeInsets.only(
+                                      top: 2,
+                                    ),
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -135,64 +137,36 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                       ],
                                     ),
                                   ),
-                                  SizedBox(
-                                    width: 230,
+                                  Container(
+                                    //color: Colors.red,
                                     child: Html(
                                       data: S.of(context).invite_come_receive_red_pocket,
                                       style: {
-                                        "p": Style(
-                                          textAlign: TextAlign.center
-                                        ),
+                                        "p": Style(textAlign: TextAlign.center),
                                         "span": Style(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: FontSize(22),
+                                          fontSize: FontSize(20),
                                         )
                                       },
                                     ),
                                   ),
-                                  /*SizedBox(
-                                    width: 230,
-                                    child: RichText(
-                                      textAlign: TextAlign.center,
-                                      text: TextSpan(
-                                          text: "邀请你一起来海伯利安领",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 22,
-                                            color: DefaultColors.color333,
-                                          ),
-                                          children: [
-                                            TextSpan(
-                                              text: "红包",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 22,
-                                                color: HexColor("#FF3B3B"),
-                                              ),
-                                            ),
-                                            TextSpan(
-                                              text: "啦!",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 22,
-                                                color: DefaultColors.color333,
-                                              ),
-                                            ),
-                                          ]),
-                                    ),
-                                  ),*/
+
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 14, bottom: 21.0),
+                                    padding: const EdgeInsets.only(top: 10.0),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: <Widget>[
-                                        Image.asset(
-                                          "res/drawable/ic_rp_invite_friend_red_package.png",
-                                          width: 208,
-                                          height: 267,
+                                        Container(
+                                          //color: Colors.red,
+                                          child: Image.asset(
+                                            "res/drawable/ic_rp_invite_friend_red_package.png",
+                                            width: 238,
+                                            height: 336,
+                                            fit: BoxFit.fill,
+                                          ),
                                         ),
                                         Positioned(
-                                          bottom: 42,
+                                          top: 162,
                                           child: Container(
                                             decoration: BoxDecoration(
                                                 color: Colors.white,
@@ -203,15 +177,55 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                               padding: const EdgeInsets.all(9),
                                               data:
                                                   "${RpInviteFriendPage.shareDomain}?from=$walletAddress&name=$walletName",
-                                              size: 131,
+                                              size: 84,
                                             ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          bottom: 36,
+                                          left: 29,
+                                          right: 29,
+                                          child: Text(
+                                            "全球首个基于HRC30交易结构的应用案例",
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: HexColor('#FFFFFF'),
+                                            ),
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
                                           ),
                                         )
                                       ],
                                     ),
                                   ),
                                   SizedBox(
-                                    height: 21,
+                                    height: 25,
+                                  ),
+                                  Visibility(
+                                    visible: !_isSharing,
+                                    child: ClickOvalButton(
+                                      S.of(context).share,
+                                      () async {
+                                        if (mounted) {
+                                          setState(() {
+                                            scrollController.jumpTo(scrollController.position.maxScrollExtent);
+                                            _isSharing = true;
+                                          });
+                                        }
+
+                                        Future.delayed(Duration(milliseconds: 111)).then((_) async {
+                                          await _shareQr(context);
+                                        });
+                                      },
+                                      btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
+                                      fontSize: 16,
+                                      width: 200,
+                                      height: 38,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 25,
                                   ),
                                 ],
                               ),
@@ -221,20 +235,10 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                       ],
                     ),
                   ),
-                  ClickOvalButton(
-                    S.of(context).share,
-                    () async {
-                      scrollController.jumpTo(scrollController.position.maxScrollExtent);
-                      await _shareQr(context);
-                    },
-                    btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
-                    fontSize: 16,
-                    width: 200,
-                    height: 38,
-                  )
                 ],
               ),
             ),
+            /*
             Container(
               height: 60,
               child: Stack(
@@ -258,7 +262,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                   )*/
                 ],
               ),
-            )
+            ),*/
           ],
         ));
   }
@@ -266,6 +270,12 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
   Future _shareQr(BuildContext context) async {
     Uint8List imageByte = await _shotController.makeImageUint8List();
     await Share.file(S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
+
+    if (mounted) {
+      setState(() {
+        _isSharing = false;
+      });
+    }
   }
 }
 
@@ -357,7 +367,7 @@ void showInviteDialog(BuildContext context, String inviterAddress, String wallet
 
             try {
               String inviteResult = await _rpApi.postRpInviter(inviterAddress, walletVo.wallet);
-              if (inviteResult != null && inviteResult.isNotEmpty) {
+              if (inviteResult != null) {
                 Fluttertoast.showToast(msg: S.of(context).invitation_success);
                 Navigator.push(
                   context,
