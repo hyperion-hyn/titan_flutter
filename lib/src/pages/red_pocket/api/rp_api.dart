@@ -285,14 +285,14 @@ class RPApi {
     );
   }
 
-  ///我的红包列表
+  ///我的红包列表，待启动
   Future<RpMyRpRecordEntity> getMyRpRecordListPending(
       String address, {
         int size = 200,
         pagingKey = '',
       }) async {
     return await RPHttpCore.instance.getEntity(
-      '/v1/rp/redpocket/list/$address',
+      '/v1/rp/redpocket/list/$address/pending',
       EntityFactory<RpMyRpRecordEntity>((json) {
         return RpMyRpRecordEntity.fromJson(json);
       }),

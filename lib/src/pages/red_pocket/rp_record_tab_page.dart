@@ -72,8 +72,8 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
           ),
           body: TabBarView(
             children: [
-              RpMyRpRecordsPage(),
-              RpMyRpRecordsPage(),
+              RpMyRpRecordsPage(state: 1,),
+              RpMyRpRecordsPage(state: 2,),
             ],
           ),
         ),

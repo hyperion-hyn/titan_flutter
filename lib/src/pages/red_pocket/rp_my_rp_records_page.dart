@@ -15,7 +15,8 @@ import 'package:titan/src/pages/red_pocket/red_pocket_detail_page.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 class RpMyRpRecordsPage extends StatefulWidget {
-  RpMyRpRecordsPage();
+  final int state; // 1: 已经打开，2：未打开
+  RpMyRpRecordsPage({this.state});
 
   @override
   State<StatefulWidget> createState() {
@@ -277,7 +278,12 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
 
   void getNetworkData() async {
     try {
-      var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
+      var netData;
+      if (widget.state == 1) {
+        netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
+      } else if (widget.state == 2) {
+        netData = await _rpApi.getMyRpRecordListPending(_address, pagingKey: _currentPageKey);
+      }
 
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
@@ -303,7 +309,12 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
     }
 
     try {
-      var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
+      var netData;
+      if (widget.state == 1) {
+        netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
+      } else if (widget.state == 2) {
+        netData = await _rpApi.getMyRpRecordListPending(_address, pagingKey: _currentPageKey);
+      }
 
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
