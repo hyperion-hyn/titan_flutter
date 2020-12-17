@@ -68,7 +68,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
   int _lastMinuteRpCount = 0; //最近一次获得的rp总奖励
   int _lastTimeCelebrateBegin = 0;
-  final RP_Celebrate_Duration = 5;
+  final _rpCelebrateDuration = 5;
 
   var _lastAirdropState;
   var _isLightOn = false;
@@ -164,15 +164,17 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
         _airdropInfoTimer.cancel();
       }
     }
-
     if (_countDownTimer != null) {
       if (_countDownTimer.isActive) {
         _countDownTimer.cancel();
       }
     }
-
+    if (_animTimer != null) {
+      if (_animTimer.isActive) {
+        _animTimer.cancel();
+      }
+    }
     _pulseController?.dispose();
-
     rpMachineStreamController?.close();
     nextRoundStreamController?.close();
     machineLightOnController?.close();
@@ -232,6 +234,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
   }
 
   _waitingView() {
+    var _nextRoundStartTimeMillieSecond =
+        (_latestRoundInfo?.startTime ?? 0) * 1000;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -257,7 +261,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                       ),
                       SizedBox(height: 4),
                       Text(
-                        '12:00',
+                        '${_nextRoundStartTimeMillieSecond != 0 ? FormatUtil.formatMinuteDate(
+                            _nextRoundStartTimeMillieSecond,
+                          ) : '--'}',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -277,13 +283,12 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
           StreamBuilder(
               stream: nextRoundStreamController.stream,
               builder: (context, snapshot) {
-                if (snapshot == null) {
+                if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
-                } else if (snapshot?.data == 0) {
-                  return Text('准备开始...');
                 } else {
-                  var nextRoundText =
-                      '下轮预估 ${FormatUtil.formatTimer(_nextRoundRemainTime)}';
+                  var nextRoundText = '下轮预估 ${FormatUtil.formatTimer(
+                    _nextRoundRemainTime,
+                  )}';
                   return Text(nextRoundText);
                 }
               }),
@@ -552,7 +557,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
     // 在showtime时间段内
     if (_now >= _latestRoundStartTime && _now < _latestRoundEndTime) {
-      if (_now - _lastTimeCelebrateBegin < RP_Celebrate_Duration) {
+      if (_now - _lastTimeCelebrateBegin < _rpCelebrateDuration) {
         if (_lastAirdropState != null &&
             _lastAirdropState != AirdropState.Received) {
           rpMachineStreamController.add(AirdropState.Received);
