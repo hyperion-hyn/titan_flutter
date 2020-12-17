@@ -41,14 +41,19 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   var _address = "";
 
   List<RpOpenRecordEntity> _dataList = List();
-  List<RpOpenRecordEntity> get _filterDataList => _dataList.where((element) => element.role == 3).toList();
-  List<RpOpenRecordEntity> get _manageDataList => _dataList.where((element) => element.role != 3).toList();
+
+  List<RpOpenRecordEntity> get _filterDataList =>
+      _dataList.where((element) => element.role == 3).toList();
+
+  List<RpOpenRecordEntity> get _manageDataList =>
+      _dataList.where((element) => element.role != 3).toList();
 
   RpOpenRecordEntity _detailEntity;
 
   RedPocketType get _rpType => RedPocketType.values[_detailEntity?.type ?? 0];
 
   Map<String, dynamic> _currentPageKey;
+
   bool get _txHashIsEmpty => (_detailEntity?.txHash ?? '').isEmpty;
 
   @override
@@ -57,7 +62,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
     _detailEntity = widget.rpOpenRecordEntity;
 
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   }
 
@@ -299,12 +305,14 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                       height: 28,
                     ),
                   ),
-                  Text(
-                    amount,
-                    style: TextStyle(
-                      color: HexColor("#E3A900"),
-                      fontSize: 26,
-                      fontWeight: FontWeight.w600,
+                  Expanded(
+                    child: Text(
+                      amount,
+                      style: TextStyle(
+                        color: HexColor("#E3A900"),
+                        fontSize: 26,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   Image.asset(
@@ -510,7 +518,9 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     var amount = rpInfoModel.amount;
 
     var userAddress = model?.address ?? '';
-    bool isMe = _address.isNotEmpty && userAddress.isNotEmpty && (userAddress.toLowerCase() == _address.toLowerCase());
+    bool isMe = _address.isNotEmpty &&
+        userAddress.isNotEmpty &&
+        (userAddress.toLowerCase() == _address.toLowerCase());
 
     return InkWell(
       onTap: _txHashIsEmpty ? null : _navToDetailAction,
@@ -596,7 +606,6 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                           ),
                           textAlign: TextAlign.left,
                         ),
-
                       ],
                     ),
                   ),
@@ -638,7 +647,9 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                         desc,
                         style: TextStyle(
                           fontSize: 10,
-                          color: luckState == RpLuckState.BEST ? HexColor('#F0BE00') : HexColor('#999999'),
+                          color: luckState == RpLuckState.BEST
+                              ? HexColor('#F0BE00')
+                              : HexColor('#999999'),
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -760,11 +771,13 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         _manageFeeAmount = valueByDecimal;
       }
     });
-    var _manageFeeAmountStr = FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + ' RP';
-    var _burnAmountStr = FormatUtil.stringFormatCoinNum(_burnAmount.toString()) + ' RP';
+    var _manageFeeAmountStr =
+        FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + ' RP';
+    var _burnAmountStr =
+        FormatUtil.stringFormatCoinNum(_burnAmount.toString()) + ' RP';
 
-
-    Widget rowText(String imageName, String title, String amount, {bool isRebuild = false}) {
+    Widget rowText(String imageName, String title, String amount,
+        {bool isRebuild = false}) {
       return Expanded(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -773,7 +786,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
               'res/drawable/$imageName.png',
               width: 16,
               height: 16,
-              color: isRebuild?HexColor('#FFFF5151'):null,
+              color: isRebuild ? HexColor('#FFFF5151') : null,
             ),
             Padding(
               padding: const EdgeInsets.only(
@@ -825,7 +838,9 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             rowText('rp_manage_fee', '管理费', _manageFeeAmountStr),
-            SizedBox(width: 20,),
+            SizedBox(
+              width: 20,
+            ),
             rowText('ic_burn', '燃烧', _burnAmountStr, isRebuild: true),
           ],
         ),
@@ -845,7 +860,9 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         _manageFeeAmount = valueByDecimal;
       }
     });
-    var _manageFeeAmountStr = '管理费 ' + FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + ' RP';
+    var _manageFeeAmountStr = '管理费 ' +
+        FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) +
+        ' RP';
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -982,11 +999,14 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 }
 
-List<RpOpenRecordEntity> filterRpOpenDataList(List<RpOpenRecordEntity> dataList) {
+List<RpOpenRecordEntity> filterRpOpenDataList(
+    List<RpOpenRecordEntity> dataList) {
   List<RpOpenRecordEntity> tempList = dataList?.where((element) {
-        var amountValue = Decimal.tryParse(element?.amountStr ?? '0') ?? Decimal.zero;
+        var amountValue =
+            Decimal.tryParse(element?.amountStr ?? '0') ?? Decimal.zero;
         var luckState = RpLuckState.values[(element?.luck ?? 0)];
-        return !(luckState == RpLuckState.UN_LUCKY && amountValue <= Decimal.zero);
+        return !(luckState == RpLuckState.UN_LUCKY &&
+            amountValue <= Decimal.zero);
       })?.toList() ??
       [];
 

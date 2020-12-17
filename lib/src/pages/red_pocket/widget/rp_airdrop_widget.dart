@@ -332,7 +332,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 rewardAudioPlayerPlaying = true;
               }
               return _airdropReceivedView();
-            } else {
+            } else if (_currentAirdropState == AirdropState.Waiting) {
               if (bgmAudioPlayerPlaying) {
                 bgmAudioPlayer.pause();
                 bgmAudioPlayerPlaying = false;
@@ -342,8 +342,33 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 rewardAudioPlayerPlaying = false;
               }
               return _waitingView();
+            } else {
+              return _loadingView();
             }
           }),
+    );
+  }
+
+  _loadingView() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        height: 160,
+        child: Stack(
+          children: [
+            Center(
+              child: Image.asset(
+                'res/drawable/bg_rp_airdrop.png',
+              ),
+            ),
+            Center(
+                child: Text(
+              '加载中...',
+              style: TextStyle(color: Colors.white),
+            )),
+          ],
+        ),
+      ),
     );
   }
 
