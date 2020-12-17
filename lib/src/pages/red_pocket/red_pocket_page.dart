@@ -69,6 +69,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     super.didChangeDependencies();
 
     _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
+    _rpStatistics = RedPocketInheritedModel.of(context).rpStatistics;
   }
 
   @override
@@ -1065,7 +1066,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpTransmitPage(_rpStatistics),
+          builder: (context) => RpTransmitPage(),
         ),
       );
     } else {
@@ -1079,7 +1080,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpTransmitRecordsPage(_rpStatistics),
+          builder: (context) => RpTransmitRecordsPage(),
         ),
       );
     } else {
@@ -1146,16 +1147,16 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   _requestData() async {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
-
     var _address = activeWallet?.wallet?.getAtlasAccount()?.address;
+
     try {
-      _rpStatistics = await _rpApi.getRPStatistics(
-        _address,
-      );
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(UpdateStatisticsEvent());
+      }
 
       if (context != null) {
         BlocProvider.of<RedPocketBloc>(context)
-            .add(UpdateMyLevelInfoEntityEvent());
+            .add(UpdateMyLevelInfoEvent());
       }
 
       if (context != null) {

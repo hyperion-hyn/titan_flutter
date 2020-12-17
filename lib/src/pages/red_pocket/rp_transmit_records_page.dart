@@ -12,14 +12,11 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
-
 import 'entity/rp_release_info.dart';
-import 'entity/rp_statistics.dart';
 
 class RpTransmitRecordsPage extends StatefulWidget {
-  final RPStatistics rpStatistics;
 
-  RpTransmitRecordsPage(this.rpStatistics);
+  RpTransmitRecordsPage();
 
   @override
   State<StatefulWidget> createState() {

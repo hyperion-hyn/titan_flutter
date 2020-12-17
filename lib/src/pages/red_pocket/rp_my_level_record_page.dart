@@ -755,7 +755,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     try {
       ///Update level info
       if (context != null) {
-        BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent());
+        BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEvent());
       }
 
       var netData = await _rpApi.getRpHoldingHistory(

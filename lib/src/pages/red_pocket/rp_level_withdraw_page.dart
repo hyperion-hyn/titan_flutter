@@ -483,7 +483,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
   Future getNetworkData() async {
     try {
       if (context != null) {
-        BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent());
+        BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEvent());
       }
 
       if (context != null) {

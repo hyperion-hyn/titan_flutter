@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -8,6 +9,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -38,6 +40,8 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
   var _address = "";
   RpPromotionRuleEntity _promotionRuleEntity;
+  RPStatistics _rpStatistics;
+
   List<LevelRule> get _dynamicDataList => (_promotionRuleEntity?.dynamicList ?? []).reversed.toList();
   List<LevelRule> get _staticDataList => (_promotionRuleEntity?.static ?? []).reversed.toList();
 
@@ -92,7 +96,9 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     super.didChangeDependencies();
 
     _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
+    _rpStatistics = RedPocketInheritedModel.of(context).rpStatistics;
   }
+
 
   @override
   void dispose() {
@@ -608,6 +614,11 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
   void getNetworkData() async {
     try {
+
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(UpdateStatisticsEvent());
+      }
+
       var netData = await _rpApi.getRPPromotionRule(_address);
 
       if (netData?.static?.isNotEmpty ?? false) {
