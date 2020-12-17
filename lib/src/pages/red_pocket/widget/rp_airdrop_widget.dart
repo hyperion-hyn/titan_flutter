@@ -42,7 +42,8 @@ class RPAirdropWidget extends StatefulWidget {
   }
 }
 
-class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTickerProviderStateMixin {
+class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
+    with SingleTickerProviderStateMixin {
   Timer _airdropInfoTimer;
   Timer _countDownTimer;
   Timer _animTimer;
@@ -53,9 +54,12 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   // AirdropState _currentAirdropState = AirdropState.Waiting;
 
-  StreamController<AirdropState> rpMachineStreamController = StreamController.broadcast();
-  StreamController<int> nextRoundStreamController = StreamController.broadcast();
-  StreamController<bool> machineLightOnController = StreamController.broadcast();
+  StreamController<AirdropState> rpMachineStreamController =
+      StreamController.broadcast();
+  StreamController<int> nextRoundStreamController =
+      StreamController.broadcast();
+  StreamController<bool> machineLightOnController =
+      StreamController.broadcast();
 
   int _nextRoundRemainTime = 0; // 下一轮剩余时间
   bool _isPassedLatestRound = false;
@@ -65,7 +69,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   int _lastMinuteRpCount = 0; //最近一次获得的rp总奖励
   int _lastTimeCelebrateBegin = 0;
-  final RP_Celebrate_Duration = 6;
+  final _rpCelebrateDuration = 6;
 
   var _lastAirdropState;
   var _isLightOn = false;
@@ -92,25 +96,27 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   @override
   void onCreated() async {
-    await _mockReqTime();
+    //await _mockReqTime();
+    await _requestData();
 
     _setUpController();
     _setUpTimer();
 
-    rewardAudioPlayer.open(rewardAudio, autoStart: false, loopMode: LoopMode.single);
+    rewardAudioPlayer.open(rewardAudio,
+        autoStart: false, loopMode: LoopMode.single);
     bgmAudioPlayer.open(bgmAudio, autoStart: false, loopMode: LoopMode.single);
   }
 
-  Future _mockReqTime() async {
-    _lastMinuteRpCount = 0;
-    _lastTimeCelebrateBegin = 0;
-    _rpApi.count = 0;
-    _rpApi.startTime = DateTime.now().millisecondsSinceEpoch ~/ 1000 + 10;
-    _rpApi.endTime = DateTime.now().millisecondsSinceEpoch ~/ 1000 + 30;
-
-    await _requestData();
-    _resetNextRoundTime();
-  }
+  // Future _mockReqTime() async {
+  //   _lastMinuteRpCount = 0;
+  //   _lastTimeCelebrateBegin = 0;
+  //   _rpApi.count = 0;
+  //   _rpApi.startTime = DateTime.now().millisecondsSinceEpoch ~/ 1000 + 10;
+  //   _rpApi.endTime = DateTime.now().millisecondsSinceEpoch ~/ 1000 + 30;
+  //
+  //   await _requestData();
+  //   _resetNextRoundTime();
+  // }
 
   _setUpTimer() {
     // 定时检查是否获得新红包
@@ -187,13 +193,17 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
         _animTimer.cancel();
       }
     }
+
     _pulseController?.dispose();
+    _fadeAnimController?.dispose();
+    _spinController?.dispose();
+
     rpMachineStreamController?.close();
     nextRoundStreamController?.close();
     machineLightOnController?.close();
 
-    rewardAudioPlayer.dispose();
-    bgmAudioPlayer.dispose();
+    rewardAudioPlayer?.dispose();
+    bgmAudioPlayer?.dispose();
 
     super.dispose();
   }
@@ -363,19 +373,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                     return Image.asset(imgPath);
                   }),
             ),
-            SpinPerfect(
-              manualTrigger: true,
-              controller: (controller) {
-                _spinController = controller;
-              },
-              child: Center(
-                child: Image.asset(
-                  'res/drawable/rp_airdrop_vertex.png',
-                  height: 50,
-                  width: 50,
-                ),
-              ),
-            ),
+            //SpinVertexAnim(),
             Center(
               child: Pulse(
                 manualTrigger: true,
@@ -432,7 +430,14 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
   _airdropDetailView() {
     var myRpCount = _latestRoundInfo?.myRpCount ?? '--';
     var myRpAmount = _latestRoundInfo?.myRpAmountStr ?? '--';
-    var totalAmount = _latestRoundInfo?.totalRpAmountStr ?? '--';
+    var totalAmount = '--';
+    try {
+      totalAmount = FormatUtil.stringFormatCoinNum(
+        _latestRoundInfo?.totalRpAmountStr ?? '0',
+        decimal: 4,
+      );
+    } catch (e) {}
+
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -441,7 +446,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
       ),
       child: Container(
         width: double.infinity,
-        decoration: BoxDecoration(color: HexColor('#FFFFF5F5'), borderRadius: BorderRadius.circular(4.0)),
+        decoration: BoxDecoration(
+            color: HexColor('#FFFFF5F5'),
+            borderRadius: BorderRadius.circular(4.0)),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
@@ -451,10 +458,11 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
             children: [
               InkWell(
                 onTap: () {
-                  _mockReqTime();
+                  //_mockReqTime();
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 8),
+                  padding: const EdgeInsets.only(
+                      left: 8, top: 8, bottom: 8, right: 8),
                   child: Image.asset(
                     'res/drawable/red_pocket.png',
                     width: 40,
@@ -492,7 +500,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                               ),
                               TextSpan(
                                 text: ' $myRpCount ',
-                                style: TextStyle(fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: '个红包 共',
@@ -500,7 +511,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                               ),
                               TextSpan(
                                 text: ' $myRpAmount ',
-                                style: TextStyle(fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: 'RP',
@@ -551,7 +565,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   _rpInfoView() {
     var rpTodayStr = '${_rpStatistics?.airdropInfo?.todayAmountStr ?? '--'} RP';
-    var rpYesterdayStr = '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr ?? '--'} RP';
+    var rpYesterdayStr =
+        '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr ?? '--'} RP';
     //var rpMissedStr = '${rpStatistics?.airdropInfo?.missRpAmountStr} RP';
 
     return InkWell(
@@ -586,7 +601,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     int _now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     int _latestRoundStartTime = _latestRoundInfo?.startTime ?? 0;
     int _latestRoundEndTime = _latestRoundInfo?.endTime ?? 0;
-    int _currentRoundReceivedCount = _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
+    int _currentRoundReceivedCount =
+        _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
     if (_currentRoundReceivedCount > _lastMinuteRpCount) {
       _lastMinuteRpCount = _currentRoundReceivedCount;
       _lastTimeCelebrateBegin = _now;
@@ -594,8 +610,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
     // 在showtime时间段内
     if (_now >= _latestRoundStartTime && _now < _latestRoundEndTime) {
-      if (_now - _lastTimeCelebrateBegin < RP_Celebrate_Duration) {
-        if (_lastAirdropState != null && _lastAirdropState != AirdropState.Received) {
+      if (_now - _lastTimeCelebrateBegin < _rpCelebrateDuration) {
+        if (_lastAirdropState != null &&
+            _lastAirdropState != AirdropState.Received) {
           rpMachineStreamController.add(AirdropState.Received);
         }
       } else if (_lastAirdropState != AirdropState.NotReceived) {
@@ -608,7 +625,11 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   _requestData() async {
     try {
-      var _address = WalletInheritedModel.of(context).activatedWallet?.wallet?.getAtlasAccount()?.address;
+      var _address = WalletInheritedModel.of(context)
+          .activatedWallet
+          ?.wallet
+          ?.getAtlasAccount()
+          ?.address;
 
       if (_address != null) {
         _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
@@ -734,5 +755,55 @@ class FadeAnimRP extends StatelessWidget {
       builder: _buildAnimation,
       animation: controller,
     );
+  }
+}
+
+class SpinVertexAnim extends StatefulWidget {
+  SpinVertexAnim({Key key, this.title}) : super(key: key);
+  final String title;
+
+  @override
+  _SpinVertexAnimState createState() => _SpinVertexAnimState();
+}
+
+class _SpinVertexAnimState extends State<SpinVertexAnim>
+    with TickerProviderStateMixin {
+  AnimationController controller;
+  Animation animation;
+
+  @override
+  void initState() {
+    super.initState();
+    controller =
+        AnimationController(duration: const Duration(seconds: 3), vsync: this);
+    animation = Tween(begin: 0.0, end: 0.25).animate(controller);
+    controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        controller.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        controller.forward();
+      } else if (status == AnimationStatus.forward) {
+      } else if (status == AnimationStatus.reverse) {}
+    });
+    controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RotationTransition(
+      alignment: Alignment.center,
+      turns: animation,
+      child: Image.asset(
+        'res/drawable/rp_airdrop_vertex.png',
+        height: 50,
+        width: 50,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
   }
 }

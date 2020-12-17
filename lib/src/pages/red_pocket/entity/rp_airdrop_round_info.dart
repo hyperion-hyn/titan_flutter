@@ -25,7 +25,7 @@ class RpAirdropRoundInfo extends Object {
 
   String get myRpAmountStr => FormatUtil.weiToEtherStr(myRpAmount) ?? '--';
 
-  String get totalRpAmountStr => FormatUtil.weiToEtherStr(totalRpAmount) ?? '--';
+  String get totalRpAmountStr => FormatUtil.weiToEtherStr(totalRpAmount) ?? '0';
 
   RpAirdropRoundInfo(
     this.startTime,
