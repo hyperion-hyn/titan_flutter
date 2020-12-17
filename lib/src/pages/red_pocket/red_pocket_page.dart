@@ -838,7 +838,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                             maxWidth: 100,
                           ),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Text(
                                 '$rpYesterday RP',
@@ -861,6 +861,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                             ],
                           ),
                         ),
+                        SizedBox(width: 16,)
                       ],
                     ),
                   ],
