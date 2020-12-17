@@ -310,7 +310,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                       height: 28,
                     ),
                   ),
-                  Expanded(
+                  Flexible(
                     child: Text(
                       amount,
                       style: TextStyle(
@@ -467,7 +467,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
   Widget _itemBuilder(int index) {
     switch (_rpType) {
-      case RedPocketType.LUCKY:
+      case RedPocketType.LEVEL:
         if (index == _filterDataList.length) {
           return _levelWidget();
         } else if (index == (_filterDataList.length + 1)) {
@@ -477,7 +477,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         break;
 
       case RedPocketType.PROMOTION:
-      case RedPocketType.LEVEL:
+      case RedPocketType.LUCKY:
         if (index == _filterDataList.length) {
           //return _manageWidget();
           return _promotionWidget();
