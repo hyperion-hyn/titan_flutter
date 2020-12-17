@@ -58,10 +58,13 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       StreamController.broadcast();
   StreamController<int> nextRoundStreamController =
       StreamController.broadcast();
+  StreamController<int> currentRoundStreamController =
+      StreamController.broadcast();
   StreamController<bool> machineLightOnController =
       StreamController.broadcast();
 
   int _nextRoundRemainTime = 0; // 下一轮剩余时间
+  int _currentRoundRemainTime = 0;
 
   RpAirdropRoundInfo _latestRoundInfo;
   RPStatistics _rpStatistics;
@@ -81,6 +84,12 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
   // final bgmAudio = Audio("res/voice/rp_bgm.mp3"); //背景音乐
   // final bgmAudioPlayer = AssetsAudioPlayer();
   // bool bgmAudioPlayerPlaying = false;
+
+  @override
+  void initState() {
+    //_setUpController();
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() {
@@ -118,7 +127,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
   _setUpTimer() {
     // 定时检查是否获得新红包
-    _airdropInfoTimer = Timer.periodic(Duration(seconds: 10), (t) async {
+    _airdropInfoTimer = Timer.periodic(Duration(seconds: 30), (t) async {
       await _requestData();
       _resetNextRoundTime();
     });
@@ -129,6 +138,16 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       if (_nextRoundRemainTime >= 1) {
         _nextRoundRemainTime--;
         nextRoundStreamController.add(_nextRoundRemainTime);
+      }
+
+      // ///
+      // if (_nextRoundRemainTime == 0) {
+      //   _requestData();
+      // }
+
+      if (_currentRoundRemainTime >= 1) {
+        _currentRoundRemainTime--;
+        currentRoundStreamController.add(_currentRoundRemainTime);
       }
 
       _isLightOn = !_isLightOn;
@@ -159,6 +178,11 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     if (currentRoundStartTime - now > 0) {
       _nextRoundRemainTime = currentRoundStartTime - now;
       nextRoundStreamController.add(_nextRoundRemainTime);
+    }
+
+    if (currentRoundEndTime > now) {
+      _currentRoundRemainTime = currentRoundEndTime - now;
+      currentRoundStreamController.add(_currentRoundRemainTime);
     }
 
     ///已过当前轮，使用下一轮的startTime
@@ -202,6 +226,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
     rpMachineStreamController?.close();
     nextRoundStreamController?.close();
+    currentRoundStreamController?.close();
     machineLightOnController?.close();
 
     // rewardAudioPlayer.dispose();
@@ -520,7 +545,23 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
               ],
             ),
           ),
-          Text('正在空投中...')
+          Text('正在空投中...'),
+          SizedBox(
+            height: 4,
+          ),
+          StreamBuilder(
+              stream: currentRoundStreamController.stream,
+              builder: (context, snapshot) {
+                print('currentRoundStreamController.stream: ${snapshot.data}');
+                if (snapshot?.data == null || snapshot?.data == 0) {
+                  return SizedBox();
+                } else {
+                  var currentRoundText = '本轮剩余 ${FormatUtil.formatTimer(
+                    _currentRoundRemainTime,
+                  )}';
+                  return Text(currentRoundText);
+                }
+              }),
         ],
       ),
     );
@@ -542,6 +583,16 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     } catch (e) {}
 
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
+
+    var now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    var _currentRoundStartTime = _latestRoundInfo?.startTime ?? 0;
+    var _currentRoundEndTime = _latestRoundInfo?.endTime ?? 0;
+
+    var airdropRoundText =
+        _currentRoundStartTime < now && now < _currentRoundEndTime
+            ? '本轮已空投'
+            : '最近一轮';
+
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: 16.0,
@@ -588,7 +639,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                           ),
                         ),
                         TextSpan(
-                          text: ' 最近一轮 ( $totalAmount RP)',
+                          text: ' $airdropRoundText ( $totalAmount RP)',
                           style: TextStyle(fontSize: 13),
                         )
                       ])),

@@ -167,26 +167,36 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
 
     var rpBalance = '--';
-    var totalBurning =
-        '${_rpStatistics?.rpHoldingContractInfo?.totalBurningStr} RP';
-    var totalHolding =
-        '${_rpStatistics?.rpHoldingContractInfo?.totalHoldingStr} RP';
-
-    var totalSupplyStr = FormatUtil.stringFormatCoinNum(
-      _rpStatistics?.rpHoldingContractInfo?.totalSupplyStr ?? '0',
-      decimal: 4,
-    );
-    var totalSupply = '$totalSupplyStr RP';
 
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
       SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
     );
 
+    var totalBurning = '--';
+    var totalHolding = '--';
+    var totalSupply = '--';
+
     try {
       rpBalance = FormatUtil.coinBalanceHumanReadFormat(
         rpToken,
       );
+      totalSupply = FormatUtil.stringFormatCoinNum(
+        _rpStatistics?.rpHoldingContractInfo?.totalSupplyStr ?? '0',
+        decimal: 4,
+      );
+      totalBurning = FormatUtil.stringFormatCoinNum(
+        _rpStatistics?.rpHoldingContractInfo?.totalBurningStr ?? '0',
+        decimal: 4,
+      );
+      totalHolding = FormatUtil.stringFormatCoinNum(
+        _rpStatistics?.rpHoldingContractInfo?.totalHoldingStr ?? '0',
+        decimal: 4,
+      );
     } catch (e) {}
+
+    var totalSupplyStr = '$totalSupply RP';
+    var totalBurningStr = '$totalBurning RP';
+    var totalHoldingStr = '$totalHolding RP';
 
     var rpBalanceStr = '$rpBalance RP';
 
@@ -476,7 +486,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           children: <Widget>[
                             Expanded(
                               child: _toolTipColumn(
-                                totalSupply,
+                                totalSupplyStr,
                                 '全网已发行量',
                                 null,
                               ),
