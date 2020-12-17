@@ -15,9 +15,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_add_staking_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -40,7 +38,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
   var _address = "";
   RpPromotionRuleEntity _promotionRuleEntity;
-  RPStatistics _rpStatistics;
 
   List<LevelRule> get _dynamicDataList => (_promotionRuleEntity?.dynamicList ?? []).reversed.toList();
   List<LevelRule> get _staticDataList => (_promotionRuleEntity?.static ?? []).reversed.toList();
@@ -96,9 +93,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     super.didChangeDependencies();
 
     _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
-    _rpStatistics = RedPocketInheritedModel.of(context).rpStatistics;
   }
-
 
   @override
   void dispose() {
@@ -188,7 +183,10 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 2, right: 10,),
+              padding: const EdgeInsets.only(
+                top: 2,
+                right: 10,
+              ),
               child: Image.asset(
                 "res/drawable/volume.png",
                 width: 15,
@@ -506,7 +504,9 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
       child: Container(
         color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 30,),
+          padding: const EdgeInsets.symmetric(
+            vertical: 30,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -614,11 +614,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
   void getNetworkData() async {
     try {
-
-      if (context != null) {
-        BlocProvider.of<RedPocketBloc>(context).add(UpdateStatisticsEvent());
-      }
-
       var netData = await _rpApi.getRPPromotionRule(_address);
 
       if (netData?.static?.isNotEmpty ?? false) {

@@ -17,6 +17,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_level_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_withdraw_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
@@ -54,6 +55,12 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
 
   List<RPLevelHistory> _levelHistoryList = [];
 
+  RPStatistics _rpStatistics;
+  List<LevelCounts> get _levelCountList => _rpStatistics?.levelCounts ?? [];
+
+  // todo: 有空加开关
+  bool _isOpenLevelCounts = false;
+
   @override
   void initState() {
     super.initState();
@@ -78,7 +85,9 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
+    _rpStatistics = RedPocketInheritedModel.of(context).rpStatistics;
   }
 
   @override
@@ -114,7 +123,6 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
         enablePullUp: _levelHistoryList.isNotEmpty,
         child: CustomScrollView(
           slivers: [
-            //_notificationWidget(),
             _myLevelInfoWidget(),
             _myLevelRecordHeader(),
             _myLevelRecordList(),
@@ -184,32 +192,44 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
   }
 
   Widget _levelInfoWidget() {
-    return Container(
-      color: HexColor('#FFFFFF'),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-        ),
-        child: Container(
+    if (!_isOpenLevelCounts) {
+      return Container();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 18,
+      ),
+      child: Container(
+        color: HexColor('#FFFFFF'),
+        child: Padding(
           padding: const EdgeInsets.symmetric(
-            vertical: 8,
-            horizontal: 2,
+            horizontal: 16,
           ),
-          decoration: BoxDecoration(
-            color: HexColor('#F6F6F6'),
-            borderRadius: BorderRadius.all(
-              Radius.circular(6.0),
-            ), //设置四周圆角 角度
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [1, 2, 3, 4, 5].map((index) {
-              return _columnWidget(
-                '---',
-                '全网${levelValueToLevelName(index)}级',
-                isSmall: true,
-              );
-            }).toList(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 8,
+              horizontal: 2,
+            ),
+            decoration: BoxDecoration(
+              color: HexColor('#F6F6F6'),
+              borderRadius: BorderRadius.all(
+                Radius.circular(6.0),
+              ), //设置四周圆角 角度
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [1, 2, 3, 4, 5].map((index) {
+                LevelCounts levelCountsModel =
+                    _levelCountList.firstWhere((element) => element?.level == index, orElse: null);
+
+                return _columnWidget(
+                  '${levelCountsModel?.count ?? 0}',
+                  '全网${levelValueToLevelName(index)}级',
+                  isSmall: true,
+                );
+              }).toList(),
+            ),
           ),
         ),
       ),
@@ -380,17 +400,6 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      /*Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                        ),
-                        child: _columnWidget(
-                          '$currentBurn RP',
-                          '当前燃烧',
-                        ),
-                        // child: _columnWidget('$totalTransmit RP', '总可传导'),
-                      ),*/
                       Spacer(),
                       _columnWidget(
                         '$holding RP',
@@ -400,12 +409,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 18,
-                  ),
-                  child: _levelInfoWidget(),
-                ),
+                _levelInfoWidget(),
                 Padding(
                   padding: const EdgeInsets.only(
                     top: 24,
@@ -753,6 +757,10 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     _currentPage = 1;
 
     try {
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(UpdateStatisticsEvent());
+      }
+
       ///Update level info
       if (context != null) {
         BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEvent());
