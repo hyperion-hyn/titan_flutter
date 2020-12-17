@@ -36,6 +36,7 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 
 import 'api/rp_api.dart';
+import 'entity/rp_miners_entity.dart';
 import 'entity/rp_my_level_info.dart';
 
 class RpLevelUpgradePage extends StatefulWidget {
@@ -65,7 +66,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   RpMyLevelInfo _myLevelInfo;
   CoinVo _coinVo;
   WalletVo _activatedWallet;
-  RPStatistics _rpStatistics;
+  RpMinerInfo _inviter;
+  String get _address => _activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
   Decimal get _inputValue {
     var zeroValue = Decimal.zero;
@@ -130,8 +132,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     super.didChangeDependencies();
 
     _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
-
-    _rpStatistics = RedPocketInheritedModel.of(context).rpStatistics;
   }
 
   @override
@@ -446,12 +446,11 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                       ],
                     ),
                   ),
-                      _confirmButtonWidget(),
+                  _confirmButtonWidget(),
                 ])),
               ),
             ),
           ),
-
         ],
       ),
     );
@@ -489,17 +488,25 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
     }
 
-    if (context != null) {
-      BlocProvider.of<RedPocketBloc>(context).add(UpdateStatisticsEvent());
-    }
-
     if (mounted) {
       _loadDataBloc.add(RefreshSuccessEvent());
     }
+
+    getRPMinerList();
+  }
+
+  void getRPMinerList() async {
+    try {
+      var netData = await _rpApi.getRPMinerList(
+        _address,
+        page: 1,
+      );
+
+      _inviter = netData.inviter;
+    } catch (e) {}
   }
 
   _checkAction() {
-
     if (widget.levelRule == null) {
       Fluttertoast.showToast(
         msg: '请先选择想要升级的量级！',
@@ -524,8 +531,9 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     }
 
     // 检车是否有好友
-    if ((_rpStatistics?.self?.friends ?? 0) <= 0) {
-
+    if (_inviter == null) {
+      getRPMinerList();
+      
       Future.delayed(Duration(milliseconds: 111)).then((_) {
         _showInviteAlertView();
       });
@@ -534,7 +542,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
     _upgradeAction();
   }
-
 
   _showInviteAlertView() {
     var border = OutlineInputBorder(
@@ -589,9 +596,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
               if (inviteResult != null && inviteResult.isNotEmpty) {
                 Fluttertoast.showToast(msg: "邀请成功, 继续升级吧！");
 
-                if (context != null) {
-                  BlocProvider.of<RedPocketBloc>(context).add(UpdateStatisticsEvent());
-                }
+                getRPMinerList();
 
                 _upgradeAction();
               }
@@ -656,7 +661,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                     ),
                     suffixIcon: InkWell(
                       onTap: () async {
-                        UiUtil.showImagePickerSheet(context, callback: (String text) async{
+                        UiUtil.showImagePickerSheet(context, callback: (String text) async {
                           _addressEditController.text = await _parseText(text);
                         });
                       },
@@ -686,7 +691,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     );
   }
 
-  Future<String> _parseText(String scanStr) async{
+  Future<String> _parseText(String scanStr) async {
     print("[扫描结果] scanStr:$scanStr");
 
     if (scanStr == null) {
@@ -704,7 +709,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     }
     return '';
   }
-
 
   _showIgnoreAlertView() async {
     UiUtil.showAlertView(
