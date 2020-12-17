@@ -482,7 +482,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                             style: TextStyle(
                               color: HexColor('#333333'),
                               fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           Padding(
