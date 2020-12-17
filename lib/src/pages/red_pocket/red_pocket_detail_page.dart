@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:k_chart/utils/date_format_util.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -148,7 +147,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
     switch (_rpType) {
       case RedPocketType.LUCKY:
-        title = '$name 的幸运红包';
+        // title = '$name 的幸运红包';
+        title = '幸运红包';
 
         amount = luckState == RpLuckState.UN_LUCKY ? zeroAmountStr : amountStr;
         break;
@@ -234,6 +234,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    /*
                     Text(
                       name,
                       style: TextStyle(
@@ -245,6 +246,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                     SizedBox(
                       width: 6,
                     ),
+                    */
                     Text(
                       address,
                       style: TextStyle(
@@ -553,6 +555,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
+                        /*
                         Padding(
                           padding: EdgeInsets.only(
                             right: isMe ? 2 : 6,
@@ -582,25 +585,28 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                               ),
                             ),
                           ),
+                        */
                         Text(
-                          '当时量级 $level ',
+                          '${UiUtil.shortEthAddress(address)}',
+                          //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                           style: TextStyle(
-                            color: HexColor("#999999"),
-                            fontSize: 10,
-                            fontWeight: FontWeight.normal,
+                            fontSize: 12,
+                            color: HexColor('#333333'),
+                            fontWeight: FontWeight.w600,
                           ),
+                          textAlign: TextAlign.left,
                         ),
+
                       ],
                     ),
                   ),
                   Text(
-                    '${UiUtil.shortEthAddress(address)}',
-                    //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                    '当时量级 $level ',
                     style: TextStyle(
+                      color: HexColor("#999999"),
                       fontSize: 10,
-                      color: HexColor('#999999'),
+                      fontWeight: FontWeight.normal,
                     ),
-                    textAlign: TextAlign.left,
                   ),
                 ],
               ),
