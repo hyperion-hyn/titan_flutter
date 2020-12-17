@@ -62,7 +62,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       StreamController.broadcast();
 
   int _nextRoundRemainTime = 0; // 下一轮剩余时间
-  bool _isPassedLatestRound = true;
+  bool _isPassedLatestRound = false;
 
   RpAirdropRoundInfo _latestRoundInfo;
   RPStatistics _rpStatistics;
@@ -148,7 +148,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
         nextRoundStreamController.add(_nextRoundRemainTime);
       }
     }
-    if ((_latestRoundInfo?.endTime ?? 0) > now) {
+    if ((_latestRoundInfo?.endTime ?? 0) >= now) {
       _isPassedLatestRound = false;
     } else {
       _isPassedLatestRound = true;
@@ -384,7 +384,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                   }),
             ),
             Center(
-              child: FadeAnim(
+              child: FadeAnimRP(
                 controller: _fadeAnimController,
               ),
             ),
@@ -675,12 +675,12 @@ Widget _verticalLine({
   );
 }
 
-class FadeAnim extends StatelessWidget {
+class FadeAnimRP extends StatelessWidget {
   final Animation<double> controller;
   final Animation<double> bezier;
   final Animation<double> size;
 
-  FadeAnim({Key key, this.controller})
+  FadeAnimRP({Key key, this.controller})
       : bezier = Tween<double>(
           begin: 1.0,
           end: 0.0,

@@ -1163,14 +1163,13 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             .add(UpdateActivatedWalletBalanceEvent());
       }
 
+      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
+        _address,
+      );
       if (mounted) {
         _loadDataBloc.add(RefreshSuccessEvent());
         setState(() {});
       }
-
-      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
-        _address,
-      );
     } catch (e) {
       _loadDataBloc.add(RefreshFailEvent());
     }
