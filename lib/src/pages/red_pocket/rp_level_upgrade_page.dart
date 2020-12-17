@@ -17,10 +17,17 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
+import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
+import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -29,6 +36,7 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 
 import 'api/rp_api.dart';
+import 'entity/rp_miners_entity.dart';
 import 'entity/rp_my_level_info.dart';
 
 class RpLevelUpgradePage extends StatefulWidget {
@@ -46,7 +54,11 @@ class RpLevelUpgradePage extends StatefulWidget {
 
 class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   final TextEditingController _textEditingController = new TextEditingController();
+  final TextEditingController _addressEditController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
+  final _addressKey = GlobalKey<FormState>();
+
   final RPApi _rpApi = RPApi();
   final StreamController<String> _inputController = StreamController.broadcast();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
@@ -54,6 +66,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   RpMyLevelInfo _myLevelInfo;
   CoinVo _coinVo;
   WalletVo _activatedWallet;
+  RpMinerInfo _inviter;
+  String get _address => _activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
   Decimal get _inputValue {
     var zeroValue = Decimal.zero;
@@ -208,7 +222,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                           amount:
                               widget.isStatic ? '${widget?.levelRule?.holdingStr ?? '--'} RP' : '$_needHoldMinValue RP',
                         ),
-
                         Padding(
                           padding: const EdgeInsets.only(top: 30),
                           child: Row(
@@ -417,20 +430,27 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(top: 16.0, bottom:8,),
+                          padding: const EdgeInsets.only(
+                            top: 16.0,
+                            bottom: 8,
+                          ),
                           child: Text(S.of(context).precautions,
-                              style: TextStyle(color: HexColor("#333333"), fontSize: 16,)),
+                              style: TextStyle(
+                                color: HexColor("#333333"),
+                                fontSize: 16,
+                              )),
                         ),
-                        rowTipsItem('如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4)} 以上的账户地址为推荐人'),
+                        rowTipsItem(
+                            '如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4)} 以上的账户地址为推荐人'),
                         rowTipsItem('燃烧不累计，每次升级都要重新燃烧，除了因 Y 增长而掉级'),
                       ],
                     ),
                   ),
+                  _confirmButtonWidget(),
                 ])),
               ),
             ),
           ),
-          _confirmButtonWidget(),
         ],
       ),
     );
@@ -440,11 +460,14 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(top: 30, bottom: 30,),
+        padding: const EdgeInsets.only(
+          top: 30,
+          bottom: 30,
+        ),
         child: Center(
           child: ClickOvalButton(
             '马上提升',
-            _upgradeAction,
+            _checkAction,
             height: 42,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
@@ -468,9 +491,22 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     if (mounted) {
       _loadDataBloc.add(RefreshSuccessEvent());
     }
+
+    getRPMinerList();
   }
 
-  _upgradeAction() async {
+  void getRPMinerList() async {
+    try {
+      var netData = await _rpApi.getRPMinerList(
+        _address,
+        page: 1,
+      );
+
+      _inviter = netData.inviter;
+    } catch (e) {}
+  }
+
+  _checkAction() {
     if (widget.levelRule == null) {
       Fluttertoast.showToast(
         msg: '请先选择想要升级的量级！',
@@ -494,13 +530,236 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       return;
     }
 
+    // 检车是否有好友
+    if (_inviter == null) {
+      getRPMinerList();
+
+      Future.delayed(Duration(milliseconds: 111)).then((_) {
+        _showInviteAlertView();
+      });
+      return;
+    }
+
+    _upgradeAction();
+  }
+
+  _showInviteAlertView() {
+    var border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30),
+      borderSide: BorderSide(
+        color: HexColor('#FFF2F2F2'),
+        width: 0.5,
+      ),
+    );
+
+    _addressEditController.text = "";
+
+    //var defaultHint = '请先设置推荐人的HYN地址';
+    var _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
+    var addressExample = 'hyn1ntjklkvx9jlkrz9';
+    var addressHint = S.of(context).example + ': $addressExample...';
+    var addressErrorHint = '请输入合法的HYN地址';
+
+    UiUtil.showAlertView(
+      context,
+      title: '设置推荐人',
+      isInputValue: true,
+      actions: [
+        ClickOvalButton(
+          '跳过',
+          () {
+            Navigator.pop(context, false);
+
+            _showIgnoreAlertView();
+          },
+          width: 115,
+          height: 36,
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+          fontColor: DefaultColors.color999,
+          btnColor: [Colors.transparent],
+        ),
+        SizedBox(
+          width: 20,
+        ),
+        ClickOvalButton(
+          S.of(context).confirm,
+          () async {
+            if (!_addressKey.currentState.validate()) {
+              return;
+            }
+
+            try {
+              var inviteAddress = _addressEditController?.text ?? '';
+
+              String inviteResult = await _rpApi.postRpInviter(inviteAddress, _activatedWallet?.wallet);
+              if (inviteResult != null && inviteResult.isNotEmpty) {
+                Fluttertoast.showToast(msg: "邀请成功, 继续升级吧！");
+
+                getRPMinerList();
+
+                _upgradeAction();
+              }
+            } catch (error) {
+              LogUtil.toastException(error);
+            }
+
+            Navigator.pop(context, true);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      ],
+      detail: '请输入好友HYN地址。也可扫描好友钱包收款码、好友邀请码',
+      contentItem: Material(
+        child: Form(
+          key: _addressKey,
+          child: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.only(
+              left: 22,
+              right: 22,
+              bottom: 16,
+            ),
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  autofocus: true,
+                  controller: _addressEditController,
+                  keyboardType: TextInputType.text,
+                  validator: (value) {
+                    var ethAddress = WalletUtil.bech32ToEthAddress(value);
+                    if (ethAddress?.isEmpty ?? true) {
+                      return '推荐人地址不能为空!';
+                    } else if (!value.startsWith('hyn1')) {
+                      return addressErrorHint;
+                    } else if (!_basicAddressReg.hasMatch(ethAddress)) {
+                      return addressErrorHint;
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    isDense: true,
+                    filled: true,
+                    fillColor: HexColor('#FFF2F2F2'),
+                    hintText: addressHint,
+                    hintStyle: TextStyle(
+                      color: HexColor('#FF999999'),
+                      fontSize: 13,
+                    ),
+                    focusedBorder: border,
+                    focusedErrorBorder: border,
+                    enabledBorder: border,
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide(
+                        color: Colors.red,
+                        width: 0.5,
+                      ),
+                    ),
+                    suffixIcon: InkWell(
+                      onTap: () async {
+                        UiUtil.showImagePickerSheet(context, callback: (String text) async {
+                          _addressEditController.text = await _parseText(text);
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Icon(
+                          ExtendsIconFont.qrcode_scan,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                    //contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  ),
+                  style: TextStyle(fontSize: 13),
+                  onSaved: (value) {
+                    // print("[$runtimeType] onSaved, inputValue:$value");
+                  },
+                  onChanged: (String value) {
+                    // print("[$runtimeType] onChanged, inputValue:$value");
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<String> _parseText(String scanStr) async {
+    print("[扫描结果] scanStr:$scanStr");
+
+    if (scanStr == null) {
+      return '';
+    } else if (scanStr.contains(PromoteQrCodePage.downloadDomain) || scanStr.contains(RpInviteFriendPage.shareDomain)) {
+      var fromArr = scanStr.split("from=");
+      if (fromArr[1].length > 0) {
+        fromArr = fromArr[1].split("&");
+        if (fromArr[0].length > 0) {
+          return fromArr[0];
+        }
+      }
+    } else if (scanStr.startsWith('hyn1')) {
+      return scanStr;
+    }
+    return '';
+  }
+
+  _showIgnoreAlertView() async {
+    UiUtil.showAlertView(
+      context,
+      title: '系统推荐提示',
+      actions: [
+        ClickOvalButton(
+          '返回',
+          () {
+            Navigator.pop(context, false);
+
+            _showInviteAlertView();
+          },
+          width: 115,
+          height: 36,
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+          fontColor: DefaultColors.color999,
+          btnColor: [Colors.transparent],
+        ),
+        SizedBox(
+          width: 20,
+        ),
+        ClickOvalButton(
+          S.of(context).confirm,
+          () {
+            Navigator.pop(context, true);
+            _upgradeAction();
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      ],
+      content: '你还没设置推荐人，如果继续升级的话，系统会为你随机设置一个量级D以上的账户作为你的推荐人，我们不推荐此类做法，你确定继续升级吗？',
+    );
+  }
+
+  _upgradeAction() async {
+
     var password = await UiUtil.showWalletPasswordDialogV2(context, _activatedWallet.wallet);
     if (password == null) {
       return;
     }
 
     var burningAmount = ConvertTokenUnit.strToBigInt(widget.levelRule.burnStr);
-    var depositAmount = ConvertTokenUnit.strToBigInt(_textEditingController?.text ?? '0');
+
+    var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.zero;
+    var inputHoldValue = (_inputValue - burnValue);
+    var depositAmount = ConvertTokenUnit.strToBigInt(inputHoldValue?.toString() ?? '0');
 
     if (mounted) {
       setState(() {
@@ -541,7 +800,11 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   }
 }
 
-Widget rpRowText({String title, String amount, double width = 100,}) {
+Widget rpRowText({
+  String title,
+  String amount,
+  double width = 100,
+}) {
   return Padding(
     padding: const EdgeInsets.only(top: 18),
     child: Row(

@@ -138,7 +138,7 @@ class FinishCreatePage extends StatelessWidget {
       if(MemoryCache.rpInviteKey != null) {
         RPApi _rpApi = RPApi();
         String inviteResult = await _rpApi.postRpInviter(MemoryCache.rpInviteKey, wallet);
-        if(inviteResult != null && inviteResult.isNotEmpty) {
+        if(inviteResult != null) {
           Fluttertoast.showToast(msg: "邀请成功");
           MemoryCache.rpInviteKey = null;
         }

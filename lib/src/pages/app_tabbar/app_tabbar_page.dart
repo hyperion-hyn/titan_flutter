@@ -207,7 +207,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
       var inviterAddress = content["from"];
       var walletName = content["name"];
       var code = content["code"];
-      showRichInviteDialog(context, inviterAddress, walletName, code);
+      showTitanInviteDialog(context, inviterAddress, walletName, code);
     } else if (type == "location" && subType == 'share') {
       ///When received encrypted msg, show dialog
       ///

@@ -19,8 +19,8 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/widget_shot.dart';
 
 class PromoteQrCodePage extends StatefulWidget {
-  // static String downloadDomain = "https://h.hyn.space/download";
-  static String downloadDomain = 'https://10.10.1.134:8090/download';
+  static String downloadDomain = "https://h.hyn.space/download";
+  // static String downloadDomain = 'https://10.10.1.134:8090/download';
 
   PromoteQrCodePage();
 
@@ -230,7 +230,7 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
   }
 }
 
-void showRichInviteDialog(BuildContext context, String inviterAddress, String walletName, String code,
+void showTitanInviteDialog(BuildContext context, String inviterAddress, String walletName, String code,
     {Function callback}) {
   UiUtil.showAlertView(
     context,
@@ -259,7 +259,7 @@ void showRichInviteDialog(BuildContext context, String inviterAddress, String wa
             RPApi _rpApi = RPApi();
             var walletVo = WalletInheritedModel.of(context).activatedWallet;
             String inviteResult = await _rpApi.postRpInviter(inviterAddress, walletVo.wallet);
-            if (inviteResult != null && inviteResult.isNotEmpty) {
+            if (inviteResult != null) {
               Fluttertoast.showToast(msg: S.of(context).invitation_success);
               if (callback != null) callback();
             }

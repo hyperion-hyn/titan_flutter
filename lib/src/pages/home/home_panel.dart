@@ -367,7 +367,7 @@ class HomePanelState extends State<HomePanel> {
             ),
           ),
           Text(
-            'RP 红包币',
+            '应用类',
             style: TextStyle(
               color: Colors.grey,
             ),
@@ -406,7 +406,7 @@ class HomePanelState extends State<HomePanel> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'RP',
+                          'RP 红包',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
@@ -415,7 +415,7 @@ class HomePanelState extends State<HomePanel> {
                           height: 4,
                         ),
                         Text(
-                          '拆红包，攒RP，与朋友圈分享更多红包奖励',
+                          '全球首个基于海伯利安地图底层公链的HRC30交易结构范例',
                           style: TextStyle(
                             fontSize: 13,
                             color: DefaultColors.color999,
@@ -953,7 +953,7 @@ class HomePanelState extends State<HomePanel> {
       if (fromArr[1].length > 0) {
         fromArr = fromArr[1].split("&name=");
         if (fromArr[0].length > 0 && fromArr[1].length > 0) {
-          showRichInviteDialog(context, fromArr[0], fromArr[1], '');
+          showTitanInviteDialog(context, fromArr[0], fromArr[1], '');
         }
       }
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
