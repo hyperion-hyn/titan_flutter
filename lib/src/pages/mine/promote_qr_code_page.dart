@@ -19,7 +19,8 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/widget_shot.dart';
 
 class PromoteQrCodePage extends StatefulWidget {
-  static String downloadDomain = "https://h.hyn.space/download";
+  // static String downloadDomain = "https://h.hyn.space/download";
+  static String downloadDomain = 'https://10.10.1.134:8090/download';
 
   PromoteQrCodePage();
 

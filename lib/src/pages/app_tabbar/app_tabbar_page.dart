@@ -28,6 +28,7 @@ import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/home/bloc/bloc.dart';
+import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
 import 'package:titan/src/pages/wallet/wallet_tabs_page.dart';
@@ -202,6 +203,11 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
       var inviterAddress = content["from"];
       var walletName = content["name"];
       showInviteDialog(context,inviterAddress,walletName);
+    } else if (type == "richinvite" && subType == "detail") {
+      var inviterAddress = content["from"];
+      var walletName = content["name"];
+      var code = content["code"];
+      showRichInviteDialog(context, inviterAddress, walletName, code);
     } else if (type == "location" && subType == 'share') {
       ///When received encrypted msg, show dialog
       ///
