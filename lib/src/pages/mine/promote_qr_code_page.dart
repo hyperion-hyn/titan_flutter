@@ -230,7 +230,7 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
   }
 }
 
-void showRichInviteDialog(BuildContext context, String inviterAddress, String walletName, String code,
+void showTitanInviteDialog(BuildContext context, String inviterAddress, String walletName, String code,
     {Function callback}) {
   UiUtil.showAlertView(
     context,
