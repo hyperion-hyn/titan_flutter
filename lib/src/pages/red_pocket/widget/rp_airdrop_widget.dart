@@ -58,6 +58,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
   StreamController<bool> machineLightOnController = StreamController.broadcast();
 
   int _nextRoundRemainTime = 0; // 下一轮剩余时间
+  bool _isPassedLatestRound = true;
 
   RpAirdropRoundInfo _latestRoundInfo;
   RPStatistics _rpStatistics;
@@ -83,7 +84,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     _latestRoundInfo = widget.rpAirdropRoundInfo;
     _rpStatistics = widget.rpStatistics;
 
-    _resetNextRoundTimeLeft();
+    _resetNextRoundTime();
     _updateAirdropState();
 
     super.didChangeDependencies();
@@ -108,14 +109,14 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     _rpApi.endTime = DateTime.now().millisecondsSinceEpoch ~/ 1000 + 30;
 
     await _requestData();
-    _resetNextRoundTimeLeft();
+    _resetNextRoundTime();
   }
 
   _setUpTimer() {
     // 定时检查是否获得新红包
     _airdropInfoTimer = Timer.periodic(Duration(seconds: 10), (t) async {
       await _requestData();
-      _resetNextRoundTimeLeft();
+      _resetNextRoundTime();
     });
 
     // 倒计时、切换空投机状态
@@ -145,14 +146,20 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     });
   }
 
-  void _resetNextRoundTimeLeft() {
+  void _resetNextRoundTime() {
+    var now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     if (_latestRoundInfo?.startTime != null) {
-      var now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       if (_latestRoundInfo.startTime - now > 0) {
         _nextRoundRemainTime = _latestRoundInfo.startTime - now;
         nextRoundStreamController.add(_nextRoundRemainTime);
       }
     }
+    if ((_latestRoundInfo?.endTime ?? 0) > now) {
+      _isPassedLatestRound = false;
+    } else {
+      _isPassedLatestRound = true;
+    }
+    if (mounted) setState(() {});
   }
 
   _setUpController() {
@@ -170,15 +177,17 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
         _airdropInfoTimer.cancel();
       }
     }
-
     if (_countDownTimer != null) {
       if (_countDownTimer.isActive) {
         _countDownTimer.cancel();
       }
     }
-
+    if (_animTimer != null) {
+      if (_animTimer.isActive) {
+        _animTimer.cancel();
+      }
+    }
     _pulseController?.dispose();
-
     rpMachineStreamController?.close();
     nextRoundStreamController?.close();
     machineLightOnController?.close();
@@ -267,6 +276,16 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
   }
 
   _waitingView() {
+    var _nextRoundStartTimeMillieSecond =
+        (_latestRoundInfo?.startTime ?? 0) * 1000;
+
+    var _nextRoundTimeText =
+        _nextRoundStartTimeMillieSecond != 0 && !_isPassedLatestRound
+            ? FormatUtil.formatMinuteDate(
+                _nextRoundStartTimeMillieSecond,
+              )
+            : '--';
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -292,7 +311,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                       ),
                       SizedBox(height: 4),
                       Text(
-                        '12:00',
+                        '$_nextRoundTimeText',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -312,12 +331,12 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
           StreamBuilder(
               stream: nextRoundStreamController.stream,
               builder: (context, snapshot) {
-                if (snapshot == null) {
+                if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
-                } else if (snapshot?.data == 0) {
-                  return Text('准备开始...');
                 } else {
-                  var nextRoundText = '下轮预估 ${FormatUtil.formatTimer(_nextRoundRemainTime)}';
+                  var nextRoundText = '下轮预估 ${FormatUtil.formatTimer(
+                    _nextRoundRemainTime,
+                  )}';
                   return Text(nextRoundText);
                 }
               }),
@@ -458,7 +477,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
                           ),
                         ),
                         TextSpan(
-                          text: ' 最近一轮 ( ${totalAmount} RP)',
+                          text: ' 最近一轮 ( $totalAmount RP)',
                           style: TextStyle(fontSize: 13),
                         )
                       ])),
@@ -599,6 +618,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
           _address,
         );
       }
+
+      if (mounted) setState(() {});
     } catch (e) {
       logger.e(e);
     }

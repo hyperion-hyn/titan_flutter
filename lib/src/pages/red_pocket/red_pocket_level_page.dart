@@ -432,7 +432,9 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     var burnTitle = '需燃烧';
     var burnRpValue = '${model.burnStr} RP';
 
-    var stakingTitle = '最低持币 ${model.holdingFormula}';
+    // var stakingTitle = '最低持币 ${model.holdingFormula}';
+    var formula = model.holdingFormula;
+    var stakingTitle = '最低持币';
     var stakingValue = '${model.holdingStr} RP';
 
     return Container(
@@ -453,6 +455,19 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                 color: HexColor('#333333'),
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 8,
+            ),
+            child: Text(
+              '计算公式: $formula',
+              style: TextStyle(
+                color: HexColor('#999999'),
+                fontSize: 10,
+                fontWeight: FontWeight.normal,
               ),
             ),
           ),
@@ -485,7 +500,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
       child: Container(
         color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.only(top: 60),
+          padding: const EdgeInsets.symmetric(vertical: 30,),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
