@@ -648,7 +648,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _airdropWidget() {
-    
+
     var todayAmount = FormatUtil.stringFormatCoinNum(
       _rpStatistics?.airdropInfo?.todayAmountStr ?? '0',
       decimal: 6,
