@@ -534,7 +534,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     _upgradeAction();
   }
 
-  //hyn15kvul6m6qsqse24m0nyjf5hpqpxvkudynnkzh8
+
   _showInviteAlertView() {
     var border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(30),
@@ -586,7 +586,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
               String inviteResult = await _rpApi.postRpInviter(inviteAddress, _activatedWallet?.wallet);
               if (inviteResult != null && inviteResult.isNotEmpty) {
-                Fluttertoast.showToast(msg: "邀请成功");
+                Fluttertoast.showToast(msg: "邀请成功, 继续升级吧！");
 
                 if (context != null) {
                   BlocProvider.of<RedPocketBloc>(context).add(UpdateStatisticsEvent());
