@@ -493,14 +493,14 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                             ),
                             Expanded(
                               child: _toolTipColumn(
-                                totalHolding,
+                                totalHoldingStr,
                                 '全网量级持币',
                                 '参与量级持币的总量',
                               ),
                             ),
                             Expanded(
                               child: _toolTipColumn(
-                                totalBurning,
+                                totalBurningStr,
                                 '全网燃烧',
                                 null,
                               ),
