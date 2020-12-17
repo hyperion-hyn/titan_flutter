@@ -20,6 +20,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 import '../rp_my_rp_records_page.dart';
+import '../rp_record_tab_page.dart';
 
 enum AirdropState {
   Waiting,
@@ -138,6 +139,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       if (_nextRoundRemainTime >= 1) {
         _nextRoundRemainTime--;
         nextRoundStreamController.add(_nextRoundRemainTime);
+
+        if (_nextRoundRemainTime == 0) {
+          rpMachineStreamController.add(AirdropState.NotReceived);
+        }
       }
 
       // ///
@@ -555,7 +560,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
                 } else {
-                  var currentRoundText = '本轮剩余 ${FormatUtil.formatTimer(
+                  var currentRoundText = '本轮剩余 ${FormatUtil.formatMinuteTimer(
                     _currentRoundRemainTime,
                   )}';
                   return Text(currentRoundText);
@@ -764,8 +769,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
   /// 更新空投机器状态
   _updateAirdropState() {
     int _now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    int _latestRoundStartTime = _latestRoundInfo?.startTime ?? 0;
-    int _latestRoundEndTime = _latestRoundInfo?.endTime ?? 0;
+    int _currentRoundStartTime = _latestRoundInfo?.startTime ?? 0;
+    int _currentRoundEndTime = _latestRoundInfo?.endTime ?? 0;
+    int _nextRoundStartTime = _latestRoundInfo?.nextRoundStartTime;
     int _currentRoundReceivedCount =
         _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
     if (_currentRoundReceivedCount > _lastMinuteRpCount) {
@@ -774,16 +780,18 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     }
 
     // 在showtime时间段内
-    if (_now >= _latestRoundStartTime && _now < _latestRoundEndTime) {
+    if (_now >= _currentRoundStartTime && _now < _currentRoundEndTime) {
       if ((_now - _lastTimeCelebrateBegin) < _rpCelebrateDuration) {
         if (_lastAirdropState != null &&
             _lastAirdropState != AirdropState.Received) {
           AssetsAudioPlayer.playAndForget(rewardAudio);
           rpMachineStreamController.add(AirdropState.Received);
         }
-      } else if (_lastAirdropState != AirdropState.NotReceived) {
+      } else {
         rpMachineStreamController.add(AirdropState.NotReceived);
       }
+    } else if (_nextRoundStartTime != null && _now > _nextRoundStartTime) {
+      rpMachineStreamController.add(AirdropState.NotReceived);
     } else if (_lastAirdropState != AirdropState.Waiting) {
       rpMachineStreamController.add(AirdropState.Waiting);
     }
@@ -806,6 +814,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
         );
       }
 
+      _updateAirdropState();
+
       if (mounted) setState(() {});
     } catch (e) {
       logger.e(e);
@@ -818,7 +828,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpMyRpRecordsPage(),
+          builder: (context) => RpRecordTabPage(),
         ),
       );
     } else {

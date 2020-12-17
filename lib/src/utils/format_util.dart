@@ -30,7 +30,6 @@ class FormatUtil {
         (Decimal.tryParse(numValue ?? '0') ?? Decimal.fromInt(0)).toDouble());
   }
 
-
   static String formatNumDecimal(double numValue, {int decimal = 4}) {
     var format = '#,###,###,###.';
     for (int i = 0; i < decimal; i++) {
@@ -142,6 +141,12 @@ class FormatUtil {
         formatTimeNum(minute) +
         ":" +
         formatTimeNum(second);
+  }
+
+  static String formatMinuteTimer(int seconds) {
+    int minute = seconds % 3600 ~/ 60;
+    int second = seconds % 60;
+    return formatTimeNum(minute) + ":" + formatTimeNum(second);
   }
 
   static String formatTimeNum(int timeNum) {
