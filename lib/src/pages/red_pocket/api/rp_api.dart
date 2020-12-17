@@ -75,7 +75,7 @@ class RPApi {
             options: RequestOptions(contentType: "application/json"));
   }
 
-  ///
+  ///统计信息
   Future<RPStatistics> getRPStatistics(String address) async {
     return await RPHttpCore.instance.getEntity(
         "/v1/rp/statistics/$address",
