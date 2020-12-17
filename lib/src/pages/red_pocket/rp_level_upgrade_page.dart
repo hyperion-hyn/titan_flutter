@@ -533,7 +533,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     // 检车是否有好友
     if (_inviter == null) {
       getRPMinerList();
-      
+
       Future.delayed(Duration(milliseconds: 111)).then((_) {
         _showInviteAlertView();
       });
