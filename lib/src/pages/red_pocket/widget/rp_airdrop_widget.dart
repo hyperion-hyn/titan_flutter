@@ -75,12 +75,12 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
   RPApi _rpApi = RPApi();
 
-  final rewardAudio = Audio("res/voice/cheer.mp3"); //中奖
-  final rewardAudioPlayer = AssetsAudioPlayer();
-  bool rewardAudioPlayerPlaying = false;
-  final bgmAudio = Audio("res/voice/rp_bgm.mp3"); //背景音乐
-  final bgmAudioPlayer = AssetsAudioPlayer();
-  bool bgmAudioPlayerPlaying = false;
+  final rewardAudio = Audio("res/voice/coin.mp3"); //中奖
+  // final rewardAudioPlayer = AssetsAudioPlayer();
+  // bool rewardAudioPlayerPlaying = false;
+  // final bgmAudio = Audio("res/voice/rp_bgm.mp3"); //背景音乐
+  // final bgmAudioPlayer = AssetsAudioPlayer();
+  // bool bgmAudioPlayerPlaying = false;
 
   @override
   void didChangeDependencies() {
@@ -101,9 +101,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     _setUpController();
     _setUpTimer();
 
-    rewardAudioPlayer.open(rewardAudio,
-        autoStart: false, loopMode: LoopMode.single);
-    bgmAudioPlayer.open(bgmAudio, autoStart: false, loopMode: LoopMode.single);
+    // rewardAudioPlayer.open(rewardAudio, autoStart: false, loopMode: LoopMode.single);
+    // bgmAudioPlayer.open(bgmAudio, autoStart: false, loopMode: LoopMode.single);
   }
 
   // Future _mockReqTime() async {
@@ -205,8 +204,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     nextRoundStreamController?.close();
     machineLightOnController?.close();
 
-    rewardAudioPlayer?.dispose();
-    bgmAudioPlayer?.dispose();
+    // rewardAudioPlayer.dispose();
+    // bgmAudioPlayer.dispose();
 
     super.dispose();
   }
@@ -312,35 +311,35 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
               return _waitingView();
             } else */
             if (_currentAirdropState == AirdropState.NotReceived) {
-              if (!bgmAudioPlayerPlaying) {
-                bgmAudioPlayer.play();
-                bgmAudioPlayerPlaying = true;
-              }
-              if (rewardAudioPlayerPlaying) {
-                rewardAudioPlayer.pause();
-                rewardAudioPlayerPlaying = false;
-              }
+              // if (!bgmAudioPlayerPlaying) {
+              //   bgmAudioPlayer.play();
+              //   bgmAudioPlayerPlaying = true;
+              // }
+              // if (rewardAudioPlayerPlaying) {
+              //   rewardAudioPlayer.pause();
+              //   rewardAudioPlayerPlaying = false;
+              // }
               return _airdropNotReceivedView();
             } else if (_currentAirdropState == AirdropState.Received) {
-              if (bgmAudioPlayerPlaying) {
-                bgmAudioPlayer.pause();
-                bgmAudioPlayerPlaying = false;
-              }
-              if (!rewardAudioPlayerPlaying) {
-                rewardAudioPlayer.seek(Duration(milliseconds: 0));
-                rewardAudioPlayer.play();
-                rewardAudioPlayerPlaying = true;
-              }
+              // if (bgmAudioPlayerPlaying) {
+              //   bgmAudioPlayer.pause();
+              //   bgmAudioPlayerPlaying = false;
+              // }
+              // if (!rewardAudioPlayerPlaying) {
+              //   rewardAudioPlayer.seek(Duration(milliseconds: 0));
+              //   rewardAudioPlayer.play();
+              //   rewardAudioPlayerPlaying = true;
+              // }
               return _airdropReceivedView();
             } else if (_currentAirdropState == AirdropState.Waiting) {
-              if (bgmAudioPlayerPlaying) {
-                bgmAudioPlayer.pause();
-                bgmAudioPlayerPlaying = false;
-              }
-              if (rewardAudioPlayerPlaying) {
-                rewardAudioPlayer.pause();
-                rewardAudioPlayerPlaying = false;
-              }
+              // if (bgmAudioPlayerPlaying) {
+              //   bgmAudioPlayer.pause();
+              //   bgmAudioPlayerPlaying = false;
+              // }
+              // if (rewardAudioPlayerPlaying) {
+              //   rewardAudioPlayer.pause();
+              //   rewardAudioPlayerPlaying = false;
+              // }
               return _waitingView();
             } else {
               return _loadingView();
