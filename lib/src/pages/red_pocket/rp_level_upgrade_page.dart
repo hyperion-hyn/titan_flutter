@@ -446,11 +446,12 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                       ],
                     ),
                   ),
+                      _confirmButtonWidget(),
                 ])),
               ),
             ),
           ),
-          _confirmButtonWidget(),
+
         ],
       ),
     );
