@@ -314,7 +314,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
             child: Align(
               alignment: Alignment.centerRight,
               child: Text(
-                '已累计红包(RP): $alreadyAirdrop ',
+                '已产生(RP): $alreadyAirdrop ',
                 style: TextStyle(
                   color: DefaultColors.color999,
                   fontSize: 12,
