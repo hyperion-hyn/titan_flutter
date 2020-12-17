@@ -115,8 +115,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             physics: BouncingScrollPhysics(),
             slivers: <Widget>[
               _myRPInfo(),
-              _levelWidget(),
               _airdropWidget(),
+              _levelWidget(),
               _rpPool(),
               _projectIntro(),
             ],
