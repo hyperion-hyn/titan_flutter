@@ -166,11 +166,18 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   _myRPInfo() {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
 
-    var rpBalance = '--';
-    var totalBurning =
-        '${_rpStatistics?.rpHoldingContractInfo?.totalBurningStr} RP';
-    var totalHolding =
-        '${_rpStatistics?.rpHoldingContractInfo?.totalHoldingStr} RP';
+    var totalBurningStr = FormatUtil.stringFormatCoinNum(
+      _rpStatistics?.rpHoldingContractInfo?.totalBurningStr ?? '0',
+      decimal: 4,
+    );
+    var totalBurning = '$totalBurningStr RP';
+
+
+    var totalHoldingStr = FormatUtil.stringFormatCoinNum(
+      _rpStatistics?.rpHoldingContractInfo?.totalHoldingStr ?? '0',
+      decimal: 4,
+    );
+    var totalHolding = '$totalHoldingStr RP';
 
     var totalSupplyStr = FormatUtil.stringFormatCoinNum(
       _rpStatistics?.rpHoldingContractInfo?.totalSupplyStr ?? '0',
@@ -178,17 +185,18 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
     var totalSupply = '$totalSupplyStr RP';
 
+
+    var rpBalanceStr = '--';
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
       SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
     );
-
     try {
-      rpBalance = FormatUtil.coinBalanceHumanReadFormat(
+      rpBalanceStr = FormatUtil.coinBalanceHumanReadFormat(
         rpToken,
       );
     } catch (e) {}
 
-    var rpBalanceStr = '$rpBalance RP';
+    var rpBalance = '$rpBalanceStr RP';
 
     var userName = activeWallet?.wallet?.keystore?.name ?? '--';
 
@@ -243,7 +251,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     width: 4,
                   ),
                   Text(
-                    '$rpBalanceStr',
+                    '$rpBalance',
                     style: TextStyle(
                       fontSize: 13,
                       color: Colors.black,
@@ -582,13 +590,10 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _airdropWidget() {
-    var rpToday = '--';
-    var rpYesterday = '--';
-    var rpMissed = '--';
-
-    var rpTodayStr = '$rpToday RP';
-    var rpYesterdayStr = '$rpYesterday RP';
-    var rpMissedStr = '$rpMissed RP';
+    var rpTodayStr = '${_rpStatistics?.airdropInfo?.todayAmountStr} RP';
+    var rpYesterdayStr =
+        '${_rpStatistics?.airdropInfo?.yesterdayRpAmountStr} RP';
+    //var rpMissedStr = '${_rpStatistics?.airdropInfo?.missRpAmountStr} RP';
 
     var airDropPercent = _rpStatistics?.rpContractInfo?.dropOnPercent ?? '--';
     return SliverToBoxAdapter(
@@ -607,7 +612,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      S.of(context).rp_airdrop,
+                      '红包',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
@@ -633,23 +638,31 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     top: 16.0,
                     bottom: 8.0,
                   ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'res/drawable/img_rp_airdrop.png',
-                        width: 80,
-                        height: 80,
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Text(
-                        S.of(context).rp_available_soon,
-                        style: TextStyle(
-                          fontSize: 13,
+                  child: Container(
+                    height: 150,
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8.0,
+                            horizontal: 16.0,
+                          ),
+                          child: Image.asset(
+                            'res/drawable/bg_rp_airdrop.png',
+                            height: 150,
+                          ),
                         ),
-                      )
-                    ],
+                        Center(
+                          child: Text(
+                            '即将空投',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -668,11 +681,11 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         child: _contentColumn(
                             rpYesterdayStr, S.of(context).rp_yesterday_rp),
                       ),
-                      _verticalLine(),
-                      Expanded(
-                        child: _contentColumn(
-                            rpMissedStr, S.of(context).rp_missed),
-                      ),
+                      // _verticalLine(),
+                      // Expanded(
+                      //   child: _contentColumn(
+                      //       rpMissedStr, S.of(context).rp_missed),
+                      // ),
                     ],
                   ),
                 )
