@@ -1,9 +1,7 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lottie/lottie.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -20,7 +18,6 @@ import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_level_record_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_my_rp_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
@@ -167,26 +164,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   _myRPInfo() {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
 
-    var totalBurningStr = FormatUtil.stringFormatCoinNum(
-      _rpStatistics?.rpHoldingContractInfo?.totalBurningStr ?? '0',
-      decimal: 4,
-    );
-    var totalBurning = '$totalBurningStr RP';
-
-
-    var totalHoldingStr = FormatUtil.stringFormatCoinNum(
-      _rpStatistics?.rpHoldingContractInfo?.totalHoldingStr ?? '0',
-      decimal: 4,
-    );
-    var totalHolding = '$totalHoldingStr RP';
-
-    var totalSupplyStr = FormatUtil.stringFormatCoinNum(
-      _rpStatistics?.rpHoldingContractInfo?.totalSupplyStr ?? '0',
-      decimal: 4,
-    );
-    var totalSupply = '$totalSupplyStr RP';
-
-
     var rpBalanceStr = '--';
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
       SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
@@ -194,18 +171,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     try {
       rpBalanceStr = FormatUtil.coinBalanceHumanReadFormat(
         rpToken,
-      );
-      totalSupply = FormatUtil.stringFormatCoinNum(
-        _rpStatistics?.rpHoldingContractInfo?.totalSupplyStr ?? '0',
-        decimal: 4,
-      );
-      totalBurning = FormatUtil.stringFormatCoinNum(
-        _rpStatistics?.rpHoldingContractInfo?.totalBurningStr ?? '0',
-        decimal: 4,
-      );
-      totalHolding = FormatUtil.stringFormatCoinNum(
-        _rpStatistics?.rpHoldingContractInfo?.totalHoldingStr ?? '0',
-        decimal: 4,
       );
     } catch (e) {}
 
