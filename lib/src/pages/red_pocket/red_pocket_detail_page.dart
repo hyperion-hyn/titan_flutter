@@ -138,7 +138,12 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     print("[$runtimeType] _infoDetailBuilder, rpType:$_rpType");
 
     var amount = '-- RP';
-    var amountStr = '${_detailEntity?.amountStr ?? '0'} RP';
+
+    var amountStr = FormatUtil.stringFormatCoinNum(
+      _detailEntity?.amountStr ?? '0',
+      decimal: 6,
+    );
+    amountStr = '$amountStr RP';
     var zeroAmountStr = '0 RP';
     var luckState = RpLuckState.values[(_detailEntity?.luck ?? 0)];
 
