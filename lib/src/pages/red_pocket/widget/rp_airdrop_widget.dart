@@ -72,12 +72,12 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
 
   RPApi _rpApi = RPApi();
 
-  final rewardAudio = Audio("res/voice/cheer.mp3"); //中奖
-  final rewardAudioPlayer = AssetsAudioPlayer();
-  bool rewardAudioPlayerPlaying = false;
-  final bgmAudio = Audio("res/voice/rp_bgm.mp3"); //背景音乐
-  final bgmAudioPlayer = AssetsAudioPlayer();
-  bool bgmAudioPlayerPlaying = false;
+  final rewardAudio = Audio("res/voice/coin.mp3"); //中奖
+  // final rewardAudioPlayer = AssetsAudioPlayer();
+  // bool rewardAudioPlayerPlaying = false;
+  // final bgmAudio = Audio("res/voice/rp_bgm.mp3"); //背景音乐
+  // final bgmAudioPlayer = AssetsAudioPlayer();
+  // bool bgmAudioPlayerPlaying = false;
 
   @override
   void didChangeDependencies() {
@@ -97,8 +97,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     _setUpController();
     _setUpTimer();
 
-    rewardAudioPlayer.open(rewardAudio, autoStart: false, loopMode: LoopMode.single);
-    bgmAudioPlayer.open(bgmAudio, autoStart: false, loopMode: LoopMode.single);
+    // rewardAudioPlayer.open(rewardAudio, autoStart: false, loopMode: LoopMode.single);
+    // bgmAudioPlayer.open(bgmAudio, autoStart: false, loopMode: LoopMode.single);
   }
 
   Future _mockReqTime() async {
@@ -187,13 +187,15 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
         _animTimer.cancel();
       }
     }
-    _pulseController?.dispose();
+    // _pulseController?.dispose();
+    // _spinController?.dispose();
+    _fadeAnimController?.dispose();
     rpMachineStreamController?.close();
     nextRoundStreamController?.close();
     machineLightOnController?.close();
 
-    rewardAudioPlayer.dispose();
-    bgmAudioPlayer.dispose();
+    // rewardAudioPlayer.dispose();
+    // bgmAudioPlayer.dispose();
 
     super.dispose();
   }
@@ -235,41 +237,17 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
         builder: (context, snapshot) {
           _pulseController = null;
           _spinController = null;
+          // _fadeAnimController = null;
           _lastAirdropState = snapshot.data;
           var _currentAirdropState = snapshot.data;
           /*if (_currentAirdropState == AirdropState.Waiting) {
             return _waitingView();
           } else */
           if (_currentAirdropState == AirdropState.NotReceived) {
-            if (!bgmAudioPlayerPlaying) {
-              bgmAudioPlayer.play();
-              bgmAudioPlayerPlaying = true;
-            }
-            if (rewardAudioPlayerPlaying) {
-              rewardAudioPlayer.pause();
-              rewardAudioPlayerPlaying = false;
-            }
             return _airdropNotReceivedView();
           } else if (_currentAirdropState == AirdropState.Received) {
-            if (bgmAudioPlayerPlaying) {
-              bgmAudioPlayer.pause();
-              bgmAudioPlayerPlaying = false;
-            }
-            if (!rewardAudioPlayerPlaying) {
-              rewardAudioPlayer.seek(Duration(milliseconds: 0));
-              rewardAudioPlayer.play();
-              rewardAudioPlayerPlaying = true;
-            }
             return _airdropReceivedView();
           } else {
-            if (bgmAudioPlayerPlaying) {
-              bgmAudioPlayer.pause();
-              bgmAudioPlayerPlaying = false;
-            }
-            if (rewardAudioPlayerPlaying) {
-              rewardAudioPlayer.pause();
-              rewardAudioPlayerPlaying = false;
-            }
             return _waitingView();
           }
         });
@@ -596,6 +574,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTicker
     if (_now >= _latestRoundStartTime && _now < _latestRoundEndTime) {
       if (_now - _lastTimeCelebrateBegin < RP_Celebrate_Duration) {
         if (_lastAirdropState != null && _lastAirdropState != AirdropState.Received) {
+          AssetsAudioPlayer.playAndForget(rewardAudio);
           rpMachineStreamController.add(AirdropState.Received);
         }
       } else if (_lastAirdropState != AirdropState.NotReceived) {
