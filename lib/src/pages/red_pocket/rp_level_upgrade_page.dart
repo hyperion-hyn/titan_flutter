@@ -458,7 +458,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   Future getNetworkData() async {
     if (context != null) {
-      BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent());
+      BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEvent());
     }
 
     if (context != null) {

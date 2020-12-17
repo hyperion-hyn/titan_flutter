@@ -11,27 +11,33 @@ class RedPocketBloc extends Bloc<RedPocketEvent, RedPocketState> {
 
   final RPApi _rpApi = RPApi();
 
+  String get _addressStr => WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+
   @override
   Stream<RedPocketState> mapEventToState(
     RedPocketEvent event,
   ) async* {
-
-    if (event is UpdateMyLevelInfoEntityEvent) {
-
-      try {
+    try {
+      if (event is UpdateMyLevelInfoEvent) {
         var _address = event.address;
         //print("[RedPocketBloc] UpdateMyLevelInfoEntityEvent, _address:$_address");
         if (_address?.isEmpty??true) {
-          var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
-          _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+          _address = _addressStr;
         }
         var _myLevelInfo = await _rpApi.getRPMyLevelInfo(_address);
 
-        yield UpdateMyLevelInfoEntityState(_myLevelInfo);
-      } catch (e) {
-        yield UpdateFailMyLevelInfoEntityState();
+        yield UpdateMyLevelInfoState(_myLevelInfo);
+      } else if (event is UpdateStatisticsEvent) {
+        var _address = event.address;
+        //print("[RedPocketBloc] UpdateStatisticsEvent, _address:$_address");
+        if (_address?.isEmpty??true) {
+          _address = _addressStr;
+        }
+        var _statistics = await _rpApi.getRPStatistics(_address);
+        yield UpdateStatisticsState(_statistics);
       }
+    } catch (e) {
+      yield UpdateFailState();
     }
-
   }
 }
