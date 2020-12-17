@@ -259,7 +259,7 @@ void showRichInviteDialog(BuildContext context, String inviterAddress, String wa
             RPApi _rpApi = RPApi();
             var walletVo = WalletInheritedModel.of(context).activatedWallet;
             String inviteResult = await _rpApi.postRpInviter(inviterAddress, walletVo.wallet);
-            if (inviteResult != null && inviteResult.isNotEmpty) {
+            if (inviteResult != null) {
               Fluttertoast.showToast(msg: S.of(context).invitation_success);
               if (callback != null) callback();
             }
