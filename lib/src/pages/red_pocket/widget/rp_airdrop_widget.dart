@@ -722,6 +722,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       if ((_now - _lastTimeCelebrateBegin) < _rpCelebrateDuration) {
         if (_lastAirdropState != null &&
             _lastAirdropState != AirdropState.Received) {
+          AssetsAudioPlayer.playAndForget(rewardAudio);
           rpMachineStreamController.add(AirdropState.Received);
         }
       } else if (_lastAirdropState != AirdropState.NotReceived) {
