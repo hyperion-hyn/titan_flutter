@@ -552,7 +552,6 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
           StreamBuilder(
               stream: currentRoundStreamController.stream,
               builder: (context, snapshot) {
-                print('currentRoundStreamController.stream: ${snapshot.data}');
                 if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
                 } else {
