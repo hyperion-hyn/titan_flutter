@@ -106,9 +106,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
   @override
   void onCreated() async {
     //await _mockReqTime();
-    await _requestData();
-
     _setUpController();
+
+    await _requestData();
     _setUpTimer();
 
     // rewardAudioPlayer.open(rewardAudio, autoStart: false, loopMode: LoopMode.single);
