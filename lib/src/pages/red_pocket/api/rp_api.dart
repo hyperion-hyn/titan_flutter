@@ -285,6 +285,27 @@ class RPApi {
     );
   }
 
+  ///我的红包列表
+  Future<RpMyRpRecordEntity> getMyRpRecordListPending(
+      String address, {
+        int size = 200,
+        pagingKey = '',
+      }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/redpocket/list/$address',
+      EntityFactory<RpMyRpRecordEntity>((json) {
+        return RpMyRpRecordEntity.fromJson(json);
+      }),
+      params: {
+        'paging_key': json.encode(pagingKey),
+        'size': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
   Future<RpOpenRecordEntity> getMyRpOpenInfo(
     String address,
     int redPocketId,
