@@ -630,7 +630,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       ),
                       Spacer(),
                       Text(
-                        '已累计空投 $alreadyAirdrop万 RP',
+                        '已累计红包 $alreadyAirdrop RP',
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,
