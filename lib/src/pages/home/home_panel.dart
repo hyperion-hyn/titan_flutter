@@ -953,7 +953,7 @@ class HomePanelState extends State<HomePanel> {
       if (fromArr[1].length > 0) {
         fromArr = fromArr[1].split("&name=");
         if (fromArr[0].length > 0 && fromArr[1].length > 0) {
-          showRichInviteDialog(context, fromArr[0], fromArr[1], '');
+          showTitanInviteDialog(context, fromArr[0], fromArr[1], '');
         }
       }
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
