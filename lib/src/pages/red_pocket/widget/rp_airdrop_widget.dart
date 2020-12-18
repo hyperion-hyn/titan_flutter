@@ -528,7 +528,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
                 } else {
-                  var currentRoundText = '本轮剩余 ${FormatUtil.formatMinuteTimer(
+                  var currentRoundText = '本轮剩余时间 ${FormatUtil.formatMinuteTimer(
                     _currentRoundRemainTime,
                   )}';
                   return Text(currentRoundText,
@@ -582,7 +582,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
                 } else {
-                  var currentRoundText = '本轮剩余 ${FormatUtil.formatMinuteTimer(
+                  var currentRoundText = '本轮剩余时间 ${FormatUtil.formatMinuteTimer(
                     _currentRoundRemainTime,
                   )}';
                   return Text(currentRoundText,
