@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:decimal/decimal.dart';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/http/entity.dart';
@@ -8,6 +9,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_http.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_airdrop_round_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_detail_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_holding_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_miners_entity.dart';
@@ -18,6 +20,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as WalletClass;
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -42,13 +45,14 @@ class RPApi {
       return;
     }
 
-    return await RPHttpCore.instance.postEntity("/v1/rp/create", EntityFactory<dynamic>((json) => json),
-        params: {
-          "address": address,
-          "hyn_amount": amount.toString(),
-          "tx_hash": txHash,
-        },
-        options: RequestOptions(contentType: "application/json"));
+    return await RPHttpCore.instance
+        .postEntity("/v1/rp/create", EntityFactory<dynamic>((json) => json),
+            params: {
+              "address": address,
+              "hyn_amount": amount.toString(),
+              "tx_hash": txHash,
+            },
+            options: RequestOptions(contentType: "application/json"));
   }
 
   Future<dynamic> postRetrieveHyn({
@@ -56,30 +60,67 @@ class RPApi {
     WalletVo activeWallet,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
-    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password);
+    var txHash = await activeWallet.wallet
+        .sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password);
     print("[Rp_api] postRetrieveHyn, address:$address, txHash:$txHash");
     if (txHash == null) {
       return;
     }
-    return await RPHttpCore.instance.postEntity("/v1/rp/retrieve", EntityFactory<dynamic>((json) => json),
-        params: {
-          "address": address,
-          "tx_hash": txHash,
-        },
-        options: RequestOptions(contentType: "application/json"));
+    return await RPHttpCore.instance
+        .postEntity("/v1/rp/retrieve", EntityFactory<dynamic>((json) => json),
+            params: {
+              "address": address,
+              "tx_hash": txHash,
+            },
+            options: RequestOptions(contentType: "application/json"));
   }
 
-  ///
+  ///统计信息
   Future<RPStatistics> getRPStatistics(String address) async {
+    var isEmpty = address?.isEmpty??true;
+    var path = "/v1/rp/statistics/$address";
+    if (isEmpty) {
+      path = "/v1/rp/statistics/null";
+    }
     return await RPHttpCore.instance.getEntity(
-        "/v1/rp/statistics/$address",
+        path,
         EntityFactory<RPStatistics>(
           (json) => RPStatistics.fromJson(json),
         ),
         options: RequestOptions(contentType: "application/json"));
   }
 
-  Future<RpStakingReleaseInfo> getRPStakingReleaseInfo(String address, String id) async {
+  int count = 0;
+  int startTime = 0;
+  int endTime = 0;
+
+  Future<RpAirdropRoundInfo> getLatestRpAirdropRoundInfo(
+    String address,
+  ) async {
+    // test hack data
+    // await Future.delayed(Duration(milliseconds: 100));
+    // count++;
+    // var t = 1;
+    // var rcount = count - t > 0 ? count - t : 0;
+    // return RpAirdropRoundInfo.fromJson({
+    //   'start_time': startTime,
+    //   'end_time': endTime,
+    //   'my_rp_count': rcount,
+    //   'my_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (rcount * 10).ceilToDouble())}',
+    //   'total_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (rcount * 100).ceilToDouble())}',
+    //   'current_time': DateTime.now().millisecondsSinceEpoch ~/ 1000,
+    // });
+
+    return await RPHttpCore.instance.getEntity(
+        "/v1/rp/airdrop/latestRound/$address",
+        EntityFactory<RpAirdropRoundInfo>(
+          (json) => RpAirdropRoundInfo.fromJson(json),
+        ),
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future<RpStakingReleaseInfo> getRPStakingReleaseInfo(
+      String address, String id) async {
     return await RPHttpCore.instance.getEntity(
         "/v1/rp/staking/$address/$id",
         EntityFactory<RpStakingReleaseInfo>(
@@ -197,7 +238,8 @@ class RPApi {
       Fluttertoast.showToast(msg: "不能邀请自己");
       return null;
     }
-    var result = await RPHttpCore.instance.postEntity("/v1/rp/confirm_invite", EntityFactory<dynamic>((json) => json),
+    var result = await RPHttpCore.instance.postEntity(
+        "/v1/rp/confirm_invite", EntityFactory<dynamic>((json) => json),
         params: {
           "invitee": myAddress,
           "inviter": inviterAddress,
@@ -235,6 +277,27 @@ class RPApi {
   }) async {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/redpocket/list/$address',
+      EntityFactory<RpMyRpRecordEntity>((json) {
+        return RpMyRpRecordEntity.fromJson(json);
+      }),
+      params: {
+        'paging_key': json.encode(pagingKey),
+        'size': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  ///我的红包列表，待启动
+  Future<RpMyRpRecordEntity> getMyRpRecordListPending(
+      String address, {
+        int size = 200,
+        pagingKey = '',
+      }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/redpocket/list/$address/pending',
       EntityFactory<RpMyRpRecordEntity>((json) {
         return RpMyRpRecordEntity.fromJson(json);
       }),
@@ -371,29 +434,34 @@ class RPApi {
 
     var amount = depositAmount + burningAmount;
     final client = WalletUtil.getWeb3Client(true);
-    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
-    var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount, nonce: nonce);
-    if (approveHex?.isEmpty ?? true ) {
+    var nonce =
+        await client.getTransactionCount(EthereumAddress.fromHex(address));
+    var approveHex = await postRpApprove(
+        password: password,
+        activeWallet: activeWallet,
+        amount: amount,
+        nonce: nonce);
+    if (approveHex?.isEmpty ?? true) {
       throw HttpResponseCodeNotSuccess(-30011, 'HYN余额不足支付网络费用!');
     }
     print('[rp_api] postRpDepositAndBurn, approveHex: $approveHex');
 
-    if(approveHex != '200'){
+    if (approveHex != '200') {
       nonce = nonce + 1;
     }
     var rawTxHash = await activeWallet.wallet.signRpHolding(
-      RpHoldingMethod.DEPOSIT_BURN,
-      password,
-      depositAmount: depositAmount,
-      burningAmount: burningAmount,
-      nonce: nonce
-    );
-    print("[Rp_api] postRpDepositAndBurn, sendRpHolding, address:$address, txHash:$rawTxHash");
+        RpHoldingMethod.DEPOSIT_BURN, password,
+        depositAmount: depositAmount,
+        burningAmount: burningAmount,
+        nonce: nonce);
+    print(
+        "[Rp_api] postRpDepositAndBurn, sendRpHolding, address:$address, txHash:$rawTxHash");
     if (rawTxHash == null) {
       throw HttpResponseCodeNotSuccess(-30012, 'RP余额不足!');
     }
 
-    return await RPHttpCore.instance.postEntity("/v1/rp/level/promotion/submit", EntityFactory<dynamic>((json) => json),
+    return await RPHttpCore.instance.postEntity(
+        "/v1/rp/level/promotion/submit", EntityFactory<dynamic>((json) => json),
         params: {
           "address": address,
           "burning": burningAmount.toString(),
@@ -420,12 +488,14 @@ class RPApi {
       withdrawAmount: withdrawAmount,
     );
 
-    print("[Rp_api] postRpWithdraw, sendRpHolding, address:$address, rawTxHash:$rawTxHash");
+    print(
+        "[Rp_api] postRpWithdraw, sendRpHolding, address:$address, rawTxHash:$rawTxHash");
     if (rawTxHash == null) {
       throw HttpResponseCodeNotSuccess(-30012, 'RP余额不足!');
     }
 
-    return await RPHttpCore.instance.postEntity("/v1/rp/level/withdraw/submit", EntityFactory<dynamic>((json) => json),
+    return await RPHttpCore.instance.postEntity(
+        "/v1/rp/level/withdraw/submit", EntityFactory<dynamic>((json) => json),
         params: {
           "address": address,
           "withdraw": withdrawAmount.toString(),
@@ -448,7 +518,8 @@ class RPApi {
     var address = wallet?.getEthAccount()?.address ?? "";
 
     var gasLimit = 100000;
-    var gasPrice = BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt());
+    var gasPrice = BigInt.from(
+        WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt());
     print(
         '[rp_api] postRpApprove, address:$address, amount:$amount, gasPrice:$gasPrice, gasLimit:$gasLimit');
 

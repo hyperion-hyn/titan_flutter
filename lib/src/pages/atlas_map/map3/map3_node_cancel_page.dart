@@ -467,7 +467,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
-            isLoading: !_canCancel,
+            isDisable: !_canCancel,
           ),
         ),
       ),

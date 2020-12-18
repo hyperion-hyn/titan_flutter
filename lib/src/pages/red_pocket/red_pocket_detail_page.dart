@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:k_chart/utils/date_format_util.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -42,7 +41,9 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   var _address = "";
 
   List<RpOpenRecordEntity> _dataList = List();
+
   List<RpOpenRecordEntity> get _filterDataList => _dataList.where((element) => element.role == 3).toList();
+
   List<RpOpenRecordEntity> get _manageDataList => _dataList.where((element) => element.role != 3).toList();
 
   RpOpenRecordEntity _detailEntity;
@@ -50,6 +51,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   RedPocketType get _rpType => RedPocketType.values[_detailEntity?.type ?? 0];
 
   Map<String, dynamic> _currentPageKey;
+
   bool get _txHashIsEmpty => (_detailEntity?.txHash ?? '').isEmpty;
 
   @override
@@ -139,7 +141,12 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     print("[$runtimeType] _infoDetailBuilder, rpType:$_rpType");
 
     var amount = '-- RP';
-    var amountStr = '${_detailEntity?.amountStr ?? '0'} RP';
+
+    var amountStr = FormatUtil.stringFormatCoinNum(
+      _detailEntity?.amountStr ?? '0',
+      decimal: 6,
+    );
+    amountStr = '$amountStr RP';
     var zeroAmountStr = '0 RP';
     var luckState = RpLuckState.values[(_detailEntity?.luck ?? 0)];
 
@@ -148,7 +155,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
     switch (_rpType) {
       case RedPocketType.LUCKY:
-        title = '$name 的幸运红包';
+        // title = '$name 的幸运红包';
+        title = '幸运红包';
 
         amount = luckState == RpLuckState.UN_LUCKY ? zeroAmountStr : amountStr;
         break;
@@ -176,7 +184,6 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       _detailEntity?.address ?? '',
     );
     var address = shortBlockChainAddress(beach32Address);
-
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -235,6 +242,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    /*
                     Text(
                       name,
                       style: TextStyle(
@@ -246,6 +254,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                     SizedBox(
                       width: 6,
                     ),
+                    */
                     Text(
                       address,
                       style: TextStyle(
@@ -298,12 +307,14 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                       height: 28,
                     ),
                   ),
-                  Text(
-                    amount,
-                    style: TextStyle(
-                      color: HexColor("#E3A900"),
-                      fontSize: 26,
-                      fontWeight: FontWeight.w600,
+                  Flexible(
+                    child: Text(
+                      amount,
+                      style: TextStyle(
+                        color: HexColor("#E3A900"),
+                        fontSize: 26,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   Image.asset(
@@ -365,6 +376,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     var createdAt = _detailEntity?.createdAt ?? 0;
     var createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt * 1000);
     var createdAtStr = Const.DATE_FORMAT.format(createdAtDate);
+    String totalAmountStr = FormatUtil.stringFormatCoinNum(_detailEntity?.totalAmountStr ?? "0") ?? '--';
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -376,7 +388,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
       child: Row(
         children: [
           Text(
-            '红包共 ${_detailEntity?.totalAmountStr ?? "0"} RP',
+            '红包共 $totalAmountStr RP',
             style: TextStyle(
               color: Color(0xff333333),
               fontWeight: FontWeight.w500,
@@ -426,7 +438,19 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         ),
       );
     } else {
-      var childCount = _rpType == RedPocketType.LUCKY ? _filterDataList.length : _filterDataList.length + 1;
+      var childCount = 0;
+      switch (_rpType) {
+        case RedPocketType.LEVEL:
+          childCount = _filterDataList.length + 2;
+
+          break;
+
+        case RedPocketType.PROMOTION:
+        case RedPocketType.LUCKY:
+          childCount = _filterDataList.length + 1;
+          break;
+      }
+
       return SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
@@ -439,20 +463,24 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 
   Widget _itemBuilder(int index) {
-    if (index == _filterDataList.length) {
-      switch (_rpType) {
-        case RedPocketType.LEVEL:
+    switch (_rpType) {
+      case RedPocketType.LEVEL:
+        if (index == _filterDataList.length) {
           return _levelWidget();
+        } else if (index == (_filterDataList.length + 1)) {
+          return _manageWidget();
+        }
 
-          break;
+        break;
 
-        case RedPocketType.PROMOTION:
+      case RedPocketType.PROMOTION:
+      case RedPocketType.LUCKY:
+        if (index == _filterDataList.length) {
+          //return _manageWidget();
           return _promotionWidget();
-          break;
+        }
 
-        case RedPocketType.LUCKY:
-          break;
-      }
+        break;
     }
 
     var model = _filterDataList[index];
@@ -538,6 +566,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
+                        /*
                         Padding(
                           padding: EdgeInsets.only(
                             right: isMe ? 2 : 6,
@@ -553,10 +582,22 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                                 )
                               : SizedBox(),
                         ),
+
+                        */
+                        Text(
+                          '${UiUtil.shortEthAddress(address)}',
+                          //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: HexColor('#333333'),
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
                         if (isMe)
                           Padding(
                             padding: const EdgeInsets.only(
-                              right: 6,
+                              left: 6,
                             ),
                             child: Text(
                               '(我)',
@@ -567,25 +608,16 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                               ),
                             ),
                           ),
-                        Text(
-                          '当时量级 $level ',
-                          style: TextStyle(
-                            color: HexColor("#999999"),
-                            fontSize: 10,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
                       ],
                     ),
                   ),
                   Text(
-                    '${UiUtil.shortEthAddress(address)}',
-                    //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                    '当时量级 $level ',
                     style: TextStyle(
+                      color: HexColor("#999999"),
                       fontSize: 10,
-                      color: HexColor('#999999'),
+                      fontWeight: FontWeight.normal,
                     ),
-                    textAlign: TextAlign.left,
                   ),
                 ],
               ),
@@ -617,7 +649,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                         desc,
                         style: TextStyle(
                           fontSize: 10,
-                          color: luckState == RpLuckState.BEST ? HexColor('#F0BE00') : HexColor('#999999'),
+                          color: ([RpLuckState.BEST, RpLuckState.LUCKY_BEST].contains(luckState)) ? HexColor('#F0BE00') : HexColor('#999999'),
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -739,9 +771,101 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         _manageFeeAmount = valueByDecimal;
       }
     });
+    var _manageFeeAmountStr = FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString(), decimal: 4,) + ' RP';
+    var _burnAmountStr = FormatUtil.stringFormatCoinNum(_burnAmount.toString(), decimal: 4,) + ' RP';
+
+    Widget rowText(String imageName, String title, String amount,
+        {bool isRebuild = false, MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start}) {
+      return Expanded(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: mainAxisAlignment,
+          children: <Widget>[
+            Image.asset(
+              'res/drawable/$imageName.png',
+              width: 16,
+              height: 16,
+              color: isRebuild ? HexColor('#FFFF5151') : null,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 4,
+              ),
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: HexColor("#999999"),
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 4,
+                ),
+                child: Text(
+                  amount,
+                  style: TextStyle(
+                    color: HexColor("#333333"),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
+      child: Container(
+        padding: const EdgeInsets.only(
+          top: 16,
+          bottom: 16,
+          left: 16,
+          right: 16,
+        ),
+        decoration: BoxDecoration(
+          color: HexColor('#FFFFFF'),
+          borderRadius: BorderRadius.all(
+            Radius.circular(6.0),
+          ), //设置四周圆角 角度
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            rowText('rp_manage_fee', '管理费', _manageFeeAmountStr),
+            SizedBox(width: 12,),
+            rowText(
+              'ic_burn',
+              '燃烧',
+              _burnAmountStr,
+              isRebuild: true,
+              mainAxisAlignment: MainAxisAlignment.end,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _manageWidget() {
+    var _manageFeeAmount = Decimal.fromInt(0);
+
+    _manageDataList.forEach((item) {
+      var bigIntValue = BigInt.tryParse(item.amount) ?? BigInt.from(0);
+      Decimal valueByDecimal = ConvertTokenUnit.weiToEther(
+        weiBigInt: bigIntValue,
+      );
+      if (item.role == 2) {
+        _manageFeeAmount = valueByDecimal;
+      }
+    });
     var _manageFeeAmountStr = '管理费 ' + FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + ' RP';
-    var _burnAmountStr = '燃烧 ' + FormatUtil.stringFormatCoinNum(_burnAmount.toString()) + ' RP';
-    var totalStr = _manageFeeAmountStr + '，' + _burnAmountStr;
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -764,10 +888,10 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 left: 6,
               ),
               child: Image.asset(
-                'res/drawable/ic_burn.png',
-                width: 32,
-                height: 32,
-                color: HexColor('#FFFF5151'),
+                'res/drawable/rp_manage_fee.png',
+                width: 24,
+                height: 24,
+                //color: HexColor('#FFFF5151'),
               ),
             ),
             Spacer(),
@@ -784,7 +908,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6.0),
                         child: Text(
-                          totalStr,
+                          _manageFeeAmountStr,
                           style: TextStyle(
                             color: HexColor("#333333"),
                             fontSize: 14,
@@ -904,13 +1028,19 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
   var desc = '';
 
   var amount = '--';
-  var amountStr = (entity?.amountStr ?? '0') + ' RP';
+  String amountStr = FormatUtil.stringFormatCoinNum(entity?.amountStr ?? '0') ?? '--';
+  amountStr += ' RP';
 
   var luckState = RpLuckState.values[(entity?.luck ?? 0)];
   switch (luckState) {
     case RpLuckState.UN_LUCKY:
       desc = '错过 $amountStr';
       amount = '0 RP';
+      break;
+
+    case RpLuckState.BEST:
+      desc = '最佳';
+      amount = amountStr;
       break;
 
     case RpLuckState.LUCKY:
@@ -922,8 +1052,13 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
       amount = amountStr;
       break;
 
-    case RpLuckState.BEST:
-      desc = '最佳';
+    case RpLuckState.LUCKY_BEST:
+      desc = '砸中且最佳';
+      amount = amountStr;
+      break;
+
+    case RpLuckState.GET:
+      desc = '';
       amount = amountStr;
       break;
 
@@ -948,6 +1083,8 @@ enum RedPocketType {
 // 0：错过 1：砸中 2：最佳
 enum RpLuckState {
   UN_LUCKY,
-  LUCKY,
+  GET,
   BEST,
+  LUCKY,
+  LUCKY_BEST,
 }

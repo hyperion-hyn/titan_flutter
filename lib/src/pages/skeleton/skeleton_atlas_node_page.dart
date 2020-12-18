@@ -227,7 +227,7 @@ class SkeletonAtlasNodePageState extends State<SkeletonAtlasNodePage> {
                       );
                     },
                     fontSize: 16,
-                    isLoading: true,
+                    isDisable: true,
                   ),
                 ),
                 Expanded(

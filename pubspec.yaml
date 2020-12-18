@@ -11,7 +11,7 @@ description: Titan Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 4.0.30+2030
+version: 4.0.34+2034
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -85,7 +85,7 @@ dependencies:
   #https://pub.dev/packages/floor
   floor: ^0.8.0
   #https://pub.dev/packages/rxdart
-  rxdart: ^0.23.1
+  rxdart: ^0.24.1
   #https://pub.dev/packages/url_launcher
   url_launcher: 5.5.0
   decimal: ^0.3.5
@@ -118,9 +118,9 @@ dependencies:
   app_settings: ^3.0.0
   fluro: 1.7.8
   #https://pub:dev/packages/image_pickers#-readme-tab-
-#  image_pickers:
-#    git:
-#      url: git@github.com:moyaying/image_pickers.git
+  #  image_pickers:
+  #    git:
+  #      url: git@github.com:moyaying/image_pickers.git
   image_pickers: 1.0.7+6
 
   bordered_text: ^1.0.0
@@ -148,13 +148,13 @@ dependencies:
   vibration: 1.4.0
   #https://pub.dev/packages/oktoast
   oktoast: ^2.3.2
-#  flutter_recaptcha_v2:
-#    git:
-#      url: git@github.com:hyperion-hyn/flutter_recaptcha_v2.git
+  #  flutter_recaptcha_v2:
+  #    git:
+  #      url: git@github.com:hyperion-hyn/flutter_recaptcha_v2.git
 
   #K-Line Chart
   #https://github.com/lanceqiuz/flutter_k_chart
-#  k_chart: ^0.1.1
+  #  k_chart: ^0.1.1
   k_chart:
     git:
       url: git@github.com:hyperion-hyn/k_chart.git
@@ -170,6 +170,8 @@ dependencies:
   lottie: 0.7.0+1
   #https://pub:dev/packages/flutter_staggered_grid_view/install:
   flutter_staggered_grid_view: ^0.3.2
+  animate_do: 1.7.5
+  assets_audio_player: ^2.0.13+1
 
 dev_dependencies:
   flutter_driver:
@@ -199,10 +201,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-
     - res/drawable/
     - res/kline/
     - res/lottie/
+    - res/voice/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

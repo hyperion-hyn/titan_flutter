@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math' as math;
+
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,10 +20,9 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -43,9 +45,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
   TextEditingController _textEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final RPApi _rpApi = RPApi();
-
-  double minTotal = 0;
-  double remainTotal = 0;
+  final StreamController<String> _inputController = StreamController.broadcast();
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
@@ -54,10 +54,24 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
   WalletVo _activatedWallet;
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
 
-  TextStyle _lightTextStyle = TextStyle(
-    fontWeight: FontWeight.w500,
-    fontSize: 14,
-  );
+  Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
+
+  Decimal get _inputValue {
+    var zeroValue = Decimal.zero;
+    var inputValue = Decimal.tryParse(_textEditingController?.text ?? '0') ?? zeroValue;
+    return inputValue;
+  }
+
+  Decimal get _preTotalHoldValue {
+    var zeroValue = Decimal.zero;
+
+    var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
+    var totalHoldValue = (_inputValue + currentHoldValue);
+
+    return totalHoldValue > zeroValue ? totalHoldValue : currentHoldValue;
+  }
+
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -87,17 +101,18 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
     print("[${widget.runtimeType}] dispose");
 
     _loadDataBloc.close();
+    _inputController.close();
+
     super.dispose();
   }
 
   Future getNetworkData() async {
     if (context != null) {
-      BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEntityEvent());
+      BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEvent());
     }
 
     if (context != null) {
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateActivatedWalletBalanceEvent());
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
     }
 
     if (mounted) {
@@ -131,22 +146,13 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                     color: Colors.white,
                     child: Column(
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(top: 60),
-                          child: Row(
-                            children: <Widget>[
-                              Text('当前量级', style: _lightTextStyle),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Text('${levelValueToLevelName(_myLevelInfo?.currentLevel ?? 0)}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16,
-                                    color: HexColor('#999999'),
-                                  )),
-                            ],
-                          ),
+                        rpRowText(
+                          title: '当前量级',
+                          amount: levelValueToLevelName(_myLevelInfo?.currentLevel ?? 0),
+                        ),
+                        rpRowText(
+                          title: '当前持币',
+                          amount: '${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 20),
@@ -154,7 +160,13 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
-                              Text('转入持币', style: _lightTextStyle),
+                              Text(
+                                '转入持币',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                ),
+                              ),
                               SizedBox(
                                 width: 5,
                               ),
@@ -165,38 +177,33 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                                     fontSize: 12,
                                     color: HexColor('#999999'),
                                   )),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: Text('当前持币 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 12,
-                                      color: HexColor('#999999'),
-                                    )),
-                              ),
                             ],
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
                             top: 16,
-                            right: 50,
+                            right: 16,
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Flexible(
+                              Expanded(
                                 flex: 1,
                                 child: Form(
                                   key: _formKey,
                                   child: RoundBorderTextField(
                                     onChanged: (text) {
                                       _formKey.currentState.validate();
+
+                                      _inputController.add(text);
                                     },
                                     controller: _textEditingController,
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                    inputFormatters: [
+                                      LengthLimitingTextInputFormatter(18),
+                                      FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
+                                    ],
                                     hint: '请输入增加数量',
                                     validator: (textStr) {
                                       if (textStr.length == 0) {
@@ -219,6 +226,54 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                                   ),
                                 ),
                               ),
+                              StreamBuilder<Object>(
+                                  stream: _inputController.stream,
+                                  builder: (context, snapshot) {
+                                    bool isShowUp = (_balanceValue > _inputValue && _inputValue > Decimal.zero);
+                                    return isShowUp
+                                        ? Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  left: 16,
+                                                  right: 16,
+                                                ),
+                                                child: Transform.rotate(
+                                                  angle: math.pi,
+                                                  child: Image.asset(
+                                                    'res/drawable/ic_rp_level_down.png',
+                                                    width: 15,
+                                                    color: Theme.of(context).primaryColor,
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  right: 4,
+                                                ),
+                                                child: Text(
+                                                  '预计总持币',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.normal,
+                                                    fontSize: 10,
+                                                    color: HexColor('#999999'),
+                                                  ),
+                                                ),
+                                              ),
+                                              Text(
+                                                '$_preTotalHoldValue RP',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Container(
+                                            width: 60,
+                                          );
+                                  }),
                             ],
                           ),
                         ),
@@ -226,6 +281,17 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
                           padding: const EdgeInsets.only(top: 10),
                           child: Row(
                             children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 6,
+                                ),
+                                child: Image.asset(
+                                  "res/drawable/add_position_image_detail.png",
+                                  width: 12,
+                                  height: 12,
+                                  color: HexColor('#999999'),
+                                ),
+                              ),
                               Text(
                                 '适当增加持币可以防止因',
                                 style: TextStyle(
@@ -279,8 +345,6 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
       ),
     );
   }
-
-  bool _isLoading = false;
 
   _addAction() async {
     FocusScope.of(context).requestFocus(FocusNode());

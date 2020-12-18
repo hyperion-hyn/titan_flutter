@@ -181,7 +181,7 @@ class SkeletonMap3NodePageState extends State<SkeletonMap3NodePage> {
                       );
                     },
                     fontSize: 16,
-                    isLoading: true,
+                    isDisable: true,
                   ),
                 ),
                 Expanded(

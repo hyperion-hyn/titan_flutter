@@ -407,7 +407,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
-            isLoading: !_canExit,
+            isDisable: !_canExit,
           ),
         ),
       ),

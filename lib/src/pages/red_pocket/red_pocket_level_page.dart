@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -8,14 +9,13 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_add_staking_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -38,6 +38,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
   var _address = "";
   RpPromotionRuleEntity _promotionRuleEntity;
+
   List<LevelRule> get _dynamicDataList => (_promotionRuleEntity?.dynamicList ?? []).reversed.toList();
   List<LevelRule> get _staticDataList => (_promotionRuleEntity?.static ?? []).reversed.toList();
 
@@ -71,6 +72,8 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   int get _currentLevel => _myLevelInfo?.currentLevel ?? 0;
 
   int _recommendLevel = 5;
+
+  bool _isStatic = true;
 
   @override
   void initState() {
@@ -176,14 +179,29 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
           bottom: 16,
           right: 16,
         ),
-        child: Wrap(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '当前已发行 $totalSupplyStr RP，百分比Y = $promotionSupplyRatioPercent（$stepPercent为1梯度）',
-              style: TextStyle(
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 2,
+                right: 10,
+              ),
+              child: Image.asset(
+                "res/drawable/volume.png",
+                width: 15,
+                height: 14,
                 color: HexColor('#333333'),
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Expanded(
+              child: Text(
+                '当前已发行 $totalSupplyStr RP，百分比Y = $promotionSupplyRatioPercent（$stepPercent为1梯度）',
+                style: TextStyle(
+                  color: HexColor('#333333'),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             )
           ],
@@ -249,7 +267,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
             children: [
               InkWell(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                onTap: () => _selectedLevelAction(model),
+                onTap: () => _selectedLevelAction(model, isStatic: true),
                 child: _itemContainer(model),
               ),
               _tagContainer(leftTagTitle: leftTagTitle, color: HexColor('#FF4C3B')),
@@ -304,7 +322,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
             children: [
               InkWell(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                onTap: () => _selectedLevelAction(dynamicModel),
+                onTap: () => _selectedLevelAction(dynamicModel, isStatic: false),
                 child: Container(
                   decoration: BoxDecoration(
                     color: HexColor('#DEDEDE'),
@@ -413,11 +431,14 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   Widget _itemContainer(LevelRule model) {
     bool isSelected = ((_currentSelectedLevelRule?.level ?? 0) == model.level);
 
-    var levelName = '量级 ${levelValueToLevelName(model.level)}';
+    var level = model.level ?? 0;
+    var levelName = '量级 ${levelValueToLevelName(level)}';
     var burnTitle = '需燃烧';
     var burnRpValue = '${model.burnStr} RP';
 
-    var stakingTitle = '最低持币 ${model.holdingFormula}';
+    // var stakingTitle = '最低持币 ${model.holdingFormula}';
+    var formula = model.holdingFormula;
+    var stakingTitle = '最低持币';
     var stakingValue = '${model.holdingStr} RP';
 
     return Container(
@@ -438,6 +459,19 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                 color: HexColor('#333333'),
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 8,
+            ),
+            child: Text(
+              '计算公式: $formula',
+              style: TextStyle(
+                color: HexColor('#999999'),
+                fontSize: 10,
+                fontWeight: FontWeight.normal,
               ),
             ),
           ),
@@ -470,7 +504,9 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
       child: Container(
         color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.only(top: 60),
+          padding: const EdgeInsets.symmetric(
+            vertical: 30,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -481,7 +517,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                 width: 120,
                 fontSize: 14,
                 btnColor: [HexColor('#2D99FF'), HexColor('#107EDC')],
-                //isLoading: !_canCancel,
               ),
               SizedBox(
                 width: 20,
@@ -493,7 +528,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
                 width: 120,
                 fontSize: 14,
                 btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
-                //isLoading: !_canCancel,
               ),
             ],
           ),
@@ -502,7 +536,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     );
   }
 
-  _selectedLevelAction(LevelRule model) {
+  _selectedLevelAction(LevelRule model, {bool isStatic = true}) {
     if (_currentLevel > model.level && _currentLevel > 0) {
       if (_currentLevel == 5) {
         Fluttertoast.showToast(
@@ -520,6 +554,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
     setState(() {
       _currentSelectedLevelRule = model;
+      _isStatic = isStatic;
     });
   }
 
@@ -568,7 +603,11 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpLevelUpgradePage(_currentSelectedLevelRule, _promotionRuleEntity),
+        builder: (context) => RpLevelUpgradePage(
+          _currentSelectedLevelRule,
+          _promotionRuleEntity,
+          isStatic: _isStatic,
+        ),
       ),
     );
   }

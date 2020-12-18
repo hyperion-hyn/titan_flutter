@@ -18,6 +18,7 @@ import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/global_data/global_data.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
+import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
@@ -366,7 +367,7 @@ class HomePanelState extends State<HomePanel> {
             ),
           ),
           Text(
-            'RP 红包币',
+            '应用类',
             style: TextStyle(
               color: Colors.grey,
             ),
@@ -405,7 +406,7 @@ class HomePanelState extends State<HomePanel> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'RP',
+                          'RP 红包',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
@@ -414,7 +415,7 @@ class HomePanelState extends State<HomePanel> {
                           height: 4,
                         ),
                         Text(
-                          '拆红包，攒RP，与朋友圈分享更多空投奖励',
+                          '全球首个基于海伯利安地图底层公链的HRC30交易结构范例',
                           style: TextStyle(
                             fontSize: 13,
                             color: DefaultColors.color999,
@@ -945,6 +946,14 @@ class HomePanelState extends State<HomePanel> {
         fromArr = fromArr[1].split("&name=");
         if(fromArr[0].length > 0 && fromArr[1].length > 0){
           showInviteDialog(context,fromArr[0],fromArr[1]);
+        }
+      }
+    } else if (scanStr.contains(PromoteQrCodePage.downloadDomain)) {
+      var fromArr = scanStr.split("from=");
+      if (fromArr[1].length > 0) {
+        fromArr = fromArr[1].split("&name=");
+        if (fromArr[0].length > 0 && fromArr[1].length > 0) {
+          showTitanInviteDialog(context, fromArr[0], fromArr[1], '');
         }
       }
     } else if (scanStr.contains("http") || scanStr.contains("https")) {

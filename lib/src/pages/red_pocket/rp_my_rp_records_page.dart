@@ -15,7 +15,8 @@ import 'package:titan/src/pages/red_pocket/red_pocket_detail_page.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 class RpMyRpRecordsPage extends StatefulWidget {
-  RpMyRpRecordsPage();
+  final int state; // 1: 已经打开，2：未打开
+  RpMyRpRecordsPage({this.state});
 
   @override
   State<StatefulWidget> createState() {
@@ -23,7 +24,7 @@ class RpMyRpRecordsPage extends StatefulWidget {
   }
 }
 
-class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
+class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKeepAliveClientMixin {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
@@ -32,6 +33,9 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   List<RpOpenRecordEntity> _dataList = [];
 
   int lastDay;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -56,10 +60,10 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: HexColor('#F8F8F8'),
-      appBar: BaseAppBar(
-        baseTitle: '我的红包',
-        backgroundColor: HexColor('#F8F8F8'),
-      ),
+      // appBar: BaseAppBar(
+      //   baseTitle: '我的红包',
+      //   backgroundColor: HexColor('#F8F8F8'),
+      // ),
       body: _pageView(),
     );
   }
@@ -148,6 +152,8 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
 
+    String totalAmountStr = FormatUtil.stringFormatCoinNum(model?.totalAmountStr ?? "0") ?? '--';
+
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -182,52 +188,50 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                   height: 28,
                 ),
               ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Wrap(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            right: 6,
-                          ),
-                          child: Text(
-                            title,
-                            style: TextStyle(
-                              color: HexColor("#333333"),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          right: 6,
                         ),
-                        Text(
-                          '${S.of(context).rp_total_pretext} ${model?.totalAmountStr ?? '0'} RP',
+                        child: Text(
+                          title,
                           style: TextStyle(
-                            color: HexColor("#999999"),
-                            fontSize: 12,
-                            fontWeight: FontWeight.normal,
+                            color: HexColor("#333333"),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
                           ),
-                          maxLines: 3,
-                          textAlign: TextAlign.right,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 6,
-                    ),
-                    Text(
-                      createdAtStr,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: HexColor('#999999'),
                       ),
-                      textAlign: TextAlign.left,
+                      Text(
+                        '${S.of(context).rp_total_pretext} $totalAmountStr RP',
+                        style: TextStyle(
+                          color: HexColor("#999999"),
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                        ),
+                        maxLines: 3,
+                        textAlign: TextAlign.right,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 6,
+                  ),
+                  Text(
+                    createdAtStr,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: HexColor('#999999'),
                     ),
-                  ],
-                ),
+                    textAlign: TextAlign.left,
+                  ),
+                ],
               ),
               // Spacer(),
               Expanded(
@@ -257,7 +261,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
                         desc,
                         style: TextStyle(
                           fontSize: 10,
-                          color: luckState == RpLuckState.BEST ? HexColor('#F0BE00') : HexColor('#999999'),
+                          color: ([RpLuckState.BEST, RpLuckState.LUCKY_BEST].contains(luckState)) ? HexColor('#F0BE00') : HexColor('#999999'),
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -274,7 +278,12 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
 
   void getNetworkData() async {
     try {
-      var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
+      var netData;
+      if (widget.state == 1) {
+        netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
+      } else if (widget.state == 2) {
+        netData = await _rpApi.getMyRpRecordListPending(_address, pagingKey: _currentPageKey);
+      }
 
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
@@ -300,7 +309,12 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> {
     }
 
     try {
-      var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
+      var netData;
+      if (widget.state == 1) {
+        netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
+      } else if (widget.state == 2) {
+        netData = await _rpApi.getMyRpRecordListPending(_address, pagingKey: _currentPageKey);
+      }
 
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;

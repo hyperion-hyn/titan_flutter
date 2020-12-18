@@ -9,7 +9,11 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 
 class FormatUtil {
-  static String formatNum(int numValue) {
+  static String intFormatNum(int numValue) {
+    return NumberFormat("#,###,###,###").format(numValue);
+  }
+
+  static String doubleFormatNum(double numValue) {
     return NumberFormat("#,###,###,###").format(numValue);
   }
 
@@ -26,22 +30,12 @@ class FormatUtil {
         (Decimal.tryParse(numValue ?? '0') ?? Decimal.fromInt(0)).toDouble());
   }
 
-  static String stringFormatCoinNum10(String numValue) {
-    return NumberFormat("#,###,###,###.##########")
-        .format(Decimal.tryParse(numValue ?? '0').toDouble());
-  }
-
-  static String stringFormatCoinNumWithFour(String numValue) {
-    return NumberFormat("#,###,###,###.####")
-        .format(Decimal.parse(numValue).toDouble());
-  }
-
-  static String doubleFormatNum(double numValue) {
-    return NumberFormat("#,###,###,###").format(numValue);
-  }
-
-  static String formatNumDecimal(double numValue) {
-    return NumberFormat("#,###,###,###.####").format(numValue);
+  static String formatNumDecimal(double numValue, {int decimal = 4}) {
+    var format = '#,###,###,###.';
+    for (int i = 0; i < decimal; i++) {
+      format += '#';
+    }
+    return NumberFormat(format).format(numValue);
   }
 
   static String formatPercent(double doubleValue) {
@@ -76,6 +70,15 @@ class FormatUtil {
 
   static String formatSecondDate(int timestamp) {
     var format = "HH:mm:ss";
+
+    var date = DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: false);
+    //print("[format]   timestamp:$timestamp, date:$date");
+
+    return DateFormat(format).format(date) ?? "";
+  }
+
+  static String formatMinuteDate(int timestamp) {
+    var format = "HH:mm";
 
     var date = DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: false);
     //print("[format]   timestamp:$timestamp, date:$date");
@@ -140,12 +143,18 @@ class FormatUtil {
         formatTimeNum(second);
   }
 
+  static String formatMinuteTimer(int seconds) {
+    int minute = seconds % 3600 ~/ 60;
+    int second = seconds % 60;
+    return formatTimeNum(minute) + ":" + formatTimeNum(second);
+  }
+
   static String formatTimeNum(int timeNum) {
     return timeNum < 10 ? "0" + timeNum.toString() : timeNum.toString();
   }
 
   static String amountToString(String amount) =>
-      FormatUtil.formatNum(double.parse(amount).toInt());
+      FormatUtil.intFormatNum(double.parse(amount).toInt());
 
   static String encodeBase64(String data) {
     var content = utf8.encode(data);
