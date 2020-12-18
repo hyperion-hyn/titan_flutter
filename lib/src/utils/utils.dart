@@ -85,14 +85,20 @@ class DebounceLater {
   Timer _debounceLater;
   Function _fun;
 
-  void debounceInterval(Function fn, [int t = 100]) {
+  void debounceInterval(Function fn, {int t = 100, bool runImmediately = false}) {
+    bool setFun = true;
     if (_debounceLater?.isActive == true) {
       _fun = fn;
       return;
     } else if (_fun == null) {
-      fn();
+      if (runImmediately) {
+        fn();
+        setFun = false;
+      }
     }
-    _fun = fn;
+    if(setFun) {
+      _fun = fn;
+    }
 
     _debounceLater = Timer(Duration(milliseconds: t), () {
       _debounceLater = null;

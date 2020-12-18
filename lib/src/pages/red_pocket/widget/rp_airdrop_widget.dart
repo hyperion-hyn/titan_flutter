@@ -18,6 +18,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utils.dart';
 
 import '../rp_my_rp_records_page.dart';
 import '../rp_record_tab_page.dart';
@@ -43,8 +44,7 @@ class RPAirdropWidget extends StatefulWidget {
   }
 }
 
-class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
-    with SingleTickerProviderStateMixin {
+class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTickerProviderStateMixin {
   Timer _airdropInfoTimer;
   Timer _countDownTimer;
   Timer _animTimer;
@@ -55,14 +55,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
   // AirdropState _currentAirdropState = AirdropState.Waiting;
 
-  StreamController<AirdropState> rpMachineStreamController =
-      StreamController.broadcast();
-  StreamController<int> nextRoundStreamController =
-      StreamController.broadcast();
-  StreamController<int> currentRoundStreamController =
-      StreamController.broadcast();
-  StreamController<bool> machineLightOnController =
-      StreamController.broadcast();
+  StreamController<AirdropState> rpMachineStreamController = StreamController.broadcast();
+  StreamController<int> nextRoundStreamController = StreamController.broadcast();
+  StreamController<int> currentRoundStreamController = StreamController.broadcast();
+  StreamController<bool> machineLightOnController = StreamController.broadcast();
 
   int _nextRoundRemainTime = 0; // 下一轮剩余时间
   int _currentRoundRemainTime = 0;
@@ -98,7 +94,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     _rpStatistics = widget.rpStatistics;
 
     _resetNextRoundTime();
-    _updateAirdropState();
+    // _updateAirdropState();
 
     super.didChangeDependencies();
   }
@@ -107,8 +103,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
   void onCreated() async {
     //await _mockReqTime();
     _setUpController();
-
-    await _requestData();
+    // await _requestData();
     _setUpTimer();
 
     // rewardAudioPlayer.open(rewardAudio, autoStart: false, loopMode: LoopMode.single);
@@ -401,11 +396,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     var _nextRoundStartTimeMillieSecond = 0;
 
     if (now > (_latestRoundInfo?.endTime ?? 0)) {
-      _nextRoundStartTimeMillieSecond =
-          (_latestRoundInfo?.nextRoundStartTime ?? 0) * 1000;
+      _nextRoundStartTimeMillieSecond = (_latestRoundInfo?.nextRoundStartTime ?? 0) * 1000;
     } else {
-      _nextRoundStartTimeMillieSecond =
-          (_latestRoundInfo?.startTime ?? 0) * 1000;
+      _nextRoundStartTimeMillieSecond = (_latestRoundInfo?.startTime ?? 0) * 1000;
     }
 
     var _nextRoundTimeText = _nextRoundStartTimeMillieSecond != 0
@@ -590,10 +583,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     var _currentRoundStartTime = _latestRoundInfo?.startTime ?? 0;
     var _currentRoundEndTime = _latestRoundInfo?.endTime ?? 0;
 
-    var airdropRoundText =
-        _currentRoundStartTime < now && now < _currentRoundEndTime
-            ? '本轮已空投'
-            : '最近一轮';
+    var airdropRoundText = _currentRoundStartTime < now && now < _currentRoundEndTime ? '本轮已空投' : '最近一轮';
 
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -602,9 +592,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       ),
       child: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
-            color: HexColor('#FFFFF5F5'),
-            borderRadius: BorderRadius.circular(4.0)),
+        decoration: BoxDecoration(color: HexColor('#FFFFF5F5'), borderRadius: BorderRadius.circular(4.0)),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
@@ -615,10 +603,13 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
               InkWell(
                 onTap: () {
                   //_mockReqTime();
+                  // debounceLater.debounceInterval(() {
+                  //   print('xxx 1');
+                  //   AssetsAudioPlayer.playAndForget(rewardAudio);
+                  // }, t: 1000, runImmediately: false);
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 8, top: 8, bottom: 8, right: 8),
+                  padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 8),
                   child: Image.asset(
                     'res/drawable/red_pocket.png',
                     width: 40,
@@ -656,10 +647,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                               ),
                               TextSpan(
                                 text: ' $myRpCount ',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: '个红包 共',
@@ -667,10 +655,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                               ),
                               TextSpan(
                                 text: ' $myRpAmount ',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: 'RP',
@@ -764,14 +749,15 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     );
   }
 
+  DebounceLater debounceLater = DebounceLater();
+
   /// 更新空投机器状态
   _updateAirdropState() {
     int _now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     int _currentRoundStartTime = _latestRoundInfo?.startTime ?? 0;
     int _currentRoundEndTime = _latestRoundInfo?.endTime ?? 0;
     int _nextRoundStartTime = _latestRoundInfo?.nextRoundStartTime;
-    int _currentRoundReceivedCount =
-        _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
+    int _currentRoundReceivedCount = _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
     if (_currentRoundReceivedCount > _lastMinuteRpCount) {
       _lastMinuteRpCount = _currentRoundReceivedCount;
       _lastTimeCelebrateBegin = _now;
@@ -780,10 +766,11 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     // 在showtime时间段内
     if (_now >= _currentRoundStartTime && _now < _currentRoundEndTime) {
       if ((_now - _lastTimeCelebrateBegin) < _rpCelebrateDuration) {
-        if (_lastAirdropState != null &&
-            _lastAirdropState != AirdropState.Received) {
+        if (_lastAirdropState != AirdropState.Received) {
           rpMachineStreamController.add(AirdropState.Received);
-          AssetsAudioPlayer.playAndForget(rewardAudio);
+          debounceLater.debounceInterval(() {
+            AssetsAudioPlayer.playAndForget(rewardAudio);
+          }, t: 500, runImmediately: false);
         }
       } else {
         rpMachineStreamController.add(AirdropState.NotReceived);
@@ -800,11 +787,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
   _requestData() async {
     try {
-      var _address = WalletInheritedModel.of(context)
-          .activatedWallet
-          ?.wallet
-          ?.getAtlasAccount()
-          ?.address;
+      var _address = WalletInheritedModel.of(context).activatedWallet?.wallet?.getAtlasAccount()?.address;
 
       if (_address != null) {
         _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
@@ -943,16 +926,14 @@ class SpinVertexAnim extends StatefulWidget {
   _SpinVertexAnimState createState() => _SpinVertexAnimState();
 }
 
-class _SpinVertexAnimState extends State<SpinVertexAnim>
-    with TickerProviderStateMixin {
+class _SpinVertexAnimState extends State<SpinVertexAnim> with TickerProviderStateMixin {
   AnimationController controller;
   Animation animation;
 
   @override
   void initState() {
     super.initState();
-    controller =
-        AnimationController(duration: const Duration(seconds: 3), vsync: this);
+    controller = AnimationController(duration: const Duration(seconds: 3), vsync: this);
     animation = Tween(begin: 0.0, end: 0.25).animate(controller);
     controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
