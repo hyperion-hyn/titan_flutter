@@ -1056,6 +1056,11 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
       amount = amountStr;
       break;
 
+    case RpLuckState.GET:
+      desc = '';
+      amount = amountStr;
+      break;
+
     default:
       desc = '';
       amount = '';
