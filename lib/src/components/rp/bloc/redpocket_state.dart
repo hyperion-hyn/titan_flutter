@@ -21,3 +21,5 @@ class UpdateStatisticsState extends RedPocketState {
 
 
 class UpdateFailState extends RedPocketState {}
+
+class ClearMyLevelInfoState extends RedPocketState {}
