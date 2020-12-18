@@ -50,6 +50,16 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
   void didChangeDependencies() {
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
+
+    BlocProvider.of<WalletCmpBloc>(context).listen((state) {
+      if (state is ActivatedWalletState) {
+        if(mounted){
+          setState(() {
+            isRefresh = false;
+          });
+        }
+      }
+    });
   }
 
 //  @override
@@ -63,15 +73,6 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
     _walletManagerBloc = BlocProvider.of<WalletManagerBloc>(context);
     _walletManagerBloc.add(ScanWalletEvent());
 
-    BlocProvider.of<WalletCmpBloc>(context).listen((state) {
-      if (state is ActivatedWalletState) {
-        if(mounted){
-          setState(() {
-            isRefresh = false;
-          });
-        }
-      }
-    });
     super.didPush();
   }
 
