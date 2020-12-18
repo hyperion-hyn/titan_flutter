@@ -58,6 +58,13 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   @override
   void onCreated() {
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
+
+    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
+    if (activeWallet == null) {
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(ClearMyLevelInfoEvent());
+      }
+    }
     super.onCreated();
   }
 
@@ -67,13 +74,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
     _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
     _rpStatistics = RedPocketInheritedModel.of(context).rpStatistics;
-
-    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
-    if (activeWallet == null) {
-      if (context != null) {
-        BlocProvider.of<RedPocketBloc>(context).add(ClearMyLevelInfoEvent());
-      }
-    }
   }
 
   @override
