@@ -799,7 +799,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 ),
               ),
             ),
-            Expanded(
+            Flexible(
               child: Padding(
                 padding: const EdgeInsets.only(
                   left: 4,
@@ -825,8 +825,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         padding: const EdgeInsets.only(
           top: 16,
           bottom: 16,
-          left: 12,
-          right: 12,
+          left: 16,
+          right: 16,
         ),
         decoration: BoxDecoration(
           color: HexColor('#FFFFFF'),
