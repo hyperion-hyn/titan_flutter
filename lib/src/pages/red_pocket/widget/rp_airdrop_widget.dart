@@ -803,13 +803,14 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     int _nextRoundStartTime = _latestRoundInfo?.nextRoundStartTime;
     int _currentRoundReceivedCount =
         _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
-    if (_currentRoundReceivedCount > _lastMinuteRpCount) {
-      _lastMinuteRpCount = _currentRoundReceivedCount;
-      _lastTimeCelebrateBegin = _now;
-    }
 
     // 在showtime时间段内
     if (_now >= _currentRoundStartTime && _now < _currentRoundEndTime) {
+      if (_currentRoundReceivedCount > _lastMinuteRpCount) {
+        _lastMinuteRpCount = _currentRoundReceivedCount;
+        _lastTimeCelebrateBegin = _now;
+      }
+
       if ((_now - _lastTimeCelebrateBegin) < _rpCelebrateDuration) {
         if (_lastAirdropState != AirdropState.Received) {
           rpMachineStreamController.add(AirdropState.Received);
