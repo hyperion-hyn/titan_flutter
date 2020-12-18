@@ -216,11 +216,13 @@ class _MyPageState extends BaseState<MyPage> {
                   _lineWidget(),
                   _buildMenuBar('钱包管理', Icons.account_balance_wallet,
                       () => Application.router.navigateTo(context, Routes.wallet_manager),
-                  color: Colors.cyan[300],
+                    imageName:"ic_me_page_manage_wallet",
+                    color: Colors.cyan[300],
                   ),
                   _lineWidget(),
                   _buildMenuBar('使用设置', Icons.settings,
                       () => Navigator.push(context, MaterialPageRoute(builder: (context) => MeSettingPage())),
+                    imageName:"ic_me_page_setting",
                     color: Colors.cyan[400],
                   ),
 
@@ -232,6 +234,7 @@ class _MyPageState extends BaseState<MyPage> {
                           builder: (context) => PolicySelectPage(),
                         ));
                   },
+                    imageName:"ic_me_page_user_protocol",
                     color: Colors.cyan[300],
                   ),
                   Padding(
@@ -239,6 +242,7 @@ class _MyPageState extends BaseState<MyPage> {
                     child: Divider(height: 0),
                   ),
                   _buildMenuBar(S.of(context).help, Icons.help, () => AtlasApi.goToAtlasMap3HelpPage(context),
+                    imageName:"ic_me_page_use_guide",
                     color: Colors.cyan[400],
                   ),
                   Padding(
@@ -247,6 +251,7 @@ class _MyPageState extends BaseState<MyPage> {
                   ),
                   _buildMenuBar(S.of(context).about_us, Icons.info,
                       () => Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage())),
+                    imageName:"ic_me_page_about_us",
                     color: Colors.cyan[300],
                   ),
                   Padding(
@@ -266,6 +271,7 @@ class _MyPageState extends BaseState<MyPage> {
                     },
                     subText: _version,
                     haveCircle: _haveNewVersion,
+                    imageName:"ic_me_page_version_update",
                     color: Colors.cyan[400],
                   ),
                   if ([
