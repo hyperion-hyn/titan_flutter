@@ -582,20 +582,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                                 )
                               : SizedBox(),
                         ),
-                        if (isMe)
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              right: 6,
-                            ),
-                            child: Text(
-                              '(我)',
-                              style: TextStyle(
-                                color: HexColor("#999999"),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
+
                         */
                         Text(
                           '${UiUtil.shortEthAddress(address)}',
@@ -607,6 +594,20 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                           ),
                           textAlign: TextAlign.left,
                         ),
+                        if (isMe)
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 6,
+                            ),
+                            child: Text(
+                              '(我)',
+                              style: TextStyle(
+                                color: HexColor("#999999"),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
