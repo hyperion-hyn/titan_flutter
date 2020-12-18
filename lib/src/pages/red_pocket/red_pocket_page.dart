@@ -436,19 +436,20 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     return SliverToBoxAdapter(
       child: Padding(
         padding: _cardPadding(),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(16.0)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                InkWell(
-                  onTap: _navToLevel,
-                  child: Column(
+        child: InkWell(
+          borderRadius: BorderRadius.all(Radius.circular(16.0)),
+          onTap: _navToLevel,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(16.0)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
                     children: [
                       Row(
                         children: [
@@ -595,39 +596,39 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       ),
                     ],
                   ),
-                ),
-                Container(
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: _toolTipColumn(
-                            totalSupply,
-                            '全网已发行量',
-                            null,
+                  Container(
+                    width: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: _toolTipColumn(
+                              totalSupply,
+                              '全网已发行量',
+                              null,
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: _toolTipColumn(
-                            totalHolding,
-                            '全网量级持币',
-                            '参与量级持币的总量',
+                          Expanded(
+                            child: _toolTipColumn(
+                              totalHolding,
+                              '全网量级持币',
+                              '参与量级持币的总量',
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: _toolTipColumn(
-                            totalBurning,
-                            '全网燃烧',
-                            null,
+                          Expanded(
+                            child: _toolTipColumn(
+                              totalBurning,
+                              '全网燃烧',
+                              null,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -681,125 +682,129 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(16.0)),
-          ),
-          child: Padding(
-            padding: _cardPadding(),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      S.of(context).rp_transmit_pool,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 4,
-                      ),
-                      child: Text(
-                        S.of(context).rp_total_amount_percent(poolPercent),
+        child: InkWell(
+          borderRadius: BorderRadius.all(Radius.circular(16.0)),
+          onTap: _navToRPPool,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(16.0)),
+            ),
+            child: Padding(
+              padding: _cardPadding(),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        S.of(context).rp_transmit_pool,
                         style: TextStyle(
-                          color: DefaultColors.color999,
-                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  children: [
-                    _inkwellColumn(
-                      '$myHYNStaking HYN',
-                      S.of(context).rp_my_hyn_staking,
-                      onTap: _navToRPPool,
-                    ),
-                    Spacer(),
-                    Row(
-                      children: [
-                        Container(
-                          constraints: BoxConstraints(
-                            maxWidth: 100,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                '$rpYesterday RP',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: HexColor("#FF001B"),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 4.0,
-                              ),
-                              Text(
-                                S.of(context).rp_transmit_yesterday,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: DefaultColors.color999,
-                                ),
-                              ),
-                            ],
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 4,
+                        ),
+                        child: Text(
+                          S.of(context).rp_total_amount_percent(poolPercent),
+                          style: TextStyle(
+                            color: DefaultColors.color999,
+                            fontSize: 12,
                           ),
                         ),
-                        SizedBox(
-                          width: 16,
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                  ),
-                  child: Container(
-                    height: 0.5,
-                    color: HexColor('#F2F2F2'),
-                  ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _poolInfoColumn(
-                        '$globalHYNStaking HYN',
-                        S.of(context).rp_global_hyn_staking,
                       ),
-                    ),
-                    Expanded(
-                      child: _poolInfoColumn(
-                        '$globalTransmit RP',
-                        S.of(context).rp_global_transmit,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 24,
-                )
-                /*Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24.0),
-                  child: ClickOvalButton(
-                    S.of(context).check,
-                    _navToRPPool,
-                    width: 160,
-                    height: 32,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal,
+                    ],
                   ),
-                ),*/
-              ],
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Row(
+                    children: [
+                      _inkwellColumn(
+                        '$myHYNStaking HYN',
+                        S.of(context).rp_my_hyn_staking,
+                        onTap: _navToRPPool,
+                      ),
+                      Spacer(),
+                      Row(
+                        children: [
+                          Container(
+                            constraints: BoxConstraints(
+                              maxWidth: 100,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  '$rpYesterday RP',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: HexColor("#FF001B"),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 4.0,
+                                ),
+                                Text(
+                                  S.of(context).rp_transmit_yesterday,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: DefaultColors.color999,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 16,
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                    ),
+                    child: Container(
+                      height: 0.5,
+                      color: HexColor('#F2F2F2'),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _poolInfoColumn(
+                          '$globalHYNStaking HYN',
+                          S.of(context).rp_global_hyn_staking,
+                        ),
+                      ),
+                      Expanded(
+                        child: _poolInfoColumn(
+                          '$globalTransmit RP',
+                          S.of(context).rp_global_transmit,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 24,
+                  )
+                  /*Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24.0),
+                    child: ClickOvalButton(
+                      S.of(context).check,
+                      _navToRPPool,
+                      width: 160,
+                      height: 32,
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),*/
+                ],
+              ),
             ),
           ),
         ),
