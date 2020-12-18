@@ -57,7 +57,7 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
           actions: <Widget>[
             InkWell(
               onTap: () async {
-                UiUtil.showImagePickerSheet(context, callback: (String text) {
+                UiUtil.showScanImagePickerSheet(context, callback: (String text) {
                   _parseText(text);
                 });
               },

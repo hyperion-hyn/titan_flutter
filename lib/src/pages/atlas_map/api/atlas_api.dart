@@ -662,10 +662,10 @@ class AtlasApi {
   }
 
   // 上传图片
-  Future<String> postUploadImageFile(
-      String path, ProgressCallback onSendProgress) async {
+  Future<String> postUploadImageFile(String address, String path, ProgressCallback onSendProgress) async {
     try {
       Map<String, dynamic> params = {};
+      params["address"] = address;
       params["file"] = MultipartFile.fromFileSync(path);
       FormData formData = FormData.fromMap(params);
 

@@ -750,7 +750,7 @@ class HomePanelState extends State<HomePanel> {
             ),
             GestureDetector(
               onTap: () {
-                UiUtil.showImagePickerSheet(context, callback: (String text) {
+                UiUtil.showScanImagePickerSheet(context, callback: (String text) {
                   _parseText(text);
                 });
               },

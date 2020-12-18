@@ -690,7 +690,7 @@ class UiUtil {
   }
 
 
-  static Future<bool> showImagePickerSheet(BuildContext context, {ImageCallback callback}) async {
+  static Future<bool> showScanImagePickerSheet(BuildContext context, {ImageCallback callback}) async {
     return await showModalBottomSheet(
         context: context,
         builder: (BuildContext dialogContext) {
@@ -726,6 +726,54 @@ class UiUtil {
                     RScanResult mnemonicWords = await RScan.scanImagePath(tempListImagePaths[0].path);
                     String mnemonicWord = mnemonicWords?.message;
                     callback(mnemonicWord);
+                  }
+                },
+              ),
+              ListTile(
+                title: Text(S.of(context).cancel, textAlign: TextAlign.center),
+                onTap: () {
+                  Navigator.pop(dialogContext, false);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  static Future<bool> showIconImagePickerSheet(BuildContext context, {ImageCallback callback}) async {
+    return await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return Wrap(
+            children: <Widget>[
+              ListTile(
+                title: Text('拍照', textAlign: TextAlign.center),
+                onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    Navigator.pop(dialogContext, true);
+                  });
+
+                  callback('');
+                },
+              ),
+              ListTile(
+                title: Text(S.of(context).import_from_album, textAlign: TextAlign.center),
+                onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    Navigator.pop(dialogContext, true);
+                  });
+
+                  var tempListImagePaths = await ImagePickers.pickerPaths(
+                    galleryMode: GalleryMode.image,
+                    selectCount: 1,
+                    showCamera: true,
+                    cropConfig: null,
+                    compressSize: 500,
+                    uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
+                  );
+                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
+                    var path = tempListImagePaths[0].path;
+                    callback(path);
                   }
                 },
               ),

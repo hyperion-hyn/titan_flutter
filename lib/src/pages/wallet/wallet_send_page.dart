@@ -148,7 +148,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                           ),
                           InkWell(
                             onTap: () async{
-                              UiUtil.showImagePickerSheet(context, callback: (String text) {
+                              UiUtil.showScanImagePickerSheet(context, callback: (String text) {
                                 _parseText(quotePrice, text);
                               });
                             },
