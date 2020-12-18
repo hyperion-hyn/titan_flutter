@@ -648,7 +648,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                         desc,
                         style: TextStyle(
                           fontSize: 10,
-                          color: luckState == RpLuckState.BEST ? HexColor('#F0BE00') : HexColor('#999999'),
+                          color: ([RpLuckState.BEST, RpLuckState.LUCKY_BEST].contains(luckState)) ? HexColor('#F0BE00') : HexColor('#999999'),
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -1037,6 +1037,11 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
       amount = '0 RP';
       break;
 
+    case RpLuckState.BEST:
+      desc = '最佳';
+      amount = amountStr;
+      break;
+
     case RpLuckState.LUCKY:
       if (rpType == RedPocketType.LUCKY) {
         desc = '砸中';
@@ -1046,8 +1051,8 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
       amount = amountStr;
       break;
 
-    case RpLuckState.BEST:
-      desc = '最佳';
+    case RpLuckState.LUCKY_BEST:
+      desc = '砸中且最佳';
       amount = amountStr;
       break;
 
@@ -1072,6 +1077,8 @@ enum RedPocketType {
 // 0：错过 1：砸中 2：最佳
 enum RpLuckState {
   UN_LUCKY,
-  LUCKY,
+  GET,
   BEST,
+  LUCKY,
+  LUCKY_BEST,
 }
