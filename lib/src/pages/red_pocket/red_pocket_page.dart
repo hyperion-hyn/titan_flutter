@@ -706,21 +706,44 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 ),
                 Row(
                   children: [
-                    Expanded(
-                      flex: 1,
-                      child: _inkwellColumn(
-                        '$myHYNStaking HYN',
-                        S.of(context).rp_my_hyn_staking,
-                        onTap: _navToRPPool,
-                      ),
+                    _inkwellColumn(
+                      '$myHYNStaking HYN',
+                      S.of(context).rp_my_hyn_staking,
+                      onTap: _navToRPPool,
                     ),
-                    Expanded(
-                      flex: 1,
-                      child: _inkwellColumn(
-                        '$rpYesterday RP',
-                        S.of(context).rp_transmit_yesterday,
-                        onTap: _navToRPReleaseRecord,
-                      ),
+                    Spacer(),
+                    Row(
+                      children: [
+                        Container(
+                          constraints: BoxConstraints(
+                            maxWidth: 100,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                '$rpYesterday RP',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: HexColor("#FF001B"),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 4.0,
+                              ),
+                              Text(
+                                S.of(context).rp_transmit_yesterday,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: DefaultColors.color999,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 16,)
+                      ],
                     ),
                   ],
                 ),
@@ -749,7 +772,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     ),
                   ],
                 ),
-                Padding(
+                SizedBox(height: 24,)
+                /*Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24.0),
                   child: ClickOvalButton(
                     S.of(context).check,
@@ -759,7 +783,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     fontSize: 14,
                     fontWeight: FontWeight.normal,
                   ),
-                ),
+                ),*/
               ],
             ),
           ),
@@ -846,8 +870,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         Text(
           content,
           style: TextStyle(
-            fontSize: 12,
-            color: DefaultColors.color999,
+            fontSize: 14,
+            color: Colors.black,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -857,7 +881,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         Text(
           subContent,
           style: TextStyle(
-            fontSize: 8,
+            fontSize: 10,
             color: DefaultColors.color999,
           ),
         ),
@@ -968,15 +992,13 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
               ],
             ),
           ),
-          if (onTap != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(
-                Icons.arrow_forward_ios,
-                size: 15,
-                color: DefaultColors.color999,
-              ),
-            ),
+          SizedBox(width: 10,),
+          Image.asset(
+            'res/drawable/rp_add_friends_arrow.png',
+            width: 15,
+            height: 15,
+            color: HexColor('#FF5959'),
+          ),
         ],
       ),
     );
