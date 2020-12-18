@@ -545,6 +545,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
               ],
             ),
           ),
+          SizedBox(
+            height: 8,
+          ),
           Text('正在空投中...'),
           SizedBox(
             height: 4,
@@ -558,7 +561,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                   var currentRoundText = '本轮剩余 ${FormatUtil.formatMinuteTimer(
                     _currentRoundRemainTime,
                   )}';
-                  return Text(currentRoundText);
+                  return Text(currentRoundText, style: TextStyle(color: Colors.black45, fontSize: 12));
                 }
               }),
         ],
@@ -779,8 +782,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       if ((_now - _lastTimeCelebrateBegin) < _rpCelebrateDuration) {
         if (_lastAirdropState != null &&
             _lastAirdropState != AirdropState.Received) {
-          AssetsAudioPlayer.playAndForget(rewardAudio);
           rpMachineStreamController.add(AirdropState.Received);
+          AssetsAudioPlayer.playAndForget(rewardAudio);
         }
       } else {
         rpMachineStreamController.add(AirdropState.NotReceived);
@@ -788,6 +791,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     } else if (_nextRoundStartTime != null && _now > _nextRoundStartTime) {
       rpMachineStreamController.add(AirdropState.NotReceived);
     } else if (_lastAirdropState != AirdropState.Waiting) {
+      //clear data when not in show time
+      _lastMinuteRpCount = 0;
+      _lastTimeCelebrateBegin = 0;
       rpMachineStreamController.add(AirdropState.Waiting);
     }
   }
