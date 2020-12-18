@@ -833,11 +833,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
   _requestData() async {
     try {
       var _address = WalletInheritedModel.of(context)
-              .activatedWallet
-              ?.wallet
-              ?.getAtlasAccount()
-              ?.address ??
-          '';
+          .activatedWallet
+          ?.wallet
+          ?.getAtlasAccount()
+          ?.address;
 
       _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
         _address,

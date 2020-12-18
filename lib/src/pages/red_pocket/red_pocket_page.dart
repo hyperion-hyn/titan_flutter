@@ -1179,7 +1179,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   _requestData() async {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
-    var _address = activeWallet?.wallet?.getAtlasAccount()?.address ?? '';
+    var _address = activeWallet?.wallet?.getAtlasAccount()?.address;
 
     try {
       if (context != null) {
