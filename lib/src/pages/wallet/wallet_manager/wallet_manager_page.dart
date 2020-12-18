@@ -65,7 +65,11 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
 
     BlocProvider.of<WalletCmpBloc>(context).listen((state) {
       if (state is ActivatedWalletState) {
-        isRefresh = false;
+        if(mounted){
+          setState(() {
+            isRefresh = false;
+          });
+        }
       }
     });
     super.didPush();
