@@ -9,6 +9,7 @@ import 'package:lottie/lottie.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/global.dart';
@@ -801,26 +802,41 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     int _currentRoundStartTime = _latestRoundInfo?.startTime ?? 0;
     int _currentRoundEndTime = _latestRoundInfo?.endTime ?? 0;
     int _nextRoundStartTime = _latestRoundInfo?.nextRoundStartTime;
-    int _currentRoundReceivedCount =
-        _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
+    int _currentRoundReceivedCount = _latestRoundInfo?.myRpCount ?? 0;
+
     if (_currentRoundReceivedCount > _lastMinuteRpCount) {
       _lastMinuteRpCount = _currentRoundReceivedCount;
       _lastTimeCelebrateBegin = _now;
     }
 
-    // 在showtime时间段内
-    if (_now >= _currentRoundStartTime && _now < _currentRoundEndTime) {
-      if ((_now - _lastTimeCelebrateBegin) < _rpCelebrateDuration) {
+    var _isAirdropping =
+        _now >= _currentRoundStartTime && _now < _currentRoundEndTime;
+
+    var _showReceivedAnim =
+        (_now - _lastTimeCelebrateBegin) < _rpCelebrateDuration;
+
+    var _passNextRound =
+        _nextRoundStartTime != null && _now > _nextRoundStartTime;
+
+    ///
+    if (_isAirdropping) {
+      if (_showReceivedAnim) {
         if (_lastAirdropState != AirdropState.Received) {
           rpMachineStreamController.add(AirdropState.Received);
-          debounceLater.debounceInterval(() {
-            AssetsAudioPlayer.playAndForget(rewardAudio);
-          }, t: 500, runImmediately: false);
+
+          ///in case play multiple times
+          debounceLater.debounceInterval(
+            () {
+              AssetsAudioPlayer.playAndForget(rewardAudio);
+            },
+            t: 500,
+            runImmediately: false,
+          );
         }
       } else {
         rpMachineStreamController.add(AirdropState.NotReceived);
       }
-    } else if (_nextRoundStartTime != null && _now > _nextRoundStartTime) {
+    } else if (_passNextRound) {
       rpMachineStreamController.add(AirdropState.NotReceived);
     } else if (_lastAirdropState != AirdropState.Waiting) {
       //clear data when not in show time
