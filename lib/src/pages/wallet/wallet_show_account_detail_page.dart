@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
@@ -41,7 +42,8 @@ class WalletShowAccountDetailPage extends StatefulWidget {
   }
 }
 
-class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetailPage> {
+class WalletShowAccountDetailPageState
+    extends BaseState<WalletShowAccountDetailPage> {
   AllPageState _currentState = LoadingState();
   List<String> _dataTitleList = [];
   List<String> _dataInfoList = [];
@@ -87,7 +89,8 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       }
       inputData = transDetail.data;
 
-      isContract = (transDetail.internalTransactions != null && transDetail.internalTransactions.length != 0);
+      isContract = (transDetail.internalTransactions != null &&
+          transDetail.internalTransactions.length != 0);
 
       print("[widget.isContain] ${widget.isContain}");
       var fromAddressTitle = HYNApi.toAddressHint(transDetail.hynType, true);
@@ -99,16 +102,20 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
         getAmountStr: true,
         isWallet: true,
       )}";
-      var gasPriceGwei = ConvertTokenUnit.weiToGWei(weiBigInt: BigInt.parse(transDetail.gasPrice));
-      var gasPriceWithHyn = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
+      var gasPriceGwei = ConvertTokenUnit.weiToGWei(
+          weiBigInt: BigInt.parse(transDetail.gasPrice));
+      var gasPriceWithHyn = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse(transDetail.gasPrice));
       var gasPriceStr = "$gasPriceWithHyn Hyn ($gasPriceGwei Gdust)";
 
       var gasLimit = Decimal.parse(transDetail.gasUsed);
-      var gasPriceEth = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
+      var gasPriceEth = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse(transDetail.gasPrice));
       var gasEstimate = "${gasPriceEth * gasLimit} HYN";
 
       var statusStr = "";
-      var timeStr = FormatUtil.formatDate(transDetail.time, isSecond: true, isMillisecond: true);
+      var timeStr = FormatUtil.formatDate(transDetail.time,
+          isSecond: true, isMillisecond: true);
       var hynPriceStr = "\$0 / HYN";
       var gasUsedStr =
           "${transDetail.gasUsed} (${FormatUtil.formatPercent((Decimal.parse(transDetail.gasUsed) / Decimal.parse(transDetail.gas)).toDouble())})";
@@ -122,14 +129,16 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       var timestamp = 0;
       var netAmountText;
       var netHynPrice;
-      if (transDetail.time != null && transDetail.time.toString().length >= 10) {
+      if (transDetail.time != null &&
+          transDetail.time.toString().length >= 10) {
         timestamp = int.parse(transDetail.time.toString().substring(0, 10));
       }
       var quotes = await _coinMarketApi.quotes(timestamp);
       SymbolQuoteVo hynQuote;
       var quotesSign = WalletInheritedModel.of(context).activeQuotesSign;
       for (var quoteItem in quotes) {
-        if (quoteItem.symbol == SupportedTokens.HYN_Atlas.symbol && quoteItem.quote == quotesSign.quote) {
+        if (quoteItem.symbol == SupportedTokens.HYN_Atlas.symbol &&
+            quoteItem.quote == quotesSign.quote) {
           hynQuote = quoteItem;
         }
       }
@@ -142,10 +151,12 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
           tempAmountText = tempAmountText.replaceAll(",", "");
         }
 
-        var amountQuote = Decimal.parse(tempAmountText) * Decimal.parse(hynQuote.price.toString());
+        var amountQuote = Decimal.parse(tempAmountText) *
+            Decimal.parse(hynQuote.price.toString());
         amountText =
             "${FormatUtil.stringFormatCoinNum(tempAmountText)} HYN (${quotesSign.sign}${FormatUtil.truncateDecimalNum(amountQuote, 4)})";
-        gasEstimateQuote = "(${(gasPriceEth * gasLimit) * Decimal.parse(hynQuote.price.toString())})";
+        gasEstimateQuote =
+            "(${(gasPriceEth * gasLimit) * Decimal.parse(hynQuote.price.toString())})";
         hynPrice =
             "${quotesSign.sign}${FormatUtil.truncateDecimalNum(Decimal.parse(hynQuote.price.toString()), 4)} / HYN";
 
@@ -179,7 +190,9 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
         rightStr: timeStr,
       ));
 
-      var fromTitle = widget.isContain ? "$fromAddressTitle:" : "${S.of(context).tx_from_address}:";
+      var fromTitle = widget.isContain
+          ? "$fromAddressTitle:"
+          : "${S.of(context).tx_from_address}:";
       _accountDetailViewList.add(AccountDetailItemView(
         AccountDetailType.TEXT_COPY,
         fromTitle,
@@ -297,7 +310,8 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
               case AccountDetailType.TEXT_COPY:
                 return accountInfoItem(accountViewItem, hasCopy: true);
               case AccountDetailType.TEXT_STATUS:
-                var isFail = (widget.transactionDetail.state == 4 || widget.transactionDetail.state == 5);
+                var isFail = (widget.transactionDetail.state == 4 ||
+                    widget.transactionDetail.state == 5);
                 return accountInfoItemStatus(accountViewItem, isFail);
               case AccountDetailType.TEXT_TEXT:
                 return accountInfoItem(accountViewItem);
@@ -317,10 +331,12 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     );
   }
 
-  Widget accountInfoItemStatus(AccountDetailItemView accountDetailItemView, bool isFail) {
+  Widget accountInfoItemStatus(
+      AccountDetailItemView accountDetailItemView, bool isFail) {
     var infoItemTitle;
     Color accountItemColor;
-    var accountItemImage = "res/drawable/ic_transfer_account_detail_pending.png";
+    var accountItemImage =
+        "res/drawable/ic_transfer_account_detail_pending.png";
     getAccountPageTitle(context, widget.transactionDetail,
         (pageTitle, pageStatusImage, pageDetailColor, pageDetailStatusImage) {
       infoItemTitle = pageTitle;
@@ -332,7 +348,8 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       child: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 18.0, bottom: 18, left: 15, right: 15),
+            padding: const EdgeInsets.only(
+                top: 18.0, bottom: 18, left: 15, right: 15),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -342,9 +359,11 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                 ),
                 Spacer(),
                 Container(
-                  padding: const EdgeInsets.only(top: 4.0, bottom: 4, left: 11, right: 11),
-                  decoration:
-                      BoxDecoration(color: accountItemColor, borderRadius: BorderRadius.all(Radius.circular(4))),
+                  padding: const EdgeInsets.only(
+                      top: 4.0, bottom: 4, left: 11, right: 11),
+                  decoration: BoxDecoration(
+                      color: accountItemColor,
+                      borderRadius: BorderRadius.all(Radius.circular(4))),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
@@ -361,7 +380,10 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                       ),
                       Text(
                         infoItemTitle,
-                        style: TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: DefaultColors.color333,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold),
                       )
                     ],
                   ),
@@ -383,12 +405,14 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
   Widget accountContractItem(
     AccountDetailItemView accountDetailItemView,
   ) {
-    var contractList = List.generate(widget.transactionDetail.internalTransactions.length, (index) {
+    var contractList = List.generate(
+        widget.transactionDetail.internalTransactions.length, (index) {
       var contractItem = widget.transactionDetail.internalTransactions[index];
       return Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 18.0, bottom: 18, left: 15, right: 15),
+            padding: const EdgeInsets.only(
+                top: 18.0, bottom: 18, left: 15, right: 15),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -403,27 +427,61 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                     RichText(
                       text: TextSpan(
                           text: "${S.of(context).exchange_from} ",
-                          style: TextStyle(color: DefaultColors.color999, fontSize: 13),
+                          style: TextStyle(
+                              color: DefaultColors.color999, fontSize: 13),
                           children: [
                             TextSpan(
                               text:
                                   "${shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(contractItem.from))}\n",
-                              style:
-                                  TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 13,
+                                  height: 1,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Colors.blue),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Clipboard.setData(ClipboardData(
+                                      text:
+                                          WalletUtil.ethAddressToBech32Address(
+                                              contractItem.from)));
+                                  UiUtil.toast(S.of(context).copyed);
+                                },
                             ),
                             TextSpan(
                                 text: "${S.of(context).exchange_to} ",
-                                style: TextStyle(color: DefaultColors.color999, fontSize: 13)),
+                                style: TextStyle(
+                                    color: DefaultColors.color999,
+                                    fontSize: 13)),
                             TextSpan(
-                              text: "${shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(contractItem.to))}",
-                              style:
-                                  TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
+                              text:
+                                  "${shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(contractItem.to))}",
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 13,
+                                  height: 2,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Colors.blue),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Clipboard.setData(ClipboardData(
+                                      text:
+                                          WalletUtil.ethAddressToBech32Address(
+                                              contractItem.to)));
+                                  UiUtil.toast(S.of(context).copyed);
+                                },
                             ),
                           ]),
                     ),
+                    SizedBox(height: 5,),
                     Text(
                       "${ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(contractItem.value))} ${HYNApi.getHynSymbol(contractItem.contractAddress)}",
-                      style: TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: DefaultColors.color333,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold),
                     ),
                   ],
                 )
@@ -448,13 +506,17 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
   }
 
   Widget accountInfoItem(AccountDetailItemView accountDetailItemView,
-      {String bottomText, bool hasCopy = false, bool isTime = false, bool hasSubTitle = false}) {
+      {String bottomText,
+      bool hasCopy = false,
+      bool isTime = false,
+      bool hasSubTitle = false}) {
     return Container(
       color: Colors.white,
       child: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 18.0, bottom: 18, left: 15, right: 15),
+            padding: const EdgeInsets.only(
+                top: 18.0, bottom: 18, left: 15, right: 15),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -498,8 +560,10 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                             ),
                             Text(
                               accountDetailItemView.rightStr,
-                              style:
-                                  TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: DefaultColors.color333,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold),
                               textAlign: TextAlign.end,
                               maxLines: 2,
                             ),
@@ -511,8 +575,10 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                             Expanded(
                               child: Text(
                                 accountDetailItemView.rightStr ?? "",
-                                style:
-                                    TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    color: DefaultColors.color333,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold),
                                 textAlign: TextAlign.end,
                               ),
                             ),
@@ -529,11 +595,13 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                       if (hasCopy)
                         InkWell(
                           onTap: () {
-                            Clipboard.setData(ClipboardData(text: accountDetailItemView.rightStr));
+                            Clipboard.setData(ClipboardData(
+                                text: accountDetailItemView.rightStr));
                             UiUtil.toast(S.of(context).copyed);
                           },
                           child: Padding(
-                            padding: const EdgeInsets.only(top: 7.0, left: 7, bottom: 7),
+                            padding: const EdgeInsets.only(
+                                top: 7.0, left: 7, bottom: 7),
                             child: Image.asset(
                               "res/drawable/ic_copy.png",
                               width: 18,
@@ -544,7 +612,9 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                       if (bottomText != null)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text(bottomText, style: TextStyles.textC999S11, textAlign: TextAlign.end),
+                          child: Text(bottomText,
+                              style: TextStyles.textC999S11,
+                              textAlign: TextAlign.end),
                         ),
                     ],
                   ),
@@ -563,13 +633,16 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     );
   }
 
-  Widget accountInfoItemTwoRight(AccountDetailItemView accountDetailItemView,) {
+  Widget accountInfoItemTwoRight(
+    AccountDetailItemView accountDetailItemView,
+  ) {
     return Container(
       color: Colors.white,
       child: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 18.0, bottom: 18, left: 15, right: 15),
+            padding: const EdgeInsets.only(
+                top: 18.0, bottom: 18, left: 15, right: 15),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -587,8 +660,10 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                 Spacer(),
                 Text(
                   accountDetailItemView.rightStr ?? "",
-                  style:
-                  TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: DefaultColors.color333,
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold),
                   textAlign: TextAlign.end,
                 ),
                 Padding(
@@ -626,7 +701,8 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
           ),
           Container(
             margin: const EdgeInsets.only(top: 13.0, bottom: 11),
-            padding: const EdgeInsets.only(top: 11.0, bottom: 11, left: 15, right: 15),
+            padding: const EdgeInsets.only(
+                top: 11.0, bottom: 11, left: 15, right: 15),
             height: 145,
             width: double.infinity,
             decoration: BoxDecoration(
@@ -657,7 +733,8 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                   S.of(context).decoded,
                   () {
                     selectLeftData = false;
-                    inputData = json.encode(widget.transactionDetail.dataDecoded);
+                    inputData =
+                        json.encode(widget.transactionDetail.dataDecoded);
                     setState(() {});
                   },
                   width: 112,
@@ -689,5 +766,6 @@ class AccountDetailItemView {
   String rightStr;
   TransactionDetailVo transactionDetailVo;
 
-  AccountDetailItemView(this.type, this.leftStr, {this.rightStr, this.transactionDetailVo});
+  AccountDetailItemView(this.type, this.leftStr,
+      {this.rightStr, this.transactionDetailVo});
 }
