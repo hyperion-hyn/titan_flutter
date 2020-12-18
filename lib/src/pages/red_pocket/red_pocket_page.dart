@@ -328,7 +328,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                                 left: 12,
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
@@ -417,7 +418,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
     var totalBurning = '$totalBurningStr RP';
 
-
     var totalHoldingStr = FormatUtil.stringFormatCoinNum(
       _rpStatistics?.rpHoldingContractInfo?.totalHoldingStr ?? '0',
       decimal: 4,
@@ -495,33 +495,33 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                             flex: 2,
                             child: isShowDowngrade
                                 ? Padding(
-                              padding: const EdgeInsets.only(
-                                top: 32,
-                              ),
-                              child: Row(
-                                children: [
-                                  Image.asset(
-                                    'res/drawable/ic_rp_level_down.png',
-                                    width: 15,
-                                  ),
-                                  SizedBox(
-                                    width: 6,
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      '等级下降了',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                      ),
+                                    padding: const EdgeInsets.only(
+                                      top: 32,
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 6,
-                                  ),
-                                ],
-                              ),
-                            )
+                                    child: Row(
+                                      children: [
+                                        Image.asset(
+                                          'res/drawable/ic_rp_level_down.png',
+                                          width: 15,
+                                        ),
+                                        SizedBox(
+                                          width: 6,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            '等级下降了',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 6,
+                                        ),
+                                      ],
+                                    ),
+                                  )
                                 : SizedBox(),
                           )
                         ],
@@ -582,9 +582,18 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       else
                         Padding(
                           padding: const EdgeInsets.only(top: 16, bottom: 8),
-                          child: Container(child: Text('你正在参与红包空投', style: TextStyle(color: Colors.white, fontSize: 12),),
-                            decoration: BoxDecoration(color: Colors.orange[500], borderRadius: BorderRadius.all(Radius.circular(4))),
-                            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                          child: Container(
+                            child: Text(
+                              '你正在参与红包空投',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 12),
+                            ),
+                            decoration: BoxDecoration(
+                                color: Colors.orange[500],
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(4))),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 16),
                           ),
                         ),
                       SizedBox(
@@ -750,7 +759,9 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                             ],
                           ),
                         ),
-                        SizedBox(width: 16,)
+                        SizedBox(
+                          width: 16,
+                        )
                       ],
                     ),
                   ],
@@ -780,7 +791,9 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     ),
                   ],
                 ),
-                SizedBox(height: 24,)
+                SizedBox(
+                  height: 24,
+                )
                 /*Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24.0),
                   child: ClickOvalButton(
@@ -1000,7 +1013,9 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
               ],
             ),
           ),
-          SizedBox(width: 10,),
+          SizedBox(
+            width: 10,
+          ),
           Image.asset(
             'res/drawable/rp_add_friends_arrow.png',
             width: 15,
@@ -1164,7 +1179,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   _requestData() async {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
-    var _address = activeWallet?.wallet?.getAtlasAccount()?.address;
+    var _address = activeWallet?.wallet?.getAtlasAccount()?.address ?? '';
 
     try {
       if (context != null) {
@@ -1176,7 +1191,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       }
 
       if (context != null) {
-        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+        BlocProvider.of<WalletCmpBloc>(context)
+            .add(UpdateActivatedWalletBalanceEvent());
       }
 
       _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
