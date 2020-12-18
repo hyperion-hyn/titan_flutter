@@ -578,6 +578,14 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                               ),
                             ],
                           ),
+                        )
+                      else
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16, bottom: 8),
+                          child: Container(child: Text('你正在参与红包空投', style: TextStyle(color: Colors.white, fontSize: 12),),
+                            decoration: BoxDecoration(color: Colors.orange[500], borderRadius: BorderRadius.all(Radius.circular(4))),
+                            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                          ),
                         ),
                       SizedBox(
                         height: 16,

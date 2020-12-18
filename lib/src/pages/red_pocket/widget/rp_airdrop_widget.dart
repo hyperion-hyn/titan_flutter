@@ -545,6 +545,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
               ],
             ),
           ),
+          SizedBox(
+            height: 8,
+          ),
           Text('正在空投中...'),
           SizedBox(
             height: 4,
@@ -558,7 +561,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                   var currentRoundText = '本轮剩余 ${FormatUtil.formatMinuteTimer(
                     _currentRoundRemainTime,
                   )}';
-                  return Text(currentRoundText);
+                  return Text(currentRoundText, style: TextStyle(color: Colors.black45, fontSize: 12));
                 }
               }),
         ],
