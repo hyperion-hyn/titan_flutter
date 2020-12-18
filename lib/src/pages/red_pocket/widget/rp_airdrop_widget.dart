@@ -779,8 +779,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       if ((_now - _lastTimeCelebrateBegin) < _rpCelebrateDuration) {
         if (_lastAirdropState != null &&
             _lastAirdropState != AirdropState.Received) {
-          AssetsAudioPlayer.playAndForget(rewardAudio);
           rpMachineStreamController.add(AirdropState.Received);
+          AssetsAudioPlayer.playAndForget(rewardAudio);
         }
       } else {
         rpMachineStreamController.add(AirdropState.NotReceived);
@@ -788,6 +788,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     } else if (_nextRoundStartTime != null && _now > _nextRoundStartTime) {
       rpMachineStreamController.add(AirdropState.NotReceived);
     } else if (_lastAirdropState != AirdropState.Waiting) {
+      //clear data when not in show time
+      _lastMinuteRpCount = 0;
+      _lastTimeCelebrateBegin = 0;
       rpMachineStreamController.add(AirdropState.Waiting);
     }
   }
