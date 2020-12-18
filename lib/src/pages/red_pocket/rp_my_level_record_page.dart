@@ -795,8 +795,12 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
       _currentPage = _currentPage + 1;
 
       if (netData?.isNotEmpty ?? false) {
-        _levelHistoryList.addAll(netData);
-        _loadDataBloc.add(LoadingMoreSuccessEvent());
+        if (mounted) {
+          setState(() {
+            _levelHistoryList.addAll(netData);
+            _loadDataBloc.add(LoadingMoreSuccessEvent());
+          });
+        }
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }

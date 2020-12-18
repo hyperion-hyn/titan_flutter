@@ -582,20 +582,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                                 )
                               : SizedBox(),
                         ),
-                        if (isMe)
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              right: 6,
-                            ),
-                            child: Text(
-                              '(我)',
-                              style: TextStyle(
-                                color: HexColor("#999999"),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
+
                         */
                         Text(
                           '${UiUtil.shortEthAddress(address)}',
@@ -607,6 +594,20 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                           ),
                           textAlign: TextAlign.left,
                         ),
+                        if (isMe)
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 6,
+                            ),
+                            child: Text(
+                              '(我)',
+                              style: TextStyle(
+                                color: HexColor("#999999"),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -648,7 +649,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                         desc,
                         style: TextStyle(
                           fontSize: 10,
-                          color: luckState == RpLuckState.BEST ? HexColor('#F0BE00') : HexColor('#999999'),
+                          color: ([RpLuckState.BEST, RpLuckState.LUCKY_BEST].contains(luckState)) ? HexColor('#F0BE00') : HexColor('#999999'),
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -799,7 +800,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                 ),
               ),
             ),
-            Expanded(
+            Flexible(
               child: Padding(
                 padding: const EdgeInsets.only(
                   left: 4,
@@ -825,8 +826,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         padding: const EdgeInsets.only(
           top: 16,
           bottom: 16,
-          left: 12,
-          right: 12,
+          left: 16,
+          right: 16,
         ),
         decoration: BoxDecoration(
           color: HexColor('#FFFFFF'),
@@ -1037,6 +1038,11 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
       amount = '0 RP';
       break;
 
+    case RpLuckState.BEST:
+      desc = '最佳';
+      amount = amountStr;
+      break;
+
     case RpLuckState.LUCKY:
       if (rpType == RedPocketType.LUCKY) {
         desc = '砸中';
@@ -1046,8 +1052,13 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
       amount = amountStr;
       break;
 
-    case RpLuckState.BEST:
-      desc = '最佳';
+    case RpLuckState.LUCKY_BEST:
+      desc = '砸中且最佳';
+      amount = amountStr;
+      break;
+
+    case RpLuckState.GET:
+      desc = '';
       amount = amountStr;
       break;
 
@@ -1072,6 +1083,8 @@ enum RedPocketType {
 // 0：错过 1：砸中 2：最佳
 enum RpLuckState {
   UN_LUCKY,
-  LUCKY,
+  GET,
   BEST,
+  LUCKY,
+  LUCKY_BEST,
 }

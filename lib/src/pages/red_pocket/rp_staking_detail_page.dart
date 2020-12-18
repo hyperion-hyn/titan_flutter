@@ -472,15 +472,16 @@ class _RpStakingDetailPageState extends BaseState<RpStakingDetailPage>
         _stakingIndex,
       );
 
+      if (netData?.isNotEmpty ?? false) {
+        _dataList = netData;
+      }
+
       if (mounted) {
         setState(() {
           _loadDataBloc.add(RefreshSuccessEvent());
         });
       }
 
-      if (netData?.isNotEmpty ?? false) {
-        _dataList = netData;
-      }
     } catch (e) {
       _loadDataBloc.add(LoadFailEvent());
     }
@@ -496,8 +497,12 @@ class _RpStakingDetailPageState extends BaseState<RpStakingDetailPage>
       );
 
       if (netData?.isNotEmpty ?? false) {
-        _dataList.addAll(netData);
-        _loadDataBloc.add(LoadingMoreSuccessEvent());
+        if (mounted) {
+          setState(() {
+            _dataList.addAll(netData);
+            _loadDataBloc.add(LoadingMoreSuccessEvent());
+          });
+        }
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }

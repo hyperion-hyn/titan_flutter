@@ -261,7 +261,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
                         desc,
                         style: TextStyle(
                           fontSize: 10,
-                          color: luckState == RpLuckState.BEST ? HexColor('#F0BE00') : HexColor('#999999'),
+                          color: ([RpLuckState.BEST, RpLuckState.LUCKY_BEST].contains(luckState)) ? HexColor('#F0BE00') : HexColor('#999999'),
                         ),
                         textAlign: TextAlign.right,
                       ),
