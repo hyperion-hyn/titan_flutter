@@ -187,58 +187,61 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
 
     var accountInfoWidget = activeWallet != null
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    userName,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
+        ? InkWell(
+            onTap: _navToManageWallet,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      userName,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    userAddress,
-                    style: TextStyle(
-                      fontSize: 9,
-                      color: DefaultColors.color999,
+                    SizedBox(
+                      width: 4,
                     ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 2,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    '钱包余额',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: DefaultColors.color999,
+                    Text(
+                      userAddress,
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: DefaultColors.color999,
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 2,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      '钱包余额',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: DefaultColors.color999,
+                      ),
+                      textAlign: TextAlign.end,
                     ),
-                    textAlign: TextAlign.end,
-                  ),
-                  SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    '$rpBalance',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.black,
+                    SizedBox(
+                      width: 4,
                     ),
-                    textAlign: TextAlign.end,
-                  ),
-                ],
-              )
-            ],
+                    Text(
+                      '$rpBalance',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.black,
+                      ),
+                      textAlign: TextAlign.end,
+                    ),
+                  ],
+                )
+              ],
+            ),
           )
         : InkWell(
             child: Text(
@@ -247,18 +250,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 color: Colors.blue,
               ),
             ),
-            onTap: () {
-              Application.router
-                  .navigateTo(
-                    context,
-                    Routes.wallet_manager,
-                  )
-                  .then((value) => () {
-                        if (mounted) {
-                          setState(() {});
-                        }
-                      });
-            },
+            onTap: _navToManageWallet,
           );
 
     int currentLevel = _myLevelInfo?.currentLevel ?? 0;
@@ -328,8 +320,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                                 left: 12,
                               ),
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 4.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
@@ -585,15 +576,11 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           child: Container(
                             child: Text(
                               '你正在参与红包空投',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 12),
+                              style: TextStyle(color: Colors.white, fontSize: 12),
                             ),
                             decoration: BoxDecoration(
-                                color: Colors.orange[500],
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(4))),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 16),
+                                color: Colors.orange[500], borderRadius: BorderRadius.all(Radius.circular(4))),
+                            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
                           ),
                         ),
                       SizedBox(
@@ -844,10 +831,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         String webTitle = FluroConvertUtils.fluroCnParamsEncode(
                           S.of(context).detailed_introduction,
                         );
-                        Application.router.navigateTo(
-                            context,
-                            Routes.toolspage_webview_page +
-                                '?initUrl=$webUrl&title=$webTitle');
+                        Application.router
+                            .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                       },
                       child: Text(
                         S.of(context).detailed_introduction,
@@ -1063,8 +1048,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   )
                 ],
                 text: title,
-                style: TextStyle(
-                    height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
               ),
             ),
           )),
@@ -1134,6 +1118,19 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     }
   }
 
+  _navToManageWallet() {
+    Application.router
+        .navigateTo(
+          context,
+          Routes.wallet_manager,
+        )
+        .then((value) => () {
+              if (mounted) {
+                setState(() {});
+              }
+            });
+  }
+
   _navToMyFriends() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
     if (activeWallet != null) {
@@ -1191,8 +1188,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       }
 
       if (context != null) {
-        BlocProvider.of<WalletCmpBloc>(context)
-            .add(UpdateActivatedWalletBalanceEvent());
+        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
       }
 
       _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
