@@ -139,16 +139,11 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       if (_nextRoundRemainTime >= 1) {
         _nextRoundRemainTime--;
         nextRoundStreamController.add(_nextRoundRemainTime);
-
-        // if (_nextRoundRemainTime == 0) {
-        //   rpMachineStreamController.add(AirdropState.NotReceived);
-        // }
+        //
+        if (_nextRoundRemainTime == 0) {
+          _requestData();
+        }
       }
-
-      // ///
-      // if (_nextRoundRemainTime == 0) {
-      //   _requestData();
-      // }
 
       if (_currentRoundRemainTime >= 1) {
         _currentRoundRemainTime--;
