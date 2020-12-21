@@ -401,6 +401,12 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Spacer(),
+                      // todo: 燃烧
+                      _columnWidget(
+                        '$holding RP',
+                        '燃烧量',
+                      ),
+                      Spacer(),
                       _columnWidget(
                         '$holding RP',
                         '当前持币',

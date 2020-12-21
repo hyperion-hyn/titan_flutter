@@ -64,42 +64,45 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   RpMyLevelInfo _myLevelInfo;
+
+  RpMinerInfo _inviter;
+
   CoinVo _coinVo;
   WalletVo _activatedWallet;
-  RpMinerInfo _inviter;
   String get _address => _activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+  String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
 
   Decimal get _inputValue {
-    var zeroValue = Decimal.zero;
-    var inputValue = Decimal.tryParse(_textEditingController?.text ?? '0') ?? zeroValue;
-    return inputValue;
+    var inputValue = Decimal.tryParse(_textEditingController?.text ?? '0') ?? Decimal.zero;
+    return inputValue > Decimal.zero ? _inputValue : Decimal.zero;
   }
 
   Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
 
-  String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
+  Decimal get _currentHoldValue => Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? Decimal.zero;
+  Decimal get _holdingValue => Decimal.tryParse(widget?.levelRule?.holdingStr ?? '0') ?? Decimal.zero;
+  Decimal get _needHoldMinValue {
+    var zeroValue = Decimal.zero;
+    var remainHoldValue = (_holdingValue - _currentHoldValue);
+
+    return remainHoldValue > zeroValue ? remainHoldValue : zeroValue;
+  }
+
+  // todo: 燃烧(模拟：currentHoldingStr)
+  Decimal get _currentBurnValue => Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? Decimal.zero;
+  Decimal get _burningValue => Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.zero;
+  Decimal get _needBurnValue {
+    var zeroValue = Decimal.zero;
+    var remainBurnValue = (_burningValue - _currentBurnValue);
+
+    return remainBurnValue > zeroValue ? remainBurnValue : zeroValue;
+  }
 
   Decimal get _needTotalMinValue {
     var zeroValue = Decimal.zero;
-    var holdValue = Decimal.tryParse(widget?.levelRule?.holdingStr ?? '0') ?? zeroValue;
-    var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? zeroValue;
 
-    var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
-    var remainHoldValue = (holdValue - currentHoldValue);
-    remainHoldValue = remainHoldValue > zeroValue ? remainHoldValue : zeroValue;
-
-    var remainValue = remainHoldValue + burnValue;
+    var remainValue = _needHoldMinValue + _needBurnValue;
     return remainValue > zeroValue ? remainValue : zeroValue;
-  }
-
-  Decimal get _needHoldMinValue {
-    var zeroValue = Decimal.zero;
-    var holdValue = Decimal.tryParse(widget?.levelRule?.holdingStr ?? '0') ?? zeroValue;
-
-    var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
-    var remainHoldValue = (holdValue - currentHoldValue);
-
-    return remainHoldValue > zeroValue ? remainHoldValue : zeroValue;
   }
 
   String get _needTotalMinValueStr => '至少' + FormatUtil.stringFormatCoinNum(_needTotalMinValue.toString()) + ' RP';
@@ -214,8 +217,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                           ),
                         ),
                         rpRowText(
-                          title: '需燃烧',
-                          amount: '${widget?.levelRule?.burnStr ?? '--'} RP',
+                          title: '需燃烧量',
+                          amount: '$_needBurnValue RP',
                         ),
                         rpRowText(
                           title: widget.isStatic ? '最小持币' : '需增加持币',
@@ -243,7 +246,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                 width: 10,
                               ),
                               Expanded(
-                                child: Text('当前持币 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP ',
+                                // todo: 燃烧
+                              child: Text('当前持币 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP，燃烧量 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
                                     style: TextStyle(
                                       fontWeight: FontWeight.normal,
                                       fontSize: 12,
@@ -285,16 +289,15 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                         return '请输入数量';
                                       }
 
-                                      var inputValue = Decimal.tryParse(textStr);
-                                      if (inputValue == null) {
+                                      if (Decimal.tryParse(textStr) == null) {
                                         return S.of(context).please_enter_correct_amount;
                                       }
 
-                                      if (_needTotalMinValue > inputValue) {
+                                      if (_needTotalMinValue > _inputValue) {
                                         return _needTotalMinValueStr;
                                       }
 
-                                      if (inputValue > _balanceValue) {
+                                      if (_inputValue > _balanceValue) {
                                         return '输入数量超过了钱包余额';
                                       }
                                     },
@@ -364,8 +367,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                 textColor = Theme.of(context).primaryColor;
                               }
 
-                              var inputValue = _inputValue > Decimal.zero ? _inputValue : Decimal.zero;
-
                               return Padding(
                                 padding: const EdgeInsets.only(top: 30),
                                 child: Row(
@@ -374,7 +375,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                     SizedBox(
                                       width: 16,
                                     ),
-                                    Text('$inputValue RP', style: _textStyle),
+                                    Text('$_inputValue RP', style: _textStyle),
                                     SizedBox(
                                       width: 16,
                                     ),
@@ -393,12 +394,10 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                         StreamBuilder<Object>(
                             stream: _inputController.stream,
                             builder: (context, snapshot) {
-                              var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.zero;
-                              var isFullBurn = _inputValue > burnValue;
+                              var isFullBurn = _inputValue > _needBurnValue;
                               var preBurnStr = isFullBurn ? widget?.levelRule?.burnStr : '0';
 
-                              //var holdingValue = Decimal.tryParse(widget?.levelRule?.holdingStr ?? '0') ?? Decimal.zero;
-                              var inputHoldValue = (_inputValue - burnValue);
+                              var inputHoldValue = (_inputValue - _needBurnValue);
                               var isFullHold = inputHoldValue > Decimal.zero;
                               var preHoldingStr = isFullHold ? inputHoldValue.toString() : '0';
                               return Padding(
@@ -749,7 +748,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   }
 
   _upgradeAction() async {
-
     var password = await UiUtil.showWalletPasswordDialogV2(context, _activatedWallet.wallet);
     if (password == null) {
       return;
@@ -757,9 +755,9 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
     var burningAmount = ConvertTokenUnit.strToBigInt(widget.levelRule.burnStr);
 
-    var burnValue = Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.zero;
-    var inputHoldValue = (_inputValue - burnValue);
-    var depositAmount = ConvertTokenUnit.strToBigInt(inputHoldValue?.toString() ?? '0');
+    var inputHoldValue = (_inputValue - _needBurnValue);
+    inputHoldValue = inputHoldValue > Decimal.zero ? inputHoldValue : Decimal.zero;
+    var holdingAmount = ConvertTokenUnit.strToBigInt(inputHoldValue?.toString() ?? '0');
 
     if (mounted) {
       setState(() {
@@ -771,7 +769,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
         await _rpApi.postRpDepositAndBurn(
           from: _myLevelInfo?.currentLevel ?? 0,
           to: widget.levelRule.level,
-          depositAmount: depositAmount,
+          depositAmount: holdingAmount,
           burningAmount: burningAmount,
           activeWallet: _activatedWallet,
           password: password,
