@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:decimal/decimal.dart';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:package_info/package_info.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -413,11 +414,26 @@ class RPApi {
 
   ///用户升级 燃烧以及抵押 需求
   Future<RpPromotionRuleEntity> getRPPromotionRule(String address) async {
+
+    PackageInfo packageInfo;
+    if (packageInfo == null) {
+      packageInfo = await PackageInfo.fromPlatform();
+    }
+
+    var version  = packageInfo?.version ?? "";
+    var buildNumber  = packageInfo?.buildNumber ?? "";
+    //print("[rp_api] getRPPromotionRule, version:$version, buildNumber:$buildNumber");
+
+    var versionCode = version  + "+" + buildNumber;
+
     return await RPHttpCore.instance.getEntity(
         "/v1/rp/level/promotion/$address",
         EntityFactory<RpPromotionRuleEntity>(
           (json) => RpPromotionRuleEntity.fromJson(json),
         ),
+        params: {
+          'flag': '$versionCode',
+        },
         options: RequestOptions(contentType: "application/json"));
   }
 

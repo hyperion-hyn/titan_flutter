@@ -260,8 +260,12 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     int highestLevel = _myLevelInfo?.highestLevel ?? 0;
 
     var holding = '--';
+    var burning = '--';
+
     try {
       holding = '${_myLevelInfo?.currentHoldingStr ?? '--'}';
+      burning = '${_myLevelInfo?.currBurningStr ?? '--'}';
+
     } catch (e) {}
 
     var isShowDowngrade = highestLevel > currentLevel;
@@ -401,9 +405,8 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Spacer(),
-                      // todo: 燃烧
                       _columnWidget(
-                        '$holding RP',
+                        '$burning RP',
                         '燃烧量',
                       ),
                       Spacer(),

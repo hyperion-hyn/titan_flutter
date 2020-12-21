@@ -306,12 +306,13 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
     var zeroValue = Decimal.zero;
 
-    // todo: 燃烧
+    // 燃烧
     var burningValue = Decimal.tryParse(dynamicModel?.burnStr ?? '0') ?? zeroValue;
-    var currentBurnValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
+    var currentBurnValue = Decimal.tryParse(_myLevelInfo?.currBurningStr ?? '0') ?? zeroValue;
     var _needBurnValue = burningValue - currentBurnValue;
     _needBurnValue = _needBurnValue > zeroValue ? _needBurnValue : zeroValue;
 
+    // 持币
     var holdValue = Decimal.tryParse(dynamicModel?.holdingStr ?? '0') ?? zeroValue;
     var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
     var _needHoldMinValue = holdValue - currentHoldValue;
@@ -440,12 +441,13 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     bool isSelected = ((_currentSelectedLevelRule?.level ?? 0) == model.level);
 
     var level = model.level ?? 0;
-    // todo: 燃烧
     var levelName = '量级 ${levelValueToLevelName(level)}';
+
     var burnTitle = '需燃烧量';
     var burnRpValue = '${model.burnStr} RP';
 
     var formula = model.holdingFormula;
+
     var stakingTitle = '最低持币';
     var stakingValue = '${model.holdingStr} RP';
 

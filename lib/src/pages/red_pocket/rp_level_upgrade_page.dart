@@ -88,8 +88,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     return remainHoldValue > zeroValue ? remainHoldValue : zeroValue;
   }
 
-  // todo: 燃烧(模拟：currentHoldingStr)
-  Decimal get _currentBurnValue => Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? Decimal.zero;
+  Decimal get _currentBurnValue => Decimal.tryParse(_myLevelInfo?.currBurningStr ?? '0') ?? Decimal.zero;
   Decimal get _burningValue => Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.zero;
   Decimal get _needBurnValue {
     var zeroValue = Decimal.zero;
@@ -246,8 +245,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                 width: 10,
                               ),
                               Expanded(
-                                // todo: 燃烧
-                              child: Text('当前持币 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP，燃烧量 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
+                              child: Text('当前持币 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP，燃烧量 ${_myLevelInfo?.currBurningStr ?? '0'} RP',
                                     style: TextStyle(
                                       fontWeight: FontWeight.normal,
                                       fontSize: 12,
