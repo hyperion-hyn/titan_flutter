@@ -77,8 +77,13 @@ class RPApi {
 
   ///统计信息
   Future<RPStatistics> getRPStatistics(String address) async {
+    var isEmpty = address?.isEmpty??true;
+    var path = "/v1/rp/statistics/$address";
+    if (isEmpty) {
+      path = "/v1/rp/statistics/null";
+    }
     return await RPHttpCore.instance.getEntity(
-        "/v1/rp/statistics/$address",
+        path,
         EntityFactory<RPStatistics>(
           (json) => RPStatistics.fromJson(json),
         ),

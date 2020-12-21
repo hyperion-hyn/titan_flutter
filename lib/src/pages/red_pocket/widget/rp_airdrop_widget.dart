@@ -9,6 +9,7 @@ import 'package:lottie/lottie.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/global.dart';
@@ -18,6 +19,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utils.dart';
 
 import '../rp_my_rp_records_page.dart';
 import '../rp_record_tab_page.dart';
@@ -98,7 +100,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     _rpStatistics = widget.rpStatistics;
 
     _resetNextRoundTime();
-    _updateAirdropState();
+    // _updateAirdropState();
 
     super.didChangeDependencies();
   }
@@ -107,8 +109,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
   void onCreated() async {
     //await _mockReqTime();
     _setUpController();
-
-    await _requestData();
+    // await _requestData();
     _setUpTimer();
 
     // rewardAudioPlayer.open(rewardAudio, autoStart: false, loopMode: LoopMode.single);
@@ -476,42 +477,66 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
   _airdropReceivedView() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Container(
-        height: 160,
-        child: Stack(
-          children: [
-            Center(
-              child: StreamBuilder(
-                  stream: machineLightOnController.stream,
-                  builder: (context, snapshot) {
-                    var imgPath = 'res/drawable/bg_rp_airdrop_light_on.png';
-                    if ((snapshot?.data ?? false)) {
-                      imgPath = 'res/drawable/bg_rp_airdrop_light_off.png';
-                    }
-                    return Image.asset(imgPath);
-                  }),
-            ),
-            //SpinVertexAnim(),
-            Center(
-              child: Pulse(
-                manualTrigger: true,
-                controller: (controller) {
-                  _pulseController = controller;
-                },
-                child: Image.asset(
-                  'res/drawable/red_pocket_logo.png',
-                  width: 40,
-                  height: 40,
+      child: Column(
+        children: [
+          Container(
+            height: 160,
+            child: Stack(
+              children: [
+                Center(
+                  child: StreamBuilder(
+                      stream: machineLightOnController.stream,
+                      builder: (context, snapshot) {
+                        var imgPath = 'res/drawable/bg_rp_airdrop_light_on.png';
+                        if ((snapshot?.data ?? false)) {
+                          imgPath = 'res/drawable/bg_rp_airdrop_light_off.png';
+                        }
+                        return Image.asset(imgPath);
+                      }),
                 ),
-              ),
+                //SpinVertexAnim(),
+                Center(
+                  child: Pulse(
+                    manualTrigger: true,
+                    controller: (controller) {
+                      _pulseController = controller;
+                    },
+                    child: Image.asset(
+                      'res/drawable/red_pocket_logo.png',
+                      width: 40,
+                      height: 40,
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Lottie.asset(
+                    'res/lottie/lottie_firework.json',
+                  ),
+                )
+              ],
             ),
-            Center(
-              child: Lottie.asset(
-                'res/lottie/lottie_firework.json',
-              ),
-            )
-          ],
-        ),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Text('正在空投中...'),
+          SizedBox(
+            height: 4,
+          ),
+          StreamBuilder(
+              stream: currentRoundStreamController.stream,
+              builder: (context, snapshot) {
+                if (snapshot?.data == null || snapshot?.data == 0) {
+                  return SizedBox();
+                } else {
+                  var currentRoundText = '本轮剩余时间 ${FormatUtil.formatMinuteTimer(
+                    _currentRoundRemainTime,
+                  )}';
+                  return Text(currentRoundText,
+                      style: TextStyle(color: Colors.black45, fontSize: 12));
+                }
+              }),
+        ],
       ),
     );
   }
@@ -545,6 +570,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
               ],
             ),
           ),
+          SizedBox(
+            height: 8,
+          ),
           Text('正在空投中...'),
           SizedBox(
             height: 4,
@@ -555,10 +583,11 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
                 } else {
-                  var currentRoundText = '本轮剩余 ${FormatUtil.formatMinuteTimer(
+                  var currentRoundText = '本轮剩余时间 ${FormatUtil.formatMinuteTimer(
                     _currentRoundRemainTime,
                   )}';
-                  return Text(currentRoundText);
+                  return Text(currentRoundText,
+                      style: TextStyle(color: Colors.black45, fontSize: 12));
                 }
               }),
         ],
@@ -612,6 +641,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
               InkWell(
                 onTap: () {
                   //_mockReqTime();
+                  // debounceLater.debounceInterval(() {
+                  //   print('xxx 1');
+                  //   AssetsAudioPlayer.playAndForget(rewardAudio);
+                  // }, t: 1000, runImmediately: false);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -761,33 +794,54 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     );
   }
 
+  DebounceLater debounceLater = DebounceLater();
+
   /// 更新空投机器状态
   _updateAirdropState() {
     int _now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     int _currentRoundStartTime = _latestRoundInfo?.startTime ?? 0;
     int _currentRoundEndTime = _latestRoundInfo?.endTime ?? 0;
     int _nextRoundStartTime = _latestRoundInfo?.nextRoundStartTime;
-    int _currentRoundReceivedCount =
-        _latestRoundInfo?.myRpCount ?? 0; // 该轮获得红包数据
+    int _currentRoundReceivedCount = _latestRoundInfo?.myRpCount ?? 0;
+
     if (_currentRoundReceivedCount > _lastMinuteRpCount) {
       _lastMinuteRpCount = _currentRoundReceivedCount;
       _lastTimeCelebrateBegin = _now;
     }
 
-    // 在showtime时间段内
-    if (_now >= _currentRoundStartTime && _now < _currentRoundEndTime) {
-      if ((_now - _lastTimeCelebrateBegin) < _rpCelebrateDuration) {
-        if (_lastAirdropState != null &&
-            _lastAirdropState != AirdropState.Received) {
-          AssetsAudioPlayer.playAndForget(rewardAudio);
+    var _isAirdropping =
+        _now >= _currentRoundStartTime && _now < _currentRoundEndTime;
+
+    var _showReceivedAnim =
+        (_now - _lastTimeCelebrateBegin) < _rpCelebrateDuration;
+
+    var _passNextRound =
+        _nextRoundStartTime != null && _now > _nextRoundStartTime;
+
+    ///
+    if (_isAirdropping) {
+      if (_showReceivedAnim) {
+        if (_lastAirdropState != AirdropState.Received) {
           rpMachineStreamController.add(AirdropState.Received);
+
+          ///in case play multiple times
+          debounceLater.debounceInterval(
+            () {
+              AssetsAudioPlayer.playAndForget(rewardAudio);
+            },
+            t: 500,
+            runImmediately: false,
+          );
         }
       } else {
         rpMachineStreamController.add(AirdropState.NotReceived);
       }
-    } else if (_nextRoundStartTime != null && _now > _nextRoundStartTime) {
+    } else if (_passNextRound) {
       rpMachineStreamController.add(AirdropState.NotReceived);
     } else if (_lastAirdropState != AirdropState.Waiting) {
+      //clear data when not in show time
+      _lastMinuteRpCount = 0;
+      _lastTimeCelebrateBegin = 0;
       rpMachineStreamController.add(AirdropState.Waiting);
     }
   }
@@ -800,14 +854,12 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
           ?.getAtlasAccount()
           ?.address;
 
-      if (_address != null) {
-        _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
-          _address,
-        );
-        _rpStatistics = await _rpApi.getRPStatistics(
-          _address,
-        );
-      }
+      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
+        _address,
+      );
+      _rpStatistics = await _rpApi.getRPStatistics(
+        _address,
+      );
 
       _updateAirdropState();
 
@@ -823,7 +875,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpRecordTabPage(),
+          builder: (context) => RpMyRpRecordsPage(),
         ),
       );
     } else {

@@ -122,6 +122,7 @@ class UiUtil {
                               "res/drawable/map3_node_close.png",
                               width: 18,
                               height: 18,
+                              color: Colors.black,
                             ),
                           ),
                         )

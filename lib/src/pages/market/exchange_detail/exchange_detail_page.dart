@@ -209,7 +209,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
             assetsDebounceLater.debounceInterval(() {
               BlocProvider.of<ExchangeCmpBloc>(context)
                   .add(UpdateAssetsEvent());
-            }, 1000);
+            }, t: 1000, runImmediately: true);
 
             _loadDataBloc.add(LoadingMoreSuccessEvent());
             consignListController.add(contrConsignTypeRefresh);
