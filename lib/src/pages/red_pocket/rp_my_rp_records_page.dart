@@ -60,10 +60,10 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: HexColor('#F8F8F8'),
-      // appBar: BaseAppBar(
-      //   baseTitle: '我的红包',
-      //   backgroundColor: HexColor('#F8F8F8'),
-      // ),
+      appBar: BaseAppBar(
+        baseTitle: '我的红包',
+        backgroundColor: HexColor('#F8F8F8'),
+      ),
       body: _pageView(),
     );
   }

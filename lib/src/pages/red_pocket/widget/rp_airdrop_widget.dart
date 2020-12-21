@@ -875,7 +875,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpRecordTabPage(),
+          builder: (context) => RpMyRpRecordsPage(),
         ),
       );
     } else {
