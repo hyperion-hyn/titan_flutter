@@ -42,9 +42,8 @@ import 'entity/rp_my_level_info.dart';
 class RpLevelUpgradePage extends StatefulWidget {
   final LevelRule levelRule;
   final RpPromotionRuleEntity promotionRuleEntity;
-  final bool isStatic;
 
-  RpLevelUpgradePage(this.levelRule, this.promotionRuleEntity, {this.isStatic});
+  RpLevelUpgradePage(this.levelRule, this.promotionRuleEntity);
 
   @override
   State<StatefulWidget> createState() {
@@ -74,25 +73,27 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   Decimal get _inputValue {
     var inputValue = Decimal.tryParse(_textEditingController?.text ?? '0') ?? Decimal.zero;
-    return inputValue > Decimal.zero ? _inputValue : Decimal.zero;
+    return inputValue > Decimal.zero ? inputValue : Decimal.zero;
   }
 
   Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
 
-  Decimal get _currentHoldValue => Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? Decimal.zero;
+  //Decimal get _currentHoldValue => Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? Decimal.zero;
   Decimal get _holdingValue => Decimal.tryParse(widget?.levelRule?.holdingStr ?? '0') ?? Decimal.zero;
   Decimal get _needHoldMinValue {
     var zeroValue = Decimal.zero;
-    var remainHoldValue = (_holdingValue - _currentHoldValue);
+    // var remainHoldValue = (_holdingValue - _currentHoldValue);
+    var remainHoldValue = (_holdingValue);
 
     return remainHoldValue > zeroValue ? remainHoldValue : zeroValue;
   }
 
-  Decimal get _currentBurnValue => Decimal.tryParse(_myLevelInfo?.currBurningStr ?? '0') ?? Decimal.zero;
+  //Decimal get _currentBurnValue => Decimal.tryParse(_myLevelInfo?.currBurningStr ?? '0') ?? Decimal.zero;
   Decimal get _burningValue => Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.zero;
   Decimal get _needBurnValue {
     var zeroValue = Decimal.zero;
-    var remainBurnValue = (_burningValue - _currentBurnValue);
+    // var remainBurnValue = (_burningValue - _currentBurnValue);
+    var remainBurnValue = (_burningValue);
 
     return remainBurnValue > zeroValue ? remainBurnValue : zeroValue;
   }
@@ -220,9 +221,9 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                           amount: '$_needBurnValue RP',
                         ),
                         rpRowText(
-                          title: widget.isStatic ? '最小持币' : '需增加持币',
+                          title: '需增加持币',
                           amount:
-                              widget.isStatic ? '${widget?.levelRule?.holdingStr ?? '--'} RP' : '$_needHoldMinValue RP',
+                              '$_needHoldMinValue RP',
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 30),

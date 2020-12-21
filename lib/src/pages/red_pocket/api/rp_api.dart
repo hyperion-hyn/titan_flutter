@@ -437,6 +437,16 @@ class RPApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
+  Future<RpPromotionRuleEntity> getRPPromotionRuleOld(String address) async {
+
+    return await RPHttpCore.instance.getEntity(
+        "/v1/rp/level/promotion/$address",
+        EntityFactory<RpPromotionRuleEntity>(
+              (json) => RpPromotionRuleEntity.fromJson(json),
+        ),
+        options: RequestOptions(contentType: "application/json"));
+  }
+
   ///预提交升级
   Future<dynamic> postRpDepositAndBurn({
     int from,
