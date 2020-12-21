@@ -34,7 +34,7 @@ class WalletPage extends StatefulWidget {
 }
 
 class _WalletPageState extends BaseState<WalletPage>
-    with RouteAware, AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
 
   final LocalAuthentication auth = LocalAuthentication();
@@ -71,18 +71,10 @@ class _WalletPageState extends BaseState<WalletPage>
   }
 
   @override
-  void didPopNext() async {
-    listLoadingData();
-  }
-
-  @override
   Future<void> onCreated() async {
-    Application.routeObserver.subscribe(this, ModalRoute.of(context));
-
     _postWalletBalance();
 
     listLoadingData();
-
   }
 
   _checkDexAccount() async {
@@ -407,7 +399,6 @@ class _WalletPageState extends BaseState<WalletPage>
 
     _checkDexAccount();
     BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
-//    await Future.delayed(Duration(milliseconds: 700));
 
     if (mounted) {
       loadDataBloc.add(RefreshSuccessEvent());
@@ -502,7 +493,6 @@ class _WalletPageState extends BaseState<WalletPage>
 
   @override
   void dispose() {
-    Application.routeObserver.unsubscribe(this);
     loadDataBloc.close();
     super.dispose();
   }

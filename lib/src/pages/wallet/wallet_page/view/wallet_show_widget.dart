@@ -7,7 +7,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/burn_history_page.dart';
@@ -57,6 +59,7 @@ import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:vibration/vibration.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart' as plugWallet;
 
 import '../../../../../config.dart';
 import '../../../../../env.dart';
@@ -74,9 +77,10 @@ class ShowWalletView extends StatefulWidget {
   }
 }
 
-class _ShowWalletViewState extends State<ShowWalletView> {
+class _ShowWalletViewState extends BaseState<ShowWalletView> {
   int _lastRequestCoinTime = 0;
   bool _isShowBalances = true;
+  bool _isRefreshBalances = false;
 
   @override
   void initState() {
@@ -87,6 +91,16 @@ class _ShowWalletViewState extends State<ShowWalletView> {
   void dispose() {
     widget.loadDataBloc.close();
     super.dispose();
+  }
+
+  @override
+  void onCreated() {
+    BlocProvider.of<WalletCmpBloc>(context).listen((state) {
+      if (state is UpdateWalletPageState && (state.updateStatus == 0 || state.updateStatus == -1)) {
+        _isRefreshBalances = false;
+      }
+    });
+    super.onCreated();
   }
 
   @override
@@ -115,11 +129,24 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             InkWell(
-                              onTap: () {
-                                Application.router.navigateTo(
+                              onTap: () async {
+                                plugWallet.Wallet wallet = await Application.router.navigateTo(
                                   context,
                                   Routes.wallet_manager,
                                 );
+                                if(wallet != null) {
+                                  setState(() {
+                                    _isRefreshBalances = true;
+                                  });
+                                  BlocProvider.of<WalletCmpBloc>(context)
+                                      .add(ActiveWalletEvent(wallet: wallet));
+                                  await Future.delayed(Duration(milliseconds: 300));
+                                  BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
+
+                                  ///Clear exchange account when switch wallet
+                                  BlocProvider.of<ExchangeCmpBloc>(context)
+                                      .add(ClearExchangeAccountEvent());
+                                }
                               },
                               child: Row(
                                 children: <Widget>[
@@ -191,6 +218,17 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                               color: Colors.white,
                             ),
                           ),
+                          Spacer(),
+                          if(_isRefreshBalances)
+                            SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                backgroundColor: Colors.white,
+                                valueColor: new AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                                strokeWidth: 3,
+                              ),
+                            )
                         ],
                       ),
                     ],

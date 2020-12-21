@@ -123,8 +123,8 @@ class FinishImportPage extends StatelessWidget {
           .add(ActiveWalletEvent(wallet: wallet));
 
       await Future.delayed(Duration(milliseconds: 300));
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateActivatedWalletBalanceEvent());
+      // BlocProvider.of<WalletCmpBloc>(context)
+      //     .add(UpdateActivatedWalletBalanceEvent());
     }
 
     ///Use digits password now

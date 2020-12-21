@@ -505,16 +505,17 @@ class _WalletSettingState extends State<WalletSettingPage> {
           //delete current wallet
           BlocProvider.of<WalletCmpBloc>(context)
               .add(ActiveWalletEvent(wallet: walletList[0]));
+          await Future.delayed(Duration(milliseconds: 500));//延时确保激活成功
           Routes.popUntilCachedEntryRouteName(context);
         } else if (walletList.length > 0) {
           //delete other wallet
-//                          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: activatedWalletVo.activatedWallet.wallet));
           Routes.popUntilCachedEntryRouteName(context);
         } else {
           //no wallet
           BlocProvider.of<WalletCmpBloc>(context)
               .add(ActiveWalletEvent(wallet: null));
           Routes.cachedEntryRouteName = null;
+          await Future.delayed(Duration(milliseconds: 500));//延时确保激活成功
           Routes.popUntilCachedEntryRouteName(context);
         }
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
