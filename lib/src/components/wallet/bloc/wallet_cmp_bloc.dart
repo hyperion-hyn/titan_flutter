@@ -147,14 +147,14 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
         if (_activatedWalletVo != null) {
           //faster show quote
-          yield UpdateWalletPageState(
+          yield UpdateWalletPageState(1,
               sign: quotesSign, quoteModel: currentQuotesModel, walletVo: _activatedWalletVo.copyWith());
           await walletRepository.updateWalletVoBalance(_activatedWalletVo);
           _saveWalletVoBalanceToDisk(_activatedWalletVo); //save balance data to disk;
-          yield UpdateWalletPageState(
+          yield UpdateWalletPageState(0,
               sign: quotesSign, quoteModel: currentQuotesModel, walletVo: _activatedWalletVo.copyWith());
         } else {
-          yield UpdateWalletPageState(sign: quotesSign, quoteModel: currentQuotesModel);
+          yield UpdateWalletPageState(0,sign: quotesSign, quoteModel: currentQuotesModel);
         }
 
         if (event.updateGasPrice) {
@@ -162,6 +162,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         }
       } catch (e) {
         LogUtil.toastException(e);
+        yield UpdateWalletPageState(-1,walletVo: _activatedWalletVo.copyWith());
       }
     } else if (event is UpdateQuotesEvent) {
       yield UpdatingQuotesState();
