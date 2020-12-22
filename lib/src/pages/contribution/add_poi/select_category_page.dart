@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -74,14 +75,9 @@ class _SelectCategoryState extends BaseState<SelectCategoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: Text(
-          S.of(context).select_category,
-          style: TextStyle(color: Colors.white),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-        centerTitle: true,
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).select_category,
+        backgroundColor: Colors.white,
       ),
       body: _buildView(context),
     );
@@ -163,6 +159,7 @@ class _SelectCategoryState extends BaseState<SelectCategoryPage> {
 
   Widget _buildBody(PositionState state,{bool isShowSearch = true}) {
     return Container(
+      color: Colors.white,
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -255,13 +252,13 @@ class _SelectCategoryState extends BaseState<SelectCategoryPage> {
 //    double height = 43;
     double height = 62;
     return Container(
-      color: Theme.of(context).primaryColor,
+      //color: Theme.of(context).primaryColor,
       height: height,
       child: Center(
         child: Container(
             margin: EdgeInsets.only(left: 32, right: 32, bottom: 8,top: 8),
             decoration: BoxDecoration(
-                color: Colors.white,
+                color: Color(0xfff2f2f2),
                 borderRadius: BorderRadius.circular(height * 0.5)),
 //            height: 29,
             height: 46,

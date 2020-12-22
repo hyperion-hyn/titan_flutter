@@ -102,6 +102,7 @@ class Const {
       "https://api.hyn.space/map-collector/upload/privacy-policy";
   static const String APP_POLICY =
       'https://github.com/hyperion-hyn/titan_flutter/blob/master/LICENSE';
+  static const String HELP_PAGE = "http://h.hyn.space/helpPage";
 }
 
 class Keys {

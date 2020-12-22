@@ -198,9 +198,12 @@ class _AboutMeState extends BaseState<AboutMePage> {
                 ),
               ),
               if (isUrl)
-                Icon(
-                  Icons.chevron_right,
-                  color: Colors.grey,
+                Padding(
+                  padding: const EdgeInsets.only(left: 60,),
+                  child: Icon(
+                    Icons.chevron_right,
+                    color: Colors.grey,
+                  ),
                 )
             ],
           ),

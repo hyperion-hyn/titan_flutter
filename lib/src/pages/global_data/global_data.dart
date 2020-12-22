@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/pages/discover/dapp/police_service/police_station_panel.dart';
@@ -50,17 +51,11 @@ class _GlobalDataState extends State<GlobalDataPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        brightness: Brightness.light,
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          //S.of(context).map3_global_nodes,
-          S.of(context).global_data,
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
-        elevation: 0,
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).global_data,
+        backgroundColor: Colors.white,
       ),
+
       body: DefaultTabController(
         length: 3,
         child: Scaffold(
@@ -70,31 +65,34 @@ class _GlobalDataState extends State<GlobalDataPage> {
               child: Material(
                 elevation: 3,
                 child: SafeArea(
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        flex: 3,
-                        child: TabBar(
-                          labelColor: Colors.black,
-                          labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
-                          indicatorSize: TabBarIndicatorSize.label,
-                          indicatorColor: Theme.of(context).primaryColor,
-                          indicatorWeight: 5,
-                          unselectedLabelColor: Colors.grey[400],
-                          tabs: [
-                            Tab(
-                              text: S.of(context).global_data_map3,
-                            ),
-                            Tab(
-                              text: S.of(context).global_data_signal,
-                            ),
-                            Tab(
-                              text: S.of(context).global_data_poi,
-                            ),
-                          ],
+                  child: Container(
+                    color: Colors.white,
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          flex: 3,
+                          child: TabBar(
+                            labelColor: Colors.black,
+                            labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                            indicatorSize: TabBarIndicatorSize.label,
+                            indicatorColor: Theme.of(context).primaryColor,
+                            indicatorWeight: 5,
+                            unselectedLabelColor: Colors.grey[400],
+                            tabs: [
+                              Tab(
+                                text: S.of(context).global_data_map3,
+                              ),
+                              Tab(
+                                text: S.of(context).global_data_signal,
+                              ),
+                              Tab(
+                                text: S.of(context).global_data_poi,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
