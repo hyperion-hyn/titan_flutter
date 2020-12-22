@@ -80,7 +80,10 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     if (activeWalletVo == null) {
       return _makeWalletGuideView();
     } else {
-      return _taskListView();
+      return Container(
+        color: Colors.white,
+        child: _taskListView(),
+      );
     }
   }
 
@@ -176,17 +179,18 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     var postPoiTimesReal = 0;
     var confirmPoiTimesReal = 0;
 
+    Widget _lineWidget({double height = 5}) {
+      return Container(
+        height: height,
+        color: HexColor('#F8F8F8'),
+      );
+    }
+
     return ListView(
       children: <Widget>[
-        Container(
-          height: 8,
-          color: Colors.grey[200],
-        ),
+        _lineWidget(),
         _activatedWalletWidget(),
-        Container(
-          height: 8,
-          color: Colors.grey[200],
-        ),
+        _lineWidget(height: 8,),
         _buildTaskItem('signal', S.of(context).scan_signal_item_title, scanTimes ?? 0, () async {
           bool status = await checkSignalPermission();
           print('[Permission] -->status:$status');
@@ -201,13 +205,13 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
         }, isOpen: true, realTimes: scanTimesReal),
         _divider(),
         _buildTaskItem('position', S.of(context).add_poi_item_title, postPoiTimes ?? 0, () async {
-          var latLng = await getLatlng();
+          //var latLng = await getLatlng();
 
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => AddPositionPageV2(
-                userPosition: latLng,
+                userPosition: null,
               ),
             ),
           );

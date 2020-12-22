@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -19,7 +20,6 @@ import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/data/entity/converter/model_converter.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/scan_util.dart';
 
 import 'vo/latlng.dart' as contributionLatlng;
@@ -306,7 +306,9 @@ class _ContributionState extends State<ScanSignalContributionPage> {
         return false;
       },
       child: Scaffold(
-        appBar: AppBar(
+        appBar: BaseAppBar(
+          baseTitle: S.of(context).scan_name_title,
+          backgroundColor: Colors.white,
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -315,13 +317,6 @@ class _ContributionState extends State<ScanSignalContributionPage> {
               );
             },
           ),
-          elevation: 0,
-          title: Text(
-            S.of(context).scan_name_title,
-            style: TextStyle(color: Colors.white),
-          ),
-          iconTheme: IconThemeData(color: Colors.white),
-          centerTitle: true,
         ),
         body: Stack(
           children: <Widget>[
@@ -337,11 +332,10 @@ class _ContributionState extends State<ScanSignalContributionPage> {
                       _buildStatusListView(),
                       Positioned(
                         child: SizedBox(
-                          height: 3,
+                          height: 1.5,
                           child: LinearProgressIndicator(
-                            backgroundColor: Theme.of(context).primaryColor,
                             value: snapshot?.data ?? 0.0,
-                            valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
+                            valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
                           ),
                         ),
                         top: 0,
