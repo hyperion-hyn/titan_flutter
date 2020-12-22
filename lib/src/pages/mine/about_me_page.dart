@@ -67,7 +67,7 @@ class _AboutMeState extends BaseState<AboutMePage> {
         ),
         body: ListView(children: <Widget>[
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 48),
+            padding: const EdgeInsets.symmetric(vertical: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -130,9 +130,7 @@ class _AboutMeState extends BaseState<AboutMePage> {
           //     value: "@Bi321369",
           //   ),
 
-          SizedBox(
-            height: 20,
-          ),
+          _lineWidget(),
         ]));
   }
 
@@ -149,7 +147,7 @@ class _AboutMeState extends BaseState<AboutMePage> {
         margin: EdgeInsets.fromLTRB(0, 1, 0, 0),
         color: Colors.white,
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -198,9 +196,12 @@ class _AboutMeState extends BaseState<AboutMePage> {
                 ),
               ),
               if (isUrl)
-                Icon(
-                  Icons.chevron_right,
-                  color: Colors.grey,
+                Padding(
+                  padding: const EdgeInsets.only(left: 60,),
+                  child: Icon(
+                    Icons.chevron_right,
+                    color: Colors.grey,
+                  ),
                 )
             ],
           ),

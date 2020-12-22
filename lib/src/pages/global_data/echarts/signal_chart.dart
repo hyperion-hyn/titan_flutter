@@ -98,13 +98,16 @@ class _SignalChatsState extends State<SignalChatsPage>
     var _size = MediaQuery.of(context).size;
     double _chartsWidth = _size.width - 16.0 * 2.0;
     double _chartsHeight = (299.3 * _chartsWidth) / 343;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        _introductionWidget(),
-        _titleWidget(S.of(context).global_node_map_title),
-        _clipRRectWidget(_nodeChartWidget(), _chartsWidth, _chartsHeight),
-      ],
+    return Container(
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _introductionWidget(),
+          _titleWidget(S.of(context).global_node_map_title),
+          _clipRRectWidget(_nodeChartWidget(), _chartsWidth, _chartsHeight),
+        ],
+      ),
     );
   }
 
@@ -113,16 +116,19 @@ class _SignalChatsState extends State<SignalChatsPage>
       return Loading();
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        _introductionWidget(),
-        _signalTotalChartWidget(),
-        _dailySignalChartWidget(type: SensorType.GPS),
-        _dailySignalChartWidget(type: SensorType.WIFI),
-        _dailySignalChartWidget(type: SensorType.BLUETOOTH),
-        _dailySignalChartWidget(type: SensorType.CELLULAR),
-      ],
+    return Container(
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _introductionWidget(),
+          _signalTotalChartWidget(),
+          _dailySignalChartWidget(type: SensorType.GPS),
+          _dailySignalChartWidget(type: SensorType.WIFI),
+          _dailySignalChartWidget(type: SensorType.BLUETOOTH),
+          _dailySignalChartWidget(type: SensorType.CELLULAR),
+        ],
+      ),
     );
   }
 
@@ -131,17 +137,20 @@ class _SignalChatsState extends State<SignalChatsPage>
       return Loading();
     }
 
-    return Column(
-      children: <Widget>[
-        _introductionWidget(),
-        _titleWidget(S.of(context).poi_total_data),
-        _clipRRectWidget(FadeInImage.assetNetwork(
-          image: "https://static.hyn.mobi/titan/images/mapmap.png",
-          placeholder: 'res/drawable/signal_map.png',
-          fit: BoxFit.fill,
-        )),
-        _dailySignalChartWidget(type: SensorType.POI),
-      ],
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          _introductionWidget(),
+          _titleWidget(S.of(context).poi_total_data),
+          _clipRRectWidget(FadeInImage.assetNetwork(
+            image: "https://static.hyn.mobi/titan/images/mapmap.png",
+            placeholder: 'res/drawable/signal_map.png',
+            fit: BoxFit.fill,
+          )),
+          _dailySignalChartWidget(type: SensorType.POI),
+        ],
+      ),
     );
   }
 

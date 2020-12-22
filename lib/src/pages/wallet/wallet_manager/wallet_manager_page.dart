@@ -44,22 +44,15 @@ class WalletManagerPage extends StatefulWidget {
 
 class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
   WalletManagerBloc _walletManagerBloc;
-  bool isRefresh = false;
+  //一开始进入当前页面激活的钱包
+  Wallet beforeActiveWallet;
+  //切换选中的钱包
+  Wallet selectWallet;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
-
-    BlocProvider.of<WalletCmpBloc>(context).listen((state) {
-      if (state is ActivatedWalletState) {
-        if(mounted){
-          setState(() {
-            isRefresh = false;
-          });
-        }
-      }
-    });
   }
 
 //  @override
@@ -70,6 +63,9 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
 
   @override
   void didPush() {
+    beforeActiveWallet = WalletInheritedModel.of(context)
+        .activatedWallet
+        ?.wallet;
     _walletManagerBloc = BlocProvider.of<WalletManagerBloc>(context);
     _walletManagerBloc.add(ScanWalletEvent());
 
@@ -77,8 +73,18 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
   }
 
   @override
-  void didPopNext() {
+  void didPopNext() async {
     _walletManagerBloc.add(ScanWalletEvent());
+
+    var currentActiveWallet = WalletInheritedModel.of(context)
+        .activatedWallet
+        ?.wallet;
+    if(currentActiveWallet?.keystore?.fileName != beforeActiveWallet?.keystore?.fileName){
+      //激活钱包发生变化，切换激活钱包
+      beforeActiveWallet = currentActiveWallet;
+      //将变化钱包作为选中钱包
+      selectWallet = currentActiveWallet;
+    }
     super.didPushNext();
   }
 
@@ -89,6 +95,10 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
     super.dispose();
   }
 
+  void listenBackAction(){
+    Navigator.pop(context,selectWallet);
+  }
+
   @override
   Widget build(BuildContext cofntext) {
     return Scaffold(
@@ -97,6 +107,16 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(
             color: Colors.black,
+          ),
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () async {
+                  listenBackAction();
+                },
+              );
+            },
           ),
           centerTitle: true,
           title: Text(
@@ -165,61 +185,53 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
             )
           ],
         ),
-        body: Container(
-          height: double.infinity,
-          color: Colors.white,
-          child: BlocBuilder<WalletManagerBloc, WalletManagerState>(
-            bloc: _walletManagerBloc,
-            builder: (context, state) {
-              if (state is ShowWalletState) {
-                var walletList = state.wallets;
-                return Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ListView.builder(
-                        primary: false,
-                        shrinkWrap: true,
-                        itemBuilder: (BuildContext context, int index) {
-                          return _buildWallet(walletList[index]);
-                        },
-                        itemCount: walletList.length,
-                      ),
-                    ),
-                    if(isRefresh)
-                      Center(
-                        child: SizedBox(
-                          height: 40,
-                          width: 40,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 3,
-                          ),
+        body: WillPopScope(
+          onWillPop: () async {
+            listenBackAction();
+            return false;
+          },
+          child: Container(
+            height: double.infinity,
+            color: Colors.white,
+            child: BlocBuilder<WalletManagerBloc, WalletManagerState>(
+              bloc: _walletManagerBloc,
+              builder: (context, state) {
+                if (state is ShowWalletState) {
+                  var walletList = state.wallets;
+                  return Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: ListView.builder(
+                          primary: false,
+                          shrinkWrap: true,
+                          itemBuilder: (BuildContext context, int index) {
+                            return _buildWallet(walletList[index]);
+                          },
+                          itemCount: walletList.length,
                         ),
                       ),
-                  ],
-                );
-              } else if (state is WalletEmptyState) {
-                return Align(
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 32.0),
-                      child: EmptyWalletView(tips: widget.tips),
-                    ));
-              } else {
-                return Container();
-              }
-            },
+                    ],
+                  );
+                } else if (state is WalletEmptyState) {
+                  return Align(
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 32.0),
+                        child: EmptyWalletView(tips: widget.tips),
+                      ));
+                } else {
+                  return Container();
+                }
+              },
+            ),
           ),
         ));
   }
 
   Widget _buildWallet(Wallet wallet) {
-    bool isSelected = wallet.keystore.fileName ==
-        WalletInheritedModel.of(context)
-            .activatedWallet
-            ?.wallet
-            ?.keystore
-            ?.fileName;
+    var walletFileName = selectWallet?.keystore?.fileName ?? beforeActiveWallet.keystore.fileName ?? "";
+    bool isSelected = (wallet.keystore.fileName == walletFileName);
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
     return Padding(
@@ -262,15 +274,10 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                               if(password == null || password.isEmpty){
                                 return;
                               }
-                              isRefresh = true;
-                              setState(() {
-                              });
 
-                              BlocProvider.of<WalletCmpBloc>(context)
-                                  .add(ActiveWalletEvent(wallet: wallet));
-                              ///Clear exchange account when switch wallet
-                              BlocProvider.of<ExchangeCmpBloc>(context)
-                                  .add(ClearExchangeAccountEvent());
+                              setState(() {
+                                selectWallet = wallet;
+                              });
                             },
                             width: 120,
                             height: 38,

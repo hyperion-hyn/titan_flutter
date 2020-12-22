@@ -114,7 +114,7 @@ class AtlasApi {
 
   static goToAtlasMap3HelpPage(BuildContext context) {
     String webUrl =
-        FluroConvertUtils.fluroCnParamsEncode("http://h.hyn.space/helpPage");
+        FluroConvertUtils.fluroCnParamsEncode(Const.HELP_PAGE);
     String webTitle = FluroConvertUtils.fluroCnParamsEncode(
         S.of(Keys.rootKey.currentContext).help);
     Application.router.navigateTo(context,

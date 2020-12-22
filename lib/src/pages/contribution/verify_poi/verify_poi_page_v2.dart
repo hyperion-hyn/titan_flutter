@@ -6,6 +6,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -160,16 +161,11 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
         return !_isSendConfirm;
       },
       child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          title: Text(
-            //"校验地点",
-            S.of(context).check_poi_item_title,
-            style: TextStyle(color: Colors.white),
-          ),
-          iconTheme: IconThemeData(color: Colors.white),
-          centerTitle: true,
+        appBar: BaseAppBar(
+          baseTitle: S.of(context).check_poi_item_title,
+          backgroundColor: Colors.white,
         ),
+
         body: _buildView(),
       ),
     );

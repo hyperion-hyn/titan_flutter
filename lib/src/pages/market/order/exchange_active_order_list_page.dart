@@ -182,7 +182,6 @@ Widget orderListEmpty(BuildContext context) {
 }
 
 Widget orderListWidget(BuildContext context, String marketCoin, bool isLoading, List<Order> _activeOrders) {
-  print("!!!4445555 $marketCoin");
   return ListView.builder(
     shrinkWrap: true,
     physics: NeverScrollableScrollPhysics(),

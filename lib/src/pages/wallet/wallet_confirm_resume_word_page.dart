@@ -38,7 +38,6 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
   }
 
   void initMnemonic() {
-    logger.i("createWalletMnemonicTemp: TODO!!");
     _candidateWords = widget.createWalletMnemonicTemp
         .split(" ")
         .asMap()

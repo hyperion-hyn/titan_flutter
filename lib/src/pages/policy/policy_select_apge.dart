@@ -90,14 +90,14 @@ Widget _buildMenuBar(String title, String subTitle, Function onTap) {
                 title?.isNotEmpty ?? false ? title : "",
                 style: TextStyle(
                     color: HexColor("#333333"),
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w400),
               ),
             ),
             Spacer(),
             Text(
               subTitle?.isNotEmpty ?? false ? subTitle : "",
-              style: TextStyle(color: HexColor("#AAAAAA"), fontSize: 16),
+              style: TextStyle(color: HexColor("#AAAAAA"), fontSize: 12),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(5, 15, 14, 15),
