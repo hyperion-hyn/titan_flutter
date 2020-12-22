@@ -668,6 +668,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 
   Widget _levelWidget() {
+
+    var otherEntity = _dataList.isNotEmpty?_dataList[0]:null;
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
       child: Container(
@@ -717,7 +719,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                       ),
                     ),
                     Text(
-                      ' ${_detailEntity?.otherUserAmount ?? 0} 个',
+                      ' ${otherEntity?.otherUserCount ?? 0} 个',
                       style: TextStyle(
                         color: HexColor("#999999"),
                         fontSize: 12,
@@ -739,7 +741,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      '+ ${_detailEntity.otherUserAmountStr ?? '0'} RP',
+                      '+ ${otherEntity.otherUserAmountStr ?? '0'} RP',
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 14,
