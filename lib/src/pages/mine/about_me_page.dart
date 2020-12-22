@@ -130,9 +130,7 @@ class _AboutMeState extends BaseState<AboutMePage> {
           //     value: "@Bi321369",
           //   ),
 
-          SizedBox(
-            height: 20,
-          ),
+          _lineWidget(),
         ]));
   }
 
