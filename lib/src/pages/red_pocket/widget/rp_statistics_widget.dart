@@ -156,8 +156,8 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
               totalCapStr,
               isHighLight: true,
             ),
-            _dataText('流通中', totalSupplyStr),
-            _dataText('总燃烧', totalBurningStr),
+            _dataText('流通中', totalSupplyStr, colorStr:'#c23531'),
+            _dataText('总燃烧', totalBurningStr, colorStr:'#2f4554'),
           ],
         ))
       ],
@@ -178,6 +178,8 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     var airdropPromotionTotalStr = bigIntToEther(totalPromotion);
 
     var unAirdrop = Decimal.tryParse(total) - Decimal.tryParse(totalAirdrop);
+    var totalAirdropStr = bigIntToEther("$totalAirdrop");
+    var unAirdropStr = bigIntToEther("$unAirdrop");
 
     var airdropBurnTotalStr = bigIntToEther(_rpStats?.airdrop?.burningTotal);
 
@@ -196,8 +198,8 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                 
             },
             data: [
-                {value: $unAirdrop, name: '待空投'},
                 {value: $totalAirdrop, name: '已空投'},
+                {value: $unAirdrop, name: '待空投'},
             ],
             
         },
@@ -242,6 +244,17 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                 ),
               ),
             ),
+            SizedBox(
+              width: 16,
+            ),
+            Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _dataText('已空投', totalAirdropStr, colorStr:'#c23531'),
+                    _dataText('未空投', unAirdropStr, colorStr:'#2f4554'),
+                  ],
+                ))
             // Expanded(
             //   child: Container( 
             //     height: 150,
@@ -347,7 +360,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _dataText('传导总量', totalStr),
-            _dataText('已传导', transmitRPStr),
+            _dataText('已传导', transmitRPStr,colorStr: '#c23531'),
           ],
         ))
       ],
@@ -385,7 +398,8 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(width:10,height:10,color: HexColor('#c23531'),),
+            if(colorStr != null)
+              Container(width:10,height:10,color: HexColor(colorStr),),
             SizedBox(width: 5,),
             if(isExpanded)
               Expanded(
