@@ -247,7 +247,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
             children: [
               _globalStaticsView(),
               _airdropAnim(),
-              _airdropDetailView(),
+              _airdropStatisticsView(),
               _rpInfoView(),
             ],
           ),
@@ -287,7 +287,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(
-            '红包',
+            S.of(context).rp_red_pocket,
             style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 14,
@@ -310,7 +310,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
             child: Align(
               alignment: Alignment.centerRight,
               child: Text(
-                '已产生(RP): $alreadyAirdrop ',
+                '${S.of(context).rp_already_airdropped}: $alreadyAirdrop ',
                 style: TextStyle(
                   color: DefaultColors.color999,
                   fontSize: 12,
@@ -388,7 +388,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
             ),
             Center(
                 child: Text(
-              '加载中...',
+              '${S.of(context).loading}...',
               style: TextStyle(color: Colors.white),
             )),
           ],
@@ -434,7 +434,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        '下一轮',
+                        S.of(context).rp_next_round,
                         style: TextStyle(color: Colors.white, fontSize: 12),
                         textAlign: TextAlign.center,
                       ),
@@ -463,7 +463,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
                 } else {
-                  var nextRoundText = '下轮预估 ${FormatUtil.formatTimer(
+                  var nextRoundText = '${S.of(context).rp_next_round_estimate} ${FormatUtil.formatTimer(
                     _nextRoundRemainTime,
                   )}';
                   return Text(nextRoundText);
@@ -519,7 +519,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
           SizedBox(
             height: 8,
           ),
-          Text('正在空投中...'),
+          Text('${S.of(context).rp_airdropping}...'),
           SizedBox(
             height: 4,
           ),
@@ -529,7 +529,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
                 } else {
-                  var currentRoundText = '本轮剩余时间 ${FormatUtil.formatMinuteTimer(
+                  var currentRoundText = '${S.of(context).rp_current_round_remain_time} ${FormatUtil.formatMinuteTimer(
                     _currentRoundRemainTime,
                   )}';
                   return Text(currentRoundText,
@@ -573,7 +573,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
           SizedBox(
             height: 8,
           ),
-          Text('正在空投中...'),
+          Text('${S.of(context).rp_airdropping}...'),
           SizedBox(
             height: 4,
           ),
@@ -583,7 +583,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
                 } else {
-                  var currentRoundText = '本轮剩余时间 ${FormatUtil.formatMinuteTimer(
+                  var currentRoundText = '${S.of(context).rp_current_round_remain_time} ${FormatUtil.formatMinuteTimer(
                     _currentRoundRemainTime,
                   )}';
                   return Text(currentRoundText,
@@ -595,7 +595,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     );
   }
 
-  _airdropDetailView() {
+  _airdropStatisticsView() {
     var myRpCount = _latestRoundInfo?.myRpCount ?? '--';
     var myRpAmount = '--';
     var totalAmount = '--';
@@ -618,8 +618,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
     var airdropRoundText =
         _currentRoundStartTime < now && now < _currentRoundEndTime
-            ? '本轮已空投'
-            : '最近一轮';
+            ? S.of(context).rp_current_round_airdropped
+            : S.of(context).rp_latest_round;
 
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -664,7 +664,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                     children: [
                       Text.rich(TextSpan(children: [
                         TextSpan(
-                          text: '幸运红包',
+                          text: S.of(context).rp_lucky_pocket,
                           style: TextStyle(
                             color: Colors.red,
                             fontWeight: FontWeight.bold,
@@ -681,7 +681,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                       activeWallet != null
                           ? Text.rich(TextSpan(children: [
                               TextSpan(
-                                text: '我获得',
+                                text: S.of(context).rp_my_airdrop_detail_1,
                                 style: TextStyle(fontSize: 13),
                               ),
                               TextSpan(
@@ -692,7 +692,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                                     fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
-                                text: '个红包 共',
+                                text: S.of(context).rp_my_airdrop_detail_2,
                                 style: TextStyle(fontSize: 13),
                               ),
                               TextSpan(
@@ -723,7 +723,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                                             });
                                   },
                                   child: Text(
-                                    ' 创建/导入 ',
+                                    S.of(context).create_import_wallet_account,
                                     style: TextStyle(
                                       fontSize: 13,
                                       color: Colors.blue,
@@ -731,7 +731,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                                   ),
                                 ),
                                 Text(
-                                  '钱包后参与领红包',
+                                  S.of(context).rp_to_join_airdrop,
                                   style: TextStyle(
                                     fontSize: 13,
                                   ),
@@ -748,6 +748,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       ),
     );
   }
+
+  _luckyRPStaticsView() {}
+
+  _levelRPStaticsView() {}
 
   _rpInfoView() {
     var rpToday = '--';

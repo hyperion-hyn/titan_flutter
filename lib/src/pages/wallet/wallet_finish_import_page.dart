@@ -122,9 +122,9 @@ class FinishImportPage extends StatelessWidget {
       BlocProvider.of<WalletCmpBloc>(context)
           .add(ActiveWalletEvent(wallet: wallet));
 
-      await Future.delayed(Duration(milliseconds: 300));
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateActivatedWalletBalanceEvent());
+      await Future.delayed(Duration(milliseconds: 500));
+      // BlocProvider.of<WalletCmpBloc>(context)
+      //     .add(UpdateActivatedWalletBalanceEvent());
     }
 
     ///Use digits password now
@@ -135,6 +135,6 @@ class FinishImportPage extends StatelessWidget {
 
     var userPayload = UserPayloadWithAddressEntity(Payload(userName: wallet.keystore.name),wallet.getAtlasAccount().address);
     AtlasApi.postUserSync(userPayload);
-    Routes.popUntilCachedEntryRouteName(context);
+    Routes.popUntilCachedEntryRouteName(context, wallet);
   }
 }

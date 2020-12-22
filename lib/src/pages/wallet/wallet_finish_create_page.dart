@@ -130,8 +130,8 @@ class FinishCreatePage extends StatelessWidget {
           .add(ClearExchangeAccountEvent());
 
       await Future.delayed(Duration(milliseconds: 300));
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateActivatedWalletBalanceEvent());
+      // BlocProvider.of<WalletCmpBloc>(context)
+      //     .add(UpdateActivatedWalletBalanceEvent());
     }
 
     try {

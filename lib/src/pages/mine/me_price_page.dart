@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -31,19 +32,32 @@ class _MePriceState extends State<MePricePage> {
       activeQuotesSign = WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeQuotesSign;
     }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          S.of(context).price_show,
-          style: TextStyle(color: Colors.white),
+    Widget _lineWidget({double height = 5}) {
+      return Container(
+        height: height,
+        color: HexColor('#F8F8F8'),
+      );
+    }
+
+    Widget _dividerWidget() {
+      return Padding(
+        padding: const EdgeInsets.only(left: 16,),
+        child: Container(
+          height: 0.8,
+          color: HexColor('#F8F8F8'),
         ),
-        centerTitle: true,
-        elevation: 0,
+      );
+    }
+
+    var quotesSigns = SupportedQuoteSigns.all;
+
+    return Scaffold(
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).price_show,
+        backgroundColor: Colors.white,
         actions: <Widget>[
-          InkWell(
-            onTap: () {
+          FlatButton(
+            onPressed: () {
               if (activeQuotesSign != null) {
                 WalletInheritedModel.saveQuoteSign(activeQuotesSign);
                 BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesSignEvent(sign: activeQuotesSign));
@@ -52,31 +66,25 @@ class _MePriceState extends State<MePricePage> {
 
               Navigator.pop(context);
             },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              alignment: Alignment.centerRight,
-              child: Text(
-                S.of(context).confirm,
-                style: TextStyle(fontSize: 16, color: Colors.white),
+            child: Text(
+              S.of(context).confirm,
+              style: TextStyle(
+                color: HexColor("#1F81FF"),
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
               ),
             ),
-          )
+          ),
         ],
       ),
-      body: ListView(
-          children: SupportedQuoteSigns.all.map<Widget>((quotesSign) {
-        return _buildInfoContainer(quotesSign);
-      }).toList()),
-    );
-  }
-
-  Widget _divider() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Divider(
-        height: 1.0,
-        color: HexColor('#D7D7D7'),
-      ),
+        body: Column(
+          children: <Widget>[
+            _lineWidget(),
+            _buildInfoContainer(quotesSigns[0]),
+            _dividerWidget(),
+            _buildInfoContainer(quotesSigns[1]),
+          ],
+        ),
     );
   }
 
@@ -91,6 +99,7 @@ class _MePriceState extends State<MePricePage> {
         children: <Widget>[
           Container(
             height: 56,
+            color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -98,7 +107,7 @@ class _MePriceState extends State<MePricePage> {
                   padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
                   child: Text(
                     quotesSign.quote,
-                    style: TextStyle(color: HexColor("#333333"), fontSize: 16),
+                    style: TextStyle(color: HexColor("#333333"), fontSize: 14),
                   ),
                 ),
                 Spacer(),
@@ -115,7 +124,6 @@ class _MePriceState extends State<MePricePage> {
               ],
             ),
           ),
-          _divider()
         ],
       ),
     );

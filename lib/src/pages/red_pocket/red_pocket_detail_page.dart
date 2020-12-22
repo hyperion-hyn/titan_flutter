@@ -152,6 +152,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
     var from = levelValueToLevelName(_detailEntity?.from ?? 0);
     var to = levelValueToLevelName(_detailEntity?.to ?? 0);
+    var level = levelValueToLevelName(_detailEntity?.level ?? 0);
 
     switch (_rpType) {
       case RedPocketType.LUCKY:
@@ -163,7 +164,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
       case RedPocketType.LEVEL:
         title = '量级红包';
-        subTitle = '（量级$to）';
+        subTitle = '（量级$level）';
 
         amount = amountStr;
         break;
@@ -649,7 +650,9 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                         desc,
                         style: TextStyle(
                           fontSize: 10,
-                          color: ([RpLuckState.BEST, RpLuckState.LUCKY_BEST].contains(luckState)) ? HexColor('#F0BE00') : HexColor('#999999'),
+                          color: ([RpLuckState.BEST, RpLuckState.LUCKY_BEST].contains(luckState))
+                              ? HexColor('#F0BE00')
+                              : HexColor('#999999'),
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -665,6 +668,8 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 
   Widget _levelWidget() {
+
+    var otherEntity = _dataList.isNotEmpty?_dataList[0]:null;
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
       child: Container(
@@ -714,7 +719,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                       ),
                     ),
                     Text(
-                      ' ${_detailEntity?.otherUserAmount ?? 0} 个',
+                      ' ${otherEntity?.otherUserCount ?? 0} 个',
                       style: TextStyle(
                         color: HexColor("#999999"),
                         fontSize: 12,
@@ -736,7 +741,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      '+ ${_detailEntity.otherUserAmountStr ?? '0'} RP',
+                      '+ ${otherEntity.otherUserAmountStr ?? '0'} RP',
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 14,
@@ -771,8 +776,16 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         _manageFeeAmount = valueByDecimal;
       }
     });
-    var _manageFeeAmountStr = FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString(), decimal: 4,) + ' RP';
-    var _burnAmountStr = FormatUtil.stringFormatCoinNum(_burnAmount.toString(), decimal: 4,) + ' RP';
+    var _manageFeeAmountStr = FormatUtil.stringFormatCoinNum(
+          _manageFeeAmount.toString(),
+          decimal: 4,
+        ) +
+        ' RP';
+    var _burnAmountStr = FormatUtil.stringFormatCoinNum(
+          _burnAmount.toString(),
+          decimal: 4,
+        ) +
+        ' RP';
 
     Widget rowText(String imageName, String title, String amount,
         {bool isRebuild = false, MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start}) {
@@ -839,7 +852,9 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             rowText('rp_manage_fee', '管理费', _manageFeeAmountStr),
-            SizedBox(width: 12,),
+            SizedBox(
+              width: 12,
+            ),
             rowText(
               'ic_burn',
               '燃烧',
@@ -938,6 +953,9 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 
   void getNetworkData() async {
+
+    _currentPageKey = null;
+
     try {
       _detailEntity = await _rpApi.getMyRpOpenInfo(
         _address,
@@ -955,14 +973,11 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         _currentPageKey = netData.pagingKey;
 
         _dataList = filterRpOpenDataList(netData.data);
-
-        if (mounted) {
-          setState(() {
-            _loadDataBloc.add(RefreshSuccessEvent());
-          });
-        }
-      } else {
-        _loadDataBloc.add(LoadEmptyEvent());
+      }
+      if (mounted) {
+        setState(() {
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
       }
     } catch (e) {
       _loadDataBloc.add(LoadFailEvent());
@@ -987,14 +1002,12 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         _currentPageKey = netData.pagingKey;
 
         _dataList.addAll(filterRpOpenDataList(netData.data));
+      }
 
-        if (mounted) {
-          setState(() {
-            _loadDataBloc.add(LoadingMoreSuccessEvent());
-          });
-        }
-      } else {
-        _loadDataBloc.add(LoadMoreEmptyEvent());
+      if (mounted) {
+        setState(() {
+          _loadDataBloc.add(LoadingMoreSuccessEvent());
+        });
       }
     } catch (e) {
       _loadDataBloc.add(LoadMoreFailEvent());
@@ -1071,7 +1084,12 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
 }
 
 // 1、燃烧 2、管理费 3、正常
-enum RpAddressRoleType { ZERO, BURN, MANAGE_FEE, NORMAL }
+enum RpAddressRoleType {
+  ZERO,
+  BURN,
+  MANAGE_FEE,
+  NORMAL,
+}
 
 // 0:Lucky 1:Level 2:Promotion
 enum RedPocketType {
