@@ -267,8 +267,14 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     var burning = '--';
 
     try {
-      holding = '${_myLevelInfo?.currentHoldingStr ?? '--'}';
-      burning = '${_myLevelInfo?.currBurningStr ?? '--'}';
+      holding = FormatUtil.stringFormatCoinNum(
+        _myLevelInfo?.currentHoldingStr ?? '0',
+        decimal: 4,
+      );
+      burning = FormatUtil.stringFormatCoinNum(
+        _myLevelInfo?.currBurningStr ?? '0',
+        decimal: 4,
+      );
     } catch (e) {}
 
     var isShowDowngrade = highestLevel > currentLevel;
