@@ -39,7 +39,8 @@ class RpMyLevelRecordsPage extends StatefulWidget {
   }
 }
 
-class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with RouteAware {
+class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
+    with RouteAware {
   final RPApi _rpApi = RPApi();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
 
@@ -56,6 +57,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
   List<RPLevelHistory> _levelHistoryList = [];
 
   RPStatistics _rpStatistics;
+
   List<LevelCounts> get _levelCountList => _rpStatistics?.levelCounts ?? [];
 
   // todo: 有空加开关
@@ -141,7 +143,8 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     );
   }
 
-  Widget _columnWidget(String amount, String title, {bool isBold = true, bool isSmall = false}) {
+  Widget _columnWidget(String amount, String title,
+      {bool isBold = true, bool isSmall = false}) {
     if (isSmall) {
       return Column(
         children: <Widget>[
@@ -220,8 +223,9 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [1, 2, 3, 4, 5].map((index) {
-                LevelCounts levelCountsModel =
-                    _levelCountList.firstWhere((element) => element?.level == index, orElse: null);
+                LevelCounts levelCountsModel = _levelCountList.firstWhere(
+                    (element) => element?.level == index,
+                    orElse: null);
 
                 return _columnWidget(
                   '${levelCountsModel?.count ?? 0}',
@@ -265,7 +269,6 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     try {
       holding = '${_myLevelInfo?.currentHoldingStr ?? '--'}';
       burning = '${_myLevelInfo?.currBurningStr ?? '--'}';
-
     } catch (e) {}
 
     var isShowDowngrade = highestLevel > currentLevel;
@@ -320,7 +323,8 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                       flex: 2,
                       child: isShowDowngrade
                           ? Padding(
-                              padding: const EdgeInsets.only(top: 32, right: 16),
+                              padding:
+                                  const EdgeInsets.only(top: 32, right: 16),
                               child: Row(
                                 children: [
                                   Image.asset(
@@ -404,17 +408,27 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Spacer(),
-                      _columnWidget(
-                        '$burning RP',
-                        '燃烧量',
+                      SizedBox(
+                        width: 32,
                       ),
-                      Spacer(),
-                      _columnWidget(
-                        '$holding RP',
-                        '当前持币',
+                      Expanded(
+                        child: _columnWidget(
+                          '$burning RP',
+                          '燃烧量',
+                        ),
                       ),
-                      Spacer(),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Expanded(
+                        child: _columnWidget(
+                          '$holding RP',
+                          '当前持币',
+                        ),
+                      ),
+                      SizedBox(
+                        width: 32,
+                      ),
                     ],
                   ),
                 ),
@@ -744,14 +758,18 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
               right: 26,
               top: 4,
               child: Container(
-                decoration:
-                    BoxDecoration(color: HexColor("#FF4C3B"), borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                decoration: BoxDecoration(
+                    color: HexColor("#FF4C3B"),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(8, 1, 8, 3),
                   child: Center(
                     child: Text(
                       'new',
-                      style: TextStyle(fontSize: 10, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: HexColor("#FFFFFF"),
+                          fontWeight: FontWeight.normal),
                     ),
                   ),
                 ),
