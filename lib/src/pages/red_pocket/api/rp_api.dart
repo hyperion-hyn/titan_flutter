@@ -98,19 +98,21 @@ class RPApi {
   Future<RpAirdropRoundInfo> getLatestRpAirdropRoundInfo(
     String address,
   ) async {
-    // test hack data
-    // await Future.delayed(Duration(milliseconds: 100));
-    // count++;
-    // var t = 1;
-    // var rcount = count - t > 0 ? count - t : 0;
-    // return RpAirdropRoundInfo.fromJson({
-    //   'start_time': startTime,
-    //   'end_time': endTime,
-    //   'my_rp_count': rcount,
-    //   'my_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (rcount * 10).ceilToDouble())}',
-    //   'total_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (rcount * 100).ceilToDouble())}',
-    //   'current_time': DateTime.now().millisecondsSinceEpoch ~/ 1000,
-    // });
+    //test hack data
+    /*
+    await Future.delayed(Duration(milliseconds: 100));
+    count++;
+    var t = 1;
+    var rcount = count - t > 0 ? count - t : 0;
+    return RpAirdropRoundInfo.fromJson({
+      'start_time': startTime,
+      'end_time': endTime,
+      'my_rp_count': rcount,
+      'my_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (rcount * 10).ceilToDouble())}',
+      'total_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (rcount * 100).ceilToDouble())}',
+      'current_time': DateTime.now().millisecondsSinceEpoch ~/ 1000,
+    });
+    */
 
     return await RPHttpCore.instance.getEntity(
         "/v1/rp/airdrop/latestRound/$address",
@@ -292,6 +294,7 @@ class RPApi {
   }
 
   ///我的红包列表，待启动
+  /*
   Future<RpMyRpRecordEntity> getMyRpRecordListPending(
       String address, {
         int size = 200,
@@ -311,6 +314,7 @@ class RPApi {
       ),
     );
   }
+  */
 
   Future<RpOpenRecordEntity> getMyRpOpenInfo(
     String address,
@@ -436,6 +440,18 @@ class RPApi {
         },
         options: RequestOptions(contentType: "application/json"));
   }
+
+  /*
+  Future<RpPromotionRuleEntity> getRPPromotionRuleOld(String address) async {
+
+    return await RPHttpCore.instance.getEntity(
+        "/v1/rp/level/promotion/$address",
+        EntityFactory<RpPromotionRuleEntity>(
+              (json) => RpPromotionRuleEntity.fromJson(json),
+        ),
+        options: RequestOptions(contentType: "application/json"));
+  }
+  */
 
   ///预提交升级
   Future<dynamic> postRpDepositAndBurn({

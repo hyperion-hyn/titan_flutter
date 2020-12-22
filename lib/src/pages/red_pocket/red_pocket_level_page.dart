@@ -47,15 +47,26 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
     for (int index = 0; index < _staticDataList.length; index++) {
       var zeroValue = Decimal.zero;
-      var staticModel = _staticDataList[index];
-      var staticBurnValue = Decimal.tryParse(staticModel?.burnStr ?? '0') ?? zeroValue;
 
+      var staticModel = _staticDataList[index];
       var dynamicModel = _dynamicDataList[index];
+
+      //  burn
+      var staticBurnValue = Decimal.tryParse(staticModel?.burnStr ?? '0') ?? zeroValue;
       var dynamicBurnValue = Decimal.tryParse(dynamicModel?.burnStr ?? '0') ?? zeroValue;
+
+      // hold
+      var staticHoldValue = Decimal.tryParse(staticModel?.holdingStr ?? '0') ?? zeroValue;
+      var dynamicHoldValue = Decimal.tryParse(dynamicModel?.holdingStr ?? '0') ?? zeroValue;
 
       bool isOldLevel = staticBurnValue > zeroValue &&
           dynamicBurnValue >= zeroValue &&
           staticBurnValue > dynamicBurnValue &&
+
+          staticHoldValue > zeroValue &&
+          dynamicHoldValue >= zeroValue &&
+          staticHoldValue > dynamicHoldValue &&
+
           dynamicModel.level > _currentLevel;
       //print("[$runtimeType] _setupOldModelList, isOldLevel:$isOldLevel");
 
@@ -267,7 +278,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
             children: [
               InkWell(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                onTap: () => _selectedLevelAction(model, isStatic: true),
+                onTap: () => _selectedLevelAction(index),
                 child: _itemContainer(model),
               ),
               _tagContainer(leftTagTitle: leftTagTitle, color: HexColor('#FF4C3B')),
@@ -283,21 +294,19 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   Widget _itemBuilderDynamic(int index) {
     var staticModel = _staticDataList[index];
 
+    // 判断当前旧的量级是否为历史最高
+    String leftTagTitle = '';
+
     // 过滤出Old
     LevelRule dynamicModel =
-        _oldModelList.firstWhere((element) => element.level == staticModel.level, orElse: () => null);
+    _oldModelList.firstWhere((element) => element.level == staticModel.level, orElse: () => null);
 
+    /*
     LevelRule oldModelMax =
         _oldModelList.firstWhere((element) => element.level > dynamicModel.level, orElse: () => null);
-    // for (var element in _oldModelList) {
-    //   print(
-    //       "[$runtimeType] oldModelList.length:${_oldModelList.length}, level:${element.level} , index:$index, oldModelMax:$oldModelMax");
-    // }
 
-    // 判断当前旧的量级是否为历史最高
     bool isNotMax = (oldModelMax != null);
 
-    String leftTagTitle = '';
     if (!isNotMax) {
       leftTagTitle = '可恢复最高量级';
     } else {
@@ -317,8 +326,9 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
     var _needHoldMinValue = holdValue - currentHoldValue;
     _needHoldMinValue = _needHoldMinValue > zeroValue ? _needHoldMinValue : zeroValue;
+    */
 
-    String oldLevelDesc = '恢复至该量级需燃烧 ${_needBurnValue.toString()}RP, 增持${_needHoldMinValue.toString()}RP';
+    String oldLevelDesc = '提升至该量级需燃烧 ${dynamicModel?.burnStr ?? '0'}RP, 增持${dynamicModel?.holdingStr ?? '0'}RP';
 
     return Stack(
       children: [
@@ -331,7 +341,7 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
             children: [
               InkWell(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                onTap: () => _selectedLevelAction(dynamicModel, isStatic: false),
+                onTap: () => _selectedLevelAction(index),
                 child: Container(
                   decoration: BoxDecoration(
                     color: HexColor('#DEDEDE'),
@@ -546,7 +556,8 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
     );
   }
 
-  _selectedLevelAction(LevelRule model, {bool isStatic = true}) {
+  _selectedLevelAction(int index) {
+    var model = _dynamicDataList[index];
     if (_currentLevel > model.level && _currentLevel > 0) {
       if (_currentLevel == 5) {
         Fluttertoast.showToast(
@@ -564,7 +575,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
 
     setState(() {
       _currentSelectedLevelRule = model;
-      _isStatic = isStatic;
     });
   }
 
@@ -616,7 +626,6 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
         builder: (context) => RpLevelUpgradePage(
           _currentSelectedLevelRule,
           _promotionRuleEntity,
-          isStatic: _isStatic,
         ),
       ),
     );
