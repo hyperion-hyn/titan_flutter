@@ -294,42 +294,41 @@ class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
   Widget _itemBuilderDynamic(int index) {
     var staticModel = _staticDataList[index];
 
+    // 判断当前旧的量级是否为历史最高
+    String leftTagTitle = '';
+
     // 过滤出Old
     LevelRule dynamicModel =
-        _oldModelList.firstWhere((element) => element.level == staticModel.level, orElse: () => null);
+    _oldModelList.firstWhere((element) => element.level == staticModel.level, orElse: () => null);
 
+    /*
     LevelRule oldModelMax =
         _oldModelList.firstWhere((element) => element.level > dynamicModel.level, orElse: () => null);
-    // for (var element in _oldModelList) {
-    //   print(
-    //       "[$runtimeType] oldModelList.length:${_oldModelList.length}, level:${element.level} , index:$index, oldModelMax:$oldModelMax");
-    // }
 
-    // 判断当前旧的量级是否为历史最高
     bool isNotMax = (oldModelMax != null);
 
-    String leftTagTitle = '';
     if (!isNotMax) {
       leftTagTitle = '可恢复最高量级';
     } else {
       leftTagTitle = '可恢复量级';
     }
 
-    //var zeroValue = Decimal.zero;
+    var zeroValue = Decimal.zero;
 
     // 燃烧
-    // var burningValue = Decimal.tryParse(dynamicModel?.burnStr ?? '0') ?? zeroValue;
-    // var currentBurnValue = Decimal.tryParse(_myLevelInfo?.currBurningStr ?? '0') ?? zeroValue;
-    // var _needBurnValue = burningValue - currentBurnValue;
-    // _needBurnValue = _needBurnValue > zeroValue ? _needBurnValue : zeroValue;
+    var burningValue = Decimal.tryParse(dynamicModel?.burnStr ?? '0') ?? zeroValue;
+    var currentBurnValue = Decimal.tryParse(_myLevelInfo?.currBurningStr ?? '0') ?? zeroValue;
+    var _needBurnValue = burningValue - currentBurnValue;
+    _needBurnValue = _needBurnValue > zeroValue ? _needBurnValue : zeroValue;
 
     // 持币
-    // var holdValue = Decimal.tryParse(dynamicModel?.holdingStr ?? '0') ?? zeroValue;
-    // var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
-    // var _needHoldMinValue = holdValue - currentHoldValue;
-    // _needHoldMinValue = _needHoldMinValue > zeroValue ? _needHoldMinValue : zeroValue;
+    var holdValue = Decimal.tryParse(dynamicModel?.holdingStr ?? '0') ?? zeroValue;
+    var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
+    var _needHoldMinValue = holdValue - currentHoldValue;
+    _needHoldMinValue = _needHoldMinValue > zeroValue ? _needHoldMinValue : zeroValue;
+    */
 
-    String oldLevelDesc = '恢复至该量级需燃烧 ${dynamicModel?.burnStr ?? '0'}RP, 增持${dynamicModel?.holdingStr ?? '0'}RP';
+    String oldLevelDesc = '提升至该量级需燃烧 ${dynamicModel?.burnStr ?? '0'}RP, 增持${dynamicModel?.holdingStr ?? '0'}RP';
 
     return Stack(
       children: [
