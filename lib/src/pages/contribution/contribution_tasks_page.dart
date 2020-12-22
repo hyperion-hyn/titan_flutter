@@ -20,6 +20,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v2.dart';
 import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v3.dart';
+import 'package:titan/src/pages/mine/me_checkin_history_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/data/entity/converter/model_converter.dart';
@@ -70,8 +71,30 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
       appBar: BaseAppBar(
         baseTitle: S.of(context).data_contribute,
         backgroundColor: Colors.white,
+        actions: <Widget>[
+          FlatButton(
+            onPressed: _navToCheckInRecords,
+            child: Text(
+              '贡献记录',
+              style: TextStyle(
+                color: HexColor("#1F81FF"),
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
       ),
       body: _buildView(context),
+    );
+  }
+
+  _navToCheckInRecords() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MeCheckInHistory(),
+      ),
     );
   }
 
@@ -190,7 +213,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
       children: <Widget>[
         _lineWidget(),
         _activatedWalletWidget(),
-        _lineWidget(height: 8,),
+        _lineWidget(
+          height: 8,
+        ),
         _buildTaskItem('signal', S.of(context).scan_signal_item_title, scanTimes ?? 0, () async {
           bool status = await checkSignalPermission();
           print('[Permission] -->status:$status');
@@ -309,8 +334,8 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                 SizedBox(
                   width: 150,
                   child: Text(
-                    shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(
-                            activeWalletVo?.wallet?.getEthAccount()?.address ?? "")),
+                    shortBlockChainAddress(
+                        WalletUtil.ethAddressToBech32Address(activeWalletVo?.wallet?.getEthAccount()?.address ?? "")),
                     style: TextStyle(fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B), fontSize: 12),
                   ),
                 )
@@ -353,10 +378,68 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
             title,
             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: HexColor('#333333')),
           ),
-          Spacer(),
+          Flexible(
+            fit: FlexFit.tight,
+            flex: 35,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                _end(todayTimes,
+                    isOpen: isOpen,
+                    taskTimes: iconName == "check" ? TAST_TIMES_TWICE : TAST_TIMES_ONE,
+                    realTimes: realTimes),
+              ],
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  Widget _end(int todayTimes, {bool isOpen = false, int taskTimes = 1, int realTimes = 0}) {
+    var activeWalletVo = WalletInheritedModel.of(context).activatedWallet;
+    var isLogged = activeWalletVo == null;
+    if (!isLogged) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              Icons.chevron_right,
+              color: HexColor('#E9E9E9'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (isOpen) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              '$taskTimes次',
+              style: TextStyle(fontSize: 12, color: Colors.red[600]),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: HexColor('#E9E9E9'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Text(
+          S.of(context).coming_soon,
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor('#AAAAAA')),
+        ),
+      );
+    }
   }
 
   Widget _divider() {
