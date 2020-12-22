@@ -14,6 +14,7 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_level_record_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
@@ -52,6 +53,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   RPStatistics _rpStatistics;
   RpMyLevelInfo _myLevelInfo;
   RpAirdropRoundInfo _latestRoundInfo;
+  RpLevelAirdropInfo _rpLevelAirdropInfo;
 
   @override
   void initState() {
@@ -708,6 +710,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             child: RPAirdropWidget(
               rpStatistics: _rpStatistics,
               rpAirdropRoundInfo: _latestRoundInfo,
+              rpLevelAirdropInfo: _rpLevelAirdropInfo,
             ),
           ),
         ),
@@ -1281,6 +1284,11 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
         _address,
       );
+
+      _rpLevelAirdropInfo = await _rpApi.getLatestLevelAirdropInfo(
+        _address,
+      );
+
       if (mounted) {
         _loadDataBloc.add(RefreshSuccessEvent());
         setState(() {});
