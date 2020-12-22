@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/account/account_component.dart';
 import 'package:titan/src/components/account/bloc/bloc.dart';
 import 'package:titan/src/pages/contribution/add_poi/add_position_page_v2.dart';
 import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
@@ -20,6 +21,7 @@ import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/contribution/signal_scan/vo/check_in_model.dart';
 import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v2.dart';
 import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v3.dart';
 import 'package:titan/src/pages/mine/me_checkin_history_page.dart';
@@ -222,12 +224,36 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
   }
 
   Widget _taskListView() {
+    var checkInModel = AccountInheritedModel.of(context, aspect: AccountAspect.checkInModel)?.checkInModel;
     var scanTimes = 0;
     var postPoiTimes = 0;
-    var confirmPoiTimes = Random().nextInt(10);
+    var confirmPoiTimes = 0;
     var scanTimesReal = 0;
     var postPoiTimesReal = 0;
     var confirmPoiTimesReal = 0;
+
+    if (checkInModel != null) {
+      print("[Task] _taskListView, total:${checkInModel.total}, length:${checkInModel.detail.length}");
+
+      CheckInModelState scanState = checkInModel.detail.firstWhere((element) {
+        return element.action == ContributionTasksPage.scanSignal;
+      }).state;
+      scanTimes = scanState.total;
+
+      scanTimesReal = scanState.real;
+
+      CheckInModelState postPoiState = checkInModel.detail.firstWhere((element) {
+        return element.action == ContributionTasksPage.postPOI;
+      }).state;
+      postPoiTimes = postPoiState.total;
+      postPoiTimesReal = postPoiState.real;
+
+      CheckInModelState confirmPoiState = checkInModel.detail.firstWhere((element) {
+        return element.action == ContributionTasksPage.confirmPOI;
+      }).state;
+      confirmPoiTimes = confirmPoiState.total;
+      confirmPoiTimesReal = confirmPoiState.real;
+    }
 
     Widget _lineWidget({double height = 5}) {
       return Container(
@@ -273,13 +299,8 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
           var latlng = await getLatlng();
           if (latlng != null) {
             // 注释：第0次，自检：图片， 后面，第N次，ta检查，都是第三方验证，多任务校验
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            var lastDate = prefs.getInt(PrefsKey.VERIFY_DATE) ?? 0;
-            var duration = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastDate));
-            print(
-                "[Radion] confirmPoiTimes:$confirmPoiTimes, lastDate:$lastDate, day:${duration.inDays}, inHours:${duration.inHours}");
 
-            if (lastDate == 0 || (lastDate > 0 && duration.inDays > 0)) {
+            if (confirmPoiTimes == 0 /*|| env.buildType == BuildType.DEV*/) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
