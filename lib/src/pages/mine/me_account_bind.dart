@@ -141,7 +141,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
   Widget build(BuildContext context) {
     print("[${widget.runtimeType}] accountType:$accountType");
     return Scaffold(
-      backgroundColor: Colors.white,
+      //backgroundColor: Colors.white,
       appBar: BaseAppBar(
         actions: <Widget>[
           IconButton(
