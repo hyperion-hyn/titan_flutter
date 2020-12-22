@@ -71,20 +71,20 @@ class _ExchangeOrderManagementPageState
                     Expanded(
                       child: TabBar(
                         isScrollable: true,
-                        labelColor: HexColor('#FF333333'),
+                        labelColor: HexColor('#FF228BA1'),
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
                         indicatorSize: TabBarIndicatorSize.label,
-                        indicatorColor: HexColor('#FF333333'),
-                        indicatorWeight: 3,
+                        indicatorColor: HexColor('#FF228BA1'),
+                        indicatorWeight: 2,
                         indicatorPadding: EdgeInsets.only(
                           bottom: 2,
                           right: 12,
                           left: 12,
                         ),
-                        unselectedLabelColor: HexColor("#FF999999"),
+                        unselectedLabelColor: HexColor("#FF333333"),
                         tabs: [
                           Tab(
                             child: Text(
