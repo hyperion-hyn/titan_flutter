@@ -67,7 +67,7 @@ class _AboutMeState extends BaseState<AboutMePage> {
         ),
         body: ListView(children: <Widget>[
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 48),
+            padding: const EdgeInsets.symmetric(vertical: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
