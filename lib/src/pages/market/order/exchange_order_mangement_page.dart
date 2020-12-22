@@ -1,13 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
-import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/pages/market/order/exchange_order_detail_list_page.dart';
 import 'package:titan/src/pages/market/order/exchange_order_history_page.dart';
-import 'package:titan/src/pages/market/order/item_order.dart';
 import 'package:titan/src/pages/market/order/exchange_active_order_list_page.dart';
 
 class ExchangeOrderManagementPage extends StatefulWidget {
@@ -21,26 +17,19 @@ class ExchangeOrderManagementPage extends StatefulWidget {
   }
 }
 
-class _ExchangeOrderManagementPageState
-    extends State<ExchangeOrderManagementPage>
-    with SingleTickerProviderStateMixin {
-  TabController _tabController;
-
+class _ExchangeOrderManagementPageState extends State<ExchangeOrderManagementPage> with SingleTickerProviderStateMixin {
   @override
   void initState() {
-    _tabController = TabController(initialIndex: 0, vsync: this, length: 3);
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
