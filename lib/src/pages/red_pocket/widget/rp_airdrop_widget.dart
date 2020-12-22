@@ -706,22 +706,22 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                       ),
                       Wrap(
                         children: [
-                          Text.rich(TextSpan(children: [
-                            TextSpan(
-                              text: S.of(context).rp_lucky_pocket,
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text.rich(TextSpan(children: [
+                              TextSpan(
+                                text: S.of(context).rp_lucky_pocket,
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            TextSpan(
-                              text:
-                                  ' $luckyAirdropRoundText ( $luckyTotalAmount RP)',
-                              style: TextStyle(fontSize: 13),
-                            )
-                          ])),
-                          SizedBox(
-                            height: 4,
+                              TextSpan(
+                                text:
+                                    ' $luckyAirdropRoundText ( $luckyTotalAmount RP)',
+                                style: TextStyle(fontSize: 13),
+                              )
+                            ])),
                           ),
                           activeWallet != null
                               ? Text.rich(TextSpan(children: [
