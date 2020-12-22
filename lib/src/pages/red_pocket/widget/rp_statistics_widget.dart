@@ -172,7 +172,6 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     var totalPromotion = _rpStats?.airdrop?.promotionTotal ?? '0';
 
     var totalStr = bigIntToEther(total);
-    var airdropTotalStr = bigIntToEther(totalAirdrop);
 
     var airdropLuckyTotalStr = bigIntToEther(totalLucky);
     var airdropLevelTotalStr = bigIntToEther(totalLevel);
@@ -182,7 +181,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
 
     var airdropBurnTotalStr = bigIntToEther(_rpStats?.airdrop?.burningTotal);
 
-    var _chartOption = '''
+    var _airdropChartOption = '''
  {
     series: [
         {
@@ -198,6 +197,28 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
             },
             data: [
                 {value: $unAirdrop, name: '待空投'},
+                {value: $totalAirdrop, name: '已空投'},
+            ],
+            
+        },
+    ]
+}
+  ''';
+    var _redPocketChartOption = '''
+ {
+    series: [
+        {
+            type: 'pie',
+            radius: ['40%', '90%'],
+            silent: true,
+            label: {
+                formatter: '{b}',
+                borderWidth: 1,
+                borderRadius: 4,
+                position: 'inner',
+                
+            },
+            data: [
                 {value: $totalPromotion, name: '晋升红包'},
                 {value: $totalLevel, name: '量级红包'},
                 {value: $totalLucky, name: '幸运红包'}
@@ -210,13 +231,27 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          height: 150,
-          width: 150,
-          child: Echarts(
-            option: _chartOption,
-            captureAllGestures: false,
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                height: 150,
+                child: Echarts(
+                  option: _airdropChartOption,
+                  captureAllGestures: false,
+                ),
+              ),
+            ),
+            // Expanded(
+            //   child: Container( 
+            //     height: 150,
+            //     child: Echarts(
+            //       option: _redPocketChartOption,
+            //       captureAllGestures: false,
+            //     ),
+            //   ),
+            // ),
+          ],
         ),
         SizedBox(
           height: 16,
