@@ -47,6 +47,7 @@ Map<String, dynamic> _$GlobalToJson(Global instance) => <String, dynamic>{
 Airdrop _$AirdropFromJson(Map<String, dynamic> json) {
   return Airdrop(
     json['total'] as String,
+    json['total_airdrop'] as String,
     json['lucky_total'] as String,
     json['level_total'] as String,
     json['promotion_total'] as String,
@@ -56,6 +57,7 @@ Airdrop _$AirdropFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$AirdropToJson(Airdrop instance) => <String, dynamic>{
       'total': instance.total,
+      'total_airdrop': instance.totalAirdrop,
       'lucky_total': instance.luckyTotal,
       'level_total': instance.levelTotal,
       'promotion_total': instance.promotionTotal,

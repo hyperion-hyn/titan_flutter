@@ -166,12 +166,20 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
 
   _rpAirdrop() {
     var total = _rpStats?.airdrop?.total ?? '0';
+    var totalAirdrop = _rpStats?.airdrop?.totalAirdrop ?? '0';
+    var totalLucky = _rpStats?.airdrop?.luckyTotal ?? '0';
+    var totalLevel = _rpStats?.airdrop?.levelTotal ?? '0';
+    var totalPromotion = _rpStats?.airdrop?.promotionTotal ?? '0';
 
-    var airdropTotalStr = bigIntToEther(_rpStats?.airdrop?.total);
-    var airdropLuckyTotalStr = bigIntToEther(_rpStats?.airdrop?.luckyTotal);
-    var airdropLevelTotalStr = bigIntToEther(_rpStats?.airdrop?.levelTotal);
-    var airdropPromotionTotalStr =
-        bigIntToEther(_rpStats?.airdrop?.promotionTotal);
+    var totalStr = bigIntToEther(total);
+    var airdropTotalStr = bigIntToEther(totalAirdrop);
+
+    var airdropLuckyTotalStr = bigIntToEther(totalLucky);
+    var airdropLevelTotalStr = bigIntToEther(totalLevel);
+    var airdropPromotionTotalStr = bigIntToEther(totalPromotion);
+
+    var unAirdrop = Decimal.tryParse(total) - Decimal.tryParse(totalAirdrop);
+
     var airdropBurnTotalStr = bigIntToEther(_rpStats?.airdrop?.burningTotal);
 
     var _chartOption = '''
@@ -189,10 +197,10 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                 
             },
             data: [
-                {value: 800, name: '待空投'},
-                {value: $airdropPromotionTotalStr, name: '晋升红包'},
-                {value: $airdropLevelTotalStr, name: '量级红包'},
-                {value: $airdropLuckyTotalStr, name: '幸运红包'}
+                {value: $unAirdrop, name: '待空投'},
+                {value: $totalPromotion, name: '晋升红包'},
+                {value: $totalLevel, name: '量级红包'},
+                {value: $totalLucky, name: '幸运红包'}
             ],
             
         },
@@ -219,7 +227,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
               children: [
                 _dataText(
                   '红包总量',
-                  airdropTotalStr,
+                  totalStr,
                   isHighLight: true,
                 ),
               ],
