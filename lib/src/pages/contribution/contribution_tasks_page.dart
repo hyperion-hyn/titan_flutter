@@ -445,25 +445,8 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
   }
 
   Widget _end(int todayTimes, {bool isOpen = false, int taskTimes = 1, int realTimes = 0}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            '$taskTimes次',
-            style: TextStyle(fontSize: 12, color: Colors.red[600]),
-          ),
-          Icon(
-            Icons.chevron_right,
-            color: HexColor('#E9E9E9'),
-          ),
-        ],
-      ),
-    );
-
     var activeWalletVo = WalletInheritedModel.of(context).activatedWallet;
-    var isLogged = activeWalletVo == null;
+    var isLogged = activeWalletVo != null;
     if (!isLogged) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
@@ -485,10 +468,18 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(
-              '$taskTimes次',
-              style: TextStyle(fontSize: 12, color: Colors.red[600]),
-            ),
+            if (todayTimes < 0)
+              Container()
+            else if (todayTimes < taskTimes)
+              Text(
+                S.of(context).task_un_finished_func(todayTimes.toString(), taskTimes.toString()),
+                style: TextStyle(fontSize: 12, color: Colors.red[600]),
+              )
+            else
+              Text(
+                S.of(context).task_is_finished_func(todayTimes.toString(), taskTimes.toString()),
+                style: TextStyle(fontSize: 12, color: Colors.green[600]),
+              ),
             Icon(
               Icons.chevron_right,
               color: HexColor('#E9E9E9'),

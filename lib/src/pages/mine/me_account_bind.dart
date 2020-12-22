@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -141,15 +142,11 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
     print("[${widget.runtimeType}] accountType:$accountType");
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+      appBar: BaseAppBar(
         actions: <Widget>[
           IconButton(
             icon: Image.asset(
               "res/drawable/account_bind_info.png",
-              color: Colors.white,
               width: 16,
               height: 16,
             ),
@@ -158,10 +155,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
             },
           ),
         ],
-        title: Text(
-          S.of(context).task_related_account,
-          style: TextStyle(color: Colors.white),
-        ),
+        baseTitle:S.of(context).task_related_account,
       ),
       body: _pageView(),
     );
