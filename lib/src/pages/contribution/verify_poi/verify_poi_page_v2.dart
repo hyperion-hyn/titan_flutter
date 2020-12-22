@@ -8,15 +8,22 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/account/account_component.dart';
+import 'package:titan/src/components/account/bloc/bloc.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
 import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/contribution/add_poi/verify_position_page.dart';
+import 'package:titan/src/pages/contribution/contribution_tasks_page.dart';
+import 'package:titan/src/pages/contribution/signal_scan/vo/check_in_model.dart';
+import 'package:titan/src/pages/mine/api/contributions_api.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
@@ -111,8 +118,16 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
                 actions: <Widget>[
                   FlatButton(
                       onPressed: () {
-                        _saveData();
-                        Navigator.of(context)..pop()..pop();
+                        var checkInModel =
+                            AccountInheritedModel.of(context, aspect: AccountAspect.checkInModel).checkInModel;
+                        CheckInModelState confirmPoiState = checkInModel.detail.firstWhere((element) {
+                          return element.action == ContributionTasksPage.confirmPOI;
+                        }).state;
+                        if (confirmPoiState.total == 0 || confirmPoiState == null) {
+                          _saveData();
+                        } else {
+                          Navigator.of(context)..pop()..pop();
+                        }
                       },
                       child: Text(S.of(context).confirm))
                 ],
@@ -156,14 +171,18 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return !_isSendConfirm;
+        var isEnablePop = true;
+        if (_isSendConfirm || _isSendCheckIn) {
+          isEnablePop = false;
+        }
+
+        return isEnablePop;
       },
       child: Scaffold(
         appBar: BaseAppBar(
           baseTitle: S.of(context).check_poi_item_title,
           backgroundColor: Colors.white,
         ),
-
         body: _buildView(),
       ),
     );
@@ -179,9 +198,14 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
 
   // UI
   void _saveData() async {
+    _finishCheckIn(S.of(context).thank_you_for_contribute_data, []);
+
+    return;
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt(PrefsKey.VERIFY_DATE, DateTime.now().millisecondsSinceEpoch);
   }
+
   void _setupData() {}
 
   Widget _buildView() {
@@ -270,7 +294,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
 
   Widget _mapView() {
     var style;
-    if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true) {
+    if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland ?? true) {
       style = Const.kWhiteWithoutMapStyleCn;
     } else {
       style = Const.kWhiteWithoutMapStyle;
@@ -590,6 +614,44 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
     _isEnableNext = _isolationText.isNotEmpty;
 
     _positionBloc.add(UpdateConfirmPoiDataPageEvent());
+  }
+
+  bool _isSendCheckIn = false;
+
+  Future _finishCheckIn(String successTip, List<String> optLogIDs) async {
+    var address =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+
+    if (address?.isEmpty ?? true) {
+      Application.router.navigateTo(
+          context,
+          Routes.contribute_position_finish +
+              '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM}');
+      return;
+    }
+
+    _isSendCheckIn = true;
+
+    ContributionsApi api = ContributionsApi();
+    try {
+      await api.postCheckIn(address, 'confirmPOIV2', _contributionPois.coordinates, optLogIDs);
+      UiUtil.toast(successTip);
+
+      BlocProvider.of<AccountBloc>(context).add(UpdateMyCheckInInfoEvent());
+
+      _isSendCheckIn = false;
+
+      Application.router.navigateTo(
+          context,
+          Routes.contribute_position_finish +
+              '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM}');
+    } catch (e) {
+      _isSendCheckIn = false;
+      setState(() {
+        _isSendConfirm = false;
+      });
+      LogUtil.process(e);
+    }
   }
 
   // Action

@@ -457,8 +457,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                             ),
                           ),
                           Positioned(
-                            top: 0,
-                            right: 0,
+                            top: 2,
+                            right: 10,
                             child: Image.asset(
                               "res/drawable/red_pocket_exchange_hot.png",
                               width: 35,

@@ -13,9 +13,11 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
+import 'package:titan/src/pages/mine/api/contributions_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
@@ -156,6 +158,8 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
     _positionBloc.listen((state) {
       if (state is PostConfirmPoiDataResultSuccessState) {
 
+        _finishCheckIn(S.of(context).thank_you_for_contribute_data);
+
         Application.router.navigateTo(
             context,
             Routes.contribute_position_finish +
@@ -170,6 +174,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
                 actions: <Widget>[
                   FlatButton(
                       onPressed: () {
+                        _finishCheckIn(S.of(context).thank_you_for_contribute_data);
 
                         Navigator.of(context)..pop()..pop();
                       },
@@ -401,7 +406,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
 
   Widget _mapView() {
     var style;
-    if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true) {
+    if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland ?? true) {
       style = Const.kWhiteWithoutMapStyleCn;
     } else {
       style = Const.kWhiteWithoutMapStyle;
@@ -701,7 +706,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: _isKo?0:8, right: 15, top: 8),
+                        padding: EdgeInsets.only(left: _isKo ? 0 : 8, right: 15, top: 8),
                         child: RadioButtonGroup(
                           key: GlobalKey(),
                           picked: imageAnswer,
@@ -881,6 +886,24 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
     );
   }
 
+  Future _finishCheckIn(String successTip) async {
+    var address =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+
+    if (address?.isEmpty ?? true) {
+      return;
+    }
+    ContributionsApi api = ContributionsApi();
+
+    try {
+      var coordinates = [widget.userPosition.latitude, widget.userPosition.longitude];
+      await api.postCheckIn(address, 'confirmPOI', coordinates, []);
+      UiUtil.toast(successTip);
+    } catch (e) {
+      LogUtil.process(e);
+    }
+  }
+
   void addMarkerAndMoveToPoi() {
     if (_mapController != null && _confirmPoiItem?.name != null) {
       _addMarkerSubject.sink.add(1);
@@ -978,7 +1001,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
           ),
         ),
         SizedBox(
-          width: _isKo?10:20,
+          width: _isKo ? 10 : 20,
         ),
         ClickOvalButton(
           confirmTitle.isEmpty ? S.of(context).correct : confirmTitle,

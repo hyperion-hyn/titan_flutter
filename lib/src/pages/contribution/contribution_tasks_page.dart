@@ -6,12 +6,14 @@ import 'dart:math';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/account/bloc/bloc.dart';
 import 'package:titan/src/pages/contribution/add_poi/add_position_page_v2.dart';
 import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
 import 'package:titan/src/components/scaffold_map/map.dart';
@@ -27,6 +29,7 @@ import 'package:titan/src/data/entity/converter/model_converter.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 
 class ContributionTasksPage extends StatefulWidget {
   static var scanSignal = "scanSignal";
@@ -40,9 +43,16 @@ class ContributionTasksPage extends StatefulWidget {
   }
 }
 
-class _DataContributionState extends State<ContributionTasksPage> with RouteAware {
+class _DataContributionState extends BaseState<ContributionTasksPage> with RouteAware {
   final int TAST_TIMES_ONE = 1;
   final int TAST_TIMES_TWICE = 2;
+
+  @override
+  void onCreated() async {
+    super.onCreated();
+
+    _checkInAction();
+  }
 
   @override
   void didChangeDependencies() async {
@@ -53,7 +63,24 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
   }
 
   @override
-  void didPopNext() {}
+  void didPopNext() {
+
+    _checkInAction();
+  }
+
+  void _checkInAction() {
+    var activeWalletVo = WalletInheritedModel.of(context).activatedWallet;
+    var isLogged = activeWalletVo != null;
+    if (isLogged) {
+      if (mounted) {
+        BlocProvider.of<AccountBloc>(context).add(UpdateMyCheckInInfoEvent());
+      }
+    } else {
+      if (mounted) {
+        BlocProvider.of<AccountBloc>(context).add(ClearMyCheckInInfoEvent());
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -397,6 +424,23 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
   }
 
   Widget _end(int todayTimes, {bool isOpen = false, int taskTimes = 1, int realTimes = 0}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            '$taskTimes次',
+            style: TextStyle(fontSize: 12, color: Colors.red[600]),
+          ),
+          Icon(
+            Icons.chevron_right,
+            color: HexColor('#E9E9E9'),
+          ),
+        ],
+      ),
+    );
+
     var activeWalletVo = WalletInheritedModel.of(context).activatedWallet;
     var isLogged = activeWalletVo == null;
     if (!isLogged) {

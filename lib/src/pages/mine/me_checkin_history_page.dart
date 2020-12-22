@@ -7,9 +7,14 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/contribution/contribution_tasks_page.dart';
 import 'package:titan/src/pages/contribution/signal_scan/vo/check_in_model.dart';
+import 'package:titan/src/pages/mine/api/contributions_api.dart';
+import 'me_account_bind.dart';
 import 'me_checkin_history_detail_page.dart';
+import 'model/page_response.dart';
 
 class MeCheckInHistory extends StatefulWidget {
   @override
@@ -19,7 +24,7 @@ class MeCheckInHistory extends StatefulWidget {
 }
 
 class _MeCheckInHistoryState extends DataListState<MeCheckInHistory> {
-  dynamic _userService = Object();
+  ContributionsApi _api = ContributionsApi();
 
   @override
   void postFrameCallBackAfterInitState() {
@@ -35,9 +40,11 @@ class _MeCheckInHistoryState extends DataListState<MeCheckInHistory> {
         backgroundColor: Colors.white,
         actions: <Widget>[
           FlatButton(
-            onPressed: _pushDetailView(null),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MeAccountBindPage()));
+            },
             child: Text(
-              '详情',
+              '关联贡献',
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
@@ -403,10 +410,12 @@ class _MeCheckInHistoryState extends DataListState<MeCheckInHistory> {
 
   @override
   Future<List> onLoadData(int page) async {
-    return [];
-    // PageResponse<CheckInModel> _pageResponse = await _userService.getHistoryListV3(page);
-    // var dataList = _pageResponse.data;
-    // return dataList;
+    var address =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+
+    PageResponse<CheckInModel> _pageResponse = await _api.getHistoryListV3(address, page);
+    var dataList = _pageResponse.data;
+    return dataList;
   }
 
   _pushDetailView(CheckInModelPoi detail) {

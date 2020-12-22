@@ -29,9 +29,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/src/pages/contribution/add_poi/select_position_page.dart';
 import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v2.dart';
+import 'package:titan/src/pages/mine/api/contributions_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/log_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 
 class AddPositionPageV2 extends StatefulWidget {
@@ -93,6 +96,7 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
   LatLng _initSelectedPosition;
 
   ScrollController _scrollController = ScrollController();
+
 
   @override
   void onCreated() {
@@ -173,7 +177,21 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
     );
   }
 
+  Future _finishCheckIn(String successTip) async {
+    var address =
+    WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
+    if (address?.isEmpty ?? true) return;
+
+    try {
+      var coordinates = [_selectedPosition.latitude, _selectedPosition.longitude];
+      await ContributionsApi().postCheckIn(address, 'postPOI', coordinates, []);
+      UiUtil.toast(successTip);
+    } catch (e) {
+      print('$runtimeType --> e:$e');
+      LogUtil.process(e);
+    }
+  }
 
   // build view
   Widget _buildView(BuildContext context) {
@@ -181,6 +199,7 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
       bloc: _positionBloc,
       condition: (AllPageState fromState, AllPageState state) {
         if (state is PostPoiDataV2ResultSuccessState) {
+          _finishCheckIn(S.of(context).thank_you_for_contribute_data);
 
           Application.router.navigateTo(
               context,
@@ -265,7 +284,7 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
     return Stack(
       children: <Widget>[
         BaseGestureDetector(
-          context:context,
+          context: context,
           child: SingleChildScrollView(
             controller: _scrollController,
             child: Form(
@@ -469,7 +488,8 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
             itemCount: outItemCount,
           ),
         ),
-        _buildImageTitleRow(S.of(context).indoor, "（${S.of(context).most} ${S.of(context).unit_zhang("$_inListImagePathsMaxLength")}）", false),
+        _buildImageTitleRow(S.of(context).indoor,
+            "（${S.of(context).most} ${S.of(context).unit_zhang("$_inListImagePathsMaxLength")}）", false),
         Container(
           color: Colors.white,
           height: inContainerHeight,
@@ -626,7 +646,7 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
 
   Widget _mapView() {
     var style;
-    if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true) {
+    if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland ?? true) {
       style = Const.kWhiteWithoutMapStyleCn;
     } else {
       style = Const.kWhiteWithoutMapStyle;
@@ -1065,7 +1085,7 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
             'res/drawable/add_position_$imageName.png',
             width: size.width,
             height: size.height,
-            color: imageName=="detail"?null:_themeColor,
+            color: imageName == "detail" ? null : _themeColor,
           ),
         ),
         Padding(
@@ -1291,7 +1311,7 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
     }
 
     var option =
-    await showConfirmDialog(context, S.of(context).add_location_data_please_confirm_actual_situation_toast);
+        await showConfirmDialog(context, S.of(context).add_location_data_please_confirm_actual_situation_toast);
     if (!option) return;
 
     var categoryId = _categoryItem.id;
