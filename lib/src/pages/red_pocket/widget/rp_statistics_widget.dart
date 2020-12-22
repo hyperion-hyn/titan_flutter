@@ -151,11 +151,26 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _dataText(
+            /*_dataText(
               '总发行',
               totalCapStr,
               isHighLight: true,
+            ),*/
+            Row(
+              children: [
+                Expanded(
+                  child: _dataText(
+                    '总发行',
+                    totalCapStr,
+                    isHighLight: true,
+                  ),
+                ),
+                SizedBox(
+                  width: 16,
+                )
+              ],
             ),
+
             _dataText('流通中', totalSupplyStr, colorStr:'#c23531'),
             _dataText('总燃烧', totalBurningStr, colorStr:'#2f4554'),
           ],
