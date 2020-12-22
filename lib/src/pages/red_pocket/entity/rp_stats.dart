@@ -57,6 +57,9 @@ class Airdrop extends Object {
   @JsonKey(name: 'total')
   String total;
 
+  @JsonKey(name: 'total_airdrop')
+  String totalAirdrop;
+
   @JsonKey(name: 'lucky_total')
   String luckyTotal;
 
@@ -71,6 +74,7 @@ class Airdrop extends Object {
 
   Airdrop(
     this.total,
+    this.totalAirdrop,
     this.luckyTotal,
     this.levelTotal,
     this.promotionTotal,
