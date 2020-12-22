@@ -951,6 +951,9 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
   }
 
   void getNetworkData() async {
+
+    _currentPageKey = null;
+
     try {
       _detailEntity = await _rpApi.getMyRpOpenInfo(
         _address,
