@@ -119,7 +119,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
             radius: ['40%', '90%'],
             silent: true,
             label: {
-                formatter: '{b}',
+                formatter: '{d}%',
                 borderWidth: 1,
                 borderRadius: 4,
                 position: 'inner',
@@ -182,7 +182,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
             radius: ['40%', '90%'],
             silent: true,
             label: {
-                formatter: '{b}',
+                formatter: '{d}%',
                 borderWidth: 1,
                 borderRadius: 4,
                 position: 'inner',
@@ -221,6 +221,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                   '红包总量',
                   airdropTotalStr,
                   isHighLight: true,
+                  isExpanded: false
                 ),
               ],
             ),
@@ -272,7 +273,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
             radius: ['40%', '90%'],
             silent: true,
             label: {
-                formatter: '{b}',
+                formatter: '{d}%',
                 borderWidth: 1,
                 borderRadius: 4,
                 position: 'inner',
@@ -332,27 +333,53 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     );
   }
 
-  _dataText(String name, String data, {bool isHighLight = false}) {
+  _dataText(String name, String data, {String colorStr, bool isHighLight = false, bool isExpanded = true}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Container(
         color: isHighLight ? HexColor('#FFFFF5F5') : null,
         padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-        child: RichText(
-            text: TextSpan(children: [
-          TextSpan(
-              text: name,
-              style: TextStyle(
-                color: DefaultColors.color999,
-                fontSize: 12,
-              )),
-          TextSpan(
-              text: ' $data',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 12,
-              )),
-        ])),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(width:10,height:10,color: HexColor('#c23531'),),
+            SizedBox(width: 5,),
+            if(isExpanded)
+              Expanded(
+                child: RichText(
+                    text: TextSpan(children: [
+                  TextSpan(
+                      text: name,
+                      style: TextStyle(
+                        color: DefaultColors.color999,
+                        fontSize: 12,
+                      )),
+                  TextSpan(
+                      text: ' $data',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                      )),
+                ])),
+              ),
+            if(!isExpanded)
+              RichText(
+                  text: TextSpan(children: [
+                    TextSpan(
+                        text: name,
+                        style: TextStyle(
+                          color: DefaultColors.color999,
+                          fontSize: 12,
+                        )),
+                    TextSpan(
+                        text: ' $data',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                        )),
+                  ])),
+          ],
+        ),
       ),
     );
   }
