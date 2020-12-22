@@ -297,12 +297,13 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
               ],
             ),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: _dataText('已发幸运红包', airdropLuckyTotalStr),
                 ),
                 SizedBox(
-                  width: 8,
+                  width: 4,
                 ),
                 Expanded(
                   child: _dataText('已发量级红包', airdropLevelTotalStr),
@@ -310,12 +311,13 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
               ],
             ),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: _dataText('已发晋升红包', airdropPromotionTotalStr),
                 ),
                 SizedBox(
-                  width: 8,
+                  width: 4,
                 ),
                 Expanded(
                   child: _dataText('未领取燃烧', airdropBurnTotalStr),
@@ -390,6 +392,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     var promotionTotalBurningStr = bigIntToEther(promotionTotalBurning);
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: _dataText('晋升持币', promotionTotalHoldingStr),
