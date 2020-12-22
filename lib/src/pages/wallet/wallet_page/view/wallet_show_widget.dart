@@ -100,6 +100,7 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
         _isRefreshBalances = false;
       }
     });
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
     super.onCreated();
   }
 
@@ -146,6 +147,9 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
                                   ///Clear exchange account when switch wallet
                                   BlocProvider.of<ExchangeCmpBloc>(context)
                                       .add(ClearExchangeAccountEvent());
+                                }else{
+                                  setState(() {
+                                  });
                                 }
                               },
                               child: Row(

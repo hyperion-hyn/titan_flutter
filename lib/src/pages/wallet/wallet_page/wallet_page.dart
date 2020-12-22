@@ -74,7 +74,7 @@ class _WalletPageState extends BaseState<WalletPage>
   Future<void> onCreated() async {
     _postWalletBalance();
 
-    listLoadingData();
+    // listLoadingData();
   }
 
   _checkDexAccount() async {
@@ -374,7 +374,7 @@ class _WalletPageState extends BaseState<WalletPage>
             case LoadingWalletState:
               return loadingView(context);
             default:
-              return EmptyWalletView();
+              return EmptyWalletView(loadDataBloc: loadDataBloc,);
           }
         },
       ),
