@@ -16,6 +16,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_level_record_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
@@ -130,7 +131,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
               _rpPool(),
               _airdropWidget(),
               //_levelWidget(),
-              //_statisticsWidget(),
+              _statisticsWidget(),
               _projectIntro(),
             ],
           )),

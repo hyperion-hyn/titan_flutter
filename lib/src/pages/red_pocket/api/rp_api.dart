@@ -22,6 +22,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as WalletClass;
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -119,6 +120,15 @@ class RPApi {
         "/v1/rp/airdrop/latestRound/$address",
         EntityFactory<RpAirdropRoundInfo>(
           (json) => RpAirdropRoundInfo.fromJson(json),
+        ),
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future<RpStats> getRPStats() async {
+    return await RPHttpCore.instance.getEntity(
+        "/v1/rp/stats",
+        EntityFactory<RpStats>(
+          (json) => RpStats.fromJson(json),
         ),
         options: RequestOptions(contentType: "application/json"));
   }

@@ -1,6 +1,11 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 
 class RPStatisticsWidget extends StatefulWidget {
@@ -13,9 +18,22 @@ class RPStatisticsWidget extends StatefulWidget {
 }
 
 class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
+  RpStats _rpStats;
+  RPApi _rpApi = RPApi();
+
   @override
   void initState() {
+    _getData();
     super.initState();
+  }
+
+  _getData() async {
+    try {
+      _rpStats = await _rpApi.getRPStats();
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {}
   }
 
   @override
@@ -34,27 +52,65 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            '发行',
-            style: TextStyle(fontSize: 11),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              '发行',
+              style: TextStyle(
+                fontSize: 11,
+                color: DefaultColors.color999,
+              ),
+            ),
           ),
           _rpSupply(),
-          Text(
-            '空投',
-            style: TextStyle(fontSize: 11),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              '空投',
+              style: TextStyle(
+                fontSize: 11,
+                color: DefaultColors.color999,
+              ),
+            ),
           ),
           _rpAirdrop(),
-          Text(
-            '传导',
-            style: TextStyle(fontSize: 11),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              '传导',
+              style: TextStyle(
+                fontSize: 11,
+                color: DefaultColors.color999,
+              ),
+            ),
           ),
-          _rpPool()
+          _rpPool(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              '晋升',
+              style: TextStyle(
+                fontSize: 11,
+                color: DefaultColors.color999,
+              ),
+            ),
+          ),
+          _rpPromotion()
         ],
       ),
     );
   }
 
   _rpSupply() {
+    var totalCap = _rpStats?.global?.totalCap ?? '0';
+    var totalSupply = _rpStats?.global?.totalSupply ?? '0';
+    var totalBurn = _rpStats?.global?.totalBurning ?? '0';
+    var unSupply = Decimal.tryParse('$totalCap') - Decimal.parse(totalSupply);
+
+    var totalCapStr = bigIntToEther(totalCap);
+    var totalSupplyStr = bigIntToEther(totalSupply);
+    var totalBurningStr = bigIntToEther(totalBurn);
+
     var _chartOption = '''
    {
     series: [
@@ -68,12 +124,11 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                 borderRadius: 4,
                 position: 'inner',
             },
-            
+                        
             data: [
-                {value: 335, name: '流通中'},
-                {value: 310, name: '已燃烧'},
-                {value: 234, name: '未发行'},
-              
+                {value: $totalSupply, name: '流通中'},
+                {value: $totalBurn, name: '总燃烧'},
+                {value: $unSupply, name: '未发行'},  
             ]
         }
     ]
@@ -96,9 +151,13 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _dataText('流通中', '299'),
-            _dataText('已燃烧', '299'),
-            _dataText('未发行', '299'),
+            _dataText(
+              '总发行',
+              totalCapStr,
+              isHighLight: true,
+            ),
+            _dataText('流通中', totalSupplyStr),
+            _dataText('总燃烧', totalBurningStr),
           ],
         ))
       ],
@@ -106,6 +165,15 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
   }
 
   _rpAirdrop() {
+    var total = _rpStats?.airdrop?.total ?? '0';
+
+    var airdropTotalStr = bigIntToEther(_rpStats?.airdrop?.total);
+    var airdropLuckyTotalStr = bigIntToEther(_rpStats?.airdrop?.luckyTotal);
+    var airdropLevelTotalStr = bigIntToEther(_rpStats?.airdrop?.levelTotal);
+    var airdropPromotionTotalStr =
+        bigIntToEther(_rpStats?.airdrop?.promotionTotal);
+    var airdropBurnTotalStr = bigIntToEther(_rpStats?.airdrop?.burningTotal);
+
     var _chartOption = '''
  {
     series: [
@@ -122,16 +190,16 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
             },
             data: [
                 {value: 800, name: '待空投'},
-                {value: 50, name: '晋升红包'},
-                {value: 100, name: '量级红包'},
-                {value: 50, name: '幸运红包'}
+                {value: $airdropPromotionTotalStr, name: '晋升红包'},
+                {value: $airdropLevelTotalStr, name: '量级红包'},
+                {value: $airdropLuckyTotalStr, name: '幸运红包'}
             ],
             
         },
     ]
 }
   ''';
-    return Row(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
@@ -143,25 +211,59 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
           ),
         ),
         SizedBox(
-          width: 16,
+          height: 16,
         ),
-        Expanded(
-            child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Column(
           children: [
-            _dataText('红包总量', '299'),
-            _dataText('已发红包', '299'),
-            _dataText('已发幸运红包', '299'),
-            _dataText('已发量级红包', '299'),
-            _dataText('已发晋升红包', '299'),
-            _dataText('未领取燃烧', '299'),
+            Row(
+              children: [
+                _dataText(
+                  '红包总量',
+                  airdropTotalStr,
+                  isHighLight: true,
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: _dataText('已发幸运红包', airdropLuckyTotalStr),
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Expanded(
+                  child: _dataText('已发量级红包', airdropLevelTotalStr),
+                )
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: _dataText('已发晋升红包', airdropPromotionTotalStr),
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Expanded(
+                  child: _dataText('未领取燃烧', airdropBurnTotalStr),
+                )
+              ],
+            )
           ],
-        ))
+        )
       ],
     );
   }
 
   _rpPool() {
+    var total = _rpStats?.transmit?.total ?? '0';
+    var transmitRp = _rpStats?.transmit?.transmitRp ?? '0';
+    var unTransmitRp = Decimal.tryParse(total) - Decimal.parse(transmitRp);
+
+    var totalStr = bigIntToEther(total);
+    var transmitRPStr = bigIntToEther(transmitRp);
+
     var _chartOption = '''
     {
     series: [
@@ -176,9 +278,8 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                 position: 'inner',
             },
             data: [
-                {value: 90000, name: '已传导'},
-                {value: 2000, name: '未传导'},
-              
+                {value: $transmitRp, name: '已传导'},
+                {value: $unTransmitRp, name: '未传导'},
             ]
         }
     ]
@@ -201,32 +302,58 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _dataText('传导总量', '299'),
-            _dataText('已传导', '299'),
+            _dataText('传导总量', totalStr),
+            _dataText('已传导', transmitRPStr),
           ],
         ))
       ],
     );
   }
 
-  _dataText(String name, String data) {
+  _rpPromotion() {
+    var promotionTotalHolding = _rpStats?.promotion?.totalHolding ?? '0';
+    var promotionTotalBurning = _rpStats?.promotion?.totalBurning ?? '0';
+
+    var promotionTotalHoldingStr = bigIntToEther(promotionTotalHolding);
+    var promotionTotalBurningStr = bigIntToEther(promotionTotalBurning);
+
+    return Row(
+      children: [
+        Expanded(
+          child: _dataText('晋升持币', promotionTotalHoldingStr),
+        ),
+        SizedBox(
+          width: 4,
+        ),
+        Expanded(
+          child: _dataText('晋升燃烧', promotionTotalBurningStr),
+        )
+      ],
+    );
+  }
+
+  _dataText(String name, String data, {bool isHighLight = false}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 4.0),
-      child: RichText(
-          text: TextSpan(children: [
-        TextSpan(
-            text: name,
-            style: TextStyle(
-              color: DefaultColors.color999,
-              fontSize: 12,
-            )),
-        TextSpan(
-            text: ' $data',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 12,
-            )),
-      ])),
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Container(
+        color: isHighLight ? HexColor('#FFFFF5F5') : null,
+        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+        child: RichText(
+            text: TextSpan(children: [
+          TextSpan(
+              text: name,
+              style: TextStyle(
+                color: DefaultColors.color999,
+                fontSize: 12,
+              )),
+          TextSpan(
+              text: ' $data',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 12,
+              )),
+        ])),
+      ),
     );
   }
 }
