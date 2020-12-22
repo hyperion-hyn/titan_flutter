@@ -129,7 +129,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
               _myRPInfo(),
               _rpPool(),
               _airdropWidget(),
-              _levelWidget(),
+              //_levelWidget(),
               //_statisticsWidget(),
               _projectIntro(),
             ],

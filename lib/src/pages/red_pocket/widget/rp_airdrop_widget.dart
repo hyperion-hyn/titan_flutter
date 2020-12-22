@@ -279,6 +279,17 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     var airDropPercent = _rpStatistics?.rpContractInfo?.dropOnPercent ?? '--';
     var alreadyAirdrop = '--';
 
+    var currentLevel =
+        RedPocketInheritedModel.of(context).rpMyLevelInfo?.currentLevel ?? 0;
+    var hint = '';
+    if (currentLevel == 0) {
+      hint = '提升量级可参与';
+    } else if (currentLevel == 5) {
+      hint = '你正在参与空投';
+    } else {
+      hint = '提升量级可获得更多红包';
+    }
+
     try {
       alreadyAirdrop = FormatUtil.stringFormatCoinNum(
         _rpStatistics?.airdropInfo?.totalAmountStr ?? '0',
@@ -317,9 +328,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
             child: Align(
               alignment: Alignment.centerRight,
               child: Text(
-                '${S.of(context).rp_already_airdropped}: $alreadyAirdrop ',
+                //'${S.of(context).rp_already_airdropped}: $alreadyAirdrop ',
+                hint,
                 style: TextStyle(
-                  color: DefaultColors.color999,
+                  color: currentLevel == 0 ? Colors.red : Colors.blue,
                   fontSize: 12,
                 ),
               ),
@@ -789,7 +801,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                       ),
                     ],
                     options: CarouselOptions(
-                      aspectRatio: 2.3,
+                      aspectRatio: 2.1,
                       initialPage: 0,
                       viewportFraction: 1,
                       enlargeCenterPage: false,

@@ -56,7 +56,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
 
   _rpSupply() {
     var _chartOption = '''
-    {
+   {
     series: [
         {
             type: 'pie',
@@ -68,6 +68,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                 borderRadius: 4,
                 position: 'inner',
             },
+            
             data: [
                 {value: 335, name: '流通中'},
                 {value: 310, name: '已燃烧'},
