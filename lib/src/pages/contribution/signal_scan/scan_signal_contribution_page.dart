@@ -14,13 +14,16 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/mine/api/contributions_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/data/entity/converter/model_converter.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/scan_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 import 'vo/latlng.dart' as contributionLatlng;
 import 'vo/signal_collector.dart';
@@ -44,8 +47,6 @@ class _ContributionState extends State<ScanSignalContributionPage> {
   MapboxMapController mapController;
 
   Api _api = Api();
-
-//  WalletService _walletService = WalletService();
 
   StreamSubscription subscription;
 
@@ -241,7 +242,7 @@ class _ContributionState extends State<ScanSignalContributionPage> {
 
       if (value > 0 && value < 1.0 * item) {
         _currentScanType = SensorType.CELLULAR;
-      }  else if (value >= 1.0 * item && value < 1.0) {
+      } else if (value >= 1.0 * item && value < 1.0) {
         _currentScanType = SensorType.GPS;
       }
     } else {
@@ -358,16 +359,33 @@ class _ContributionState extends State<ScanSignalContributionPage> {
 
   Future<void> _onPressed() async {
     var isFinish = await _uploadCollectData();
-    //print('[Request] --> isFinish: ${isFinish}');
+
     if (isFinish) {
-//      createWalletPopUtilName = '/data_contribution_page';
-//      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishUploadPage()));
+      _finishCheckIn(S.of(context).thank_you_for_contribute_data);
+
       Application.router.navigateTo(context, Routes.contribute_done, replace: true);
     } else {
       Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
       setState(() {
         _isOnPressed = false;
       });
+    }
+  }
+
+  Future _finishCheckIn(String successTip) async {
+    var address =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+
+    if (address?.isEmpty ?? true) return;
+
+    try {
+      var coordinates = [widget.initLocation.latitude, widget.initLocation.longitude];
+      await ContributionsApi().postCheckIn(address, 'scanSignal', coordinates, []);
+
+      UiUtil.toast(successTip);
+    } catch (e) {
+      print('$runtimeType --> e:$e');
+      LogUtil.process(e);
     }
   }
 
@@ -499,8 +517,9 @@ class _ContributionState extends State<ScanSignalContributionPage> {
   }
 
   Widget _mapView() {
-    var style =
-        SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true ? Const.kBlackMapStyleCn : Const.kBlackMapStyle;
+    var style = SettingInheritedModel.of(context)?.areaModel?.isChinaMainland ?? true
+        ? Const.kBlackMapStyleCn
+        : Const.kBlackMapStyle;
 
     return MapboxMap(
       compassEnabled: false,
