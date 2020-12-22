@@ -8,6 +8,9 @@ class RpMyLevelInfo extends Object {
   @JsonKey(name: 'current_holding')
   String currentHolding;
 
+  @JsonKey(name: 'curr_burning')
+  String currBurning;
+
   @JsonKey(name: 'current_level')
   int currentLevel;
 
@@ -16,9 +19,14 @@ class RpMyLevelInfo extends Object {
 
   RpMyLevelInfo(
     this.currentHolding,
+    this.currBurning,
     this.currentLevel,
     this.highestLevel,
   );
+
+  String get currBurningStr =>
+      FormatUtil.weiToEtherStr(currBurning) ?? '0';
+
 
   String get currentHoldingStr =>
       FormatUtil.weiToEtherStr(currentHolding) ?? '0';

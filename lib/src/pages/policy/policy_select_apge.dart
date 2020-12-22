@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -22,19 +23,32 @@ class PolicySelectPage extends StatefulWidget {
 class _PolicySelectPageState extends State<PolicySelectPage> {
   @override
   Widget build(BuildContext context) {
+
+    Widget _lineWidget({double height = 5}) {
+      return Container(
+        height: height,
+        color: HexColor('#F8F8F8'),
+      );
+    }
+
+    Widget _dividerWidget() {
+      return Padding(
+        padding: const EdgeInsets.only(left: 16,),
+        child: Container(
+          height: 0.8,
+          color: HexColor('#F8F8F8'),
+        ),
+      );
+    }
     return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          iconTheme: IconThemeData(color: Colors.black),
+        appBar: BaseAppBar(
+          baseTitle: S.of(context).user_policy,
           backgroundColor: Colors.white,
-          title: Text(
-            S.of(context).user_policy,
-            style: TextStyle(color: Colors.black, fontSize: 18),
-          ),
-          centerTitle: true,
         ),
         body: Column(
           children: <Widget>[
+            _lineWidget(),
+
             _buildMenuBar(S.of(context).policy_wallet, '', () {
               Navigator.push(
                   context,
@@ -44,9 +58,8 @@ class _PolicySelectPageState extends State<PolicySelectPage> {
                             isShowConfirm: false,
                           )));
             }),
-            Divider(
-              height: 1,
-            ),
+            _dividerWidget(),
+
             _buildMenuBar(S.of(context).policy_hswap, '', () {
               Navigator.push(
                   context,
@@ -56,9 +69,6 @@ class _PolicySelectPageState extends State<PolicySelectPage> {
                             isShowConfirm: false,
                           )));
             }),
-            Divider(
-              height: 1,
-            ),
           ],
         ));
   }

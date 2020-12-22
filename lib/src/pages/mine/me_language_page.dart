@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/setting/model.dart';
@@ -18,79 +19,71 @@ class MeLanguagePage extends StatefulWidget {
 class _LanguageState extends BaseState<MeLanguagePage> {
   LanguageModel selectedLanguageModel;
 
-//  var isComplete = false;
 
   @override
   void onCreated() {
     selectedLanguageModel = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel;
   }
 
-//  @override
-//  void deactivate() {
-//    if(isComplete) {
-//      var currentAreaModel = SettingInheritedModel
-//          .of(context, aspect: SettingAspect.area)
-//          .areaModel;
-//
-//      for (AreaModel areaModel in SupportedArea.all(context)) {
-//        if (currentAreaModel.id == areaModel.id) {
-//          BlocProvider.of<SettingBloc>(context).add(
-//              UpdateAreaEvent(areaModel: areaModel));
-//        }
-//      }
-//    }
-//
-//    super.deactivate();
-//  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.white),
-          title: Text(
-            S.of(context).language,
-            style: TextStyle(color: Colors.white),
-          ),
-          centerTitle: true,
-          elevation: 0,
-          actions: <Widget>[
-            InkWell(
-              onTap: () {
-                BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(languageModel: selectedLanguageModel));
-//                isComplete = true;
-                Navigator.pop(context);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                alignment: Alignment.centerRight,
-                child: Text(
-                  S.of(context).confirm,
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
-              ),
-            )
-          ],
+
+    var languages = SupportedLanguage.all;
+
+    Widget _lineWidget({double height = 5}) {
+      return Container(
+        height: height,
+        color: HexColor('#F8F8F8'),
+      );
+    }
+
+    Widget _dividerWidget() {
+      return Padding(
+        padding: const EdgeInsets.only(left: 16,),
+        child: Container(
+          height: 0.8,
+          color: HexColor('#F8F8F8'),
         ),
-        body: ListView(children: _buildLanguageList()));
-  }
+      );
+    }
 
-  List<Widget> _buildLanguageList() {
-    return SupportedLanguage.all.map<Widget>((language) {
-      return _buildInfoContainer(language);
-    }).toList();
-  }
-
-  Widget _divider() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Divider(
-        height: 1.0,
-        color: HexColor('#D7D7D7'),
+    return Scaffold(
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).language,
+        backgroundColor: Colors.white,
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(languageModel: selectedLanguageModel));
+              Navigator.pop(context);
+            },
+            child: Text(
+              S.of(context).confirm,
+              style: TextStyle(
+                color: HexColor("#1F81FF"),
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: Column(
+        children: <Widget>[
+          _lineWidget(),
+          _buildInfoContainer(languages[0]),
+          _dividerWidget(),
+          _buildInfoContainer(languages[1]),
+          _dividerWidget(),
+          _buildInfoContainer(languages[2]),
+          _dividerWidget(),
+          _buildInfoContainer(languages[3]),
+        ],
       ),
     );
   }
+
 
   Widget _buildInfoContainer(LanguageModel languageModel) {
 
@@ -114,6 +107,7 @@ class _LanguageState extends BaseState<MeLanguagePage> {
         children: <Widget>[
           Container(
             height: 56,
+            color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -121,7 +115,7 @@ class _LanguageState extends BaseState<MeLanguagePage> {
                   padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
                   child: Text(
                     languageModel.name,
-                    style: TextStyle(color: HexColor("#333333"), fontSize: 16),
+                    style: TextStyle(color: HexColor("#333333"), fontSize: 14),
                   ),
                 ),
                 Spacer(),
@@ -138,7 +132,6 @@ class _LanguageState extends BaseState<MeLanguagePage> {
               ],
             ),
           ),
-          _divider()
         ],
       ),
     );

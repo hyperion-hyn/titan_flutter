@@ -55,6 +55,8 @@ class _RedPocketState extends BaseState<_RedPocketManager> {
           _myLevelInfo = state.rpMyLevelInfo;
         } else if (state is UpdateStatisticsState) {
           _rpStatistics = state.rpStatistics;
+        } else if (state is ClearMyLevelInfoState) {
+          _myLevelInfo = null;
         }
       },
       child: BlocBuilder<RedPocketBloc, RedPocketState>(
@@ -92,7 +94,7 @@ class _RedPocketState extends BaseState<_RedPocketManager> {
   }
 }
 
-enum RedPocketAspect { levelInfo, statistics}
+enum RedPocketAspect { levelInfo, statistics }
 
 class RedPocketInheritedModel extends InheritedModel<RedPocketAspect> {
   final RpMyLevelInfo rpMyLevelInfo;
@@ -120,7 +122,6 @@ class RedPocketInheritedModel extends InheritedModel<RedPocketAspect> {
   @override
   bool updateShouldNotifyDependent(RedPocketInheritedModel oldWidget, Set<RedPocketAspect> dependencies) {
     return (rpMyLevelInfo != oldWidget.rpMyLevelInfo && dependencies.contains(RedPocketAspect.levelInfo)) ||
-        (rpStatistics != oldWidget.rpStatistics && dependencies.contains(RedPocketAspect.statistics))
-    ;
+        (rpStatistics != oldWidget.rpStatistics && dependencies.contains(RedPocketAspect.statistics));
   }
 }

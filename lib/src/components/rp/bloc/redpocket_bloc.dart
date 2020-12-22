@@ -35,6 +35,8 @@ class RedPocketBloc extends Bloc<RedPocketEvent, RedPocketState> {
         }
         var _statistics = await _rpApi.getRPStatistics(_address);
         yield UpdateStatisticsState(_statistics);
+      } else if (event is ClearMyLevelInfoEvent) {
+        yield ClearMyLevelInfoState();
       }
     } catch (e) {
       yield UpdateFailState();

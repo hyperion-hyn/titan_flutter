@@ -9,10 +9,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:titan/env.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/updater/bloc/bloc.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutMePage extends StatefulWidget {
@@ -37,8 +40,31 @@ class _AboutMeState extends BaseState<AboutMePage> {
   @override
   Widget build(BuildContext context) {
     var languageCode = Localizations.localeOf(context).languageCode;
+
+    Widget _lineWidget({double height = 5}) {
+      return Container(
+        height: height,
+        color: HexColor('#F8F8F8'),
+      );
+    }
+
+    Widget _dividerWidget() {
+      return Padding(
+        padding: const EdgeInsets.only(
+          left: 16,
+        ),
+        child: Container(
+          height: 0.8,
+          color: HexColor('#F8F8F8'),
+        ),
+      );
+    }
+
     return Scaffold(
-        appBar: AppBar(title: Text(S.of(context).about_us)),
+        appBar: BaseAppBar(
+          baseTitle: S.of(context).about_us,
+          backgroundColor: Colors.white,
+        ),
         body: ListView(children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 48),
@@ -59,81 +85,26 @@ class _AboutMeState extends BaseState<AboutMePage> {
               ],
             ),
           ),
-          Ink(
-            color: Colors.white,
-            child: InkWell(
-              onTap: (){
-                BlocProvider.of<UpdateBloc>(context)
-                    .add(CheckUpdate(lang: Localizations.localeOf(context).languageCode, isManual: true));
-              },
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      S.of(context).app_version,
-                      style: TextStyle(color: Colors.black, fontSize: 15),
-                    ),
-                    Spacer(),
-                    Text(
-                      version,
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    if(env.buildType != BuildType.PROD)
-                      Text("(Test1.3)")
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Divider(height: 0),
-          Ink(
-            color: Colors.white,
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => WebViewContainer(
-                          initUrl: Const.APP_POLICY,
-                          title: 'POLICY',
-                        )));
-              },
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      S.of(context).software_agreement,
-                      style: TextStyle(color: Colors.black, fontSize: 15),
-                    ),
-                    Spacer(),
-                    Icon(
-                      Icons.chevron_right,
-                      color: Colors.grey,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Divider(height: 0),
-          SizedBox(
-            height: 20,
-          ),
-          Divider(height: 0),
+
           _buildInfoContainer(
               label: S.of(context).official_website,
               showValue: "https://www.hyn.space/",
               value: "https://www.hyn.space/",
               isUrl: true),
           _buildInfoContainer(
+              label: '区块链浏览器', showValue: "https://hynscan.io/", value: "https://hynscan.io/", isUrl: true),
+          _buildInfoContainer(
+              label: '开源地址',
+              showValue: "https://github.com/hyperion-hyn/",
+              value: "https://github.com/hyperion-hyn/",
+              isUrl: true),
+          _buildInfoContainer(label: '开源协议 MIT', showValue: Const.APP_POLICY, value: Const.APP_POLICY, isUrl: true),
+          _buildInfoContainer(
               label: S.of(context).forum,
               showValue: "https://talk.hyn.space/",
               value: "https://talk.hyn.space/",
               isUrl: true),
+          _lineWidget(),
           _buildInfoContainer(
               label: S.of(context).telegram, showValue: "@hypersionOfficianHYN", value: "hypersionOfficianHYN"),
           _buildInfoContainer(label: S.of(context).twitterhyperion, showValue: "@TitanHYN", value: "TitanHYN"),
@@ -144,30 +115,28 @@ class _AboutMeState extends BaseState<AboutMePage> {
           ),
           _buildInfoContainer(
             label: S.of(context).medium,
-            showValue: "@hyperionsgoffical",
-            value: "@hyperionsgoffical",
+            showValue: "@hyperionsgofficial",
+            value: "@hyperionsgofficial",
           ),
           _buildInfoContainer(label: S.of(context).wechat, showValue: "@HyperionHYN", value: "HyperionHYN"),
           _buildInfoContainer(label: S.of(context).wechat_official_account, showValue: "@kaizshuo", value: "kaizshuo"),
           if (languageCode == "en")
             _buildInfoContainer(
                 label: S.of(context).telegram_operator, showValue: "@FriedrichLVZX", value: "FriedrichLVZX"),
-          if (languageCode == "zh")
-            _buildInfoContainer(
-              label: S.of(context).wechat_cs,
-              showValue: "@Bi321369",
-              value: "@Bi321369",
-            ),
-          Divider(height: 0),
+          // if (languageCode == "zh")
+          //   _buildInfoContainer(
+          //     label: S.of(context).wechat_cs,
+          //     showValue: "@Bi321369",
+          //     value: "@Bi321369",
+          //   ),
+
           SizedBox(
             height: 20,
           ),
-
         ]));
   }
 
   Widget _buildInfoContainer({String label, String showValue, String value, bool isUrl: false}) {
-    Color showValueTextColor = isUrl ? Colors.grey : Colors.blue;
     return GestureDetector(
       onTap: () {
         if (isUrl) {
@@ -184,14 +153,49 @@ class _AboutMeState extends BaseState<AboutMePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Text(
-                label,
-                style: TextStyle(color: Colors.black, fontSize: 15),
-              ),
-              Spacer(),
-              Text(
-                showValue,
-                style: TextStyle(color: showValueTextColor),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: TextStyle(
+                        color: DefaultColors.color333,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 4,
+                    ),
+                    isUrl
+                        ? Text(
+                            showValue,
+                            style: TextStyle(
+                              color: Colors.grey ,
+                              fontSize: 12,
+                            ),
+                          )
+                        : Row(
+                            children: [
+                              Text(
+                                showValue,
+                                style: TextStyle(
+                                  color: Colors.grey ,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Icon(
+                                Icons.copy,
+                                color: Colors.grey,
+                                size: 12,
+                              )
+                            ],
+                          ),
+                  ],
+                ),
               ),
               if (isUrl)
                 Icon(

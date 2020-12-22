@@ -60,10 +60,10 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: HexColor('#F8F8F8'),
-      // appBar: BaseAppBar(
-      //   baseTitle: '我的红包',
-      //   backgroundColor: HexColor('#F8F8F8'),
-      // ),
+      appBar: BaseAppBar(
+        baseTitle: '我的红包',
+        backgroundColor: HexColor('#F8F8F8'),
+      ),
       body: _pageView(),
     );
   }
@@ -84,38 +84,38 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
         slivers: <Widget>[
           SliverList(
               delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              var model = _dataList[index];
+                    (context, index) {
+                  var model = _dataList[index];
 
-              var currentDate = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
+                  var currentDate = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
 
-              bool isNewDay = false;
-              if (index == 0) {
-                isNewDay = true;
-              } else {
-                if (currentDate.day != lastDay) {
-                  isNewDay = true;
-                }
-              }
-              lastDay = currentDate.day;
+                  bool isNewDay = false;
+                  if (index == 0) {
+                    isNewDay = true;
+                  } else {
+                    if (currentDate.day != lastDay) {
+                      isNewDay = true;
+                    }
+                  }
+                  lastDay = currentDate.day;
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (isNewDay)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
-                      child: Text(
-                        FormatUtil.humanReadableDay(model.createdAt),
-                        style: TextStyle(color: Color(0xff999999)),
-                      ),
-                    ),
-                  _itemBuilder(index),
-                ],
-              );
-            },
-            childCount: _dataList?.length ?? 0,
-          ))
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (isNewDay)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
+                          child: Text(
+                            FormatUtil.humanReadableDay(model.createdAt),
+                            style: TextStyle(color: Color(0xff999999)),
+                          ),
+                        ),
+                      _itemBuilder(index),
+                    ],
+                  );
+                },
+                childCount: _dataList?.length ?? 0,
+              ))
         ],
       ),
     );
@@ -128,7 +128,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
     var rpInfoModel = getRpLuckStateInfo(model);
     var desc = rpInfoModel.desc;
     var amount = rpInfoModel.amount;
-    
+
     var title = '';
     RedPocketType rpType = RedPocketType.values[model.type];
     switch (rpType) {
@@ -278,12 +278,13 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
 
   void getNetworkData() async {
     try {
-      var netData;
-      if (widget.state == 1) {
+      var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
+
+      /*if (widget.state == 1) {
         netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
       } else if (widget.state == 2) {
         netData = await _rpApi.getMyRpRecordListPending(_address, pagingKey: _currentPageKey);
-      }
+      }*/
 
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
@@ -309,12 +310,13 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
     }
 
     try {
-      var netData;
-      if (widget.state == 1) {
+      var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
+
+      /* if (widget.state == 1) {
         netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
       } else if (widget.state == 2) {
         netData = await _rpApi.getMyRpRecordListPending(_address, pagingKey: _currentPageKey);
-      }
+      }*/
 
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;

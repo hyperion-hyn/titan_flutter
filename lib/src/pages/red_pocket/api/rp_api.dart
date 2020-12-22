@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:decimal/decimal.dart';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:package_info/package_info.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -77,8 +78,13 @@ class RPApi {
 
   ///统计信息
   Future<RPStatistics> getRPStatistics(String address) async {
+    var isEmpty = address?.isEmpty??true;
+    var path = "/v1/rp/statistics/$address";
+    if (isEmpty) {
+      path = "/v1/rp/statistics/null";
+    }
     return await RPHttpCore.instance.getEntity(
-        "/v1/rp/statistics/$address",
+        path,
         EntityFactory<RPStatistics>(
           (json) => RPStatistics.fromJson(json),
         ),
@@ -92,19 +98,21 @@ class RPApi {
   Future<RpAirdropRoundInfo> getLatestRpAirdropRoundInfo(
     String address,
   ) async {
-    // test hack data
-    // await Future.delayed(Duration(milliseconds: 100));
-    // count++;
-    // var t = 1;
-    // var rcount = count - t > 0 ? count - t : 0;
-    // return RpAirdropRoundInfo.fromJson({
-    //   'start_time': startTime,
-    //   'end_time': endTime,
-    //   'my_rp_count': rcount,
-    //   'my_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (rcount * 10).ceilToDouble())}',
-    //   'total_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (rcount * 100).ceilToDouble())}',
-    //   'current_time': DateTime.now().millisecondsSinceEpoch ~/ 1000,
-    // });
+    //test hack data
+    /*
+    await Future.delayed(Duration(milliseconds: 100));
+    count++;
+    var t = 1;
+    var rcount = count - t > 0 ? count - t : 0;
+    return RpAirdropRoundInfo.fromJson({
+      'start_time': startTime,
+      'end_time': endTime,
+      'my_rp_count': rcount,
+      'my_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (rcount * 10).ceilToDouble())}',
+      'total_rp_amount': '${ConvertTokenUnit.etherToWei(etherDouble: (rcount * 100).ceilToDouble())}',
+      'current_time': DateTime.now().millisecondsSinceEpoch ~/ 1000,
+    });
+    */
 
     return await RPHttpCore.instance.getEntity(
         "/v1/rp/airdrop/latestRound/$address",
@@ -286,6 +294,7 @@ class RPApi {
   }
 
   ///我的红包列表，待启动
+  /*
   Future<RpMyRpRecordEntity> getMyRpRecordListPending(
       String address, {
         int size = 200,
@@ -305,6 +314,7 @@ class RPApi {
       ),
     );
   }
+  */
 
   Future<RpOpenRecordEntity> getMyRpOpenInfo(
     String address,
@@ -408,13 +418,40 @@ class RPApi {
 
   ///用户升级 燃烧以及抵押 需求
   Future<RpPromotionRuleEntity> getRPPromotionRule(String address) async {
+
+    PackageInfo packageInfo;
+    if (packageInfo == null) {
+      packageInfo = await PackageInfo.fromPlatform();
+    }
+
+    var version  = packageInfo?.version ?? "";
+    var buildNumber  = packageInfo?.buildNumber ?? "";
+    //print("[rp_api] getRPPromotionRule, version:$version, buildNumber:$buildNumber");
+
+    var versionCode = version  + "+" + buildNumber;
+
     return await RPHttpCore.instance.getEntity(
         "/v1/rp/level/promotion/$address",
         EntityFactory<RpPromotionRuleEntity>(
           (json) => RpPromotionRuleEntity.fromJson(json),
         ),
+        params: {
+          'flag': '$versionCode',
+        },
         options: RequestOptions(contentType: "application/json"));
   }
+
+  /*
+  Future<RpPromotionRuleEntity> getRPPromotionRuleOld(String address) async {
+
+    return await RPHttpCore.instance.getEntity(
+        "/v1/rp/level/promotion/$address",
+        EntityFactory<RpPromotionRuleEntity>(
+              (json) => RpPromotionRuleEntity.fromJson(json),
+        ),
+        options: RequestOptions(contentType: "application/json"));
+  }
+  */
 
   ///预提交升级
   Future<dynamic> postRpDepositAndBurn({

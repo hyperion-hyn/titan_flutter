@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -30,50 +31,57 @@ class _MeAreaState extends State<MeAreaPage> {
       selectedAppArea = SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel;
     }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          S.of(context).app_area_setting,
-          style: TextStyle(color: Colors.white),
+    Widget _lineWidget({double height = 5}) {
+      return Container(
+        height: height,
+        color: HexColor('#F8F8F8'),
+      );
+    }
+
+    Widget _dividerWidget() {
+      return Padding(
+        padding: const EdgeInsets.only(left: 16,),
+        child: Container(
+          height: 0.8,
+          color: HexColor('#F8F8F8'),
         ),
-        centerTitle: true,
-        elevation: 0,
+      );
+    }
+
+    var areas = SupportedArea.all();
+
+    return Scaffold(
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).language,
+        backgroundColor: Colors.white,
         actions: <Widget>[
-          InkWell(
-            onTap: () {
+          FlatButton(
+            onPressed: () {
               BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(areaModel: selectedAppArea));
-//              switchAppArea(selectedAppArea);
               Navigator.pop(context);
             },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              alignment: Alignment.centerRight,
-              child: Text(
-                S.of(context).confirm,
-                style: TextStyle(fontSize: 16, color: Colors.white),
+            child: Text(
+              S.of(context).confirm,
+              style: TextStyle(
+                color: HexColor("#1F81FF"),
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
               ),
             ),
-          )
+          ),
         ],
       ),
-      body: ListView(
-          children: SupportedArea.all().map<Widget>((areaModel) {
-        return _buildInfoContainer(areaModel);
-      }).toList()),
+      body: Column(
+        children: <Widget>[
+          _lineWidget(),
+          _buildInfoContainer(areas[0]),
+          _dividerWidget(),
+          _buildInfoContainer(areas[1]),
+        ],
+      ),
     );
   }
 
-  Widget _divider() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Divider(
-        height: 1.0,
-        color: HexColor('#D7D7D7'),
-      ),
-    );
-  }
 
   Widget _buildInfoContainer(AreaModel areaModel) {
     return InkWell(
@@ -86,6 +94,7 @@ class _MeAreaState extends State<MeAreaPage> {
         children: <Widget>[
           Container(
             height: 56,
+            color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -93,7 +102,7 @@ class _MeAreaState extends State<MeAreaPage> {
                   padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
                   child: Text(
                     areaModel.name(context),
-                    style: TextStyle(color: HexColor("#333333"), fontSize: 16),
+                    style: TextStyle(color: HexColor("#333333"), fontSize: 14),
                   ),
                 ),
                 Spacer(),
@@ -110,7 +119,6 @@ class _MeAreaState extends State<MeAreaPage> {
               ],
             ),
           ),
-          _divider()
         ],
       ),
     );

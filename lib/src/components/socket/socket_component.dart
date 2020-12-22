@@ -180,7 +180,7 @@ class _SocketState extends State<_SocketManager> {
           _marketItemList = state.marketItemList;
           cacheDebounceLater.debounceInterval(() {
             _cacheSymbolList(_marketItemList);
-          }, 1000);
+          }, t: 1000, runImmediately: true);
         } else if (state is ChannelKLine24HourState) {
           // 24小时候成交数据  socket 方式
           _updateMarketItemList(state.response, symbol: state.symbol);
