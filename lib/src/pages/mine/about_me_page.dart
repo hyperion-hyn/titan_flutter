@@ -149,7 +149,7 @@ class _AboutMeState extends BaseState<AboutMePage> {
         margin: EdgeInsets.fromLTRB(0, 1, 0, 0),
         color: Colors.white,
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
