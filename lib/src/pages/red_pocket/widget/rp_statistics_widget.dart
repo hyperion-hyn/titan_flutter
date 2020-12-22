@@ -110,6 +110,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     var totalCapStr = bigIntToEther(totalCap);
     var totalSupplyStr = bigIntToEther(totalSupply);
     var totalBurningStr = bigIntToEther(totalBurn);
+    var unSupplyStr = bigIntToEther("$unSupply");
 
     var _chartOption = '''
    {
@@ -173,6 +174,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
 
             _dataText('流通中', totalSupplyStr, colorStr:'#c23531'),
             _dataText('总燃烧', totalBurningStr, colorStr:'#2f4554'),
+            _dataText('未发行', unSupplyStr, colorStr:'#61a0a8'),
           ],
         ))
       ],
@@ -337,6 +339,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
 
     var totalStr = bigIntToEther(total);
     var transmitRPStr = bigIntToEther(transmitRp);
+    var unTransmitRpStr = bigIntToEther("$unTransmitRp");
 
     var _chartOption = '''
     {
@@ -378,6 +381,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
           children: [
             _dataText('传导总量', totalStr),
             _dataText('已传导', transmitRPStr,colorStr: '#c23531'),
+            _dataText('未传导', unTransmitRpStr,colorStr: '#2f4554'),
           ],
         ))
       ],
