@@ -302,9 +302,9 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
 
       if (_filterDataList?.isEmpty??true) {
 
-        var isEmptyKey = _currentPageKey?.isNotEmpty??false;
-        print("[$runtimeType] getNetworkData, _countRequest:$_countRequest");
-        if (isEmptyKey) {
+        var isNotEmptyKey = _currentPageKey?.isNotEmpty??false;
+        print("[$runtimeType] getNetworkData,isNotEmptyKey:$isNotEmptyKey, _countRequest:$_countRequest");
+        if (isNotEmptyKey) {
           _countRequest += 1;
           getMoreNetworkData();
         } else {
