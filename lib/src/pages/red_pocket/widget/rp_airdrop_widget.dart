@@ -12,7 +12,6 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_airdrop_round_info.dart';
@@ -20,14 +19,13 @@ import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
-import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 
-import '../rp_my_level_record_page.dart';
-import '../rp_my_rp_records_page.dart';
-import '../rp_record_tab_page.dart';
+import '../rp_level_records_page.dart';
+import '../rp_record_list_page.dart';
+
 
 enum AirdropState {
   Waiting,
@@ -990,7 +988,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpMyRpRecordsPage(),
+          builder: (context) => RpRecordListPage(),
         ),
       );
     } else {
@@ -1004,7 +1002,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpMyLevelRecordsPage(),
+          builder: (context) => RpLevelRecordsPage(),
         ),
       );
     } else {

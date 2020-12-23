@@ -23,18 +23,18 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 
-class RedPocketDetailPage extends StatefulWidget {
+class RpRecordDetailPage extends StatefulWidget {
   final RpOpenRecordEntity rpOpenRecordEntity;
 
-  RedPocketDetailPage({this.rpOpenRecordEntity});
+  RpRecordDetailPage({this.rpOpenRecordEntity});
 
   @override
   State<StatefulWidget> createState() {
-    return _RedPocketDetailState();
+    return _RpRecordDetailState();
   }
 }
 
-class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
+class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 

@@ -16,10 +16,10 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
-import 'package:titan/src/pages/red_pocket/rp_my_level_record_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_my_rp_records_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_records_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_friend_list_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_record_list_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
@@ -1206,7 +1206,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpMyLevelRecordsPage(),
+          builder: (context) => RpLevelRecordsPage(),
         ),
       );
     } else {
@@ -1239,7 +1239,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpMyFriendsPage(),
+          builder: (context) => RpFriendListPage(),
         ),
       );
     } else {
@@ -1254,7 +1254,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         context,
         MaterialPageRoute(
           // builder: (context) => RpRecordTabPage(),
-          builder: (context) => RpMyRpRecordsPage(),
+          builder: (context) => RpRecordListPage(),
         ),
       );
     } else {
@@ -1268,7 +1268,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpInviteFriendPage(),
+          builder: (context) => RpFriendInvitePage(),
         ),
       );
     } else {
