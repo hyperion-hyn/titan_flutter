@@ -853,7 +853,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   _statisticsWidget() {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: _cardPadding(),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
