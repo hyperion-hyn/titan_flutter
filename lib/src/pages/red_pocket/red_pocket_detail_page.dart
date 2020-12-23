@@ -741,7 +741,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      '+ ${otherEntity.otherUserAmountStr ?? '0'} RP',
+                      '+ ${FormatUtil.stringFormatCoinNum(otherEntity.otherUserAmountStr ?? '0', decimal: 4,)} RP',
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 14,
