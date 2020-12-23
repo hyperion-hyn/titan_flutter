@@ -325,17 +325,17 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
     // fastest
     var fastGasPrice = double.parse(responseFromEtherScanDict["FastGasPrice"]) * 10.0;
     var fastest = double.parse(responseFromEthGasStationDict["fastest"].toString());
-    responseFromEthGasStationDict["fastest"] = min(fastGasPrice, fastest);
+    responseFromEthGasStationDict["fastest"] = max(fastGasPrice, fastest);
 
     // fast
     var proposeGasPrice = double.parse(responseFromEtherScanDict["ProposeGasPrice"]) * 10.0;
     var fast = double.parse(responseFromEthGasStationDict["fast"].toString());
-    responseFromEthGasStationDict["fast"] = min(proposeGasPrice, fast);
+    responseFromEthGasStationDict["fast"] = max(proposeGasPrice, fast);
 
     // average
     var safeGasPrice = double.parse(responseFromEtherScanDict["SafeGasPrice"]) * 10.0;
     var average = double.parse(responseFromEthGasStationDict["average"].toString());
-    responseFromEthGasStationDict["average"] = min(safeGasPrice, average);
+    responseFromEthGasStationDict["average"] = max(safeGasPrice, average);
 
     //print("[object] requestGasPrice，2, responseFromEtherScanDict:$responseFromEtherScanDict, responseFromEthGasStationDict:$responseFromEthGasStationDict");
 
