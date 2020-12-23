@@ -40,6 +40,30 @@ class WalletManagerPage extends StatefulWidget {
   State<StatefulWidget> createState() {
     return _WalletManagerState();
   }
+
+  static Future jumpWalletManager(BuildContext context,{void hasWalletUpdate(Wallet wallet),Function noWalletUpdate}) async {
+    Wallet wallet = await Application.router.navigateTo(
+      context,
+      Routes.wallet_manager,
+    );
+    if(wallet != null) {
+      if(hasWalletUpdate != null){
+        hasWalletUpdate(wallet);
+      }
+      BlocProvider.of<WalletCmpBloc>(context)
+          .add(ActiveWalletEvent(wallet: wallet));
+      await Future.delayed(Duration(milliseconds: 300));
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
+
+      ///Clear exchange account when switch wallet
+      BlocProvider.of<ExchangeCmpBloc>(context)
+          .add(ClearExchangeAccountEvent());
+    }else{
+      if(noWalletUpdate != null){
+        noWalletUpdate();
+      }
+    }
+  }
 }
 
 class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {

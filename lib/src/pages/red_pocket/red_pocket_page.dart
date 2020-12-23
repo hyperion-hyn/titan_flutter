@@ -16,15 +16,14 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_level_record_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_rp_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -33,11 +32,10 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:titan/src/widget/map3_nodes_widget.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'entity/rp_airdrop_round_info.dart';
 import 'entity/rp_statistics.dart';
-import 'rp_record_tab_page.dart';
+
 
 class RedPocketPage extends StatefulWidget {
   RedPocketPage();
@@ -466,6 +464,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
   }
 
+  /*
   _levelWidget() {
     var totalBurningStr = FormatUtil.stringFormatCoinNum(
       _rpStatistics?.rpHoldingContractInfo?.totalBurningStr ?? '0',
@@ -696,6 +695,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       ),
     );
   }
+  */
 
   _airdropWidget() {
     return SliverToBoxAdapter(
@@ -955,6 +955,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   ///widgets
+  /*
   Widget _poolInfoColumn(
     String content,
     String subContent,
@@ -982,7 +983,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         ),
       ],
     );
-  }
+  }*/
 
   Widget _toolTipColumn(
     String content,
@@ -1047,6 +1048,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
   }
 
+  /*
   Widget _inkwellColumn(
     String content,
     String subContent, {
@@ -1100,6 +1102,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       ),
     );
   }
+  */
 
   Widget _tipRow(
     String title, {
@@ -1147,6 +1150,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
   }
 
+  /*
   Widget _verticalLine({
     bool havePadding = false,
   }) {
@@ -1164,6 +1168,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       ),
     );
   }
+  */
 
   ///Actions
   _navToRPPool() {
@@ -1180,6 +1185,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     }
   }
 
+  /*
   _navToRPReleaseRecord() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
     if (activeWallet != null) {
@@ -1192,7 +1198,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     } else {
       Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
     }
-  }
+  }*/
 
   _navToLevel() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
@@ -1209,7 +1215,13 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _navToManageWallet() {
-    Application.router
+    WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (wallet){
+      if (mounted) {
+        setState(() {});
+      }
+    });
+
+    /*Application.router
         .navigateTo(
           context,
           Routes.wallet_manager,
@@ -1218,7 +1230,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
               if (mounted) {
                 setState(() {});
               }
-            });
+            });*/
   }
 
   _navToMyFriends() {

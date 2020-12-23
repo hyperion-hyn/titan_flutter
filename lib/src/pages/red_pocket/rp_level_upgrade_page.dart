@@ -302,7 +302,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 8, left: 16,),
                                 child: Text(
-                                    '当前持币 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP，燃烧量 ${_myLevelInfo?.currBurningStr ?? '0'} RP',
+                                    '当前持币 ${FormatUtil.stringFormatCoinNum(_myLevelInfo?.currentHoldingStr ?? '0')} RP，燃烧量 ${FormatUtil.stringFormatCoinNum(_myLevelInfo?.currBurningStr ?? '0')} RP',
                                     style: TextStyle(
                                       fontWeight: FontWeight.normal,
                                       fontSize: 12,

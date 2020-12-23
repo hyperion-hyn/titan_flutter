@@ -24,7 +24,7 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_staking_detail_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_transmit_detail_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -1005,7 +1005,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpStakingDetailPage(_rpStatistics, _dataList[index]),
+        builder: (context) => RpTransmitDetailPage(_rpStatistics, _dataList[index]),
       ),
     );
   }

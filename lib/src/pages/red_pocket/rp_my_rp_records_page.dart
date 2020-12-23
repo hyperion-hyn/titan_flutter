@@ -84,38 +84,40 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
         slivers: <Widget>[
           SliverList(
               delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                  var model = _dataList[index];
+            (context, index) {
+              var model = _dataList[index];
 
-                  var currentDate = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
+              var currentDate = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
 
-                  bool isNewDay = false;
-                  if (index == 0) {
-                    isNewDay = true;
-                  } else {
-                    if (currentDate.day != lastDay) {
-                      isNewDay = true;
-                    }
-                  }
-                  lastDay = currentDate.day;
+              bool isNewDay = false;
+              if (index == 0) {
+                isNewDay = true;
+              } else {
+                if (currentDate.day != lastDay) {
+                  isNewDay = true;
+                }
+              }
+              lastDay = currentDate.day;
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (isNewDay)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
-                          child: Text(
-                            FormatUtil.humanReadableDay(model.createdAt),
-                            style: TextStyle(color: Color(0xff999999)),
-                          ),
-                        ),
-                      _itemBuilder(index),
-                    ],
-                  );
-                },
-                childCount: _dataList?.length ?? 0,
-              ))
+              //print("[$runtimeType] model.createdAt:${model.createdAt},length:${model.createdAt.toString().length}");
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (isNewDay)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
+                      child: Text(
+                        FormatUtil.humanReadableDay(model.createdAt),
+                        style: TextStyle(color: Color(0xff999999)),
+                      ),
+                    ),
+                  _itemBuilder(index),
+                ],
+              );
+            },
+            childCount: _dataList?.length ?? 0,
+          ))
         ],
       ),
     );
@@ -152,7 +154,11 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
 
-    String totalAmountStr = FormatUtil.stringFormatCoinNum(model?.totalAmountStr ?? "0") ?? '--';
+    String totalAmountStr = FormatUtil.stringFormatCoinNum(
+          model?.totalAmountStr ?? "0",
+          decimal: 4,
+        ) ??
+        '--';
 
     return InkWell(
       onTap: () {
@@ -261,7 +267,9 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
                         desc,
                         style: TextStyle(
                           fontSize: 10,
-                          color: ([RpLuckState.BEST, RpLuckState.LUCKY_BEST].contains(luckState)) ? HexColor('#F0BE00') : HexColor('#999999'),
+                          color: ([RpLuckState.BEST, RpLuckState.LUCKY_BEST].contains(luckState))
+                              ? HexColor('#F0BE00')
+                              : HexColor('#999999'),
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -284,6 +292,9 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
         _dataList = filterRpOpenDataList(netData.data);
+
+        // todo:排序
+        //_dataList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
         if (mounted) {
           setState(() {

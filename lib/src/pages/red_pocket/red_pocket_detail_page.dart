@@ -144,7 +144,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
 
     var amountStr = FormatUtil.stringFormatCoinNum(
       _detailEntity?.amountStr ?? '0',
-      decimal: 6,
+      decimal: 4,
     );
     amountStr = '$amountStr RP';
     var zeroAmountStr = '0 RP';
@@ -377,7 +377,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
     var createdAt = _detailEntity?.createdAt ?? 0;
     var createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt * 1000);
     var createdAtStr = Const.DATE_FORMAT.format(createdAtDate);
-    String totalAmountStr = FormatUtil.stringFormatCoinNum(_detailEntity?.totalAmountStr ?? "0") ?? '--';
+    String totalAmountStr = FormatUtil.stringFormatCoinNum(_detailEntity?.totalAmountStr ?? "0", decimal: 4,) ?? '--';
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -741,7 +741,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      '+ ${otherEntity.otherUserAmountStr ?? '0'} RP',
+                      '+ ${FormatUtil.stringFormatCoinNum(otherEntity.otherUserAmountStr ?? '0', decimal: 4,)} RP',
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 14,
@@ -880,7 +880,7 @@ class _RedPocketDetailState extends BaseState<RedPocketDetailPage> {
         _manageFeeAmount = valueByDecimal;
       }
     });
-    var _manageFeeAmountStr = '管理费 ' + FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString()) + ' RP';
+    var _manageFeeAmountStr = '管理费 ' + FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString(), decimal: 4,) + ' RP';
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -1041,7 +1041,7 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
   var desc = '';
 
   var amount = '--';
-  String amountStr = FormatUtil.stringFormatCoinNum(entity?.amountStr ?? '0') ?? '--';
+  String amountStr = FormatUtil.stringFormatCoinNum(entity?.amountStr ?? '0', decimal: 4,) ?? '--';
   amountStr += ' RP';
 
   var luckState = RpLuckState.values[(entity?.luck ?? 0)];

@@ -31,6 +31,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/pages/wallet_demo/ApiDemo.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -136,7 +137,15 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
                           children: <Widget>[
                             InkWell(
                               onTap: () async {
-                                plugWallet.Wallet wallet = await Application.router.navigateTo(
+                                WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (wallet){
+                                  setState(() {
+                                    _isRefreshBalances = true;
+                                  });
+                                },noWalletUpdate: (){
+                                  setState(() {
+                                  });
+                                });
+                                /*plugWallet.Wallet wallet = await Application.router.navigateTo(
                                   context,
                                   Routes.wallet_manager,
                                 );
@@ -155,7 +164,7 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
                                 }else{
                                   setState(() {
                                   });
-                                }
+                                }*/
                               },
                               child: Row(
                                 children: <Widget>[
@@ -235,7 +244,7 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
                               child: CircularProgressIndicator(
                                 backgroundColor: Colors.white,
                                 valueColor: new AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-                                strokeWidth: 3,
+                                strokeWidth: 1,
                               ),
                             )
                         ],
