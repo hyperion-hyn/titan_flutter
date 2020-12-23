@@ -34,7 +34,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
   var _address = "";
   List<RpOpenRecordEntity> _dataList = [];
   List<RpOpenRecordEntity> get _filterDataList =>
-      _dataList?.where((element) => element.type == widget.state.index)?.toList()?.reversed?.toList() ?? [];
+      _dataList?.where((element) => element.type == widget.state.index)?.toList() ?? [];
 
   int lastDay;
 
@@ -84,6 +84,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
       onLoadingMore: () {
         getMoreNetworkData();
       },
+      enablePullUp: true,
       child: CustomScrollView(
         slivers: <Widget>[
           SliverList(
