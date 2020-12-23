@@ -24,6 +24,8 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/widget/loading_button/click_loading_button.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class ExchangeTransferPage extends StatefulWidget {
   final String coinSymbol;
@@ -402,34 +404,16 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _confirm() {
-    return Container(
-      width: double.infinity,
-      height: 50,
-      child: RaisedButton(
-          textColor: Colors.white,
-          color: Theme.of(context).primaryColor,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(
-                color: Theme.of(context).primaryColor,
-              ),
-              borderRadius: BorderRadius.circular(4.0)),
-          child: Text(
-            _fromExchangeToWallet
-                ? S.of(context).exchange_withdraw
-                : S.of(context).exchange_deposit,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-            ),
-          ),
-          onPressed: () async {
-            debounce(() {
-              FocusScope.of(context).requestFocus(FocusNode());
-              if (_formKey.currentState.validate()) {
-                _transfer();
-              }
-            }, 200)();
-          }),
+    return Padding(
+      padding: const EdgeInsets.only(left:48.0,right: 48,bottom: 32),
+      child: ClickOvalButton(_fromExchangeToWallet
+          ? S.of(context).exchange_withdraw
+          : S.of(context).exchange_deposit, () async {
+        FocusScope.of(context).requestFocus(FocusNode());
+        if (_formKey.currentState.validate()) {
+          await _transfer();
+        }
+      },height: 51,width: double.infinity,fontSize: 14,btnColor: [Theme.of(context).primaryColor],),
     );
   }
 
@@ -707,7 +691,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     }
   }
 
-  _transfer() async {
+  Future _transfer() async {
     try {
       if (_fromExchangeToWallet) {
         _withdraw();
