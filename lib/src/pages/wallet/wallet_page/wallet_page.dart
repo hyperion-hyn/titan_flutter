@@ -364,9 +364,11 @@ class _WalletPageState extends BaseState<WalletPage>
           ),
         );
       }
+    }else{
+      return EmptyWalletView(loadDataBloc: loadDataBloc,);
     }
 
-    return BlocListener<WalletCmpBloc, WalletCmpState>(
+    /*return BlocListener<WalletCmpBloc, WalletCmpState>(
       listener: (ctx, state) {},
       child: BlocBuilder<WalletCmpBloc, WalletCmpState>(
         builder: (BuildContext context, WalletCmpState state) {
@@ -378,7 +380,7 @@ class _WalletPageState extends BaseState<WalletPage>
           }
         },
       ),
-    );
+    );*/
   }
 
   Future listLoadingData() async {

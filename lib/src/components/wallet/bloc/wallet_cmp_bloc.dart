@@ -108,8 +108,8 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         }
       }
     } else if (event is LoadLocalDiskWalletAndActiveEvent) {
-//      yield LoadingWalletState();
       try {
+        // yield LoadingWalletState();
         var wallet = await walletRepository.getActivatedWalletFormLocalDisk();
         //now active loaded wallet_vo. tips: maybe null
         add(ActiveWalletEvent(wallet: wallet));
@@ -148,7 +148,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         if (_activatedWalletVo != null) {
           //faster show quote
           yield UpdateWalletPageState(1,
-              sign: quotesSign, quoteModel: currentQuotesModel, walletVo: _activatedWalletVo.copyWith());
+              sign: quotesSign, quoteModel: currentQuotesModel);
           await walletRepository.updateWalletVoBalance(_activatedWalletVo);
           _saveWalletVoBalanceToDisk(_activatedWalletVo); //save balance data to disk;
           yield UpdateWalletPageState(0,
@@ -162,7 +162,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         }
       } catch (e) {
         LogUtil.toastException(e);
-        yield UpdateWalletPageState(-1,walletVo: _activatedWalletVo.copyWith());
+        yield UpdateWalletPageState(-1);
       }
     } else if (event is UpdateQuotesEvent) {
       yield UpdatingQuotesState();

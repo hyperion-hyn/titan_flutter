@@ -89,8 +89,8 @@ class _WalletManagerState extends State<_WalletManager> {
     return BlocListener<WalletCmpBloc, WalletCmpState>(
       listener: (context, state) {
         if (state is UpdateWalletPageState) {
-          _activatedWallet = state.walletVo;
-          if (_activatedWallet != null) {
+          if (state.walletVo != null) {
+            _activatedWallet = state.walletVo;
             var balance = _calculateTotalBalance(_activatedWallet);
             if (_activatedWallet.wallet != null) {
               var ethAddress =
