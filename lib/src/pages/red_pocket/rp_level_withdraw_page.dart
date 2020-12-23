@@ -50,11 +50,11 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
-  RpPromotionRuleEntity _promotionRuleEntity;
   RpMyLevelInfo _myLevelInfo;
 
   int get _currentLevel => _myLevelInfo?.currentLevel ?? 0;
 
+  RpPromotionRuleEntity _promotionRuleEntity;
   List<LevelRule> get _staticDataList => (_promotionRuleEntity?.static ?? []).toList();
 
   LevelRule get _currentLevelRule {

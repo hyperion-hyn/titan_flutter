@@ -20,6 +20,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -53,6 +54,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
   CoinVo _coinVo;
   WalletVo _activatedWallet;
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
+  String get _address => _activatedWallet?.wallet?.getAtlasAccount()?.address;
 
   Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
 
@@ -65,13 +67,56 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
   Decimal get _preTotalHoldValue {
     var zeroValue = Decimal.zero;
 
-    var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
-    var totalHoldValue = (_inputValue + currentHoldValue);
+    var totalHoldValue = (_inputValue + _currentHoldValue);
 
-    return totalHoldValue > zeroValue ? totalHoldValue : currentHoldValue;
+    return totalHoldValue > zeroValue ? totalHoldValue : _currentHoldValue;
   }
 
+  Decimal get _currentHoldValue =>
+      Decimal.tryParse(
+        _myLevelInfo?.currentHoldingStr ?? '0',
+      ) ??
+      Decimal.zero;
+
+  Decimal get _currentBurnValue =>
+      Decimal.tryParse(
+        _myLevelInfo?.currBurningStr ?? '0',
+      ) ??
+      Decimal.zero;
+
   bool _isLoading = false;
+
+  RpPromotionRuleEntity _promotionRuleEntity;
+  List<LevelRule> get _dynamicDataList => (_promotionRuleEntity?.dynamicList ?? []).toList();
+  int get _currentLevel => _myLevelInfo?.currentLevel ?? 0;
+
+  int get _toLevel {
+    var level = _currentLevel;
+
+    var filterDataList = _dynamicDataList.where((element) => element.level > _currentLevel).toList().reversed.toList();
+    if (filterDataList?.isNotEmpty ?? false) {
+      var firstObj = filterDataList?.firstWhere((levelRule) {
+        var holding = Decimal.tryParse(
+              levelRule?.holdingStr ?? '0',
+            ) ??
+            Decimal.zero;
+
+        var burning = Decimal.tryParse(
+              levelRule?.burnStr ?? '0',
+            ) ??
+            Decimal.zero;
+
+        return _preTotalHoldValue >= holding && _currentBurnValue >= burning;
+      }, orElse: () => null);
+
+      //print("firstObj:${firstObj?.level??0}");
+
+      level = firstObj?.level ?? 0;
+    } else {
+      level = _currentLevel;
+    }
+    return level;
+  }
 
   @override
   void initState() {
@@ -117,6 +162,12 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
 
     if (mounted) {
       _loadDataBloc.add(RefreshSuccessEvent());
+    }
+
+    var netData = await _rpApi.getRPPromotionRule(_address);
+    if (netData?.static?.isNotEmpty ?? false) {
+      _promotionRuleEntity = netData;
+      print("[$runtimeType] getNetworkData, count:${_dynamicDataList.length}");
     }
   }
 
@@ -217,7 +268,7 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
 
                                       var balanceValue = Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ??
                                           Decimal.fromInt(0);
-                                      print("inputValue:$inputValue, balanceValue:$balanceValue");
+                                      //print("inputValue:$inputValue, balanceValue:$balanceValue");
 
                                       if (inputValue > balanceValue) {
                                         return '输入数量超过了钱包余额';
@@ -380,11 +431,13 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
         _isLoading = true;
       });
     }
+
+
     Future.delayed(Duration(milliseconds: 111)).then((_) async {
       try {
         await _rpApi.postRpDepositAndBurn(
           from: _myLevelInfo?.currentLevel ?? 0,
-          to: _myLevelInfo?.currentLevel ?? 0,
+          to: _toLevel, // 累积燃烧 > 当前燃烧；累积持币 > 当前持币；
           depositAmount: depositAmount,
           burningAmount: burningAmount,
           activeWallet: _activatedWallet,

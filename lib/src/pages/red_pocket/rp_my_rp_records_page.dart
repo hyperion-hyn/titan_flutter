@@ -99,7 +99,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
               }
               lastDay = currentDate.day;
 
-              print("[$runtimeType] model.createdAt:${model.createdAt},length:${model.createdAt.toString().length}");
+              //print("[$runtimeType] model.createdAt:${model.createdAt},length:${model.createdAt.toString().length}");
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
