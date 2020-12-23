@@ -29,7 +29,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
   final RPApi _rpApi = RPApi();
 
   Map<String, dynamic> _currentPageKey;
-  bool get _isNotEmptyKey => _currentPageKey?.isNotEmpty??false;
+  bool get _isNotEmptyKey => _currentPageKey?.isNotEmpty ?? false;
 
   var _address = "";
   List<RpOpenRecordEntity> _dataList = [];
@@ -299,7 +299,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
         _dataList = filterRpOpenDataList(netData.data);
       }
 
-      if ((_filterDataList?.length??0) < 15) {
+      if ((_filterDataList?.length ?? 0) < 15) {
         if (_isNotEmptyKey) {
           getMoreNetworkData();
         } else {
@@ -322,12 +322,11 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
   }
 
   void getMoreNetworkData() async {
-
     _countRequest += 1;
 
     print("[$runtimeType] getNetworkData,_isNotEmptyKey:$_isNotEmptyKey, _countRequest:$_countRequest");
 
-    if (_currentPageKey?.isEmpty ?? true) {
+    if (!_isNotEmptyKey) {
       _loadDataBloc.add(LoadMoreEmptyEvent());
       return;
     }
@@ -341,9 +340,8 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
         _dataList.addAll(filterRpOpenDataList(netData.data));
       }
 
-
       if (!_isNotEmptyKey) {
-        if (_filterDataList?.isEmpty??true) {
+        if (_filterDataList?.isEmpty ?? true) {
           if (mounted) {
             setState(() {
               _loadDataBloc.add(LoadEmptyEvent());
@@ -356,9 +354,8 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
             });
           }
         }
-      }
-      else {
-        if ((_filterDataList?.length??0) < 15) {
+      } else {
+        if ((_filterDataList?.length ?? 0) < 15) {
           getMoreNetworkData();
         } else {
           if (mounted) {
@@ -368,8 +365,6 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
           }
         }
       }
-
-
     } catch (e) {
       _loadDataBloc.add(LoadMoreFailEvent());
     }
