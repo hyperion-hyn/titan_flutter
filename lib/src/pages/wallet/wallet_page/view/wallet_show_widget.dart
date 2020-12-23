@@ -96,11 +96,16 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
   @override
   void onCreated() {
     BlocProvider.of<WalletCmpBloc>(context).listen((state) {
-      if (state is UpdateWalletPageState && (state.updateStatus == 0 || state.updateStatus == -1)) {
+      if (state is UpdateWalletPageState && state.updateStatus == 0) {
         _isRefreshBalances = false;
+      }else if(state is UpdateWalletPageState && (state.updateStatus == -1)){
+        Fluttertoast.showToast(msg: "请求余额失败");
+        _isRefreshBalances = false;
+      }else if(state is UpdateWalletPageState && (state.updateStatus == 1)){
+        _isRefreshBalances = true;
       }
     });
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
+    // BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
     super.onCreated();
   }
 

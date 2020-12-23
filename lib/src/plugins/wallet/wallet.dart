@@ -328,7 +328,7 @@ class Wallet {
         contract: contract,
         function: contract.function('transfer'),
         parameters: [web3.EthereumAddress.fromHex(toAddress), value],
-        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        gasPrice: web3.EtherAmount.inWei(BigInt.from(1)),
         maxGas: gasLimit,
         nonce: nonce,
       ),
