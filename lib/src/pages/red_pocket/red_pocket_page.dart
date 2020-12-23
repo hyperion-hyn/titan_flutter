@@ -23,6 +23,7 @@ import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -1180,7 +1181,13 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _navToManageWallet() {
-    Application.router
+    WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (){
+      if (mounted) {
+        setState(() {});
+      }
+    });
+
+    /*Application.router
         .navigateTo(
           context,
           Routes.wallet_manager,
@@ -1189,7 +1196,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
               if (mounted) {
                 setState(() {});
               }
-            });
+            });*/
   }
 
   _navToMyFriends() {

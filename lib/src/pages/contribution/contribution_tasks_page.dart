@@ -20,6 +20,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v2.dart';
 import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v3.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/data/entity/converter/model_converter.dart';
@@ -269,7 +270,8 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
 
     return InkWell(
       onTap: () {
-        Application.router.navigateTo(context, Routes.wallet_manager);
+        WalletManagerPage.jumpWalletManager(context);
+        // Application.router.navigateTo(context, Routes.wallet_manager);
       },
       child: SizedBox(
         height: 64,
