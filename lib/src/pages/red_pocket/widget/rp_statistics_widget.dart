@@ -93,9 +93,11 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     var totalCap = _rpStats?.global?.totalCap ?? '0';
     var totalSupply = _rpStats?.global?.totalSupply ?? '0';
     var totalBurn = _rpStats?.global?.totalBurning ?? '0';
-    var unSupply =
-        (Decimal.tryParse('$totalCap') - Decimal.parse(totalSupply)) -
-            Decimal.parse(totalBurn);
+    var unSupply = Decimal.fromInt(0);
+    try {
+      unSupply = (Decimal.tryParse('$totalCap') - Decimal.parse(totalSupply)) -
+          Decimal.parse(totalBurn);
+    } catch (e) {}
 
     var totalCapStr = bigIntToEther(totalCap);
     var totalSupplyStr = bigIntToEther(totalSupply);
@@ -188,7 +190,11 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     var airdropLevelTotalStr = bigIntToEther(totalLevel);
     var airdropPromotionTotalStr = bigIntToEther(totalPromotion);
 
-    var unAirdrop = Decimal.tryParse(total) - Decimal.tryParse(totalAirdrop);
+    var unAirdrop = Decimal.fromInt(0);
+    try {
+      unAirdrop = Decimal.tryParse(total) - Decimal.tryParse(totalAirdrop);
+    } catch (e) {}
+
     var totalAirdropStr = bigIntToEther("$totalAirdrop");
     var unAirdropStr = bigIntToEther("$unAirdrop");
 
@@ -325,7 +331,11 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
   _rpPool() {
     var total = _rpStats?.transmit?.total ?? '0';
     var transmitRp = _rpStats?.transmit?.transmitRp ?? '0';
-    var unTransmitRp = Decimal.tryParse(total) - Decimal.parse(transmitRp);
+    var unTransmitRp = Decimal.fromInt(0);
+
+    try {
+      unTransmitRp = Decimal.tryParse(total) - Decimal.parse(transmitRp);
+    } catch (e) {}
 
     var totalStr = bigIntToEther(total);
     var transmitRPStr = bigIntToEther(transmitRp);
