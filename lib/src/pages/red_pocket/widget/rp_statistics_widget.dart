@@ -93,7 +93,9 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     var totalCap = _rpStats?.global?.totalCap ?? '0';
     var totalSupply = _rpStats?.global?.totalSupply ?? '0';
     var totalBurn = _rpStats?.global?.totalBurning ?? '0';
-    var unSupply = Decimal.tryParse('$totalCap') - Decimal.parse(totalSupply);
+    var unSupply =
+        (Decimal.tryParse('$totalCap') - Decimal.parse(totalSupply)) -
+            Decimal.parse(totalBurn);
 
     var totalCapStr = bigIntToEther(totalCap);
     var totalSupplyStr = bigIntToEther(totalSupply);
@@ -135,7 +137,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
           ),
         ),
         SizedBox(
-          width:24,
+          width: 24,
         ),
         Expanded(
             child: Column(
@@ -162,7 +164,11 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
             ),
             _dataText('流通中', totalSupplyStr, colorStr: colorPalette[0]),
             _dataText('总燃烧', totalBurningStr, colorStr: colorPalette[2]),
-            _dataText('未发行', unSupplyStr, colorStr: colorPalette[1],),
+            _dataText(
+              '未发行',
+              unSupplyStr,
+              colorStr: colorPalette[1],
+            ),
           ],
         ))
       ],
