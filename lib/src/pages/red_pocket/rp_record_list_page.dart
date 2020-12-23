@@ -292,6 +292,8 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
   var _countRequest = 0;
   void getNetworkData() async {
     _currentPageKey = null;
+    _countRequest = 0;
+
     try {
       var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
 
@@ -357,9 +359,16 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
             });
           }
         } else {
+
           if (mounted) {
             setState(() {
               _loadDataBloc.add(LoadMoreEmptyEvent());
+            });
+          }
+
+          if (mounted) {
+            setState(() {
+              _loadDataBloc.add(RefreshSuccessEvent());
             });
           }
         }
