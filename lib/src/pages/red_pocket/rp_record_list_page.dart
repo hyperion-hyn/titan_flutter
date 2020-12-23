@@ -335,17 +335,10 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
     try {
       var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
 
-      if (netData?.data?.isNotEmpty ?? false) {
+      var isNotEmpty = netData?.data?.isNotEmpty ?? false;
+      if (isNotEmpty) {
         _currentPageKey = netData.pagingKey;
         _dataList.addAll(filterRpOpenDataList(netData.data));
-        if (mounted) {
-          setState(() {
-            // todo: 不应该调用set state
-            _loadDataBloc.add(LoadingMoreSuccessEvent());
-          });
-        }
-      } else {
-        _loadDataBloc.add(LoadMoreEmptyEvent());
       }
 
       if (_filterDataList?.isEmpty??true && _currentPageKey == null) {
@@ -355,7 +348,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
           });
         }
       } else {
-        if (_dataList?.isNotEmpty ?? false) {
+        if (isNotEmpty) {
           if (mounted) {
             setState(() {
               _loadDataBloc.add(LoadingMoreSuccessEvent());
