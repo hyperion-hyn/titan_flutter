@@ -15,7 +15,7 @@ import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 class RpRecordListPage extends StatefulWidget {
-  final int state; // 1: 已经打开，2：未打开
+  final RedPocketType state; // 1: 已经打开，2：未打开
   RpRecordListPage({this.state});
 
   @override
@@ -31,6 +31,8 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
   Map<String, dynamic> _currentPageKey;
   var _address = "";
   List<RpOpenRecordEntity> _dataList = [];
+  List<RpOpenRecordEntity> get _filterDataList =>
+      _dataList?.where((element) => element.type == widget.state.index)?.toList()?.reversed?.toList() ?? [];
 
   int lastDay;
 
@@ -60,10 +62,10 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: HexColor('#F8F8F8'),
-      appBar: BaseAppBar(
-        baseTitle: '我的红包',
-        backgroundColor: HexColor('#F8F8F8'),
-      ),
+      // appBar: BaseAppBar(
+      //   baseTitle: '我的红包',
+      //   backgroundColor: HexColor('#F8F8F8'),
+      // ),
       body: _pageView(),
     );
   }
@@ -85,7 +87,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
           SliverList(
               delegate: SliverChildBuilderDelegate(
             (context, index) {
-              var model = _dataList[index];
+              var model = _filterDataList[index];
 
               var currentDate = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
 
@@ -116,7 +118,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
                 ],
               );
             },
-            childCount: _dataList?.length ?? 0,
+            childCount: _filterDataList?.length ?? 0,
           ))
         ],
       ),
@@ -124,7 +126,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
   }
 
   Widget _itemBuilder(int index) {
-    var model = _dataList[index];
+    var model = _filterDataList[index];
 
     var luckState = RpLuckState.values[(model?.luck ?? 0)];
     var rpInfoModel = getRpLuckStateInfo(model);
@@ -284,6 +286,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
     );
   }
 
+  var _countRequest = 0;
   void getNetworkData() async {
     _currentPageKey = null;
     try {
@@ -295,14 +298,28 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
 
         // todo:排序
         //_dataList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      }
 
+      if (_filterDataList?.isEmpty??true) {
+
+        var isEmptyKey = _currentPageKey?.isNotEmpty??false;
+        print("[$runtimeType] getNetworkData, _countRequest:$_countRequest");
+        if (isEmptyKey) {
+          _countRequest += 1;
+          getMoreNetworkData();
+        } else {
+          if (mounted) {
+            setState(() {
+              _loadDataBloc.add(LoadEmptyEvent());
+            });
+          }
+        }
+      } else {
         if (mounted) {
           setState(() {
             _loadDataBloc.add(RefreshSuccessEvent());
           });
         }
-      } else {
-        _loadDataBloc.add(LoadEmptyEvent());
       }
     } catch (e) {
       _loadDataBloc.add(LoadFailEvent());
@@ -329,6 +346,28 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
         }
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
+      }
+
+      if (_filterDataList?.isEmpty??true && _currentPageKey == null) {
+        if (mounted) {
+          setState(() {
+            _loadDataBloc.add(LoadEmptyEvent());
+          });
+        }
+      } else {
+        if (_dataList?.isNotEmpty ?? false) {
+          if (mounted) {
+            setState(() {
+              _loadDataBloc.add(LoadingMoreSuccessEvent());
+            });
+          }
+        } else {
+          if (mounted) {
+            setState(() {
+              _loadDataBloc.add(LoadMoreEmptyEvent());
+            });
+          }
+        }
       }
     } catch (e) {
       _loadDataBloc.add(LoadMoreFailEvent());

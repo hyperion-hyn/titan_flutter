@@ -84,8 +84,6 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
 
   int _recommendLevel = 5;
 
-  bool _isStatic = true;
-
   @override
   void initState() {
     super.initState();
