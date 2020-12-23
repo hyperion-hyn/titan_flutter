@@ -42,7 +42,7 @@ class RpLevelAddStakingPage extends StatefulWidget {
 }
 
 class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
-  TextEditingController _textEditingController = new TextEditingController();
+  final TextEditingController _textEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final RPApi _rpApi = RPApi();
   final StreamController<String> _inputController = StreamController.broadcast();

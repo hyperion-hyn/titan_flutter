@@ -152,7 +152,7 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
 
-    String totalAmountStr = FormatUtil.stringFormatCoinNum(model?.totalAmountStr ?? "0") ?? '--';
+    String totalAmountStr = FormatUtil.stringFormatCoinNum(model?.totalAmountStr ?? "0", decimal: 6,) ?? '--';
 
     return InkWell(
       onTap: () {

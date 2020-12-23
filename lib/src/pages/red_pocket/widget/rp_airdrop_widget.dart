@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,13 +16,16 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_airdrop_round_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 
+import '../rp_my_level_record_page.dart';
 import '../rp_my_rp_records_page.dart';
 import '../rp_record_tab_page.dart';
 
@@ -34,10 +38,12 @@ enum AirdropState {
 class RPAirdropWidget extends StatefulWidget {
   final RpAirdropRoundInfo rpAirdropRoundInfo;
   final RPStatistics rpStatistics;
+  final RpLevelAirdropInfo rpLevelAirdropInfo;
 
   RPAirdropWidget({
     this.rpAirdropRoundInfo,
     this.rpStatistics,
+    this.rpLevelAirdropInfo,
   });
 
   @override
@@ -70,8 +76,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
   int _nextRoundRemainTime = 0; // 下一轮剩余时间
   int _currentRoundRemainTime = 0;
 
-  RpAirdropRoundInfo _latestRoundInfo;
+  RpAirdropRoundInfo _latestLuckyRoundInfo;
   RPStatistics _rpStatistics;
+  RpLevelAirdropInfo _rpLevelAirdropInfo;
 
   int _lastMinuteRpCount = 0; //最近一次获得的rp总奖励
   int _lastTimeCelebrateBegin = 0;
@@ -97,8 +104,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
   @override
   void didChangeDependencies() {
-    _latestRoundInfo = widget.rpAirdropRoundInfo;
+    _latestLuckyRoundInfo = widget.rpAirdropRoundInfo;
     _rpStatistics = widget.rpStatistics;
+    _rpLevelAirdropInfo = widget.rpLevelAirdropInfo;
 
     _resetNextRoundTime();
     // _updateAirdropState();
@@ -173,9 +181,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
   void _resetNextRoundTime() {
     var now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    var currentRoundStartTime = _latestRoundInfo?.startTime ?? 0;
-    var currentRoundEndTime = _latestRoundInfo?.endTime ?? 0;
-    var nextRoundStartTime = _latestRoundInfo?.nextRoundStartTime ?? 0;
+    var currentRoundStartTime = _latestLuckyRoundInfo?.startTime ?? 0;
+    var currentRoundEndTime = _latestLuckyRoundInfo?.endTime ?? 0;
+    var nextRoundStartTime = _latestLuckyRoundInfo?.nextRoundStartTime ?? 0;
 
     if (currentRoundStartTime - now > 0) {
       _nextRoundRemainTime = currentRoundStartTime - now;
@@ -273,6 +281,17 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     var airDropPercent = _rpStatistics?.rpContractInfo?.dropOnPercent ?? '--';
     var alreadyAirdrop = '--';
 
+    var currentLevel =
+        RedPocketInheritedModel.of(context).rpMyLevelInfo?.currentLevel ?? 0;
+    var hint = '';
+    if (currentLevel == 0) {
+      hint = '提升量级可参与';
+    } else if (currentLevel == 5) {
+      hint = '你正在参与空投';
+    } else {
+      hint = '提升量级可获得更多红包';
+    }
+
     try {
       alreadyAirdrop = FormatUtil.stringFormatCoinNum(
         _rpStatistics?.airdropInfo?.totalAmountStr ?? '0',
@@ -310,11 +329,15 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
           Expanded(
             child: Align(
               alignment: Alignment.centerRight,
-              child: Text(
-                '${S.of(context).rp_already_airdropped}: $alreadyAirdrop ',
-                style: TextStyle(
-                  color: DefaultColors.color999,
-                  fontSize: 12,
+              child: InkWell(
+                onTap: _navToLevel,
+                child: Text(
+                  //'${S.of(context).rp_already_airdropped}: $alreadyAirdrop ',
+                  hint,
+                  style: TextStyle(
+                    color: currentLevel == 0 ? Colors.red : Colors.blue,
+                    fontSize: 12,
+                  ),
                 ),
               ),
             ),
@@ -402,12 +425,12 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     var now = DateTime.now().millisecondsSinceEpoch;
     var _nextRoundStartTimeMillieSecond = 0;
 
-    if (now > (_latestRoundInfo?.endTime ?? 0)) {
+    if (now > (_latestLuckyRoundInfo?.endTime ?? 0)) {
       _nextRoundStartTimeMillieSecond =
-          (_latestRoundInfo?.nextRoundStartTime ?? 0) * 1000;
+          (_latestLuckyRoundInfo?.nextRoundStartTime ?? 0) * 1000;
     } else {
       _nextRoundStartTimeMillieSecond =
-          (_latestRoundInfo?.startTime ?? 0) * 1000;
+          (_latestLuckyRoundInfo?.startTime ?? 0) * 1000;
     }
 
     var _nextRoundTimeText = _nextRoundStartTimeMillieSecond != 0
@@ -464,7 +487,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
                 } else {
-                  var nextRoundText = '${S.of(context).rp_next_round_estimate} ${FormatUtil.formatTimer(
+                  var nextRoundText =
+                      '${S.of(context).rp_next_round_estimate} ${FormatUtil.formatTimer(
                     _nextRoundRemainTime,
                   )}';
                   return Text(nextRoundText);
@@ -530,7 +554,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
                 } else {
-                  var currentRoundText = '${S.of(context).rp_current_round_remain_time} ${FormatUtil.formatMinuteTimer(
+                  var currentRoundText =
+                      '${S.of(context).rp_current_round_remain_time} ${FormatUtil.formatMinuteTimer(
                     _currentRoundRemainTime,
                   )}';
                   return Text(currentRoundText,
@@ -584,7 +609,8 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
                 } else {
-                  var currentRoundText = '${S.of(context).rp_current_round_remain_time} ${FormatUtil.formatMinuteTimer(
+                  var currentRoundText =
+                      '${S.of(context).rp_current_round_remain_time} ${FormatUtil.formatMinuteTimer(
                     _currentRoundRemainTime,
                   )}';
                   return Text(currentRoundText,
@@ -597,16 +623,21 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
   }
 
   _airdropStatisticsView() {
-    var myRpCount = _latestRoundInfo?.myRpCount ?? '--';
-    var myRpAmount = '--';
-    var totalAmount = '--';
+    var myLuckyRpCount = _latestLuckyRoundInfo?.myRpCount ?? '--';
+    var myLuckyRpAmount = '--';
+    var luckyTotalAmount = '--';
+    var levelTotalAmount = '--';
     try {
-      myRpAmount = FormatUtil.stringFormatCoinNum(
-        _latestRoundInfo?.myRpAmountStr ?? '0',
+      myLuckyRpAmount = FormatUtil.stringFormatCoinNum(
+        _latestLuckyRoundInfo?.myRpAmountStr ?? '0',
         decimal: 4,
       );
-      totalAmount = FormatUtil.stringFormatCoinNum(
-        _latestRoundInfo?.totalRpAmountStr ?? '0',
+      luckyTotalAmount = FormatUtil.stringFormatCoinNum(
+        _latestLuckyRoundInfo?.totalRpAmountStr ?? '0',
+        decimal: 4,
+      );
+      levelTotalAmount = FormatUtil.stringFormatCoinNum(
+        _rpLevelAirdropInfo?.totalRpAmountStr ?? '0',
         decimal: 4,
       );
     } catch (e) {}
@@ -614,13 +645,14 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
 
     var now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    var _currentRoundStartTime = _latestRoundInfo?.startTime ?? 0;
-    var _currentRoundEndTime = _latestRoundInfo?.endTime ?? 0;
+    var _currentRoundStartTime = _latestLuckyRoundInfo?.startTime ?? 0;
+    var _currentRoundEndTime = _latestLuckyRoundInfo?.endTime ?? 0;
 
-    var airdropRoundText =
+    var luckyAirdropRoundText =
         _currentRoundStartTime < now && now < _currentRoundEndTime
             ? S.of(context).rp_current_round_airdropped
             : S.of(context).rp_latest_round;
+    var levelAirdropRoundText = S.of(context).rp_latest_round;
 
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -635,7 +667,6 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
-            vertical: 4.0,
           ),
           child: Row(
             children: [
@@ -658,100 +689,169 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 ),
               ),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text.rich(TextSpan(children: [
-                        TextSpan(
-                          text: S.of(context).rp_lucky_pocket,
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
+                child: CarouselSlider(
+                    items: [
+                      Wrap(
+                        children: [
+                          Text.rich(TextSpan(children: [
+                            TextSpan(
+                              text: '量级红包',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' $levelAirdropRoundText ( $levelTotalAmount RP)',
+                              style: TextStyle(fontSize: 13),
+                            )
+                          ])),
+                          SizedBox(
+                            height: 4,
                           ),
-                        ),
-                        TextSpan(
-                          text: ' $airdropRoundText ( $totalAmount RP)',
-                          style: TextStyle(fontSize: 13),
-                        )
-                      ])),
-                      SizedBox(
-                        height: 4,
+                          Wrap(
+                            children: [
+                              _levelAirdropAmountRichText(1),
+                              _levelAirdropAmountRichText(2),
+                              _levelAirdropAmountRichText(3),
+                              _levelAirdropAmountRichText(4),
+                              _levelAirdropAmountRichText(5),
+                            ],
+                          )
+                        ],
                       ),
-                      activeWallet != null
-                          ? Text.rich(TextSpan(children: [
+                      Wrap(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text.rich(TextSpan(children: [
                               TextSpan(
-                                text: S.of(context).rp_my_airdrop_detail_1,
-                                style: TextStyle(fontSize: 13),
-                              ),
-                              TextSpan(
-                                text: ' $myRpCount ',
+                                text: S.of(context).rp_lucky_pocket,
                                 style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold),
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               TextSpan(
-                                text: S.of(context).rp_my_airdrop_detail_2,
-                                style: TextStyle(fontSize: 13),
-                              ),
-                              TextSpan(
-                                text: ' $myRpAmount ',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              TextSpan(
-                                text: 'RP',
+                                text:
+                                    ' $luckyAirdropRoundText ( $luckyTotalAmount RP)',
                                 style: TextStyle(fontSize: 13),
                               )
-                            ]))
-                          : Row(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (){
-                                      if (mounted) {
-                                        setState(() {});
-                                      }
-                                    });
-                                    /*Application.router
-                                        .navigateTo(
-                                          context,
-                                          Routes.wallet_manager,
-                                        )
-                                        .then((value) => () {
-                                              if (mounted) {
-                                                setState(() {});
-                                              }
-                                            });*/
-                                  },
-                                  child: Text(
-                                    S.of(context).create_import_wallet_account,
+                            ])),
+                          ),
+                          activeWallet != null
+                              ? Text.rich(TextSpan(children: [
+                                  TextSpan(
+                                    text: S.of(context).rp_my_airdrop_detail_1,
+                                    style: TextStyle(fontSize: 13),
+                                  ),
+                                  TextSpan(
+                                    text: ' $myLuckyRpCount ',
                                     style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.blue,
+                                        fontSize: 13,
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  TextSpan(
+                                    text: S.of(context).rp_my_airdrop_detail_2,
+                                    style: TextStyle(fontSize: 13),
+                                  ),
+                                  TextSpan(
+                                    text: ' $myLuckyRpAmount ',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  TextSpan(
+                                    text: 'RP',
+                                    style: TextStyle(fontSize: 13),
+                                  )
+                                ]))
+                              : Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (){
+                                          if (mounted) {
+                                            setState(() {});
+                                          }
+                                        });
+                                        /*Application.router
+                                            .navigateTo(
+                                              context,
+                                              Routes.wallet_manager,
+                                            )
+                                            .then((value) => () {
+                                                  if (mounted) {
+                                                    setState(() {});
+                                                  }
+                                                });*/
+                                      },
+                                      child: Text(
+                                        S
+                                            .of(context)
+                                            .create_import_wallet_account,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    Text(
+                                      S.of(context).rp_to_join_airdrop,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  S.of(context).rp_to_join_airdrop,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
-                            ),
+                        ],
+                      ),
                     ],
-                  ),
-                ),
+                    options: CarouselOptions(
+                      aspectRatio: 2.1,
+                      initialPage: 0,
+                      viewportFraction: 1,
+                      enlargeCenterPage: false,
+                      enableInfiniteScroll: true,
+                      autoPlay: true,
+                      autoPlayInterval: Duration(seconds: 5),
+                      autoPlayAnimationDuration: Duration(milliseconds: 800),
+                      autoPlayCurve: Curves.fastOutSlowIn,
+                      scrollDirection: Axis.vertical,
+                    )),
               )
             ],
           ),
         ),
       ),
+    );
+  }
+
+  _levelAirdropAmountRichText(int level) {
+    var levelName = levelValueToLevelName(level);
+    return Padding(
+      padding: EdgeInsets.only(right: 4),
+      child: RichText(
+          text: TextSpan(children: [
+        TextSpan(
+          text: '$levelName级',
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.black,
+          ),
+        ),
+        TextSpan(
+          text: ' ${_rpLevelAirdropInfo?.getLevelAmountStr(level) ?? '--'} RP ',
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ])),
     );
   }
 
@@ -809,10 +909,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
   /// 更新空投机器状态
   _updateAirdropState() {
     int _now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    int _currentRoundStartTime = _latestRoundInfo?.startTime ?? 0;
-    int _currentRoundEndTime = _latestRoundInfo?.endTime ?? 0;
-    int _nextRoundStartTime = _latestRoundInfo?.nextRoundStartTime;
-    int _currentRoundReceivedCount = _latestRoundInfo?.myRpCount ?? 0;
+    int _currentRoundStartTime = _latestLuckyRoundInfo?.startTime ?? 0;
+    int _currentRoundEndTime = _latestLuckyRoundInfo?.endTime ?? 0;
+    int _nextRoundStartTime = _latestLuckyRoundInfo?.nextRoundStartTime;
+    int _currentRoundReceivedCount = _latestLuckyRoundInfo?.myRpCount ?? 0;
 
     if (_currentRoundReceivedCount > _lastMinuteRpCount) {
       _lastMinuteRpCount = _currentRoundReceivedCount;
@@ -864,10 +964,15 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
           ?.getAtlasAccount()
           ?.address;
 
-      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
+      _latestLuckyRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
         _address,
       );
+
       _rpStatistics = await _rpApi.getRPStatistics(
+        _address,
+      );
+
+      _rpLevelAirdropInfo = await _rpApi.getLatestLevelAirdropInfo(
         _address,
       );
 
@@ -886,6 +991,20 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
         context,
         MaterialPageRoute(
           builder: (context) => RpMyRpRecordsPage(),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
+    }
+  }
+
+  _navToLevel() {
+    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+    if (activeWallet != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RpMyLevelRecordsPage(),
         ),
       );
     } else {

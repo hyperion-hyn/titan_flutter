@@ -14,7 +14,9 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_level_record_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
@@ -53,6 +55,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   RPStatistics _rpStatistics;
   RpMyLevelInfo _myLevelInfo;
   RpAirdropRoundInfo _latestRoundInfo;
+  RpLevelAirdropInfo _rpLevelAirdropInfo;
 
   @override
   void initState() {
@@ -126,10 +129,10 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             physics: BouncingScrollPhysics(),
             slivers: <Widget>[
               _myRPInfo(),
-              _airdropWidget(),
-              _levelWidget(),
               _rpPool(),
-              //_statisticsWidget(),
+              _airdropWidget(),
+              //_levelWidget(),
+              _statisticsWidget(),
               _projectIntro(),
             ],
           )),
@@ -234,21 +237,20 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     Text(
                       '钱包余额',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 12,
                         color: DefaultColors.color999,
                       ),
                       textAlign: TextAlign.end,
                     ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      '$rpBalance',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.black,
+                    SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        '$rpBalance',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
                       ),
-                      textAlign: TextAlign.end,
                     ),
                   ],
                 )
@@ -269,6 +271,43 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     int highestLevel = _myLevelInfo?.highestLevel ?? 0;
 
     var isShowDowngrade = highestLevel > currentLevel;
+    var isZeroLevel = currentLevel == 0;
+
+    var hint = isShowDowngrade || isZeroLevel
+        ? Padding(
+            padding: const EdgeInsets.only(
+              top: 4,
+            ),
+            child: Row(
+              children: [
+                Image.asset(
+                  isZeroLevel
+                      ? 'res/drawable/error_rounded.png'
+                      : 'res/drawable/ic_rp_level_down.png',
+                  width: 8,
+                ),
+                SizedBox(
+                  width: 2,
+                ),
+                Expanded(
+                  child: Text(
+                    isZeroLevel ? '当前量级无法参与红包空投' : '等级下降了',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        : Text(
+            currentLevel < 5 ? '去提升' : '去查看',
+            style: TextStyle(
+              color: Colors.blue,
+              fontSize: 9,
+            ),
+          );
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -301,8 +340,21 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     Expanded(
                       child: accountInfoWidget,
                     ),
-                    SizedBox(
-                      width: 16,
+                    InkWell(
+                      onTap: _navToLevel,
+                      child: Container(
+                        width: 70,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "res/drawable/ic_rp_level_$currentLevel.png",
+                              height: 33,
+                            ),
+                            hint,
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -660,6 +712,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             child: RPAirdropWidget(
               rpStatistics: _rpStatistics,
               rpAirdropRoundInfo: _latestRoundInfo,
+              rpLevelAirdropInfo: _rpLevelAirdropInfo,
             ),
           ),
         ),
@@ -670,8 +723,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   _rpPool() {
     var rpYesterday = '--';
     var myHYNStaking = '--';
-    var globalHYNStaking = '--';
-    var globalTransmit = '--';
     var poolPercent = _rpStatistics?.rpContractInfo?.poolPercent ?? '--';
 
     try {
@@ -681,140 +732,118 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       myHYNStaking = FormatUtil.stringFormatCoinNum(
         _rpStatistics?.self?.totalStakingHynStr,
       );
-      globalHYNStaking = FormatUtil.stringFormatCoinNum(
-        _rpStatistics?.global?.totalStakingHynStr,
-      );
-      globalTransmit = FormatUtil.stringFormatCoinNum(
-        _rpStatistics?.global?.transmitStr,
-      );
     } catch (e) {}
 
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
-        child: InkWell(
-          borderRadius: BorderRadius.all(Radius.circular(16.0)),
-          onTap: _navToRPPool,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(16.0)),
-            ),
-            child: Padding(
-              padding: _cardPadding(),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        S.of(context).rp_transmit_pool,
+        padding: const EdgeInsets.only(
+          left: 16.0,
+          right: 16.0,
+          top: 16.0,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(16.0)),
+          ),
+          child: Padding(
+            padding: _cardPadding(),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      S.of(context).rp_transmit_pool,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 4,
+                      ),
+                      child: Text(
+                        S.of(context).rp_total_amount_percent(poolPercent),
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                          color: DefaultColors.color999,
+                          fontSize: 12,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 4,
+                    ),
+                    Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 4,
+                      ),
+                      child: Text(
+                        '越早传导，获得越多RP!',
+                        style: TextStyle(
+                          fontSize: 12,
                         ),
-                        child: Text(
-                          S.of(context).rp_total_amount_percent(poolPercent),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  '$myHYNStaking',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text(
+                    '${S.of(context).rp_my_hyn_staking} (HYN)',
+                    style: TextStyle(
+                      color: DefaultColors.color999,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 2.0,
+                      horizontal: 8.0,
+                    ),
+                    color: DefaultColors.colorf2f2f2,
+                    child: RichText(
+                        text: TextSpan(children: [
+                      TextSpan(
+                          text: '${S.of(context).rp_transmit_yesterday}',
                           style: TextStyle(
                             color: DefaultColors.color999,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
+                            fontSize: 13,
+                          )),
+                      TextSpan(
+                          text: '  $rpYesterday RP',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 13,
+                          ))
+                    ])),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: ClickOvalButton(
+                    '马上传导',
+                    _navToRPPool,
+                    width: 140,
+                    height: 32,
+                    fontSize: 13,
+                    btnColor: [
+                      HexColor('#FFFF4D4D'),
+                      HexColor('#FFFF0829'),
                     ],
                   ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  Row(
-                    children: [
-                      _inkwellColumn(
-                        '$myHYNStaking HYN',
-                        S.of(context).rp_my_hyn_staking,
-                        onTap: _navToRPPool,
-                      ),
-                      Spacer(),
-                      Row(
-                        children: [
-                          Container(
-                            constraints: BoxConstraints(
-                              maxWidth: 100,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  '$rpYesterday RP',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor("#FF001B"),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 4.0,
-                                ),
-                                Text(
-                                  S.of(context).rp_transmit_yesterday,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: DefaultColors.color999,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: 16,
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                    ),
-                    child: Container(
-                      height: 0.5,
-                      color: HexColor('#F2F2F2'),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _poolInfoColumn(
-                          '$globalHYNStaking HYN',
-                          S.of(context).rp_global_hyn_staking,
-                        ),
-                      ),
-                      Expanded(
-                        child: _poolInfoColumn(
-                          '$globalTransmit RP',
-                          S.of(context).rp_global_transmit,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 24,
-                  )
-                  /*Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24.0),
-                    child: ClickOvalButton(
-                      S.of(context).check,
-                      _navToRPPool,
-                      width: 160,
-                      height: 32,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),*/
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -825,7 +854,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   _statisticsWidget() {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: _cardPadding(),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -1263,6 +1292,11 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
         _address,
       );
+
+      _rpLevelAirdropInfo = await _rpApi.getLatestLevelAirdropInfo(
+        _address,
+      );
+
       if (mounted) {
         _loadDataBloc.add(RefreshSuccessEvent());
         setState(() {});
