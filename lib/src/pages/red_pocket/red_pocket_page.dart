@@ -1210,7 +1210,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _navToManageWallet() {
-    WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (){
+    WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (wallet){
       if (mounted) {
         setState(() {});
       }

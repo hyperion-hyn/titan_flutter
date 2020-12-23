@@ -773,7 +773,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (){
+                                        WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (wallet){
                                           if (mounted) {
                                             setState(() {});
                                           }

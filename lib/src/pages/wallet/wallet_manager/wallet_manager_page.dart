@@ -41,14 +41,14 @@ class WalletManagerPage extends StatefulWidget {
     return _WalletManagerState();
   }
 
-  static Future jumpWalletManager(BuildContext context,{Function hasWalletUpdate,Function noWalletUpdate}) async {
+  static Future jumpWalletManager(BuildContext context,{void hasWalletUpdate(Wallet wallet),Function noWalletUpdate}) async {
     Wallet wallet = await Application.router.navigateTo(
       context,
       Routes.wallet_manager,
     );
     if(wallet != null) {
       if(hasWalletUpdate != null){
-        hasWalletUpdate();
+        hasWalletUpdate(wallet);
       }
       BlocProvider.of<WalletCmpBloc>(context)
           .add(ActiveWalletEvent(wallet: wallet));

@@ -137,7 +137,7 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
                           children: <Widget>[
                             InkWell(
                               onTap: () async {
-                                WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (){
+                                WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (wallet){
                                   setState(() {
                                     _isRefreshBalances = true;
                                   });
