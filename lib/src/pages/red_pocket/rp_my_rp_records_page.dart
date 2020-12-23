@@ -277,14 +277,9 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
   }
 
   void getNetworkData() async {
+    _currentPageKey = null;
     try {
       var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
-
-      /*if (widget.state == 1) {
-        netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
-      } else if (widget.state == 2) {
-        netData = await _rpApi.getMyRpRecordListPending(_address, pagingKey: _currentPageKey);
-      }*/
 
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
@@ -311,12 +306,6 @@ class _RpMyRpRecordsState extends BaseState<RpMyRpRecordsPage> with AutomaticKee
 
     try {
       var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
-
-      /* if (widget.state == 1) {
-        netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
-      } else if (widget.state == 2) {
-        netData = await _rpApi.getMyRpRecordListPending(_address, pagingKey: _currentPageKey);
-      }*/
 
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;

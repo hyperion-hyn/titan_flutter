@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 
 class AddPositionImagePage extends StatefulWidget {
   AddPositionImagePage();
@@ -62,14 +63,9 @@ class _AddPositionImageState extends State<AddPositionImagePage> with TickerProv
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: Text(
-          S.of(context).shooting_specifications_title,
-          style: TextStyle(color: Colors.white),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-        centerTitle: true,
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).shooting_specifications_title,
+        backgroundColor: Colors.white,
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(

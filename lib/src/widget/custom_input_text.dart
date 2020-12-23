@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/l10n.dart';
 
-typedef void TextFieldCallBack(String content,{bool isForceSearch});
+typedef void TextFieldCallBack(String content, {bool isForceSearch});
 
 class CustomInputText extends StatefulWidget {
   final String text;
@@ -68,19 +68,19 @@ class _TextaState extends State<CustomInputText> {
 
   void searchTextChangeListener() {
     String currentText = widget.controller.text.trim();
-    if(oldText != currentText){
+    if (oldText != currentText) {
       _filterSubject.sink.add(currentText);
       oldText = currentText;
     }
     if (currentText.isNotEmpty) {
       setState(() {
-          widget.isShowClean = true;
-        });
+        widget.isShowClean = true;
+      });
     } else {
       widget.fieldCallBack("");
-        setState(() {
-          widget.isShowClean = false;
-        });
+      setState(() {
+        widget.isShowClean = false;
+      });
     }
   }
 
@@ -96,8 +96,6 @@ class _TextaState extends State<CustomInputText> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -108,21 +106,26 @@ class _TextaState extends State<CustomInputText> {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-          child: Image.asset('res/drawable/ic_select_category_search_bar.png', width: 16, height: 16),
+          child: Image.asset(
+            'res/drawable/ic_select_category_search_bar.png',
+            width: 16,
+            height: 16,
+            color: Color(0xff777777),
+          ),
         ),
         Expanded(
           child: TextFormField(
 //              inputFormatters: [LengthLimitingTextInputFormatter(9)],
             textInputAction: TextInputAction.search,
-            onFieldSubmitted: (value){
-              widget.fieldCallBack(value,isForceSearch: true);
+            onFieldSubmitted: (value) {
+              widget.fieldCallBack(value, isForceSearch: true);
             },
 //              focusNode: _focusNode,
 //              textAlign: TextAlign.left,
             controller: widget.controller,
             autofocus: false,
             style: TextStyle(fontSize: 14),
-            onChanged: (value){
+            onChanged: (value) {
               searchTextChangeListener();
             },
             maxLines: 1,
@@ -144,19 +147,19 @@ class _TextaState extends State<CustomInputText> {
             children: <Widget>[
               widget.isShowClean
                   ? IconButton(
-                icon: Image.asset(
-                  'res/drawable/ic_select_category_search_bar_clear.png',
-                  height: 16,
-                  width: 16,
-                ),
-                onPressed: onCancel,
-              )
+                      icon: Image.asset(
+                        'res/drawable/ic_select_category_search_bar_clear.png',
+                        height: 16,
+                        width: 16,
+                      ),
+                      onPressed: onCancel,
+                    )
                   : Text(""),
               widget.isRightBtn
                   ? IconButton(
-                icon: widget.rightIcon,
-                onPressed: widget.onRightBtnClick,
-              )
+                      icon: widget.rightIcon,
+                      onPressed: widget.onRightBtnClick,
+                    )
                   : Text(""),
             ],
           ),

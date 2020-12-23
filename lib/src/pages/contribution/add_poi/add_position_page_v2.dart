@@ -165,14 +165,9 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: Text(
-          S.of(context).data_position_adding,
-          style: TextStyle(color: Colors.white),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-        centerTitle: true,
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).data_position_adding,
+        backgroundColor: Colors.white,
       ),
       body: _buildView(context),
     );
