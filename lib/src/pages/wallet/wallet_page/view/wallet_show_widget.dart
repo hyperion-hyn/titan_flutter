@@ -244,7 +244,7 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
                               child: CircularProgressIndicator(
                                 backgroundColor: Colors.white,
                                 valueColor: new AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-                                strokeWidth: 3,
+                                strokeWidth: 1,
                               ),
                             )
                         ],
