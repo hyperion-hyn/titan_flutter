@@ -189,186 +189,192 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
               child: BaseGestureDetector(
                 context: context,
                 child: SingleChildScrollView(
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                    ),
-                    color: Colors.white,
-                    child: Column(
-                      children: <Widget>[
-                        rpRowText(
-                          title: '当前量级',
-                          amount: levelValueToLevelName(_myLevelInfo?.currentLevel ?? 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
                         ),
-                        rpRowText(
-                          title: '当前持币',
-                          amount: '${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              Text(
-                                '转入持币',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                  '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 12,
-                                    color: HexColor('#999999'),
-                                  )),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 16,
-                            right: 16,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                                flex: 1,
-                                child: Form(
-                                  key: _formKey,
-                                  child: RoundBorderTextField(
-                                    onChanged: (text) {
-                                      _formKey.currentState.validate();
-
-                                      _inputController.add(text);
-                                    },
-                                    controller: _textEditingController,
-                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(18),
-                                      FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
-                                    ],
-                                    hint: '请输入增加数量',
-                                    validator: (textStr) {
-                                      if (textStr.length == 0) {
-                                        return '请输入增加数量';
-                                      }
-
-                                      var inputValue = Decimal.tryParse(textStr ?? '0');
-                                      if (inputValue == null || inputValue <= Decimal.zero) {
-                                        return S.of(context).please_enter_correct_amount;
-                                      }
-
-                                      var balanceValue = Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ??
-                                          Decimal.fromInt(0);
-                                      //print("inputValue:$inputValue, balanceValue:$balanceValue");
-
-                                      if (inputValue > balanceValue) {
-                                        return '输入数量超过了钱包余额';
-                                      }
-                                    },
+                        color: Colors.white,
+                        child: Column(
+                          children: <Widget>[
+                            rpRowText(
+                              title: '当前量级',
+                              amount: levelValueToLevelName(_myLevelInfo?.currentLevel ?? 0),
+                            ),
+                            rpRowText(
+                              title: '当前持币',
+                              amount: '${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: <Widget>[
+                                  Text(
+                                    '转入持币',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
+                                    ),
                                   ),
-                                ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                      '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 12,
+                                        color: HexColor('#999999'),
+                                      )),
+                                ],
                               ),
-                              StreamBuilder<Object>(
-                                  stream: _inputController.stream,
-                                  builder: (context, snapshot) {
-                                    bool isShowUp = (_balanceValue > _inputValue && _inputValue > Decimal.zero);
-                                    return isShowUp
-                                        ? Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  left: 16,
-                                                  right: 16,
-                                                ),
-                                                child: Transform.rotate(
-                                                  angle: math.pi,
-                                                  child: Image.asset(
-                                                    'res/drawable/ic_rp_level_down.png',
-                                                    width: 15,
-                                                    color: Theme.of(context).primaryColor,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: 16,
+                                right: 16,
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 1,
+                                    child: Form(
+                                      key: _formKey,
+                                      child: RoundBorderTextField(
+                                        onChanged: (text) {
+                                          _formKey.currentState.validate();
+
+                                          _inputController.add(text);
+                                        },
+                                        controller: _textEditingController,
+                                        keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                        inputFormatters: [
+                                          LengthLimitingTextInputFormatter(18),
+                                          FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
+                                        ],
+                                        hint: '请输入增加数量',
+                                        validator: (textStr) {
+                                          if (textStr.length == 0) {
+                                            return '请输入增加数量';
+                                          }
+
+                                          var inputValue = Decimal.tryParse(textStr ?? '0');
+                                          if (inputValue == null || inputValue <= Decimal.zero) {
+                                            return S.of(context).please_enter_correct_amount;
+                                          }
+
+                                          var balanceValue =
+                                              Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ??
+                                                  Decimal.fromInt(0);
+                                          //print("inputValue:$inputValue, balanceValue:$balanceValue");
+
+                                          if (inputValue > balanceValue) {
+                                            return '输入数量超过了钱包余额';
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  StreamBuilder<Object>(
+                                      stream: _inputController.stream,
+                                      builder: (context, snapshot) {
+                                        bool isShowUp = (_balanceValue > _inputValue && _inputValue > Decimal.zero);
+                                        return isShowUp
+                                            ? Row(
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(
+                                                      left: 16,
+                                                      right: 16,
+                                                    ),
+                                                    child: Transform.rotate(
+                                                      angle: math.pi,
+                                                      child: Image.asset(
+                                                        'res/drawable/ic_rp_level_down.png',
+                                                        width: 15,
+                                                        color: Theme.of(context).primaryColor,
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  right: 4,
-                                                ),
-                                                child: Text(
-                                                  '预计总持币',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.normal,
-                                                    fontSize: 10,
-                                                    color: HexColor('#999999'),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(
+                                                      right: 4,
+                                                    ),
+                                                    child: Text(
+                                                      '预计总持币',
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.normal,
+                                                        fontSize: 10,
+                                                        color: HexColor('#999999'),
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                              Text(
-                                                '$_preTotalHoldValue RP',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 18,
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        : Container(
-                                            width: 60,
-                                          );
-                                  }),
-                            ],
-                          ),
+                                                  Text(
+                                                    '$_preTotalHoldValue RP',
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.w500,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            : Container(
+                                                width: 60,
+                                              );
+                                      }),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 6,
+                                    ),
+                                    child: Image.asset(
+                                      "res/drawable/add_position_image_detail.png",
+                                      width: 12,
+                                      height: 12,
+                                      color: HexColor('#999999'),
+                                    ),
+                                  ),
+                                  Text(
+                                    '适当增加持币可以防止因',
+                                    style: TextStyle(
+                                      color: HexColor('#999999'),
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                  Text(
+                                    ' Y',
+                                    style: TextStyle(
+                                        color: HexColor('#333333'), fontSize: 12, fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                    '增加而掉级',
+                                    style: TextStyle(
+                                      color: HexColor('#999999'),
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  right: 6,
-                                ),
-                                child: Image.asset(
-                                  "res/drawable/add_position_image_detail.png",
-                                  width: 12,
-                                  height: 12,
-                                  color: HexColor('#999999'),
-                                ),
-                              ),
-                              Text(
-                                '适当增加持币可以防止因',
-                                style: TextStyle(
-                                  color: HexColor('#999999'),
-                                  fontSize: 10,
-                                ),
-                              ),
-                              Text(
-                                ' Y',
-                                style: TextStyle(color: HexColor('#333333'), fontSize: 12, fontWeight: FontWeight.w600),
-                              ),
-                              Text(
-                                '增加而掉级',
-                                style: TextStyle(
-                                  color: HexColor('#999999'),
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                      ),
+                      _confirmButtonWidget(),
+                    ],
                   ),
-                  _confirmButtonWidget(),
-                ])),
+                ),
               ),
             ),
           ),
@@ -431,7 +437,6 @@ class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
         _isLoading = true;
       });
     }
-
 
     Future.delayed(Duration(milliseconds: 111)).then((_) async {
       try {
