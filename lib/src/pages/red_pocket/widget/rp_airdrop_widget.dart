@@ -665,7 +665,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
             borderRadius: BorderRadius.circular(4.0)),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
+            horizontal: 8.0,
           ),
           child: Row(
             children: [
@@ -679,11 +679,15 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      left: 8, top: 8, bottom: 8, right: 8),
+                    top: 8,
+                    bottom: 8,
+                    right: 8,
+                    left: 4,
+                  ),
                   child: Image.asset(
                     'res/drawable/red_pocket.png',
-                    width: 40,
-                    height: 40,
+                    width: 35,
+                    height: 35,
                   ),
                 ),
               ),
@@ -706,17 +710,17 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                               style: TextStyle(fontSize: 13),
                             )
                           ])),
-                          SizedBox(
-                            height: 4,
-                          ),
-                          Wrap(
-                            children: [
-                              _levelAirdropAmountRichText(1),
-                              _levelAirdropAmountRichText(2),
-                              _levelAirdropAmountRichText(3),
-                              _levelAirdropAmountRichText(4),
-                              _levelAirdropAmountRichText(5),
-                            ],
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Wrap(
+                              children: [
+                                _levelAirdropAmountRichText(1),
+                                _levelAirdropAmountRichText(2),
+                                _levelAirdropAmountRichText(3),
+                                _levelAirdropAmountRichText(4),
+                                _levelAirdropAmountRichText(5),
+                              ],
+                            ),
                           )
                         ],
                       ),
@@ -805,7 +809,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                       ),
                     ],
                     options: CarouselOptions(
-                      aspectRatio: 2.1,
+                      aspectRatio: 2.8,
                       initialPage: 0,
                       viewportFraction: 1,
                       enlargeCenterPage: false,
