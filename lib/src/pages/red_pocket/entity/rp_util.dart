@@ -1,7 +1,24 @@
-
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/utils/format_util.dart';
+
+String bigIntToEther(
+  String bigIntValue, {
+  int decimal = 4,
+}) {
+  if (bigIntValue == null) return '0';
+  try {
+    var value = FormatUtil.weiToEtherStr(bigIntValue);
+    var result = FormatUtil.stringFormatCoinNum(
+      value,
+      decimal: decimal,
+    );
+    return (result ?? '0');
+  } catch (e) {
+    return '0';
+  }
+}
 
 HexColor getStateColor(int status) {
   HexColor stateColor = HexColor('#999999');
@@ -98,7 +115,6 @@ String getStateDesc(int status) {
   }
   return stateDesc;
 }
-
 
 String levelValueToLevelName(int levelValue) {
   if (levelValue == null) return '--';
