@@ -97,7 +97,7 @@ dependencies:
       ref: stable
   bip39: ^1.0.3
   intl: ^0.16.1
-  webview_flutter: ^1.0.0
+  webview_flutter: 1.0.7
   pull_to_refresh: ^1.5.7
   carousel_slider: ^2.3.1
   fake_cookie_manager: ^0.1.0
