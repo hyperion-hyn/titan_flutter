@@ -28,6 +28,30 @@ class _WidgetDemoPageState extends State<WidgetDemoPage>
 
   @override
   Widget build(BuildContext context) {
+    var pieChartOption = '''
+    {
+    series: [
+        {
+            type: 'pie',
+            radius: ['40%', '90%'],
+            silent: true,
+            label: {
+                formatter: '{b} {d}%',
+                borderWidth: 1,
+                borderRadius: 4,
+                position: 'inner',
+            },
+            
+            data: [
+                {value: 335, name: '流通中'},
+                {value: 310, name: '已燃烧'},
+                {value: 234, name: '未发行'},
+            ],
+            color:['#00b04f', '#ffbf00', '#ff0000'],
+        }
+    ]
+}
+    ''';
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.black),
