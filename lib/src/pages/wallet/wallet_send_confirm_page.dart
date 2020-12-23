@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
@@ -140,15 +141,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).transfer_confirm,
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
-        centerTitle: true,
-        title: Text(
-          S.of(context).transfer_confirm,
-          style: TextStyle(color: Colors.black),
-        ),
       ),
       body: SingleChildScrollView(
         child: Column(

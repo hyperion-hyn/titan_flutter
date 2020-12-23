@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -60,6 +61,8 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
 
   // todo: 有空加开关
   bool _isOpenLevelCounts = false;
+
+  Decimal get _currentHoldingValue => Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? Decimal.zero;
 
   @override
   void initState() {
@@ -262,11 +265,16 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     var holding = '--';
     var burning = '--';
 
-    try {
-      holding = '${_myLevelInfo?.currentHoldingStr ?? '--'}';
-      burning = '${_myLevelInfo?.currBurningStr ?? '--'}';
+    holding = FormatUtil.stringFormatCoinNum(
+      _myLevelInfo?.currentHoldingStr ?? '0',
+      decimal: 4,
+    );
 
-    } catch (e) {}
+    burning = FormatUtil.stringFormatCoinNum(
+      _myLevelInfo?.currBurningStr ?? '0',
+      decimal: 4,
+    );
+
 
     var isShowDowngrade = highestLevel > currentLevel;
 
@@ -830,9 +838,9 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
   }
 
   _navToLevelUnStakingAction() {
-    if (_currentLevel == 0) {
+    if (_currentHoldingValue <= Decimal.zero) {
       Fluttertoast.showToast(
-        msg: '当前量级为0，可取回持币金额为0！',
+        msg: '可取回持币金额为0！',
         gravity: ToastGravity.CENTER,
       );
       return;
