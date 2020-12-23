@@ -91,10 +91,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
       Decimal.zero;
 
   int get _toLevel {
-    var holding = Decimal.tryParse(
-          _myLevelInfo?.currentHoldingStr ?? '0',
-        ) ??
-        Decimal.zero;
+    var holding = _currentHoldValue;
 
     var remainHolding = holding - _inputValue;
     var needHolding = Decimal.tryParse(
@@ -257,7 +254,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                                         return S.of(context).please_enter_correct_amount;
                                       }
 
-                                      var holding = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? 0;
+                                      var holding = _currentHoldValue;
 
                                       if (textStr.length == 0 || inputValue == Decimal.fromInt(0)) {
                                         return '请输入有效提币数量';

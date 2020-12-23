@@ -19,7 +19,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
-import 'package:titan/src/pages/red_pocket/red_pocket_level_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_withdraw_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -858,7 +858,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RedPocketLevelPage(),
+        builder: (context) => RpLevelPage(),
       ),
     );
     return;

@@ -23,16 +23,16 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'entity/rp_util.dart';
 
-class RedPocketLevelPage extends StatefulWidget {
-  RedPocketLevelPage();
+class RpLevelPage extends StatefulWidget {
+  RpLevelPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RedPocketLevelState();
+    return _RpLevelState();
   }
 }
 
-class _RedPocketLevelState extends BaseState<RedPocketLevelPage> {
+class _RpLevelState extends BaseState<RpLevelPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
