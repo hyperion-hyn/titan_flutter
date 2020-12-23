@@ -22,7 +22,7 @@ class RPStatisticsWidget extends StatefulWidget {
 class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
   RpStats _rpStats;
   RPApi _rpApi = RPApi();
-  
+
   var colorPalette = [
     '#FF5E5E',
     '#66A9FF',
@@ -116,8 +116,9 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
             color: ${jsonEncode(colorPalette)},
             data: [
                 {value: $totalSupply, name: '流通中'},
+                {value: $unSupply, name: '未发行'}, 
                 {value: $totalBurn, name: '总燃烧'},
-                {value: $unSupply, name: '未发行'},  
+                 
             ]
         }
     ]
@@ -160,8 +161,8 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
               ],
             ),
             _dataText('流通中', totalSupplyStr, colorStr: colorPalette[0]),
-            _dataText('总燃烧', totalBurningStr, colorStr: colorPalette[1]),
-            _dataText('未发行', unSupplyStr, colorStr: colorPalette[2]),
+            _dataText('总燃烧', totalBurningStr, colorStr: colorPalette[2]),
+            _dataText('未发行', unSupplyStr, colorStr: colorPalette[1],),
           ],
         ))
       ],
@@ -348,7 +349,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
   ''';
     return Row(
       children: [
-        Container( 
+        Container(
           width: 130,
           height: 130,
           child: Echarts(
