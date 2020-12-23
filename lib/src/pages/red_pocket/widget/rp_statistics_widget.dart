@@ -355,6 +355,10 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
           child: Echarts(
             option: _chartOption,
             captureAllGestures: false,
+            onMessage: (String message) {
+              Map<String, Object> messageAction = jsonDecode(message);
+              print("[$runtimeType] messageAction:$messageAction");
+            },
           ),
         ),
         SizedBox(

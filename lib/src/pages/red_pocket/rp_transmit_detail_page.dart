@@ -22,22 +22,22 @@ import 'package:titan/src/utils/format_util.dart';
 import 'entity/rp_staking_release_info.dart';
 import 'entity/rp_util.dart';
 
-class RpStakingDetailPage extends StatefulWidget {
+class RpTransmitDetailPage extends StatefulWidget {
   final RPStatistics rpStatistics;
   final RpStakingInfo rpStakingInfo;
 
-  RpStakingDetailPage(
+  RpTransmitDetailPage(
     this.rpStatistics,
     this.rpStakingInfo,
   );
 
   @override
   State<StatefulWidget> createState() {
-    return _RpStakingDetailPageState();
+    return _RpTransmitDetailPageState();
   }
 }
 
-class _RpStakingDetailPageState extends BaseState<RpStakingDetailPage>
+class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage>
     with RouteAware {
   final RPApi _rpApi = RPApi();
 
