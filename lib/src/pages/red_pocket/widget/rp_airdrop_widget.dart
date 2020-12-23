@@ -24,6 +24,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 
+import '../rp_my_level_record_page.dart';
 import '../rp_my_rp_records_page.dart';
 import '../rp_record_tab_page.dart';
 
@@ -327,12 +328,15 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
           Expanded(
             child: Align(
               alignment: Alignment.centerRight,
-              child: Text(
-                //'${S.of(context).rp_already_airdropped}: $alreadyAirdrop ',
-                hint,
-                style: TextStyle(
-                  color: currentLevel == 0 ? Colors.red : Colors.blue,
-                  fontSize: 12,
+              child: InkWell(
+                onTap: _navToLevel,
+                child: Text(
+                  //'${S.of(context).rp_already_airdropped}: $alreadyAirdrop ',
+                  hint,
+                  style: TextStyle(
+                    color: currentLevel == 0 ? Colors.red : Colors.blue,
+                    fontSize: 12,
+                  ),
                 ),
               ),
             ),
@@ -981,6 +985,20 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
         context,
         MaterialPageRoute(
           builder: (context) => RpMyRpRecordsPage(),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
+    }
+  }
+
+  _navToLevel() {
+    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+    if (activeWallet != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RpMyLevelRecordsPage(),
         ),
       );
     } else {

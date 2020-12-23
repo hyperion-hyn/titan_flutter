@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -20,6 +22,15 @@ class RPStatisticsWidget extends StatefulWidget {
 class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
   RpStats _rpStats;
   RPApi _rpApi = RPApi();
+  
+  var colorPalette = [
+    '#FF5E5E',
+    '#66A9FF',
+    '#66F0CB',
+    '#FBF463',
+    '#FFC05C',
+    '#4EECFA'
+  ];
 
   @override
   void initState() {
@@ -52,51 +63,28 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '发行',
-              style: TextStyle(
-                fontSize: 11,
-                color: DefaultColors.color999,
-              ),
-            ),
-          ),
+          _title('发行'),
           _rpSupply(),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              '空投',
-              style: TextStyle(
-                fontSize: 11,
-                color: DefaultColors.color999,
-              ),
-            ),
-          ),
+          _title('空投'),
           _rpAirdrop(),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              '传导',
-              style: TextStyle(
-                fontSize: 11,
-                color: DefaultColors.color999,
-              ),
-            ),
-          ),
+          _title('传导'),
           _rpPool(),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              '晋升',
-              style: TextStyle(
-                fontSize: 11,
-                color: DefaultColors.color999,
-              ),
-            ),
-          ),
+          _title('晋升'),
           _rpPromotion()
         ],
+      ),
+    );
+  }
+
+  _title(String name) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Text(
+        name,
+        style: TextStyle(
+          fontSize: 11,
+          color: DefaultColors.color999,
+        ),
       ),
     );
   }
@@ -125,7 +113,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                 borderRadius: 4,
                 position: 'inner',
             },
-                        
+            color: ${jsonEncode(colorPalette)},
             data: [
                 {value: $totalSupply, name: '流通中'},
                 {value: $totalBurn, name: '总燃烧'},
@@ -138,15 +126,15 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     return Row(
       children: [
         Container(
-          width: 150,
-          height: 150,
+          width: 130,
+          height: 130,
           child: Echarts(
             option: _chartOption,
             captureAllGestures: false,
           ),
         ),
         SizedBox(
-          width: 16,
+          width:24,
         ),
         Expanded(
             child: Column(
@@ -171,10 +159,9 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                 )
               ],
             ),
-
-            _dataText('流通中', totalSupplyStr, colorStr:'#c23531'),
-            _dataText('总燃烧', totalBurningStr, colorStr:'#2f4554'),
-            _dataText('未发行', unSupplyStr, colorStr:'#61a0a8'),
+            _dataText('流通中', totalSupplyStr, colorStr: colorPalette[0]),
+            _dataText('总燃烧', totalBurningStr, colorStr: colorPalette[1]),
+            _dataText('未发行', unSupplyStr, colorStr: colorPalette[2]),
           ],
         ))
       ],
@@ -214,6 +201,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                 position: 'inner',
                 
             },
+            color: ${jsonEncode(colorPalette)},
             data: [
                 {value: $totalAirdrop, name: '已空投'},
                 {value: $unAirdrop, name: '待空投'},
@@ -252,29 +240,28 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
       children: [
         Row(
           children: [
-            Expanded(
-              child: Container(
-                height: 150,
-                child: Echarts(
-                  option: _airdropChartOption,
-                  captureAllGestures: false,
-                ),
+            Container(
+              width: 130,
+              height: 130,
+              child: Echarts(
+                option: _airdropChartOption,
+                captureAllGestures: false,
               ),
             ),
             SizedBox(
-              width: 16,
+              width: 24,
             ),
             Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _dataText('已空投', totalAirdropStr, colorStr:'#c23531'),
-                    _dataText('未空投', unAirdropStr, colorStr:'#2f4554'),
-                  ],
-                ))
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _dataText('已空投', totalAirdropStr, colorStr: colorPalette[0]),
+                _dataText('未空投', unAirdropStr, colorStr: colorPalette[1]),
+              ],
+            ))
             // Expanded(
-            //   child: Container( 
-            //     height: 150,
+            //   child: Container(
+            //     height: 130,
             //     child: Echarts(
             //       option: _redPocketChartOption,
             //       captureAllGestures: false,
@@ -290,12 +277,8 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
           children: [
             Row(
               children: [
-                _dataText(
-                  '红包总量',
-                  totalStr,
-                  isHighLight: true,
-                  isExpanded: false
-                ),
+                _dataText('红包总量', totalStr,
+                    isHighLight: true, isExpanded: false),
               ],
             ),
             Row(
@@ -354,6 +337,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                 borderRadius: 4,
                 position: 'inner',
             },
+            color: ${jsonEncode(colorPalette)},
             data: [
                 {value: $transmitRp, name: '已传导'},
                 {value: $unTransmitRp, name: '未传导'},
@@ -364,24 +348,24 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
   ''';
     return Row(
       children: [
-        Container(
-          width: 150,
-          height: 150,
+        Container( 
+          width: 130,
+          height: 130,
           child: Echarts(
             option: _chartOption,
             captureAllGestures: false,
           ),
         ),
         SizedBox(
-          width: 16,
+          width: 24,
         ),
         Expanded(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _dataText('传导总量', totalStr),
-            _dataText('已传导', transmitRPStr,colorStr: '#c23531'),
-            _dataText('未传导', unTransmitRpStr,colorStr: '#2f4554'),
+            _dataText('已传导', transmitRPStr, colorStr: colorPalette[0]),
+            _dataText('未传导', unTransmitRpStr, colorStr: colorPalette[1]),
           ],
         ))
       ],
@@ -411,7 +395,13 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     );
   }
 
-  _dataText(String name, String data, {String colorStr, bool isHighLight = false, bool isExpanded = true}) {
+  _dataText(
+    String name,
+    String data, {
+    String colorStr,
+    bool isHighLight = false,
+    bool isExpanded = true,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Container(
@@ -420,10 +410,16 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            if(colorStr != null)
-              Container(width:10,height:10,color: HexColor(colorStr),),
-            SizedBox(width: 5,),
-            if(isExpanded)
+            if (colorStr != null)
+              Container(
+                width: 10,
+                height: 10,
+                color: HexColor(colorStr),
+              ),
+            SizedBox(
+              width: 5,
+            ),
+            if (isExpanded)
               Expanded(
                 child: RichText(
                     text: TextSpan(children: [
@@ -441,22 +437,22 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                       )),
                 ])),
               ),
-            if(!isExpanded)
+            if (!isExpanded)
               RichText(
                   text: TextSpan(children: [
-                    TextSpan(
-                        text: name,
-                        style: TextStyle(
-                          color: DefaultColors.color999,
-                          fontSize: 12,
-                        )),
-                    TextSpan(
-                        text: ' $data',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 12,
-                        )),
-                  ])),
+                TextSpan(
+                    text: name,
+                    style: TextStyle(
+                      color: DefaultColors.color999,
+                      fontSize: 12,
+                    )),
+                TextSpan(
+                    text: ' $data',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                    )),
+              ])),
           ],
         ),
       ),
