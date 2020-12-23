@@ -303,10 +303,18 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
         if (_isNotEmptyKey) {
           getMoreNetworkData();
         } else {
-          if (mounted) {
-            setState(() {
-              _loadDataBloc.add(LoadEmptyEvent());
-            });
+          if (_filterDataList.isNotEmpty) {
+            if (mounted) {
+              setState(() {
+                _loadDataBloc.add(RefreshSuccessEvent());
+              });
+            }
+          } else {
+            if (mounted) {
+              setState(() {
+                _loadDataBloc.add(LoadEmptyEvent());
+              });
+            }
           }
         }
       } else {
