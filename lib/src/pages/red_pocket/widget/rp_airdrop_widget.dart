@@ -27,7 +27,6 @@ import 'package:titan/src/utils/utils.dart';
 
 import '../rp_my_level_record_page.dart';
 import '../rp_my_rp_records_page.dart';
-import '../rp_record_tab_page.dart';
 
 enum AirdropState {
   Waiting,
