@@ -300,12 +300,9 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
         //_dataList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       }
 
-      if (_filterDataList?.isEmpty??true) {
-
+      if ((_filterDataList?.length??0) < 15) {
         var isNotEmptyKey = _currentPageKey?.isNotEmpty??false;
-        print("[$runtimeType] getNetworkData,isNotEmptyKey:$isNotEmptyKey, _countRequest:$_countRequest");
         if (isNotEmptyKey) {
-          _countRequest += 1;
           getMoreNetworkData();
         } else {
           if (mounted) {
@@ -327,6 +324,13 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
   }
 
   void getMoreNetworkData() async {
+
+    _countRequest += 1;
+
+    var isNotEmptyKey = _currentPageKey?.isNotEmpty??false;
+
+    print("[$runtimeType] getNetworkData,isNotEmptyKey:$isNotEmptyKey, _countRequest:$_countRequest");
+
     if (_currentPageKey?.isEmpty ?? true) {
       _loadDataBloc.add(LoadMoreEmptyEvent());
       return;
@@ -349,10 +353,15 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
         }
       } else {
         if (isNotEmpty) {
-          if (mounted) {
-            setState(() {
-              _loadDataBloc.add(LoadingMoreSuccessEvent());
-            });
+          isNotEmptyKey = _currentPageKey?.isNotEmpty??false;
+          if ((_filterDataList?.length??0) < 15 && isNotEmptyKey != null) {
+            getMoreNetworkData();
+          } else {
+            if (mounted) {
+              setState(() {
+                _loadDataBloc.add(LoadingMoreSuccessEvent());
+              });
+            }
           }
         } else {
           if (mounted) {
