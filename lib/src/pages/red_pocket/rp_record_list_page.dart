@@ -16,7 +16,7 @@ import 'package:titan/src/utils/format_util.dart';
 
 class RpRecordListPage extends StatefulWidget {
   final RedPocketType state; // 1: 已经打开，2：未打开
-  RpRecordListPage({this.state});
+  RpRecordListPage({this.state = RedPocketType.LUCKY});
 
   @override
   State<StatefulWidget> createState() {
@@ -29,6 +29,8 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
   final RPApi _rpApi = RPApi();
 
   Map<String, dynamic> _currentPageKey;
+  bool get _isNotEmptyKey => _currentPageKey?.isNotEmpty??false;
+
   var _address = "";
   List<RpOpenRecordEntity> _dataList = [];
   List<RpOpenRecordEntity> get _filterDataList =>
@@ -295,14 +297,10 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
         _dataList = filterRpOpenDataList(netData.data);
-
-        // todo:排序
-        //_dataList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       }
 
       if ((_filterDataList?.length??0) < 15) {
-        var isNotEmptyKey = _currentPageKey?.isNotEmpty??false;
-        if (isNotEmptyKey) {
+        if (_isNotEmptyKey) {
           getMoreNetworkData();
         } else {
           if (mounted) {
@@ -327,9 +325,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
 
     _countRequest += 1;
 
-    var isNotEmptyKey = _currentPageKey?.isNotEmpty??false;
-
-    print("[$runtimeType] getNetworkData,isNotEmptyKey:$isNotEmptyKey, _countRequest:$_countRequest");
+    print("[$runtimeType] getNetworkData,_isNotEmptyKey:$_isNotEmptyKey, _countRequest:$_countRequest");
 
     if (_currentPageKey?.isEmpty ?? true) {
       _loadDataBloc.add(LoadMoreEmptyEvent());
@@ -345,23 +341,13 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
         _dataList.addAll(filterRpOpenDataList(netData.data));
       }
 
-      if (_filterDataList?.isEmpty??true && _currentPageKey == null) {
-        if (mounted) {
-          setState(() {
-            _loadDataBloc.add(LoadEmptyEvent());
-          });
-        }
-      } else {
-        if (isNotEmpty) {
-          isNotEmptyKey = _currentPageKey?.isNotEmpty??false;
-          if ((_filterDataList?.length??0) < 15 && isNotEmptyKey != null) {
-            getMoreNetworkData();
-          } else {
-            if (mounted) {
-              setState(() {
-                _loadDataBloc.add(LoadingMoreSuccessEvent());
-              });
-            }
+
+      if (!_isNotEmptyKey) {
+        if (_filterDataList?.isEmpty??true) {
+          if (mounted) {
+            setState(() {
+              _loadDataBloc.add(LoadEmptyEvent());
+            });
           }
         } else {
           if (mounted) {
@@ -371,6 +357,19 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
           }
         }
       }
+      else {
+        if ((_filterDataList?.length??0) < 15) {
+          getMoreNetworkData();
+        } else {
+          if (mounted) {
+            setState(() {
+              _loadDataBloc.add(LoadingMoreSuccessEvent());
+            });
+          }
+        }
+      }
+
+
     } catch (e) {
       _loadDataBloc.add(LoadMoreFailEvent());
     }
