@@ -18,6 +18,7 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
@@ -341,7 +342,33 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                               ),
                             )
                           ],
-                        )
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 60,
+                            //left: 16,
+                            right: 16,
+                            bottom: 16,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 16.0,
+                                  bottom: 8,
+                                ),
+                                child: Text(S.of(context).precautions,
+                                    style: TextStyle(
+                                      color: HexColor("#333333"),
+                                      fontSize: 16,
+                                    )),
+                              ),
+
+                              rowTipsItem('取回持币如果掉级将导致燃烧量减少一半，你需要重新燃烧才能回到当前量级！'),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/pages/wallet/service/wallet_service.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -24,11 +25,15 @@ class _ConfirmSuccessPage extends State<ConfirmSuccessPage> {
         return false;
       },
       child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            iconTheme: IconThemeData(color: Colors.black),
+          appBar: BaseAppBar(
+            baseTitle: '',
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           ),
+          // appBar: AppBar(
+          //   backgroundColor: Colors.white,
+          //   elevation: 0,
+          //   iconTheme: IconThemeData(color: Colors.black),
+          // ),
           body: Center(
             child: Container(
               padding: EdgeInsets.all(16),
