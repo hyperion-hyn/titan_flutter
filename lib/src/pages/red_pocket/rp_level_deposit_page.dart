@@ -33,16 +33,16 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 
 import 'entity/rp_my_level_info.dart';
 
-class RpLevelAddStakingPage extends StatefulWidget {
-  RpLevelAddStakingPage();
+class RpLevelDepositPage extends StatefulWidget {
+  RpLevelDepositPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RpLevelAddStakingState();
+    return _RpLevelDepositState();
   }
 }
 
-class _RpLevelAddStakingState extends BaseState<RpLevelAddStakingPage> {
+class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
   final TextEditingController _textEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final RPApi _rpApi = RPApi();

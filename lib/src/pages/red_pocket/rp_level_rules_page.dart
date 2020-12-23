@@ -16,23 +16,23 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
-import 'package:titan/src/pages/red_pocket/rp_level_add_staking_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_deposit_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'entity/rp_util.dart';
 
-class RpLevelPage extends StatefulWidget {
-  RpLevelPage();
+class RpLevelRulesPage extends StatefulWidget {
+  RpLevelRulesPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RpLevelState();
+    return _RpLevelRulesState();
   }
 }
 
-class _RpLevelState extends BaseState<RpLevelPage> {
+class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
@@ -590,7 +590,7 @@ class _RpLevelState extends BaseState<RpLevelPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpLevelAddStakingPage(),
+        builder: (context) => RpLevelDepositPage(),
       ),
     );
   }

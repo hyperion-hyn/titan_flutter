@@ -12,7 +12,6 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_airdrop_round_info.dart';
@@ -20,14 +19,13 @@ import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
-import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 
-import '../rp_my_level_record_page.dart';
-import '../rp_my_rp_records_page.dart';
-import '../rp_record_tab_page.dart';
+import '../rp_level_records_page.dart';
+import '../rp_record_list_page.dart';
+
 
 enum AirdropState {
   Waiting,
@@ -666,7 +664,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
             borderRadius: BorderRadius.circular(4.0)),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
+            horizontal: 8.0,
           ),
           child: Row(
             children: [
@@ -680,11 +678,15 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      left: 8, top: 8, bottom: 8, right: 8),
+                    top: 8,
+                    bottom: 8,
+                    right: 8,
+                    left: 4,
+                  ),
                   child: Image.asset(
                     'res/drawable/red_pocket.png',
-                    width: 40,
-                    height: 40,
+                    width: 35,
+                    height: 35,
                   ),
                 ),
               ),
@@ -707,17 +709,17 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                               style: TextStyle(fontSize: 13),
                             )
                           ])),
-                          SizedBox(
-                            height: 4,
-                          ),
-                          Wrap(
-                            children: [
-                              _levelAirdropAmountRichText(1),
-                              _levelAirdropAmountRichText(2),
-                              _levelAirdropAmountRichText(3),
-                              _levelAirdropAmountRichText(4),
-                              _levelAirdropAmountRichText(5),
-                            ],
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Wrap(
+                              children: [
+                                _levelAirdropAmountRichText(1),
+                                _levelAirdropAmountRichText(2),
+                                _levelAirdropAmountRichText(3),
+                                _levelAirdropAmountRichText(4),
+                                _levelAirdropAmountRichText(5),
+                              ],
+                            ),
                           )
                         ],
                       ),
@@ -811,7 +813,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                       ),
                     ],
                     options: CarouselOptions(
-                      aspectRatio: 2.1,
+                      aspectRatio: 2.8,
                       initialPage: 0,
                       viewportFraction: 1,
                       enlargeCenterPage: false,
@@ -990,7 +992,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpMyRpRecordsPage(),
+          builder: (context) => RpRecordListPage(),
         ),
       );
     } else {
@@ -1004,7 +1006,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpMyLevelRecordsPage(),
+          builder: (context) => RpLevelRecordsPage(),
         ),
       );
     } else {

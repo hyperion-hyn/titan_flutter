@@ -22,7 +22,7 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
-import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -699,7 +699,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
     if (scanStr == null) {
       return '';
-    } else if (scanStr.contains(PromoteQrCodePage.downloadDomain) || scanStr.contains(RpInviteFriendPage.shareDomain)) {
+    } else if (scanStr.contains(PromoteQrCodePage.downloadDomain) || scanStr.contains(RpFriendInvitePage.shareDomain)) {
       var fromArr = scanStr.split("from=");
       if (fromArr[1].length > 0) {
         fromArr = fromArr[1].split("&");

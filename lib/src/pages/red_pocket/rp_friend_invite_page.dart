@@ -27,18 +27,18 @@ import 'package:flutter_html/flutter_html.dart';
 import 'api/rp_api.dart';
 import 'package:flutter_html/style.dart';
 
-class RpInviteFriendPage extends StatefulWidget {
+class RpFriendInvitePage extends StatefulWidget {
   static String shareDomain = "https://h.hyn.space/share";
 
-  RpInviteFriendPage();
+  RpFriendInvitePage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RpInviteFriendPageState();
+    return _RpFriendInvitePageState();
   }
 }
 
-class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
+class _RpFriendInvitePageState extends BaseState<RpFriendInvitePage> {
   WalletVo activityWallet;
   final ShotController _shotController = new ShotController();
   ScrollController scrollController = ScrollController();
@@ -176,7 +176,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                             child: QrImage(
                                               padding: const EdgeInsets.all(9),
                                               data:
-                                                  "${RpInviteFriendPage.shareDomain}?from=$walletAddress&name=$walletName",
+                                                  "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$walletName",
                                               size: 84,
                                             ),
                                           ),

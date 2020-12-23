@@ -19,7 +19,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
-import 'package:titan/src/pages/red_pocket/rp_level_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_rules_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_withdraw_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -31,16 +31,16 @@ import 'entity/rp_holding_record_entity.dart';
 import 'entity/rp_my_level_info.dart';
 import 'entity/rp_util.dart';
 
-class RpMyLevelRecordsPage extends StatefulWidget {
-  RpMyLevelRecordsPage();
+class RpLevelRecordsPage extends StatefulWidget {
+  RpLevelRecordsPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RpMyLevelRecordsPageState();
+    return _RpLevelRecordsState();
   }
 }
 
-class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
+class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
     with RouteAware {
   final RPApi _rpApi = RPApi();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
@@ -51,7 +51,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
 
   RpMyLevelInfo _myLevelInfo;
 
-  int get _currentLevel => _myLevelInfo?.currentLevel ?? 0;
+  //int get _currentLevel => _myLevelInfo?.currentLevel ?? 0;
 
   int _currentPage = 1;
 
@@ -877,7 +877,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpLevelPage(),
+        builder: (context) => RpLevelRulesPage(),
       ),
     );
     return;
