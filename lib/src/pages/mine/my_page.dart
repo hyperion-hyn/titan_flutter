@@ -18,6 +18,7 @@ import 'package:titan/src/pages/mine/dex_wallet_m_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/policy/policy_select_apge.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -212,7 +213,11 @@ class _MyPageState extends BaseState<MyPage> {
                 children: <Widget>[
                   _lineWidget(),
                   _buildMenuBar('钱包管理', Icons.account_balance_wallet,
-                      () => Application.router.navigateTo(context, Routes.wallet_manager),
+                      () {
+                        WalletManagerPage.jumpWalletManager(context);
+
+                        // Application.router.navigateTo(context, Routes.wallet_manager);
+                      },
                     imageName:"ic_me_page_manage_wallet",
                     color: Colors.cyan[300],
                   ),
@@ -406,7 +411,9 @@ class _MyPageState extends BaseState<MyPage> {
           child: InkWell(
               onTap: () {
 //                BlocProvider.of<AppTabBarBloc>(context).add(ChangeTabBarItemEvent(index: 1));
-                Application.router.navigateTo(context, Routes.wallet_manager);
+                WalletManagerPage.jumpWalletManager(context);
+
+                // Application.router.navigateTo(context, Routes.wallet_manager);
               },
               child: Text(S.of(context).create_import_wallet_account,
                   style: TextStyle(color: Colors.white70, fontSize: 20))),

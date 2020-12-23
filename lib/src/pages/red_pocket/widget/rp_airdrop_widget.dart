@@ -18,6 +18,7 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_airdrop_round_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -772,7 +773,12 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        Application.router
+                                        WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (){
+                                          if (mounted) {
+                                            setState(() {});
+                                          }
+                                        });
+                                        /*Application.router
                                             .navigateTo(
                                               context,
                                               Routes.wallet_manager,
@@ -781,7 +787,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                                                   if (mounted) {
                                                     setState(() {});
                                                   }
-                                                });
+                                                });*/
                                       },
                                       child: Text(
                                         S
