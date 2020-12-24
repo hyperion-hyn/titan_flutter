@@ -267,48 +267,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             onTap: _navToManageWallet,
           );
 
-    int currentLevel = _myLevelInfo?.currentLevel ?? 0;
-    int highestLevel = _myLevelInfo?.highestLevel ?? 0;
-
-    var isShowDowngrade = highestLevel > currentLevel;
-    var isZeroLevel = currentLevel == 0;
-
-    var hint = isShowDowngrade || isZeroLevel
-        ? Padding(
-            padding: const EdgeInsets.only(
-              top: 4,
-            ),
-            child: Row(
-              children: [
-                Image.asset(
-                  isZeroLevel
-                      ? 'res/drawable/error_rounded.png'
-                      : 'res/drawable/ic_rp_level_down.png',
-                  width: 8,
-                ),
-                SizedBox(
-                  width: 2,
-                ),
-                Expanded(
-                  child: Text(
-                    isZeroLevel ? '当前量级无法参与红包空投' : '等级下降了',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 9,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        : Text(
-            currentLevel < 5 ? '去提升' : '去查看',
-            style: TextStyle(
-              color: Colors.blue,
-              fontSize: 9,
-            ),
-          );
-
     return SliverToBoxAdapter(
       child: Padding(
         padding: _cardPadding(),
@@ -340,22 +298,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     Expanded(
                       child: accountInfoWidget,
                     ),
-                    InkWell(
-                      onTap: _navToLevel,
-                      child: Container(
-                        width: 70,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "res/drawable/ic_rp_level_$currentLevel.png",
-                              height: 33,
-                            ),
-                            hint,
-                          ],
-                        ),
-                      ),
-                    ),
                   ],
                 ),
                 Padding(
@@ -370,6 +312,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     color: HexColor('#F2F2F2'),
                   ),
                 ),
+                _levelWidget(),
                 if (activeWallet != null)
                   Row(
                     children: <Widget>[
@@ -915,6 +858,99 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
               ),
             ),
           )),
+        ],
+      ),
+    );
+  }
+
+  _levelWidget() {
+    int currentLevel = _myLevelInfo?.currentLevel ?? 0;
+    int highestLevel = _myLevelInfo?.highestLevel ?? 0;
+
+    var isShowDowngrade = highestLevel > currentLevel;
+
+    var isZeroLevel = currentLevel == 0;
+
+    var hint = isShowDowngrade || isZeroLevel
+        ? Padding(
+            padding: const EdgeInsets.only(
+              top: 4,
+            ),
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Image.asset(
+                  isZeroLevel
+                      ? 'res/drawable/error_rounded.png'
+                      : 'res/drawable/ic_rp_level_down.png',
+                  width: 13,
+                ),
+                SizedBox(
+                  width: 4,
+                ),
+                Text(
+                  isZeroLevel ? '当前量级无法参与红包空投' : '等级下降了',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          )
+        : Text(
+            currentLevel < 5 ? '去提升' : '去查看',
+            style: TextStyle(
+              color: Colors.blue,
+              fontSize: 13,
+            ),
+          );
+    return InkWell(
+      borderRadius: BorderRadius.all(Radius.circular(16.0)),
+      onTap: _navToLevel,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                '持币量级',
+                style: TextStyle(
+                  color: HexColor('#333333'),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                flex: 2,
+                child: SizedBox(),
+              ),
+              Expanded(
+                flex: 3,
+                child: Image.asset(
+                  "res/drawable/ic_rp_level_$currentLevel.png",
+                  height: 80,
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: SizedBox(),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 2,
+          ),
+          Center(
+            child: hint,
+          ),
+          SizedBox(
+            height: 16,
+          ),
         ],
       ),
     );
