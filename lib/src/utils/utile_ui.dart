@@ -18,6 +18,7 @@ import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/auth_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
@@ -140,7 +141,7 @@ class UiUtil {
                                 decoration: TextDecoration.none)),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 24, left: 24, right: 24),
+                        padding: EdgeInsets.only(top: 16, left: 24, right: 24, bottom: (contentItem != null || detail.isNotEmpty)?0:24),
                         child: RichText(
                             text: TextSpan(
                                 text: content,
@@ -304,7 +305,7 @@ class UiUtil {
     ]);
   }
 
-  static Future<T> showRequestLocationAuthDialog<T>(BuildContext context, bool isServiceTurnOff) {
+  static Future<bool> showRequestLocationAuthDialog<T>(BuildContext context, bool isServiceTurnOff) {
     return showDialogs<T>(
       context,
       isServiceTurnOff == true ? S.of(context).open_location_service : S.of(context).require_location,
@@ -328,7 +329,43 @@ class UiUtil {
     }
   }
 
-  static Future<T> showDialogs<T>(BuildContext context, String title, String content, Function func) {
+  static Future<bool> showDialogs<T>(BuildContext context, String title, String content, Function func) {
+
+    return  UiUtil.showAlertView(
+      context,
+      title: title,
+      actions: [
+        ClickOvalButton(
+          S.of(context).cancel,
+              () {
+            Navigator.pop(context);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+          fontColor: DefaultColors.color333,
+          btnColor: [Colors.transparent],
+        ),
+        SizedBox(
+          width: 20,
+        ),
+        ClickOvalButton(
+          S.of(context).setting,
+              () {
+                func();
+                Navigator.pop(context);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      ],
+      content: content,
+    );
+
+    /*
     return showDialogWidget<T>(
       context,
       title: Text(title),
@@ -347,6 +384,7 @@ class UiUtil {
         ),
       ],
     );
+    */
   }
 
   static bool isIPhoneX(BuildContext context) {

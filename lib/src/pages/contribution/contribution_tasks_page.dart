@@ -30,6 +30,7 @@ import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class ContributionTasksPage extends StatefulWidget {
   static var scanSignal = "scanSignal";
@@ -64,7 +65,6 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
 
   @override
   void didPopNext() {
-
     _checkInAction();
   }
 
@@ -320,14 +320,31 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
     );
   }
 
+  _showCloseDialog() {
+    UiUtil.showAlertView(
+      context,
+      title: S.of(context).tips,
+      actions: [
+        ClickOvalButton(
+          S.of(context).confirm,
+          () {
+            Navigator.pop(context);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      ],
+      content: S.of(context).get_poi_fail_please_again,
+    );
+  }
+
   Future<LatLng> getLatlng() async {
     var latlng =
         await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
     if (latlng == null) {
-      UiUtil.showConfirmDialog(
-        context,
-        content: S.of(context).get_poi_fail_please_again,
-      );
+      _showCloseDialog();
     }
     return latlng;
   }
@@ -453,7 +470,9 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12,),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+              ),
               child: Image.asset(
                 'res/drawable/me_account_bind_arrow.png',
                 width: 7,
@@ -479,7 +498,9 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
                 style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12,),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+              ),
               child: Image.asset(
                 'res/drawable/me_account_bind_arrow.png',
                 width: 7,
