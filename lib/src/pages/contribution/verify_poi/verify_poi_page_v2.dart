@@ -634,7 +634,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
 
     ContributionsApi api = ContributionsApi();
     try {
-      await api.postCheckIn(address, 'confirmPOIV2', _contributionPois.coordinates, optLogIDs);
+      await api.postCheckIn('confirmPOIV2', _contributionPois.coordinates, optLogIDs);
       UiUtil.toast(successTip);
 
       BlocProvider.of<AccountBloc>(context).add(UpdateCheckInInfoEvent());

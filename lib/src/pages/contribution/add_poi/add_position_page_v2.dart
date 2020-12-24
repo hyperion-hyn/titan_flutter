@@ -185,7 +185,7 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
 
     try {
       var coordinates = [_selectedPosition.latitude, _selectedPosition.longitude];
-      await ContributionsApi().postCheckIn(address, 'postPOI', coordinates, []);
+      await ContributionsApi().postCheckIn('postPOI', coordinates, []);
       UiUtil.toast(successTip);
     } catch (e) {
       print('$runtimeType --> e:$e');

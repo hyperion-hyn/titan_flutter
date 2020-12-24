@@ -380,7 +380,7 @@ class _ContributionState extends State<ScanSignalContributionPage> {
 
     try {
       var coordinates = [widget.initLocation.latitude, widget.initLocation.longitude];
-      await ContributionsApi().postCheckIn(address, 'scanSignal', coordinates, []);
+      await ContributionsApi().postCheckIn('scanSignal', coordinates, []);
 
       UiUtil.toast(successTip);
     } catch (e) {

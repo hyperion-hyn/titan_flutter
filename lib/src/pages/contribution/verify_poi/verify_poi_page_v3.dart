@@ -897,7 +897,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
 
     try {
       var coordinates = [widget.userPosition.latitude, widget.userPosition.longitude];
-      await api.postCheckIn(address, 'confirmPOI', coordinates, []);
+      await api.postCheckIn('confirmPOI', coordinates, []);
       UiUtil.toast(successTip);
     } catch (e) {
       LogUtil.process(e);
