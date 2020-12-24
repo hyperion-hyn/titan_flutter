@@ -12,6 +12,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/auth_util.dart';
@@ -255,11 +256,12 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
           ClickOvalButton(
             S.of(context).create_wallet,
             () {
-              ///
-              Application.router.navigateTo(
+              WalletManagerPage.jumpWalletManager(context);
+
+              /*Application.router.navigateTo(
                 context,
                 Routes.wallet_manager,
-              );
+              );*/
             },
             height: 45,
           )

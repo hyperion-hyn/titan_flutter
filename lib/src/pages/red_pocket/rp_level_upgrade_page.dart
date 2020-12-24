@@ -21,11 +21,9 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
-import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -222,8 +220,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                         ),
                         rpRowText(
                           title: '需增加持币',
-                          amount:
-                              '$_needHoldMinValue RP',
+                          amount: '$_needHoldMinValue RP',
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 30),
@@ -245,14 +242,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                               SizedBox(
                                 width: 10,
                               ),
-                              Expanded(
-                              child: Text('当前持币 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP，燃烧量 ${_myLevelInfo?.currBurningStr ?? '0'} RP',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 12,
-                                      color: HexColor('#999999'),
-                                    )),
-                              ),
+
                             ],
                           ),
                         ),
@@ -305,6 +295,22 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                               ),
                             ],
                           ),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 8, left: 16,),
+                                child: Text(
+                                    '当前持币 ${FormatUtil.stringFormatCoinNum(_myLevelInfo?.currentHoldingStr ?? '0')} RP，燃烧量 ${FormatUtil.stringFormatCoinNum(_myLevelInfo?.currBurningStr ?? '0')} RP',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 12,
+                                      color: HexColor('#999999'),
+                                    )),
+                              ),
+                            ),
+                          ],
                         ),
                         Row(
                           children: [
@@ -440,7 +446,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                         ),
                         rowTipsItem(
                             '如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4)} 以上的账户地址为推荐人'),
-                        rowTipsItem('燃烧不累计，每次升级都要重新燃烧，除了因 Y 增长而掉级'),
                       ],
                     ),
                   ),
@@ -694,7 +699,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
     if (scanStr == null) {
       return '';
-    } else if (scanStr.contains(PromoteQrCodePage.downloadDomain) || scanStr.contains(RpInviteFriendPage.shareDomain)) {
+    } else if (scanStr.contains(PromoteQrCodePage.downloadDomain) || scanStr.contains(RpFriendInvitePage.shareDomain)) {
       var fromArr = scanStr.split("from=");
       if (fromArr[1].length > 0) {
         fromArr = fromArr[1].split("&");

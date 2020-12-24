@@ -31,6 +31,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/pages/wallet_demo/ApiDemo.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -96,11 +97,16 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
   @override
   void onCreated() {
     BlocProvider.of<WalletCmpBloc>(context).listen((state) {
-      if (state is UpdateWalletPageState && (state.updateStatus == 0 || state.updateStatus == -1)) {
+      if (state is UpdateWalletPageState && state.updateStatus == 0) {
         _isRefreshBalances = false;
+      }else if(state is UpdateWalletPageState && (state.updateStatus == -1)){
+        Fluttertoast.showToast(msg: "请求余额失败");
+        _isRefreshBalances = false;
+      }else if(state is UpdateWalletPageState && (state.updateStatus == 1)){
+        _isRefreshBalances = true;
       }
     });
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
+    // BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
     super.onCreated();
   }
 
@@ -131,7 +137,15 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
                           children: <Widget>[
                             InkWell(
                               onTap: () async {
-                                plugWallet.Wallet wallet = await Application.router.navigateTo(
+                                WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (wallet){
+                                  setState(() {
+                                    _isRefreshBalances = true;
+                                  });
+                                },noWalletUpdate: (){
+                                  setState(() {
+                                  });
+                                });
+                                /*plugWallet.Wallet wallet = await Application.router.navigateTo(
                                   context,
                                   Routes.wallet_manager,
                                 );
@@ -150,7 +164,7 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
                                 }else{
                                   setState(() {
                                   });
-                                }
+                                }*/
                               },
                               child: Row(
                                 children: <Widget>[
@@ -230,7 +244,7 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
                               child: CircularProgressIndicator(
                                 backgroundColor: Colors.white,
                                 valueColor: new AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-                                strokeWidth: 3,
+                                strokeWidth: 1,
                               ),
                             )
                         ],

@@ -19,6 +19,7 @@ import 'package:titan/src/pages/market/transfer/exchange_asset_history_page.dart
 import 'package:titan/src/pages/market/model/asset_list.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -161,8 +162,10 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
 
                     ///close asset page
                     Navigator.of(context).pop();
-                    Application.router
-                        .navigateTo(context, Routes.wallet_manager);
+                    WalletManagerPage.jumpWalletManager(context);
+
+                    /*Application.router
+                        .navigateTo(context, Routes.wallet_manager);*/
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),

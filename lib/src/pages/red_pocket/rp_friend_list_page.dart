@@ -21,16 +21,16 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 
 import 'entity/rp_util.dart';
 
-class RpMyFriendsPage extends StatefulWidget {
-  RpMyFriendsPage();
+class RpFriendListPage extends StatefulWidget {
+  RpFriendListPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RpMyFriendsState();
+    return _RpFriendListState();
   }
 }
 
-class _RpMyFriendsState extends BaseState<RpMyFriendsPage> {
+class _RpFriendListState extends BaseState<RpFriendListPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/pages/red_pocket/rp_my_rp_records_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_record_list_page.dart';
 
 class RpRecordTabPage extends StatefulWidget {
   @override
@@ -16,7 +17,7 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: BaseAppBar(
           baseTitle: '我的红包',
@@ -49,21 +50,27 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
                       ),
                       unselectedLabelColor: HexColor("#FF333333"),
                       tabs: [
+
                         Tab(
                           child: Text(
-                            '已领取',
+                            '幸运红包',
                           ),
                         ),
                         Tab(
                           child: Text(
-                            '确认中',
+                            '量级红包',
+                          ),
+                        ),
+                        Tab(
+                          child: Text(
+                            '晋升红包',
                           ),
                         ),
                       ],
                     ),
                   ),
                   Expanded(
-                    flex: 6,
+                    flex: 1,
                     child: Container(),
                   )
                 ],
@@ -72,8 +79,9 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
           ),
           body: TabBarView(
             children: [
-              RpMyRpRecordsPage(state: 1,),
-              RpMyRpRecordsPage(state: 2,),
+              RpRecordListPage(state: RedPocketType.LUCKY,),
+              RpRecordListPage(state: RedPocketType.LEVEL,),
+              RpRecordListPage(state: RedPocketType.PROMOTION,),
             ],
           ),
         ),
@@ -81,3 +89,4 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
     );
   }
 }
+

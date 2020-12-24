@@ -183,8 +183,11 @@ class Wallet {
   Future<int> getCurrentWalletNonce({int nonce}) async {
     if (nonce == null) {
       WalletVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-      String fromAddress = walletVo.wallet.getEthAccount().address;
-      nonce = await WalletUtil.getWeb3Client().getTransactionCount(EthereumAddress.fromHex(fromAddress));
+      String fromAddress = walletVo?.wallet?.getEthAccount()?.address ?? "";
+      if(fromAddress != null && fromAddress.isNotEmpty) {
+        nonce = await WalletUtil.getWeb3Client().getTransactionCount(
+            EthereumAddress.fromHex(fromAddress));
+      }
 //      String localNonce = await transactionInteractor.getTransactionDBNonce(fromAddress);
 //      if (localNonce != null && int.parse(localNonce) >= nonce) {
 //        nonce = int.parse(localNonce) + 1;
@@ -199,15 +202,15 @@ class Wallet {
   /// 如果[type]和[message]都是null，则为ethereum转账
   Future<String> sendEthTransaction(
       {int id,
-      String password,
-      String toAddress,
-      BigInt value,
-      BigInt gasPrice,
-      int nonce,
-      int gasLimit = 0,
-      int type,
-      web3.IMessage message,
-      bool isAtlasTrans = false}) async {
+        String password,
+        String toAddress,
+        BigInt value,
+        BigInt gasPrice,
+        int nonce,
+        int gasLimit = 0,
+        int type,
+        web3.IMessage message,
+        bool isAtlasTrans = false}) async {
     /*if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
     }
@@ -229,6 +232,11 @@ class Wallet {
       fetchChainIdFromNetworkId: type == null ? true : false,
     );*/
 
+    //方法内已判断nonce是否为空
+    if(!isAtlasTrans){
+      nonce = await getCurrentWalletNonce(nonce: nonce);
+    }
+
     final signedRawHex = await signEthTransaction(
       password: password,
       toAddress: toAddress,
@@ -244,7 +252,6 @@ class Wallet {
     var responseMap = await WalletUtil.postToEthereumNetwork(
         method: 'eth_sendRawTransaction', params: [signedRawHex], isAtlasTrans: isAtlasTrans);
     if (type == null && responseMap['result'] != null) {
-      nonce = await getCurrentWalletNonce();
       await transactionInteractor.insertTransactionDB(
           responseMap['result'], toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce,
           id: id);
@@ -308,7 +315,8 @@ class Wallet {
     if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.erc20TransferGasLimit;
     }
-//    nonce = await getCurrentWalletNonce(nonce: nonce);
+    //方法内已判断nonce是否为空
+    nonce = await getCurrentWalletNonce(nonce: nonce);
 
     var ethBalance = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('ETH').balance;
 
@@ -336,7 +344,6 @@ class Wallet {
     );
 
     if (txHash != null) {
-      nonce = await getCurrentWalletNonce();
       await transactionInteractor.insertTransactionDB(
           txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_HYN_USDT, nonce,
           id: id, contractAddress: contractAddress);

@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -18,7 +19,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
-import 'package:titan/src/pages/red_pocket/red_pocket_level_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_rules_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_withdraw_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -30,16 +31,17 @@ import 'entity/rp_holding_record_entity.dart';
 import 'entity/rp_my_level_info.dart';
 import 'entity/rp_util.dart';
 
-class RpMyLevelRecordsPage extends StatefulWidget {
-  RpMyLevelRecordsPage();
+class RpLevelRecordsPage extends StatefulWidget {
+  RpLevelRecordsPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RpMyLevelRecordsPageState();
+    return _RpLevelRecordsState();
   }
 }
 
-class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with RouteAware {
+class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
+    with RouteAware {
   final RPApi _rpApi = RPApi();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
 
@@ -49,17 +51,20 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
 
   RpMyLevelInfo _myLevelInfo;
 
-  int get _currentLevel => _myLevelInfo?.currentLevel ?? 0;
+  //int get _currentLevel => _myLevelInfo?.currentLevel ?? 0;
 
   int _currentPage = 1;
 
   List<RPLevelHistory> _levelHistoryList = [];
 
   RPStatistics _rpStatistics;
+
   List<LevelCounts> get _levelCountList => _rpStatistics?.levelCounts ?? [];
 
   // todo: 有空加开关
   bool _isOpenLevelCounts = false;
+
+  Decimal get _currentHoldingValue => Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? Decimal.zero;
 
   @override
   void initState() {
@@ -141,7 +146,8 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     );
   }
 
-  Widget _columnWidget(String amount, String title, {bool isBold = true, bool isSmall = false}) {
+  Widget _columnWidget(String amount, String title,
+      {bool isBold = true, bool isSmall = false}) {
     if (isSmall) {
       return Column(
         children: <Widget>[
@@ -220,8 +226,9 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [1, 2, 3, 4, 5].map((index) {
-                LevelCounts levelCountsModel =
-                    _levelCountList.firstWhere((element) => element?.level == index, orElse: null);
+                LevelCounts levelCountsModel = _levelCountList.firstWhere(
+                    (element) => element?.level == index,
+                    orElse: null);
 
                 return _columnWidget(
                   '${levelCountsModel?.count ?? 0}',
@@ -263,9 +270,14 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     var burning = '--';
 
     try {
-      holding = '${_myLevelInfo?.currentHoldingStr ?? '--'}';
-      burning = '${_myLevelInfo?.currBurningStr ?? '--'}';
-
+      holding = FormatUtil.stringFormatCoinNum(
+        _myLevelInfo?.currentHoldingStr ?? '0',
+        decimal: 4,
+      );
+      burning = FormatUtil.stringFormatCoinNum(
+        _myLevelInfo?.currBurningStr ?? '0',
+        decimal: 4,
+      );
     } catch (e) {}
 
     var isShowDowngrade = highestLevel > currentLevel;
@@ -320,7 +332,8 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                       flex: 2,
                       child: isShowDowngrade
                           ? Padding(
-                              padding: const EdgeInsets.only(top: 32, right: 16),
+                              padding:
+                                  const EdgeInsets.only(top: 32, right: 16),
                               child: Row(
                                 children: [
                                   Image.asset(
@@ -404,17 +417,27 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Spacer(),
-                      _columnWidget(
-                        '$burning RP',
-                        '燃烧量',
+                      SizedBox(
+                        width: 32,
                       ),
-                      Spacer(),
-                      _columnWidget(
-                        '$holding RP',
-                        '当前持币',
+                      Expanded(
+                        child: _columnWidget(
+                          '$burning RP',
+                          '燃烧量',
+                        ),
                       ),
-                      Spacer(),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Expanded(
+                        child: _columnWidget(
+                          '$holding RP',
+                          '当前持币',
+                        ),
+                      ),
+                      SizedBox(
+                        width: 32,
+                      ),
                     ],
                   ),
                 ),
@@ -744,14 +767,18 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
               right: 26,
               top: 4,
               child: Container(
-                decoration:
-                    BoxDecoration(color: HexColor("#FF4C3B"), borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                decoration: BoxDecoration(
+                    color: HexColor("#FF4C3B"),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(8, 1, 8, 3),
                   child: Center(
                     child: Text(
                       'new',
-                      style: TextStyle(fontSize: 10, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: HexColor("#FFFFFF"),
+                          fontWeight: FontWeight.normal),
                     ),
                   ),
                 ),
@@ -830,9 +857,9 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
   }
 
   _navToLevelUnStakingAction() {
-    if (_currentLevel == 0) {
+    if (_currentHoldingValue <= Decimal.zero) {
       Fluttertoast.showToast(
-        msg: '当前量级为0，可取回持币金额为0！',
+        msg: '可取回持币金额为0！',
         gravity: ToastGravity.CENTER,
       );
       return;
@@ -850,7 +877,7 @@ class _RpMyLevelRecordsPageState extends BaseState<RpMyLevelRecordsPage> with Ro
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RedPocketLevelPage(),
+        builder: (context) => RpLevelRulesPage(),
       ),
     );
     return;

@@ -108,8 +108,8 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         }
       }
     } else if (event is LoadLocalDiskWalletAndActiveEvent) {
-//      yield LoadingWalletState();
       try {
+        // yield LoadingWalletState();
         var wallet = await walletRepository.getActivatedWalletFormLocalDisk();
         //now active loaded wallet_vo. tips: maybe null
         add(ActiveWalletEvent(wallet: wallet));
@@ -148,7 +148,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         if (_activatedWalletVo != null) {
           //faster show quote
           yield UpdateWalletPageState(1,
-              sign: quotesSign, quoteModel: currentQuotesModel, walletVo: _activatedWalletVo.copyWith());
+              sign: quotesSign, quoteModel: currentQuotesModel);
           await walletRepository.updateWalletVoBalance(_activatedWalletVo);
           _saveWalletVoBalanceToDisk(_activatedWalletVo); //save balance data to disk;
           yield UpdateWalletPageState(0,
@@ -162,7 +162,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         }
       } catch (e) {
         LogUtil.toastException(e);
-        yield UpdateWalletPageState(-1,walletVo: _activatedWalletVo.copyWith());
+        yield UpdateWalletPageState(-1);
       }
     } else if (event is UpdateQuotesEvent) {
       yield UpdatingQuotesState();
@@ -325,17 +325,17 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
     // fastest
     var fastGasPrice = double.parse(responseFromEtherScanDict["FastGasPrice"]) * 10.0;
     var fastest = double.parse(responseFromEthGasStationDict["fastest"].toString());
-    responseFromEthGasStationDict["fastest"] = min(fastGasPrice, fastest);
+    responseFromEthGasStationDict["fastest"] = max(fastGasPrice, fastest);
 
     // fast
     var proposeGasPrice = double.parse(responseFromEtherScanDict["ProposeGasPrice"]) * 10.0;
     var fast = double.parse(responseFromEthGasStationDict["fast"].toString());
-    responseFromEthGasStationDict["fast"] = min(proposeGasPrice, fast);
+    responseFromEthGasStationDict["fast"] = max(proposeGasPrice, fast);
 
     // average
     var safeGasPrice = double.parse(responseFromEtherScanDict["SafeGasPrice"]) * 10.0;
     var average = double.parse(responseFromEthGasStationDict["average"].toString());
-    responseFromEthGasStationDict["average"] = min(safeGasPrice, average);
+    responseFromEthGasStationDict["average"] = max(safeGasPrice, average);
 
     //print("[object] requestGasPrice，2, responseFromEtherScanDict:$responseFromEtherScanDict, responseFromEthGasStationDict:$responseFromEthGasStationDict");
 

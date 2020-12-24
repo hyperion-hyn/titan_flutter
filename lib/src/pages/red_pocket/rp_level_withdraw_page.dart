@@ -18,6 +18,7 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
@@ -49,11 +50,11 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
-  RpPromotionRuleEntity _promotionRuleEntity;
   RpMyLevelInfo _myLevelInfo;
 
   int get _currentLevel => _myLevelInfo?.currentLevel ?? 0;
 
+  RpPromotionRuleEntity _promotionRuleEntity;
   List<LevelRule> get _staticDataList => (_promotionRuleEntity?.static ?? []).toList();
 
   LevelRule get _currentLevelRule {
@@ -90,10 +91,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
       Decimal.zero;
 
   int get _toLevel {
-    var holding = Decimal.tryParse(
-          _myLevelInfo?.currentHoldingStr ?? '0',
-        ) ??
-        Decimal.zero;
+    var holding = _currentHoldValue;
 
     var remainHolding = holding - _inputValue;
     var needHolding = Decimal.tryParse(
@@ -181,172 +179,198 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
               child: BaseGestureDetector(
                 context: context,
                 child: SingleChildScrollView(
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Container(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                    ),
-                    color: Colors.white,
-                    child: Column(
-                      children: <Widget>[
-                        rpRowText(
-                          title: '当前量级${levelValueToLevelName(_currentLevel)}需持币',
-                          amount: '${_currentLevelRule?.holdingStr ?? '0'} RP',
-                          width: 110,
-                        ),
-                        rpRowText(
-                          title: '当前持币',
-                          amount: '${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
-                          width: 110,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30),
-                          child: Row(
-                            children: <Widget>[
-                              Text(
-                                '取回持币',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: HexColor('#333333'),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                  '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Container(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                      ),
+                      color: Colors.white,
+                      child: Column(
+                        children: <Widget>[
+                          rpRowText(
+                            title: '当前量级${levelValueToLevelName(_currentLevel)}需持币',
+                            amount: '${_currentLevelRule?.holdingStr ?? '0'} RP',
+                            width: 110,
+                          ),
+                          rpRowText(
+                            title: '当前持币',
+                            amount: '${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
+                            width: 110,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 30),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  '取回持币',
                                   style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 12,
-                                    color: HexColor('#999999'),
-                                  )),
-                            ],
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: HexColor('#333333'),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                    '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 12,
+                                      color: HexColor('#999999'),
+                                    )),
+                              ],
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 16,
-                            right: 16,
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 16,
+                              right: 16,
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Expanded(
+                                  flex: 1,
+                                  child: Form(
+                                    key: _formKey,
+                                    child: RoundBorderTextField(
+                                      onChanged: (text) {
+                                        _formKey.currentState.validate();
+
+                                        _inputController.add(text);
+                                      },
+                                      controller: _textEditingController,
+                                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(18),
+                                        FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
+                                      ],
+                                      hint: S.of(context).please_enter_withdraw_amount,
+                                      validator: (textStr) {
+                                        var inputValue = Decimal.tryParse(textStr);
+
+                                        if (inputValue == null) {
+                                          return S.of(context).please_enter_correct_amount;
+                                        }
+
+                                        var holding = _currentHoldValue;
+
+                                        if (textStr.length == 0 || inputValue == Decimal.fromInt(0)) {
+                                          return '请输入有效提币数量';
+                                        }
+                                        if (inputValue > holding) {
+                                          return '大于当前持币';
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                StreamBuilder<Object>(
+                                    stream: _inputController.stream,
+                                    builder: (context, snapshot) {
+                                      bool isShowDown = (_toLevel < _currentLevel &&
+                                          _currentHoldValue > _inputValue &&
+                                          _inputValue > Decimal.zero);
+                                      return isShowDown
+                                          ? Row(
+                                              // crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.only(
+                                                    left: 16,
+                                                    right: 16,
+                                                  ),
+                                                  child: Image.asset(
+                                                    'res/drawable/ic_rp_level_down.png',
+                                                    width: 15,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(
+                                                    right: 4,
+                                                  ),
+                                                  child: Text(
+                                                    '量级',
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.normal,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '${levelValueToLevelName(_toLevel)} ',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          : Container(
+                                              width: 60,
+                                            );
+                                    }),
+                              ],
+                            ),
                           ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                                flex: 1,
-                                child: Form(
-                                  key: _formKey,
-                                  child: RoundBorderTextField(
-                                    onChanged: (text) {
-                                      _formKey.currentState.validate();
-
-                                      _inputController.add(text);
-                                    },
-                                    controller: _textEditingController,
-                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(18),
-                                      FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
-                                    ],
-                                    hint: S.of(context).please_enter_withdraw_amount,
-                                    validator: (textStr) {
-                                      var inputValue = Decimal.tryParse(textStr);
-
-                                      if (inputValue == null) {
-                                        return S.of(context).please_enter_correct_amount;
-                                      }
-
-                                      var holding = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? 0;
-
-                                      if (textStr.length == 0 || inputValue == Decimal.fromInt(0)) {
-                                        return '请输入有效提币数量';
-                                      }
-                                      if (inputValue > holding) {
-                                        return '大于当前持币';
-                                      }
-                                    },
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 8,
+                                ),
+                                child: Text(
+                                  '*',
+                                  style: TextStyle(
+                                    color: HexColor('#FF4C3B'),
+                                    fontSize: 24,
                                   ),
                                 ),
                               ),
-                              StreamBuilder<Object>(
-                                  stream: _inputController.stream,
-                                  builder: (context, snapshot) {
-                                    bool isShowDown = (_toLevel < _currentLevel &&
-                                        _currentHoldValue > _inputValue &&
-                                        _inputValue > Decimal.zero);
-                                    return isShowDown
-                                        ? Row(
-                                            // crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  left: 16,
-                                                  right: 16,
-                                                ),
-                                                child: Image.asset(
-                                                  'res/drawable/ic_rp_level_down.png',
-                                                  width: 15,
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  right: 4,
-                                                ),
-                                                child: Text(
-                                                  '量级',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.normal,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ),
-                                              Text(
-                                                '${levelValueToLevelName(_toLevel)} ',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 18,
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        : Container(
-                                            width: 60,
-                                          );
-                                  }),
+                              SizedBox(
+                                width: 6,
+                              ),
+                              Text(
+                                '为保证当前量级不下降，请保持持币量大于${_currentLevelRule?.holdingStr ?? '0'}RP',
+                                style: TextStyle(
+                                  color: HexColor('#333333'),
+                                  fontSize: 12,
+                                ),
+                              )
                             ],
                           ),
-                        ),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: 8,
-                              ),
-                              child: Text(
-                                '*',
-                                style: TextStyle(
-                                  color: HexColor('#FF4C3B'),
-                                  fontSize: 24,
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 60,
+                              //left: 16,
+                              right: 16,
+                              bottom: 16,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 16.0,
+                                    bottom: 8,
+                                  ),
+                                  child: Text(S.of(context).precautions,
+                                      style: TextStyle(
+                                        color: HexColor("#333333"),
+                                        fontSize: 16,
+                                      )),
                                 ),
-                              ),
+                                rowTipsItem('取回持币如果掉级将导致燃烧量减少一半，你需要重新燃烧才能回到当前量级！'),
+                              ],
                             ),
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Text(
-                              '为保证当前量级不下降，请保持持币量大于${_currentLevelRule?.holdingStr ?? '0'}RP',
-                              style: TextStyle(
-                                color: HexColor('#333333'),
-                                fontSize: 12,
-                              ),
-                            )
-                          ],
-                        )
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  _confirmButtonWidget(),
-                ])),
+                    _confirmButtonWidget(),
+                  ]),
+                ),
               ),
             ),
           ),

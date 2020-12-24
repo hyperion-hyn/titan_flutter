@@ -1,6 +1,13 @@
+import 'dart:convert';
+
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 
 class RPStatisticsWidget extends StatefulWidget {
@@ -13,9 +20,31 @@ class RPStatisticsWidget extends StatefulWidget {
 }
 
 class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
+  RpStats _rpStats;
+  RPApi _rpApi = RPApi();
+
+  var colorPalette = [
+    '#FF5E5E',
+    '#66A9FF',
+    '#66F0CB',
+    '#FBF463',
+    '#FFC05C',
+    '#4EECFA'
+  ];
+
   @override
   void initState() {
+    _getData();
     super.initState();
+  }
+
+  _getData() async {
+    try {
+      _rpStats = await _rpApi.getRPStats();
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {}
   }
 
   @override
@@ -34,45 +63,66 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            '发行',
-            style: TextStyle(fontSize: 11),
-          ),
+          _title('发行'),
           _rpSupply(),
-          Text(
-            '空投',
-            style: TextStyle(fontSize: 11),
-          ),
+          _title('空投'),
           _rpAirdrop(),
-          Text(
-            '传导',
-            style: TextStyle(fontSize: 11),
-          ),
-          _rpPool()
+          _title('传导'),
+          _rpPool(),
+          _title('晋升'),
+          _rpPromotion()
         ],
       ),
     );
   }
 
+  _title(String name) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Text(
+        name,
+        style: TextStyle(
+          fontSize: 11,
+          color: DefaultColors.color999,
+        ),
+      ),
+    );
+  }
+
   _rpSupply() {
+    var totalCap = _rpStats?.global?.totalCap ?? '0';
+    var totalSupply = _rpStats?.global?.totalSupply ?? '0';
+    var totalBurn = _rpStats?.global?.totalBurning ?? '0';
+    var unSupply = Decimal.fromInt(0);
+    try {
+      unSupply = (Decimal.tryParse('$totalCap') - Decimal.parse(totalSupply)) -
+          Decimal.parse(totalBurn);
+    } catch (e) {}
+
+    var totalCapStr = bigIntToEther(totalCap);
+    var totalSupplyStr = bigIntToEther(totalSupply);
+    var totalBurningStr = bigIntToEther(totalBurn);
+    var unSupplyStr = bigIntToEther("$unSupply");
+
     var _chartOption = '''
-    {
+   {
     series: [
         {
             type: 'pie',
             radius: ['40%', '90%'],
             silent: true,
             label: {
-                formatter: '{b}',
+                formatter: '{d}%',
                 borderWidth: 1,
                 borderRadius: 4,
                 position: 'inner',
             },
+            color: ${jsonEncode(colorPalette)},
             data: [
-                {value: 335, name: '流通中'},
-                {value: 310, name: '已燃烧'},
-                {value: 234, name: '未发行'},
-              
+                {value: $totalSupply, name: '流通中'},
+                {value: $unSupply, name: '未发行'}, 
+                {value: $totalBurn, name: '总燃烧'},
+                 
             ]
         }
     ]
@@ -81,23 +131,46 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     return Row(
       children: [
         Container(
-          width: 150,
-          height: 150,
+          width: 130,
+          height: 130,
           child: Echarts(
             option: _chartOption,
             captureAllGestures: false,
           ),
         ),
         SizedBox(
-          width: 16,
+          width: 24,
         ),
         Expanded(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _dataText('流通中', '299'),
-            _dataText('已燃烧', '299'),
-            _dataText('未发行', '299'),
+            /*_dataText(
+              '总发行',
+              totalCapStr,
+              isHighLight: true,
+            ),*/
+            Row(
+              children: [
+                Expanded(
+                  child: _dataText(
+                    '总发行',
+                    totalCapStr,
+                    isHighLight: true,
+                  ),
+                ),
+                SizedBox(
+                  width: 16,
+                )
+              ],
+            ),
+            _dataText('流通中', totalSupplyStr, colorStr: colorPalette[0]),
+            _dataText('总燃烧', totalBurningStr, colorStr: colorPalette[2]),
+            _dataText(
+              '未发行',
+              unSupplyStr,
+              colorStr: colorPalette[1],
+            ),
           ],
         ))
       ],
@@ -105,7 +178,53 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
   }
 
   _rpAirdrop() {
-    var _chartOption = '''
+    var total = _rpStats?.airdrop?.total ?? '0';
+    var totalAirdrop = _rpStats?.airdrop?.totalAirdrop ?? '0';
+    var totalLucky = _rpStats?.airdrop?.luckyTotal ?? '0';
+    var totalLevel = _rpStats?.airdrop?.levelTotal ?? '0';
+    var totalPromotion = _rpStats?.airdrop?.promotionTotal ?? '0';
+
+    var totalStr = bigIntToEther(total);
+
+    var airdropLuckyTotalStr = bigIntToEther(totalLucky);
+    var airdropLevelTotalStr = bigIntToEther(totalLevel);
+    var airdropPromotionTotalStr = bigIntToEther(totalPromotion);
+
+    var unAirdrop = Decimal.fromInt(0);
+    try {
+      unAirdrop = Decimal.tryParse(total) - Decimal.tryParse(totalAirdrop);
+    } catch (e) {}
+
+    var totalAirdropStr = bigIntToEther("$totalAirdrop");
+    var unAirdropStr = bigIntToEther("$unAirdrop");
+
+    var airdropBurnTotalStr = bigIntToEther(_rpStats?.airdrop?.burningTotal);
+
+    var _airdropChartOption = '''
+ {
+    series: [
+        {
+            type: 'pie',
+            radius: ['40%', '90%'],
+            silent: true,
+            label: {
+                formatter: '{d}%',
+                borderWidth: 1,
+                borderRadius: 4,
+                position: 'inner',
+                
+            },
+            color: ${jsonEncode(colorPalette)},
+            data: [
+                {value: $totalAirdrop, name: '已空投'},
+                {value: $unAirdrop, name: '待空投'},
+            ],
+            
+        },
+    ]
+}
+  ''';
+    var _redPocketChartOption = '''
  {
     series: [
         {
@@ -120,47 +239,108 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                 
             },
             data: [
-                {value: 800, name: '待空投'},
-                {value: 50, name: '晋升红包'},
-                {value: 100, name: '量级红包'},
-                {value: 50, name: '幸运红包'}
+                {value: $totalPromotion, name: '晋升红包'},
+                {value: $totalLevel, name: '量级红包'},
+                {value: $totalLucky, name: '幸运红包'}
             ],
             
         },
     ]
 }
   ''';
-    return Row(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          height: 150,
-          width: 150,
-          child: Echarts(
-            option: _chartOption,
-            captureAllGestures: false,
-          ),
+        Row(
+          children: [
+            Container(
+              width: 130,
+              height: 130,
+              child: Echarts(
+                option: _airdropChartOption,
+                captureAllGestures: false,
+              ),
+            ),
+            SizedBox(
+              width: 24,
+            ),
+            Expanded(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _dataText('已空投', totalAirdropStr, colorStr: colorPalette[0]),
+                _dataText('未空投', unAirdropStr, colorStr: colorPalette[1]),
+              ],
+            ))
+            // Expanded(
+            //   child: Container(
+            //     height: 130,
+            //     child: Echarts(
+            //       option: _redPocketChartOption,
+            //       captureAllGestures: false,
+            //     ),
+            //   ),
+            // ),
+          ],
         ),
         SizedBox(
-          width: 16,
+          height: 16,
         ),
-        Expanded(
-            child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Column(
           children: [
-            _dataText('红包总量', '299'),
-            _dataText('已发红包', '299'),
-            _dataText('已发幸运红包', '299'),
-            _dataText('已发量级红包', '299'),
-            _dataText('已发晋升红包', '299'),
-            _dataText('未领取燃烧', '299'),
+            Row(
+              children: [
+                _dataText('红包总量', totalStr,
+                    isHighLight: true, isExpanded: false),
+              ],
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _dataText('已发幸运红包', airdropLuckyTotalStr),
+                ),
+                SizedBox(
+                  width: 4,
+                ),
+                Expanded(
+                  child: _dataText('已发量级红包', airdropLevelTotalStr),
+                )
+              ],
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _dataText('已发晋升红包', airdropPromotionTotalStr),
+                ),
+                SizedBox(
+                  width: 4,
+                ),
+                Expanded(
+                  child: _dataText('未领取燃烧', airdropBurnTotalStr),
+                )
+              ],
+            )
           ],
-        ))
+        )
       ],
     );
   }
 
   _rpPool() {
+    var total = _rpStats?.transmit?.total ?? '0';
+    var transmitRp = _rpStats?.transmit?.transmitRp ?? '0';
+    var unTransmitRp = Decimal.fromInt(0);
+
+    try {
+      unTransmitRp = Decimal.tryParse(total) - Decimal.parse(transmitRp);
+    } catch (e) {}
+
+    var totalStr = bigIntToEther(total);
+    var transmitRPStr = bigIntToEther(transmitRp);
+    var unTransmitRpStr = bigIntToEther("$unTransmitRp");
+
     var _chartOption = '''
     {
     series: [
@@ -169,15 +349,15 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
             radius: ['40%', '90%'],
             silent: true,
             label: {
-                formatter: '{b}',
+                formatter: '{d}%',
                 borderWidth: 1,
                 borderRadius: 4,
                 position: 'inner',
             },
+            color: ${jsonEncode(colorPalette)},
             data: [
-                {value: 90000, name: '已传导'},
-                {value: 2000, name: '未传导'},
-              
+                {value: $transmitRp, name: '已传导'},
+                {value: $unTransmitRp, name: '未传导'},
             ]
         }
     ]
@@ -186,46 +366,117 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     return Row(
       children: [
         Container(
-          width: 150,
-          height: 150,
+          width: 130,
+          height: 130,
           child: Echarts(
             option: _chartOption,
             captureAllGestures: false,
+            onMessage: (String message) {
+              Map<String, Object> messageAction = jsonDecode(message);
+              print("[$runtimeType] messageAction:$messageAction");
+            },
           ),
         ),
         SizedBox(
-          width: 16,
+          width: 24,
         ),
         Expanded(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _dataText('传导总量', '299'),
-            _dataText('已传导', '299'),
+            _dataText('传导总量', totalStr),
+            _dataText('已传导', transmitRPStr, colorStr: colorPalette[0]),
+            _dataText('未传导', unTransmitRpStr, colorStr: colorPalette[1]),
           ],
         ))
       ],
     );
   }
 
-  _dataText(String name, String data) {
+  _rpPromotion() {
+    var promotionTotalHolding = _rpStats?.promotion?.totalHolding ?? '0';
+    var promotionTotalBurning = _rpStats?.promotion?.totalBurning ?? '0';
+
+    var promotionTotalHoldingStr = bigIntToEther(promotionTotalHolding);
+    var promotionTotalBurningStr = bigIntToEther(promotionTotalBurning);
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: _dataText('晋升持币', promotionTotalHoldingStr),
+        ),
+        SizedBox(
+          width: 4,
+        ),
+        Expanded(
+          child: _dataText('晋升燃烧', promotionTotalBurningStr),
+        )
+      ],
+    );
+  }
+
+  _dataText(
+    String name,
+    String data, {
+    String colorStr,
+    bool isHighLight = false,
+    bool isExpanded = true,
+  }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 4.0),
-      child: RichText(
-          text: TextSpan(children: [
-        TextSpan(
-            text: name,
-            style: TextStyle(
-              color: DefaultColors.color999,
-              fontSize: 12,
-            )),
-        TextSpan(
-            text: ' $data',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 12,
-            )),
-      ])),
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Container(
+        color: isHighLight ? HexColor('#FFFFF5F5') : null,
+        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (colorStr != null)
+              Container(
+                width: 10,
+                height: 10,
+                color: HexColor(colorStr),
+              ),
+            SizedBox(
+              width: 5,
+            ),
+            if (isExpanded)
+              Expanded(
+                child: RichText(
+                    text: TextSpan(children: [
+                  TextSpan(
+                      text: name,
+                      style: TextStyle(
+                        color: DefaultColors.color999,
+                        fontSize: 12,
+                      )),
+                  TextSpan(
+                      text: ' $data',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                      )),
+                ])),
+              ),
+            if (!isExpanded)
+              RichText(
+                  text: TextSpan(children: [
+                TextSpan(
+                    text: name,
+                    style: TextStyle(
+                      color: DefaultColors.color999,
+                      fontSize: 12,
+                    )),
+                TextSpan(
+                    text: ' $data',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                    )),
+              ])),
+          ],
+        ),
+      ),
     );
   }
 }

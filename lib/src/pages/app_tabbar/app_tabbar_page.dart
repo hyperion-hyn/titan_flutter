@@ -50,7 +50,7 @@ import 'bloc/app_tabbar_bloc.dart';
 import 'bloc/app_tabbar_event.dart';
 import 'bloc/app_tabbar_state.dart';
 import 'drawer_component.dart';
-import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 
 class AppTabBarPage extends StatefulWidget {
   @override

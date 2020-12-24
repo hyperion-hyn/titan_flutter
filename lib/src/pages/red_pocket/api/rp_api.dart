@@ -13,6 +13,7 @@ import 'package:titan/src/pages/red_pocket/api/rp_http.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_airdrop_round_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_detail_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_holding_record_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_miners_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
@@ -21,6 +22,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as WalletClass;
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -78,7 +80,7 @@ class RPApi {
 
   ///统计信息
   Future<RPStatistics> getRPStatistics(String address) async {
-    var isEmpty = address?.isEmpty??true;
+    var isEmpty = address?.isEmpty ?? true;
     var path = "/v1/rp/statistics/$address";
     if (isEmpty) {
       path = "/v1/rp/statistics/null";
@@ -118,6 +120,26 @@ class RPApi {
         "/v1/rp/airdrop/latestRound/$address",
         EntityFactory<RpAirdropRoundInfo>(
           (json) => RpAirdropRoundInfo.fromJson(json),
+        ),
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future<RpStats> getRPStats() async {
+    return await RPHttpCore.instance.getEntity(
+        "/v1/rp/stats",
+        EntityFactory<RpStats>(
+          (json) => RpStats.fromJson(json),
+        ),
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future<RpLevelAirdropInfo> getLatestLevelAirdropInfo(
+    String address,
+  ) async {
+    return await RPHttpCore.instance.getEntity(
+        "/v1/rp/airdrop/level/latestRound/$address",
+        EntityFactory<RpLevelAirdropInfo>(
+          (json) => RpLevelAirdropInfo.fromJson(json),
         ),
         options: RequestOptions(contentType: "application/json"));
   }
@@ -418,17 +440,16 @@ class RPApi {
 
   ///用户升级 燃烧以及抵押 需求
   Future<RpPromotionRuleEntity> getRPPromotionRule(String address) async {
-
     PackageInfo packageInfo;
     if (packageInfo == null) {
       packageInfo = await PackageInfo.fromPlatform();
     }
 
-    var version  = packageInfo?.version ?? "";
-    var buildNumber  = packageInfo?.buildNumber ?? "";
+    var version = packageInfo?.version ?? "";
+    var buildNumber = packageInfo?.buildNumber ?? "";
     //print("[rp_api] getRPPromotionRule, version:$version, buildNumber:$buildNumber");
 
-    var versionCode = version  + "+" + buildNumber;
+    var versionCode = version + "+" + buildNumber;
 
     return await RPHttpCore.instance.getEntity(
         "/v1/rp/level/promotion/$address",

@@ -20,7 +20,7 @@ import 'package:titan/src/pages/global_data/global_data.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -940,7 +940,7 @@ class HomePanelState extends State<HomePanel> {
           context,
           Routes.map3node_contract_detail_page +
               '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
-    } else if (scanStr.contains(RpInviteFriendPage.shareDomain)) {
+    } else if (scanStr.contains(RpFriendInvitePage.shareDomain)) {
       var fromArr = scanStr.split("from=");
       if(fromArr[1].length > 0){
         fromArr = fromArr[1].split("&name=");
