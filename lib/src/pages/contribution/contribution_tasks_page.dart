@@ -452,9 +452,13 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Icon(
-              Icons.chevron_right,
-              color: HexColor('#E9E9E9'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12,),
+              child: Image.asset(
+                'res/drawable/me_account_bind_arrow.png',
+                width: 7,
+                height: 12,
+              ),
             ),
           ],
         ),
@@ -474,9 +478,13 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
                 S.of(context).task_is_finished_func(todayTimes.toString(), taskTimes.toString()),
                 style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
-            Icon(
-              Icons.chevron_right,
-              color: HexColor('#E9E9E9'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12,),
+              child: Image.asset(
+                'res/drawable/me_account_bind_arrow.png',
+                width: 7,
+                height: 12,
+              ),
             ),
           ],
         ),
