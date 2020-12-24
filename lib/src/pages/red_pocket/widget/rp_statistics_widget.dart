@@ -377,11 +377,12 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
         chartValuesOptions: ChartValuesOptions(
           chartValueStyle: TextStyle(
             fontSize: 11,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: Colors.black,
           ),
           showChartValueBackground: false,
           showChartValuesInPercentage: true,
+          decimalPlaces: 2,
           showChartValuesOutside: true,
         ),
       ),
