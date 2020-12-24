@@ -298,14 +298,6 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
           if (latlng != null) {
             // 注释：第0次，自检：图片， 后面，第N次，ta检查，都是第三方验证，多任务校验
 
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => VerifyPoiPageV2(userPosition: latlng),
-              ),
-            );
-            return;
-
             if (confirmPoiTimes == 0 /*|| env.buildType == BuildType.DEV*/) {
               Navigator.push(
                 context,
