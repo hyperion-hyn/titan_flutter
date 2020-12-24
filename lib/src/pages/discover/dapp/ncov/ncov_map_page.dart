@@ -537,26 +537,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
       UiUtil.showRequestLocationAuthDialog(context, false);
     }
   }
-
-  void _showDialogWidget({Widget title, Widget content, List<Widget> actions}) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Platform.isIOS
-            ? CupertinoAlertDialog(
-                title: title,
-                content: content,
-                actions: actions,
-              )
-            : AlertDialog(
-                title: title,
-                content: content,
-                actions: actions,
-              );
-      },
-    );
-  }
-
+  
   Widget _buildPanelView(BuildContext context, BoxConstraints constraints, NcovState state) {
     return NotificationListener<myWidget.DraggableScrollableNotification>(
       onNotification: (notification) {
