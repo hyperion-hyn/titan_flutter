@@ -915,15 +915,13 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
           () async {
             Navigator.pop(context, false);
 
+            List<int> userIDs = [];
             if (subRelationships.isNotEmpty) {
-              List<int> userIDs = [];
-
               for (var item in subRelationships) {
                 userIDs.add(item.userID);
               }
-
-              _postMrReset(userIDs);
             }
+            _postMrReset(userIDs);
           },
           width: 115,
           height: 36,
@@ -972,7 +970,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
         ),
         ClickOvalButton(
           S.of(context).continue_text,
-          () async{
+          () async {
             Navigator.pop(context, false);
 
             _showSetParisAlertView();

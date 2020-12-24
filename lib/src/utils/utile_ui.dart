@@ -141,7 +141,7 @@ class UiUtil {
                                 decoration: TextDecoration.none)),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 16, left: 24, right: 24, bottom: (contentItem != null || detail.isNotEmpty)?0:24),
+                        padding: EdgeInsets.only(top: 16, left: 24, right: 24, bottom: (contentItem != null || detail.isNotEmpty)?0:18),
                         child: RichText(
                             text: TextSpan(
                                 text: content,
