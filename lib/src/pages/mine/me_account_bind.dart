@@ -901,10 +901,10 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
   _showUnbindAlertView() {
     var subRelationships = (_accountBindInfoEntity?.subRelationships ?? []);
 
-    if (subRelationships.isEmpty) {
-      Fluttertoast.showToast(msg: '已解除所有关联子账户');
-      return;
-    }
+    // if (subRelationships.isEmpty) {
+    //   Fluttertoast.showToast(msg: '已解除所有关联子账户');
+    //   return;
+    // }
 
     UiUtil.showAlertView(
       context,

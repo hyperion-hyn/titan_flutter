@@ -30,6 +30,7 @@ import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/grouped_buttons/grouped_buttons.dart';
 import 'package:titan/src/widget/grouped_buttons/src/grouped_buttons_orientation.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class VerifyPoiPageV2 extends StatefulWidget {
   final LatLng userPosition;
@@ -101,7 +102,8 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
 
     _positionBloc.listen((state) {
       if (state is PostConfirmPoiDataV2ResultSuccessState) {
-        _saveData();
+        print("PostConfirmPoiDataV2ResultSuccessState----1111");
+        _finishCheckIn(S.of(context).thank_you_for_contribute_data, []);
 
         Application.router.navigateTo(
             context,
@@ -124,7 +126,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
                           return element.action == ContributionTasksPage.confirmPOI;
                         }).state;
                         if (confirmPoiState.total == 0 || confirmPoiState == null) {
-                          _saveData();
+                          _finishCheckIn(S.of(context).thank_you_for_contribute_data, []);
                         } else {
                           Navigator.of(context)..pop()..pop();
                         }
@@ -197,14 +199,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
   }
 
   // UI
-  void _saveData() async {
-    _finishCheckIn(S.of(context).thank_you_for_contribute_data, []);
 
-    return;
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt(PrefsKey.VERIFY_DATE, DateTime.now().millisecondsSinceEpoch);
-  }
 
   void _setupData() {}
 
@@ -630,6 +625,10 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
       return;
     }
 
+    if (_isSendCheckIn) {
+      return;
+    }
+
     _isSendCheckIn = true;
 
     ContributionsApi api = ContributionsApi();
@@ -641,10 +640,6 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
 
       _isSendCheckIn = false;
 
-      Application.router.navigateTo(
-          context,
-          Routes.contribute_position_finish +
-              '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM}');
     } catch (e) {
       _isSendCheckIn = false;
       setState(() {
@@ -680,25 +675,37 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
 }
 
 Future<bool> showConfirmDialog(BuildContext context, String content, {String title = ""}) {
-  return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title.isEmpty ? S.of(context).tips : title),
-          content: Text(content),
-          actions: <Widget>[
-            FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: Text(S.of(context).cancel)),
-            FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: Text(S.of(context).confirm))
-          ],
-        );
-      },
-      barrierDismissible: true);
+  return UiUtil.showAlertView(
+    context,
+    title: title.isEmpty ? S.of(context).tips : title,
+    actions: [
+      ClickOvalButton(
+        S.of(context).cancel,
+            () {
+              Navigator.of(context).pop(false);
+        },
+        width: 115,
+        height: 36,
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+        fontColor: DefaultColors.color999,
+        btnColor: [Colors.transparent],
+      ),
+      SizedBox(
+        width: 20,
+      ),
+      ClickOvalButton(
+        S.of(context).confirm,
+            () {
+              Navigator.of(context).pop(true);
+
+            },
+        width: 115,
+        height: 36,
+        fontSize: 16,
+        fontWeight: FontWeight.normal,
+      ),
+    ],
+    content: content,
+  );
 }

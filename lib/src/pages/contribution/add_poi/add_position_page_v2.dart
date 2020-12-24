@@ -199,12 +199,15 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
       bloc: _positionBloc,
       condition: (AllPageState fromState, AllPageState state) {
         if (state is PostPoiDataV2ResultSuccessState) {
-          _finishCheckIn(S.of(context).thank_you_for_contribute_data);
+          if (_isUploading) {
+            _finishCheckIn(S.of(context).thank_you_for_contribute_data);
 
-          Application.router.navigateTo(
-              context,
-              Routes.contribute_position_finish +
-                  '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_ADD}');
+            Application.router.navigateTo(
+                context,
+                Routes.contribute_position_finish +
+                    '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_ADD}');
+          }
+
         } else if (state is PostPoiDataV2ResultFailState) {
           setState(() {
             _isUploading = false;

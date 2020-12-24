@@ -12,7 +12,6 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'contributions_http.dart';
 
 class ContributionsApi {
-
   String getRequestLang() {
     var locale = SettingInheritedModel.of(Keys.rootKey.currentContext)?.languageModel?.locale;
     if (locale == null) {
@@ -27,8 +26,11 @@ class ContributionsApi {
   String get _address =>
       WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
-  Future postCheckIn(String type, List<double> coordinates, List<String> optLogIDs,) async {
-
+  Future postCheckIn(
+    String type,
+    List<double> coordinates,
+    List<String> optLogIDs,
+  ) async {
     var isEmpty = false;
     List<String> newOptLogIDs = [];
     if (type == "confirmPOIV2" && optLogIDs != null) {
@@ -46,7 +48,10 @@ class ContributionsApi {
     await ContributionsHttpCore.instance.postEntity(
       "/v1/titan/checkin/$_address",
       EntityFactory((json) => json),
-      options: RequestOptions(headers: {"Lang": getRequestLang()}),
+      options: RequestOptions(
+        headers: {"Lang": getRequestLang()},
+        contentType: "application/json",
+      ),
       params: params,
     );
   }
@@ -93,6 +98,7 @@ class ContributionsApi {
     return await ContributionsHttpCore.instance.postResponseEntity(
       'v1/titan/mr/$_address/set-master',
       null,
+      options: RequestOptions(contentType: "application/json"),
     );
   }
 
@@ -100,15 +106,15 @@ class ContributionsApi {
   Future<ResponseEntity<dynamic>> postMrRequest({
     @required String address,
   }) async {
-
     var identify = WalletUtil.bech32ToEthAddress(address);
 
     return await ContributionsHttpCore.instance.postResponseEntity(
-      '/v1/titan/mr/$_address/request ',
+      '/v1/titan/mr/$_address/request',
       null,
       params: {
         "identify": identify,
       },
+      options: RequestOptions(contentType: "application/json"),
     );
   }
 
@@ -134,6 +140,7 @@ class ContributionsApi {
       null,
       data: data,
       params: params,
+      options: RequestOptions(contentType: "application/json"),
     );
   }
 
@@ -151,6 +158,7 @@ class ContributionsApi {
         "ID": id,
         "optType": optType,
       },
+      options: RequestOptions(contentType: "application/json"),
     );
   }
 
@@ -164,6 +172,7 @@ class ContributionsApi {
       params: {
         "ID": id,
       },
+      options: RequestOptions(contentType: "application/json"),
     );
   }
 

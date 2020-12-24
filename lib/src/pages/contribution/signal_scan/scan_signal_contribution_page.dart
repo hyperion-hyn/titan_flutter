@@ -338,7 +338,7 @@ class _ContributionState extends State<ScanSignalContributionPage> {
                           height: 1.5,
                           child: LinearProgressIndicator(
                             value: snapshot?.data ?? 0.0,
-                            valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                           ),
                         ),
                         top: 0,
