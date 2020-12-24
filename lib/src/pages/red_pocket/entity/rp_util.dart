@@ -3,7 +3,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/utils/format_util.dart';
 
-String bigIntToEther(
+String bigIntToEtherWithFormat(
   String bigIntValue, {
   int decimal = 4,
 }) {
