@@ -273,7 +273,7 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
           height: 40,
           width: 40,
           child: CircularProgressIndicator(
-            strokeWidth: 3,
+            strokeWidth: 1.5,
           ),
         ),
       ),

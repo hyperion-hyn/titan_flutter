@@ -537,7 +537,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
       UiUtil.showRequestLocationAuthDialog(context, false);
     }
   }
-  
+
   Widget _buildPanelView(BuildContext context, BoxConstraints constraints, NcovState state) {
     return NotificationListener<myWidget.DraggableScrollableNotification>(
       onNotification: (notification) {
