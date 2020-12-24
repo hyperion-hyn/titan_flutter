@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/contribution/signal_scan/vo/check_in_model.dart';
 import 'package:titan/src/pages/mine/model/account_bind_info_entity.dart';
@@ -22,7 +23,10 @@ class ContributionsApi {
     }
   }
 
-  Future postCheckIn(String address, String type, List<double> coordinates, List<String> optLogIDs,) async {
+  String get _address =>
+      WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+
+  Future postCheckIn(String type, List<double> coordinates, List<String> optLogIDs,) async {
 
     var isEmpty = false;
     List<String> newOptLogIDs = [];
@@ -39,25 +43,25 @@ class ContributionsApi {
     };
     //print("[map_rich] checkInV3, params:$params");
     await ContributionsHttpCore.instance.postEntity(
-      "/v1/titan/checkin/$address",
+      "/v1/titan/checkin/$_address",
       EntityFactory((json) => json),
       options: RequestOptions(headers: {"Lang": getRequestLang()}),
       params: params,
     );
   }
 
-  Future<CheckInModel> checkInCountV3(String address) async {
+  Future<CheckInModel> checkInCountV3() async {
     return await ContributionsHttpCore.instance.getEntity(
-      "/v1/titan/checkin/$address/stats",
+      "/v1/titan/checkin/$_address/stats",
       EntityFactory((json) => CheckInModel.fromJson(json)),
       options: RequestOptions(headers: {"Lang": getRequestLang()}),
     );
   }
 
   ///获取checkinhistory
-  Future<PageResponse<CheckInModel>> getHistoryListV3(String address, int page) async {
+  Future<PageResponse<CheckInModel>> getHistoryListV3(int page) async {
     return await ContributionsHttpCore.instance.getEntity(
-      "/v1/titan/checkin/$address/history",
+      "/v1/titan/checkin/$_address/history",
       EntityFactory<PageResponse<CheckInModel>>((json) {
         var currentPage = json["page"] as int;
         var totalPages = json["totalPages"] as int;
@@ -76,21 +80,17 @@ class ContributionsApi {
   }
 
   ///打卡关联信息
-  Future<AccountBindInfoEntity> getMrInfo({
-    @required String address,
-  }) async {
+  Future<AccountBindInfoEntity> getMrInfo() async {
     return await ContributionsHttpCore.instance.getEntity(
-      '/v1/titan/mr/$address/info',
+      '/v1/titan/mr/$_address/info',
       EntityFactory<AccountBindInfoEntity>((json) => AccountBindInfoEntity.fromJson(json)),
     );
   }
 
   // 打卡关联-设置成主账号
-  Future<ResponseEntity<dynamic>> postMrSetMaster({
-    @required String address,
-  }) async {
+  Future<ResponseEntity<dynamic>> postMrSetMaster() async {
     return await ContributionsHttpCore.instance.postResponseEntity(
-      'v1/titan/mr/$address/set-master',
+      'v1/titan/mr/$_address/set-master',
       null,
     );
   }
@@ -98,10 +98,9 @@ class ContributionsApi {
   // 打卡关联-设置成子账号
   Future<ResponseEntity<dynamic>> postMrRequest({
     @required String email,
-    @required String address,
   }) async {
     return await ContributionsHttpCore.instance.postResponseEntity(
-      '/v1/titan/mr/$address/request ',
+      '/v1/titan/mr/$_address/request ',
       null,
       params: {
         "email": email,
@@ -113,7 +112,6 @@ class ContributionsApi {
   // 子账号取消与主账号的关联
   Future<ResponseEntity<dynamic>> postMrReset({
     @required List<int> userIDs,
-    @required String address,
   }) async {
     Map<String, dynamic> params;
     dynamic data;
@@ -128,7 +126,7 @@ class ContributionsApi {
     }
 
     return await ContributionsHttpCore.instance.postResponseEntity(
-      '/v1/titan/mr/$address/reset',
+      '/v1/titan/mr/$_address/reset',
       null,
       data: data,
       params: params,
@@ -141,10 +139,9 @@ class ContributionsApi {
   Future<ResponseEntity<dynamic>> postMrOperation({
     @required int id,
     @required String optType,
-    @required String address,
   }) async {
     return await ContributionsHttpCore.instance.postResponseEntity(
-      '/v1/titan/mr/$address/operation',
+      '/v1/titan/mr/$_address/operation',
       null,
       params: {
         "ID": id,
@@ -156,10 +153,9 @@ class ContributionsApi {
   // 打卡关联-取消申请
   Future<ResponseEntity<dynamic>> postCancelRequest({
     @required int id,
-    @required String address,
   }) async {
     return await ContributionsHttpCore.instance.postResponseEntity(
-      '/v1/titan/mr/$address/cancel-request',
+      '/v1/titan/mr/$_address/cancel-request',
       null,
       params: {
         "ID": id,
@@ -173,10 +169,9 @@ class ContributionsApi {
   // 1: 已批准
   Future<ResponseEntity<dynamic>> getMrRequestList({
     @required int page,
-    @required String address,
   }) async {
     return await ContributionsHttpCore.instance.getResponseEntity(
-      'v1/titan/mr/$address/list-request',
+      'v1/titan/mr/$_address/list-request',
       null,
       params: {
         "page": page,
@@ -185,9 +180,9 @@ class ContributionsApi {
   }
 
   ///是否有加速量：effective_acceleration > 0 表示有加速量
-  Future<UserInfo> getAcceleration(String address) async {
+  Future<UserInfo> getAcceleration() async {
     return await ContributionsHttpCore.instance.getEntity(
-        "/v1/titan/account/$address/acceleration",
+        "/v1/titan/account/$_address/acceleration",
         EntityFactory<UserInfo>(
           (json) => UserInfo.fromJson(json),
         ),

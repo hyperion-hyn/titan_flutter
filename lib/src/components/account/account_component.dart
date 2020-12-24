@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/account/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/pages/contribution/signal_scan/vo/check_in_model.dart';
+import 'package:titan/src/pages/mine/model/user_info.dart';
 
 class AccountComponent extends StatelessWidget {
   final Widget child;
@@ -31,7 +32,7 @@ class _AccountManager extends StatefulWidget {
 
 class _AccountManagerState extends State<_AccountManager> {
   CheckInModel _checkInModel;
-
+  UserInfo _userInfoModel;
   @override
   void initState() {
     super.initState();
@@ -47,7 +48,8 @@ class _AccountManagerState extends State<_AccountManager> {
         print("[AccountComponent] ActivatedWalletState, _address:$_address");
 
         if (context != null) {
-          BlocProvider.of<AccountBloc>(context).add(UpdateMyCheckInInfoEvent(address: _address));
+          BlocProvider.of<AccountBloc>(context).add(UpdateCheckInInfoEvent(address: _address));
+          BlocProvider.of<AccountBloc>(context).add(UpdateUserInfoEvent(address: _address));
         }
       }
     });
@@ -57,16 +59,21 @@ class _AccountManagerState extends State<_AccountManager> {
   Widget build(BuildContext context) {
     return BlocBuilder<AccountBloc, AccountState>(
       builder: (BuildContext context, AccountState state) {
-        if (state is UpdateMyCheckInInfoState) {
+        if (state is UpdateCheckInInfoState) {
           if (state.checkInModel != null) {
             _checkInModel = state.checkInModel;
           }
-        } else if (state is ClearMyCheckInInfoState) {
+        } else if (state is UpdateUserInfoState) {
+          if (state.userInfo != null) {
+            _userInfoModel = state.userInfo;
+          }
+        } else if (state is ClearDataState) {
           _checkInModel = null;
         }
 
         return AccountInheritedModel(
           checkInModel: _checkInModel,
+          userInfoModel: _userInfoModel,
           child: widget.child,
         );
       },
@@ -75,14 +82,17 @@ class _AccountManagerState extends State<_AccountManager> {
 }
 
 enum AccountAspect {
-  checkInModel,
+  checkIn,
+  userInfo,
 }
 
 class AccountInheritedModel extends InheritedModel<AccountAspect> {
   final CheckInModel checkInModel;
+  final UserInfo userInfoModel;
 
   AccountInheritedModel({
     this.checkInModel,
+    this.userInfoModel,
     Key key,
     @required Widget child,
   }) : super(key: key, child: child);
@@ -93,11 +103,12 @@ class AccountInheritedModel extends InheritedModel<AccountAspect> {
 
   @override
   bool updateShouldNotify(AccountInheritedModel oldWidget) {
-    return checkInModel != oldWidget.checkInModel;
+    return (checkInModel != oldWidget.checkInModel) || (userInfoModel != oldWidget.userInfoModel);
   }
 
   @override
   bool updateShouldNotifyDependent(AccountInheritedModel oldWidget, Set<AccountAspect> dependencies) {
-    return (checkInModel != oldWidget.checkInModel && dependencies.contains(AccountAspect.checkInModel));
+    return (checkInModel != oldWidget.checkInModel && dependencies.contains(AccountAspect.checkIn)) ||
+        (userInfoModel != oldWidget.userInfoModel && dependencies.contains(AccountAspect.userInfo));
   }
 }

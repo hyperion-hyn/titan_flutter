@@ -3,9 +3,14 @@ import 'package:meta/meta.dart';
 @immutable
 abstract class AccountEvent {}
 
-class UpdateMyCheckInInfoEvent extends AccountEvent {
+class UpdateCheckInInfoEvent extends AccountEvent {
   final String address;
-  UpdateMyCheckInInfoEvent({this.address});
+  UpdateCheckInInfoEvent({this.address});
 }
 
-class ClearMyCheckInInfoEvent extends AccountEvent {}
+class UpdateUserInfoEvent extends AccountEvent {
+  final String address;
+  UpdateUserInfoEvent({this.address});
+}
+
+class ClearDataEvent extends AccountEvent {}

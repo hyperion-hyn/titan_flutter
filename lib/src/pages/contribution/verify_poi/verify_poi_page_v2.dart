@@ -119,7 +119,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
                   FlatButton(
                       onPressed: () {
                         var checkInModel =
-                            AccountInheritedModel.of(context, aspect: AccountAspect.checkInModel).checkInModel;
+                            AccountInheritedModel.of(context, aspect: AccountAspect.checkIn).checkInModel;
                         CheckInModelState confirmPoiState = checkInModel.detail.firstWhere((element) {
                           return element.action == ContributionTasksPage.confirmPOI;
                         }).state;
@@ -637,7 +637,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
       await api.postCheckIn(address, 'confirmPOIV2', _contributionPois.coordinates, optLogIDs);
       UiUtil.toast(successTip);
 
-      BlocProvider.of<AccountBloc>(context).add(UpdateMyCheckInInfoEvent());
+      BlocProvider.of<AccountBloc>(context).add(UpdateCheckInInfoEvent());
 
       _isSendCheckIn = false;
 

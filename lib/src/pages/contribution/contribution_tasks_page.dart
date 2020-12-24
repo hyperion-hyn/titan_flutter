@@ -1,15 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
-
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -76,11 +73,11 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
     var isLogged = activeWalletVo != null;
     if (isLogged) {
       if (mounted) {
-        BlocProvider.of<AccountBloc>(context).add(UpdateMyCheckInInfoEvent());
+        BlocProvider.of<AccountBloc>(context).add(UpdateCheckInInfoEvent());
       }
     } else {
       if (mounted) {
-        BlocProvider.of<AccountBloc>(context).add(ClearMyCheckInInfoEvent());
+        BlocProvider.of<AccountBloc>(context).add(ClearDataEvent());
       }
     }
   }
@@ -225,7 +222,7 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
   }
 
   Widget _taskListView() {
-    var checkInModel = AccountInheritedModel.of(context, aspect: AccountAspect.checkInModel)?.checkInModel;
+    var checkInModel = AccountInheritedModel.of(context, aspect: AccountAspect.checkIn)?.checkInModel;
     var scanTimes = 0;
     var postPoiTimes = 0;
     var confirmPoiTimes = 0;
@@ -472,15 +469,10 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
           children: <Widget>[
             if (todayTimes < 0)
               Container()
-            else if (todayTimes < taskTimes)
-              Text(
-                S.of(context).task_un_finished_func(todayTimes.toString(), taskTimes.toString()),
-                style: TextStyle(fontSize: 12, color: Colors.red[600]),
-              )
             else
               Text(
                 S.of(context).task_is_finished_func(todayTimes.toString(), taskTimes.toString()),
-                style: TextStyle(fontSize: 12, color: Colors.green[600]),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             Icon(
               Icons.chevron_right,
