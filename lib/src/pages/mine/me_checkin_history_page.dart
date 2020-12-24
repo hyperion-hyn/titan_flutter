@@ -174,235 +174,243 @@ class _MeCheckInHistoryState extends DataListState<MeCheckInHistory> {
       detail = S.of(context).you_still_have_unfinished_tasks_detail_toast;
     }
 
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
-      child: Column(
-        children: <Widget>[
-          Row(
+    return Column(
+      children: [
+        if (index == 0) Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          height: 5,
+        ),
+        Container(
+          color: Colors.white,
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
+          child: Column(
             children: <Widget>[
-              Text(
-                title,
-                style: TextStyle(
-                    color: title == S.of(context).task_failed ? HexColor('#FF4C3B') : HexColor('#333333'),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600),
+              Row(
+                children: <Widget>[
+                  Text(
+                    title,
+                    style: TextStyle(
+                        color: title == S.of(context).task_failed ? HexColor('#FF4C3B') : HexColor('#333333'),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  Spacer(),
+                  Text(
+                    model.day,
+                    style: TextStyle(color: HexColor('#999999'), fontSize: 12),
+                  ),
+                ],
               ),
-              Spacer(),
-              Text(
-                model.day,
-                style: TextStyle(color: HexColor('#999999'), fontSize: 12),
-              ),
-            ],
-          ),
-          if (detail.isNotEmpty)
-            Column(
-              children: <Widget>[
-                SizedBox(
-                  height: 8,
-                ),
-                Row(
+              if (detail.isNotEmpty)
+                Column(
                   children: <Widget>[
-                    Text(
-                      detail,
-                      style: TextStyle(color: HexColor('#333333'), fontSize: 14),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          Padding(
-            padding: const EdgeInsets.only(top: 12, bottom: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [1, 2, 3].map((value) {
-                var title = "";
-                var count = 0;
-                bool isTrue = true;
-                switch (value) {
-                  case 1:
-                    title = S.of(context).add_location;
-                    isTrue = addPoiCount >= 1;
-                    count = addPoiCount;
-                    break;
-
-                  case 2:
-                    title = S.of(context).verification_location;
-                    isTrue = confirmPoiCount >= 2;
-                    if (model.detail.isEmpty && isFinish) {
-                      isTrue = confirmPoiCount >= 1;
-                    }
-
-                    count = confirmPoiCount;
-                    break;
-
-                  case 3:
-                    title = S.of(context).scanning_location;
-                    isTrue = scanCount >= 1;
-                    count = scanCount;
-                    break;
-                }
-
-                if (isFinish && !isToday) {
-                  isTrue = isFinish;
-                }
-
-                return Row(
-                  children: <Widget>[
-                    Image.asset(
-                      isTrue ? "res/drawable/check_in_true.png" : "res/drawable/check_in_false.png",
-                      width: 16,
-                      height: 16,
-                    ),
                     SizedBox(
-                      width: 6,
+                      height: 8,
                     ),
-                    Text(
-                      "$title $count",
-                      style: TextStyle(color: HexColor('#999999'), fontSize: 14),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-          ),
-          if (poiList.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Column(
-                children: poiList.map((value) {
-                  CheckInModelPoi poi;
-                  switch (value) {
-                    case 0:
-                    case 1:
-                    case 2:
-                      poi = confirmPOIModel.state.pois[value];
-                      break;
-
-                    case 4:
-                      poi = null;
-                      return Container(
-                        height: 16,
-                      );
-                      break;
-                  }
-
-                  if (poi == null) {
-                    return Container(
-                      height: 0.01,
-                    );
-                  }
-                  var createAt = DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(poi.createdAt * 1000));
-
-                  return InkWell(
-                    onTap: () {
-                      if (poi?.detail?.isNotEmpty ?? false) {
-                        _pushDetailView(poi);
-                      }
-                    },
-                    child: Stack(
+                    Row(
                       children: <Widget>[
-                        Container(
-                          //color: Colors.red,
-                          child: Row(
-                            children: <Widget>[
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(4.0),
-                                child: FadeInImage.assetNetwork(
-                                  placeholder: 'res/drawable/img_placeholder.jpg',
-                                  image: poi.image.isNotEmpty ? poi.image : "",
-                                  fit: BoxFit.cover,
-                                  width: 98,
-                                  height: 68,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Flexible(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Text(
-                                            poi.name,
-//                                          "唱唱",
-                                            style: TextStyle(
-                                                color: HexColor('#333333'), fontSize: 16, fontWeight: FontWeight.w600),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        Text(
-//                                        "6-3 12:02",
-                                          createAt.isNotEmpty ? createAt : "",
-                                          style: TextStyle(color: HexColor('#999999'), fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 2,
-                                    ),
-                                    Row(
-                                      children: <Widget>[
-                                        Text(
-//                                        "美食/西餐",
-                                          poi.category,
-                                          style: TextStyle(color: HexColor('#333333'), fontSize: 14),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 6,
-                                    ),
-                                    Row(
-                                      children: <Widget>[
-                                        Image.asset(
-                                          "res/drawable/check_in_location.png",
-                                          width: 12,
-                                          height: 12,
-                                        ),
-                                        SizedBox(
-                                          width: 6,
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            //"广东省-广州市-天河区-黄埔大道西8号",
-                                            poi.address.isNotEmpty ? poi.address : "",
-                                            style: TextStyle(color: HexColor('#999999'), fontSize: 12),
-                                            overflow: TextOverflow.ellipsis,
-                                            //maxLines: 2,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Positioned(
-                          right: 60,
-                          top: 10,
-                          child: Image.asset(
-                            "res/drawable/check_in_fales_data_zh_CN.png",
-                            width: 93,
-                            height: 58,
-                          ),
+                        Text(
+                          detail,
+                          style: TextStyle(color: HexColor('#333333'), fontSize: 14),
                         ),
                       ],
                     ),
-                  );
-                }).toList(),
+                  ],
+                ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12, bottom: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [1, 2, 3].map((value) {
+                    var title = "";
+                    var count = 0;
+                    bool isTrue = true;
+                    switch (value) {
+                      case 1:
+                        title = S.of(context).add_location;
+                        isTrue = addPoiCount >= 1;
+                        count = addPoiCount;
+                        break;
+
+                      case 2:
+                        title = S.of(context).verification_location;
+                        isTrue = confirmPoiCount >= 2;
+                        if (model.detail.isEmpty && isFinish) {
+                          isTrue = confirmPoiCount >= 1;
+                        }
+
+                        count = confirmPoiCount;
+                        break;
+
+                      case 3:
+                        title = S.of(context).scanning_location;
+                        isTrue = scanCount >= 1;
+                        count = scanCount;
+                        break;
+                    }
+
+                    if (isFinish && !isToday) {
+                      isTrue = isFinish;
+                    }
+
+                    return Row(
+                      children: <Widget>[
+                        Image.asset(
+                          isTrue ? "res/drawable/check_in_true.png" : "res/drawable/check_in_false.png",
+                          width: 16,
+                          height: 16,
+                        ),
+                        SizedBox(
+                          width: 6,
+                        ),
+                        Text(
+                          "$title $count",
+                          style: TextStyle(color: HexColor('#999999'), fontSize: 14),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
               ),
-            ),
-        ],
-      ),
+              if (poiList.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Column(
+                    children: poiList.map((value) {
+                      CheckInModelPoi poi;
+                      switch (value) {
+                        case 0:
+                        case 1:
+                        case 2:
+                          poi = confirmPOIModel.state.pois[value];
+                          break;
+
+                        case 4:
+                          poi = null;
+                          return Container(
+                            height: 16,
+                          );
+                          break;
+                      }
+
+                      if (poi == null) {
+                        return Container(
+                          height: 0.01,
+                        );
+                      }
+                      var createAt = DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(poi.createdAt * 1000));
+
+                      return InkWell(
+                        onTap: () {
+                          if (poi?.detail?.isNotEmpty ?? false) {
+                            _pushDetailView(poi);
+                          }
+                        },
+                        child: Stack(
+                          children: <Widget>[
+                            Container(
+                              //color: Colors.red,
+                              child: Row(
+                                children: <Widget>[
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(4.0),
+                                    child: FadeInImage.assetNetwork(
+                                      placeholder: 'res/drawable/img_placeholder.jpg',
+                                      image: poi.image.isNotEmpty ? poi.image : "",
+                                      fit: BoxFit.cover,
+                                      width: 98,
+                                      height: 68,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Flexible(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(
+                                                poi.name,
+//                                          "唱唱",
+                                                style: TextStyle(
+                                                    color: HexColor('#333333'), fontSize: 16, fontWeight: FontWeight.w600),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                            Text(
+//                                        "6-3 12:02",
+                                              createAt.isNotEmpty ? createAt : "",
+                                              style: TextStyle(color: HexColor('#999999'), fontSize: 12),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 2,
+                                        ),
+                                        Row(
+                                          children: <Widget>[
+                                            Text(
+//                                        "美食/西餐",
+                                              poi.category,
+                                              style: TextStyle(color: HexColor('#333333'), fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 6,
+                                        ),
+                                        Row(
+                                          children: <Widget>[
+                                            Image.asset(
+                                              "res/drawable/check_in_location.png",
+                                              width: 12,
+                                              height: 12,
+                                            ),
+                                            SizedBox(
+                                              width: 6,
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                //"广东省-广州市-天河区-黄埔大道西8号",
+                                                poi.address.isNotEmpty ? poi.address : "",
+                                                style: TextStyle(color: HexColor('#999999'), fontSize: 12),
+                                                overflow: TextOverflow.ellipsis,
+                                                //maxLines: 2,
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              right: 60,
+                              top: 10,
+                              child: Image.asset(
+                                "res/drawable/check_in_fales_data_zh_CN.png",
+                                width: 93,
+                                height: 58,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

@@ -21,7 +21,8 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
       child: Scaffold(
         appBar: BaseAppBar(
           baseTitle: '我的红包',
-          backgroundColor: HexColor('#F8F8F8'),
+          //backgroundColor: HexColor('#F8F8F8'),
+          backgroundColor: Colors.white,
         ),
         body: Scaffold(
           appBar: new PreferredSize(
@@ -29,7 +30,8 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
             child: new Container(
               width: double.infinity,
               height: 50.0,
-              color: HexColor('#F8F8F8'),
+              //color: HexColor('#F8F8F8'),
+              color: Colors.white,
               child: Row(
                 children: <Widget>[
                   Expanded(

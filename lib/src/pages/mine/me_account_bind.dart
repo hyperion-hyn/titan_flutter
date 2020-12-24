@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -7,12 +8,17 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/account/account_component.dart';
+import 'package:titan/src/components/account/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/mine/me_account_bind_request.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/popup/bubble_widget.dart';
 import 'package:titan/src/widget/popup/pop_route.dart';
@@ -33,6 +39,16 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
   UserInfo _userInfo;
   AccountBindInfoEntity _accountBindInfoEntity;
   ContributionsApi _api = ContributionsApi();
+
+  String get _address =>
+      WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+  String get _shortAddress {
+    var beach32Address = WalletUtil.ethAddressToBech32Address(_address ?? '');
+    var address = shortBlockChainAddress(
+      beach32Address,
+    );
+    return address;
+  }
 
   var _textEditController = TextEditingController();
 
@@ -87,13 +103,21 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
 
   @override
   void onCreated() async {
+    _syncData();
 
     loadDataBloc.add(LoadingEvent());
 
     super.onCreated();
   }
 
+  Future _syncData() async {
+    if (context == null) return;
 
+    _userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo)?.userInfoModel;
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -116,6 +140,10 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
   void getNetworkData() async {
     try {
       _accountBindInfoEntity = await _api.getMrInfo();
+
+      if (context != null) {
+        BlocProvider.of<AccountBloc>(context).add(UpdateUserInfoEvent());
+      }
 
       print('${widget.runtimeType}, _accountBindInfoEntity:${_accountBindInfoEntity.toJson()}');
       if (mounted) {
@@ -155,7 +183,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
             },
           ),
         ],
-        baseTitle:S.of(context).task_related_account,
+        baseTitle: S.of(context).task_related_account,
       ),
       body: _pageView(),
     );
@@ -227,7 +255,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                       top: 6,
                     ),
                     child: Text(
-                      _userInfo?.email ?? '',
+                      _userInfo?.email ?? _shortAddress ?? '',
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 18,
@@ -297,6 +325,10 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
           child: Column(
             children: <Widget>[
               Container(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                height: 5,
+              ),
+              Container(
                 color: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
                 child: Column(
@@ -319,7 +351,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                         child: Row(
                           children: <Widget>[
                             Text(
-                              _userInfo?.email ?? '',
+                              _userInfo?.email ?? _shortAddress ?? '',
                               style: _contentTextStyle,
                             ),
                             Spacer(),
@@ -341,65 +373,68 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                 ),
               ),
               Container(
-                height: 10,
+                height: 8,
                 color: HexColor("#F2F2F2"),
               ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MeAccountBindRequestPage()));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 14,
-                    right: 16,
-                    top: 15,
-                    bottom: 14,
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        '新的申请',
-                        style: _contentTextStyle,
-                      ),
-                      Spacer(),
-                      if ((_accountBindInfoEntity?.applyCount ?? 0) > 0)
-                        Container(
-                          width: 16,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            color: HexColor("#FF4C3B"),
-                            borderRadius: BorderRadius.all(Radius.circular(
-                              16.0,
-                            )),
-                          ),
-                          child: Center(
-                            child: Text(
-                              '${_accountBindInfoEntity?.applyCount ?? 0}',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: HexColor("#FFFFFF"),
-                                fontSize: 10,
-                                fontWeight: FontWeight.normal,
+              Container(
+                color: Colors.white,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => MeAccountBindRequestPage()));
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 14,
+                      right: 16,
+                      top: 15,
+                      bottom: 14,
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          '新的申请',
+                          style: _contentTextStyle,
+                        ),
+                        Spacer(),
+                        if ((_accountBindInfoEntity?.applyCount ?? 0) > 0)
+                          Container(
+                            width: 16,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              color: HexColor("#FF4C3B"),
+                              borderRadius: BorderRadius.all(Radius.circular(
+                                16.0,
+                              )),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '${_accountBindInfoEntity?.applyCount ?? 0}',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: HexColor("#FFFFFF"),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.normal,
+                                ),
                               ),
                             ),
                           ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 4,
+                          ),
+                          child: Image.asset(
+                            'res/drawable/me_account_bind_arrow.png',
+                            width: 7,
+                            height: 12,
+                          ),
                         ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 4,
-                        ),
-                        child: Image.asset(
-                          'res/drawable/me_account_bind_arrow.png',
-                          width: 7,
-                          height: 12,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
               Container(
-                height: 10,
+                height: 8,
                 color: HexColor("#F2F2F2"),
               ),
               Row(
@@ -688,8 +723,8 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
 
                                   if (subTitle == '取消') {
                                     try {
-                                      var isOk = await _api.postCancelRequest(
-                                          id: _accountBindInfoEntity?.request?.id ?? 0);
+                                      var isOk =
+                                          await _api.postCancelRequest(id: _accountBindInfoEntity?.request?.id ?? 0);
 
                                       print("[${widget.runtimeType}],1,打卡关联-取消关联, isOk:$isOk");
 
