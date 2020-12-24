@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
@@ -177,7 +176,6 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     var totalPromotion = _rpStats?.airdrop?.promotionTotal ?? '0';
 
     var totalStr = bigIntToEtherWithFormat(total);
-
     var airdropLuckyTotalStr = bigIntToEtherWithFormat(totalLucky);
     var airdropLevelTotalStr = bigIntToEtherWithFormat(totalLevel);
     var airdropPromotionTotalStr = bigIntToEtherWithFormat(totalPromotion);
