@@ -8,6 +8,7 @@ import 'package:titan/src/pages/contribution/signal_scan/vo/check_in_model.dart'
 import 'package:titan/src/pages/mine/model/account_bind_info_entity.dart';
 import 'package:titan/src/pages/mine/model/page_response.dart';
 import 'package:titan/src/pages/mine/model/user_info.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'contributions_http.dart';
 
 class ContributionsApi {
@@ -97,13 +98,16 @@ class ContributionsApi {
 
   // 打卡关联-设置成子账号
   Future<ResponseEntity<dynamic>> postMrRequest({
-    @required String email,
+    @required String address,
   }) async {
+
+    var identify = WalletUtil.bech32ToEthAddress(address);
+
     return await ContributionsHttpCore.instance.postResponseEntity(
       '/v1/titan/mr/$_address/request ',
       null,
       params: {
-        "email": email,
+        "identify": identify,
       },
     );
   }

@@ -956,11 +956,9 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
       title: '设为子账户',
       actions: [
         ClickOvalButton(
-          '继续',
+          S.of(context).cancel,
           () async {
-            Navigator.pop(context, false);
-
-            _showSetParisAlertView();
+            Navigator.pop(context, true);
           },
           width: 115,
           height: 36,
@@ -973,9 +971,11 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
           width: 20,
         ),
         ClickOvalButton(
-          '再想想',
-          () {
-            Navigator.pop(context, true);
+          S.of(context).continue_text,
+          () async{
+            Navigator.pop(context, false);
+
+            _showSetParisAlertView();
           },
           width: 115,
           height: 36,
@@ -1015,7 +1015,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
             var text = _textEditController.text;
             if (text?.isNotEmpty ?? false) {
               try {
-                var isOk = await _api.postMrRequest(email: text);
+                var isOk = await _api.postMrRequest(address: text);
                 print("[${widget.runtimeType}],设为子账户, isOk.code:${isOk.code}");
 
                 if (isOk.code == 0) {
