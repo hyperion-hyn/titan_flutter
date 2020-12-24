@@ -21,9 +21,11 @@ import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/data/entity/converter/model_converter.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/scan_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import 'vo/latlng.dart' as contributionLatlng;
 import 'vo/signal_collector.dart';
@@ -561,58 +563,48 @@ class _ContributionState extends State<ScanSignalContributionPage> {
     return uploadStatus;
   }
 
-  void _showCloseDialog() {
+  _showCloseDialog() {
     if (_isFinishScan) {
       Navigator.of(context).pop();
       return;
     }
 
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Platform.isIOS
-              ? CupertinoAlertDialog(
-                  content: Text(S.of(context).scan_exit_tips),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        S.of(context).cancel,
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text(
-                        S.of(context).confirm,
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                      onPressed: () {
-                        _sensorPlugin.stopScan();
-                        Navigator.pop(context);
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                )
-              : AlertDialog(
-                  content: Text(S.of(context).scan_exit_tips),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(S.of(context).cancel),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text(S.of(context).confirm),
-                      onPressed: () {
-                        _sensorPlugin.stopScan();
-                        Navigator.pop(context);
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-        });
+    UiUtil.showAlertView(
+      context,
+      title: S.of(context).tips,
+      actions: [
+        ClickOvalButton(
+          S.of(context).cancel,
+          () {
+            Navigator.pop(context, false);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+          fontColor: DefaultColors.color999,
+          btnColor: [Colors.transparent],
+        ),
+        SizedBox(
+          width: 20,
+        ),
+        ClickOvalButton(
+          S.of(context).confirm,
+          () {
+            _sensorPlugin.stopScan();
+            Navigator.pop(context);
+            Navigator.of(context).pop();
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      ],
+      content: S.of(context).scan_exit_tips,
+    );
   }
+
 }
 
 class RadarScan extends StatefulWidget {
