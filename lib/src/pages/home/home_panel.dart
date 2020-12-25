@@ -291,13 +291,13 @@ class HomePanelState extends State<HomePanel> {
                         )),
                     if ((userInfo?.effectiveAcceleration ?? 0) > 0)
                       Positioned(
-                          bottom: 16,
-                          left: 55,
+                          top: 16,
+                          left: 16,
                           child: Image.asset(
                             'res/drawable/contributions_leap.png',
-                            width: 32,
-                            height: 32,
-                            //color: Colors.red,
+                            width: 20,
+                            height: 20,
+                            color: Colors.white,
                           )),
                   ],
                 ),
