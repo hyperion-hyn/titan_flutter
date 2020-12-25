@@ -62,7 +62,7 @@ class ExchangeTransferHistoryListPageState
           color: Colors.black,
         ),
         title: Text(
-          S.of(context).exchange_transfer_history,
+          "${widget.type}${S.of(context).exchange_transfer_history}",
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
