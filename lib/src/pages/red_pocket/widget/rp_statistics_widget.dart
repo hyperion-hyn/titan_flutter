@@ -108,7 +108,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                 enlargeCenterPage: false,
                 enableInfiniteScroll: true,
                 autoPlay: true,
-                autoPlayInterval: Duration(seconds: 4),
+                autoPlayInterval: Duration(seconds: 5),
                 autoPlayAnimationDuration: Duration(milliseconds: 800),
                 autoPlayCurve: Curves.fastOutSlowIn,
                 scrollDirection: Axis.horizontal,
