@@ -102,7 +102,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
         CarouselSlider(
             items: items,
             options: CarouselOptions(
-                aspectRatio: 1.2,
+                aspectRatio: 1.1,
                 initialPage: 0,
                 viewportFraction: 1,
                 enlargeCenterPage: false,
