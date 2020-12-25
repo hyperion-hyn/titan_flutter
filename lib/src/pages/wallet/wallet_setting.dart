@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
@@ -85,6 +86,9 @@ class _WalletSettingState extends State<WalletSettingPage> {
         _imageSource = jsonDecode(localImageSource);
       });
     }
+
+    // WalletInfoEntity walletInfoEntity = await AtlasApi().queryWalletDetail(_address);
+    // print("[$runtimeType] queryWalletDetail, pic:${walletInfoEntity.pic}");
   }
 
   @override
@@ -98,18 +102,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
-        title: Text(
-          S.of(context).wallet_setting,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).wallet_setting,
         actions: <Widget>[
           FlatButton(
             onPressed: _showDeleteDialog,
@@ -442,22 +436,13 @@ class _WalletSettingState extends State<WalletSettingPage> {
   }
 
   _showDeleteDialog() {
-    UiUtil.showDialogWidget(context,
-        title: Text(S.of(context).dialog_title_delete_wallet_confirm),
-        content: Text(S.of(context).dialog_content_delete_wallet_confirm),
-        actions: [
-          FlatButton(
-              child: Text(S.of(context).cancel),
-              onPressed: () async {
-                Navigator.of(context).pop();
-              }),
-          FlatButton(
-              child: Text(S.of(context).confirm),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                deleteWallet();
-              })
-        ]);
+    UiUtil.showDialogs(
+        context: context,
+        title: S.of(context).dialog_title_delete_wallet_confirm,
+        content: S.of(context).dialog_content_delete_wallet_confirm,
+        func: () {
+          deleteWallet();
+        });
   }
 
   Future<void> deleteWallet() async {
@@ -482,9 +467,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
             walletList.length > 0) {
           //delete current wallet
 
-          BlocProvider.of<WalletCmpBloc>(context)
-              .add(ActiveWalletEvent(wallet: walletList[0]));
-          await Future.delayed(Duration(milliseconds: 500));//延时确保激活成功
+          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: walletList[0]));
+          await Future.delayed(Duration(milliseconds: 500)); //延时确保激活成功
 
           Routes.popUntilCachedEntryRouteName(context);
         } else if (walletList.length > 0) {
@@ -494,7 +478,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
           //no wallet
           BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
           Routes.cachedEntryRouteName = null;
-          await Future.delayed(Duration(milliseconds: 500));//延时确保激活成功
+          await Future.delayed(Duration(milliseconds: 500)); //延时确保激活成功
           Routes.popUntilCachedEntryRouteName(context);
         }
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
@@ -530,7 +514,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
         '[$runtimeType] upload  ---> picPath:$picPath, _address:$address',
       );
 
-      if (picPath?.isEmpty??true) {
+      if (picPath?.isEmpty ?? true) {
         return;
       }
 
@@ -562,7 +546,6 @@ class _WalletSettingState extends State<WalletSettingPage> {
         // 2.本地保存
         await AppCache.saveValue(PrefsKey.WALLET_ICON_LAST_KEY, json.encode(result));
       }
-
     });
   }
 

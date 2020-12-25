@@ -141,7 +141,8 @@ class UiUtil {
                                 decoration: TextDecoration.none)),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 16, left: 24, right: 24, bottom: (contentItem != null || detail.isNotEmpty)?0:18),
+                        padding: EdgeInsets.only(
+                            top: 16, left: 24, right: 24, bottom: (contentItem != null || detail.isNotEmpty) ? 0 : 18),
                         child: RichText(
                             text: TextSpan(
                                 text: content,
@@ -193,20 +194,19 @@ class UiUtil {
 
   // alertView
   static Future<bool> showAlertViewNew<T>(
-      BuildContext context, {
-        List<Widget> actions,
-        Widget contentWidget,
-        bool barrierDismissible = true,
-        bool isShowCloseIcon = true,
-      }) {
+    BuildContext context, {
+    List<Widget> actions,
+    Widget contentWidget,
+    bool barrierDismissible = true,
+    bool isShowCloseIcon = true,
+  }) {
     return showDialog<bool>(
       barrierDismissible: barrierDismissible,
       // 传入 context
       context: context,
       // 构建 Dialog 的视图
       builder: (_) => AnimatedPadding(
-        padding: MediaQuery.of(context).viewInsets +
-            const EdgeInsets.symmetric(horizontal: 36.0),
+        padding: MediaQuery.of(context).viewInsets + const EdgeInsets.symmetric(horizontal: 36.0),
         duration: const Duration(milliseconds: 100),
         curve: Curves.decelerate,
         child: Column(
@@ -220,17 +220,17 @@ class UiUtil {
                 children: <Widget>[
                   isShowCloseIcon
                       ? Positioned(
-                    right: 10,
-                    top: 10,
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(_, false),
-                      child: Image.asset(
-                        "res/drawable/map3_node_close.png",
-                        width: 18,
-                        height: 18,
-                      ),
-                    ),
-                  )
+                          right: 10,
+                          top: 10,
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(_, false),
+                            child: Image.asset(
+                              "res/drawable/map3_node_close.png",
+                              width: 18,
+                              height: 18,
+                            ),
+                          ),
+                        )
                       : Container(),
                   Column(
                     children: <Widget>[
@@ -307,10 +307,12 @@ class UiUtil {
 
   static Future<bool> showRequestLocationAuthDialog<T>(BuildContext context, bool isServiceTurnOff) {
     return showDialogs<T>(
-      context,
-      isServiceTurnOff == true ? S.of(context).open_location_service : S.of(context).require_location,
-      isServiceTurnOff == true ? S.of(context).open_location_service_message : S.of(context).require_location_message,
-      () => openSettingLocation(isServiceTurnOff),
+      context: context,
+      title: isServiceTurnOff == true ? S.of(context).open_location_service : S.of(context).require_location,
+      content: isServiceTurnOff == true
+          ? S.of(context).open_location_service_message
+          : S.of(context).require_location_message,
+      func: () => openSettingLocation(isServiceTurnOff),
     );
   }
 
@@ -329,15 +331,20 @@ class UiUtil {
     }
   }
 
-  static Future<bool> showDialogs<T>(BuildContext context, String title, String content, Function func) {
-
-    return  UiUtil.showAlertView(
+  static Future<bool> showDialogs<T>({
+    BuildContext context,
+    String title,
+    String content,
+    Function func,
+    String ok = '',
+  }) {
+    return UiUtil.showAlertView(
       context,
       title: title,
       actions: [
         ClickOvalButton(
           S.of(context).cancel,
-              () {
+          () {
             Navigator.pop(context);
           },
           width: 115,
@@ -351,10 +358,10 @@ class UiUtil {
           width: 20,
         ),
         ClickOvalButton(
-          S.of(context).setting,
-              () {
-                func();
-                Navigator.pop(context);
+          ok.isNotEmpty ? ok : S.of(context).setting,
+          () {
+            func();
+            Navigator.pop(context);
           },
           width: 115,
           height: 36,
@@ -364,27 +371,6 @@ class UiUtil {
       ],
       content: content,
     );
-
-    /*
-    return showDialogWidget<T>(
-      context,
-      title: Text(title),
-      content: Text(content),
-      actions: <Widget>[
-        FlatButton(
-          child: Text(S.of(context).cancel),
-          onPressed: () => Navigator.pop(context),
-        ),
-        FlatButton(
-          child: Text(S.of(context).setting),
-          onPressed: () {
-            func();
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    );
-    */
   }
 
   static bool isIPhoneX(BuildContext context) {
@@ -710,6 +696,7 @@ class UiUtil {
       ],
     );
   }
+
   static Future<T> showDialogsNoCallback<T>(BuildContext context, String title, String content, {String confirm = ""}) {
     return showDialogWidget<T>(
       context,
@@ -727,7 +714,6 @@ class UiUtil {
       ],
     );
   }
-
 
   static Future<bool> showScanImagePickerSheet(BuildContext context, {ImageCallback callback}) async {
     return await showModalBottomSheet(
@@ -826,11 +812,9 @@ class UiUtil {
           );
         });
   }
-
 }
 
 typedef ImageCallback = void Function(String text);
-
 
 void callLater(FrameCallback callback) {
   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {

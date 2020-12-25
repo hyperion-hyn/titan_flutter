@@ -570,9 +570,13 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
     bool blueAvailable = await TitanPlugin.bluetoothEnable();
     if (Platform.isAndroid) {
       if (!blueAvailable) {
-        UiUtil.showDialogs(context, S.of(context).open_bluetooth, S.of(context).please_open_bluetooth, () {
-          AppSettings.openBluetoothSettings();
-        });
+        UiUtil.showDialogs(
+            context: context,
+            title: S.of(context).open_bluetooth,
+            content: S.of(context).please_open_bluetooth,
+            func: () {
+              AppSettings.openBluetoothSettings();
+            });
         return false;
       }
     } else {
@@ -585,9 +589,13 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
     if (Platform.isAndroid) {
       bool wifiAvailable = await TitanPlugin.wifiEnable();
       if (!wifiAvailable) {
-        UiUtil.showDialogs(context, S.of(context).open_wifi, S.of(context).please_open_wifi, () {
-          AppSettings.openWIFISettings();
-        });
+        UiUtil.showDialogs(
+            context: context,
+            title: S.of(context).open_wifi,
+            content: S.of(context).please_open_wifi,
+            func: () {
+              AppSettings.openWIFISettings();
+            });
         return false;
       }
     }

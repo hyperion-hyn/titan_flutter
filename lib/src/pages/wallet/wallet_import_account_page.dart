@@ -42,18 +42,8 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Colors.black),
-          centerTitle: true,
-          title: Text(
-            S.of(context).import_account,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-            ),
-          ),
+        appBar: BaseAppBar(
+          baseTitle: S.of(context).import_account,
           actions: <Widget>[
             InkWell(
               onTap: () async {

@@ -133,7 +133,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back_ios_rounded),
                 onPressed: () async {
                   listenBackAction();
                 },
