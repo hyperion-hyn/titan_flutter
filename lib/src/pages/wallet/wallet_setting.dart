@@ -1,24 +1,23 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_options_page.dart';
-import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
-import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
-import 'package:titan/src/components/auth/bloc/auth_event.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
@@ -27,10 +26,8 @@ import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
-import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
-import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:characters/characters.dart';
 
@@ -50,25 +47,38 @@ class _WalletSettingState extends State<WalletSettingPage> {
 
   KeyStore _walletKeyStore;
 
-//  WalletService _walletService;
-
   String _originWalletName;
   bool _hasChangeProperties = false;
 
   FocusNode _focusNode;
+  String _imageSource = '';
+  String get _address => widget.wallet.getAtlasAccount().address;
+  String get _imageSourceKey {
+    var address = _address;
+    String hexColor = address;
+    if (address.length > 6 && !address.contains('@')) {
+      hexColor = "#" + address.substring(address.length - 6);
+    } else {
+      hexColor = "#BFBFBF";
+    }
+    return '${PrefsKey.WALLET_ICON_LAST_KEY}_$hexColor';
+  }
+
+  int _uploadImageStatus = 0; // 0： 未操作，1：正在上传，2： 上传完成；
+  final StreamController<double> _uploadImageController = StreamController.broadcast();
 
   @override
   void initState() {
     super.initState();
+
+    _setupData();
+  }
+
+  void _setupData() async {
     _walletKeyStore = widget.wallet.keystore;
     _walletNameController.text = _walletKeyStore.name;
     _originWalletName = _walletKeyStore.name;
-//    _walletService = WalletService(context: context);
-
     _focusNode = FocusNode();
-//    _focusNode.addListener(() {
-//      if (_focusNode.hasFocus) _textFieldController.clear();
-//    });
 
     _walletNameController.addListener(() {
       if (_hasChangeProperties != true) {
@@ -85,11 +95,22 @@ class _WalletSettingState extends State<WalletSettingPage> {
         }
       }
     });
+
+    var localImageSource = await AppCache.getValue(_imageSourceKey);
+    if (mounted && localImageSource != null) {
+      setState(() {
+        _imageSource = jsonDecode(localImageSource);
+      });
+    }
+
+    // WalletInfoEntity walletInfoEntity = await AtlasApi().queryWalletDetail(_address);
+    // print("[$runtimeType] queryWalletDetail, pic:${walletInfoEntity.pic}");
   }
 
   @override
   void dispose() {
     _walletNameController.dispose();
+    _uploadImageController.close();
     super.dispose();
   }
 
@@ -98,18 +119,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
-        title: Text(
-          S.of(context).wallet_setting,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).wallet_setting,
         actions: <Widget>[
           FlatButton(
             onPressed: _showDeleteDialog,
@@ -134,25 +145,46 @@ class _WalletSettingState extends State<WalletSettingPage> {
               key: _walletNameKey,
               child: Column(
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16, bottom: 36),
-                    child: Stack(
-                      children: <Widget>[
-                        walletHeaderWidget(
-                            widget.wallet.keystore.name.isEmpty
-                                ? ""
-                                : widget.wallet.keystore.name.characters.first,
+                  InkWell(
+                    onTap: _editIconAction,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 16, bottom: 36),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: <Widget>[
+                          if (_uploadImageStatus == 1)
+                            SizedBox(
+                              height: 65,
+                              width: 65,
+                              child: StreamBuilder<double>(
+                                  stream: _uploadImageController.stream,
+                                  builder: (context, snapshot) {
+                                    //print("[$runtimeType] snapshot.data:${snapshot.data}");
+
+                                    return CircularProgressIndicator(
+                                      backgroundColor: Colors.grey[200],
+                                      valueColor: AlwaysStoppedAnimation(HexColor("#1F81FF")),
+                                      value: snapshot?.data??0.25,
+                                      strokeWidth: 1.5,
+                                    );
+                                  }),
+                            ),
+                          walletHeaderIconWidget(
+                            widget.wallet.keystore.name.isEmpty ? "" : widget.wallet.keystore.name.characters.first,
                             size: 64,
                             fontSize: 20,
-                            address: widget.wallet.getEthAccount()?.address),
-//                      Positioned(
-//                          right: 6,
-//                          bottom: 6,
-//                          child: Image.asset(
-//                            'res/drawable/ic_edit.png',
-//                            height: 12,
-//                          )),
-                      ],
+                            address: widget.wallet.getEthAccount()?.address,
+                            imageSource: _imageSource,
+                          ),
+                          /*Positioned(
+                              right: 6,
+                              bottom: 6,
+                              child: Image.asset(
+                                'res/drawable/ic_edit.png',
+                                height: 12,
+                              )),*/
+                        ],
+                      ),
                     ),
                   ),
                   _divider(),
@@ -167,8 +199,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                     margin: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
                     constraints: BoxConstraints.expand(height: 44),
                     child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                       disabledColor: Colors.grey[600],
                       color: Theme.of(context).primaryColor,
                       textColor: Colors.white,
@@ -181,8 +212,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                           children: <Widget>[
                             Text(
                               S.of(context).save_update,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
+                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                             ),
                           ],
                         ),
@@ -237,10 +267,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
                   LengthLimitingTextInputFormatter(6),
                 ],
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 ),
                 keyboardType: TextInputType.text),
           ),
@@ -317,11 +345,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
               padding: EdgeInsets.all(16.0),
               child: InkWell(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              BioAuthOptionsPage(widget.wallet)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => BioAuthOptionsPage(widget.wallet)));
                 },
                 child: Row(
                   children: <Widget>[
@@ -363,14 +387,11 @@ class _WalletSettingState extends State<WalletSettingPage> {
           Divider(),
           InkWell(
             onTap: () {
-              var walletStr =
-                  FluroConvertUtils.object2string(widget.wallet.toJson());
+              var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
               Application.router.navigateTo(
                   context,
                   Routes.wallet_setting_wallet_backup_notice +
                       '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
-//                Navigator.push(
-//                    context, MaterialPageRoute(builder: (context) => WalletBackupNoticePage(widget.wallet)));
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -420,31 +441,19 @@ class _WalletSettingState extends State<WalletSettingPage> {
     }
     */
 
-    var password =
-        await UiUtil.showWalletPasswordDialogV2(context, widget.wallet);
+    var password = await UiUtil.showWalletPasswordDialogV2(context, widget.wallet);
     if (password != null) {
       try {
         if (_focusNode.hasFocus) {
           _focusNode.unfocus();
         }
-        var success = await WalletUtil.updateWallet(
-            wallet: widget.wallet, password: password, name: newName);
+        var success = await WalletUtil.updateWallet(wallet: widget.wallet, password: password, name: newName);
         if (success == true) {
-          BlocProvider.of<WalletCmpBloc>(context)
-              .add(ActiveWalletEvent(wallet: widget.wallet));
+          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: widget.wallet));
+
           UiUtil.toast(S.of(context).update_success);
 
-          var userPayload = UserPayloadWithAddressEntity(
-              Payload(userName: widget.wallet.keystore.name),
-              widget.wallet.getAtlasAccount().address);
-          AtlasApi.postUserSync(userPayload);
-
-//          await UiUtil.showSetBioAuthDialog(
-//            context,
-//            '更新成功',
-//            widget.wallet,
-//            password,
-//          );
+          postUserSync();
         }
         setState(() {
           _originWalletName = newName;
@@ -462,22 +471,13 @@ class _WalletSettingState extends State<WalletSettingPage> {
   }
 
   _showDeleteDialog() {
-    UiUtil.showDialogWidget(context,
-        title: Text(S.of(context).dialog_title_delete_wallet_confirm),
-        content: Text(S.of(context).dialog_content_delete_wallet_confirm),
-        actions: [
-          FlatButton(
-              child: Text(S.of(context).cancel),
-              onPressed: () async {
-                Navigator.of(context).pop();
-              }),
-          FlatButton(
-              child: Text(S.of(context).confirm),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                deleteWallet();
-              })
-        ]);
+    UiUtil.showDialogs(
+        context: context,
+        title: S.of(context).dialog_title_delete_wallet_confirm,
+        content: S.of(context).dialog_content_delete_wallet_confirm,
+        func: () {
+          deleteWallet();
+        });
   }
 
   Future<void> deleteWallet() async {
@@ -496,33 +496,30 @@ class _WalletSettingState extends State<WalletSettingPage> {
       if (result) {
         await AppCache.remove(widget.wallet.getBitcoinAccount()?.address ?? "");
         List<Wallet> walletList = await WalletUtil.scanWallets();
-        var activatedWalletVo = WalletInheritedModel.of(context,
-            aspect: WalletAspect.activatedWallet);
+        var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet);
 
-        if (activatedWalletVo.activatedWallet.wallet.keystore.fileName ==
-                widget.wallet.keystore.fileName &&
+        if (activatedWalletVo.activatedWallet.wallet.keystore.fileName == widget.wallet.keystore.fileName &&
             walletList.length > 0) {
           //delete current wallet
-          BlocProvider.of<WalletCmpBloc>(context)
-              .add(ActiveWalletEvent(wallet: walletList[0]));
-          await Future.delayed(Duration(milliseconds: 500));//延时确保激活成功
+
+          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: walletList[0]));
+          await Future.delayed(Duration(milliseconds: 500)); //延时确保激活成功
+
           Routes.popUntilCachedEntryRouteName(context);
         } else if (walletList.length > 0) {
           //delete other wallet
           Routes.popUntilCachedEntryRouteName(context);
         } else {
           //no wallet
-          BlocProvider.of<WalletCmpBloc>(context)
-              .add(ActiveWalletEvent(wallet: null));
+          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
           Routes.cachedEntryRouteName = null;
-          await Future.delayed(Duration(milliseconds: 500));//延时确保激活成功
+          await Future.delayed(Duration(milliseconds: 500)); //延时确保激活成功
           Routes.popUntilCachedEntryRouteName(context);
         }
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
 
         ///log out exchange account
-        BlocProvider.of<ExchangeCmpBloc>(context)
-            .add(ClearExchangeAccountEvent());
+        BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
       } else {
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
       }
@@ -534,5 +531,93 @@ class _WalletSettingState extends State<WalletSettingPage> {
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
       }
     }
+  }
+
+  _editIconAction() async {
+    return;
+    
+    /*
+    var result =
+        'https://static.hyn.space/test/explore/0xa599CFEb7a04010CaABB7Cc924d2e1004cCB71A4/9632d1f559446ae9c5c5d55c191fb53c.jpeg';
+    // 2.本地保存
+    await AppCache.saveValue(PrefsKey.WALLET_ICON_LAST_KEY, json.encode(result));
+    return;
+    */
+
+    String address = widget?.wallet?.getEthAccount()?.address ?? "";
+
+    editIconSheet(context, (picPath) async {
+      print(
+        '[$runtimeType] upload  ---> picPath:$picPath, _address:$address',
+      );
+
+      if (picPath?.isEmpty ?? true) {
+        return;
+      }
+
+      if (mounted) {
+        setState(() {
+          _uploadImageStatus = 1;
+        });
+      }
+
+      String result;
+      try {
+        result = await AtlasApi().postUploadImageFile(
+          address,
+          picPath,
+          (count, total) {
+            double progress = count * 1.00 / total;
+            if (progress.isNaN || progress.isNegative) {
+              progress = 0.25;
+            }
+            //print('[$runtimeType] upload  ---> count:$count, total:$total, progress:$progress');
+            _uploadImageController.add(progress);
+          },
+        );
+      } catch (e) {
+        LogUtil.toastException(e);
+      }
+
+      if (mounted) {
+        setState(() {
+          _uploadImageStatus = 2;
+        });
+      }
+
+      print('[$runtimeType] upload  ---> result:$result');
+
+      if (result?.isNotEmpty ?? false) {
+        // 0.刷新UI
+        if (mounted) {
+          setState(() {
+            _imageSource = result;
+          });
+        }
+
+        // 1.同步
+        postUserSync(userPic: result);
+
+        // 2.本地保存
+        await AppCache.remove(PrefsKey.WALLET_ICON_LAST_KEY);
+        await AppCache.saveValue(_imageSourceKey, json.encode(result));
+      }
+    });
+  }
+
+  void postUserSync({String userPic = ''}) {
+    var userName = widget.wallet.keystore.name;
+
+    Payload payload;
+    if (userPic?.isNotEmpty ?? false) {
+      payload = Payload(userName: userName, userPic: userPic);
+    } else {
+      payload = Payload(
+        userName: userName,
+      );
+    }
+    var userPayload = UserPayloadWithAddressEntity(payload, _address);
+
+    AtlasApi.postUserSync(userPayload);
   }
 }

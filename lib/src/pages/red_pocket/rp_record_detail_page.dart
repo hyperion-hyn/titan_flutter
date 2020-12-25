@@ -159,7 +159,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
         // title = '$name 的幸运红包';
         title = '幸运红包';
 
-        amount = luckState == RpLuckState.UN_LUCKY ? zeroAmountStr : amountStr;
+        amount = luckState == RpLuckState.MISS ? zeroAmountStr : amountStr;
         break;
 
       case RedPocketType.LEVEL:
@@ -172,7 +172,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
       case RedPocketType.PROMOTION:
         title = '晋升红包';
 
-        amount = luckState == RpLuckState.UN_LUCKY ? zeroAmountStr : amountStr;
+        amount = luckState == RpLuckState.MISS ? zeroAmountStr : amountStr;
         break;
 
       default:
@@ -1019,7 +1019,7 @@ List<RpOpenRecordEntity> filterRpOpenDataList(List<RpOpenRecordEntity> dataList)
   List<RpOpenRecordEntity> tempList = dataList?.where((element) {
         var amountValue = Decimal.tryParse(element?.amountStr ?? '0') ?? Decimal.zero;
         var luckState = RpLuckState.values[(element?.luck ?? 0)];
-        return !(luckState == RpLuckState.UN_LUCKY && amountValue <= Decimal.zero);
+        return !(luckState == RpLuckState.MISS && amountValue <= Decimal.zero);
       })?.toList() ??
       [];
 
@@ -1046,7 +1046,7 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
 
   var luckState = RpLuckState.values[(entity?.luck ?? 0)];
   switch (luckState) {
-    case RpLuckState.UN_LUCKY:
+    case RpLuckState.MISS:
       desc = '错过 $amountStr';
       amount = '0 RP';
       break;
@@ -1067,6 +1067,11 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
 
     case RpLuckState.LUCKY_BEST:
       desc = '砸中且最佳';
+      amount = amountStr;
+      break;
+
+    case RpLuckState.LUCKY_MISS_QUOTA:
+      desc = '可拆次数用尽';
       amount = amountStr;
       break;
 
@@ -1100,9 +1105,10 @@ enum RedPocketType {
 
 // 0：错过 1：砸中 2：最佳
 enum RpLuckState {
-  UN_LUCKY,
-  GET,
-  BEST,
-  LUCKY,
-  LUCKY_BEST,
+  MISS,             // 错过
+  GET,              // 获取
+  BEST,             // 最佳
+  LUCKY,            // 砸中
+  LUCKY_BEST,       // 砸中且最佳
+  LUCKY_MISS_QUOTA, // 可拆次数用尽
 }

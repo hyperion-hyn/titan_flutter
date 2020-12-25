@@ -6,9 +6,6 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
-import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -17,8 +14,6 @@ import 'package:titan/src/plugins/wallet/wallet.dart' as localWallet;
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'package:titan/src/utils/log_util.dart';
-
 import 'package:web3dart/web3dart.dart';
 
 class HYNApi {

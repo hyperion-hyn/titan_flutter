@@ -1,32 +1,26 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
-import 'package:titan/src/components/auth/bloc/auth_state.dart';
 import 'package:titan/src/components/exchange/model.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v2.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_list.dart';
 import 'package:titan/src/pages/market/model/exchange_account.dart';
-import 'package:titan/src/utils/utile_ui.dart';
 
 import 'bloc/bloc.dart';
+import 'package:nested/nested.dart';
 
-class ExchangeComponent extends StatelessWidget {
-  final Widget child;
+class ExchangeComponent extends SingleChildStatelessWidget {
 
-  ExchangeComponent({@required this.child});
+  ExchangeComponent({Key key, Widget child}): super(key: key, child: child);
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return BlocProvider<ExchangeCmpBloc>(
       create: (ctx) => ExchangeCmpBloc(),
       child: _ExchangeManager(child: child),

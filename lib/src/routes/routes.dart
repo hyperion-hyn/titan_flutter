@@ -31,6 +31,7 @@ class Routes {
   ///Exchange
   static const String exchange_assets_page = '/exchange/assets';
   static const String exchange_transfer_page = '/exchange/transfer';
+  static const String exchange_qrcode_deposit_page = '/exchange/qrcode_deposit';
   static const String exchange_deposit_confirm_page = '/exchange/deposit_confirm';
   static const String exchange_withdraw_confirm_page = '/exchange/withdraw_confirm';
   static const String exchange_transfer_success_page = '/exchange/transfer_success';
@@ -146,6 +147,11 @@ class Routes {
     router.define(
       exchange_transfer_page,
       handler: exchangeTransferHandler,
+      transitionType: pushNewPageTransitionType,
+    );
+    router.define(
+      exchange_qrcode_deposit_page,
+      handler: exchangeQrcodeDepositHandler,
       transitionType: pushNewPageTransitionType,
     );
     router.define(exchange_deposit_confirm_page,

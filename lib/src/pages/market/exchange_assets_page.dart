@@ -297,7 +297,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                     children: <Widget>[
                       Container(
                         height: 30,
-                        width: 120,
+                        width: 112,
                         child: OutlineButton(
                           child: Text(
                             S.of(context).exchange_transfer,
@@ -311,6 +311,38 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                               Application.router.navigateTo(
                                 context,
                                 Routes.exchange_transfer_page,
+                              );
+                            } else {
+                              UiUtil.showExchangeAuthAgainDialog(context);
+                            }
+                          },
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 1,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 20,),
+                      Container(
+                        height: 30,
+                        width: 112,
+                        child: OutlineButton(
+                          child: Text(
+                            "普通充币",
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor),
+                          ),
+                          onPressed: () {
+                            if (ExchangeInheritedModel.of(context)
+                                .exchangeModel
+                                .hasActiveAccount()) {
+
+                              Application.router.navigateTo(
+                                context,
+                                Routes.exchange_qrcode_deposit_page,
                               );
                             } else {
                               UiUtil.showExchangeAuthAgainDialog(context);

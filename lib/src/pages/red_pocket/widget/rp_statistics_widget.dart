@@ -102,13 +102,13 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
         CarouselSlider(
             items: items,
             options: CarouselOptions(
-                aspectRatio: 1.2,
+                aspectRatio: 1.1,
                 initialPage: 0,
                 viewportFraction: 1,
                 enlargeCenterPage: false,
                 enableInfiniteScroll: true,
                 autoPlay: true,
-                autoPlayInterval: Duration(seconds: 4),
+                autoPlayInterval: Duration(seconds: 5),
                 autoPlayAnimationDuration: Duration(milliseconds: 800),
                 autoPlayCurve: Curves.fastOutSlowIn,
                 scrollDirection: Axis.horizontal,

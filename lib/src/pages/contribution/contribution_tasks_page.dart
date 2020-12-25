@@ -1,25 +1,27 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
-
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/account/account_component.dart';
+import 'package:titan/src/components/account/bloc/bloc.dart';
 import 'package:titan/src/pages/contribution/add_poi/add_position_page_v2.dart';
 import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
 import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/contribution/signal_scan/vo/check_in_model.dart';
 import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v2.dart';
 import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v3.dart';
+import 'package:titan/src/pages/mine/me_checkin_history_page.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -27,6 +29,8 @@ import 'package:titan/src/data/entity/converter/model_converter.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class ContributionTasksPage extends StatefulWidget {
   static var scanSignal = "scanSignal";
@@ -40,9 +44,16 @@ class ContributionTasksPage extends StatefulWidget {
   }
 }
 
-class _DataContributionState extends State<ContributionTasksPage> with RouteAware {
+class _DataContributionState extends BaseState<ContributionTasksPage> with RouteAware {
   final int TAST_TIMES_ONE = 1;
   final int TAST_TIMES_TWICE = 2;
+
+  @override
+  void onCreated() async {
+    super.onCreated();
+
+    _checkInAction();
+  }
 
   @override
   void didChangeDependencies() async {
@@ -53,7 +64,23 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
   }
 
   @override
-  void didPopNext() {}
+  void didPopNext() {
+    _checkInAction();
+  }
+
+  void _checkInAction() {
+    var activeWalletVo = WalletInheritedModel.of(context).activatedWallet;
+    var isLogged = activeWalletVo != null;
+    if (isLogged) {
+      if (mounted) {
+        BlocProvider.of<AccountBloc>(context).add(UpdateCheckInInfoEvent());
+      }
+    } else {
+      if (mounted) {
+        BlocProvider.of<AccountBloc>(context).add(ClearDataEvent());
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -71,8 +98,30 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
       appBar: BaseAppBar(
         baseTitle: S.of(context).data_contribute,
         backgroundColor: Colors.white,
+        actions: <Widget>[
+          FlatButton(
+            onPressed: _navToCheckInRecords,
+            child: Text(
+              '贡献记录',
+              style: TextStyle(
+                color: HexColor("#1F81FF"),
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
       ),
       body: _buildView(context),
+    );
+  }
+
+  _navToCheckInRecords() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MeCheckInHistory(),
+      ),
     );
   }
 
@@ -173,12 +222,36 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
   }
 
   Widget _taskListView() {
+    var checkInModel = AccountInheritedModel.of(context, aspect: AccountAspect.checkIn)?.checkInModel;
     var scanTimes = 0;
     var postPoiTimes = 0;
-    var confirmPoiTimes = Random().nextInt(10);
+    var confirmPoiTimes = 0;
     var scanTimesReal = 0;
     var postPoiTimesReal = 0;
     var confirmPoiTimesReal = 0;
+
+    if (checkInModel != null) {
+      print("[Task] _taskListView, total:${checkInModel.total}, length:${checkInModel.detail.length}");
+
+      CheckInModelState scanState = checkInModel.detail.firstWhere((element) {
+        return element.action == ContributionTasksPage.scanSignal;
+      }).state;
+      scanTimes = scanState.total;
+
+      scanTimesReal = scanState.real;
+
+      CheckInModelState postPoiState = checkInModel.detail.firstWhere((element) {
+        return element.action == ContributionTasksPage.postPOI;
+      }).state;
+      postPoiTimes = postPoiState.total;
+      postPoiTimesReal = postPoiState.real;
+
+      CheckInModelState confirmPoiState = checkInModel.detail.firstWhere((element) {
+        return element.action == ContributionTasksPage.confirmPOI;
+      }).state;
+      confirmPoiTimes = confirmPoiState.total;
+      confirmPoiTimesReal = confirmPoiState.real;
+    }
 
     Widget _lineWidget({double height = 5}) {
       return Container(
@@ -191,7 +264,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
       children: <Widget>[
         _lineWidget(),
         _activatedWalletWidget(),
-        _lineWidget(height: 8,),
+        _lineWidget(
+          height: 8,
+        ),
         _buildTaskItem('signal', S.of(context).scan_signal_item_title, scanTimes ?? 0, () async {
           bool status = await checkSignalPermission();
           print('[Permission] -->status:$status');
@@ -222,13 +297,8 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           var latlng = await getLatlng();
           if (latlng != null) {
             // 注释：第0次，自检：图片， 后面，第N次，ta检查，都是第三方验证，多任务校验
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            var lastDate = prefs.getInt(PrefsKey.VERIFY_DATE) ?? 0;
-            var duration = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastDate));
-            print(
-                "[Radion] confirmPoiTimes:$confirmPoiTimes, lastDate:$lastDate, day:${duration.inDays}, inHours:${duration.inHours}");
 
-            if (lastDate == 0 || (lastDate > 0 && duration.inDays > 0)) {
+            if (confirmPoiTimes == 0 /*|| env.buildType == BuildType.DEV*/) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -250,14 +320,31 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     );
   }
 
+  _showCloseDialog() {
+    UiUtil.showAlertView(
+      context,
+      title: S.of(context).tips,
+      actions: [
+        ClickOvalButton(
+          S.of(context).confirm,
+          () {
+            Navigator.pop(context);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      ],
+      content: S.of(context).get_poi_fail_please_again,
+    );
+  }
+
   Future<LatLng> getLatlng() async {
     var latlng =
         await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
     if (latlng == null) {
-      UiUtil.showConfirmDialog(
-        context,
-        content: S.of(context).get_poi_fail_please_again,
-      );
+      _showCloseDialog();
     }
     return latlng;
   }
@@ -311,8 +398,8 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                 SizedBox(
                   width: 150,
                   child: Text(
-                    shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(
-                            activeWalletVo?.wallet?.getEthAccount()?.address ?? "")),
+                    shortBlockChainAddress(
+                        WalletUtil.ethAddressToBech32Address(activeWalletVo?.wallet?.getEthAccount()?.address ?? "")),
                     style: TextStyle(fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B), fontSize: 12),
                   ),
                 )
@@ -355,10 +442,83 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
             title,
             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: HexColor('#333333')),
           ),
-          Spacer(),
+          Flexible(
+            fit: FlexFit.tight,
+            flex: 35,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                _end(todayTimes,
+                    isOpen: isOpen,
+                    taskTimes: iconName == "check" ? TAST_TIMES_TWICE : TAST_TIMES_ONE,
+                    realTimes: realTimes),
+              ],
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  Widget _end(int todayTimes, {bool isOpen = false, int taskTimes = 1, int realTimes = 0}) {
+    var activeWalletVo = WalletInheritedModel.of(context).activatedWallet;
+    var isLogged = activeWalletVo != null;
+    if (!isLogged) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+              ),
+              child: Image.asset(
+                'res/drawable/me_account_bind_arrow.png',
+                width: 7,
+                height: 12,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (isOpen) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            if (todayTimes < 0)
+              Container()
+            else
+              Text(
+                S.of(context).task_is_finished_func(todayTimes.toString(), taskTimes.toString()),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+              ),
+              child: Image.asset(
+                'res/drawable/me_account_bind_arrow.png',
+                width: 7,
+                height: 12,
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Text(
+          S.of(context).coming_soon,
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor('#AAAAAA')),
+        ),
+      );
+    }
   }
 
   Widget _divider() {
@@ -410,9 +570,13 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     bool blueAvailable = await TitanPlugin.bluetoothEnable();
     if (Platform.isAndroid) {
       if (!blueAvailable) {
-        UiUtil.showDialogs(context, S.of(context).open_bluetooth, S.of(context).please_open_bluetooth, () {
-          AppSettings.openBluetoothSettings();
-        });
+        UiUtil.showDialogs(
+            context: context,
+            title: S.of(context).open_bluetooth,
+            content: S.of(context).please_open_bluetooth,
+            func: () {
+              AppSettings.openBluetoothSettings();
+            });
         return false;
       }
     } else {
@@ -425,9 +589,13 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     if (Platform.isAndroid) {
       bool wifiAvailable = await TitanPlugin.wifiEnable();
       if (!wifiAvailable) {
-        UiUtil.showDialogs(context, S.of(context).open_wifi, S.of(context).please_open_wifi, () {
-          AppSettings.openWIFISettings();
-        });
+        UiUtil.showDialogs(
+            context: context,
+            title: S.of(context).open_wifi,
+            content: S.of(context).please_open_wifi,
+            func: () {
+              AppSettings.openWIFISettings();
+            });
         return false;
       }
     }
