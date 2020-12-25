@@ -13,14 +13,14 @@ import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:nested/nested.dart';
 
-class SocketComponent extends StatelessWidget {
-  final Widget child;
+class SocketComponent extends SingleChildStatelessWidget {
 
-  SocketComponent({@required this.child});
+  SocketComponent({Key key, Widget child}): super(key: key, child: child);
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return BlocProvider<SocketBloc>(
       create: (ctx) => SocketBloc(),
       child: _SocketManager(child: child),

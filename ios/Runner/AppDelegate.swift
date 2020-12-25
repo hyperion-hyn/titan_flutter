@@ -62,6 +62,8 @@ import CoreBluetooth
         
         let isLaunch = super.application(application, didFinishLaunchingWithOptions: launchOptions)
 
+        print("[AppDelegate] isTestFlight:\(AppDelegate.isTestFlight), isAppStore:\(AppDelegate.isAppStore)")
+        
         return isLaunch
     }
     
@@ -231,70 +233,94 @@ import CoreBluetooth
         return true
     }
     
-       private func urlLauncherAction(url: URL) {
-    //        [Appdelegate] -->open url, url:starrich://contract/detail?contractId=9&key=eyJhIjoiMHg0MjNiMzQwRjgwMzE3NDAwYkE1NzFiMzY1Q2JGODM4NThlRmJiN0I0IiwiYiI6ImRldGFpbCIsImMiOmZhbHNlfQ==
+    private func urlLauncherAction(url: URL) {
+//        [Appdelegate] -->open url, url:starrich://contract/detail?contractId=9&key=eyJhIjoiMHg0MjNiMzQwRjgwMzE3NDAwYkE1NzFiMzY1Q2JGODM4NThlRmJiN0I0IiwiYiI6ImRldGFpbCIsImMiOmZhbHNlfQ==
 
-    /*
-      <key>CFBundleURLTypes</key>
-      <array>
-          <dict>
-              <key>CFBundleTypeRole</key>
-              <string>Editor</string>
-              <key>CFBundleURLSchemes</key>
-              <array>
-                  <string>starrich</string>
-              </array>
-          </dict>
-      </array>
-    */
-            
-            var protocolStr : String = ""
-            if let types = Bundle.main.object(forInfoDictionaryKey: "CFBundleURLTypes") as? Array<Any>, let dict = types.first as? [String:Any] {
-                if let protocolHead = dict["CFBundleURLSchemes"] as? Array<String>, let value = protocolHead.first {
-                    protocolStr = value
-                }
-            }
-            
-
-            print("[Appdelegate] -->protocolStr:\(protocolStr), open url, url:\(url)")
-
-
-            // TODO: 特别注意！！！！！！！！
-            let urlString = url.absoluteString
-            if !urlString.hasPrefix("\(protocolStr)://") {
-                return
-            }
-            let urlComponents = urlString.components(separatedBy: "?")
-            if let protocolFirst = urlComponents.first, let detailLast = urlComponents.last {
-            
-                // e.g: starrich://contract/detail
-                let protocolComponents = protocolFirst.components(separatedBy: "//").last!.components(separatedBy: "/")
-                
-                // e.g: contract
-                let type = protocolComponents.first!
-                
-                // e.g: detail
-                let subType = protocolComponents.last!
-                
-                // e.g: contractId=9&key=xxx
-                let detailComponents = detailLast.components(separatedBy: "&")
-                var content: [String:Any] = [:];
-                for item in detailComponents {
-                    let subcomponents = item.components(separatedBy: "=")
-                    content[subcomponents.first!] = subcomponents.last!
-                }
-                
-                let arguments: [String:Any] = [
-                    "type": type,
-                    "subType": subType,
-                    "content": content
-                ]
-                print("[Appdelegate] -->open url, content:\(content), arguments:\(arguments)")
-
-                self.callChannel.invokeMethod("p2fDeeplink", arguments: arguments)
+/*
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>starrich</string>
+            </array>
+        </dict>
+    </array>
+*/
+        
+        var protocolStr : String = ""
+        if let types = Bundle.main.object(forInfoDictionaryKey: "CFBundleURLTypes") as? Array<Any>, let dict = types.first as? [String:Any] {
+            if let protocolHead = dict["CFBundleURLSchemes"] as? Array<String>, let value = protocolHead.first {
+                protocolStr = value
             }
         }
+        
+
+        print("[Appdelegate] -->protocolStr:\(protocolStr), open url, url:\(url)")
+
+
+        // TODO: 特别注意！！！！！！！！
+        let urlString = url.absoluteString
+        if !urlString.hasPrefix("\(protocolStr)://") {
+            return
+        }
+        let urlComponents = urlString.components(separatedBy: "?")
+        if let protocolFirst = urlComponents.first, let detailLast = urlComponents.last {
+        
+            // e.g: starrich://contract/detail
+            let protocolComponents = protocolFirst.components(separatedBy: "//").last!.components(separatedBy: "/")
+            
+            // e.g: contract
+            let type = protocolComponents.first!
+            
+            // e.g: detail
+            let subType = protocolComponents.last!
+            
+            // e.g: contractId=9&key=xxx
+            let detailComponents = detailLast.components(separatedBy: "&")
+            var content: [String:Any] = [:];
+            for item in detailComponents {
+                let subcomponents = item.components(separatedBy: "=")
+                content[subcomponents.first!] = subcomponents.last!
+            }
+            
+            let arguments: [String:Any] = [
+                "type": type,
+                "subType": subType,
+                "content": content
+            ]
+            print("[Appdelegate] -->open url, content:\(content), arguments:\(arguments)")
+
+            self.callChannel.invokeMethod("p2fDeeplink", arguments: arguments)
+        }
+    }
     
+    /// 是否是 testflight包
+    public static var isTestFlight: Bool {
+        return isAppStoreReceiptSandbox && !hasEmbeddedMobileProvision
+     }
+    
+    /// 是否是 Appstore 包
+     public static var isAppStore: Bool {
+         if isAppStoreReceiptSandbox || hasEmbeddedMobileProvision {
+          return false
+         }
+         return true
+     }
+    
+     fileprivate static var isAppStoreReceiptSandbox: Bool {
+         let b = Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+        NSLog("Bundle.main.appStoreReceiptURL:\(String(describing: Bundle.main.appStoreReceiptURL?.absoluteString)),isAppStoreReceiptSandbox: \(b)")
+        return b
+     }
+    
+     fileprivate static var hasEmbeddedMobileProvision: Bool {
+        let b = Bundle.main.path(forResource: "embedded", ofType: "mobileprovision") != nil
+        NSLog("hasEmbeddedMobileProvision: \(b)")
+        return b
+     }
 }
 
 

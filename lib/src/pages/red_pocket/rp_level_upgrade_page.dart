@@ -664,7 +664,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                     ),
                     suffixIcon: InkWell(
                       onTap: () async {
-                        UiUtil.showImagePickerSheet(context, callback: (String text) async {
+                        UiUtil.showScanImagePickerSheet(context, callback: (String text) async {
                           _addressEditController.text = await _parseText(text);
                         });
                       },

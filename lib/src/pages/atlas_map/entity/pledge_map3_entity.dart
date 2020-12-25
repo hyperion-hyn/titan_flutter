@@ -46,4 +46,25 @@ class Payload extends Object {
 
 }
 
+@JsonSerializable()
+class WalletInfoEntity extends Object {
 
+  @JsonKey(name: 'address')
+  String address;
+
+  @JsonKey(name: 'name')
+  String name;
+
+  @JsonKey(name: 'pic')
+  String pic;
+
+  @JsonKey(name: 'status')
+  int status;
+
+  WalletInfoEntity({this.address,this.name,this.pic,this.status,});
+
+  factory WalletInfoEntity.fromJson(Map<String, dynamic> srcJson) => _$WalletInfoEntityFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$WalletInfoEntityToJson(this);
+
+}

@@ -8,7 +8,10 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/account/account_component.dart';
+import 'package:titan/src/components/account/bloc/bloc.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
@@ -16,6 +19,8 @@ import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/contribution/add_poi/verify_position_page.dart';
 import 'package:titan/src/pages/contribution/contribution_tasks_page.dart';
+import 'package:titan/src/pages/contribution/signal_scan/vo/check_in_model.dart';
+import 'package:titan/src/pages/mine/api/contributions_api.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -25,6 +30,7 @@ import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/grouped_buttons/grouped_buttons.dart';
 import 'package:titan/src/widget/grouped_buttons/src/grouped_buttons_orientation.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class VerifyPoiPageV2 extends StatefulWidget {
   final LatLng userPosition;
@@ -96,7 +102,8 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
 
     _positionBloc.listen((state) {
       if (state is PostConfirmPoiDataV2ResultSuccessState) {
-        _saveData();
+        print("PostConfirmPoiDataV2ResultSuccessState----1111");
+        _finishCheckIn(S.of(context).thank_you_for_contribute_data, []);
 
         Application.router.navigateTo(
             context,
@@ -113,8 +120,16 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
                 actions: <Widget>[
                   FlatButton(
                       onPressed: () {
-                        _saveData();
-                        Navigator.of(context)..pop()..pop();
+                        var checkInModel =
+                            AccountInheritedModel.of(context, aspect: AccountAspect.checkIn).checkInModel;
+                        CheckInModelState confirmPoiState = checkInModel.detail.firstWhere((element) {
+                          return element.action == ContributionTasksPage.confirmPOI;
+                        }).state;
+                        if (confirmPoiState.total == 0 || confirmPoiState == null) {
+                          _finishCheckIn(S.of(context).thank_you_for_contribute_data, []);
+                        } else {
+                          Navigator.of(context)..pop()..pop();
+                        }
                       },
                       child: Text(S.of(context).confirm))
                 ],
@@ -158,14 +173,18 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return !_isSendConfirm;
+        var isEnablePop = true;
+        if (_isSendConfirm || _isSendCheckIn) {
+          isEnablePop = false;
+        }
+
+        return isEnablePop;
       },
       child: Scaffold(
         appBar: BaseAppBar(
           baseTitle: S.of(context).check_poi_item_title,
           backgroundColor: Colors.white,
         ),
-
         body: _buildView(),
       ),
     );
@@ -180,10 +199,8 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
   }
 
   // UI
-  void _saveData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt(PrefsKey.VERIFY_DATE, DateTime.now().millisecondsSinceEpoch);
-  }
+
+
   void _setupData() {}
 
   Widget _buildView() {
@@ -272,7 +289,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
 
   Widget _mapView() {
     var style;
-    if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true) {
+    if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland ?? true) {
       style = Const.kWhiteWithoutMapStyleCn;
     } else {
       style = Const.kWhiteWithoutMapStyle;
@@ -594,6 +611,44 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
     _positionBloc.add(UpdateConfirmPoiDataPageEvent());
   }
 
+  bool _isSendCheckIn = false;
+
+  Future _finishCheckIn(String successTip, List<String> optLogIDs) async {
+    var address =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+
+    if (address?.isEmpty ?? true) {
+      Application.router.navigateTo(
+          context,
+          Routes.contribute_position_finish +
+              '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM}');
+      return;
+    }
+
+    if (_isSendCheckIn) {
+      return;
+    }
+
+    _isSendCheckIn = true;
+
+    ContributionsApi api = ContributionsApi();
+    try {
+      await api.postCheckIn('confirmPOIV2', _contributionPois.coordinates, optLogIDs);
+      UiUtil.toast(successTip);
+
+      BlocProvider.of<AccountBloc>(context).add(UpdateCheckInInfoEvent());
+
+      _isSendCheckIn = false;
+
+    } catch (e) {
+      _isSendCheckIn = false;
+      setState(() {
+        _isSendConfirm = false;
+      });
+      LogUtil.process(e);
+    }
+  }
+
   // Action
   _pushPosition() {
     Navigator.push(
@@ -620,25 +675,37 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
 }
 
 Future<bool> showConfirmDialog(BuildContext context, String content, {String title = ""}) {
-  return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title.isEmpty ? S.of(context).tips : title),
-          content: Text(content),
-          actions: <Widget>[
-            FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: Text(S.of(context).cancel)),
-            FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: Text(S.of(context).confirm))
-          ],
-        );
-      },
-      barrierDismissible: true);
+  return UiUtil.showAlertView(
+    context,
+    title: title.isEmpty ? S.of(context).tips : title,
+    actions: [
+      ClickOvalButton(
+        S.of(context).cancel,
+            () {
+              Navigator.of(context).pop(false);
+        },
+        width: 115,
+        height: 36,
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+        fontColor: DefaultColors.color999,
+        btnColor: [Colors.transparent],
+      ),
+      SizedBox(
+        width: 20,
+      ),
+      ClickOvalButton(
+        S.of(context).confirm,
+            () {
+              Navigator.of(context).pop(true);
+
+            },
+        width: 115,
+        height: 36,
+        fontSize: 16,
+        fontWeight: FontWeight.normal,
+      ),
+    ],
+    content: content,
+  );
 }

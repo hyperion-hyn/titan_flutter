@@ -20,7 +20,6 @@ class RedPocketBloc extends Bloc<RedPocketEvent, RedPocketState> {
     try {
       if (event is UpdateMyLevelInfoEvent) {
         var _address = event.address;
-        //print("[RedPocketBloc] UpdateMyLevelInfoEntityEvent, _address:$_address");
         if (_address?.isEmpty??true) {
           _address = _addressStr;
         }
@@ -29,7 +28,6 @@ class RedPocketBloc extends Bloc<RedPocketEvent, RedPocketState> {
         yield UpdateMyLevelInfoState(_myLevelInfo);
       } else if (event is UpdateStatisticsEvent) {
         var _address = event.address;
-        //print("[RedPocketBloc] UpdateStatisticsEvent, _address:$_address");
         if (_address?.isEmpty??true) {
           _address = _addressStr;
         }

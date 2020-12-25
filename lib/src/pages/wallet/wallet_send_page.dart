@@ -100,18 +100,8 @@ class _WalletSendState extends BaseState<WalletSendPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
-        title: Text(
-          S.of(context).send_symbol(widget.coinVo.symbol),
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).send_symbol(widget.coinVo.symbol),
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 32),
@@ -148,7 +138,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                           ),
                           InkWell(
                             onTap: () async{
-                              UiUtil.showImagePickerSheet(context, callback: (String text) {
+                              UiUtil.showScanImagePickerSheet(context, callback: (String text) {
                                 _parseText(quotePrice, text);
                               });
                             },

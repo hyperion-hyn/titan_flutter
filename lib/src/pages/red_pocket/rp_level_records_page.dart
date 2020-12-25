@@ -466,7 +466,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
                             padding: const EdgeInsets.all(16),
                           ),
                           Positioned(
-                            top: 6,
+                            top: 2,
                             right: 6,
                             child: Image.asset(
                               "res/drawable/red_pocket_exchange_hot.png",

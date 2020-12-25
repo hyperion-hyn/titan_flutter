@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
@@ -238,12 +240,17 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
       child: ClickOvalButton(
         S.of(context).submit,
         () async {
-          setState(() {
-            _isUploading = true;
-          });
+          if (mounted) {
+            setState(() {
+              _isUploading = true;
+            });
+          }
 
           ///upload icon pic
+          String address = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+
           var result = await _atlasApi.postUploadImageFile(
+            address,
             widget._createAtlasPayload.pic,
             (count, total) {
               print(
@@ -252,9 +259,11 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
             },
           );
 
-          setState(() {
-            _isUploading = false;
-          });
+          if (mounted) {
+            setState(() {
+              _isUploading = false;
+            });
+          }
 
           if (result != null) {
             CreateAtlasEntity createAtlasEntity = CreateAtlasEntity.onlyType(

@@ -4,17 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
-import 'package:titan/env.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/updater/bloc/bloc.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -197,12 +193,13 @@ class _AboutMeState extends BaseState<AboutMePage> {
               ),
               if (isUrl)
                 Padding(
-                  padding: const EdgeInsets.only(left: 60,),
-                  child: Icon(
-                    Icons.chevron_right,
-                    color: Colors.grey,
+                  padding: const EdgeInsets.fromLTRB(60, 12, 0, 12),
+                  child: Image.asset(
+                    'res/drawable/me_account_bind_arrow.png',
+                    width: 7,
+                    height: 12,
                   ),
-                )
+                ),
             ],
           ),
         ),

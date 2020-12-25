@@ -10,14 +10,14 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 
 import 'bloc/bloc.dart';
+import 'package:nested/nested.dart';
 
-class SettingComponent extends StatelessWidget {
-  final Widget child;
+class SettingComponent extends SingleChildStatelessWidget {
 
-  SettingComponent({@required this.child});
+  SettingComponent({Key key, Widget child}): super(key: key, child: child);
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return BlocProvider<SettingBloc>(
       create: (ctx) => SettingBloc(),
       child: _SettingManager(child: child),

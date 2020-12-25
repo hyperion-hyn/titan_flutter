@@ -18,6 +18,7 @@ import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/auth_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
@@ -140,7 +141,8 @@ class UiUtil {
                                 decoration: TextDecoration.none)),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 24, left: 24, right: 24),
+                        padding: EdgeInsets.only(
+                            top: 16, left: 24, right: 24, bottom: (contentItem != null || detail.isNotEmpty) ? 0 : 18),
                         child: RichText(
                             text: TextSpan(
                                 text: content,
@@ -192,20 +194,19 @@ class UiUtil {
 
   // alertView
   static Future<bool> showAlertViewNew<T>(
-      BuildContext context, {
-        List<Widget> actions,
-        Widget contentWidget,
-        bool barrierDismissible = true,
-        bool isShowCloseIcon = true,
-      }) {
+    BuildContext context, {
+    List<Widget> actions,
+    Widget contentWidget,
+    bool barrierDismissible = true,
+    bool isShowCloseIcon = true,
+  }) {
     return showDialog<bool>(
       barrierDismissible: barrierDismissible,
       // 传入 context
       context: context,
       // 构建 Dialog 的视图
       builder: (_) => AnimatedPadding(
-        padding: MediaQuery.of(context).viewInsets +
-            const EdgeInsets.symmetric(horizontal: 36.0),
+        padding: MediaQuery.of(context).viewInsets + const EdgeInsets.symmetric(horizontal: 36.0),
         duration: const Duration(milliseconds: 100),
         curve: Curves.decelerate,
         child: Column(
@@ -219,17 +220,17 @@ class UiUtil {
                 children: <Widget>[
                   isShowCloseIcon
                       ? Positioned(
-                    right: 10,
-                    top: 10,
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(_, false),
-                      child: Image.asset(
-                        "res/drawable/map3_node_close.png",
-                        width: 18,
-                        height: 18,
-                      ),
-                    ),
-                  )
+                          right: 10,
+                          top: 10,
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(_, false),
+                            child: Image.asset(
+                              "res/drawable/map3_node_close.png",
+                              width: 18,
+                              height: 18,
+                            ),
+                          ),
+                        )
                       : Container(),
                   Column(
                     children: <Widget>[
@@ -304,12 +305,14 @@ class UiUtil {
     ]);
   }
 
-  static Future<T> showRequestLocationAuthDialog<T>(BuildContext context, bool isServiceTurnOff) {
+  static Future<bool> showRequestLocationAuthDialog<T>(BuildContext context, bool isServiceTurnOff) {
     return showDialogs<T>(
-      context,
-      isServiceTurnOff == true ? S.of(context).open_location_service : S.of(context).require_location,
-      isServiceTurnOff == true ? S.of(context).open_location_service_message : S.of(context).require_location_message,
-      () => openSettingLocation(isServiceTurnOff),
+      context: context,
+      title: isServiceTurnOff == true ? S.of(context).open_location_service : S.of(context).require_location,
+      content: isServiceTurnOff == true
+          ? S.of(context).open_location_service_message
+          : S.of(context).require_location_message,
+      func: () => openSettingLocation(isServiceTurnOff),
     );
   }
 
@@ -328,24 +331,45 @@ class UiUtil {
     }
   }
 
-  static Future<T> showDialogs<T>(BuildContext context, String title, String content, Function func) {
-    return showDialogWidget<T>(
+  static Future<bool> showDialogs<T>({
+    BuildContext context,
+    String title,
+    String content,
+    Function func,
+    String ok = '',
+  }) {
+    return UiUtil.showAlertView(
       context,
-      title: Text(title),
-      content: Text(content),
-      actions: <Widget>[
-        FlatButton(
-          child: Text(S.of(context).cancel),
-          onPressed: () => Navigator.pop(context),
+      title: title,
+      actions: [
+        ClickOvalButton(
+          S.of(context).cancel,
+          () {
+            Navigator.pop(context);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+          fontColor: DefaultColors.color333,
+          btnColor: [Colors.transparent],
         ),
-        FlatButton(
-          child: Text(S.of(context).setting),
-          onPressed: () {
+        SizedBox(
+          width: 20,
+        ),
+        ClickOvalButton(
+          ok.isNotEmpty ? ok : S.of(context).setting,
+          () {
             func();
             Navigator.pop(context);
           },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
         ),
       ],
+      content: content,
     );
   }
 
@@ -672,6 +696,7 @@ class UiUtil {
       ],
     );
   }
+
   static Future<T> showDialogsNoCallback<T>(BuildContext context, String title, String content, {String confirm = ""}) {
     return showDialogWidget<T>(
       context,
@@ -690,8 +715,7 @@ class UiUtil {
     );
   }
 
-
-  static Future<bool> showImagePickerSheet(BuildContext context, {ImageCallback callback}) async {
+  static Future<bool> showScanImagePickerSheet(BuildContext context, {ImageCallback callback}) async {
     return await showModalBottomSheet(
         context: context,
         builder: (BuildContext dialogContext) {
@@ -741,10 +765,56 @@ class UiUtil {
         });
   }
 
+  static Future<bool> showIconImagePickerSheet(BuildContext context, {ImageCallback callback}) async {
+    return await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return Wrap(
+            children: <Widget>[
+              ListTile(
+                title: Text('拍照', textAlign: TextAlign.center),
+                onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    Navigator.pop(dialogContext, true);
+                  });
+
+                  callback('');
+                },
+              ),
+              ListTile(
+                title: Text(S.of(context).import_from_album, textAlign: TextAlign.center),
+                onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    Navigator.pop(dialogContext, true);
+                  });
+
+                  var tempListImagePaths = await ImagePickers.pickerPaths(
+                    galleryMode: GalleryMode.image,
+                    selectCount: 1,
+                    showCamera: true,
+                    cropConfig: null,
+                    compressSize: 500,
+                    uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
+                  );
+                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
+                    var path = tempListImagePaths[0].path;
+                    callback(path);
+                  }
+                },
+              ),
+              ListTile(
+                title: Text(S.of(context).cancel, textAlign: TextAlign.center),
+                onTap: () {
+                  Navigator.pop(dialogContext, false);
+                },
+              ),
+            ],
+          );
+        });
+  }
 }
 
 typedef ImageCallback = void Function(String text);
-
 
 void callLater(FrameCallback callback) {
   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {

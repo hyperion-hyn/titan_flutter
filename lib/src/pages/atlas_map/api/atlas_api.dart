@@ -34,7 +34,6 @@ import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entit
 import 'package:titan/src/pages/atlas_map/entity/user_reward_entity.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -95,6 +94,19 @@ class AtlasApi {
     if (result["code"] == 0) {
       var data = result["data"];
       return HynTransferHistory.fromJson(data);
+    } else {
+      throw new Exception();
+    }
+  }
+
+  Future<WalletInfoEntity> queryWalletDetail(String address) async {
+    Map result = await AtlasHttpCore.instance.post(
+      "v1/wallet/user_info",
+      data: "{\"address\": \"$address\"}",
+    );
+    if (result["code"] == 0) {
+      var data = result["data"];
+      return WalletInfoEntity.fromJson(data);
     } else {
       throw new Exception();
     }
@@ -662,10 +674,10 @@ class AtlasApi {
   }
 
   // 上传图片
-  Future<String> postUploadImageFile(
-      String path, ProgressCallback onSendProgress) async {
+  Future<String> postUploadImageFile(String address, String path, ProgressCallback onSendProgress) async {
     try {
       Map<String, dynamic> params = {};
+      params["address"] = address;
       params["file"] = MultipartFile.fromFileSync(path);
       FormData formData = FormData.fromMap(params);
 
