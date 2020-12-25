@@ -1,14 +1,16 @@
 import 'dart:convert';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_echarts/flutter_echarts.dart';
+import 'package:pie_chart/pie_chart.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 class RPStatisticsWidget extends StatefulWidget {
   RPStatisticsWidget();
@@ -22,6 +24,7 @@ class RPStatisticsWidget extends StatefulWidget {
 class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
   RpStats _rpStats;
   RPApi _rpApi = RPApi();
+  var _currentIndex = 0;
 
   var colorPalette = [
     '#FF5E5E',
@@ -30,6 +33,15 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     '#FBF463',
     '#FFC05C',
     '#4EECFA'
+  ];
+
+  var colorPaletteHex = [
+    HexColor('#FF5E5E'),
+    HexColor('#66A9FF'),
+    HexColor('#66F0CB'),
+    HexColor('#FBF463'),
+    HexColor('#FFC05C'),
+    HexColor('#4EECFA'),
   ];
 
   @override
@@ -59,31 +71,88 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+    var items = [
+      Wrap(
         children: [
           _title('发行'),
           _rpSupply(),
-          _title('空投'),
-          _rpAirdrop(),
-          _title('传导'),
-          _rpPool(),
-          _title('晋升'),
-          _rpPromotion()
         ],
       ),
+      Wrap(
+        children: [
+          _title('空投'),
+          _rpAirdrop(),
+        ],
+      ),
+      Wrap(
+        children: [
+          _title('传导'),
+          _rpPool(),
+        ],
+      ),
+      Wrap(
+        children: [
+          _title('晋升'),
+          _rpPromotion(),
+        ],
+      )
+    ];
+    return Column(
+      children: [
+        CarouselSlider(
+            items: items,
+            options: CarouselOptions(
+                aspectRatio: 1.2,
+                initialPage: 0,
+                viewportFraction: 1,
+                enlargeCenterPage: false,
+                enableInfiniteScroll: true,
+                autoPlay: true,
+                autoPlayInterval: Duration(seconds: 5),
+                autoPlayAnimationDuration: Duration(milliseconds: 800),
+                autoPlayCurve: Curves.fastOutSlowIn,
+                scrollDirection: Axis.horizontal,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                })),
+        Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              items.length,
+              (index) {
+                return Container(
+                  width: 8.0,
+                  height: 8.0,
+                  margin: EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: 4.0,
+                  ),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _currentIndex == index
+                        ? Color.fromRGBO(0, 0, 0, 0.9)
+                        : Color.fromRGBO(0, 0, 0, 0.4),
+                  ),
+                );
+              },
+            )),
+      ],
     );
   }
 
   _title(String name) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Text(
-        name,
-        style: TextStyle(
-          fontSize: 11,
-          color: DefaultColors.color999,
+    return Align(
+      alignment: Alignment.center,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(
+          name,
+          style: TextStyle(
+            fontSize: 11,
+            color: DefaultColors.color999,
+          ),
         ),
       ),
     );
@@ -94,62 +163,45 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     var totalSupply = _rpStats?.global?.totalSupply ?? '0';
     var totalBurn = _rpStats?.global?.totalBurning ?? '0';
     var unSupply = Decimal.fromInt(0);
+
+    var totalSupplyEther = Decimal.zero;
+    var totalBurnEther = Decimal.zero;
+    var unSupplyEther = Decimal.zero;
+
     try {
       unSupply = (Decimal.tryParse('$totalCap') - Decimal.parse(totalSupply)) -
           Decimal.parse(totalBurn);
+      totalSupplyEther = Decimal.parse(FormatUtil.weiToEtherStr(totalSupply));
+      totalBurnEther = Decimal.parse(FormatUtil.weiToEtherStr(totalBurn));
+      unSupplyEther = Decimal.parse(FormatUtil.weiToEtherStr('$unSupply'));
     } catch (e) {}
 
-    var totalCapStr = bigIntToEther(totalCap);
-    var totalSupplyStr = bigIntToEther(totalSupply);
-    var totalBurningStr = bigIntToEther(totalBurn);
-    var unSupplyStr = bigIntToEther("$unSupply");
+    var totalCapStr = bigIntToEtherWithFormat(totalCap);
+    var totalSupplyStr = bigIntToEtherWithFormat(totalSupply);
+    var totalBurningStr = bigIntToEtherWithFormat(totalBurn);
+    var unSupplyStr = bigIntToEtherWithFormat("$unSupply");
 
-    var _chartOption = '''
-   {
-    series: [
-        {
-            type: 'pie',
-            radius: ['40%', '90%'],
-            silent: true,
-            label: {
-                formatter: '{d}%',
-                borderWidth: 1,
-                borderRadius: 4,
-                position: 'inner',
-            },
-            color: ${jsonEncode(colorPalette)},
-            data: [
-                {value: $totalSupply, name: '流通中'},
-                {value: $unSupply, name: '未发行'}, 
-                {value: $totalBurn, name: '总燃烧'},
-                 
-            ]
-        }
-    ]
-}
-  ''';
     return Row(
       children: [
+        SizedBox(
+          width: 16,
+        ),
         Container(
-          width: 130,
-          height: 130,
-          child: Echarts(
-            option: _chartOption,
-            captureAllGestures: false,
-          ),
+          width: 100,
+          height: 100,
+          child: _pieChart([
+            totalSupplyEther,
+            unSupplyEther,
+            totalBurnEther,
+          ]),
         ),
         SizedBox(
-          width: 24,
+          width: 36,
         ),
         Expanded(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /*_dataText(
-              '总发行',
-              totalCapStr,
-              isHighLight: true,
-            ),*/
             Row(
               children: [
                 Expanded(
@@ -172,7 +224,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
               colorStr: colorPalette[1],
             ),
           ],
-        ))
+        )),
       ],
     );
   }
@@ -184,85 +236,51 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     var totalLevel = _rpStats?.airdrop?.levelTotal ?? '0';
     var totalPromotion = _rpStats?.airdrop?.promotionTotal ?? '0';
 
-    var totalStr = bigIntToEther(total);
+    var totalStr = bigIntToEtherWithFormat(total);
+    var airdropLuckyTotalStr = bigIntToEtherWithFormat(totalLucky);
+    var airdropLevelTotalStr = bigIntToEtherWithFormat(totalLevel);
+    var airdropPromotionTotalStr = bigIntToEtherWithFormat(totalPromotion);
 
-    var airdropLuckyTotalStr = bigIntToEther(totalLucky);
-    var airdropLevelTotalStr = bigIntToEther(totalLevel);
-    var airdropPromotionTotalStr = bigIntToEther(totalPromotion);
+    var unAirdrop = Decimal.zero;
+    var airdropTotalEther = Decimal.zero;
+    var unAirdropEther = Decimal.zero;
 
-    var unAirdrop = Decimal.fromInt(0);
     try {
       unAirdrop = Decimal.tryParse(total) - Decimal.tryParse(totalAirdrop);
+
+      unAirdropEther = Decimal.parse(
+        FormatUtil.weiToEtherStr('$unAirdrop'),
+      );
+
+      airdropTotalEther = Decimal.parse(
+        FormatUtil.weiToEtherStr('$totalAirdrop'),
+      );
     } catch (e) {}
 
-    var totalAirdropStr = bigIntToEther("$totalAirdrop");
-    var unAirdropStr = bigIntToEther("$unAirdrop");
+    var totalAirdropStr = bigIntToEtherWithFormat("$totalAirdrop");
+    var unAirdropStr = bigIntToEtherWithFormat("$unAirdrop");
 
-    var airdropBurnTotalStr = bigIntToEther(_rpStats?.airdrop?.burningTotal);
+    var airdropBurnTotalStr =
+        bigIntToEtherWithFormat(_rpStats?.airdrop?.burningTotal);
 
-    var _airdropChartOption = '''
- {
-    series: [
-        {
-            type: 'pie',
-            radius: ['40%', '90%'],
-            silent: true,
-            label: {
-                formatter: '{d}%',
-                borderWidth: 1,
-                borderRadius: 4,
-                position: 'inner',
-                
-            },
-            color: ${jsonEncode(colorPalette)},
-            data: [
-                {value: $totalAirdrop, name: '已空投'},
-                {value: $unAirdrop, name: '待空投'},
-            ],
-            
-        },
-    ]
-}
-  ''';
-    var _redPocketChartOption = '''
- {
-    series: [
-        {
-            type: 'pie',
-            radius: ['40%', '90%'],
-            silent: true,
-            label: {
-                formatter: '{b}',
-                borderWidth: 1,
-                borderRadius: 4,
-                position: 'inner',
-                
-            },
-            data: [
-                {value: $totalPromotion, name: '晋升红包'},
-                {value: $totalLevel, name: '量级红包'},
-                {value: $totalLucky, name: '幸运红包'}
-            ],
-            
-        },
-    ]
-}
-  ''';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Row(
           children: [
+            SizedBox(
+              width: 16,
+            ),
             Container(
-              width: 130,
-              height: 130,
-              child: Echarts(
-                option: _airdropChartOption,
-                captureAllGestures: false,
-              ),
+              width: 100,
+              height: 100,
+              child: _pieChart([
+                airdropTotalEther,
+                unAirdropEther,
+              ]),
             ),
             SizedBox(
-              width: 24,
+              width: 36,
             ),
             Expanded(
                 child: Column(
@@ -272,15 +290,6 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                 _dataText('未空投', unAirdropStr, colorStr: colorPalette[1]),
               ],
             ))
-            // Expanded(
-            //   child: Container(
-            //     height: 130,
-            //     child: Echarts(
-            //       option: _redPocketChartOption,
-            //       captureAllGestures: false,
-            //     ),
-            //   ),
-            // ),
           ],
         ),
         SizedBox(
@@ -331,54 +340,42 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
   _rpPool() {
     var total = _rpStats?.transmit?.total ?? '0';
     var transmitRp = _rpStats?.transmit?.transmitRp ?? '0';
-    var unTransmitRp = Decimal.fromInt(0);
+    var unTransmitRp = Decimal.zero;
+
+    var transmitRpEther = Decimal.zero;
+    var unTransmitRpEther = Decimal.zero;
 
     try {
       unTransmitRp = Decimal.tryParse(total) - Decimal.parse(transmitRp);
+
+      unTransmitRpEther = Decimal.parse(
+        FormatUtil.weiToEtherStr('$unTransmitRp'),
+      );
+
+      transmitRpEther = Decimal.parse(
+        FormatUtil.weiToEtherStr('$transmitRp'),
+      );
     } catch (e) {}
 
-    var totalStr = bigIntToEther(total);
-    var transmitRPStr = bigIntToEther(transmitRp);
-    var unTransmitRpStr = bigIntToEther("$unTransmitRp");
+    var totalStr = bigIntToEtherWithFormat(total);
+    var transmitRPStr = bigIntToEtherWithFormat(transmitRp);
+    var unTransmitRpStr = bigIntToEtherWithFormat("$unTransmitRp");
 
-    var _chartOption = '''
-    {
-    series: [
-        {
-            type: 'pie',
-            radius: ['40%', '90%'],
-            silent: true,
-            label: {
-                formatter: '{d}%',
-                borderWidth: 1,
-                borderRadius: 4,
-                position: 'inner',
-            },
-            color: ${jsonEncode(colorPalette)},
-            data: [
-                {value: $transmitRp, name: '已传导'},
-                {value: $unTransmitRp, name: '未传导'},
-            ]
-        }
-    ]
-}
-  ''';
     return Row(
       children: [
+        SizedBox(
+          width: 16,
+        ),
         Container(
-          width: 130,
-          height: 130,
-          child: Echarts(
-            option: _chartOption,
-            captureAllGestures: false,
-            onMessage: (String message) {
-              Map<String, Object> messageAction = jsonDecode(message);
-              print("[$runtimeType] messageAction:$messageAction");
-            },
-          ),
+          width: 100,
+          height: 100,
+          child: _pieChart([
+            transmitRpEther,
+            unTransmitRpEther,
+          ]),
         ),
         SizedBox(
-          width: 24,
+          width: 36,
         ),
         Expanded(
             child: Column(
@@ -397,8 +394,10 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     var promotionTotalHolding = _rpStats?.promotion?.totalHolding ?? '0';
     var promotionTotalBurning = _rpStats?.promotion?.totalBurning ?? '0';
 
-    var promotionTotalHoldingStr = bigIntToEther(promotionTotalHolding);
-    var promotionTotalBurningStr = bigIntToEther(promotionTotalBurning);
+    var promotionTotalHoldingStr =
+        bigIntToEtherWithFormat(promotionTotalHolding);
+    var promotionTotalBurningStr =
+        bigIntToEtherWithFormat(promotionTotalBurning);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -413,6 +412,39 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
           child: _dataText('晋升燃烧', promotionTotalBurningStr),
         )
       ],
+    );
+  }
+
+  _pieChart(List<Decimal> dataList) {
+    Map<String, double> dataMap = {};
+    dataList.forEach((element) {
+      double value = double.tryParse('$element') ?? 0;
+      dataMap['${value}'] = value;
+    });
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: PieChart(
+        dataMap: dataMap,
+        animationDuration: Duration(milliseconds: 800),
+        chartRadius: MediaQuery.of(context).size.width / 3.2,
+        colorList: colorPaletteHex,
+        chartType: ChartType.ring,
+        ringStrokeWidth: 30,
+        legendOptions: LegendOptions(
+          showLegends: false,
+        ),
+        chartValuesOptions: ChartValuesOptions(
+          chartValueStyle: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
+          ),
+          showChartValueBackground: false,
+          showChartValuesInPercentage: true,
+          decimalPlaces: 2,
+          showChartValuesOutside: true,
+        ),
+      ),
     );
   }
 
