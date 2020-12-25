@@ -99,7 +99,7 @@ class _SignalChatsState extends State<SignalChatsPage>
     double _chartsWidth = _size.width - 16.0 * 2.0;
     double _chartsHeight = (299.3 * _chartsWidth) / 343;
     return Container(
-      color: Colors.white,
+      //color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -117,7 +117,7 @@ class _SignalChatsState extends State<SignalChatsPage>
     }
 
     return Container(
-      color: Colors.white,
+      //color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -138,7 +138,7 @@ class _SignalChatsState extends State<SignalChatsPage>
     }
 
     return Container(
-      color: Colors.white,
+      //color: Colors.white,
       child: Column(
         children: <Widget>[
           _introductionWidget(),

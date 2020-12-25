@@ -5,14 +5,14 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'bloc/bloc.dart';
+import 'package:nested/nested.dart';
 
-class RedPocketComponent extends StatelessWidget {
-  final Widget child;
+class RedPocketComponent extends SingleChildStatelessWidget {
 
-  RedPocketComponent({@required this.child});
+  RedPocketComponent({Key key, Widget child}): super(key: key, child: child);
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return BlocProvider<RedPocketBloc>(
       create: (ctx) => RedPocketBloc(),
       child: _RedPocketManager(child: child),

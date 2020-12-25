@@ -57,6 +57,15 @@ class Const {
     }
   }
 
+
+  static String get CONTRIBUTIONS_DOMAIN {
+    if (env.buildType == BuildType.DEV) {
+      return Config.CONTRIBUTIONS_API_URL_TEST;
+    } else {
+      return Config.ATLAS_API_URL;
+    }
+  }
+
   static const String TITAN_SCHEMA = "titan://";
   static const String TITAN_SHARE_URL_PREFIX =
       'https://www.hyn.mobi/titan/sharev2/?key=';
@@ -176,6 +185,9 @@ class PrefsKey {
   ///Policy
   static const String IS_CONFIRM_WALLET_POLICY = 'wallet_policy_confirmed';
   static const String IS_CONFIRM_DEX_POLICY = 'dex_policy_confirmed';
+
+  static const String WALLET_ICON_LAST_KEY = "wallet_icon_last_key";
+
 }
 
 class SecurePrefsKey {

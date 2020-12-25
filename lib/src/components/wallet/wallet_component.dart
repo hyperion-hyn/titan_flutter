@@ -17,14 +17,14 @@ import 'package:titan/src/utils/format_util.dart';
 
 import 'bloc/bloc.dart';
 import 'wallet_repository.dart';
+import 'package:nested/nested.dart';
 
-class WalletComponent extends StatelessWidget {
-  final Widget child;
+class WalletComponent extends SingleChildStatelessWidget {
 
-  WalletComponent({@required this.child});
+  WalletComponent({Key key, Widget child}): super(key: key, child: child);
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return RepositoryProvider(
       create: (ctx) => WalletRepository(),
       child: BlocProvider<WalletCmpBloc>(

@@ -100,10 +100,11 @@ Widget _buildMenuBar(String title, String subTitle, Function onTap) {
               style: TextStyle(color: HexColor("#AAAAAA"), fontSize: 12),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(5, 15, 14, 15),
-              child: Icon(
-                Icons.chevron_right,
-                color: Colors.black54,
+              padding: const EdgeInsets.fromLTRB(5, 20, 14, 20),
+              child: Image.asset(
+                'res/drawable/me_account_bind_arrow.png',
+                width: 7,
+                height: 12,
               ),
             )
           ],

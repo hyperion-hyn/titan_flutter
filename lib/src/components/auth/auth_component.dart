@@ -11,14 +11,17 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 
 import 'model.dart';
+import 'package:nested/nested.dart';
 
-class AuthComponent extends StatelessWidget {
-  final Widget child;
+class AuthComponent extends SingleChildStatelessWidget {
+  //final Widget child;
 
-  AuthComponent({@required this.child});
+  AuthComponent({Key key, Widget child}): super(key: key, child: child);
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
+    print("[$runtimeType] buildWithChild, context:$context, child:$child");
+
     return BlocProvider<AuthBloc>(
       create: (ctx) => AuthBloc(),
       child: _AuthManager(child: child),

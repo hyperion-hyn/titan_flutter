@@ -369,9 +369,13 @@ class _MyPageState extends BaseState<MyPage> {
                         border: Border.all(color: HexColor("#DA3B2A"))),
                   ),
                 ),
-              Icon(
-                Icons.chevron_right,
-                color: Colors.black54,
+              Padding(
+                padding: const EdgeInsets.only(left: 12,),
+                child: Image.asset(
+                  'res/drawable/me_account_bind_arrow.png',
+                  width: 7,
+                  height: 12,
+                ),
               ),
             ],
           ),

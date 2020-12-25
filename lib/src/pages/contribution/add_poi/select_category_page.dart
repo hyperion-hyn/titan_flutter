@@ -176,7 +176,7 @@ class _SelectCategoryState extends BaseState<SelectCategoryPage> {
           height: 40,
           width: 40,
           child: CircularProgressIndicator(
-            strokeWidth: 3,
+            strokeWidth: 1.5,
           ),
         ),
       );
