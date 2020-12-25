@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
@@ -126,12 +128,8 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
   @override
   Widget build(BuildContext cofntext) {
     return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(
-            color: Colors.black,
-          ),
+        appBar: BaseAppBar(
+          baseTitle: S.of(context).wallet_manage,
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -141,14 +139,6 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                 },
               );
             },
-          ),
-          centerTitle: true,
-          title: Text(
-            S.of(context).wallet_manage,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-            ),
           ),
           actions: <Widget>[
             InkWell(
@@ -216,26 +206,31 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
           },
           child: Container(
             height: double.infinity,
-            color: Colors.white,
+            //color: Colors.white,
             child: BlocBuilder<WalletManagerBloc, WalletManagerState>(
               bloc: _walletManagerBloc,
               builder: (context, state) {
                 if (state is ShowWalletState) {
                   var walletList = state.wallets;
-                  return Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: ListView.builder(
-                          primary: false,
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context, int index) {
-                            return _buildWallet(walletList[index]);
-                          },
-                          itemCount: walletList.length,
+                  return ListView.separated(
+                    primary: false,
+                    shrinkWrap: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      return _buildWallet(walletList[index], index:index);
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 30,
                         ),
-                      ),
-                    ],
+                        child: Container(
+                          height: 0.8,
+                          color: HexColor('#F8F8F8'),
+                        ),
+                      );
+                    },
+                    itemCount: walletList.length,
                   );
                 } else if (state is WalletEmptyState) {
                   return Align(
@@ -253,162 +248,173 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
         ));
   }
 
-  Widget _buildWallet(Wallet wallet) {
+  Widget _buildWallet(Wallet wallet,{int index = 0}) {
     var walletFileName = selectWallet?.keystore?.fileName ?? beforeActiveWallet.keystore.fileName ?? "";
     bool isSelected = (wallet.keystore.fileName == walletFileName);
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return Container(
+      color: Colors.white,
       child: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: InkWell(
-                  onTap: () {
-                    if (!isSelected) {
-                      UiUtil.showAlertView(
-                        context,
-                        title: S.of(context).tips,
-                        actions: [
-                          ClickOvalButton(
-                            S.of(context).cancel,
-                                () {
-                              Navigator.pop(context);
-                            },
-                            width: 120,
-                            height: 32,
-                            fontSize: 14,
-                            fontColor: DefaultColors.color999,
-                            btnColor: [Colors.transparent],
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          ClickOvalButton(
-                            "切换钱包",
-                                () async {
-                              Navigator.pop(context);
-
-                              var password = await UiUtil.showWalletPasswordDialogV2(
-                                context,
-                                wallet,
-                              );
-                              if(password == null || password.isEmpty){
-                                return;
-                              }
-
-                              setState(() {
-                                selectWallet = wallet;
-                              });
-                            },
-                            width: 120,
-                            height: 38,
-                            fontSize: 16,
-                          ),
-                        ],
-                        content: "你将要切换${walletKeyStore.name}为当前钱包，继续切换吗？",
-                      );
-                    }
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Theme.of(context).primaryColor),
-                        width: 45,
-                        height: 45,
-                        child: Stack(
-                          children: <Widget>[
-                            Align(
-                              alignment: Alignment.center,
-                              child: walletHeaderWidget(
-                                walletKeyStore.name.isEmpty
-                                    ? "Name is empty"
-                                    : walletKeyStore.name.characters.first,
-                                address: ethAccount.address,
-                                size: 52,
-                                fontSize: 20,
-                              ),
-                            ),
-                            if (isSelected)
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: Container(
-                                  padding: EdgeInsets.all(0),
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.white),
-                                  child: Icon(
-                                    Icons.check_circle,
-                                    size: 18,
-                                    color: Colors.blue,
-                                  ),
+        children: [
+          if (index == 0) Container(
+            height: 5,
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8,),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          if (!isSelected) {
+                            UiUtil.showAlertView(
+                              context,
+                              title: S.of(context).tips,
+                              actions: [
+                                ClickOvalButton(
+                                  S.of(context).cancel,
+                                      () {
+                                    Navigator.pop(context);
+                                  },
+                                  width: 120,
+                                  height: 32,
+                                  fontSize: 14,
+                                  fontColor: DefaultColors.color999,
+                                  btnColor: [Colors.transparent],
                                 ),
-                              )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              walletKeyStore.name,
-                              style: TextStyle(
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                ClickOvalButton(
+                                  "切换钱包",
+                                      () async {
+                                    Navigator.pop(context);
+
+                                    var password = await UiUtil.showWalletPasswordDialogV2(
+                                      context,
+                                      wallet,
+                                    );
+                                    if(password == null || password.isEmpty){
+                                      return;
+                                    }
+
+                                    setState(() {
+                                      selectWallet = wallet;
+                                    });
+                                  },
+                                  width: 120,
+                                  height: 38,
                                   fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF252525)),
+                                ),
+                              ],
+                              content: "你将要切换${walletKeyStore.name}为当前钱包，继续切换吗？",
+                            );
+                          }
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: <Widget>[
+                            Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Theme.of(context).primaryColor),
+                              width: 45,
+                              height: 45,
+                              child: Stack(
+                                children: <Widget>[
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: walletHeaderWidget(
+                                      walletKeyStore.name.isEmpty
+                                          ? "Name is empty"
+                                          : walletKeyStore.name.characters.first,
+                                      address: ethAccount.address,
+                                      size: 52,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  if (isSelected)
+                                    Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: Container(
+                                        padding: EdgeInsets.all(0),
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white),
+                                        child: Icon(
+                                          Icons.check_circle,
+                                          size: 18,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                    )
+                                ],
+                              ),
                             ),
                             SizedBox(
-                              height: 4,
+                              width: 8,
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Text(
-                                shortBlockChainAddress(
-                                    WalletUtil.ethAddressToBech32Address(
-                                  ethAccount.address,
-                                )),
-                                style: TextStyle(
-                                    fontSize: 14, color: Color(0xFF9B9B9B)),
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    walletKeyStore.name,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF252525)),
+                                  ),
+                                  SizedBox(
+                                    height: 4,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 4),
+                                    child: Text(
+                                      shortBlockChainAddress(
+                                          WalletUtil.ethAddressToBech32Address(
+                                        ethAccount.address,
+                                      )),
+                                      style: TextStyle(
+                                          fontSize: 14, color: Color(0xFF9B9B9B)),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
+                            )
                           ],
                         ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  var walletStr =
-                      FluroConvertUtils.object2string(wallet.toJson());
-                  var currentRouteName =
-                      RouteUtil.encodeRouteNameWithoutParams(context);
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        var walletStr =
+                            FluroConvertUtils.object2string(wallet.toJson());
+                        var currentRouteName =
+                            RouteUtil.encodeRouteNameWithoutParams(context);
 
-                  Application.router.navigateTo(
-                      context,
-                      Routes.wallet_setting +
-                          '?entryRouteName=$currentRouteName&walletStr=$walletStr');
-                },
-                child: Icon(
-                  Icons.info_outline,
-                  color: Color(0xFF9B9B9B),
+                        Application.router.navigateTo(
+                            context,
+                            Routes.wallet_setting +
+                                '?entryRouteName=$currentRouteName&walletStr=$walletStr');
+                      },
+                      child: Icon(
+                        Icons.info_outline,
+                        color: Color(0xFF9B9B9B),
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
+                //Divider()
+              ],
+            ),
           ),
-          Divider()
         ],
       ),
     );
