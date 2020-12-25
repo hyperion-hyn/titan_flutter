@@ -32,6 +32,7 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_history_page.da
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/market/exchange_assets_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_deposit_confirm_page.dart';
+import 'package:titan/src/pages/market/transfer/exchange_qrcode_deposit_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_success_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_withdraw_confirm_page.dart';
@@ -167,6 +168,11 @@ var exchangeAssetsHandler = Handler(handlerFunc: (context, params) {
 var exchangeTransferHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   return ExchangeTransferPage(params['coinType']?.first);
+});
+
+var exchangeQrcodeDepositHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return ExchangeQrcodeDepositPage(params['coinType']?.first);
 });
 
 var exchangeDepositConfirmHandler = Handler(handlerFunc: (context, params) {
