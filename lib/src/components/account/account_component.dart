@@ -4,14 +4,14 @@ import 'package:titan/src/components/account/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/pages/contribution/signal_scan/vo/check_in_model.dart';
 import 'package:titan/src/pages/mine/model/user_info.dart';
+import 'package:nested/nested.dart';
 
-class AccountComponent extends StatelessWidget {
-  final Widget child;
+class AccountComponent extends SingleChildStatelessWidget {
 
-  AccountComponent({@required this.child});
+  AccountComponent({Key key, Widget child}): super(key: key, child: child);
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return BlocProvider<AccountBloc>(
       create: (ctx) => AccountBloc(),
       child: _AccountManager(child: child),
