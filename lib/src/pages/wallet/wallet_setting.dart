@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_options_page.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
@@ -24,6 +26,7 @@ import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:characters/characters.dart';
@@ -50,6 +53,19 @@ class _WalletSettingState extends State<WalletSettingPage> {
   FocusNode _focusNode;
   String _imageSource = '';
   String get _address => widget.wallet.getAtlasAccount().address;
+  String get _imageSourceKey {
+    var address = _address;
+    String hexColor = address;
+    if (address.length > 6 && !address.contains('@')) {
+      hexColor = "#" + address.substring(address.length - 6);
+    } else {
+      hexColor = "#BFBFBF";
+    }
+    return '${PrefsKey.WALLET_ICON_LAST_KEY}_$hexColor';
+  }
+
+  int _uploadImageStatus = 0; // 0： 未操作，1：正在上传，2： 上传完成；
+  final StreamController<double> _uploadImageController = StreamController.broadcast();
 
   @override
   void initState() {
@@ -80,8 +96,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
       }
     });
 
-    var localImageSource = await AppCache.getValue(PrefsKey.WALLET_ICON_LAST_KEY);
-    if (mounted) {
+    var localImageSource = await AppCache.getValue(_imageSourceKey);
+    if (mounted && localImageSource != null) {
       setState(() {
         _imageSource = jsonDecode(localImageSource);
       });
@@ -94,6 +110,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
   @override
   void dispose() {
     _walletNameController.dispose();
+    _uploadImageController.close();
     super.dispose();
   }
 
@@ -133,7 +150,25 @@ class _WalletSettingState extends State<WalletSettingPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 16, bottom: 36),
                       child: Stack(
+                        alignment: Alignment.center,
                         children: <Widget>[
+                          if (_uploadImageStatus == 1)
+                            SizedBox(
+                              height: 65,
+                              width: 65,
+                              child: StreamBuilder<double>(
+                                  stream: _uploadImageController.stream,
+                                  builder: (context, snapshot) {
+                                    //print("[$runtimeType] snapshot.data:${snapshot.data}");
+
+                                    return CircularProgressIndicator(
+                                      backgroundColor: Colors.grey[200],
+                                      valueColor: AlwaysStoppedAnimation(HexColor("#1F81FF")),
+                                      value: snapshot?.data??0.25,
+                                      strokeWidth: 1.5,
+                                    );
+                                  }),
+                            ),
                           walletHeaderIconWidget(
                             widget.wallet.keystore.name.isEmpty ? "" : widget.wallet.keystore.name.characters.first,
                             size: 64,
@@ -141,13 +176,13 @@ class _WalletSettingState extends State<WalletSettingPage> {
                             address: widget.wallet.getEthAccount()?.address,
                             imageSource: _imageSource,
                           ),
-                          Positioned(
+                          /*Positioned(
                               right: 6,
                               bottom: 6,
                               child: Image.asset(
                                 'res/drawable/ic_edit.png',
                                 height: 12,
-                              )),
+                              )),*/
                         ],
                       ),
                     ),
@@ -499,6 +534,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
   }
 
   _editIconAction() async {
+    return;
+    
     /*
     var result =
         'https://static.hyn.space/test/explore/0xa599CFEb7a04010CaABB7Cc924d2e1004cCB71A4/9632d1f559446ae9c5c5d55c191fb53c.jpeg';
@@ -509,7 +546,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
 
     String address = widget?.wallet?.getEthAccount()?.address ?? "";
 
-    UiUtil.showIconImagePickerSheet(context, callback: (String picPath) async {
+    editIconSheet(context, (picPath) async {
       print(
         '[$runtimeType] upload  ---> picPath:$picPath, _address:$address',
       );
@@ -518,19 +555,37 @@ class _WalletSettingState extends State<WalletSettingPage> {
         return;
       }
 
-      var result = await AtlasApi().postUploadImageFile(
-        address,
-        picPath,
-        (count, total) {
-          print(
-            '[$runtimeType] upload  ---> count:$count, total:$total',
-          );
-        },
-      );
+      if (mounted) {
+        setState(() {
+          _uploadImageStatus = 1;
+        });
+      }
 
-      print(
-        '[$runtimeType] upload  ---> result:$result',
-      );
+      String result;
+      try {
+        result = await AtlasApi().postUploadImageFile(
+          address,
+          picPath,
+          (count, total) {
+            double progress = count * 1.00 / total;
+            if (progress.isNaN || progress.isNegative) {
+              progress = 0.25;
+            }
+            //print('[$runtimeType] upload  ---> count:$count, total:$total, progress:$progress');
+            _uploadImageController.add(progress);
+          },
+        );
+      } catch (e) {
+        LogUtil.toastException(e);
+      }
+
+      if (mounted) {
+        setState(() {
+          _uploadImageStatus = 2;
+        });
+      }
+
+      print('[$runtimeType] upload  ---> result:$result');
 
       if (result?.isNotEmpty ?? false) {
         // 0.刷新UI
@@ -544,7 +599,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
         postUserSync(userPic: result);
 
         // 2.本地保存
-        await AppCache.saveValue(PrefsKey.WALLET_ICON_LAST_KEY, json.encode(result));
+        await AppCache.remove(PrefsKey.WALLET_ICON_LAST_KEY);
+        await AppCache.saveValue(_imageSourceKey, json.encode(result));
       }
     });
   }

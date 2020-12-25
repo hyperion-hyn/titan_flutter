@@ -805,36 +805,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
                   _detailTabWidget(),
                   _detailWidget(),
-
-                  /*
-                  // 4.参与人员列表信息
-                  SliverToBoxAdapter(
-                    child: Material(
-                      color: Colors.white,
-                      child: NodeJoinMemberWidget(
-                        nodeId: _nodeId,
-                        isShowInviteItem: false,
-                        loadDataBloc: _loadDataBloc,
-                      ),
-                    ),
-                  ),
-                  _spacer(),
-
-
-                  // 5.合约流水信息
-                  SliverToBoxAdapter(child: _delegateRecordHeaderWidget()),
-
-                  (_delegateRecordList?.isNotEmpty ?? false)
-                      ? SliverList(
-                          delegate: SliverChildBuilderDelegate((context, index) {
-                          return delegateRecordItemWidget(
-                            _delegateRecordList[index],
-                            map3CreatorAddress: _nodeCreatorAddress,
-                          );
-                        }, childCount: _delegateRecordList.length))
-                      : emptyListWidget(title: "节点记录为空"),
-
-                   */
                 ],
               )),
         ),
@@ -2295,43 +2265,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       );
     }
 
-    return Column(
-      children: <Widget>[
-        /*
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 12,
-                ),
-                color: Colors.white,
-                child: Text('共 ${_txLogList?.length ?? 0}个',
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 16,
-                      color: HexColor('#999999'),
-                    )),
-              ),
-            ),
-          ],
-        ),
-        */
-        ListView.builder(
-          shrinkWrap: true,
-          physics: BouncingScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          itemBuilder: (context, index) {
-            return delegateRecordItemWidget(
-              _txLogList[index],
-              map3CreatorAddress: _nodeCreatorAddress,
-            );
-          },
-          itemCount: _txLogList.length,
-        ),
-      ],
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: BouncingScrollPhysics(),
+      scrollDirection: Axis.vertical,
+      itemBuilder: (context, index) {
+        return delegateRecordItemWidget(
+          _txLogList[index],
+          map3CreatorAddress: _nodeCreatorAddress,
+        );
+      },
+      itemCount: _txLogList.length,
     );
   }
 
