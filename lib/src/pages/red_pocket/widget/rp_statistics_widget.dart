@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -23,6 +24,7 @@ class RPStatisticsWidget extends StatefulWidget {
 class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
   RpStats _rpStats;
   RPApi _rpApi = RPApi();
+  var _currentIndex = 0;
 
   var colorPalette = [
     '#FF5E5E',
@@ -69,29 +71,88 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    var items = [
+      Wrap(
+        children: [
+          _title('发行'),
+          _rpSupply(),
+        ],
+      ),
+      Wrap(
+        children: [
+          _title('空投'),
+          _rpAirdrop(),
+        ],
+      ),
+      Wrap(
+        children: [
+          _title('传导'),
+          _rpPool(),
+        ],
+      ),
+      Wrap(
+        children: [
+          _title('晋升'),
+          _rpPromotion(),
+        ],
+      )
+    ];
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _title('发行'),
-        _rpSupply(),
-        _title('空投'),
-        _rpAirdrop(),
-        _title('传导'),
-        _rpPool(),
-        _title('晋升'),
-        _rpPromotion()
+        CarouselSlider(
+            items: items,
+            options: CarouselOptions(
+                aspectRatio: 1.2,
+                initialPage: 0,
+                viewportFraction: 1,
+                enlargeCenterPage: false,
+                enableInfiniteScroll: true,
+                autoPlay: true,
+                autoPlayInterval: Duration(seconds: 4),
+                autoPlayAnimationDuration: Duration(milliseconds: 800),
+                autoPlayCurve: Curves.fastOutSlowIn,
+                scrollDirection: Axis.horizontal,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                })),
+        Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              items.length,
+              (index) {
+                return Container(
+                  width: 8.0,
+                  height: 8.0,
+                  margin: EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: 4.0,
+                  ),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _currentIndex == index
+                        ? Color.fromRGBO(0, 0, 0, 0.9)
+                        : Color.fromRGBO(0, 0, 0, 0.4),
+                  ),
+                );
+              },
+            )),
       ],
     );
   }
 
   _title(String name) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Text(
-        name,
-        style: TextStyle(
-          fontSize: 11,
-          color: DefaultColors.color999,
+    return Align(
+      alignment: Alignment.center,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(
+          name,
+          style: TextStyle(
+            fontSize: 11,
+            color: DefaultColors.color999,
+          ),
         ),
       ),
     );
