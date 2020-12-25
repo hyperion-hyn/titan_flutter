@@ -8,6 +8,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/token_burn_info_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
@@ -318,6 +319,18 @@ class _ApiDemoState extends State {
               NodeApi _nodeApi = NodeApi();
               List list = await _nodeApi.getNodeProviderList();
               print(' Map3 providers ${list.length}');
+            },
+          ),
+          RaisedButton(
+            child: Text('检查更新'),
+            onPressed: () async {
+              AtlasApi atlasApi = AtlasApi();
+              try {
+                var appUpdateInfo = await atlasApi.checkUpdate();
+                print('xxx needUpdate:${appUpdateInfo.needUpdate}');
+              } catch (e) {
+                print('xxx $e');
+              }
             },
           )
         ],

@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:decimal/decimal.dart';
+import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:package_info/package_info.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -994,18 +997,61 @@ class AtlasApi {
   }
 
   Future<AppUpdateInfo> checkUpdate() async {
-    var configEntity = await AtlasHttpCore.instance.postEntity(
+    var walletAddress = WalletInheritedModel.of(Keys.rootKey.currentContext)
+            ?.activatedWallet
+            ?.wallet
+            ?.getAtlasAccount()
+            ?.address ??
+        '';
+    var packageInfo = AtlasHttpCore.instance.packageInfo;
+    if (packageInfo == null) {
+      packageInfo = await PackageInfo.fromPlatform();
+    }
+
+    var deviceInfoPlugin = DeviceInfoPlugin();
+    var deviceId = '';
+    var channel = '';
+
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo deviceInfo = await deviceInfoPlugin?.androidInfo;
+      deviceId = deviceInfo?.androidId;
+      if (env.channel == BuildChannel.OFFICIAL) {
+        channel = 'android-official';
+      } else if (env.channel == BuildChannel.STORE) {
+        channel = 'android-google';
+      }
+    } else if (Platform.isIOS) {
+      IosDeviceInfo deviceInfo = await deviceInfoPlugin?.iosInfo;
+      deviceId = deviceInfo?.identifierForVendor;
+      if (env.channel == BuildChannel.OFFICIAL) {
+        channel = 'ios-appstore';
+      } else if (env.channel == BuildChannel.STORE) {
+        channel = 'ios-testflight';
+      }
+    }
+
+    var versionName = packageInfo?.version ?? '';
+    var versionCode = packageInfo?.buildNumber ?? '';
+    var versionType = '';
+
+    if (env.buildType == BuildType.DEV) {
+      versionType = 'test';
+    }
+
+    return AtlasHttpCore.instance.postEntity(
       '/v1/app/version_check',
       EntityFactory<AppUpdateInfo>(
         (data) {
-          return AppUpdateInfo.fromJson(json.decode(data));
+          return AppUpdateInfo.fromJson(data);
         },
       ),
       params: {
-        "key": 'app:config',
+        "address": walletAddress,
+        "channel": channel,
+        "device_id": deviceId,
+        "version": '$versionName.$versionCode.$versionType'
       },
       options: RequestOptions(contentType: "application/json"),
     );
-    return configEntity;
   }
 }
