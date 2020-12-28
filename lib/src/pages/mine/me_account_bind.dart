@@ -13,7 +13,10 @@ import 'package:titan/src/components/account/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/mine/me_account_bind_request.dart';
+import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -39,6 +42,8 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
   UserInfo _userInfo;
   AccountBindInfoEntity _accountBindInfoEntity;
   ContributionsApi _api = ContributionsApi();
+  final _addressKey = GlobalKey<FormState>();
+  final TextEditingController _addressEditController = TextEditingController();
 
   String get _address =>
       WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
@@ -49,8 +54,6 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
     );
     return address;
   }
-
-  var _textEditController = TextEditingController();
 
   get _flatTextStyle => TextStyle(
         color: HexColor("#1F81FF"),
@@ -995,7 +998,12 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
       ),
     );
 
-    _textEditController.text = "";
+    _addressEditController.text = "";
+
+    var _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
+    var addressExample = 'hyn1ntjklkvx9jlkrz9';
+    var addressHint = S.of(context).example + ': $addressExample...';
+    var addressErrorHint = '请输入合法的HYN地址';
 
     UiUtil.showAlertView(
       context,
@@ -1008,9 +1016,11 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
         ClickOvalButton(
           S.of(context).confirm,
           () async {
-            Navigator.pop(context, true);
+            if (!_addressKey.currentState.validate()) {
+              return;
+            }
 
-            var text = _textEditController.text;
+            var text = _addressEditController.text;
             if (text?.isNotEmpty ?? false) {
               try {
                 var isOk = await _api.postMrRequest(address: text);
@@ -1034,6 +1044,8 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
               } catch (e) {
                 LogUtil.toastException(e);
               }
+
+              Navigator.pop(context, true);
             }
           },
           width: 115,
@@ -1043,42 +1055,102 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
         ),
       ],
       isInputValue: true,
+      detail: '请输入主账户HYN地址。也可扫描主账户收款码',
       contentItem: Material(
-        child: Container(
-          color: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 22),
-          child: TextFormField(
-            //validator: validatePubAddress,
-            autofocus: true,
-            controller: _textEditController,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: HexColor('#FFF2F2F2'),
-              hintText: S.of(context).related_text_field_hint,
-              hintStyle: TextStyle(
-                color: HexColor('#FF999999'),
-                fontSize: 13,
-              ),
-              focusedBorder: border,
-              focusedErrorBorder: border,
-              enabledBorder: border,
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide(
-                  color: Colors.red,
-                  width: 0.5,
-                ),
-              ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Form(
+          key: _addressKey,
+          child: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.only(
+              left: 22,
+              right: 22,
+              bottom: 8,
             ),
-            style: TextStyle(fontSize: 13),
-            onSaved: (value) {
-              print("[object]  --> value:$value");
-            },
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  autofocus: true,
+                  controller: _addressEditController,
+                  keyboardType: TextInputType.text,
+                  validator: (value) {
+                    var ethAddress = WalletUtil.bech32ToEthAddress(value);
+                    if (ethAddress?.isEmpty ?? true) {
+                      return '主账户HYN地址不能为空!';
+                    } else if (!value.startsWith('hyn1')) {
+                      return addressErrorHint;
+                    } else if (!_basicAddressReg.hasMatch(ethAddress)) {
+                      return addressErrorHint;
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    isDense: true,
+                    filled: true,
+                    fillColor: HexColor('#FFF2F2F2'),
+                    hintText: addressHint,
+                    hintStyle: TextStyle(
+                      color: HexColor('#FF999999'),
+                      fontSize: 13,
+                    ),
+                    focusedBorder: border,
+                    focusedErrorBorder: border,
+                    enabledBorder: border,
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide(
+                        color: Colors.red,
+                        width: 0.5,
+                      ),
+                    ),
+                    suffixIcon: InkWell(
+                      onTap: () async {
+                        UiUtil.showScanImagePickerSheet(context, callback: (String text) async {
+                          _addressEditController.text = await _parseText(text);
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Icon(
+                          ExtendsIconFont.qrcode_scan,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                    //contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  ),
+                  style: TextStyle(fontSize: 13),
+                  onSaved: (value) {
+                    // print("[$runtimeType] onSaved, inputValue:$value");
+                  },
+                  onChanged: (String value) {
+                    // print("[$runtimeType] onChanged, inputValue:$value");
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  Future<String> _parseText(String scanStr) async {
+    print("[扫描结果] scanStr:$scanStr");
+
+    if (scanStr == null) {
+      return '';
+    } else if (scanStr.contains(PromoteQrCodePage.downloadDomain) || scanStr.contains(RpFriendInvitePage.shareDomain)) {
+      var fromArr = scanStr.split("from=");
+      if (fromArr[1].length > 0) {
+        fromArr = fromArr[1].split("&");
+        if (fromArr[0].length > 0) {
+          return fromArr[0];
+        }
+      }
+    } else if (scanStr.startsWith('hyn1')) {
+      return scanStr;
+    }
+    return '';
   }
 
   _showParisAlertView() {

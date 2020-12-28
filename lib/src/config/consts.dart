@@ -62,7 +62,7 @@ class Const {
     if (env.buildType == BuildType.DEV) {
       return Config.CONTRIBUTIONS_API_URL_TEST;
     } else {
-      return Config.ATLAS_API_URL;
+      return Config.CONTRIBUTIONS_API_URL;
     }
   }
 

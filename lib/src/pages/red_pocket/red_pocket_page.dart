@@ -22,6 +22,7 @@ import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_tab_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
+import 'package:titan/src/pages/red_pocket/widget/rp_level_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -34,6 +35,7 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'entity/rp_airdrop_round_info.dart';
+import 'entity/rp_promotion_rule_entity.dart';
 import 'entity/rp_statistics.dart';
 
 class RedPocketPage extends StatefulWidget {
@@ -49,7 +51,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   RPApi _rpApi = RPApi();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   RPStatistics _rpStatistics;
-  RpMyLevelInfo _myLevelInfo;
   RpAirdropRoundInfo _latestRoundInfo;
   RpLevelAirdropInfo _rpLevelAirdropInfo;
 
@@ -74,8 +75,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
     _rpStatistics = RedPocketInheritedModel.of(context).rpStatistics;
   }
 
@@ -311,7 +310,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     color: HexColor('#F2F2F2'),
                   ),
                 ),
-                _levelWidget(),
+                RPLevelWidget(),
                 if (activeWallet != null)
                   Row(
                     children: <Widget>[
@@ -362,7 +361,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                               'res/drawable/rp_add_friends_arrow.png',
                               width: 15,
                               height: 15,
-                              color: HexColor('#FF5959'),
+                              color: HexColor('#FF1F81FF'),
                             ),
                           ],
                         ),
@@ -373,26 +372,40 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           onTap: _navToRPInviteFriends,
                           child: Row(
                             children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 12,
-                                  right: 8,
-                                ),
-                                child: Text(
-                                  S.of(context).rp_invite_to_collect,
-                                  style: TextStyle(
-                                    color: HexColor('#333333'),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 12,
+                                    right: 8,
                                   ),
-                                  maxLines: 2,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        S.of(context).rp_invite_to_collect,
+                                        style: TextStyle(
+                                          color: HexColor('#333333'),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        maxLines: 2,
+                                      ),
+                                      Text(
+                                        '多一个好友，机会提升一倍',
+                                        style: TextStyle(
+                                          color: DefaultColors.color999,
+                                          fontSize: 11,
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                               Image.asset(
                                 'res/drawable/rp_add_friends.png',
                                 width: 17,
                                 height: 17,
-                                color: HexColor('#FF5959'),
+                                color: HexColor('#FF1F81FF'),
                               ),
                             ],
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -760,62 +773,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
   }
 
-  /*
-  Widget _inkwellColumn(
-    String content,
-    String subContent, {
-    GestureTapCallback onTap,
-    double contentFontSize = 14,
-    double subContentFontSize = 10,
-    CrossAxisAlignment columnCrossAxisAlignment = CrossAxisAlignment.start,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Row(
-        children: [
-          Container(
-            constraints: BoxConstraints(
-              maxWidth: 100,
-            ),
-            child: Column(
-              crossAxisAlignment: columnCrossAxisAlignment,
-              children: <Widget>[
-                Text(
-                  content,
-                  style: TextStyle(
-                    fontSize: contentFontSize,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(
-                  height: 4.0,
-                ),
-                Text(
-                  subContent,
-                  style: TextStyle(
-                    fontSize: subContentFontSize,
-                    color: DefaultColors.color999,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Image.asset(
-            'res/drawable/rp_add_friends_arrow.png',
-            width: 15,
-            height: 15,
-            color: HexColor('#FF5959'),
-          ),
-        ],
-      ),
-    );
-  }
-  */
-
   Widget _tipRow(
     String title, {
     double top = 8,
@@ -861,119 +818,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       ),
     );
   }
-
-  _levelWidget() {
-    int currentLevel = _myLevelInfo?.currentLevel ?? 0;
-    int highestLevel = _myLevelInfo?.highestLevel ?? 0;
-
-    var isShowDowngrade = highestLevel > currentLevel;
-
-    var isZeroLevel = currentLevel == 0;
-
-    var hint = isShowDowngrade || isZeroLevel
-        ? Padding(
-            padding: const EdgeInsets.only(
-              top: 4,
-            ),
-            child: Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Image.asset(
-                  isZeroLevel
-                      ? 'res/drawable/error_rounded.png'
-                      : 'res/drawable/ic_rp_level_down.png',
-                  width: 13,
-                ),
-                SizedBox(
-                  width: 4,
-                ),
-                Text(
-                  isZeroLevel ? '当前量级无法参与红包空投' : '等级下降了',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-          )
-        : Text(
-            currentLevel < 5 ? '去提升' : '去查看',
-            style: TextStyle(
-              color: Colors.blue,
-              fontSize: 13,
-            ),
-          );
-    return InkWell(
-      borderRadius: BorderRadius.all(Radius.circular(16.0)),
-      onTap: _navToLevel,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                '持币量级',
-                style: TextStyle(
-                  color: HexColor('#333333'),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                flex: 2,
-                child: SizedBox(),
-              ),
-              Expanded(
-                flex: 3,
-                child: Image.asset(
-                  "res/drawable/ic_rp_level_$currentLevel.png",
-                  height: 80,
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: SizedBox(),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 2,
-          ),
-          Center(
-            child: hint,
-          ),
-          SizedBox(
-            height: 16,
-          ),
-        ],
-      ),
-    );
-  }
-
-  /*
-  Widget _verticalLine({
-    bool havePadding = false,
-  }) {
-    return Center(
-      child: Container(
-        height: 20,
-        width: 0.5,
-        color: HexColor('#000000').withOpacity(0.2),
-        margin: havePadding
-            ? const EdgeInsets.only(
-                right: 4.0,
-                left: 4.0,
-              )
-            : null,
-      ),
-    );
-  }
-  */
 
   ///Actions
   _navToRPPool() {
@@ -1094,17 +938,17 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       }
 
       if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(UpdatePromotionRuleEvent());
+      }
+
+      if (context != null) {
         BlocProvider.of<WalletCmpBloc>(context)
             .add(UpdateActivatedWalletBalanceEvent());
       }
 
-      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
-        _address,
-      );
+      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(_address);
 
-      _rpLevelAirdropInfo = await _rpApi.getLatestLevelAirdropInfo(
-        _address,
-      );
+      _rpLevelAirdropInfo = await _rpApi.getLatestLevelAirdropInfo(_address);
 
       if (mounted) {
         _loadDataBloc.add(RefreshSuccessEvent());

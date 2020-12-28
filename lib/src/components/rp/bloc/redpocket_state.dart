@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 
 @immutable
@@ -17,6 +18,12 @@ class UpdateStatisticsState extends RedPocketState {
   final RPStatistics rpStatistics;
 
   UpdateStatisticsState(this.rpStatistics);
+}
+
+class UpdatePromotionRuleState extends RedPocketState {
+  final RpPromotionRuleEntity rpPromotionRule;
+
+  UpdatePromotionRuleState(this.rpPromotionRule);
 }
 
 

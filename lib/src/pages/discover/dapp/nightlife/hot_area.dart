@@ -149,7 +149,7 @@ class HotAreaState extends BaseState<HotArea> {
                 height: 130,
                 child: Center(
                     child: CircularProgressIndicator(
-                  strokeWidth: 3,
+                  strokeWidth: 1.5,
                 )),
               ),
             if (otherModels != null) buildNormalItems(context, otherModels)

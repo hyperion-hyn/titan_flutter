@@ -114,7 +114,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
               height: 16,
               child: CircularProgressIndicator(
                 valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
-                strokeWidth: 2,
+                strokeWidth: 1.5,
               ),
             )
         ],
@@ -302,7 +302,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
                         width: 24,
                         height: 24,
                         child: CircularProgressIndicator(
-                          strokeWidth: 3,
+                          strokeWidth: 1.5,
                         ),
                       )
                   ],

@@ -199,7 +199,7 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> with Automa
                               height: 16,
                               width: 16,
                               child: CircularProgressIndicator(
-                                strokeWidth: 2,
+                                strokeWidth: 1.5,
                               ),
                             ),
                           ),

@@ -106,6 +106,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   String get _needTotalMinValueStr => '至少' + FormatUtil.stringFormatCoinNum(_needTotalMinValue.toString()) + ' RP';
 
   bool _isLoading = false;
+  bool _haveFinishRequest = false;
 
   TextStyle _textStyle = TextStyle(
     fontWeight: FontWeight.w500,
@@ -163,294 +164,297 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
               child: BaseGestureDetector(
                 context: context,
                 child: SingleChildScrollView(
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                    ),
-                    color: Colors.white,
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(top: 18),
-                          child: Row(
-                            children: <Widget>[
-                              SizedBox(
-                                width: 100,
-                                child: Text('提升量级',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 12,
-                                      color: HexColor('#999999'),
-                                    )),
-                              ),
-                              Text(
-                                '${levelValueToLevelName(_myLevelInfo?.currentLevel)}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12,
-                                  color: HexColor('#999999'),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                      ),
+                      color: Colors.white,
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(top: 18),
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: 100,
+                                  child: Text('提升量级',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 12,
+                                        color: HexColor('#999999'),
+                                      )),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 12,
-                                  right: 20,
-                                ),
-                                child: Text(
-                                  '->',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 12,
-                                    color: HexColor('#999999'),
-                                  ),
-                                ),
-                              ),
-                              Text('${levelValueToLevelName(widget?.levelRule?.level)} ',
+                                Text(
+                                  '${levelValueToLevelName(_myLevelInfo?.currentLevel)}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
-                                    fontSize: 18,
-                                  )),
-                            ],
-                          ),
-                        ),
-                        rpRowText(
-                          title: '需燃烧量',
-                          amount: '$_needBurnValue RP',
-                        ),
-                        rpRowText(
-                          title: '需增加持币',
-                          amount: '$_needHoldMinValue RP',
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              Text('输入金额', style: _textStyle),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                  '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.normal,
                                     fontSize: 12,
                                     color: HexColor('#999999'),
-                                  )),
-                              SizedBox(
-                                width: 10,
-                              ),
-
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 16,
-                            right: 50,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Flexible(
-                                flex: 1,
-                                child: Form(
-                                  key: _formKey,
-                                  child: RoundBorderTextField(
-                                    onChanged: (text) {
-                                      if (text?.isNotEmpty ?? false) {
-                                        _formKey.currentState.validate();
-                                      }
-
-                                      _inputController.add(text);
-                                    },
-                                    controller: _textEditingController,
-                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(18),
-                                      FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
-                                    ],
-                                    hint: _needTotalMinValueStr,
-                                    validator: (textStr) {
-                                      if (textStr.length == 0 && _needTotalMinValue > Decimal.zero) {
-                                        return '请输入数量';
-                                      }
-
-                                      if (Decimal.tryParse(textStr) == null) {
-                                        return S.of(context).please_enter_correct_amount;
-                                      }
-
-                                      if (_needTotalMinValue > _inputValue) {
-                                        return _needTotalMinValueStr;
-                                      }
-
-                                      if (_inputValue > _balanceValue) {
-                                        return '输入数量超过了钱包余额';
-                                      }
-                                    },
                                   ),
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 12,
+                                    right: 20,
+                                  ),
+                                  child: Text(
+                                    '->',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 12,
+                                      color: HexColor('#999999'),
+                                    ),
+                                  ),
+                                ),
+                                Text('${levelValueToLevelName(widget?.levelRule?.level)} ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18,
+                                    )),
+                              ],
+                            ),
                           ),
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 8, left: 16,),
-                                child: Text(
-                                    '当前持币 ${FormatUtil.stringFormatCoinNum(_myLevelInfo?.currentHoldingStr ?? '0')} RP，燃烧量 ${FormatUtil.stringFormatCoinNum(_myLevelInfo?.currBurningStr ?? '0')} RP',
+                          rpRowText(
+                            title: '需燃烧量',
+                            amount: '$_needBurnValue RP',
+                          ),
+                          rpRowText(
+                            title: '需增加持币',
+                            amount: '$_needHoldMinValue RP',
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 30),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Text('输入金额', style: _textStyle),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                    '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
                                     style: TextStyle(
                                       fontWeight: FontWeight.normal,
                                       fontSize: 12,
                                       color: HexColor('#999999'),
                                     )),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: 8,
-                              ),
-                              child: Text(
-                                '*',
-                                style: TextStyle(
-                                  color: HexColor('#FF4C3B'),
-                                  fontSize: 24,
+                                SizedBox(
+                                  width: 10,
                                 ),
-                              ),
+                              ],
                             ),
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Text.rich(
-                              TextSpan(
-                                  text: '为防止因',
-                                  style: TextStyle(
-                                    color: HexColor('#333333'),
-                                    fontSize: 12,
-                                  ),
-                                  children: [
-                                    TextSpan(
-                                      text: ' Y ',
-                                      style: TextStyle(
-                                        color: HexColor('#333333'),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: '增长导致掉级，建议适当增加持币量',
-                                      style: TextStyle(
-                                        color: HexColor('#333333'),
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ]),
-                            )
-                          ],
-                        ),
-                        StreamBuilder<Object>(
-                            stream: _inputController.stream,
-                            builder: (context, snapshot) {
-                              var isOver = _inputValue > _balanceValue;
-
-                              var content = '';
-                              Color textColor;
-
-                              if (isOver) {
-                                content = '（余额不足）';
-                                textColor = HexColor('#FF4C3B');
-                              } else {
-                                content = '';
-                                textColor = Theme.of(context).primaryColor;
-                              }
-
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 30),
-                                child: Row(
-                                  children: <Widget>[
-                                    Text('合计：', style: _textStyle),
-                                    SizedBox(
-                                      width: 16,
-                                    ),
-                                    Text('$_inputValue RP', style: _textStyle),
-                                    SizedBox(
-                                      width: 16,
-                                    ),
-                                    Text(
-                                      content,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12,
-                                        color: textColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                        StreamBuilder<Object>(
-                            stream: _inputController.stream,
-                            builder: (context, snapshot) {
-                              var isFullBurn = _inputValue > _needBurnValue;
-                              var preBurnStr = isFullBurn ? widget?.levelRule?.burnStr : '0';
-
-                              var inputHoldValue = (_inputValue - _needBurnValue);
-                              var isFullHold = inputHoldValue > Decimal.zero;
-                              var preHoldingStr = isFullHold ? inputHoldValue.toString() : '0';
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 2, left: 50, right: 12),
-                                child: Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Text(
-                                        '(其中：燃烧:$preBurnStr RP, 持币:$preHoldingStr RP)',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.normal, fontSize: 12, color: HexColor('#999999')),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 60,
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 16.0,
-                            bottom: 8,
                           ),
-                          child: Text(S.of(context).precautions,
-                              style: TextStyle(
-                                color: HexColor("#333333"),
-                                fontSize: 16,
-                              )),
-                        ),
-                        rowTipsItem(
-                            '如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4)} 以上的账户地址为推荐人'),
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 16,
+                              right: 50,
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Flexible(
+                                  flex: 1,
+                                  child: Form(
+                                    key: _formKey,
+                                    child: RoundBorderTextField(
+                                      onChanged: (text) {
+                                        if (text?.isNotEmpty ?? false) {
+                                          _formKey.currentState.validate();
+                                        }
+
+                                        _inputController.add(text);
+                                      },
+                                      controller: _textEditingController,
+                                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(18),
+                                        FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
+                                      ],
+                                      hint: _needTotalMinValueStr,
+                                      validator: (textStr) {
+                                        if (textStr.length == 0 && _needTotalMinValue > Decimal.zero) {
+                                          return '请输入数量';
+                                        }
+
+                                        if (Decimal.tryParse(textStr) == null) {
+                                          return S.of(context).please_enter_correct_amount;
+                                        }
+
+                                        if (_needTotalMinValue > _inputValue) {
+                                          return _needTotalMinValueStr;
+                                        }
+
+                                        if (_inputValue > _balanceValue) {
+                                          return '输入数量超过了钱包余额';
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 8,
+                                    left: 16,
+                                  ),
+                                  child: Text(
+                                      '当前持币 ${FormatUtil.stringFormatCoinNum(_myLevelInfo?.currentHoldingStr ?? '0')} RP，燃烧量 ${FormatUtil.stringFormatCoinNum(_myLevelInfo?.currBurningStr ?? '0')} RP',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 12,
+                                        color: HexColor('#999999'),
+                                      )),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 8,
+                                ),
+                                child: Text(
+                                  '*',
+                                  style: TextStyle(
+                                    color: HexColor('#FF4C3B'),
+                                    fontSize: 24,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 6,
+                              ),
+                              Text.rich(
+                                TextSpan(
+                                    text: '为防止因',
+                                    style: TextStyle(
+                                      color: HexColor('#333333'),
+                                      fontSize: 12,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: ' Y ',
+                                        style: TextStyle(
+                                          color: HexColor('#333333'),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: '增长导致掉级，建议适当增加持币量',
+                                        style: TextStyle(
+                                          color: HexColor('#333333'),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ]),
+                              )
+                            ],
+                          ),
+                          StreamBuilder<Object>(
+                              stream: _inputController.stream,
+                              builder: (context, snapshot) {
+                                var isOver = _inputValue > _balanceValue;
+
+                                var content = '';
+                                Color textColor;
+
+                                if (isOver) {
+                                  content = '（余额不足）';
+                                  textColor = HexColor('#FF4C3B');
+                                } else {
+                                  content = '';
+                                  textColor = Theme.of(context).primaryColor;
+                                }
+
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 30),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text('合计：', style: _textStyle),
+                                      SizedBox(
+                                        width: 16,
+                                      ),
+                                      Text('$_inputValue RP', style: _textStyle),
+                                      SizedBox(
+                                        width: 16,
+                                      ),
+                                      Text(
+                                        content,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                          color: textColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                          StreamBuilder<Object>(
+                              stream: _inputController.stream,
+                              builder: (context, snapshot) {
+                                var isFullBurn = _inputValue > _needBurnValue;
+                                var preBurnStr = isFullBurn ? widget?.levelRule?.burnStr : '0';
+
+                                var inputHoldValue = (_inputValue - _needBurnValue);
+                                var isFullHold = inputHoldValue > Decimal.zero;
+                                var preHoldingStr = isFullHold ? inputHoldValue.toString() : '0';
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 2, left: 50, right: 12),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Text(
+                                          '(其中：燃烧:$preBurnStr RP, 持币:$preHoldingStr RP)',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.normal, fontSize: 12, color: HexColor('#999999')),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                        ],
+                      ),
                     ),
-                  ),
-                  _confirmButtonWidget(),
-                ])),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 60,
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 16.0,
+                              bottom: 8,
+                            ),
+                            child: Text(S.of(context).precautions,
+                                style: TextStyle(
+                                  color: HexColor("#333333"),
+                                  fontSize: 16,
+                                )),
+                          ),
+                          rowTipsItem(
+                              '如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4)} 以上的账户地址为推荐人'),
+                        ],
+                      ),
+                    ),
+                    _confirmButtonWidget(),
+                  ]),
+                ),
               ),
             ),
           ),
@@ -506,7 +510,10 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       );
 
       _inviter = netData.inviter;
-    } catch (e) {}
+      _haveFinishRequest = true;
+    } catch (e) {
+      LogUtil.toastException(e);
+    }
   }
 
   _checkAction() {
@@ -534,9 +541,18 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     }
 
     // 检车是否有好友
-    if (_inviter == null) {
+    if (!_haveFinishRequest) {
+      Fluttertoast.showToast(
+        msg: '请求推荐人信息失败！',
+        gravity: ToastGravity.CENTER,
+      );
+
       getRPMinerList();
 
+      return;
+    }
+
+    if (_inviter == null) {
       Future.delayed(Duration(milliseconds: 111)).then((_) {
         _showInviteAlertView();
       });
@@ -573,7 +589,9 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
           () {
             Navigator.pop(context, false);
 
-            _showIgnoreAlertView();
+            Future.delayed(Duration(milliseconds: 111)).then((_) {
+              _showIgnoreAlertView();
+            });
           },
           width: 115,
           height: 36,
@@ -596,7 +614,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
               var inviteAddress = _addressEditController?.text ?? '';
 
               String inviteResult = await _rpApi.postRpInviter(inviteAddress, _activatedWallet?.wallet);
-              if (inviteResult != null && inviteResult.isNotEmpty) {
+              if (inviteResult?.isNotEmpty ?? false) {
                 Fluttertoast.showToast(msg: "邀请成功, 继续升级吧！");
 
                 getRPMinerList();

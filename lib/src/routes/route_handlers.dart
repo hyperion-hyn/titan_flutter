@@ -2,6 +2,7 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_info_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_node_page.dart';
@@ -88,8 +89,15 @@ void _cacheEntryRouteName(params) {
 }
 
 var toolsPageWebviewHandler = Handler(handlerFunc: (context, params) {
+  String webUrl = FluroConvertUtils.fluroCnParamsDecode(params['initUrl']?.first);
+  var language = SettingInheritedModel.of(Keys.rootKey.currentContext).netLanguageCode;
+  if(!webUrl.contains("?")){
+    webUrl = webUrl + "?lang=$language";
+  }else{
+    webUrl = webUrl + "&lang=$language";
+  }
   return InAppWebViewContainer(
-      initUrl: FluroConvertUtils.fluroCnParamsDecode(params['initUrl']?.first),
+      initUrl: webUrl,
       title: FluroConvertUtils.fluroCnParamsDecode(params['title']?.first));
 });
 
