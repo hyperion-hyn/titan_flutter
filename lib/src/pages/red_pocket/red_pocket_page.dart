@@ -51,10 +51,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   RPApi _rpApi = RPApi();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   RPStatistics _rpStatistics;
-  RpMyLevelInfo _myLevelInfo;
   RpAirdropRoundInfo _latestRoundInfo;
   RpLevelAirdropInfo _rpLevelAirdropInfo;
-  RpPromotionRuleEntity _rpPromotionRule;
 
   @override
   void initState() {
@@ -77,10 +75,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
     _rpStatistics = RedPocketInheritedModel.of(context).rpStatistics;
-    _rpPromotionRule = RedPocketInheritedModel.of(context).rpPromotionRule;
   }
 
   @override
