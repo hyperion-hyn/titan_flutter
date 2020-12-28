@@ -34,6 +34,7 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'entity/rp_airdrop_round_info.dart';
+import 'entity/rp_promotion_rule_entity.dart';
 import 'entity/rp_statistics.dart';
 
 class RedPocketPage extends StatefulWidget {
@@ -52,6 +53,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   RpMyLevelInfo _myLevelInfo;
   RpAirdropRoundInfo _latestRoundInfo;
   RpLevelAirdropInfo _rpLevelAirdropInfo;
+  RpPromotionRuleEntity _promotionRuleEntity;
 
   @override
   void initState() {
@@ -362,7 +364,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                               'res/drawable/rp_add_friends_arrow.png',
                               width: 15,
                               height: 15,
-                              color: HexColor('#FF5959'),
+                              color: HexColor('#FF1F81FF'),
                             ),
                           ],
                         ),
@@ -373,26 +375,40 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           onTap: _navToRPInviteFriends,
                           child: Row(
                             children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 12,
-                                  right: 8,
-                                ),
-                                child: Text(
-                                  S.of(context).rp_invite_to_collect,
-                                  style: TextStyle(
-                                    color: HexColor('#333333'),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 12,
+                                    right: 8,
                                   ),
-                                  maxLines: 2,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        S.of(context).rp_invite_to_collect,
+                                        style: TextStyle(
+                                          color: HexColor('#333333'),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        maxLines: 2,
+                                      ),
+                                      Text(
+                                        '多一个好友，机会提升一倍',
+                                        style: TextStyle(
+                                          color: DefaultColors.color999,
+                                          fontSize: 11,
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                               Image.asset(
                                 'res/drawable/rp_add_friends.png',
                                 width: 17,
                                 height: 17,
-                                color: HexColor('#FF5959'),
+                                color: HexColor('#FF1F81FF'),
                               ),
                             ],
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -904,24 +920,110 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
               fontSize: 13,
             ),
           );
-    return InkWell(
-      borderRadius: BorderRadius.all(Radius.circular(16.0)),
-      onTap: _navToLevel,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                '持币量级',
-                style: TextStyle(
-                  color: HexColor('#333333'),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+    GlobalKey _toolTipKey = GlobalKey();
+
+    var promotionSupplyRatioValue = double.tryParse(
+            _promotionRuleEntity?.supplyInfo?.promotionSupplyRatio ?? '0') ??
+        0;
+
+    var currentTotalSupplyValue = double.tryParse(
+            _promotionRuleEntity?.supplyInfo?.totalSupplyStr ?? '0') ??
+        0;
+
+    var nextYRatio = promotionSupplyRatioValue + 0.05;
+
+    var nextRankSupply = 1000000 * nextYRatio;
+
+    var isShowNextRankY = (nextRankSupply - currentTotalSupplyValue) < 10000 &&
+        (nextRankSupply - currentTotalSupplyValue) > 0;
+
+    var currentYPercent = FormatUtil.formatPercent(promotionSupplyRatioValue);
+
+    var nextYPercent = FormatUtil.formatPercent(nextYRatio);
+
+    var yValueHint = RichText(
+        text: TextSpan(
+      children: [
+        TextSpan(
+          text: '当前Y',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 12,
           ),
-          Row(
+        ),
+        TextSpan(
+          text: '(RP发行比)',
+          style: TextStyle(
+            color: DefaultColors.color999,
+            fontSize: 11,
+          ),
+        ),
+        TextSpan(
+          text: isShowNextRankY ? '即将提升到$nextYPercent' : '为$currentYPercent',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+          ),
+        ),
+      ],
+    ));
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              '持币量级',
+              style: TextStyle(
+                color: HexColor('#333333'),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Expanded(
+                child: InkWell(
+              onTap: () {
+                final dynamic tooltip = _toolTipKey.currentState;
+                tooltip?.ensureTooltipVisible();
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (isShowNextRankY)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Image.asset(
+                        'res/drawable/ic_warning_triangle.png',
+                        width: 15,
+                        height: 15,
+                      ),
+                    ),
+                  yValueHint,
+                  SizedBox(width: 2),
+                  Tooltip(
+                    key: _toolTipKey,
+                    verticalOffset: 16,
+                    margin: EdgeInsets.symmetric(horizontal: 32.0),
+                    padding: EdgeInsets.all(16.0),
+                    message:
+                        '每个量级的最小持币量将随着Y增长而增长，如果Y增长导致你的持币量不满足最小持币量，你的量级就自动下降！请适当增加持币量以避免掉级。',
+                    child: Image.asset(
+                      'res/drawable/ic_tooltip.png',
+                      width: 10,
+                      height: 10,
+                    ),
+                  ),
+                ],
+              ),
+            )),
+          ],
+        ),
+        SizedBox(
+          height: 16,
+        ),
+        InkWell(
+          onTap: _navToLevel,
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
@@ -941,17 +1043,17 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
               )
             ],
           ),
-          SizedBox(
-            height: 2,
-          ),
-          Center(
-            child: hint,
-          ),
-          SizedBox(
-            height: 16,
-          ),
-        ],
-      ),
+        ),
+        SizedBox(
+          height: 2,
+        ),
+        Center(
+          child: hint,
+        ),
+        SizedBox(
+          height: 16,
+        ),
+      ],
     );
   }
 
@@ -1098,13 +1200,11 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             .add(UpdateActivatedWalletBalanceEvent());
       }
 
-      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
-        _address,
-      );
+      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(_address);
 
-      _rpLevelAirdropInfo = await _rpApi.getLatestLevelAirdropInfo(
-        _address,
-      );
+      _rpLevelAirdropInfo = await _rpApi.getLatestLevelAirdropInfo(_address);
+
+      _promotionRuleEntity = await _rpApi.getRPPromotionRule(_address);
 
       if (mounted) {
         _loadDataBloc.add(RefreshSuccessEvent());
