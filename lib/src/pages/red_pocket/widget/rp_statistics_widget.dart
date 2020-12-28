@@ -437,7 +437,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
         chartValuesOptions: ChartValuesOptions(
           chartValueStyle: TextStyle(
             fontSize: 8,
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
           showChartValueBackground: false,
