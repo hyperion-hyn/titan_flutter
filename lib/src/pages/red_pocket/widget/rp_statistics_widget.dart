@@ -88,14 +88,10 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
         children: [
           _title('传导'),
           _rpPool(),
-        ],
-      ),
-      Wrap(
-        children: [
           _title('晋升'),
           _rpPromotion(),
         ],
-      )
+      ),
     ];
     return Column(
       children: [
@@ -181,50 +177,56 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     var totalBurningStr = bigIntToEtherWithFormat(totalBurn);
     var unSupplyStr = bigIntToEtherWithFormat("$unSupply");
 
-    return Row(
+    return Column(
       children: [
         SizedBox(
           width: 16,
         ),
-        Container(
-          width: 100,
-          height: 100,
-          child: _pieChart([
-            totalSupplyEther,
-            unSupplyEther,
-            totalBurnEther,
-          ]),
-        ),
+        _pieChart([
+          totalSupplyEther,
+          unSupplyEther,
+          totalBurnEther,
+        ]),
         SizedBox(
-          width: 36,
+          width: 16,
         ),
-        Expanded(
-            child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Column(
           children: [
+            Row(
+              children: [
+                _dataText(
+                  '总发行',
+                  totalCapStr,
+                  isHighLight: true,
+                  isExpanded: false,
+                ),
+                Spacer(),
+              ],
+            ),
             Row(
               children: [
                 Expanded(
                   child: _dataText(
-                    '总发行',
-                    totalCapStr,
-                    isHighLight: true,
+                    '流通中',
+                    totalSupplyStr,
+                    colorStr: colorPalette[0],
                   ),
                 ),
-                SizedBox(
-                  width: 16,
-                )
+                Expanded(
+                    child: _dataText(
+                  '总燃烧',
+                  totalBurningStr,
+                  colorStr: colorPalette[2],
+                )),
               ],
             ),
-            _dataText('流通中', totalSupplyStr, colorStr: colorPalette[0]),
-            _dataText('总燃烧', totalBurningStr, colorStr: colorPalette[2]),
             _dataText(
               '未发行',
               unSupplyStr,
               colorStr: colorPalette[1],
             ),
           ],
-        )),
+        ),
       ],
     );
   }
@@ -271,16 +273,12 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
             SizedBox(
               width: 16,
             ),
-            Container(
-              width: 100,
-              height: 100,
-              child: _pieChart([
-                airdropTotalEther,
-                unAirdropEther,
-              ]),
-            ),
+            _pieChart([
+              airdropTotalEther,
+              unAirdropEther,
+            ]),
             SizedBox(
-              width: 36,
+              width: 16,
             ),
             Expanded(
                 child: Column(
@@ -293,7 +291,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
           ],
         ),
         SizedBox(
-          height: 16,
+          height: 24,
         ),
         Column(
           children: [
@@ -366,16 +364,12 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
         SizedBox(
           width: 16,
         ),
-        Container(
-          width: 100,
-          height: 100,
-          child: _pieChart([
-            transmitRpEther,
-            unTransmitRpEther,
-          ]),
-        ),
+        _pieChart([
+          transmitRpEther,
+          unTransmitRpEther,
+        ]),
         SizedBox(
-          width: 36,
+          width: 16,
         ),
         Expanded(
             child: Column(
@@ -403,13 +397,19 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: _dataText('晋升持币', promotionTotalHoldingStr),
+          child: _dataText(
+            '晋升持币',
+            promotionTotalHoldingStr,
+          ),
         ),
         SizedBox(
           width: 4,
         ),
         Expanded(
-          child: _dataText('晋升燃烧', promotionTotalBurningStr),
+          child: _dataText(
+            '晋升燃烧',
+            promotionTotalBurningStr,
+          ),
         )
       ],
     );
@@ -419,14 +419,15 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     Map<String, double> dataMap = {};
     dataList.forEach((element) {
       double value = double.tryParse('$element') ?? 0;
-      dataMap['${value}'] = value;
+      dataMap['$value'] = value;
     });
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
+    return Container(
+      height: 120,
+      width: 120,
       child: PieChart(
         dataMap: dataMap,
         animationDuration: Duration(milliseconds: 800),
-        chartRadius: MediaQuery.of(context).size.width / 3.2,
+        chartRadius: MediaQuery.of(context).size.width / 5,
         colorList: colorPaletteHex,
         chartType: ChartType.ring,
         ringStrokeWidth: 30,
@@ -435,8 +436,8 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
         ),
         chartValuesOptions: ChartValuesOptions(
           chartValueStyle: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
+            fontSize: 10,
+            fontWeight: FontWeight.w400,
             color: Colors.black,
           ),
           showChartValueBackground: false,
