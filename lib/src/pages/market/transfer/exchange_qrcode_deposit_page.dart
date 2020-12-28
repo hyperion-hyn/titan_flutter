@@ -37,8 +37,11 @@ class ExchangeQrcodeDepositPage extends StatefulWidget {
 class ExchangeQrcodeDepositPageState
     extends BaseState<ExchangeQrcodeDepositPage> {
   String _selectedCoinSymbol = SupportedTokens.HYN_Atlas.symbol;
-  Map symbolToChain = {SupportedTokens.HYN_Atlas.symbol: "Atlas主链", SupportedTokens.USDT_ERC20.symbol: "ERC20", SupportedTokens.HYN_RP_HRC30.symbol: "HRC30"};
-  Map symbolToRemind;
+  Map symbolToChain = {
+    SupportedTokens.HYN_Atlas.symbol: "Atlas主链",
+    SupportedTokens.USDT_ERC20.symbol: "ERC20",
+    SupportedTokens.HYN_RP_HRC30.symbol: "HRC30"
+  };
   GlobalKey _qrImageBoundaryKey = GlobalKey();
   AllPageState _currentState = LoadingState();
   ExchangeApi _exchangeApi = ExchangeApi();
@@ -64,25 +67,6 @@ class ExchangeQrcodeDepositPageState
   Future loadData() async {
     var ret = await _exchangeApi.getAddress(_selectedCoinSymbol);
     exchangeAddress = ret['address'];
-
-    var assetList = ExchangeInheritedModel.of(context)
-        .exchangeModel
-        .activeAccount
-        ?.assetList;
-
-    var minHyn = assetList?.HYN?.rechargeMin ?? '0';
-    var minUsdt = assetList?.USDT?.rechargeMin ?? '0';
-    var minRp = assetList?.RP?.rechargeMin ?? '0';
-
-    symbolToRemind = {
-      SupportedTokens.HYN_Atlas.symbol:
-      "请勿向上述地址充值任何非Atlas-HYN资产，否则资产将不可找回。\n\n您充值至上述地址后，需要整个网站节点的确认。\n\n最小充币金额：${minHyn}HYN，小于最小金额的充值将不会上账且无法退回！"
-      , SupportedTokens.USDT_ERC20.symbol:
-      "请勿向上述地址充值任何非ERC20-USDT资产，否则资产将不可找回。\n\n您充值至上述地址后，需要整个网站节点的确认。\n\n最小充币金额：${minUsdt}USTD，小于最小金额的充值将不会上账且无法退回！\n\n使用USDT地址充值需要网络确认才能到账，到账时间容易受到网络堵塞情况的影响，请合理安排资金。"
-      , SupportedTokens.HYN_RP_HRC30.symbol:
-      "请勿向上述地址充值任何非HRC30-RP资产，否则资产将不可找回。\n\n您充值至上述地址后，需要整个网站节点的确认。\n\n最小充币金额：${minRp}RP，小于最小金额的充值将不会上账且无法退回！"
-    };
-
     setState(() {
       _currentState = null;
     });
@@ -120,7 +104,7 @@ class ExchangeQrcodeDepositPageState
   }
 
   Widget _pageView() {
-    if (_currentState != null || exchangeAddress == null || symbolToRemind == null) {
+    if (_currentState != null || exchangeAddress == null) {
       return Scaffold(
         body: AllPageStateContainer(_currentState, () {
           setState(() {
@@ -141,7 +125,7 @@ class ExchangeQrcodeDepositPageState
         slivers: <Widget>[
           SliverToBoxAdapter(
             child: InkWell(
-              onTap: (){
+              onTap: () {
                 _showCoinSelectDialog();
               },
               child: Container(
@@ -242,7 +226,7 @@ class ExchangeQrcodeDepositPageState
                     ),
                   ),
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       _saveQrImage(changeAddress);
                     },
                     child: Container(
@@ -308,7 +292,7 @@ class ExchangeQrcodeDepositPageState
             ),
           ),
           SliverToBoxAdapter(
-            child: Text(symbolToRemind[_selectedCoinSymbol],style: TextStyle(fontSize: 10,color: DefaultColors.color777),),
+            child: _remainders(_selectedCoinSymbol),
           )
         ],
       ),
@@ -381,7 +365,8 @@ class ExchangeQrcodeDepositPageState
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Center(
-              child: Text(symbol,
+              child: Text(
+                symbol,
                 style: TextStyle(
                     color: _selectedCoinSymbol == symbol
                         ? Theme.of(context).primaryColor
@@ -410,4 +395,137 @@ class ExchangeQrcodeDepositPageState
     );
   }
 
+  _remainders(String tokenSymbol) {
+    var assetList = ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        ?.assetList;
+
+    var minHyn = assetList?.HYN?.rechargeMin ?? '0';
+    var minUsdt = assetList?.USDT?.rechargeMin ?? '0';
+    var minRp = assetList?.RP?.rechargeMin ?? '0';
+
+    if (tokenSymbol == SupportedTokens.HYN_Atlas.symbol) {
+      return RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+                text: '请勿向上述地址充值任何非',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: DefaultColors.color777,
+                )),
+            TextSpan(
+              text: 'Atlas-HYN',
+              style: TextStyle(
+                  fontSize: 10,
+                  color: DefaultColors.color333,
+                  fontWeight: FontWeight.bold),
+            ),
+            TextSpan(
+                text: '资产，否则资产将不可找回。\n\n您充值至上述地址后，需要整个网站节点的确认。\n\n最小充币金额：',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: DefaultColors.color777,
+                )),
+            TextSpan(
+              text: '$minHyn',
+              style: TextStyle(
+                  fontSize: 10,
+                  color: DefaultColors.color333,
+                  fontWeight: FontWeight.bold),
+            ),
+            TextSpan(
+                text: 'HYN，小于最小金额的充值将不会上账且无法退回！',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: DefaultColors.color777,
+                )),
+          ],
+        ),
+      );
+    } else if (tokenSymbol == SupportedTokens.USDT_ERC20.symbol) {
+      return RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+                text: '请勿向上述地址充值任何非',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: DefaultColors.color777,
+                )),
+            TextSpan(
+              text: ' ERC20-USDT ',
+              style: TextStyle(
+                  fontSize: 10,
+                  color: DefaultColors.color333,
+                  fontWeight: FontWeight.bold),
+            ),
+            TextSpan(
+                text: '资产，否则资产将不可找回。\n\n您充值至上述地址后，需要整个网站节点的确认。\n\n最小充币金额：',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: DefaultColors.color777,
+                )),
+            TextSpan(
+              text: '$minUsdt ',
+              style: TextStyle(
+                fontSize: 10,
+                color: DefaultColors.color333,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            TextSpan(
+                text:
+                    'USDT，小于最小金额的充值将不会上账且无法退回！\n\n使用USDT地址充值需要网络确认才能到账，到账时间容易受到网络堵塞情况的影响，请合理安排资金。',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: DefaultColors.color777,
+                )),
+          ],
+        ),
+      );
+    } else if (tokenSymbol == SupportedTokens.HYN_RP_HRC30.symbol) {
+      return RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+                text: '请勿向上述地址充值任何非',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: DefaultColors.color777,
+                )),
+            TextSpan(
+              text: ' HRC30-RP ',
+              style: TextStyle(
+                  fontSize: 10,
+                  color: DefaultColors.color333,
+                  fontWeight: FontWeight.bold),
+            ),
+            TextSpan(
+                text: '资产，否则资产将不可找回。\n\n您充值至上述地址后，需要整个网站节点的确认。\n\n最小充币金额：',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: DefaultColors.color777,
+                )),
+            TextSpan(
+              text: '$minRp',
+              style: TextStyle(
+                  fontSize: 10,
+                  color: DefaultColors.color333,
+                  fontWeight: FontWeight.bold),
+            ),
+            TextSpan(
+                text: 'RP，小于最小金额的充值将不会上账且无法退回！',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: DefaultColors.color777,
+                )),
+          ],
+        ),
+      );
+    } else {
+      return Container();
+    }
+  }
 }
