@@ -133,7 +133,7 @@ class RPApi {
   Future<RpLevelAirdropInfo> getLatestLevelAirdropInfo(
     String address,
   ) async {
-    return await RPHttpCore.instance.getEntity(
+    return await RPHttpCoreNoLog.instance.getEntity(
         "/v1/rp/airdrop/level/latestRound/$address",
         EntityFactory<RpLevelAirdropInfo>(
           (json) => RpLevelAirdropInfo.fromJson(json),

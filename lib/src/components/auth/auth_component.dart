@@ -20,7 +20,7 @@ class AuthComponent extends SingleChildStatelessWidget {
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
-    print("[$runtimeType] buildWithChild, context:$context, child:$child");
+    //print("[$runtimeType] buildWithChild, context:$context, child:$child");
 
     return BlocProvider<AuthBloc>(
       create: (ctx) => AuthBloc(),
