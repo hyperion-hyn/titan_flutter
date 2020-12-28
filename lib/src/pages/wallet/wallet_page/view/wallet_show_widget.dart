@@ -656,20 +656,20 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
                 SizedBox(
                   height: 4,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Text(
-                        quotePrice,
-                        style: TextStyles.textC9b9b9bS12,
-                      ),
-                    ),
-                    if (symbolQuote?.quoteVo?.percentChange24h != null)
-                      getPercentChange(symbolQuote?.quoteVo?.percentChange24h)
-                  ],
-                )
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: <Widget>[
+                //     Padding(
+                //       padding: const EdgeInsets.symmetric(vertical: 4),
+                //       child: Text(
+                //         quotePrice,
+                //         style: TextStyles.textC9b9b9bS12,
+                //       ),
+                //     ),
+                //     if (symbolQuote?.quoteVo?.percentChange24h != null)
+                //       getPercentChange(symbolQuote?.quoteVo?.percentChange24h)
+                //   ],
+                // )
               ],
             ),
           ),
