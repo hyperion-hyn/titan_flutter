@@ -3,13 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'bloc/bloc.dart';
 import 'package:nested/nested.dart';
 
 class RedPocketComponent extends SingleChildStatelessWidget {
-
-  RedPocketComponent({Key key, Widget child}): super(key: key, child: child);
+  RedPocketComponent({Key key, Widget child}) : super(key: key, child: child);
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
@@ -34,6 +34,7 @@ class _RedPocketManager extends StatefulWidget {
 class _RedPocketState extends BaseState<_RedPocketManager> {
   RpMyLevelInfo _myLevelInfo;
   RPStatistics _rpStatistics;
+  RpPromotionRuleEntity _rpPromotionRule;
 
   @override
   void onCreated() {
@@ -55,6 +56,8 @@ class _RedPocketState extends BaseState<_RedPocketManager> {
           _myLevelInfo = state.rpMyLevelInfo;
         } else if (state is UpdateStatisticsState) {
           _rpStatistics = state.rpStatistics;
+        }else if (state is UpdatePromotionRuleState) {
+          _rpPromotionRule = state.rpPromotionRule;
         } else if (state is ClearMyLevelInfoState) {
           _myLevelInfo = null;
         }
@@ -64,6 +67,7 @@ class _RedPocketState extends BaseState<_RedPocketManager> {
           return RedPocketInheritedModel(
             rpMyLevelInfo: _myLevelInfo,
             rpStatistics: _rpStatistics,
+            rpPromotionRule: _rpPromotionRule,
             child: widget.child,
           );
         },
@@ -75,15 +79,23 @@ class _RedPocketState extends BaseState<_RedPocketManager> {
     BlocProvider.of<WalletCmpBloc>(context).listen((state) {
       if (state is ActivatedWalletState) {
         var _activatedWallet = state.walletVo;
-        var _address = _activatedWallet?.wallet?.getAtlasAccount()?.address ?? '';
+        var _address =
+            _activatedWallet?.wallet?.getAtlasAccount()?.address ?? '';
         //print("[RedPocketComponent] ActivatedWalletState, _address:$_address");
 
         if (context != null) {
-          BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEvent(address: _address));
+          BlocProvider.of<RedPocketBloc>(context)
+              .add(UpdateMyLevelInfoEvent(address: _address));
         }
 
         if (context != null) {
-          BlocProvider.of<RedPocketBloc>(context).add(UpdateStatisticsEvent(address: _address));
+          BlocProvider.of<RedPocketBloc>(context)
+              .add(UpdateStatisticsEvent(address: _address));
+        }
+
+        if (context != null) {
+          BlocProvider.of<RedPocketBloc>(context)
+              .add(UpdatePromotionRuleEvent(address: _address));
         }
       }
     });
@@ -94,16 +106,22 @@ class _RedPocketState extends BaseState<_RedPocketManager> {
   }
 }
 
-enum RedPocketAspect { levelInfo, statistics }
+enum RedPocketAspect {
+  levelInfo,
+  statistics,
+  promotion,
+}
 
 class RedPocketInheritedModel extends InheritedModel<RedPocketAspect> {
   final RpMyLevelInfo rpMyLevelInfo;
   final RPStatistics rpStatistics;
+  final RpPromotionRuleEntity rpPromotionRule;
 
   const RedPocketInheritedModel({
     Key key,
     @required this.rpMyLevelInfo,
     @required this.rpStatistics,
+    @required this.rpPromotionRule,
     @required Widget child,
   }) : super(key: key, child: child);
 
@@ -112,7 +130,8 @@ class RedPocketInheritedModel extends InheritedModel<RedPocketAspect> {
     return true;
   }
 
-  static RedPocketInheritedModel of(BuildContext context, {RedPocketAspect aspect}) {
+  static RedPocketInheritedModel of(BuildContext context,
+      {RedPocketAspect aspect}) {
     return InheritedModel.inheritFrom<RedPocketInheritedModel>(
       context,
       aspect: aspect,
@@ -120,8 +139,13 @@ class RedPocketInheritedModel extends InheritedModel<RedPocketAspect> {
   }
 
   @override
-  bool updateShouldNotifyDependent(RedPocketInheritedModel oldWidget, Set<RedPocketAspect> dependencies) {
-    return (rpMyLevelInfo != oldWidget.rpMyLevelInfo && dependencies.contains(RedPocketAspect.levelInfo)) ||
-        (rpStatistics != oldWidget.rpStatistics && dependencies.contains(RedPocketAspect.statistics));
+  bool updateShouldNotifyDependent(
+      RedPocketInheritedModel oldWidget, Set<RedPocketAspect> dependencies) {
+    return (rpMyLevelInfo != oldWidget.rpMyLevelInfo &&
+            dependencies.contains(RedPocketAspect.levelInfo)) ||
+        (rpStatistics != oldWidget.rpStatistics &&
+            dependencies.contains(RedPocketAspect.statistics)) ||
+        (rpPromotionRule != oldWidget.rpPromotionRule &&
+            dependencies.contains(RedPocketAspect.promotion));
   }
 }
