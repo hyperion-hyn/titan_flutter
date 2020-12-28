@@ -66,7 +66,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
 
   @override
   void onCreated() {
-    _loadDataBloc.add(LoadingEvent());
+    //_loadDataBloc.add(LoadingEvent());
   }
 
   @override
@@ -138,7 +138,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
     if (name.isEmpty) {
       name = '用户';
     }
-    print("[$runtimeType] _infoDetailBuilder, rpType:$_rpType");
+    //print("[$runtimeType] _infoDetailBuilder, rpType:$_rpType");
 
     var amount = '-- RP';
 
@@ -974,6 +974,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
 
         _dataList = filterRpOpenDataList(netData.data);
       }
+
       if (mounted) {
         setState(() {
           _loadDataBloc.add(RefreshSuccessEvent());
@@ -1003,6 +1004,8 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
 
         _dataList.addAll(filterRpOpenDataList(netData.data));
       }
+
+      // _loadDataBloc.add(LoadingMoreSuccessEvent());
 
       if (mounted) {
         setState(() {
@@ -1103,12 +1106,12 @@ enum RedPocketType {
   PROMOTION,
 }
 
-// 0：错过 1：砸中 2：最佳
+
 enum RpLuckState {
-  MISS,             // 错过
-  GET,              // 获取
-  BEST,             // 最佳
-  LUCKY,            // 砸中
-  LUCKY_BEST,       // 砸中且最佳
-  LUCKY_MISS_QUOTA, // 可拆次数用尽
+  MISS,             // 错过：0
+  GET,              // 获取：1
+  BEST,             // 最佳：2
+  LUCKY,            // 砸中：3
+  LUCKY_BEST,       // 砸中且最佳：4
+  LUCKY_MISS_QUOTA, // 可拆次数用尽：5
 }
