@@ -680,7 +680,8 @@ class AtlasApi {
   }
 
   // 上传图片
-  Future<String> postUploadImageFile(String address, String path, ProgressCallback onSendProgress) async {
+  Future<String> postUploadImageFile(
+      String address, String path, ProgressCallback onSendProgress) async {
     try {
       Map<String, dynamic> params = {};
       params["address"] = address;
@@ -1028,13 +1029,14 @@ class AtlasApi {
       AndroidDeviceInfo deviceInfo = await deviceInfoPlugin?.androidInfo;
       deviceId = deviceInfo?.androidId;
       if (env.channel == BuildChannel.OFFICIAL) {
-        channel = 'android-official';
+        channel = 'android-titan';
       } else if (env.channel == BuildChannel.STORE) {
         channel = 'android-google';
       }
     } else if (Platform.isIOS) {
       IosDeviceInfo deviceInfo = await deviceInfoPlugin?.iosInfo;
       deviceId = deviceInfo?.identifierForVendor;
+      //Todo: iOS check if testFlight
       if (env.channel == BuildChannel.OFFICIAL) {
         channel = 'ios-appstore';
       } else if (env.channel == BuildChannel.STORE) {
