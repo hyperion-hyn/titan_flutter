@@ -499,7 +499,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       _loadDataBloc.add(RefreshSuccessEvent());
     }
 
-    //getRPMinerList();
+    getRPMinerList();
   }
 
   void getRPMinerList() async {
