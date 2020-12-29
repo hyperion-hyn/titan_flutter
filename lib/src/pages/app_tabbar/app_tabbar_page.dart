@@ -23,7 +23,6 @@ import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/app_tabbar/bottom_fabs_widget.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_node_tabs_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_tabs_page_deprecated.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
@@ -35,11 +34,8 @@ import 'package:titan/src/pages/wallet/wallet_tabs_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
-import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/encryption.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
 import '../../../env.dart';

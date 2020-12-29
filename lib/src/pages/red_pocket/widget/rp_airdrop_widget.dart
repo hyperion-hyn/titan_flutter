@@ -186,18 +186,26 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
     if (currentRoundStartTime - now > 0) {
       _nextRoundRemainTime = currentRoundStartTime - now;
-      nextRoundStreamController.add(_nextRoundRemainTime);
+
+      if (!nextRoundStreamController.isClosed) {
+        nextRoundStreamController.add(_nextRoundRemainTime);
+      }
     }
 
     if (currentRoundEndTime > now) {
       _currentRoundRemainTime = currentRoundEndTime - now;
-      currentRoundStreamController.add(_currentRoundRemainTime);
+
+      if (!currentRoundStreamController.isClosed) {
+        currentRoundStreamController.add(_currentRoundRemainTime);
+      }
     }
 
     ///已过当前轮，使用下一轮的startTime
     if (now > currentRoundEndTime && now < nextRoundStartTime) {
       _nextRoundRemainTime = nextRoundStartTime - now;
-      nextRoundStreamController.add(_nextRoundRemainTime);
+      if (!nextRoundStreamController.isClosed) {
+        nextRoundStreamController.add(_nextRoundRemainTime);
+      }
     }
 
     if (mounted) setState(() {});
