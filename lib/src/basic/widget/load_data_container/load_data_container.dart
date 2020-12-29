@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -46,11 +48,35 @@ class LoadDataContainer extends StatefulWidget {
 }
 
 class LoadDataContainerState extends State<LoadDataContainer> {
-  RefreshController controller = RefreshController();
+  RefreshController _refreshController = RefreshController();
+  StreamController<int> _streamController = StreamController.broadcast();
 
   @override
   void initState() {
     super.initState();
+
+    widget.bloc.listen((state) {
+      print("[$runtimeType] state:$state");
+
+      if (state is RefreshingState) {
+      } else if (state is RefreshSuccessState) {
+        print("[$runtimeType] 1, RefreshSuccessState");
+
+        //if (!_streamController.isClosed) {
+          _streamController.add(1);
+        //}
+      } else if (state is RefreshFailState) {
+      } else if (state is LoadingMoreState) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {});
+      } else if (state is LoadingMoreSuccessState) {
+        print("[$runtimeType] 2, LoadingMoreSuccessState");
+
+        if (!_streamController.isClosed) {
+          _streamController.add(2);
+        }
+      } else if (state is LoadMoreEmptyState) {
+      } else if (state is LoadMoreFailState) {}
+    });
   }
 
   @override
@@ -153,35 +179,35 @@ class LoadDataContainerState extends State<LoadDataContainer> {
   Widget buildPullRefreshWithChild(context, LoadDataState state) {
     if (state is RefreshingState) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        if (!controller.isRefresh) {
-          controller.requestRefresh();
+        if (!_refreshController.isRefresh) {
+          _refreshController.requestRefresh();
         }
         widget.onRefresh();
       });
     } else if (state is RefreshSuccessState) {
-      controller.refreshCompleted(resetFooterState: true);
+      _refreshController.refreshCompleted(resetFooterState: true);
     } else if (state is RefreshFailState) {
-      controller.refreshFailed();
+      _refreshController.refreshFailed();
     } else if (state is LoadingMoreState) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        if (!controller.isLoading) {
-          controller.requestLoading();
+        if (!_refreshController.isLoading) {
+          _refreshController.requestLoading();
         }
         widget.onLoadingMore();
       });
     } else if (state is LoadingMoreSuccessState) {
-      controller.loadComplete();
+      _refreshController.loadComplete();
     } else if (state is LoadMoreEmptyState) {
-      controller.loadNoData();
+      _refreshController.loadNoData();
       if (widget.onLoadingMoreEmpty != null) widget.onLoadingMoreEmpty();
     } else if (state is LoadMoreFailState) {
-      controller.loadFailed();
+      _refreshController.loadFailed();
     }
 
     return RefreshConfiguration.copyAncestor(
       context: context,
       child: SmartRefresher(
-        controller: controller,
+        controller: _refreshController,
         enablePullDown: widget.enablePullDown,
         enablePullUp: widget.enablePullUp,
         footer: CustomFooter(builder: (BuildContext context, LoadStatus mode) {
@@ -213,14 +239,22 @@ class LoadDataContainerState extends State<LoadDataContainer> {
         }),
         onRefresh: widget.onRefresh,
         onLoading: widget.onLoadingMore,
-        child: widget.child,
+        child: StreamBuilder<int>(
+          stream: _streamController.stream,
+          builder: (context, snapshot) {
+            print("[$runtimeType] snapshot.value:${snapshot.data}");
+
+            return widget.child;
+          },
+        ),
       ),
     );
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    _refreshController.dispose();
+    _streamController.close();
     super.dispose();
   }
 }

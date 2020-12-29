@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -65,9 +64,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
   }
 
   @override
-  void onCreated() {
-    //_loadDataBloc.add(LoadingEvent());
-  }
+  void onCreated() {}
 
   @override
   void dispose() {
@@ -77,6 +74,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("[$runtimeType] build, 11111111111!");
     return Scaffold(
       backgroundColor: HexColor('#F8F8F8'),
       appBar: BaseAppBar(
@@ -377,7 +375,11 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
     var createdAt = _detailEntity?.createdAt ?? 0;
     var createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt * 1000);
     var createdAtStr = Const.DATE_FORMAT.format(createdAtDate);
-    String totalAmountStr = FormatUtil.stringFormatCoinNum(_detailEntity?.totalAmountStr ?? "0", decimal: 4,) ?? '--';
+    String totalAmountStr = FormatUtil.stringFormatCoinNum(
+          _detailEntity?.totalAmountStr ?? "0",
+          decimal: 4,
+        ) ??
+        '--';
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -411,7 +413,10 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
   }
 
   _rpRecordListWidget() {
-    if (_dataList.isEmpty) {
+    print("[$runtimeType] data.length:${_dataList.length},_filterDataList.length:${_filterDataList.length}");
+
+    var childCount = 0;
+    if (_filterDataList.isEmpty) {
       return SliverToBoxAdapter(
         child: Center(
           child: Column(
@@ -438,29 +443,28 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
           ),
         ),
       );
-    } else {
-      var childCount = 0;
-      switch (_rpType) {
-        case RedPocketType.LEVEL:
-          childCount = _filterDataList.length + 2;
-
-          break;
-
-        case RedPocketType.PROMOTION:
-        case RedPocketType.LUCKY:
-          childCount = _filterDataList.length + 1;
-          break;
-      }
-
-      return SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            return _itemBuilder(index);
-          },
-          childCount: childCount,
-        ),
-      );
     }
+
+    switch (_rpType) {
+      case RedPocketType.LEVEL:
+        childCount = _filterDataList.length + 2;
+
+        break;
+
+      case RedPocketType.PROMOTION:
+      case RedPocketType.LUCKY:
+        childCount = _filterDataList.length + 1;
+        break;
+    }
+
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          return _itemBuilder(index);
+        },
+        childCount: childCount,
+      ),
+    );
   }
 
   Widget _itemBuilder(int index) {
@@ -668,8 +672,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
   }
 
   Widget _levelWidget() {
-
-    var otherEntity = _dataList.isNotEmpty?_dataList[0]:null;
+    var otherEntity = _dataList.isNotEmpty ? _dataList[0] : null;
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
       child: Container(
@@ -741,7 +744,10 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      '+ ${FormatUtil.stringFormatCoinNum(otherEntity.otherUserAmountStr ?? '0', decimal: 4,)} RP',
+                      '+ ${FormatUtil.stringFormatCoinNum(
+                        otherEntity.otherUserAmountStr ?? '0',
+                        decimal: 4,
+                      )} RP',
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 14,
@@ -880,7 +886,12 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
         _manageFeeAmount = valueByDecimal;
       }
     });
-    var _manageFeeAmountStr = '管理费 ' + FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString(), decimal: 4,) + ' RP';
+    var _manageFeeAmountStr = '管理费 ' +
+        FormatUtil.stringFormatCoinNum(
+          _manageFeeAmount.toString(),
+          decimal: 4,
+        ) +
+        ' RP';
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -953,7 +964,6 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
   }
 
   void getNetworkData() async {
-
     _currentPageKey = null;
 
     try {
@@ -975,11 +985,13 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
         _dataList = filterRpOpenDataList(netData.data);
       }
 
-      if (mounted) {
-        setState(() {
-          _loadDataBloc.add(RefreshSuccessEvent());
-        });
-      }
+      _loadDataBloc.add(RefreshSuccessEvent());
+
+      // if (mounted) {
+      //   setState(() {
+      //     _loadDataBloc.add(RefreshSuccessEvent());
+      //   });
+      // }
     } catch (e) {
       _loadDataBloc.add(LoadFailEvent());
     }
@@ -1005,13 +1017,13 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
         _dataList.addAll(filterRpOpenDataList(netData.data));
       }
 
-      // _loadDataBloc.add(LoadingMoreSuccessEvent());
+      _loadDataBloc.add(LoadingMoreSuccessEvent());
 
-      if (mounted) {
-        setState(() {
-          _loadDataBloc.add(LoadingMoreSuccessEvent());
-        });
-      }
+      // if (mounted) {
+      //   setState(() {
+      //     _loadDataBloc.add(LoadingMoreSuccessEvent());
+      //   });
+      // }
     } catch (e) {
       _loadDataBloc.add(LoadMoreFailEvent());
     }
@@ -1044,7 +1056,11 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
   var desc = '';
 
   var amount = '--';
-  String amountStr = FormatUtil.stringFormatCoinNum(entity?.amountStr ?? '0', decimal: 4,) ?? '--';
+  String amountStr = FormatUtil.stringFormatCoinNum(
+        entity?.amountStr ?? '0',
+        decimal: 4,
+      ) ??
+      '--';
   amountStr += ' RP';
 
   var luckState = RpLuckState.values[(entity?.luck ?? 0)];
@@ -1106,12 +1122,11 @@ enum RedPocketType {
   PROMOTION,
 }
 
-
 enum RpLuckState {
-  MISS,             // 错过：0
-  GET,              // 获取：1
-  BEST,             // 最佳：2
-  LUCKY,            // 砸中：3
-  LUCKY_BEST,       // 砸中且最佳：4
+  MISS, // 错过：0
+  GET, // 获取：1
+  BEST, // 最佳：2
+  LUCKY, // 砸中：3
+  LUCKY_BEST, // 砸中且最佳：4
   LUCKY_MISS_QUOTA, // 可拆次数用尽：5
 }
