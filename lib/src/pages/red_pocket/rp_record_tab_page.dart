@@ -81,9 +81,9 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
           ),
           body: TabBarView(
             children: [
-              RpRecordListPage(state: RedPocketType.LUCKY,),
-              RpRecordListPage(state: RedPocketType.LEVEL,),
-              RpRecordListPage(state: RedPocketType.PROMOTION,),
+              RpRecordListPage(rpType: RedPocketType.LUCKY,),
+              RpRecordListPage(rpType: RedPocketType.LEVEL,),
+              RpRecordListPage(rpType: RedPocketType.PROMOTION,),
             ],
           ),
         ),

@@ -54,7 +54,6 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
   CoinVo _coinVo;
   WalletVo _activatedWallet;
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
-  String get _address => _activatedWallet?.wallet?.getAtlasAccount()?.address;
 
   Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
 
@@ -139,6 +138,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
     super.didChangeDependencies();
 
     _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
+    _promotionRuleEntity = RedPocketInheritedModel.of(context).rpPromotionRule;
   }
 
   @override
@@ -160,14 +160,12 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
       BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
     }
 
-    if (mounted) {
-      _loadDataBloc.add(RefreshSuccessEvent());
+    if (context != null) {
+      BlocProvider.of<RedPocketBloc>(context).add(UpdatePromotionRuleEvent());
     }
 
-    var netData = await _rpApi.getRPPromotionRule(_address);
-    if (netData?.static?.isNotEmpty ?? false) {
-      _promotionRuleEntity = netData;
-      print("[$runtimeType] getNetworkData, count:${_dynamicDataList.length}");
+    if (mounted) {
+      _loadDataBloc.add(RefreshSuccessEvent());
     }
   }
 

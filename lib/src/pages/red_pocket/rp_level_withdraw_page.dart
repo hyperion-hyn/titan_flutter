@@ -74,7 +74,6 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
   CoinVo _coinVo;
   WalletVo _activatedWallet;
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
-  String get _address => _activatedWallet?.wallet?.getAtlasAccount()?.address;
 
   bool _isLoading = false;
 
@@ -116,14 +115,12 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
           return remainHolding >= holding;
         }, orElse: () => null);
 
-        //print("firstObj:${firstObj?.level??0}");
-
         level = firstObj?.level ?? 0;
       } else {
         level = 0;
       }
     }
-    //print('[_getLevelByHolding] inputValue: $_inputValue， level：$level');
+    // print('[_getLevelByHolding] inputValue: $_inputValue， level：$level');
 
     return level;
   }
@@ -139,7 +136,6 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
 
   @override
   void onCreated() {
-    getNetworkData();
 
     super.onCreated();
   }
@@ -149,6 +145,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
     super.didChangeDependencies();
 
     _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
+    _promotionRuleEntity = RedPocketInheritedModel.of(context).rpPromotionRule;
   }
 
   @override
@@ -175,7 +172,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
               bloc: _loadDataBloc,
               enablePullUp: false,
               onRefresh: getNetworkData,
-              isStartLoading: true,
+              onLoadData: getNetworkData,
               child: BaseGestureDetector(
                 context: context,
                 child: SingleChildScrollView(
@@ -270,8 +267,9 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                                     stream: _inputController.stream,
                                     builder: (context, snapshot) {
                                       bool isShowDown = (_toLevel < _currentLevel &&
-                                          _currentHoldValue > _inputValue &&
+                                          _currentHoldValue >= _inputValue &&
                                           _inputValue > Decimal.zero);
+
                                       return isShowDown
                                           ? Row(
                                               // crossAxisAlignment: CrossAxisAlignment.start,
@@ -505,37 +503,21 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
   }
 
   Future getNetworkData() async {
-    try {
-      if (context != null) {
-        BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEvent());
-      }
 
-      if (context != null) {
-        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
-      }
-
-      var netData = await _rpApi.getRPPromotionRule(_address);
-
-      if (netData?.static?.isNotEmpty ?? false) {
-        _promotionRuleEntity = netData;
-        print("[$runtimeType] getNetworkData, count:${_staticDataList.length}");
-
-        if (mounted) {
-          setState(() {
-            _loadDataBloc.add(RefreshSuccessEvent());
-          });
-        }
-      } else {
-        _loadDataBloc.add(LoadEmptyEvent());
-      }
-    } catch (e) {
-      if (mounted) {
-        LogUtil.toastException(e);
-
-        setState(() {
-          _loadDataBloc.add(RefreshFailEvent());
-        });
-      }
+    if (context != null) {
+      BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEvent());
     }
+
+    if (context != null) {
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+    }
+
+    if (context != null) {
+      BlocProvider.of<RedPocketBloc>(context).add(UpdatePromotionRuleEvent());
+    }
+
+    //if (mounted) {
+      _loadDataBloc.add(RefreshSuccessEvent());
+    //}
   }
 }

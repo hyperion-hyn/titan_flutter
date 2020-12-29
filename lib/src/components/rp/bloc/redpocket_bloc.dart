@@ -38,6 +38,7 @@ class RedPocketBloc extends Bloc<RedPocketEvent, RedPocketState> {
           _address = _addressStr;
         }
         var _statistics = await _rpApi.getRPStatistics(_address);
+
         yield UpdateStatisticsState(_statistics);
       } else if (event is UpdatePromotionRuleEvent) {
         var _address = event.address;
@@ -45,6 +46,7 @@ class RedPocketBloc extends Bloc<RedPocketEvent, RedPocketState> {
           _address = _addressStr;
         }
         var _promotionRule = await _rpApi.getRPPromotionRule(_address);
+
         yield UpdatePromotionRuleState(_promotionRule);
       } else if (event is ClearMyLevelInfoEvent) {
         yield ClearMyLevelInfoState();

@@ -34,9 +34,7 @@ class RpLevelRulesPage extends StatefulWidget {
 
 class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
-  final RPApi _rpApi = RPApi();
 
-  var _address = "";
   RpPromotionRuleEntity _promotionRuleEntity;
 
   List<LevelRule> get _dynamicDataList => (_promotionRuleEntity?.dynamicList ?? []).reversed.toList();
@@ -87,9 +85,6 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
   @override
   void initState() {
     super.initState();
-
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
-    _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   }
 
   @override
@@ -102,6 +97,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     super.didChangeDependencies();
 
     _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
+    _promotionRuleEntity = RedPocketInheritedModel.of(context).rpPromotionRule;
   }
 
   @override
@@ -630,24 +626,12 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
   }
 
   void getNetworkData() async {
-    try {
-      var netData = await _rpApi.getRPPromotionRule(_address);
+    if (context != null) {
+      BlocProvider.of<RedPocketBloc>(context).add(UpdatePromotionRuleEvent());
+    }
 
-      if (netData?.static?.isNotEmpty ?? false) {
-        _promotionRuleEntity = netData;
-
-        print("[$runtimeType] getNetworkData, count:${_staticDataList.length}, old.length:${_oldModelList.length}");
-
-        if (mounted) {
-          setState(() {
-            _loadDataBloc.add(RefreshSuccessEvent());
-          });
-        }
-      } else {
-        _loadDataBloc.add(LoadEmptyEvent());
-      }
-    } catch (e) {
-      _loadDataBloc.add(LoadFailEvent());
+    if (mounted) {
+      _loadDataBloc.add(RefreshSuccessEvent());
     }
   }
 }
