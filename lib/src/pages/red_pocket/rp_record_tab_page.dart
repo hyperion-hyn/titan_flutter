@@ -5,6 +5,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_list_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_record_statistics_page.dart';
 
 class RpRecordTabPage extends StatefulWidget {
   @override
@@ -21,8 +22,29 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
       child: Scaffold(
         appBar: BaseAppBar(
           baseTitle: '我的红包',
-          //backgroundColor: HexColor('#F8F8F8'),
           backgroundColor: Colors.white,
+          /*
+          actions: <Widget>[
+            FlatButton(
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RpRecordStatisticsPage(),
+                  ),
+                );
+              },
+              child: Text(
+                '每日统计',
+                style: TextStyle(
+                  color: HexColor("#1F81FF"),
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+          ],
+          */
         ),
         body: Scaffold(
           appBar: new PreferredSize(

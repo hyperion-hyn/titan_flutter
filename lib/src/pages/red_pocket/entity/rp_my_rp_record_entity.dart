@@ -115,6 +115,8 @@ class RpOpenRecordEntity extends Object {
     this.txHash,
   );
 
+  RpOpenRecordEntity.onlyType(this.type);
+
   factory RpOpenRecordEntity.fromJson(Map<String, dynamic> srcJson) => _$RpOpenRecordEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RpOpenRecordEntityToJson(this);
