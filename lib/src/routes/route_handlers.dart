@@ -43,6 +43,7 @@ import 'package:titan/src/pages/wallet/confirm_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
+import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_import_account_page2.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
@@ -72,7 +73,7 @@ var rootHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<S
 //wallet
 var createWalletHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return CreateAccountPage();
+  return WalletCreateAccountPage2();
 });
 
 var importWalletHandler = Handler(handlerFunc: (context, params) {
