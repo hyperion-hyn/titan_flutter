@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -254,7 +255,7 @@ class RPApi {
     }
     inviterAddress = WalletUtil.bech32ToEthAddress(inviterAddress);
     if (myAddress.toLowerCase() == inviterAddress.toLowerCase()) {
-      Fluttertoast.showToast(msg: "不能邀请自己");
+      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).can_not_invite_myself);
       return null;
     }
     var result = await RPHttpCore.instance.postEntity("/v1/rp/confirm_invite", EntityFactory<dynamic>((json) => json),
@@ -505,7 +506,7 @@ class RPApi {
     var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
     var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount, nonce: nonce);
     if (approveHex?.isEmpty ?? true) {
-      throw HttpResponseCodeNotSuccess(-30011, 'HYN余额不足支付网络费用!');
+      throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
     }
     print('[rp_api] postRpDepositAndBurn, approveHex: $approveHex');
 
@@ -516,7 +517,7 @@ class RPApi {
         depositAmount: depositAmount, burningAmount: burningAmount, nonce: nonce);
     print("[Rp_api] postRpDepositAndBurn, sendRpHolding, address:$address, txHash:$rawTxHash");
     if (rawTxHash == null) {
-      throw HttpResponseCodeNotSuccess(-30012, 'RP余额不足!');
+      throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
     }
 
     return await RPHttpCore.instance.postEntity("/v1/rp/level/promotion/submit", EntityFactory<dynamic>((json) => json),
@@ -548,7 +549,7 @@ class RPApi {
 
     print("[Rp_api] postRpWithdraw, sendRpHolding, address:$address, rawTxHash:$rawTxHash");
     if (rawTxHash == null) {
-      throw HttpResponseCodeNotSuccess(-30012, 'RP余额不足!');
+      throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
     }
 
     return await RPHttpCore.instance.postEntity("/v1/rp/level/withdraw/submit", EntityFactory<dynamic>((json) => json),

@@ -46,7 +46,13 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
   final TextEditingController _addressEditController = TextEditingController();
 
   String get _address =>
-      WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+      WalletInheritedModel.of(Keys.rootKey.currentContext)
+          ?.activatedWallet
+          ?.wallet
+          ?.getEthAccount()
+          ?.address ??
+      "";
+
   String get _shortAddress {
     var beach32Address = WalletUtil.ethAddressToBech32Address(_address ?? '');
     var address = shortBlockChainAddress(
@@ -73,17 +79,20 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
         fontWeight: FontWeight.w500,
       );
 
-  String _defaultEmptyText = "暂无关联";
-  String _cancelTitle = "取消关联";
+  String _defaultEmptyText = S.of(Keys.rootKey.currentContext).not_bind;
+  String _cancelTitle = S.of(Keys.rootKey.currentContext).cancel_bind;
 
   // var _moreKey = GlobalKey(debugLabel: '__more_global__');
   // double _moreSizeHeight = 18;
 
   // 0: 游客，1: 主账号，2: 子账号
   int get accountType {
-    if (_accountBindInfoEntity?.isMaster ?? false || (_accountBindInfoEntity?.subRelationships?.isNotEmpty ?? false)) {
+    if (_accountBindInfoEntity?.isMaster ??
+        false ||
+            (_accountBindInfoEntity?.subRelationships?.isNotEmpty ?? false)) {
       return 1;
-    } else if ((_accountBindInfoEntity?.request != null && (_accountBindInfoEntity?.request?.state ?? 0) != -3) ||
+    } else if ((_accountBindInfoEntity?.request != null &&
+            (_accountBindInfoEntity?.request?.state ?? 0) != -3) ||
         (_accountBindInfoEntity?.isSub ?? false)) {
       return 2;
     }
@@ -116,7 +125,9 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
   Future _syncData() async {
     if (context == null) return;
 
-    _userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo)?.userInfoModel;
+    _userInfo =
+        AccountInheritedModel.of(context, aspect: AccountAspect.userInfo)
+            ?.userInfoModel;
     if (mounted) {
       setState(() {});
     }
@@ -148,7 +159,8 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
         BlocProvider.of<AccountBloc>(context).add(UpdateUserInfoEvent());
       }
 
-      print('${widget.runtimeType}, _accountBindInfoEntity:${_accountBindInfoEntity.toJson()}');
+      print(
+          '${widget.runtimeType}, _accountBindInfoEntity:${_accountBindInfoEntity.toJson()}');
       if (mounted) {
         setState(() {
           loadDataBloc.add(RefreshSuccessEvent());
@@ -245,7 +257,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                       top: 20,
                     ),
                     child: Text(
-                      '当前账户',
+                      S.of(context).current_account,
                       style: TextStyle(
                         color: HexColor("#999999"),
                         fontSize: 14,
@@ -275,15 +287,18 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                       children: <Widget>[
                         Spacer(),
                         ClickOvalButton(
-                          '设为主账户',
+                          S.of(context).set_as_main_account,
                           () async {
                             try {
                               var isOk = await _api.postMrSetMaster();
-                              print("[${widget.runtimeType}],设为主账户, isOk:$isOk");
+                              print(
+                                  "[${widget.runtimeType}],设为主账户, isOk:$isOk");
                               if (isOk.code == 0) {
                                 loadDataBloc.add(LoadingEvent());
                               } else {
-                                Fluttertoast.showToast(msg: isOk?.msg ?? '未知错误');
+                                Fluttertoast.showToast(
+                                    msg: isOk?.msg ??
+                                        S.of(context).unkown_error);
                               }
                             } catch (e) {
                               LogUtil.toastException(e);
@@ -298,7 +313,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                           width: 20,
                         ),
                         ClickOvalButton(
-                          '设为子账户',
+                          S.of(context).set_as_sub_account,
                           () {
                             _showSetParisAlertView();
                           },
@@ -333,12 +348,13 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
               ),
               Container(
                 color: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '当前账户为主账户',
+                      S.of(context).is_main_account,
                       style: _titleTextStyle,
                     ),
                     Padding(
@@ -383,7 +399,10 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                 color: Colors.white,
                 child: InkWell(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => MeAccountBindRequestPage()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MeAccountBindRequestPage()));
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(
@@ -395,7 +414,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                     child: Row(
                       children: <Widget>[
                         Text(
-                          '新的申请',
+                          S.of(context).new_apply,
                           style: _contentTextStyle,
                         ),
                         Spacer(),
@@ -446,14 +465,16 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                   Expanded(
                     child: Container(
                       color: Colors.white,
-                      padding: const EdgeInsets.only(left: 12, right: 12, top: 16, bottom: 12),
+                      padding: const EdgeInsets.only(
+                          left: 12, right: 12, top: 16, bottom: 12),
                       child: RichText(
                         text: TextSpan(
                           text: S.of(context).current_related_child_account,
                           style: _titleTextStyle,
                           children: [
                             TextSpan(
-                              text: S.of(context).related_children_count("${subRelationships.length}"),
+                              text: S.of(context).related_children_count(
+                                  "${subRelationships.length}"),
                               style: TextStyle(
                                 color: HexColor("#999999"),
                                 fontSize: 12,
@@ -472,7 +493,8 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
         ),
         SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
-          var isNotEmpty = (_accountBindInfoEntity?.subRelationships ?? []).isNotEmpty;
+          var isNotEmpty =
+              (_accountBindInfoEntity?.subRelationships ?? []).isNotEmpty;
 
           SubRelationships model;
           if (isNotEmpty) {
@@ -488,7 +510,9 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                 Column(
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.only(left: 12, bottom: subRelationships.length > 0 ? 0 : 12),
+                      padding: EdgeInsets.only(
+                          left: 12,
+                          bottom: subRelationships.length > 0 ? 0 : 12),
                       child: Text(
                         title,
                         style: _contentTextStyle,
@@ -501,7 +525,9 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                           top: 6,
                         ),
                         child: Text(
-                          Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(createAt * 1000)),
+                          Const.DATE_FORMAT.format(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  createAt * 1000)),
                           style: TextStyle(fontSize: 12, color: Colors.black54),
                           textAlign: TextAlign.left,
                         ),
@@ -523,7 +549,9 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
               ],
             ),
           );
-        }, childCount: subRelationships.isNotEmpty ? subRelationships.length : 1))
+        },
+                childCount:
+                    subRelationships.isNotEmpty ? subRelationships.length : 1))
       ],
     );
   }
@@ -536,12 +564,13 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
             children: <Widget>[
               Container(
                 color: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '当前账户为子账户',
+                      S.of(context).is_sub_account,
                       style: _titleTextStyle,
                     ),
                     Padding(
@@ -557,7 +586,9 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                         child: Row(
                           children: <Widget>[
                             Text(
-                              _userInfo?.email ?? _accountBindInfoEntity?.sub ?? '',
+                              _userInfo?.email ??
+                                  _accountBindInfoEntity?.sub ??
+                                  '',
                               style: _contentTextStyle,
                             ),
                             Spacer(),
@@ -588,10 +619,11 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                   Expanded(
                     child: Container(
                       color: Colors.white,
-                      padding: const EdgeInsets.only(left: 12, right: 12, top: 16, bottom: 12),
+                      padding: const EdgeInsets.only(
+                          left: 12, right: 12, top: 16, bottom: 12),
                       child: RichText(
                         text: TextSpan(
-                          text: '当前账户关联的主账户',
+                          text: S.of(context).binded_main_account,
                           style: _titleTextStyle,
                         ),
                       ),
@@ -606,14 +638,16 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
             delegate: SliverChildBuilderDelegate((context, index) {
           var email = _accountBindInfoEntity?.request?.email;
           var state = _accountBindInfoEntity?.request?.state;
-          var title = email ?? _accountBindInfoEntity?.master ?? _defaultEmptyText;
+          var title =
+              email ?? _accountBindInfoEntity?.master ?? _defaultEmptyText;
 
           var haveSubRow = _accountBindInfoEntity?.request != null;
           var subTitle = '';
           var status = '';
           HexColor hexColor;
 
-          if ((_accountBindInfoEntity?.request == null) && (_accountBindInfoEntity?.isSub ?? false)) {
+          if ((_accountBindInfoEntity?.request == null) &&
+              (_accountBindInfoEntity?.isSub ?? false)) {
             state = 1;
           }
           switch (state) {
@@ -626,26 +660,26 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
             case 0:
               haveSubRow = true;
 
-              status = '已申请，等待主账户验证';
+              status = S.of(context).wait_for_main_account_to_bind;
               hexColor = HexColor('#999999');
-              subTitle = '取消';
+              subTitle = S.of(context).cancel;
               break;
 
             case -1:
               haveSubRow = true;
 
-              status = '已拒绝';
+              status = S.of(context).rejected;
               hexColor = HexColor('#FF4C3B');
-              subTitle = '重新设置';
+              subTitle = S.of(context).reset;
 
               break;
 
             case -3:
               haveSubRow = true;
 
-              status = '已申请，等待主账户验证';
+              status = S.of(context).wait_for_main_account_to_bind;
               hexColor = HexColor('#999999');
-              subTitle = '已取消申请';
+              subTitle = S.of(context).apply_cancelled;
 
               break;
           }
@@ -663,7 +697,10 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                 Row(
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.only(left: 12, bottom: _accountBindInfoEntity?.request != null ? 0 : 12),
+                      padding: EdgeInsets.only(
+                          left: 12,
+                          bottom:
+                              _accountBindInfoEntity?.request != null ? 0 : 12),
                       child: Text(
                         title,
                         style: _contentTextStyle,
@@ -713,8 +750,11 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                               left: 13,
                             ),
                             child: Text(
-                              Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(createAt * 1000)),
-                              style: TextStyle(fontSize: 12, color: Colors.black54),
+                              Const.DATE_FORMAT.format(
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      createAt * 1000)),
+                              style: TextStyle(
+                                  fontSize: 12, color: Colors.black54),
                               textAlign: TextAlign.left,
                             ),
                           ),
@@ -724,23 +764,30 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                               ? () async {
                                   print(subTitle);
 
-                                  if (subTitle == '取消') {
+                                  if (subTitle == S.of(context).cancel) {
                                     try {
-                                      var isOk =
-                                          await _api.postCancelRequest(id: _accountBindInfoEntity?.request?.id ?? 0);
+                                      var isOk = await _api.postCancelRequest(
+                                          id: _accountBindInfoEntity
+                                                  ?.request?.id ??
+                                              0);
 
-                                      print("[${widget.runtimeType}],1,打卡关联-取消关联, isOk:$isOk");
+                                      print(
+                                          "[${widget.runtimeType}],1,打卡关联-取消关联, isOk:$isOk");
 
                                       if (isOk.code == 0) {
                                         loadDataBloc.add(LoadingEvent());
                                       } else if (isOk.code == -1003) {
-                                        Fluttertoast.showToast(msg: '没操作权限');
+                                        Fluttertoast.showToast(msg: S.of(context).no_opt_permisson);
                                       } else if (isOk.code == -1004) {
-                                        Fluttertoast.showToast(msg: '审核的账号已经是子账号或者有子账号申请在等待审核');
+                                        Fluttertoast.showToast(
+                                            msg: S.of(context).sub_account_apply_pending
+                                        );
                                       } else if (isOk.code == -1007) {
-                                        Fluttertoast.showToast(msg: '子账号已经到达上限');
+                                        Fluttertoast.showToast(
+                                            msg: S.of(context).reach_max_sub_account);
                                       } else {
-                                        Fluttertoast.showToast(msg: isOk?.msg ?? '未知错误');
+                                        Fluttertoast.showToast(
+                                            msg: isOk?.msg ?? S.of(context).unkown_error);
                                       }
                                     } catch (e) {
                                       LogUtil.toastException(e);
@@ -757,7 +804,9 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                             child: Text(
                               subTitle,
                               style: TextStyle(
-                                color: state != -3 ? HexColor("#1F81FF") : hexColor,
+                                color: state != -3
+                                    ? HexColor("#1F81FF")
+                                    : hexColor,
                                 fontSize: 14,
                                 fontWeight: FontWeight.normal,
                               ),
@@ -806,7 +855,8 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
         child: Popup(
           left: _moreOffsetLeft,
           top: _moreOffsetTop,
-          child: BubbleWidget(_moreSizeWidth, _moreSizeHeight, Colors.white, BubbleArrowDirection.top,
+          child: BubbleWidget(_moreSizeWidth, _moreSizeHeight, Colors.white,
+              BubbleArrowDirection.top,
               length: 50,
               innerPadding: 0.0,
               child: Container(
@@ -824,9 +874,9 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                         if (index == 2) {
                           title = "";
                         } else if (index == 0) {
-                          title = "解除所有关联";
+                          title = S.of(context).unbind_all;
                         } else if (index == 1) {
-                          title = "设为子账户";
+                          title = S.of(context).set_as_sub_account;
                         }
                         break;
 
@@ -834,9 +884,9 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                         if (index == 2) {
                           title = "";
                         } else if (index == 0) {
-                          title = "更改主账户";
+                          title = S.of(context).change_main_account;
                         } else if (index == 1) {
-                          title = "设为主账户";
+                          title = S.of(context).change_main_account;
                         }
                         break;
                     }
@@ -879,7 +929,8 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                               endIndent: 13,
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(8, index == 0 ? 12 : 8, 8, 8),
+                              padding: EdgeInsets.fromLTRB(
+                                  8, index == 0 ? 12 : 8, 8, 8),
                               child: Text(
                                 title,
                                 style: TextStyle(
@@ -911,10 +962,10 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
 
     UiUtil.showAlertView(
       context,
-      title: '解除所有关联',
+      title: S.of(context).unbind_all,
       actions: [
         ClickOvalButton(
-          '解除',
+          S.of(context).unbind,
           () async {
             Navigator.pop(context, false);
 
@@ -937,7 +988,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
           width: 20,
         ),
         ClickOvalButton(
-          '再想想',
+          S.of(context).re_think,
           () {
             Navigator.pop(context, true);
           },
@@ -947,14 +998,14 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
           fontWeight: FontWeight.normal,
         ),
       ],
-      content: '解除关联将解除该主账户关联的所有子账户，解除后可重新设置，是否继续？',
+      content: S.of(context).unbind_main_account_warning,
     );
   }
 
   _showSetChildrenAlertView() {
     UiUtil.showAlertView(
       context,
-      title: '设为子账户',
+      title: S.of(context).set_as_sub_account,
       actions: [
         ClickOvalButton(
           S.of(context).cancel,
@@ -984,7 +1035,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
           fontWeight: FontWeight.normal,
         ),
       ],
-      content: '您将解除该主账户关联的所有子账户并为该账户关联新的主账户，是否继续？',
+      content: S.of(context).change_main_account_warning,
     );
   }
 
@@ -1003,7 +1054,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
     var _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
     var addressExample = 'hyn1ntjklkvx9jlkrz9';
     var addressHint = S.of(context).example + ': $addressExample...';
-    var addressErrorHint = '请输入合法的HYN地址';
+    var addressErrorHint = S.of(context).input_valid_hyn_address;
 
     UiUtil.showAlertView(
       context,
@@ -1029,17 +1080,23 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                 if (isOk.code == 0) {
                   loadDataBloc.add(LoadingEvent());
                 } else if (isOk.code == -1007) {
-                  Fluttertoast.showToast(msg: '请求的主账号的子账号已经到达上限');
+                  Fluttertoast.showToast(
+                      msg: S.of(context).requested_main_reach_sub_account_max);
                 } else if (isOk.code == -1004) {
                   loadDataBloc.add(LoadingEvent());
-                  Fluttertoast.showToast(msg: '本账号已经是子账号或者有子账号申请在等待审核');
+                  Fluttertoast.showToast(
+                      msg: S.of(context).already_sub_account_or_pending);
                 } else if (isOk.code == -1003) {
-                  Fluttertoast.showToast(msg: '申请关联的主账号不是推荐账号');
+                  Fluttertoast.showToast(
+                      msg: S
+                          .of(context)
+                          .apply_main_account_is_not_recommended_account);
                 } else if (isOk.code == -20014) {
                   //Fluttertoast.showToast(msg: '申请关联的账号不是主账号');
                   _showCheckAlertView();
                 } else {
-                  Fluttertoast.showToast(msg: isOk?.msg ?? '未知错误');
+                  Fluttertoast.showToast(
+                      msg: isOk?.msg ?? S.of(context).unkown_error);
                 }
               } catch (e) {
                 LogUtil.toastException(e);
@@ -1055,7 +1112,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
         ),
       ],
       isInputValue: true,
-      detail: '请输入主账户HYN地址。也可扫描主账户收款码',
+      detail: S.of(context).input_main_account_address_or_qrcode,
       contentItem: Material(
         child: Form(
           key: _addressKey,
@@ -1075,7 +1132,9 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                   validator: (value) {
                     var ethAddress = WalletUtil.bech32ToEthAddress(value);
                     if (ethAddress?.isEmpty ?? true) {
-                      return '主账户HYN地址不能为空!';
+                      return S
+                          .of(context)
+                          .main_account_hyn_address_can_not_null;
                     } else if (!value.startsWith('hyn1')) {
                       return addressErrorHint;
                     } else if (!_basicAddressReg.hasMatch(ethAddress)) {
@@ -1104,7 +1163,8 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
                     ),
                     suffixIcon: InkWell(
                       onTap: () async {
-                        UiUtil.showScanImagePickerSheet(context, callback: (String text) async {
+                        UiUtil.showScanImagePickerSheet(context,
+                            callback: (String text) async {
                           _addressEditController.text = await _parseText(text);
                         });
                       },
@@ -1139,7 +1199,8 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
 
     if (scanStr == null) {
       return '';
-    } else if (scanStr.contains(PromoteQrCodePage.downloadDomain) || scanStr.contains(RpFriendInvitePage.shareDomain)) {
+    } else if (scanStr.contains(PromoteQrCodePage.downloadDomain) ||
+        scanStr.contains(RpFriendInvitePage.shareDomain)) {
       var fromArr = scanStr.split("from=");
       if (fromArr[1].length > 0) {
         fromArr = fromArr[1].split("&");
@@ -1156,14 +1217,14 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
   _showParisAlertView() {
     UiUtil.showAlertView(
       context,
-      title: '设为主账户',
+      title: S.of(context).set_as_main_account,
       actions: [
         _cancelItem(context),
         SizedBox(
           width: 20,
         ),
         ClickOvalButton(
-          '继续',
+          S.of(context).continue_text,
           () async {
             Navigator.pop(context, true);
 
@@ -1176,13 +1237,16 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
               if (isOk.code == 0) {
                 loadDataBloc.add(LoadingEvent());
               } else if (isOk.code == -1003) {
-                Fluttertoast.showToast(msg: '没操作权限');
+                Fluttertoast.showToast(msg: S.of(context).no_opt_permisson);
               } else if (isOk.code == -1004) {
-                Fluttertoast.showToast(msg: '审核的账号已经是子账号或者有子账号申请在等待审核');
+                Fluttertoast.showToast(
+                    msg: S.of(context).already_sub_account_or_pending);
               } else if (isOk.code == -1007) {
-                Fluttertoast.showToast(msg: '子账号已经到达上限');
+                Fluttertoast.showToast(
+                    msg: S.of(context).reach_max_sub_account);
               } else {
-                Fluttertoast.showToast(msg: isOk?.msg ?? '未知错误');
+                Fluttertoast.showToast(
+                    msg: isOk?.msg ?? S.of(context).unkown_error);
               }
             } catch (e) {
               LogUtil.toastException(e);
@@ -1194,7 +1258,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
           fontWeight: FontWeight.normal,
         ),
       ],
-      content: '您将解除该账户关联的主账户并将该账户设置为主账户，是否继续？',
+      content: S.of(context).apply_main_account_warning,
     );
   }
 
@@ -1228,7 +1292,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
           width: 20,
         ),
         ClickOvalButton(
-          '重新设置',
+          S.of(context).reset,
           () {
             Navigator.pop(context, true);
 
@@ -1240,7 +1304,7 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
           fontWeight: FontWeight.normal,
         ),
       ],
-      content: '该账户不是主账户，请确认输入无误，如果您还没有主账户，请先设置一个主账户再关联',
+      content: S.of(context).apply_main_account_warning,
     );
   }
 
@@ -1248,18 +1312,19 @@ class _MeAccountBindState extends BaseState<MeAccountBindPage> with RouteAware {
   _postMrReset(List<int> userIDs, {int type = 0}) async {
     try {
       var isOk = await _api.postMrReset(userIDs: userIDs);
-      print("[${widget.runtimeType}],解除所有关联:$type, userIDs:$userIDs, isOk:$isOk");
+      print(
+          "[${widget.runtimeType}],解除所有关联:$type, userIDs:$userIDs, isOk:$isOk");
 
       if (isOk.code == 0) {
         loadDataBloc.add(LoadingEvent());
       } else if (isOk.code == -1003) {
-        Fluttertoast.showToast(msg: '没操作权限');
+        Fluttertoast.showToast(msg: S.of(context).no_opt_permisson);
       } else if (isOk.code == -1004) {
-        Fluttertoast.showToast(msg: '审核的账号已经是子账号或者有子账号申请在等待审核');
+        Fluttertoast.showToast(msg: S.of(context).sub_account_apply_pending);
       } else if (isOk.code == -1007) {
-        Fluttertoast.showToast(msg: '子账号已经到达上限');
+        Fluttertoast.showToast(msg: S.of(context).reach_max_sub_account);
       } else {
-        Fluttertoast.showToast(msg: isOk?.msg ?? '未知错误');
+        Fluttertoast.showToast(msg: isOk?.msg ?? S.of(context).unkown_error);
       }
     } catch (e) {
       LogUtil.toastException(e);

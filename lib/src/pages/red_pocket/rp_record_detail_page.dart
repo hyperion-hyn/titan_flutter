@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -80,13 +81,13 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
     return Scaffold(
       backgroundColor: HexColor('#F8F8F8'),
       appBar: BaseAppBar(
-        baseTitle: '红包详情',
+        baseTitle: S.of(context).rp_redpocket_detail,
         backgroundColor: HexColor('#F8F8F8'),
         actions: <Widget>[
           FlatButton(
             onPressed: _txHashIsEmpty ? null : _navToDetailAction,
             child: Text(
-              _txHashIsEmpty ? '' : '查看交易',
+              _txHashIsEmpty ? '' : S.of(context).check_tx,
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
@@ -136,7 +137,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
 
     var name = _detailEntity?.username ?? '';
     if (name.isEmpty) {
-      name = '用户';
+      name = S.of(context).user;
     }
     //print("[$runtimeType] _infoDetailBuilder, rpType:$_rpType");
 
@@ -157,20 +158,20 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
     switch (_rpType) {
       case RedPocketType.LUCKY:
         // title = '$name 的幸运红包';
-        title = '幸运红包';
+        title = S.of(context).rp_lucky_pocket;
 
         amount = luckState == RpLuckState.MISS ? zeroAmountStr : amountStr;
         break;
 
       case RedPocketType.LEVEL:
-        title = '量级红包';
-        subTitle = '（量级$level）';
+        title = S.of(context).level_rp;
+        subTitle = '（${S.of(context).rp_level}$level）';
 
         amount = amountStr;
         break;
 
       case RedPocketType.PROMOTION:
-        title = '晋升红包';
+        title = S.of(context).promotion_rp;
 
         amount = luckState == RpLuckState.MISS ? zeroAmountStr : amountStr;
         break;
@@ -340,7 +341,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '你已错过红包机会',
+                        S.of(context).you_missed_rp,
                         style: TextStyle(
                           color: HexColor("#999999"),
                           fontSize: 12,
@@ -428,7 +429,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
                 ),
               ),
               Text(
-                '暂无记录',
+                S.of(context).no_data,
                 style: TextStyle(
                   fontSize: 13,
                   color: DefaultColors.color999,
@@ -491,11 +492,11 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
       case RpAddressRoleType.BURN:
         //desc = '量级不足，错过机会';
 
-        role = '燃烧';
+        role = S.of(context).rp_burn;
         break;
 
       case RpAddressRoleType.MANAGE_FEE:
-        role = '管理费';
+        role = S.of(context).manage_fee;
         break;
 
       case RpAddressRoleType.NORMAL:
@@ -506,7 +507,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
 
     var name = model?.username ?? '';
     if (name.isEmpty) {
-      name = '用户';
+      name = S.of(context).user;
     }
     name += role;
 
@@ -601,7 +602,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
                               left: 6,
                             ),
                             child: Text(
-                              '(我)',
+                              '(${S.of(context).me})',
                               style: TextStyle(
                                 color: HexColor("#999999"),
                                 fontSize: 12,
@@ -709,7 +710,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6.0),
                         child: Text(
-                          '其他相同量级账户',
+                          S.of(context).other_same_level_users,
                           style: TextStyle(
                             color: HexColor("#333333"),
                             fontSize: 14,
@@ -851,13 +852,13 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            rowText('rp_manage_fee', '管理费', _manageFeeAmountStr),
+            rowText('rp_manage_fee', S.of(context).manage_fee, _manageFeeAmountStr),
             SizedBox(
               width: 12,
             ),
             rowText(
               'ic_burn',
-              '燃烧',
+              S.of(context).rp_burn,
               _burnAmountStr,
               isRebuild: true,
               mainAxisAlignment: MainAxisAlignment.end,
@@ -1050,18 +1051,18 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
   var luckState = RpLuckState.values[(entity?.luck ?? 0)];
   switch (luckState) {
     case RpLuckState.MISS:
-      desc = '错过 $amountStr';
+      desc = '${S.of(Keys.rootKey.currentContext).rp_missed} $amountStr';
       amount = '0 RP';
       break;
 
     case RpLuckState.BEST:
-      desc = '最佳';
+      desc = S.of(Keys.rootKey.currentContext).rp_best;
       amount = amountStr;
       break;
 
     case RpLuckState.LUCKY:
       if (rpType == RedPocketType.LUCKY) {
-        desc = '砸中';
+        desc = S.of(Keys.rootKey.currentContext).rp_hit;
       } else {
         desc = '';
       }
@@ -1069,12 +1070,12 @@ RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
       break;
 
     case RpLuckState.LUCKY_BEST:
-      desc = '砸中且最佳';
+      desc = S.of(Keys.rootKey.currentContext).rp_hit_and_best;
       amount = amountStr;
       break;
 
     case RpLuckState.LUCKY_MISS_QUOTA:
-      desc = '可拆次数用尽';
+      desc = S.of(Keys.rootKey.currentContext).rp_run_out_open_times;
       amount = amountStr;
       break;
 

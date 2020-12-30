@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -111,7 +112,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     return Scaffold(
       backgroundColor: HexColor('#FFFFFF'),
       appBar: BaseAppBar(
-        baseTitle: '量级',
+        baseTitle: S.of(context).rp_level,
         backgroundColor: HexColor('#FFFFFF'),
       ),
       body: _pageView(),
@@ -258,7 +259,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     bool isCurrent = _currentLevel == model.level;
     String leftTagTitle = '';
     if (isCurrent) {
-      leftTagTitle = '当前量级';
+      leftTagTitle = S.of(context).rp_current_level;
     }
 
     return Stack(
@@ -430,7 +431,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
             padding: const EdgeInsets.fromLTRB(8, 3, 8, 3),
             child: Center(
               child: Text(
-                '推荐',
+                S.of(context).recommend,
                 style: TextStyle(fontSize: 8, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
               ),
             ),
@@ -445,14 +446,14 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     bool isSelected = ((_currentSelectedLevelRule?.level ?? 0) == model.level);
 
     var level = model.level ?? 0;
-    var levelName = '量级 ${levelValueToLevelName(level)}';
+    var levelName = '${S.of(context).rp_level} ${levelValueToLevelName(level)}';
 
-    var burnTitle = '需燃烧量';
+    var burnTitle = S.of(context).rp_need_burn_amount;
     var burnRpValue = '${model.burnStr} RP';
 
     var formula = model.holdingFormula;
 
-    var stakingTitle = '最低持币';
+    var stakingTitle = S.of(context).rp_min_holding;
     var stakingValue = '${model.holdingStr} RP';
 
     return Container(
@@ -525,7 +526,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ClickOvalButton(
-                '增加持币',
+                S.of(context).rp_add_holding,
                 _navToLevelAddStakingAction,
                 height: 34,
                 width: 120,
@@ -536,7 +537,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
                 width: 20,
               ),
               ClickOvalButton(
-                '提升量级',
+                S.of(context).rp_level_up,
                 _navToLevelUpgradeAction,
                 height: 34,
                 width: 120,
@@ -555,13 +556,13 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     if (_currentLevel > model.level && _currentLevel > 0) {
       if (_currentLevel == 5) {
         Fluttertoast.showToast(
-          msg: '当前量级已经是最高量级！',
+          msg: S.of(context).rp_already_highest_level,
           gravity: ToastGravity.CENTER,
         );
         return;
       }
       Fluttertoast.showToast(
-        msg: '升级的量级不能小于当前量级, 请重新选择！',
+        msg: S.of(context).rp_upgrade_level_less_then_current,
         gravity: ToastGravity.CENTER,
       );
       return;
@@ -592,7 +593,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
   _navToLevelUpgradeAction() {
     if (_currentLevel == 5) {
       Fluttertoast.showToast(
-        msg: '当前量级已经是最高量级！',
+        msg: S.of(context).rp_already_highest_level,
         gravity: ToastGravity.CENTER,
       );
       return;
@@ -600,7 +601,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
 
     if (_currentSelectedLevelRule == null) {
       Fluttertoast.showToast(
-        msg: '请先选择想要升级的量级！',
+        msg: S.of(context).rp_select_upgrade_level,
         gravity: ToastGravity.CENTER,
       );
       return;
@@ -608,7 +609,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
 
     if (_currentLevel == (_currentSelectedLevelRule?.level ?? 0) && _currentLevel > 0) {
       Fluttertoast.showToast(
-        msg: '选择的量级与当前量级相同, 请重新选择！',
+        msg: S.of(context).rp_select_same_level,
         gravity: ToastGravity.CENTER,
       );
       return;

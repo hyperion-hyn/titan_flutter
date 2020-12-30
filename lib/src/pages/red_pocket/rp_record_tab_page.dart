@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -21,7 +22,7 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
       length: 3,
       child: Scaffold(
         appBar: BaseAppBar(
-          baseTitle: '我的红包',
+          baseTitle: S.of(context).my_redpocket,
           backgroundColor: Colors.white,
           /*
           actions: <Widget>[
@@ -77,17 +78,17 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
 
                         Tab(
                           child: Text(
-                            '幸运红包',
+                            S.of(context).lucky_rp,
                           ),
                         ),
                         Tab(
                           child: Text(
-                            '量级红包',
+                            S.of(context).level_rp,
                           ),
                         ),
                         Tab(
                           child: Text(
-                            '晋升红包',
+                            S.of(context).promotion_rp,
                           ),
                         ),
                       ],

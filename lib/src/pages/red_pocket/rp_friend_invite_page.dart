@@ -186,7 +186,7 @@ class _RpFriendInvitePageState extends BaseState<RpFriendInvitePage> {
                                           left: 29,
                                           right: 29,
                                           child: Text(
-                                            "全球首个基于HRC30交易结构的应用案例",
+                                            S.of(context).world_first_hrc30_case,
                                             style: TextStyle(
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
