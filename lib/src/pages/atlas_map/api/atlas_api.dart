@@ -46,6 +46,7 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
 import '../../../../config.dart';
 import '../../../../env.dart';
+import 'package:detect_testflight/detect_testflight.dart';
 
 class AtlasApi {
   Future<List<HynTransferHistory>> queryHYNHistory(
@@ -1036,11 +1037,12 @@ class AtlasApi {
     } else if (Platform.isIOS) {
       IosDeviceInfo deviceInfo = await deviceInfoPlugin?.iosInfo;
       deviceId = deviceInfo?.identifierForVendor;
-      //Todo: iOS check if testFlight
-      if (env.channel == BuildChannel.OFFICIAL) {
-        channel = 'ios-appstore';
-      } else if (env.channel == BuildChannel.STORE) {
+
+      bool isTestFlight = await DetectTestflight.isTestflight;
+      if (isTestFlight) {
         channel = 'ios-testflight';
+      } else {
+        channel = 'ios-appstore';
       }
     }
 
