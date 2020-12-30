@@ -17,6 +17,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget.dart';
+import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/route_util.dart';
@@ -237,7 +238,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                       alignment: Alignment.topCenter,
                       child: Padding(
                         padding: const EdgeInsets.only(top: 32.0),
-                        child: EmptyWalletView(tips: widget.tips),
+                        child: EmptyWalletViewV2(tips: widget.tips),
                       ));
                 } else {
                   return Container();

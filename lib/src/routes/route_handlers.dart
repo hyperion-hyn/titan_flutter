@@ -44,6 +44,7 @@ import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_import_account_page2.dart';
+import 'package:titan/src/pages/wallet/wallet_page/view/wallet_backup_notice_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
@@ -141,7 +142,7 @@ var settingWalletHandler = Handler(handlerFunc: (context, params) {
 var settingBackupNoticeWalletHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
-  return WalletBackupNoticePage(wallet);
+  return WalletBackupNoticePageV2(wallet);
 });
 
 var backUpMnemoicNoticeForCreation = Handler(handlerFunc: (context, params) {

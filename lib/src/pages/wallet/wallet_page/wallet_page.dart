@@ -19,6 +19,7 @@ import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
+import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -365,7 +366,7 @@ class _WalletPageState extends BaseState<WalletPage>
         );
       }
     }else{
-      return EmptyWalletView(loadDataBloc: loadDataBloc,);
+      return EmptyWalletViewV2(loadDataBloc: loadDataBloc,);
     }
 
     /*return BlocListener<WalletCmpBloc, WalletCmpState>(

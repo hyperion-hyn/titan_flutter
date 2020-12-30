@@ -88,13 +88,20 @@ class _AboutMeState extends BaseState<AboutMePage> {
               value: "https://www.hyn.space/",
               isUrl: true),
           _buildInfoContainer(
-              label: '区块链浏览器', showValue: "https://hynscan.io/", value: "https://hynscan.io/", isUrl: true),
+              label: '区块链浏览器',
+              showValue: "https://hynscan.io/",
+              value: "https://hynscan.io/",
+              isUrl: true),
           _buildInfoContainer(
               label: '开源地址',
               showValue: "https://github.com/hyperion-hyn/",
               value: "https://github.com/hyperion-hyn/",
               isUrl: true),
-          _buildInfoContainer(label: '开源协议 MIT', showValue: Const.APP_POLICY, value: Const.APP_POLICY, isUrl: true),
+          _buildInfoContainer(
+              label: '开源协议 MIT',
+              showValue: Const.APP_POLICY,
+              value: Const.APP_POLICY,
+              isUrl: true),
           _buildInfoContainer(
               label: S.of(context).forum,
               showValue: "https://talk.hyn.space/",
@@ -102,8 +109,13 @@ class _AboutMeState extends BaseState<AboutMePage> {
               isUrl: true),
           _lineWidget(),
           _buildInfoContainer(
-              label: S.of(context).telegram, showValue: "@hypersionOfficianHYN", value: "hypersionOfficianHYN"),
-          _buildInfoContainer(label: S.of(context).twitterhyperion, showValue: "@TitanHYN", value: "TitanHYN"),
+              label: S.of(context).telegram,
+              showValue: "@hypersionOfficianHYN",
+              value: "hypersionOfficianHYN"),
+          _buildInfoContainer(
+              label: S.of(context).twitterhyperion,
+              showValue: "@TitanHYN",
+              value: "TitanHYN"),
           _buildInfoContainer(
             label: S.of(context).twittertitan,
             showValue: "@HyperionHYN",
@@ -114,11 +126,19 @@ class _AboutMeState extends BaseState<AboutMePage> {
             showValue: "@hyperionsgofficial",
             value: "@hyperionsgofficial",
           ),
-          _buildInfoContainer(label: S.of(context).wechat, showValue: "@HyperionHYN", value: "HyperionHYN"),
-          _buildInfoContainer(label: S.of(context).wechat_official_account, showValue: "@kaizshuo", value: "kaizshuo"),
+          _buildInfoContainer(
+              label: S.of(context).wechat,
+              showValue: "@HyperionHYN",
+              value: "HyperionHYN"),
+          _buildInfoContainer(
+              label: S.of(context).wechat_official_account,
+              showValue: "@kaizshuo",
+              value: "kaizshuo"),
           if (languageCode == "en")
             _buildInfoContainer(
-                label: S.of(context).telegram_operator, showValue: "@FriedrichLVZX", value: "FriedrichLVZX"),
+                label: S.of(context).telegram_operator,
+                showValue: "@FriedrichLVZX",
+                value: "FriedrichLVZX"),
           // if (languageCode == "zh")
           //   _buildInfoContainer(
           //     label: S.of(context).wechat_cs,
@@ -130,7 +150,8 @@ class _AboutMeState extends BaseState<AboutMePage> {
         ]));
   }
 
-  Widget _buildInfoContainer({String label, String showValue, String value, bool isUrl: false}) {
+  Widget _buildInfoContainer(
+      {String label, String showValue, String value, bool isUrl: false}) {
     return GestureDetector(
       onTap: () {
         if (isUrl) {
@@ -165,7 +186,7 @@ class _AboutMeState extends BaseState<AboutMePage> {
                         ? Text(
                             showValue,
                             style: TextStyle(
-                              color: Colors.grey ,
+                              color: Colors.grey,
                               fontSize: 12,
                             ),
                           )
@@ -174,7 +195,7 @@ class _AboutMeState extends BaseState<AboutMePage> {
                               Text(
                                 showValue,
                                 style: TextStyle(
-                                  color: Colors.grey ,
+                                  color: Colors.grey,
                                   fontSize: 12,
                                 ),
                               ),
