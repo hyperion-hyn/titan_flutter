@@ -6,6 +6,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/image_util.dart';
+import 'package:titan/src/utils/psw_strength/password_strength_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -36,9 +37,11 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
     super.initState();
 
     _walletPwsController.addListener(() {
-      var pwsStr = _walletPwsController.text;
-      RegExp singlePws = RegExp(r'[A-Z]|[0-9]');
-      // if(pwsStr)
+      var pswStr = _walletPwsController.text;
+      _pswLevel = PasswordStrengthUtil.getPasswordLevel(pswStr,limitLength: 8);
+      setState(() {
+
+      });
     });
   }
 
@@ -114,7 +117,7 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
                         margin: const EdgeInsets.only(top: 20, bottom: 12),
                         child: TextFormField(
                           inputFormatters: [
-                            LengthLimitingTextInputFormatter(6),
+                            LengthLimitingTextInputFormatter(8),
                           ],
                           keyboardType: TextInputType.text,
                           validator: (value) {
@@ -149,9 +152,7 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
                           children: [
                             Expanded(
                               child: TextFormField(
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(6),
-                                ],
+                                obscureText: !isShowPws,//obscureText为false则显示
                                 keyboardType: TextInputType.text,
                                 validator: (value) {
                                   if (value.isEmpty) {
@@ -202,6 +203,10 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
                           ],
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.only(left:10.0,right: 10,top: 4),
+                        child: Text("不少于8位字符，建议混合大小写字母、数字、符号",style: TextStyle(color: HexColor("#E7BB00",),fontSize: 10),),
+                      ),
                       Container(
                         height: 50,
                         margin: const EdgeInsets.only(top: 12, bottom: 12),
@@ -213,9 +218,7 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
                           children: [
                             Expanded(
                               child: TextFormField(
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(6),
-                                ],
+                                obscureText: !isShowPws,
                                 keyboardType: TextInputType.text,
                                 validator: (value) {
                                   if (value.isEmpty) {
@@ -239,15 +242,22 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16, right: 16, top: 5, bottom: 5),
-                              child: Image.asset(
-                                isShowPws
-                                    ? "res/drawable/ic_input_psw_show.png"
-                                    : "res/drawable/ic_input_psw_hide.png",
-                                width: 20,
-                                height: 15,
+                            InkWell(
+                              onTap: (){
+                                setState(() {
+                                  isShowPws = !isShowPws;
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16, right: 16, top: 5, bottom: 5),
+                                child: Image.asset(
+                                  isShowPws
+                                      ? "res/drawable/ic_input_psw_show.png"
+                                      : "res/drawable/ic_input_psw_hide.png",
+                                  width: 20,
+                                  height: 15,
+                                ),
                               ),
                             )
                           ],
@@ -258,7 +268,7 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
                         margin: const EdgeInsets.only(bottom: 12),
                         child: TextFormField(
                           inputFormatters: [
-                            LengthLimitingTextInputFormatter(6),
+                            LengthLimitingTextInputFormatter(20),
                           ],
                           keyboardType: TextInputType.text,
                           validator: (value) {
