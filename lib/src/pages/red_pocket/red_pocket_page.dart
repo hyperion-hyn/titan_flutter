@@ -99,7 +99,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           FlatButton(
             onPressed: _navToMyRpRecords,
             child: Text(
-              '我的红包',
+              S.of(context).my_redpocket,
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
@@ -231,7 +231,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      '钱包余额',
+                      S.of(context).wallet_balance,
                       style: TextStyle(
                         fontSize: 12,
                         color: DefaultColors.color999,
@@ -389,7 +389,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                                         maxLines: 2,
                                       ),
                                       Text(
-                                        '多一个好友，机会提升一倍',
+                                        S.of(context).more_friends_more_chances,
                                         style: TextStyle(
                                           color: DefaultColors.color999,
                                           fontSize: 11,
@@ -498,7 +498,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         left: 4,
                       ),
                       child: Text(
-                        '越早传导，获得越多RP!',
+                        S.of(context).sooner_get_more_rp,
                         style: TextStyle(
                           fontSize: 12,
                         ),
@@ -554,7 +554,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 Padding(
                   padding: EdgeInsets.all(16.0),
                   child: ClickOvalButton(
-                    '马上传导',
+                    S.of(context).rp_transmit_now,
                     _navToRPPool,
                     width: 140,
                     height: 32,
@@ -590,7 +590,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 Row(
                   children: [
                     Text(
-                      '统计',
+                      S.of(context).statistics,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),

@@ -88,13 +88,13 @@ class _AboutMeState extends BaseState<AboutMePage> {
               value: "https://www.hyn.space/",
               isUrl: true),
           _buildInfoContainer(
-              label: '区块链浏览器', showValue: "https://hynscan.io/", value: "https://hynscan.io/", isUrl: true),
+              label: S.of(context).block_explorer, showValue: "https://hynscan.io/", value: "https://hynscan.io/", isUrl: true),
           _buildInfoContainer(
-              label: '开源地址',
+              label: S.of(context).open_source_url,
               showValue: "https://github.com/hyperion-hyn/",
               value: "https://github.com/hyperion-hyn/",
               isUrl: true),
-          _buildInfoContainer(label: '开源协议 MIT', showValue: Const.APP_POLICY, value: Const.APP_POLICY, isUrl: true),
+          _buildInfoContainer(label: S.of(context).open_source_policy_mit, showValue: Const.APP_POLICY, value: Const.APP_POLICY, isUrl: true),
           _buildInfoContainer(
               label: S.of(context).forum,
               showValue: "https://talk.hyn.space/",

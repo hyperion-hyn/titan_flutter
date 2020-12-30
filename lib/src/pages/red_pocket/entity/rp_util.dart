@@ -72,7 +72,7 @@ String getStateDesc(int status) {
     return '';
   }
 
-  String stateDesc = '运行中';
+  String stateDesc = '';
 
   //1:确认中 2:失败 3:成功 4:释放中 5:释放结束 6:可取回 7:取回中 8: 已提取
 
