@@ -38,10 +38,8 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
 
     _walletPwsController.addListener(() {
       var pswStr = _walletPwsController.text;
-      _pswLevel = PasswordStrengthUtil.getPasswordLevel(pswStr,limitLength: 8);
-      setState(() {
-
-      });
+      _pswLevel = PasswordStrengthUtil.getPasswordLevel(pswStr, limitLength: 8);
+      setState(() {});
     });
   }
 
@@ -99,7 +97,8 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              UiUtil.showScanImagePickerSheet(context, callback: (String text) {
+                              UiUtil.showScanImagePickerSheet(context,
+                                  callback: (String text) {
                                 // _parseText(text);
                               });
                             },
@@ -152,7 +151,8 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
                           children: [
                             Expanded(
                               child: TextFormField(
-                                obscureText: !isShowPws,//obscureText为false则显示
+                                obscureText: !isShowPws,
+                                //obscureText为false则显示
                                 keyboardType: TextInputType.text,
                                 validator: (value) {
                                   if (value.isEmpty) {
@@ -204,8 +204,16 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left:10.0,right: 10,top: 4),
-                        child: Text("不少于8位字符，建议混合大小写字母、数字、符号",style: TextStyle(color: HexColor("#E7BB00",),fontSize: 10),),
+                        padding: const EdgeInsets.only(
+                            left: 10.0, right: 10, top: 4),
+                        child: Text(
+                          "不少于8位字符，建议混合大小写字母、数字、符号",
+                          style: TextStyle(
+                              color: HexColor(
+                                "#E7BB00",
+                              ),
+                              fontSize: 10),
+                        ),
                       ),
                       Container(
                         height: 50,
@@ -243,7 +251,7 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
                               ),
                             ),
                             InkWell(
-                              onTap: (){
+                              onTap: () {
                                 setState(() {
                                   isShowPws = !isShowPws;
                                 });
@@ -303,7 +311,10 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
             () {},
             width: 300,
             height: 46,
-            btnColor: [HexColor("#F7D33D"),HexColor("#E7C01A"),],
+            btnColor: [
+              HexColor("#F7D33D"),
+              HexColor("#E7C01A"),
+            ],
             fontSize: 16,
             fontColor: DefaultColors.color333,
           ),

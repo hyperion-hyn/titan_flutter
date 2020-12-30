@@ -5,6 +5,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 
@@ -71,7 +72,7 @@ class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
                             'res/drawable/ic_snap.png',
                             width: 60,
                             height: 60,
-                            color: Theme.of(context).primaryColor,
+                            color: DefaultColors.primary,
                           ),
                         ),
                       ),
@@ -97,53 +98,25 @@ class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: 32.0,
+
+                      Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: ClickOvalButton(
+                          S.of(context).no_screenshot_dialog_confirm,
+                          () {
+                            Navigator.of(context).pop();
+                            widget.onConfirm();
+                          },
+                          width: 200,
+                          height: 38,
+                          btnColor: [
+                            HexColor("#F7D33D"),
+                            HexColor("#E7C01A"),
+                          ],
+                          fontSize: 16,
+                          fontColor: DefaultColors.color333,
+                        ),
                       ),
-                      Container(
-                        width: double.infinity,
-                        color: Colors.grey[200],
-                        height: 1,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 1,
-                            child: FlatButton(
-                              child: Text(
-                                S.of(context).no_screenshot_dialog_cancel,
-                                style: TextStyle(
-                                  color: HexColor('#FF9B9B9B'),
-                                  fontSize: 16,
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ),
-                          Container(
-                            width: 1,
-                            color: Colors.grey[200],
-                            height: 24.0,
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: FlatButton(
-                              child: Text(
-                                S.of(context).no_screenshot_dialog_confirm,
-                                style: TextStyle(
-                                    color: Theme.of(context).primaryColor,
-                                    fontSize: 16),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                widget.onConfirm();
-                              },
-                            ),
-                          )
-                        ],
-                      )
                     ],
                   ),
                 ),
