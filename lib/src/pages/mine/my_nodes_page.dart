@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
@@ -18,7 +19,8 @@ class _MyNodesPageState extends State<MyNodesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: BaseAppBar(
-          baseTitle: '我的节点',
+          baseTitle: S.of(context).my_nodes
+          ,
         ),
         body: ListView(
           children: [
@@ -29,7 +31,7 @@ class _MyNodesPageState extends State<MyNodesPage> {
               color: Colors.white,
               child: Column(
                 children: <Widget>[
-                  _buildMenuBar('Map3节点', '', () {
+                  _buildMenuBar(S.of(context).map3_node, '', () {
                     Application.router.navigateTo(context, Routes.map3node_my_page);
                   }),
                   Padding(
@@ -39,7 +41,7 @@ class _MyNodesPageState extends State<MyNodesPage> {
                       color: HexColor('#FFF2F2F2'),
                     ),
                   ),
-                  _buildMenuBar('Atlas节点', '', () {
+                  _buildMenuBar(S.of(context).atlas_node, '', () {
                     Application.router.navigateTo(context, Routes.atlas_my_node_page);
                   }),
                 ],

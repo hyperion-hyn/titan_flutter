@@ -5,6 +5,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
@@ -74,21 +75,21 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
     var items = [
       Wrap(
         children: [
-          _title('发行'),
+          _title(S.of(context).title_rp_supply),
           _rpSupply(),
         ],
       ),
       Wrap(
         children: [
-          _title('空投'),
+          _title(S.of(context).rp_title_airdrop),
           _rpAirdrop(),
         ],
       ),
       Wrap(
         children: [
-          _title('传导'),
+          _title(S.of(context).rp_title_transmit),
           _rpPool(),
-          _title('晋升'),
+          _title(S.of(context).rp_title_promotion),
           _rpPromotion(),
         ],
       ),
@@ -98,7 +99,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
         CarouselSlider(
             items: items,
             options: CarouselOptions(
-                aspectRatio: 1.1,
+                aspectRatio: 1.05,
                 initialPage: 0,
                 viewportFraction: 1,
                 enlargeCenterPage: false,
@@ -195,7 +196,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
             Row(
               children: [
                 _dataText(
-                  '总发行',
+                  S.of(context).total_supply,
                   totalCapStr,
                   isHighLight: true,
                   isExpanded: false,
@@ -207,21 +208,21 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
               children: [
                 Expanded(
                   child: _dataText(
-                    '流通中',
+                    S.of(context).rp_in_circulation,
                     totalSupplyStr,
                     colorStr: colorPalette[0],
                   ),
                 ),
                 Expanded(
                     child: _dataText(
-                  '总燃烧',
+                      S.of(context).rp_total_burn,
                   totalBurningStr,
                   colorStr: colorPalette[2],
                 )),
               ],
             ),
             _dataText(
-              '未发行',
+              S.of(context).rp_not_in_circulation,
               unSupplyStr,
               colorStr: colorPalette[1],
             ),
@@ -284,8 +285,8 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _dataText('已空投', totalAirdropStr, colorStr: colorPalette[0]),
-                _dataText('未空投', unAirdropStr, colorStr: colorPalette[1]),
+                _dataText(S.of(context).rp_airdopped, totalAirdropStr, colorStr: colorPalette[0]),
+                _dataText(S.of(context).rp_not_airdrop, unAirdropStr, colorStr: colorPalette[1]),
               ],
             ))
           ],
@@ -297,7 +298,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
           children: [
             Row(
               children: [
-                _dataText('红包总量', totalStr,
+                _dataText(S.of(context).rp_total_amount, totalStr,
                     isHighLight: true, isExpanded: false),
               ],
             ),
@@ -305,13 +306,13 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: _dataText('已发幸运红包', airdropLuckyTotalStr),
+                  child: _dataText(S.of(context).lucky_rp_sent, airdropLuckyTotalStr),
                 ),
                 SizedBox(
                   width: 4,
                 ),
                 Expanded(
-                  child: _dataText('已发量级红包', airdropLevelTotalStr),
+                  child: _dataText(S.of(context).level_rp_sent, airdropLevelTotalStr),
                 )
               ],
             ),
@@ -319,13 +320,13 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: _dataText('已发晋升红包', airdropPromotionTotalStr),
+                  child: _dataText(S.of(context).promotion_rp_sent, airdropPromotionTotalStr),
                 ),
                 SizedBox(
                   width: 4,
                 ),
                 Expanded(
-                  child: _dataText('未领取燃烧', airdropBurnTotalStr),
+                  child: _dataText(S.of(context).unopen_rp_burnt, airdropBurnTotalStr),
                 )
               ],
             )
@@ -375,9 +376,9 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _dataText('传导总量', totalStr),
-            _dataText('已传导', transmitRPStr, colorStr: colorPalette[0]),
-            _dataText('未传导', unTransmitRpStr, colorStr: colorPalette[1]),
+            _dataText(S.of(context).transmit_total_amount, totalStr),
+            _dataText(S.of(context).transmitted, transmitRPStr, colorStr: colorPalette[0]),
+            _dataText(S.of(context).not_transmitted, unTransmitRpStr, colorStr: colorPalette[1]),
           ],
         ))
       ],
@@ -398,7 +399,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
       children: [
         Expanded(
           child: _dataText(
-            '晋升持币',
+            S.of(context).rp_promotion_holding,
             promotionTotalHoldingStr,
           ),
         ),
@@ -407,7 +408,7 @@ class _RPStatisticsWidgetState extends State<RPStatisticsWidget> {
         ),
         Expanded(
           child: _dataText(
-            '晋升燃烧',
+            S.of(context).rp_promotion_burning,
             promotionTotalBurningStr,
           ),
         )

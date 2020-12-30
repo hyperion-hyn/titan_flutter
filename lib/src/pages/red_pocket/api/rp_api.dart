@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -21,6 +22,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
+import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as WalletClass;
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -45,14 +47,13 @@ class RPApi {
       return;
     }
 
-    return await RPHttpCore.instance
-        .postEntity("/v1/rp/create", EntityFactory<dynamic>((json) => json),
-            params: {
-              "address": address,
-              "hyn_amount": amount.toString(),
-              "tx_hash": txHash,
-            },
-            options: RequestOptions(contentType: "application/json"));
+    return await RPHttpCore.instance.postEntity("/v1/rp/create", EntityFactory<dynamic>((json) => json),
+        params: {
+          "address": address,
+          "hyn_amount": amount.toString(),
+          "tx_hash": txHash,
+        },
+        options: RequestOptions(contentType: "application/json"));
   }
 
   Future<dynamic> postRetrieveHyn({
@@ -60,19 +61,17 @@ class RPApi {
     WalletVo activeWallet,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
-    var txHash = await activeWallet.wallet
-        .sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password);
+    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password);
     print("[Rp_api] postRetrieveHyn, address:$address, txHash:$txHash");
     if (txHash == null) {
       return;
     }
-    return await RPHttpCore.instance
-        .postEntity("/v1/rp/retrieve", EntityFactory<dynamic>((json) => json),
-            params: {
-              "address": address,
-              "tx_hash": txHash,
-            },
-            options: RequestOptions(contentType: "application/json"));
+    return await RPHttpCore.instance.postEntity("/v1/rp/retrieve", EntityFactory<dynamic>((json) => json),
+        params: {
+          "address": address,
+          "tx_hash": txHash,
+        },
+        options: RequestOptions(contentType: "application/json"));
   }
 
   ///统计信息
@@ -133,7 +132,7 @@ class RPApi {
   Future<RpLevelAirdropInfo> getLatestLevelAirdropInfo(
     String address,
   ) async {
-    return await RPHttpCore.instance.getEntity(
+    return await RPHttpCoreNoLog.instance.getEntity(
         "/v1/rp/airdrop/level/latestRound/$address",
         EntityFactory<RpLevelAirdropInfo>(
           (json) => RpLevelAirdropInfo.fromJson(json),
@@ -141,8 +140,7 @@ class RPApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
-  Future<RpStakingReleaseInfo> getRPStakingReleaseInfo(
-      String address, String id) async {
+  Future<RpStakingReleaseInfo> getRPStakingReleaseInfo(String address, String id) async {
     return await RPHttpCore.instance.getEntity(
         "/v1/rp/staking/$address/$id",
         EntityFactory<RpStakingReleaseInfo>(
@@ -257,11 +255,10 @@ class RPApi {
     }
     inviterAddress = WalletUtil.bech32ToEthAddress(inviterAddress);
     if (myAddress.toLowerCase() == inviterAddress.toLowerCase()) {
-      Fluttertoast.showToast(msg: "不能邀请自己");
+      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).can_not_invite_myself);
       return null;
     }
-    var result = await RPHttpCore.instance.postEntity(
-        "/v1/rp/confirm_invite", EntityFactory<dynamic>((json) => json),
+    var result = await RPHttpCore.instance.postEntity("/v1/rp/confirm_invite", EntityFactory<dynamic>((json) => json),
         params: {
           "invitee": myAddress,
           "inviter": inviterAddress,
@@ -294,9 +291,31 @@ class RPApi {
   ///我的红包列表
   Future<RpMyRpRecordEntity> getMyRpRecordList(
     String address, {
-    int size = 200,
+    int size = 20,
     pagingKey = '',
+    RedPocketType rpType = RedPocketType.LUCKY,
   }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/redpocket/list/$address',
+      EntityFactory<RpMyRpRecordEntity>((json) {
+        return RpMyRpRecordEntity.fromJson(json);
+      }),
+      params: {
+        'paging_key': json.encode(pagingKey),
+        'size': size,
+        'type': rpType.index,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  Future<RpMyRpRecordEntity> getMyRpRecordStatistics(
+      String address, {
+        int size = 200,
+        pagingKey = '',
+      }) async {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/redpocket/list/$address',
       EntityFactory<RpMyRpRecordEntity>((json) {
@@ -484,34 +503,24 @@ class RPApi {
 
     var amount = depositAmount + burningAmount;
     final client = WalletUtil.getWeb3Client(true);
-    var nonce =
-        await client.getTransactionCount(EthereumAddress.fromHex(address));
-    var approveHex = await postRpApprove(
-        password: password,
-        activeWallet: activeWallet,
-        amount: amount,
-        nonce: nonce);
+    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
+    var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount, nonce: nonce);
     if (approveHex?.isEmpty ?? true) {
-      throw HttpResponseCodeNotSuccess(-30011, 'HYN余额不足支付网络费用!');
+      throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
     }
     print('[rp_api] postRpDepositAndBurn, approveHex: $approveHex');
 
     if (approveHex != '200') {
       nonce = nonce + 1;
     }
-    var rawTxHash = await activeWallet.wallet.signRpHolding(
-        RpHoldingMethod.DEPOSIT_BURN, password,
-        depositAmount: depositAmount,
-        burningAmount: burningAmount,
-        nonce: nonce);
-    print(
-        "[Rp_api] postRpDepositAndBurn, sendRpHolding, address:$address, txHash:$rawTxHash");
+    var rawTxHash = await activeWallet.wallet.signRpHolding(RpHoldingMethod.DEPOSIT_BURN, password,
+        depositAmount: depositAmount, burningAmount: burningAmount, nonce: nonce);
+    print("[Rp_api] postRpDepositAndBurn, sendRpHolding, address:$address, txHash:$rawTxHash");
     if (rawTxHash == null) {
-      throw HttpResponseCodeNotSuccess(-30012, 'RP余额不足!');
+      throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
     }
 
-    return await RPHttpCore.instance.postEntity(
-        "/v1/rp/level/promotion/submit", EntityFactory<dynamic>((json) => json),
+    return await RPHttpCore.instance.postEntity("/v1/rp/level/promotion/submit", EntityFactory<dynamic>((json) => json),
         params: {
           "address": address,
           "burning": burningAmount.toString(),
@@ -538,14 +547,12 @@ class RPApi {
       withdrawAmount: withdrawAmount,
     );
 
-    print(
-        "[Rp_api] postRpWithdraw, sendRpHolding, address:$address, rawTxHash:$rawTxHash");
+    print("[Rp_api] postRpWithdraw, sendRpHolding, address:$address, rawTxHash:$rawTxHash");
     if (rawTxHash == null) {
-      throw HttpResponseCodeNotSuccess(-30012, 'RP余额不足!');
+      throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
     }
 
-    return await RPHttpCore.instance.postEntity(
-        "/v1/rp/level/withdraw/submit", EntityFactory<dynamic>((json) => json),
+    return await RPHttpCore.instance.postEntity("/v1/rp/level/withdraw/submit", EntityFactory<dynamic>((json) => json),
         params: {
           "address": address,
           "withdraw": withdrawAmount.toString(),
@@ -568,10 +575,8 @@ class RPApi {
     var address = wallet?.getEthAccount()?.address ?? "";
 
     var gasLimit = 100000;
-    var gasPrice = BigInt.from(
-        WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt());
-    print(
-        '[rp_api] postRpApprove, address:$address, amount:$amount, gasPrice:$gasPrice, gasLimit:$gasLimit');
+    var gasPrice = BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt());
+    print('[rp_api] postRpApprove, address:$address, amount:$amount, gasPrice:$gasPrice, gasLimit:$gasLimit');
 
     var ret = await wallet.getAllowance(
       WalletConfig.hynRPHrc30Address,

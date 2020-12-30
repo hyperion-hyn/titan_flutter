@@ -54,7 +54,6 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
   CoinVo _coinVo;
   WalletVo _activatedWallet;
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
-  String get _address => _activatedWallet?.wallet?.getAtlasAccount()?.address;
 
   Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
 
@@ -139,6 +138,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
     super.didChangeDependencies();
 
     _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
+    _promotionRuleEntity = RedPocketInheritedModel.of(context).rpPromotionRule;
   }
 
   @override
@@ -160,14 +160,12 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
       BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
     }
 
-    if (mounted) {
-      _loadDataBloc.add(RefreshSuccessEvent());
+    if (context != null) {
+      BlocProvider.of<RedPocketBloc>(context).add(UpdatePromotionRuleEvent());
     }
 
-    var netData = await _rpApi.getRPPromotionRule(_address);
-    if (netData?.static?.isNotEmpty ?? false) {
-      _promotionRuleEntity = netData;
-      print("[$runtimeType] getNetworkData, count:${_dynamicDataList.length}");
+    if (mounted) {
+      _loadDataBloc.add(RefreshSuccessEvent());
     }
   }
 
@@ -175,7 +173,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '增加持币',
+        baseTitle: S.of(context).rp_add_holding,
       ),
       backgroundColor: Colors.white,
       body: Column(
@@ -200,11 +198,11 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                         child: Column(
                           children: <Widget>[
                             rpRowText(
-                              title: '当前量级',
+                              title: S.of(context).rp_current_level,
                               amount: levelValueToLevelName(_myLevelInfo?.currentLevel ?? 0),
                             ),
                             rpRowText(
-                              title: '当前持币',
+                              title: S.of(context).rp_current_holding,
                               amount: '${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
                             ),
                             Padding(
@@ -214,7 +212,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: <Widget>[
                                   Text(
-                                    '转入持币',
+                                    S.of(context).rp_transfer_holding,
                                     style: TextStyle(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 14,
@@ -257,10 +255,10 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                                           LengthLimitingTextInputFormatter(18),
                                           FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
                                         ],
-                                        hint: '请输入增加数量',
+                                        hint: S.of(context).input_add_amount,
                                         validator: (textStr) {
                                           if (textStr.length == 0) {
-                                            return '请输入增加数量';
+                                            return S.of(context).input_add_amount;
                                           }
 
                                           var inputValue = Decimal.tryParse(textStr ?? '0');
@@ -274,7 +272,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                                           //print("inputValue:$inputValue, balanceValue:$balanceValue");
 
                                           if (inputValue > balanceValue) {
-                                            return '输入数量超过了钱包余额';
+                                            return S.of(context).input_count_over_balance;
                                           }
                                         },
                                       ),
@@ -307,7 +305,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                                                       right: 4,
                                                     ),
                                                     child: Text(
-                                                      '预计总持币',
+                                                      S.of(context).rp_esmatite_total_holding,
                                                       style: TextStyle(
                                                         fontWeight: FontWeight.normal,
                                                         fontSize: 10,
@@ -347,7 +345,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                                     ),
                                   ),
                                   Text(
-                                    '适当增加持币可以防止因',
+                                    S.of(context).rp_add_holding_prevent_level_drop_1,
                                     style: TextStyle(
                                       color: HexColor('#999999'),
                                       fontSize: 10,
@@ -359,7 +357,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                                         color: HexColor('#333333'), fontSize: 12, fontWeight: FontWeight.w600),
                                   ),
                                   Text(
-                                    '增加而掉级',
+                                    S.of(context).rp_add_holding_prevent_level_drop_2,
                                     style: TextStyle(
                                       color: HexColor('#999999'),
                                       fontSize: 10,
@@ -412,7 +410,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
 
     if ((_myLevelInfo?.currentLevel ?? 0) == 0) {
       Fluttertoast.showToast(
-        msg: '请先提升量级！',
+        msg: '${S.of(context).rp_level_up_first}！',
         gravity: ToastGravity.CENTER,
       );
       return;
@@ -450,7 +448,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
         );
 
         Fluttertoast.showToast(
-          msg: '增加持币请求已广播！',
+          msg: '${S.of(context).rp_add_holding_brocast_sent}！',
           gravity: ToastGravity.CENTER,
         );
 

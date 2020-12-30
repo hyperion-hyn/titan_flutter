@@ -64,7 +64,8 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
   // todo: 有空加开关
   bool _isOpenLevelCounts = false;
 
-  Decimal get _currentHoldingValue => Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? Decimal.zero;
+  Decimal get _currentHoldingValue =>
+      Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? Decimal.zero;
 
   @override
   void initState() {
@@ -111,7 +112,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '持币量级',
+        baseTitle: S.of(context).rp_holding_level,
         backgroundColor: HexColor('#F8F8F8'),
       ),
       body: LoadDataContainer(
@@ -232,7 +233,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
 
                 return _columnWidget(
                   '${levelCountsModel?.count ?? 0}',
-                  '全网${levelValueToLevelName(index)}级',
+                  '${S.of(context).global}${levelValueToLevelName(index)}${S.of(context).level}',
                   isSmall: true,
                 );
               }).toList(),
@@ -305,7 +306,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
                   ),
                   child: Container(
                     child: Text(
-                      '当前量级',
+                      S.of(context).rp_current_level,
                       style: TextStyle(
                         color: HexColor('#333333'),
                         fontSize: 12,
@@ -345,7 +346,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
                                   ),
                                   Expanded(
                                     child: Text(
-                                      '等级下降了',
+                                      S.of(context).level_drop,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 12,
@@ -394,7 +395,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
                               left: 4,
                             ),
                             child: Text(
-                              '当前量级为0级，不能获得红包，请尽快升级',
+                              S.of(context).rp_zero_level_warning,
                               style: TextStyle(
                                 color: HexColor('#333333'),
                                 fontSize: 14,
@@ -423,7 +424,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
                       Expanded(
                         child: _columnWidget(
                           '$burning RP',
-                          '燃烧量',
+                          S.of(context).burning_amount,
                         ),
                       ),
                       SizedBox(
@@ -432,7 +433,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
                       Expanded(
                         child: _columnWidget(
                           '$holding RP',
-                          '当前持币',
+                          S.of(context).rp_current_holding,
                         ),
                       ),
                       SizedBox(
@@ -454,7 +455,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
                         children: <Widget>[
                           Container(
                             child: ClickOvalButton(
-                              '升级/增持',
+                              S.of(context).rp_upgrade_or_add_holding,
                               _navToLevelUpgradeAction,
                               width: 120,
                               height: 32,
@@ -480,7 +481,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
                         width: 14,
                       ),
                       ClickOvalButton(
-                        '取回持币',
+                        S.of(context).rp_retrive_holding,
                         _navToLevelUnStakingAction,
                         width: 120,
                         height: 32,
@@ -514,7 +515,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
-                '量级记录',
+                S.of(context).rp_level_record,
                 style: TextStyle(
                   color: HexColor("#333333"),
                   fontSize: 14,
@@ -579,38 +580,38 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
     var isShowState = false;
 
     if (recordType == 1) {
-      detailStr = '取回持币 ${model.withdrawStr} RP';
+      detailStr = '${ S.of(context).rp_retrive_holding} ${model.withdrawStr} RP';
       isShowState = true;
     } else if (recordType == 2) {
-      detailStr = '全网发行增长调整';
+      detailStr =  S.of(context).rp_global_supply_adjustment;
       isShowState = false;
     } else if (recordType == 3) {
-      detailStr = '燃烧 ${model.burningStr} RP，增持 ${model.holdingStr} RP';
+      detailStr = '${ S.of(context).rp_burn} ${model.burningStr} RP，${ S.of(context).rp_add} ${model.holdingStr} RP';
       isShowState = true;
     } else if (recordType == 4) {
-      detailStr = '燃烧 ${model.burningStr} RP，增持 ${model.holdingStr} RP';
+      detailStr = '${ S.of(context).rp_burn} ${model.burningStr} RP，${ S.of(context).rp_add} ${model.holdingStr} RP';
       isShowState = true;
     } else if (recordType == 5) {
-      detailStr = '增持 ${model.holdingStr} RP';
+      detailStr = '${ S.of(context).rp_add} ${model.holdingStr} RP';
       isShowState = true;
     } else if (recordType == 6) {
-      detailStr = '增持 ${model.holdingStr} RP';
+      detailStr = '${ S.of(context).rp_add} ${model.holdingStr} RP';
       isShowState = true;
     } else if (recordType == 7) {
-      detailStr = '取回持币 ${model.withdrawStr} RP';
+      detailStr = '${S.of(context).rp_retrive_holding} ${model.withdrawStr} RP';
       isShowState = true;
     }
     var recordStatus = model?.state ?? 0;
-    var statusHint = '进行中';
+    var statusHint = '${ S.of(context).ongoing}';
     var statusColor = HexColor('#FFE4B300');
     if (recordStatus == 0) {
-      statusHint = '待确认';
+      statusHint = S.of(context).to_be_confirmed;
       statusColor = HexColor('#FFE4B300');
     } else if (recordStatus == 1) {
-      statusHint = '已确认';
+      statusHint = S.of(context).confirmed;
       statusColor = HexColor('#FF999999');
     } else if (recordStatus == 2) {
-      statusHint = '失败';
+      statusHint = S.of(context).failed;
       statusColor = HexColor('#FFEB3737');
     }
     var recordTime = FormatUtil.newFormatUTCDateStr(
@@ -859,7 +860,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
   _navToLevelUnStakingAction() {
     if (_currentHoldingValue <= Decimal.zero) {
       Fluttertoast.showToast(
-        msg: '可取回持币金额为0！',
+        msg: '${S.of(context).rp_retrive_holding_null}！',
         gravity: ToastGravity.CENTER,
       );
       return;

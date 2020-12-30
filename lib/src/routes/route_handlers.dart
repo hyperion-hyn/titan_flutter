@@ -9,6 +9,7 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_create_node_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_broadcast_success_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_page.dart';
+import 'package:titan/src/pages/atlas_map/atlas/burn_history_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -313,6 +314,12 @@ var map3NodeIntroductionHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   return Map3NodeIntroductionPage();
 });
+
+var map3NodeBurnHistoryHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return BurnHistoryPage();
+});
+
 
 var map3NodeMyHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);

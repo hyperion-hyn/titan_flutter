@@ -15,7 +15,6 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_list_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
@@ -35,7 +34,6 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'entity/rp_airdrop_round_info.dart';
-import 'entity/rp_promotion_rule_entity.dart';
 import 'entity/rp_statistics.dart';
 
 class RedPocketPage extends StatefulWidget {
@@ -101,7 +99,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           FlatButton(
             onPressed: _navToMyRpRecords,
             child: Text(
-              '我的红包',
+              S.of(context).my_redpocket,
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
@@ -233,7 +231,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      '钱包余额',
+                      S.of(context).wallet_balance,
                       style: TextStyle(
                         fontSize: 12,
                         color: DefaultColors.color999,
@@ -391,7 +389,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                                         maxLines: 2,
                                       ),
                                       Text(
-                                        '多一个好友，机会提升一倍',
+                                        S.of(context).more_friends_more_chances,
                                         style: TextStyle(
                                           color: DefaultColors.color999,
                                           fontSize: 11,
@@ -500,7 +498,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         left: 4,
                       ),
                       child: Text(
-                        '越早传导，获得越多RP!',
+                        S.of(context).sooner_get_more_rp,
                         style: TextStyle(
                           fontSize: 12,
                         ),
@@ -556,7 +554,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 Padding(
                   padding: EdgeInsets.all(16.0),
                   child: ClickOvalButton(
-                    '马上传导',
+                    S.of(context).rp_transmit_now,
                     _navToRPPool,
                     width: 140,
                     height: 32,
@@ -592,7 +590,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 Row(
                   children: [
                     Text(
-                      '统计',
+                      S.of(context).statistics,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),

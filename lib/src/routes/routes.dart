@@ -61,7 +61,12 @@ class Routes {
   static const String map3node_contract_detail_page = '/map3node/contract_detail_page';
 
   static const String map3node_share_page = '/map3node/share_page';
+
   static const String map3node_introduction_page = '/map3node/pre_create_contract_page';
+
+  static const String map3node_burn_history_page = '/map3node/map3node_burn_history_page';
+
+
   static const String map3node_my_page = '/map3node/my_page';
 
   static const String map3node_my_page_reward = '/map3node/my_page_reward';
@@ -232,6 +237,14 @@ class Routes {
       handler: map3NodeIntroductionHandler,
       transitionType: pushNewPageTransitionType,
     );
+
+    router.define(
+      map3node_burn_history_page,
+      handler: map3NodeBurnHistoryHandler,
+      transitionType: pushNewPageTransitionType,
+    );
+
+
 
     router.define(
       map3node_my_page_reward,

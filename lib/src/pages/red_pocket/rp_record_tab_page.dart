@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_list_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_record_statistics_page.dart';
 
 class RpRecordTabPage extends StatefulWidget {
   @override
@@ -20,9 +22,30 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
       length: 3,
       child: Scaffold(
         appBar: BaseAppBar(
-          baseTitle: '我的红包',
-          //backgroundColor: HexColor('#F8F8F8'),
+          baseTitle: S.of(context).my_redpocket,
           backgroundColor: Colors.white,
+          /*
+          actions: <Widget>[
+            FlatButton(
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RpRecordStatisticsPage(),
+                  ),
+                );
+              },
+              child: Text(
+                '每日统计',
+                style: TextStyle(
+                  color: HexColor("#1F81FF"),
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+          ],
+          */
         ),
         body: Scaffold(
           appBar: new PreferredSize(
@@ -55,17 +78,17 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
 
                         Tab(
                           child: Text(
-                            '幸运红包',
+                            S.of(context).lucky_rp,
                           ),
                         ),
                         Tab(
                           child: Text(
-                            '量级红包',
+                            S.of(context).level_rp,
                           ),
                         ),
                         Tab(
                           child: Text(
-                            '晋升红包',
+                            S.of(context).promotion_rp,
                           ),
                         ),
                       ],
@@ -81,9 +104,9 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
           ),
           body: TabBarView(
             children: [
-              RpRecordListPage(state: RedPocketType.LUCKY,),
-              RpRecordListPage(state: RedPocketType.LEVEL,),
-              RpRecordListPage(state: RedPocketType.PROMOTION,),
+              RpRecordListPage(rpType: RedPocketType.LUCKY,),
+              RpRecordListPage(rpType: RedPocketType.LEVEL,),
+              RpRecordListPage(rpType: RedPocketType.PROMOTION,),
             ],
           ),
         ),
