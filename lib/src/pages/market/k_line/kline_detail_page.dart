@@ -1453,7 +1453,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
             'low': double.parse(itemList[3].toString()),
             'close': double.parse(itemList[4].toString()),
             'vol': double.parse(itemList[5].toString()),
-            'amount': double.parse(itemList[6].toString()),
+            'amount': double.parse(itemList[5].toString()),
             'count': 0,
             'id': int.parse(itemList[0].toString()) / 1000,
           };
