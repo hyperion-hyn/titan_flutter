@@ -62,9 +62,9 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
   bool _isLoadedMap = false;
 
   List<String> _titles = [
-    "名称",
-    "类别",
-    "位置",
+  S.of(Keys.rootKey.currentContext).exchange_name,
+  S.of(Keys.rootKey.currentContext).category,
+  S.of(Keys.rootKey.currentContext).position,
   ];
 
   List<String> _questionList = [
@@ -74,11 +74,11 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
     "",
   ];
   String _currentAnswer;
-  List<String> _answerExistList = ["存在", "不存在"];
-  List<String> _answerTrueList = ["是", "否"];
-  List<String> _answerRadiusList = ["偏差小于50米", "偏差小于100米", "偏差小于200米", "偏差较大"]; // 忽略判断
-  List<String> _answerRegulationList = ["符合地方法规", "违反地方法规", "不确定"];
-  List<String> _answerDefaultList = ["是", "否", "不确定"];
+  List<String> _answerExistList = [S.of(Keys.rootKey.currentContext).exist, S.of(Keys.rootKey.currentContext).does_not_exist];
+  List<String> _answerTrueList = [S.of(Keys.rootKey.currentContext).isolation_yes, S.of(Keys.rootKey.currentContext).isolation_no];
+  List<String> _answerRadiusList = [S.of(Keys.rootKey.currentContext).deviation_less_than_50_meters, S.of(Keys.rootKey.currentContext).deviation_less_than_100_meters, S.of(Keys.rootKey.currentContext).deviation_less_than_200_meters, S.of(Keys.rootKey.currentContext).deviation_more_than_meters]; // 忽略判断
+  List<String> _answerRegulationList = [S.of(Keys.rootKey.currentContext).compliance_with_local_regulations, S.of(Keys.rootKey.currentContext).violation_of_local_regulations, S.of(Keys.rootKey.currentContext).uncertain];
+  List<String> _answerDefaultList = [S.of(Keys.rootKey.currentContext).isolation_yes, S.of(Keys.rootKey.currentContext).isolation_no, S.of(Keys.rootKey.currentContext).uncertain];
   List<String> _answerList = []; // 忽略判断
 
   List<Map<String, dynamic>> _answerDetailList = [];

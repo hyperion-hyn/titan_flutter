@@ -64,12 +64,12 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
     switch (_lastPendingTx.status) {
       case TransactionStatus.pending:
       case TransactionStatus.pending_for_receipt:
-        notification = '提取Map3奖励请求处理中...';
+        notification = S.of(context).extracting_reward_request_processing;
 
         break;
 
       case TransactionStatus.success:
-        notification = '提取成功，Map3奖励已发送您的钱包';
+        notification = S.of(context).successful_withdrawal_rewards_sent_your_wallet;
         break;
     }
     return notification;
@@ -278,7 +278,7 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
                 vertical: 4.0,
               ),
               child: Text(
-                '当前可提',
+                S.of(context).currently_available,
                 style: TextStyle(
                   fontSize: 13,
                 ),
@@ -287,7 +287,7 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24.0),
               child: ClickOvalButton(
-                '提取奖励',
+                S.of(context).action_atals_receive_award,
                 _collect,
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
@@ -386,7 +386,7 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
       );
 
       if (lastTxIsPending) {
-        Fluttertoast.showToast(msg: '请先等待上一笔交易处理完成');
+        Fluttertoast.showToast(msg: S.of(context).wait_for_completion_previous_transaction);
         return;
       }
 
@@ -562,7 +562,7 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
                     height: 4,
                   ),
                   Text(
-                    '可提奖励',
+                    S.of(context).map3_current_reward,
                     style: TextStyle(
                       color: DefaultColors.color999,
                       fontSize: 12,

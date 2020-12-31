@@ -1159,7 +1159,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                     padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                     child: Text(
                       !exchangeModel.isActiveAccountAndHasAssets()
-                          ? "授权后查看余额"
+                          ? S.of(context).check_balance_after_authorization
                           : "${S.of(context).available}  ${getValidNum()}  ${isBuy ? widget.base : widget.quote}",
                       style: TextStyle(
                           color: DefaultColors.color999, fontSize: 10),

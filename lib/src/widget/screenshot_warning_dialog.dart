@@ -111,7 +111,7 @@ class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
                             flex: 1,
                             child: FlatButton(
                               child: Text(
-                                S.of(context).no_screenshot_dialog_cancel,
+                                S.of(context).cancel,
                                 style: TextStyle(
                                   color: HexColor('#FF9B9B9B'),
                                   fontSize: 16,

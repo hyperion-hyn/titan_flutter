@@ -84,12 +84,12 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
     var notification = '';
     switch (_status) {
       case TransactionStatus.pending:
-        notification = '终止请求处理中...';
+        notification = S.of(context).map3_exit_doing;
 
         break;
 
       case TransactionStatus.success:
-        notification = '节点已终止，抵押金额已返回您的钱包';
+        notification = S.of(context).node_terminated_mortgage_amount_returned_wallet;
 
         //notification = '终止请求已完成, 请前往【钱包】查看退款情况!';
         break;

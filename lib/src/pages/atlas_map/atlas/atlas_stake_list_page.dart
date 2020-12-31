@@ -55,7 +55,7 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.black),
         title: Text(
-          "抵押Atlas节点",
+          S.of(context).staking_atlas_node,
           style: TextStyle(
             color: Colors.black,
             fontSize: 16,
@@ -100,12 +100,12 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      "参与抵押",
+                      S.of(context).join_delegate,
                       style: TextStyles.textC333S16,
                     ),
                     Spacer(),
                     Text(
-                      "共${_dataList.length}个节点",
+                      S.of(context).nodes_in_total(_dataList.length),
                       style: TextStyles.textC999S12,
                     )
                   ],
@@ -140,7 +140,7 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
                                 padding: const EdgeInsets.only(top: 2.0, bottom: 2),
                                 child: Text(map3InfoEntity.address,style: TextStyles.textC999S12),
                               ),
-                              Text("昨日年化：${map3InfoEntity.rewardRate}",style: TextStyles.textC333S12),
+                              Text(S.of(context).annualized_yesterday_reward_rate(map3InfoEntity.rewardRate),style: TextStyles.textC333S12),
                             ],
                           ),
                         ),
@@ -149,7 +149,7 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
                             Text("${map3InfoEntity.staking}",style: TextStyles.textC333S14),
                             SizedBox(height: 13,),
                             ClickOvalButton(
-                              "抵押",
+                              S.of(context).map3_node_delegate,
                                   () {},
                               width: 52,
                               height: 22,

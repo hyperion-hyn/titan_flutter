@@ -77,8 +77,6 @@ class Routes {
   //atlas
   static const String atlas_create_node_page = '/atlas/atlas_create_node';
   static const String atlas_create_node_info_page = '/atlas/atlas_create_node_info';
-  static const String atlas_create_node_confirm_page = '/atlas/atlas_create_node_confirm';
-  static const String atlas_broadcast_success_page = '/atlas/atlas_broadcast_success';
   static const String atlas_detail_page = '/atlas/atlas_detail';
   static const String atlas_my_node_page = '/atlas/atlas_my_node';
 
@@ -296,16 +294,6 @@ class Routes {
     router.define(
       atlas_create_node_info_page,
       handler: atlasCreateNodeInfoHandler,
-      transitionType: pushNewPageTransitionType,
-    );
-    router.define(
-      atlas_create_node_confirm_page,
-      handler: atlasCreateNodeConfirmHandler,
-      transitionType: pushNewPageTransitionType,
-    );
-    router.define(
-      atlas_broadcast_success_page,
-      handler: atlasBroadcastSuccessHandler,
       transitionType: pushNewPageTransitionType,
     );
     router.define(

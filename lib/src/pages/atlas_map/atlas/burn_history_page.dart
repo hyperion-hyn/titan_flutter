@@ -49,7 +49,7 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: 'HYN燃烧',
+        baseTitle: S.of(context).hyn_burning,
         backgroundColor: Colors.grey[50],
       ),
       body: LoadDataContainer(
@@ -79,14 +79,14 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
                   ),
                   child: Row(
                     children: [
-                      Text('燃烧记录'),
+                      Text(S.of(context).burning_record),
                       Spacer(),
                       InkWell(
                           onTap: () {
                             AtlasApi.goToAtlasMap3HelpPage(context);
                           },
                           child: Text(
-                            '关于燃烧',
+                            S.of(context).about_burning,
                             style: TextStyle(
                               color: Colors.blue,
                             ),
@@ -154,7 +154,7 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
             SizedBox(
               height: 16,
             ),
-            Text('历史累计燃烧'),
+            Text(S.of(context).historical_cumulative_burning),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
@@ -172,7 +172,7 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
                   left: 16.0,
                 ),
                 child: Text(
-                  '通过内燃和外燃机制持续降低HYN供给总量，从而提升HYN价值。每过30个纪元燃烧一次，并展示本轮燃烧总量。',
+                  S.of(context).internal_external_combustion_increasing_value,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 11,
@@ -255,7 +255,7 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
                                   right: 4.0,
                                 ),
                                 child: Text(
-                                  '创世燃烧',
+                                  S.of(context).creation_burn,
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: DefaultColors.color999,

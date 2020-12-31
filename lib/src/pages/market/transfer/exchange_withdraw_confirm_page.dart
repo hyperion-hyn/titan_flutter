@@ -391,8 +391,7 @@ class _ExchangeWithdrawConfirmPageState
                                 )
                               : SizedBox(),
                         ),
-                        Text(
-                          '实际扣除的矿工费将以${widget.coinVo.symbol}来抵除',
+                        Text( S.of(context).fee_deducted_offset_by_symbol(widget.coinVo.symbol),
                           style: TextStyle(
                             color: DefaultColors.color999,
                             fontSize: 12,

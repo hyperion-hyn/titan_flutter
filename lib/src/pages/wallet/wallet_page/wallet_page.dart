@@ -229,7 +229,7 @@ class _WalletPageState extends BaseState<WalletPage>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      '查看',
+                      S.of(context).check,
                       style: TextStyle(
                         fontWeight: FontWeight.normal,
                         fontSize: 14,

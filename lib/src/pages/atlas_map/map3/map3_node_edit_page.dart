@@ -208,7 +208,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
       });
     }
 
-    var notification = lastTxIsPending ? '编辑请求正处理中...' : '';
+    var notification = lastTxIsPending ? S.of(context).edit_request_being_processed : '';
 
     var _lastCurrentBlockHeight = _currentBlockHeight;
     _currentBlockHeight = AtlasInheritedModel.of(context).committeeInfo?.blockNum ?? 0;
@@ -432,7 +432,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     print("map3NodeAddress: $map3NodeAddress");
 
     if (map3NodeAddress.isEmpty) {
-      Fluttertoast.showToast(msg: '新创建的节点暂时不支持修改');
+      Fluttertoast.showToast(msg: S.of(context).newly_created_node_not_modification);
       return;
     }
 
@@ -494,7 +494,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     }
 
     if (!isEdit) {
-      Fluttertoast.showToast(msg: '未修改节点信息');
+      Fluttertoast.showToast(msg: S.of(context).node_information_not_modified);
       return;
     }
 

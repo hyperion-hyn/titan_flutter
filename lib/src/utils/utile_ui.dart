@@ -772,7 +772,7 @@ class UiUtil {
           return Wrap(
             children: <Widget>[
               ListTile(
-                title: Text('拍照', textAlign: TextAlign.center),
+                title: Text(S.of(context).take_picture, textAlign: TextAlign.center),
                 onTap: () async {
                   Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext, true);

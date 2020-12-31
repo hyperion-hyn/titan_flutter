@@ -22,30 +22,8 @@ class Map3NodeCreateConfirmPage extends StatefulWidget {
 }
 
 class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
-  List<String> _titleList = [
-    S.of(Keys.rootKey.currentContext).icon,
-    S.of(Keys.rootKey.currentContext).name,
-    S.of(Keys.rootKey.currentContext).node_num,
-    S.of(Keys.rootKey.currentContext).first_time_stake,
-    S.of(Keys.rootKey.currentContext).manage_fee,
-    S.of(Keys.rootKey.currentContext).website,
-    S.of(Keys.rootKey.currentContext).contact,
-    S.of(Keys.rootKey.currentContext).description,
-    S.of(Keys.rootKey.currentContext).cloud_provider,
-    S.of(Keys.rootKey.currentContext).node_addrees
-  ];
-  List<String> _detailList = [
-    "",
-    "派大星",
-    "PB2020",
-    "200,000 HYN",
-    "20%",
-    "www.hyn.space",
-    "12345678901",
-    "欢迎参加我的合约，前10名参与者返10%管理。",
-    "亚马逊云",
-    "美国东部（弗吉尼亚北部）"
-  ];
+  List<String> _titleList = [];
+  List<String> _detailList = [];
   AtlasApi _atlasApi = AtlasApi();
 
   @override
@@ -185,7 +163,7 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
                           TextStyle(color: HexColor("#999999"), fontSize: 14),
                     ),
                   ),
-                  title != "图标"
+                  title != S.of(context).icon
                       ? Expanded(
                           child: Text(
                             detail,

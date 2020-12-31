@@ -91,7 +91,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 4.0),
                           child: Text(
-                            '节点号：${_atlasInfo.nodeId}',
+                            S.of(context).node_num_and_node_id(_atlasInfo.nodeId),
                             style: TextStyle(
                               fontSize: 12,
                             ),

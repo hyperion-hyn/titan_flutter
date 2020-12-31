@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
@@ -20,7 +21,7 @@ class _Map3NodeRewardTabsPageState extends State<Map3NodeRewardTabsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '我的奖励',
+        baseTitle: S.of(context).my_reward,
         actions: [
           FlatButton(
             onPressed: () {
@@ -30,7 +31,7 @@ class _Map3NodeRewardTabsPageState extends State<Map3NodeRewardTabsPage> {
               );
             },
             child: Text(
-              '提取记录',
+              S.of(context).extract_records,
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,

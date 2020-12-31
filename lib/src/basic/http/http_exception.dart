@@ -89,11 +89,11 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
   ),
   HttpResponseCodeNotSuccess(
     -2007,
-    "邀请人数已满",
+    S.of(Keys.rootKey.currentContext).invitations_number_full,
   ),
   HttpResponseCodeNotSuccess(
     -3001,
-    "存在处理中的交易，请稍后重试",
+    S.of(Keys.rootKey.currentContext).transaction_progress_try_again,
   ),
   HttpResponseCodeNotSuccess(
     -20001,
@@ -133,11 +133,11 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
   ),
   HttpResponseCodeNotSuccess(
     -30011,
-    'HYN余额不足支付网络费用!',
+    S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas,
   ),
   HttpResponseCodeNotSuccess(
     -30012,
-    'RP余额不足!',
+    S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh,
   ),
   ERROR_FUND_PASSWORD
 ];

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
@@ -48,7 +49,7 @@ class _Map3NodeCollectHistoryState extends DataListState<Map3NodeCollectHistoryP
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: BaseAppBar(
-        baseTitle: '提取记录',
+        baseTitle: S.of(context).extract_records,
       ),
       body: LoadDataContainer(
         bloc: loadDataBloc,
@@ -77,9 +78,9 @@ class _Map3NodeCollectHistoryState extends DataListState<Map3NodeCollectHistoryP
   Widget _buildItem({HynTransferHistory item}) {
     var title = '';
     if (item.type == 5) {
-      title = '提取Atlas奖励到Map3';
+      title = S.of(context).withdraw_atlas_rewards_map3;
     } else if (item.type == 11) {
-      title = '提取Map3奖励到钱包';
+      title = S.of(context).withdraw_map3_rewards_wallet;
     }
     TransactionDetailVo transactionDetail = TransactionDetailVo.fromHynTransferHistory(item, 0, "HYN");
 

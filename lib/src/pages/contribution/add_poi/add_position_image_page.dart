@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/config/consts.dart';
 
 class AddPositionImagePage extends StatefulWidget {
   AddPositionImagePage();
@@ -15,15 +16,15 @@ class AddPositionImagePage extends StatefulWidget {
 class _AddPositionImageState extends State<AddPositionImagePage> with TickerProviderStateMixin {
   int _currentIndex = 0;
   List<String> _titleList = [
-    "拍摄时请保证商铺名称清晰完整，并拍全招牌和门脸",
-    "拍摄时请拍清楚商铺的左右相邻商铺",
-    "照片类型分为室外和室内，室外必填，室内选填，两者都有更容易评为优质POI哦",
-    "请勿拍摄移动摊位等不固定地点，请勿拍摄军事禁区等涉密地点"
+    S.of(Keys.rootKey.currentContext).store_name_clear_when_shooting,
+    S.of(Keys.rootKey.currentContext).shooting_picture_adjacent_shops,
+    S.of(Keys.rootKey.currentContext).photo_outdoor_indoor_high_quality,
+    S.of(Keys.rootKey.currentContext).not_take_mobile_booths_unfixed_locations
   ];
 
   List<String> _subtitleList = [
     "",
-    "（如相邻无商铺，请拍清楚商铺左右环境）",
+    S.of(Keys.rootKey.currentContext).no_shops_nearby_surrounding_environment,
     "",
     "",
   ];

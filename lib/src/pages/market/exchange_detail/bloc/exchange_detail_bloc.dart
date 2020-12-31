@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/market_info_entity.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
@@ -29,7 +31,7 @@ class ExchangeDetailBloc extends Bloc<ExchangeDetailEvent, ExchangeDetailState> 
         if(error is HttpResponseCodeNotSuccess){
           yield OrderPutLimitState(respCode: error.code, respMsg: error.message);
         }else{
-          yield OrderPutLimitState(respCode: -10000, respMsg: "网络异常");
+          yield OrderPutLimitState(respCode: -10000, respMsg: S.of(Keys.rootKey.currentContext).network_error);
         }
       }
     } else if (event is MarketExchangeEvent) {

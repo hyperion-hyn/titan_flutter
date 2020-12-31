@@ -208,7 +208,7 @@ class WalletShowAccountDetailPageState
       if (widget.isContain) {
         _accountDetailViewList.add(AccountDetailItemView(
           AccountDetailType.TEXT_COPY,
-          "${S.of(context).tx_to_address}（原以太链0X开头）:",
+          "${S.of(context).tx_to_address}（${S.of(context).original_ether_start_with_zerox}）:",
           rightStr: _toEthAddress,
         ));
       }

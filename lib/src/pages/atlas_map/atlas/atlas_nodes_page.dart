@@ -138,7 +138,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                         vertical: 8,
                       ),
                       child: Text(
-                        '节点列表',
+                        S.of(context).node_list,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -168,8 +168,8 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   }
 
   _atlasIntro() {
-    var title = 'Atlas节点';
-    var desc = 'Atlas网络层由Atlas节点组成，并按照抵押量降序选出88个出块节点进行验证、出块、清算、并获取出块奖励。';
+    var title = S.of(context).atlas_node;
+    var desc = S.of(context).atlas_node_intro;
     var guideTitle = S.of(context).tutorial;
     return Container(
       margin: const EdgeInsets.only(

@@ -331,7 +331,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                         width: 112,
                         child: OutlineButton(
                           child: Text(
-                            "普通充币",
+                            S.of(context).ordinary_deposit,
                             style: TextStyle(
                                 color: Theme.of(context).primaryColor),
                           ),

@@ -45,7 +45,7 @@ class FormatUtil {
 
   static String formatTenThousand(String strValue) {
     var doubleValue = double.parse(strValue) / 10000;
-    return NumberFormat("#,###,###,###").format(doubleValue) + "万";
+    return NumberFormat("#,###,###,###").format(doubleValue) + S.of(Keys.rootKey.currentContext).ten_thousand;
   }
 
   static String formatTenThousandNoUnit(String strValue) {

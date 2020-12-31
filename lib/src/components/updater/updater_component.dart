@@ -136,7 +136,7 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 26.0),
                                 child: ClickOvalButton(
-                                  "立即体验",
+                                  S.of(context).experience_now,
                                   () {
                                     _launch(updateEntity);
                                   },

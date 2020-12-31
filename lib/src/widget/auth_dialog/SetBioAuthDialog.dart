@@ -124,7 +124,7 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Text(
-            '您的设备支持面容识别功能，是否开启面容识别？',
+            S.of(context).device_supports_face_is_enabled,
             textAlign: TextAlign.center,
             style: TextStyle(color: HexColor('#FF999999')),
           ),
@@ -144,14 +144,14 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
             children: <Widget>[
               Spacer(),
               InkWell(
-                child: Text('暂不开启'),
+                child: Text(S.of(context).not_open),
                 onTap: () {
                   Navigator.of(context).pop(false);
                 },
               ),
               Spacer(),
               ClickOvalButton(
-                '开启',
+                S.of(context).turn_on,
                 () {
                   _authenticate();
                 },
@@ -172,7 +172,7 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Text(
-            '您的设备支持指纹识别功能，是否开启指纹识别？',
+            S.of(context).device_supports_fingerprint_is_enabled,
             textAlign: TextAlign.center,
             style: TextStyle(color: HexColor('#FF999999')),
           ),
@@ -192,14 +192,14 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
             children: <Widget>[
               Spacer(),
               InkWell(
-                child: Text('暂不开启'),
+                child: Text(S.of(context).not_open),
                 onTap: () {
                   Navigator.of(context).pop(false);
                 },
               ),
               Spacer(),
               ClickOvalButton(
-                '开启',
+                S.of(context).turn_on,
                 () {
                   _authenticate();
                 },
@@ -216,31 +216,31 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
   _authenticate() async {
     bool authenticated = false;
     var iosStrings = IOSAuthMessages(
-        cancelButton: '取消',
-        goToSettingsButton: '前往设置',
+        cancelButton: S.of(context).cancel,
+        goToSettingsButton: S.of(context).go_to_settings,
         goToSettingsDescription: widget.biometricType == BiometricType.face
-            ? '请到设置页开启您的面容 ID'
-            : '请到设置页开启您的Touch ID',
+            ? S.of(context).go_to_setting_page_open_face_id
+            : S.of(context).go_settings_turn_on_touch,
         lockOut: widget.biometricType == BiometricType.face
-            ? '请重新启用面容 ID'
-            : '请重新使用的Touch ID');
+            ? S.of(context).re_enable_face_id
+            : S.of(context).re_enable_touch_id);
     var androidStrings = AndroidAuthMessages(
-      cancelButton: '取消',
-      signInTitle: '指纹识别title',
-      fingerprintRequiredTitle: '需要指纹title',
-      fingerprintSuccess: '指纹识别成功',
-      fingerprintHint: '指纹提示',
-      fingerprintNotRecognized: '未检测到指纹',
-      goToSettingsButton: '前往设置',
+      cancelButton: S.of(context).cancel,
+      signInTitle: S.of(context).fingerprint_identification_title,
+      fingerprintRequiredTitle: S.of(context).need_fingerprint_title,
+      fingerprintSuccess: S.of(context).fingerprint_recognition_success,
+      fingerprintHint: S.of(context).fingerprint_prompt,
+      fingerprintNotRecognized: S.of(context).no_fingerprint_detected,
+      goToSettingsButton: S.of(context).go_to_settings,
       goToSettingsDescription: widget.biometricType == BiometricType.face
-          ? '请到设置页开启您的面容 ID'
-          : '请到设置页开启您的指纹识别',
+          ? S.of(context).go_to_setting_page_open_face_id
+          : S.of(context).go_setting_open_fingerprint,
     );
     try {
       authenticated = await auth.authenticateWithBiometrics(
         useErrorDialogs: false,
         stickyAuth: true,
-        localizedReason:'使用您的指纹进行授权',
+        localizedReason:S.of(context).use_fingerprint_for_authorization,
         androidAuthStrings: androidStrings,
         iOSAuthStrings: iosStrings,
         sensitiveTransaction: true
@@ -251,7 +251,7 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: Text('生物识别'),
+                title: Text(S.of(context).bio_auth),
                 content: Text(androidStrings.goToSettingsDescription),
                 actions: <Widget>[
                   FlatButton(
@@ -264,7 +264,7 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
                         Navigator.of(context).pop();
                         TitanPlugin.jumpToBioAuthSetting();
                       },
-                      child: Text('前往设置'))
+                      child: Text(S.of(context).go_to_settings))
                 ],
               );
             });

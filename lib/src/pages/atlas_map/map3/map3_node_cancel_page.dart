@@ -213,7 +213,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     TransactionDetailVo transactionDetail = TransactionDetailVo.fromHynTransferHistory(_lastPendingTx, 0, "HYN");
     var amount = FormatUtil.stringFormatCoinNum(transactionDetail.getDecodedAmount());
 
-    return '部分撤销${amount}HYN请求正处理中...';
+    return S.of(Keys.rootKey.currentContext).cancellation_hyn_being_processed(amount);
   }
 
   @override

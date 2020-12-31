@@ -290,7 +290,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                                   width: 8,
                                 ),
                                 ClickOvalButton(
-                                  "切换钱包",
+                                  S.of(context).switch_wallet,
                                       () async {
                                     Navigator.pop(context);
 
@@ -311,7 +311,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                                   fontSize: 16,
                                 ),
                               ],
-                              content: "你将要切换${walletKeyStore.name}为当前钱包，继续切换吗？",
+                              content: S.of(context).will_switch_current_continue(walletKeyStore.name),
                             );
                           }
                         },

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/config/consts.dart';
 import 'bloc.dart';
 
 class LoadDataBloc extends Bloc<LoadDataEvent, LoadDataState> {
@@ -13,13 +15,23 @@ class LoadDataBloc extends Bloc<LoadDataEvent, LoadDataState> {
     } else if (event is LoadEmptyEvent) {
       yield LoadEmptyState();
     } else if (event is LoadFailEvent) {
-      yield LoadFailState(message: event.message);
+      // S.of(Keys.rootKey.currentContext).all;
+      if(event.message == null){
+        yield LoadFailState(S.of(Keys.rootKey.currentContext).failed_to_load);
+      }else{
+        yield LoadFailState(event.message);
+      }
     } else if (event is RefreshingEvent) {
       yield RefreshingState();
     } else if (event is RefreshSuccessEvent) {
       yield RefreshSuccessState();
     } else if (event is RefreshFailEvent) {
-      yield RefreshFailState(message: event.message);
+      // S.of(Keys.rootKey.currentContext).all;
+      if(event.message == null){
+        yield RefreshFailState(S.of(Keys.rootKey.currentContext).refresh_failed);
+      }else{
+        yield RefreshFailState(event.message);
+      }
     } else if (event is LoadingMoreEvent) {
       yield LoadingMoreState();
     } else if (event is LoadingMoreSuccessEvent) {

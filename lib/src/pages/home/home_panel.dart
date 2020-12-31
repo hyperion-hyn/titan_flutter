@@ -355,7 +355,7 @@ class HomePanelState extends State<HomePanel> {
             ),
           ),
           Text(
-            '应用类',
+            S.of(context).application_class,
             style: TextStyle(
               color: Colors.grey,
             ),
@@ -403,7 +403,7 @@ class HomePanelState extends State<HomePanel> {
                           height: 4,
                         ),
                         Text(
-                          '全球首个基于海伯利安地图底层公链的HRC30交易结构范例',
+                          S.of(context).world_first_hrc30_structure_example,
                           style: TextStyle(
                             fontSize: 13,
                             color: DefaultColors.color999,

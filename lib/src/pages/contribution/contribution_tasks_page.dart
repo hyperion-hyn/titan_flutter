@@ -102,7 +102,7 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
           FlatButton(
             onPressed: _navToCheckInRecords,
             child: Text(
-              '贡献记录',
+              S.of(context).contribution_record,
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,

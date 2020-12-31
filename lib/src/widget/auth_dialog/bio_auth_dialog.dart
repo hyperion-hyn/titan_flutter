@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -102,7 +103,7 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      '钱包授权登陆',
+                                      S.of(context).wallet_authorization_login,
                                       style: TextStyle(
                                         fontSize: 17,
                                         fontWeight: FontWeight.bold,
@@ -157,7 +158,7 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                '重新识别',
+                S.of(context).re_identify,
                 style: TextStyle(
                   color: Colors.blue,
                 ),
@@ -188,7 +189,7 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            '钱包的Touch ID',
+            S.of(context).touch_id_the_wallet,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
@@ -200,14 +201,14 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                '重新识别',
+                S.of(context).re_identify,
                 style: TextStyle(
                   color: Colors.blue,
                 ),
               ),
             ),
           ),
-        Text('请验证已有的指纹'),
+        Text(S.of(context).verify_existing_fingerprint),
         SizedBox(
           height: 32,
         ),
@@ -222,7 +223,7 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
       child: Wrap(
         children: <Widget>[
           Text(
-            '识别失败，剩余$remainCount次',
+            S.of(context).recognition_failed_remaining_times(remainCount),
             style: TextStyle(
               fontSize: 13,
             ),
@@ -232,7 +233,7 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
           ),
           InkWell(
             child: Text(
-              '取消',
+              S.of(context).cancel,
               style: TextStyle(color: Colors.blue, fontSize: 13),
             ),
             onTap: () {

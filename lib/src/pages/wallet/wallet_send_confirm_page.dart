@@ -548,7 +548,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
       var msg;
       if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-        msg = '已在区块链上网络广播转账的消息，区块链网络需要6秒钟开采验证。';
+        msg = S.of(context).transfer_message_broadcast_wait_six_seconds;
       } else {
         msg = S.of(context).transfer_broadcase_success_description;
       }

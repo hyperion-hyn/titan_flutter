@@ -3,6 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
@@ -68,9 +69,9 @@ class BioAuthDialogBloc extends Bloc<BioAuthDialogEvent, BioAuthDialogState> {
           localizedReason: 'Use your face or fingerprint to authorize.');
     } on PlatformException catch (e) {
       if (e.code == auth_error.notEnrolled) {
-        Fluttertoast.showToast(msg: '暂不支持生物识别');
+        Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).not_support_biometrics);
       } else if (e.code == auth_error.notAvailable) {
-        Fluttertoast.showToast(msg: '您当前未开启Face ID授权，请前往设置中心开启');
+        Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).not_enable_face_authorization_go_settings);
       } else if (e.code == auth_error.passcodeNotSet) {
         Fluttertoast.showToast(msg: 'passcodeNotSet');
       } else if (e.code == auth_error.lockedOut) {

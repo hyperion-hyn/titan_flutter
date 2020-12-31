@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/coin_market_api.dart';
@@ -42,7 +43,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '燃烧详情',
+        baseTitle: S.of(context).burning_detail,
       ),
       body: Container(
         color: Colors.white,
@@ -88,36 +89,36 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
                 width: 16,
               ),
               Expanded(
-                child: Text('Atlas主链已经自动完成第${widget._burnHistory.epoch}纪元燃烧计划'),
+                child: Text(S.of(context).atlas_automatically_completed_burning_plan(widget._burnHistory.epoch)),
               ),
             ],
           ),
           _optionItem(
-            '燃烧纪元',
+            S.of(context).burning_era,
             '${widget._burnHistory.epoch}',
           ),
           _optionItem(
-            '区块高度',
+            S.of(context).block_height,
             '${widget._burnHistory.block}',
           ),
           _optionItem(
-            '燃烧量',
+            S.of(context).burning_amount,
             '$_burnTokenAmountStr',
           ),
           _optionItem(
-            'HYN价格',
+            S.of(context).hyn_price_num,
             '${quotesSign.sign} ${hynQuote?.price ?? '--'}',
           ),
           _optionItem(
-            '价值(相当于)',
+            S.of(context).value_equivalent_to,
             '${quotesSign.sign} $_burnTokenPriceStr',
           ),
           _optionItem(
-            '占总供应量',
+            S.of(context).of_total_supply,
             '$_burnRate %',
           ),
           _optionItem(
-            '燃烧后HYN总供应量',
+            S.of(context).total_supply_after_combustion,
             '$_hynSupplyAmountStr',
           ),
           Padding(
@@ -133,7 +134,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
                 );
               },
               child: Text(
-                '查看账单',
+                S.of(context).view_bill,
                 style: TextStyle(color: Colors.blue),
               ),
             ),
@@ -141,11 +142,11 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
           SizedBox(
             height: 8,
           ),
-          Text('感谢您的支持！'),
+          Text(S.of(context).thanks_for_your_support),
           SizedBox(
             height: 8,
           ),
-          Text('海伯利安团队'),
+          Text(S.of(context).hyperion_team),
         ],
       ),
     );
@@ -175,7 +176,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
-                content ?? '无',
+                content ?? S.of(context).nothing,
                 style: TextStyle(
                   color: DefaultColors.color333,
                   fontSize: 13,

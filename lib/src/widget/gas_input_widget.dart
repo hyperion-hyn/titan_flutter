@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
@@ -71,7 +72,7 @@ class _GasInputWidgetState extends State<GasInputWidget> {
               child: Row(
                 children: <Widget>[
                   Text(
-                    "矿工费",
+                    S.of(context).transfer_gas_fee,
                     style: TextStyle(color: HexColor("#333333"), fontSize: 16),
                   ),
                   Spacer(),
@@ -95,7 +96,7 @@ class _GasInputWidgetState extends State<GasInputWidget> {
                 children: <Widget>[
                   Spacer(),
                   Text(
-                    "高级模式",
+                    S.of(context).advanced_mode,
                     style: TextStyle(color: HexColor("#999999")),
                   ),
                   Switch(

@@ -10,6 +10,9 @@
  6 合约已启动；
  7 合约期满终止；
 */
+import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/config/consts.dart';
+
 enum Map3InfoStatus {
   MAP,
   CREATE_SUBMIT_ING,
@@ -66,11 +69,11 @@ String getAtlasNodeType(int atlasNodeType){
   AtlasNodeType nodeType = AtlasNodeType.values[atlasNodeType];
   switch(nodeType){
     case AtlasNodeType.CANDIDATE:
-      return "候选节点";
+      return S.of(Keys.rootKey.currentContext).candidate_node;
     case AtlasNodeType.SETTLE:
-      return "清算节点";
+      return S.of(Keys.rootKey.currentContext).clearing_node;
     case AtlasNodeType.BLOCK:
-      return "出块节点";
+      return S.of(Keys.rootKey.currentContext).block_producer;
     default:
       return "";
   }
@@ -116,9 +119,9 @@ String getMap3AtlasStatusRemind(int map3atlasStatus){
   Map3AtlasStatus map3atlas = Map3AtlasStatus.values[map3atlasStatus];
   switch(map3atlas){
     case Map3AtlasStatus.JOIN_DELEGATE_ING:
-      return "你已经抵押该Atlas节点，将在下一纪元生效。";
+      return S.of(Keys.rootKey.currentContext).pledged_atlas_node_effect_next_epoch;
     case Map3AtlasStatus.DELEGATE_SUCCESS_CANCEL_ING:
-      return "你已经撤销抵押该Atlas节点，将在下一纪元生效。";
+      return S.of(Keys.rootKey.currentContext).canceled_mortgage_effect_next_epoch;
     default:
       return "";
   }

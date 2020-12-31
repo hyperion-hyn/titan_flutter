@@ -1,5 +1,6 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/pages/atlas_map/entity/reward_history_entity.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 
@@ -36,12 +37,12 @@ class SimpleLineChart extends StatelessWidget {
             // The top tick label may extend upwards into the top margin region
             // if it is located at the top of the draw area.
             innerPadding: 18),*/
-        new charts.ChartTitle('纪元',
+        new charts.ChartTitle(S.of(context).epoch,
             titleStyleSpec: charts.TextStyleSpec(fontSize: 12),
             behaviorPosition: charts.BehaviorPosition.bottom,
             titleOutsideJustification:
             charts.OutsideJustification.middleDrawArea),
-        new charts.ChartTitle('年化奖励',
+        new charts.ChartTitle(S.of(context).annualized_rewards,
             titleStyleSpec: charts.TextStyleSpec(fontSize: 12),
             behaviorPosition: charts.BehaviorPosition.start,
             titleOutsideJustification:

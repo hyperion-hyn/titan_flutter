@@ -100,7 +100,7 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
       if (state is UpdateWalletPageState && state.updateStatus == 0) {
         _isRefreshBalances = false;
       }else if(state is UpdateWalletPageState && (state.updateStatus == -1)){
-        Fluttertoast.showToast(msg: "请求余额失败");
+        Fluttertoast.showToast(msg: S.of(context).failed_request_balance);
         _isRefreshBalances = false;
       }else if(state is UpdateWalletPageState && (state.updateStatus == 1)){
         _isRefreshBalances = true;

@@ -68,18 +68,18 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
 
 //  注：period类型有如下”：'1min', '5min', '15min', '30min', '60min', '1day', '1week'，"1mon"
   List<PeriodInfoEntity> _normalPeriodList = [
-    PeriodInfoEntity(name: "5分钟", value: "5min"),
-    PeriodInfoEntity(name: "15分钟", value: "15min"),
-    PeriodInfoEntity(name: "60分钟", value: "60min"),
-    PeriodInfoEntity(name: "1天", value: "1day")
+    PeriodInfoEntity(name: S.of(Keys.rootKey.currentContext).five_minutes, value: "5min"),
+    PeriodInfoEntity(name: S.of(Keys.rootKey.currentContext).fifteen_minutes, value: "15min"),
+    PeriodInfoEntity(name: S.of(Keys.rootKey.currentContext).sixty_minutes, value: "60min"),
+    PeriodInfoEntity(name: S.of(Keys.rootKey.currentContext).one_day, value: "1day")
   ];
 
   List<PeriodInfoEntity> _morePeriodList = [
 //    PeriodInfoEntity(name: "分时", value: "分时"),
-    PeriodInfoEntity(name: "1分钟", value: "1min"),
-    PeriodInfoEntity(name: "30分钟", value: "30min"),
-    PeriodInfoEntity(name: "1周", value: "1week"),
-    PeriodInfoEntity(name: "1月", value: "1mon"),
+    PeriodInfoEntity(name: S.of(Keys.rootKey.currentContext).one_minutes, value: "1min"),
+    PeriodInfoEntity(name: S.of(Keys.rootKey.currentContext).thirty_minutes, value: "30min"),
+    PeriodInfoEntity(name: S.of(Keys.rootKey.currentContext).one_week, value: "1week"),
+    PeriodInfoEntity(name: S.of(Keys.rootKey.currentContext).one_month, value: "1mon"),
   ];
 
 //  MainState _mainState = MainState.MA;
@@ -1749,8 +1749,8 @@ Widget delegationListView(BuildContext context,
     priceStr = S.of(context).kline_delegate_price;
     amountStr = S.of(context).kline_delegate_amount;
   } else {
-    priceStr = '价格(HYN)';
-    amountStr = '数量(RP)';
+    priceStr = S.of(context).desc_price_hyn;
+    amountStr = S.of(context).desc_num_rp;
   }
 
   return Container(

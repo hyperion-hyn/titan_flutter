@@ -566,10 +566,10 @@ class _ExchangeDepositConfirmPageState
 
       if (isShowDialog) {
         await UiUtil.showDialogWidget(context,
-            content: Text("你有未确认的转账，如果需要加快转账速度，你可以尝试增加矿工费加快打包速度。"),
+            content: Text(S.of(context).unconfirmed_transfer_speed_transfer_increase_fee),
             actions: [
               FlatButton(
-                  child: Text("查看"),
+                  child: Text(S.of(context).check),
                   onPressed: () async {
                     Navigator.pop(context);
                     var coinVo = widget.coinVo;
@@ -603,7 +603,7 @@ class _ExchangeDepositConfirmPageState
 
       if (isShowDialog) {
         await UiUtil.showDialogWidget(context,
-            content: Text("你有未确认的转账，请稍等片刻。"),
+            content: Text(S.of(context).unconfirmed_transfer_wait_moment),
             actions: [
               FlatButton(
                   child: Text(S.of(context).confirm),

@@ -81,8 +81,6 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
                 address: state.address);
             var account = ExchangeAccount.fromJson(ret);
 
-            print('使用钱包授权登录: account: $account');
-
             if (account != null) {
               exchangeModel.activeAccount = account;
               var ret = await _exchangeApi.getAssetsList();

@@ -703,7 +703,7 @@ class AtlasApi {
         return null;
       }
     } catch (_) {
-      Fluttertoast.showToast(msg: '图片上传失败');
+      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).image_upload_failed);
       LogUtil.uploadException("[Atlas] upload image", 'post upload fail');
       return null;
     }
@@ -841,56 +841,56 @@ class AtlasApi {
         switch (type) {
           case MessageType.typeTerminateMap3:
             Fluttertoast.showToast(
-              msg: '终止请求正处理中!',
+              msg: S.of(Keys.rootKey.currentContext).termination_request_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case MessageType.typeUnMicroDelegate:
             Fluttertoast.showToast(
-              msg: '部分撤销请求正处理中!',
+              msg: S.of(Keys.rootKey.currentContext).cancellation_request_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case MessageType.typeCollectMicroStakingRewards:
             Fluttertoast.showToast(
-              msg: '提取请求正处理中!',
+              msg: S.of(Keys.rootKey.currentContext).withdrawal_request_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case MessageType.typeRenewMap3:
             Fluttertoast.showToast(
-              msg: '续约请求正处理中!',
+              msg: S.of(Keys.rootKey.currentContext).renewal_request_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case MessageType.typeEditMap3:
             Fluttertoast.showToast(
-              msg: '编辑请求正处理中!',
+              msg: S.of(Keys.rootKey.currentContext).edit_request_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case MessageType.typeReDelegate:
             Fluttertoast.showToast(
-              msg: '复抵押正处理中!',
+              msg: S.of(Keys.rootKey.currentContext).double_mortgage_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case MessageType.typeUnReDelegate:
             Fluttertoast.showToast(
-              msg: '取消复抵押正处理中!',
+              msg: S.of(Keys.rootKey.currentContext).cancellation_remortgage_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case MessageType.typeCollectReStakingReward:
             Fluttertoast.showToast(
-              msg: '提取出块奖励正处理中!',
+              msg: S.of(Keys.rootKey.currentContext).block_reward_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
@@ -901,7 +901,7 @@ class AtlasApi {
     } catch (e) {
       print(e);
       Fluttertoast.showToast(
-        msg: '未知错误，请稍后重试!',
+        msg: S.of(Keys.rootKey.currentContext).unknown_error_again_later,
         gravity: ToastGravity.CENTER,
       );
       return false;
@@ -956,14 +956,14 @@ class AtlasApi {
         switch (status) {
           case TransactionStatus.pending:
             Fluttertoast.showToast(
-              msg: '终止请求正处理中!',
+              msg: S.of(Keys.rootKey.currentContext).termination_request_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case TransactionStatus.success:
             Fluttertoast.showToast(
-              msg: '终止请求已完成!',
+              msg: S.of(Keys.rootKey.currentContext).termination_request_complete,
               gravity: ToastGravity.CENTER,
             );
             break;

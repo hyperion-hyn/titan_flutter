@@ -61,7 +61,7 @@ class SkeletonAtlasNodePageState extends State<SkeletonAtlasNodePage> {
                       child: Container(
                         color: Colors.white,
                         child: Text(
-                          '节点列表',
+                          S.of(context).node_list,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

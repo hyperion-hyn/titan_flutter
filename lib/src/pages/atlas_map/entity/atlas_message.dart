@@ -1,3 +1,4 @@
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -141,12 +142,12 @@ class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     return ConfirmInfoDescription(
-      title: "提取奖励",
+      title: S.of(Keys.rootKey.currentContext).action_atals_receive_award,
       amountDirection: "+",
       amount: "0",
-      fromName: nodeName ?? "Atlas节点",
-      fromDetail: "节点号:$nodeId",
-      toName: "Map3节点",
+      fromName: nodeName ?? S.of(Keys.rootKey.currentContext).atlas_node,
+      fromDetail: S.of(Keys.rootKey.currentContext).node_num_and_node_id(nodeId),
+      toName: S.of(Keys.rootKey.currentContext).map3_node,
       toDetail: "",
       fee: "0.0001",
     );
@@ -175,12 +176,12 @@ class ConfirmAtlasActiveMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     return ConfirmInfoDescription(
-      title: "激活节点",
+      title: S.of(Keys.rootKey.currentContext).active_node,
       amountDirection: "",
       amount: "0",
-      fromName: "钱包",
+      fromName: S.of(Keys.rootKey.currentContext).wallet,
       fromDetail: _walletAddressAndName,
-      toName: "Atlas链",
+      toName: S.of(Keys.rootKey.currentContext).atlas_chain,
       toDetail: "",
       fee: "0.0001",
     );
@@ -210,13 +211,13 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     return ConfirmInfoDescription(
-      title: "抵押Atlas节点",
+      title: S.of(Keys.rootKey.currentContext).staking_atlas_node,
       amountDirection: "",
       amount: "0",
-      fromName: "钱包",
+      fromName: S.of(Keys.rootKey.currentContext).wallet,
       fromDetail: _walletAddressAndName,
-      toName: nodeName ?? "Atlas节点",
-      toDetail: "节点号:$nodeId",
+      toName: nodeName ?? S.of(Keys.rootKey.currentContext).atlas_node,
+      toDetail: S.of(Keys.rootKey.currentContext).node_num_and_node_id(nodeId),
       fee: "0.0001",
     );
   }
@@ -245,13 +246,13 @@ class ConfirmAtlasUnStakeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     return ConfirmInfoDescription(
-      title: "撤销抵押",
+      title: S.of(Keys.rootKey.currentContext).cancel_delegate,
       amountDirection: "",
       amount: "0",
-      fromName: "钱包",
+      fromName: S.of(Keys.rootKey.currentContext).wallet,
       fromDetail: _walletAddressAndName,
-      toName: nodeName ?? "Atlas节点",
-      toDetail: "节点号:$nodeId",
+      toName: nodeName ?? S.of(Keys.rootKey.currentContext).atlas_node,
+      toDetail: S.of(Keys.rootKey.currentContext).node_num_and_node_id(nodeId),
       fee: "0.0001",
     );
   }
@@ -289,13 +290,13 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     return ConfirmInfoDescription(
-      title: "确认创建节点",
+      title: S.of(Keys.rootKey.currentContext).confirm_create_node,
       amountDirection: "-",
       amount: entity.payload.staking,
-      fromName: "钱包",
+      fromName: S.of(Keys.rootKey.currentContext).wallet,
       fromDetail: _walletAddressAndName,
-      toName: "Map3节点",
-      toDetail: "节点号:${entity.payload.nodeId}",
+      toName: S.of(Keys.rootKey.currentContext).map3_node,
+      toDetail: S.of(Keys.rootKey.currentContext).node_num_and_node_id(entity.payload.nodeId),
       fee: "0.0001",
     );
   }
@@ -339,13 +340,13 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     return ConfirmInfoDescription(
-      title: "确认编辑节点",
+      title: S.of(Keys.rootKey.currentContext).confirm_edit_node,
       amountDirection: "",
       amount: "0",
-      fromName: "钱包",
+      fromName: S.of(Keys.rootKey.currentContext).wallet,
       fromDetail: _walletAddressAndName,
-      toName: "Map3节点",
-      toDetail: entity.payload.nodeId == null ? '' : "节点号:${entity.payload.nodeId}",
+      toName: S.of(Keys.rootKey.currentContext).map3_node,
+      toDetail: entity.payload.nodeId == null ? '' : S.of(Keys.rootKey.currentContext).node_num_and_node_id(entity.payload.nodeId),
       fee: "0.0001",
     );
   }
@@ -399,12 +400,12 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     return ConfirmInfoDescription(
-      title: "确认修改预设",
+      title: S.of(Keys.rootKey.currentContext).confirm_modify_preset,
       amountDirection: "",
       amount: "0",
-      fromName: "钱包",
+      fromName: S.of(Keys.rootKey.currentContext).wallet,
       fromDetail: _walletAddressAndName,
-      toName: "Map3节点",
+      toName: S.of(Keys.rootKey.currentContext).map3_node,
       toDetail: "${this.map3NodeName ?? ""}",
       fee: "0.0001",
     );
@@ -447,12 +448,12 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     return ConfirmInfoDescription(
-      title: "确认终止节点",
+      title: S.of(Keys.rootKey.currentContext).confirm_termination_node,
       amountDirection: "+",
-      fromName: "Map3节点",
-      fromDetail: "节点号:${entity?.payload?.userIdentity ?? ""}",
+      fromName: S.of(Keys.rootKey.currentContext).map3_node,
+      fromDetail: S.of(Keys.rootKey.currentContext).node_num_and_node_id(entity?.payload?.userIdentity ?? ""),
       amount: "0",
-      toName: "钱包",
+      toName: S.of(Keys.rootKey.currentContext).wallet,
       toDetail: _walletAddressAndName,
       fee: "0.0001",
     );
@@ -494,12 +495,12 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     return ConfirmInfoDescription(
-      title: "确认撤销",
+      title: S.of(Keys.rootKey.currentContext).confirm_cancel,
       amountDirection: "+",
-      fromName: "Map3节点",
-      fromDetail: "节点号:${entity?.payload?.userIdentity ?? ""}",
+      fromName: S.of(Keys.rootKey.currentContext).map3_node,
+      fromDetail: S.of(Keys.rootKey.currentContext).node_num_and_node_id(entity?.payload?.userIdentity ?? ""),
       amount: amount ?? "0",
-      toName: "钱包",
+      toName: S.of(Keys.rootKey.currentContext).wallet,
       toDetail: _walletAddressAndName,
       fee: "0.0001",
     );
@@ -547,12 +548,12 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     return ConfirmInfoDescription(
-      title: "确认抵押节点",
+      title: S.of(Keys.rootKey.currentContext).confirm_mortgage_node,
       amountDirection: "-",
-      fromName: "钱包",
+      fromName: S.of(Keys.rootKey.currentContext).wallet,
       fromDetail: _walletAddressAndName,
-      toName: "Map3节点",
-      toDetail: "节点号:${nodeId ?? ""}",
+      toName: S.of(Keys.rootKey.currentContext).map3_node,
+      toDetail: S.of(Keys.rootKey.currentContext).node_num_and_node_id(nodeId ?? ""),
       amount: amount ?? "0",
       fee: "0.0001",
     );
@@ -599,12 +600,12 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     return ConfirmInfoDescription(
-      title: "提取奖励",
+      title: S.of(Keys.rootKey.currentContext).action_atals_receive_award,
       amountDirection: "+",
-      fromName: "Map3节点",
+      fromName: S.of(Keys.rootKey.currentContext).map3_node,
       fromDetail: "",
       amount: this.amount,
-      toName: "钱包",
+      toName: S.of(Keys.rootKey.currentContext).wallet,
       toDetail: _walletAddressAndName,
       fee: "0.0001",
       addressList: this.addressList,

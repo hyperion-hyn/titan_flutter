@@ -168,7 +168,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                               } else if (((activatedWallet?.wallet?.getAtlasAccount()?.address ?? null) != null)
                                   && ((WalletUtil.ethAddressToBech32Address(activatedWallet.wallet.getAtlasAccount().address) == value)
                                       ||(activatedWallet.wallet.getAtlasAccount().address == value))) {
-                                return "不能转给自己";
+                                return S.of(context).cant_transfer_myself;
                               }
                               return null;
                             },

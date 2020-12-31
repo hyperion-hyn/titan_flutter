@@ -3,10 +3,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
-import 'package:titan/src/pages/atlas_map/atlas/atlas_create_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_info_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_node_page.dart';
-import 'package:titan/src/pages/atlas_map/atlas/atlas_broadcast_success_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
@@ -390,21 +388,6 @@ var atlasCreateNodeInfoHandler = Handler(handlerFunc: (context, params) {
   return AtlasCreateInfoPage(
     _createAtlasPayload,
     _selectedMap3NodeName,
-  );
-});
-
-var atlasCreateNodeConfirmHandler = Handler(handlerFunc: (context, params) {
-  _cacheEntryRouteName(params);
-  CreateAtlasPayload _createAtlasPayload =
-      CreateAtlasPayload.fromJson(FluroConvertUtils.string2map(params['createAtlasPayload']?.first));
-  return AtlasNodeCreateConfirmPage(_createAtlasPayload);
-});
-
-var atlasBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
-  _cacheEntryRouteName(params);
-  var actionEvent = params['actionEvent']?.first;
-  return AtlasBroadcastSuccessPage(
-    actionEvent: atlasActionEventFromString(actionEvent),
   );
 });
 

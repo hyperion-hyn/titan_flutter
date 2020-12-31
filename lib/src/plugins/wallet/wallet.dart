@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -322,7 +323,7 @@ class Wallet {
 
     var gasFees = BigInt.from(gasLimit) * gasPrice;
     if (gasFees > ethBalance) {
-      Fluttertoast.showToast(msg: "ETH余额不足以支付gas费");
+      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).eth_balance_not_enough_gas);
       return null;
     }
 
@@ -348,7 +349,7 @@ class Wallet {
           txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_HYN_USDT, nonce,
           id: id, contractAddress: contractAddress);
     } else {
-      Fluttertoast.showToast(msg: "广播异常");
+      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).broadcast_exception);
     }
     return txHash;
   }
@@ -368,7 +369,7 @@ class Wallet {
 
     var gasFees = BigInt.from(gasLimit) * gasPrice;
     if (gasFees > hynBalance) {
-      Fluttertoast.showToast(msg: "HYN余额不足以支付gas费");
+      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas);
       return null;
     }
 
@@ -390,7 +391,7 @@ class Wallet {
     );
 
     if (txHash == null) {
-      Fluttertoast.showToast(msg: "广播异常");
+      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).broadcast_exception);
     }
     return txHash;
   }
@@ -610,7 +611,7 @@ class Wallet {
     }
     BigInt stakingAmount;
     if(!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)){
-      throw HttpResponseCodeNotSuccess(-30011, 'HYN余额不足支付网络费用!');
+      throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas);
     }
 
     String methodName;
