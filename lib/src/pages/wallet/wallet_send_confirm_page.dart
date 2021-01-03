@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +29,6 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/widget/gas_input_widget.dart';
 import 'api/hyn_api.dart';
 
 class WalletSendConfirmPage extends StatefulWidget {
@@ -45,13 +46,15 @@ class WalletSendConfirmPage extends StatefulWidget {
 }
 
 class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
+  final TextEditingController _gasPriceController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final StreamController<String> _inputController = StreamController.broadcast();
+
   double ethFee = 0.0;
   double currencyFee = 0.0;
 
   var isTransferring = false;
   var isLoadingGasFee = false;
-
-  final TextEditingController _gasPriceController = TextEditingController();
 
   int selectedPriceLevel = 1;
 
@@ -72,10 +75,51 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       case 2:
         return gasPriceRecommend.fast;
       case 3:
-        return Decimal.tryParse(_gasPriceController?.text ?? '0') ?? Decimal.zero;
+        var inputValue = int.tryParse(_gasPriceController?.text ?? '0') ?? 0;
+        return Decimal.fromInt(inputValue * TokenUnit.G_WEI);
+
       default:
         return gasPriceRecommend.average;
     }
+  }
+
+  String get _gasPriceEstimateStr {
+    var gasPriceEstimateStr = '';
+    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
+    var quoteSign = activatedQuoteSign?.sign?.sign;
+
+    // BTC
+    if (widget.coinVo.coinType == CoinType.BITCOIN) {
+      var fees = ConvertTokenUnit.weiToDecimal(
+          BigInt.parse((_gasPrice * Decimal.fromInt(BitcoinConst.BTC_RAWTX_SIZE)).toString()), 8);
+      var gasPriceEstimate = fees * Decimal.parse(quotePrice.toString());
+      gasPriceEstimateStr = "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
+    }
+    // 2.ETH
+    else if (widget.coinVo.coinType == CoinType.ETHEREUM) {
+      var ethQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0;
+      var gasLimit = widget.coinVo.symbol == "ETH"
+          ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
+          : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
+      var gasEstimate = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+      var gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
+      gasPriceEstimateStr =
+          "${(_gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ ${quoteSign ?? ""}${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
+    }
+    // 3.ATLAS
+    else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+      // var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
+      var hynQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN')?.quoteVo?.price ?? 0;
+      var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+      var gasEstimate = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+      var gasPriceEstimate = gasEstimate * Decimal.parse(hynQuotePrice.toString());
+      gasPriceEstimateStr =
+          '${(_gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} G_DUST (≈ ${quoteSign ?? ""}${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())})';
+    }
+
+    return gasPriceEstimateStr;
   }
 
   @override
@@ -83,6 +127,15 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     super.initState();
 
     BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
+  }
+
+  @override
+  void dispose() {
+    print("[${widget.runtimeType}] dispose");
+
+    _inputController.close();
+
+    super.dispose();
   }
 
   @override
@@ -114,7 +167,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
             _totalWidget(),
             _transferWidget(),
             _gasWidget(),
-            // _gasWidget(),
             _sendWidget(),
           ],
         ),
@@ -287,109 +339,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     );
   }
 
-  /*
   Widget _gasWidget() {
-    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
-    var quoteSign = activatedQuoteSign?.sign?.sign;
-    var gasPriceEstimateStr = "";
-
-    // 1.BTC
-    if (widget.coinVo.coinType == CoinType.BITCOIN) {
-      gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).btcGasPriceRecommend;
-      var fees = ConvertTokenUnit.weiToDecimal(
-          BigInt.parse((_gasPrice * Decimal.fromInt(BitcoinConst.BTC_RAWTX_SIZE)).toString()), 8);
-      var gasPriceEstimate = fees * Decimal.parse(quotePrice.toString());
-      gasPriceEstimateStr = "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
-    }
-    // 2.ETH
-    else if (widget.coinVo.coinType == CoinType.ETHEREUM) {
-      var ethQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0;
-      gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).gasPriceRecommend;
-      var gasLimit = widget.coinVo.symbol == "ETH"
-          ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
-          : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
-      var gasEstimate = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
-      var gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
-      gasPriceEstimateStr =
-          "${(_gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ ${quoteSign ?? ""}${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
-    }
-    // 3.ATLAS
-    else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      // var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
-      var hynQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN')?.quoteVo?.price ?? 0;
-      var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
-      var gasEstimate = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
-      var gasPriceEstimate = gasEstimate * Decimal.parse(hynQuotePrice.toString());
-      gasPriceEstimateStr =
-          '${(_gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} G_DUST (≈ ${quoteSign ?? ""}${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())})';
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          (widget.coinVo.coinType != CoinType.ETHEREUM)
-              ? Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Text(
-                        '${S.of(context).gas_fee}(${widget.coinVo.coinType == CoinType.HYN_ATLAS ? 'HYN' : 'ETH'})',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: HexColor('#FF999999'),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            height: 24,
-                            child: Text(
-                              gasPriceEstimateStr,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF333333),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          if (isLoadingGasFee)
-                            Container(
-                              width: 24,
-                              height: 24,
-                              child: CupertinoActivityIndicator(),
-                            )
-                        ],
-                      ),
-                    ),
-                  ],
-                )
-              : GasInputWidget(
-                  coinVo: widget.coinVo,
-                  callback: (Decimal gasPrice, int gasPriceLimit) {
-                    print("[$runtimeType] gasPrice:$gasPrice, gasPriceLimit:$gasPriceLimit");
-                  },
-                ),
-        ],
-      ),
-    );
-  }
-  */
-
-  Widget _gasWidget() {
-    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
-    var quoteSign = activatedQuoteSign?.sign?.sign;
-    var gasPriceEstimateStr = "";
-
     List<Widget> children = [];
 
     Widget _item({int index, String title, String waite, BorderRadiusGeometry borderRadius}) {
@@ -402,9 +352,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
             padding: EdgeInsets.symmetric(vertical: 4),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-                color: selectedPriceLevel == index ? Colors.grey : Colors.grey[200],
-                border: Border(),
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30))),
+              color: selectedPriceLevel == index ? Colors.grey : Colors.grey[200],
+              borderRadius: borderRadius,
+            ),
             child: Column(
               children: <Widget>[
                 Text(
@@ -422,7 +372,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       );
     }
 
-    Widget _diviDer() {
+    Widget _divider() {
       return VerticalDivider(
         width: 1,
         thickness: 2,
@@ -431,12 +381,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
     // 1.BTC
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
-      gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).btcGasPriceRecommend;
-      var fees = ConvertTokenUnit.weiToDecimal(
-          BigInt.parse((_gasPrice * Decimal.fromInt(BitcoinConst.BTC_RAWTX_SIZE)).toString()), 8);
-      var gasPriceEstimate = fees * Decimal.parse(quotePrice.toString());
-      gasPriceEstimateStr = "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
-
       children = [
         _item(
           index: 0,
@@ -444,14 +388,14 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           waite: S.of(context).wait_min(gasPriceRecommend.safeLowWait.toString()),
           borderRadius: BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30)),
         ),
-        _diviDer(),
+        _divider(),
         _item(
           index: 1,
           title: S.of(context).speed_normal,
           waite: S.of(context).wait_min(gasPriceRecommend.avgWait.toString()),
           borderRadius: BorderRadius.all(Radius.circular(0)),
         ),
-        _diviDer(),
+        _divider(),
         _item(
           index: 2,
           title: S.of(context).speed_fast,
@@ -462,16 +406,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     }
     // 2.ETH
     else if (widget.coinVo.coinType == CoinType.ETHEREUM) {
-      var ethQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0;
-      gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).gasPriceRecommend;
-      var gasLimit = widget.coinVo.symbol == "ETH"
-          ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
-          : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
-      var gasEstimate = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
-      var gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
-      gasPriceEstimateStr =
-          "${(_gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ ${quoteSign ?? ""}${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
       children = [
         _item(
           index: 0,
@@ -479,21 +413,21 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           waite: S.of(context).wait_min(gasPriceRecommend.safeLowWait.toString()),
           borderRadius: BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30)),
         ),
-        _diviDer(),
+        _divider(),
         _item(
           index: 1,
           title: S.of(context).speed_normal,
           waite: S.of(context).wait_min(gasPriceRecommend.avgWait.toString()),
           borderRadius: BorderRadius.all(Radius.circular(0)),
         ),
-        _diviDer(),
+        _divider(),
         _item(
           index: 2,
           title: S.of(context).speed_fast,
           waite: S.of(context).wait_min(gasPriceRecommend.fastWait.toString()),
           borderRadius: BorderRadius.all(Radius.circular(0)),
         ),
-        _diviDer(),
+        _divider(),
         _item(
           index: 3,
           title: '自定义',
@@ -501,17 +435,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           borderRadius: BorderRadius.only(topRight: Radius.circular(30), bottomRight: Radius.circular(30)),
         ),
       ];
-    }
-    // 3.ATLAS
-    else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      // var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
-      var hynQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN')?.quoteVo?.price ?? 0;
-      var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
-      var gasEstimate = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
-      var gasPriceEstimate = gasEstimate * Decimal.parse(hynQuotePrice.toString());
-      gasPriceEstimateStr =
-          '${(_gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} G_DUST (≈ ${quoteSign ?? ""}${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())})';
     }
 
     return Padding(
@@ -535,18 +458,22 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  alignment: Alignment.centerLeft,
-                  height: 24,
-                  child: Text(
-                    gasPriceEstimateStr,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF333333),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                StreamBuilder<Object>(
+                    stream: _inputController.stream,
+                    builder: (context, snapshot) {
+                      return Container(
+                        alignment: Alignment.centerLeft,
+                        height: 24,
+                        child: Text(
+                          _gasPriceEstimateStr,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF333333),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    }),
                 if (isLoadingGasFee)
                   Container(
                     width: 24,
@@ -567,9 +494,90 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                textField(_gasPriceController, "自定义 Gas Price", "GWEI"),
+                _textField(_gasPriceController, "自定义 Gas Price", "GWEI"),
               ],
             ),
+        ],
+      ),
+    );
+  }
+
+  Widget _textField(TextEditingController controller, String hintText, String suffixText) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Form(
+              key: _formKey,
+              child: TextFormField(
+                controller: controller,
+                validator: (textStr) {
+                  if (textStr.length == 0) {
+                    return null;
+                  }
+
+                  if (Decimal.tryParse(textStr) == null) {
+                    return null;
+                  }
+
+                  if (gasPriceRecommend.safeLow > _gasPrice) {
+                    return 'Gas Price过低，将会影响交易确认时间';
+                  }
+
+                  if (_gasPrice > gasPriceRecommend.fast) {
+                    return 'Gas Price过高，将会造成矿工费浪费';
+                  }
+
+                  return null;
+                },
+                onChanged: (String inputText) {
+                  //print('[add] --> onChanged, inputText:$inputText');
+
+                  _formKey.currentState.validate();
+
+                  _inputController.add(inputText);
+                },
+                onEditingComplete: () {
+                  //_onEditingComplete();
+                },
+                onFieldSubmitted: (String inputText) {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                },
+                style: TextStyle(fontSize: 16),
+                cursorColor: Theme.of(context).primaryColor,
+                //光标圆角
+                cursorRadius: Radius.circular(5),
+                //光标宽度
+                cursorWidth: 1.8,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: hintText,
+                  suffixIcon: SizedBox(
+                    child: Center(
+                      widthFactor: 0.0,
+                      child: Text(
+                        suffixText,
+                        style: TextStyle(color: Colors.grey[300]),
+                      ),
+                    ),
+                  ),
+                  errorStyle: TextStyle(fontSize: 14, color: Colors.blue[300]),
+                  hintStyle: TextStyle(fontSize: 14, color: Colors.grey[300]),
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
+                  //输入框启用时，下划线的样式
+                  disabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(width: 0.5, color: Colors.grey[300], style: BorderStyle.solid)),
+                  //输入框启用时，下划线的样式
+                  enabledBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(width: 0.5, color: Colors.grey[300], style: BorderStyle.solid)), //输入框启用时，下划线的样式
+                ),
+                keyboardType: TextInputType.number,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -660,10 +668,14 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       // 3.ERC20
       else {
         var txHash = await _transferErc20(
-            walletPassword,
-            ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
-            widget.receiverAddress,
-            activatedWallet.wallet);
+          walletPassword,
+          ConvertTokenUnit.strToBigInt(
+            widget.transferAmount,
+            widget.coinVo.decimals,
+          ),
+          widget.receiverAddress,
+          activatedWallet.wallet,
+        );
         if (txHash == null) {
           setState(() {
             isTransferring = false;
@@ -701,6 +713,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
   Future<String> _transferErc20(String password, BigInt amount, String toAddress, Wallet wallet) async {
     var contractAddress = widget.coinVo.contractAddress;
+    //logger.i('[HYN] _transferErc20，_gasPrice $_gasPrice ');
 
     final txHash = await wallet.sendErc20Transaction(
       contractAddress: contractAddress,
