@@ -69,7 +69,8 @@ class _MyPageState extends BaseState<MyPage> {
         platform = "ios";
       }
       var lang = Localizations.localeOf(context).languageCode;
-      var versionModel = await injector.repository.checkNewVersion(channel, lang, platform);
+      var versionModel =
+          await injector.repository.checkNewVersion(channel, lang, platform);
 
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       var newBuildNumber = versionModel?.build ?? 0;
@@ -136,7 +137,8 @@ class _MyPageState extends BaseState<MyPage> {
                           color: HexColor("#D8D8D8").withOpacity(0.1),
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(216), bottomRight: Radius.circular(216)), // 也可控件一边圆角大小
+                              topRight: Radius.circular(216),
+                              bottomRight: Radius.circular(216)), // 也可控件一边圆角大小
                         ),
                       ),
                       Container(
@@ -146,7 +148,8 @@ class _MyPageState extends BaseState<MyPage> {
                         decoration: BoxDecoration(
                           color: HexColor("#D8D8D8").withOpacity(0.1),
                           shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.only(topRight: Radius.circular(289.39)), // 也可控件一边圆角大小
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(289.39)), // 也可控件一边圆角大小
                         ),
                       ),
                       Padding(
@@ -156,7 +159,9 @@ class _MyPageState extends BaseState<MyPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             SizedBox(height: 16),
-                            _wallet == null ? _buildWalletCreateRow() : _buildWalletDetailRow(_wallet),
+                            _wallet == null
+                                ? _buildWalletCreateRow()
+                                : _buildWalletDetailRow(_wallet),
                             SizedBox(height: 16),
                             _buildSloganRow(),
                           ],
@@ -212,48 +217,40 @@ class _MyPageState extends BaseState<MyPage> {
               child: Column(
                 children: <Widget>[
                   _lineWidget(),
-                  _buildMenuBar('钱包管理', Icons.account_balance_wallet,
-                      () {
-                        WalletManagerPage.jumpWalletManager(context);
+                  _buildMenuBar(
+                    S.of(context).wallet_manage,
+                    Icons.account_balance_wallet,
+                    () {
+                      WalletManagerPage.jumpWalletManager(context);
 
-                        // Application.router.navigateTo(context, Routes.wallet_manager);
-                      },
-                    imageName:"ic_me_page_manage_wallet",
+                      // Application.router.navigateTo(context, Routes.wallet_manager);
+                    },
+                    imageName: "ic_me_page_manage_wallet",
                     color: Colors.cyan[300],
                   ),
                   _lineWidget(),
-                  _buildMenuBar('使用设置', Icons.settings,
-                      () => Navigator.push(context, MaterialPageRoute(builder: (context) => MeSettingPage())),
-                    imageName:"ic_me_page_setting",
-                    color: Colors.cyan[400],
-                  ),
-
-                  _lineWidget(),
-                  _buildMenuBar(S.of(context).user_policy, Icons.assignment, () {
-                    Navigator.push(
+                  _buildMenuBar(
+                    S.of(context).preferences,
+                    Icons.settings,
+                    () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PolicySelectPage(),
-                        ));
-                  },
-                    imageName:"ic_me_page_user_protocol",
-                    color: Colors.cyan[300],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 56.0),
-                    child: Divider(height: 0),
-                  ),
-                  _buildMenuBar(S.of(context).help, Icons.help, () => AtlasApi.goToAtlasMap3HelpPage(context),
-                    imageName:"ic_me_page_use_guide",
+                            builder: (context) => MeSettingPage())),
+                    imageName: "ic_me_page_setting",
                     color: Colors.cyan[400],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 56.0),
-                    child: Divider(height: 0),
-                  ),
-                  _buildMenuBar(S.of(context).about_us, Icons.info,
-                      () => Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage())),
-                    imageName:"ic_me_page_about_us",
+                  _lineWidget(),
+                  _buildMenuBar(
+                    S.of(context).user_policy,
+                    Icons.assignment,
+                    () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PolicySelectPage(),
+                          ));
+                    },
+                    imageName: "ic_me_page_user_protocol",
                     color: Colors.cyan[300],
                   ),
                   Padding(
@@ -261,19 +258,43 @@ class _MyPageState extends BaseState<MyPage> {
                     child: Divider(height: 0),
                   ),
                   _buildMenuBar(
-                    '版本更新',
+                    S.of(context).help,
+                    Icons.help,
+                    () => AtlasApi.goToAtlasMap3HelpPage(context),
+                    imageName: "ic_me_page_use_guide",
+                    color: Colors.cyan[400],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 56.0),
+                    child: Divider(height: 0),
+                  ),
+                  _buildMenuBar(
+                    S.of(context).about_us,
+                    Icons.info,
+                    () => Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => AboutMePage())),
+                    imageName: "ic_me_page_about_us",
+                    color: Colors.cyan[300],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 56.0),
+                    child: Divider(height: 0),
+                  ),
+                  _buildMenuBar(
+                    S.of(context).version_update,
                     Icons.batch_prediction,
                     () {
                       if (_haveNewVersion) {
                         _showUpdateDialog(_updateEntity);
                       } else {
-                        BlocProvider.of<UpdateBloc>(context)
-                            .add(CheckUpdate(lang: Localizations.localeOf(context).languageCode, isManual: true));
+                        BlocProvider.of<UpdateBloc>(context).add(CheckUpdate(
+                            lang: Localizations.localeOf(context).languageCode,
+                            isManual: true));
                       }
                     },
                     subText: _version,
                     haveCircle: _haveNewVersion,
-                    imageName:"ic_me_page_version_update",
+                    imageName: "ic_me_page_version_update",
                     color: Colors.cyan[400],
                   ),
                   if ([
@@ -285,7 +306,10 @@ class _MyPageState extends BaseState<MyPage> {
                         S.of(context).map_smart_contract_management,
                         Icons.book,
                         () => Navigator.push(
-                            context, MaterialPageRoute(builder: (context) => Map3ContractControlPage()))),
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    Map3ContractControlPage()))),
                   Divider(
                     height: 0,
                   ),
@@ -294,8 +318,13 @@ class _MyPageState extends BaseState<MyPage> {
                     '0x9D05DDfC30bc83e7215EB3C5C3C7A443e7Ee1dB6'.toLowerCase(),
                     '0x5AD1e746E6610401f598486d8747d9907Cf114b2'.toLowerCase(),
                   ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
-                    _buildMenuBar('链上子钱包', Icons.account_balance_wallet,
-                        () => Navigator.push(context, MaterialPageRoute(builder: (context) => DexWalletManagerPage()))),
+                    _buildMenuBar(
+                        '链上子钱包',
+                        Icons.account_balance_wallet,
+                        () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DexWalletManagerPage()))),
                 ],
               ),
             ),
@@ -325,7 +354,7 @@ class _MyPageState extends BaseState<MyPage> {
     if (imageName.length <= 0) {
       iconWidget = Icon(
         iconData,
-        color: color??Color(0xffb4b4b4),
+        color: color ?? Color(0xffb4b4b4),
       );
     } else {
       iconWidget = Image.asset(
@@ -370,7 +399,9 @@ class _MyPageState extends BaseState<MyPage> {
                   ),
                 ),
               Padding(
-                padding: const EdgeInsets.only(left: 12,),
+                padding: const EdgeInsets.only(
+                  left: 12,
+                ),
                 child: Image.asset(
                   'res/drawable/me_account_bind_arrow.png',
                   width: 7,
@@ -391,7 +422,8 @@ class _MyPageState extends BaseState<MyPage> {
           alignment: Alignment.center,
           width: 52,
           height: 52,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+          decoration: BoxDecoration(
+              shape: BoxShape.circle, color: Theme.of(context).primaryColor),
           child: InkWell(
             onTap: () {},
             child: Stack(
@@ -430,7 +462,8 @@ class _MyPageState extends BaseState<MyPage> {
   Widget _buildWalletDetailRow(Wallet wallet) {
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
-    String walletName = walletKeyStore.name[0].toUpperCase() + walletKeyStore.name.substring(1);
+    String walletName =
+        walletKeyStore.name[0].toUpperCase() + walletKeyStore.name.substring(1);
 
     return Row(
       children: <Widget>[
@@ -438,7 +471,8 @@ class _MyPageState extends BaseState<MyPage> {
           alignment: Alignment.center,
 //          width: 52,
 //          height: 52,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+          decoration: BoxDecoration(
+              shape: BoxShape.circle, color: Theme.of(context).primaryColor),
           child: InkWell(
             onTap: () {
               goSetWallet(wallet);
@@ -473,7 +507,10 @@ class _MyPageState extends BaseState<MyPage> {
               children: <Widget>[
                 Text(
                   walletName,
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
                 SizedBox(
                   height: 4,
@@ -502,8 +539,10 @@ class _MyPageState extends BaseState<MyPage> {
     var walletStr = FluroConvertUtils.object2string(wallet.toJson());
     var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
 
-    Application.router
-        .navigateTo(context, Routes.wallet_setting + '?entryRouteName=$currentRouteName&walletStr=$walletStr');
+    Application.router.navigateTo(
+        context,
+        Routes.wallet_setting +
+            '?entryRouteName=$currentRouteName&walletStr=$walletStr');
   }
 
   Widget _buildSloganRow() {
@@ -518,7 +557,8 @@ class _MyPageState extends BaseState<MyPage> {
             height: 36,
           ),
           SizedBox(width: 16),
-          Text(S.of(context).titan_encrypted_map_ecology, style: TextStyle(color: Colors.white70))
+          Text(S.of(context).titan_encrypted_map_ecology,
+              style: TextStyle(color: Colors.white70))
         ],
       ),
     );
@@ -526,9 +566,7 @@ class _MyPageState extends BaseState<MyPage> {
 
   void shareApp() async {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => PromoteQrCodePage()));
+        context, MaterialPageRoute(builder: (context) => PromoteQrCodePage()));
     /*
     return;
 
@@ -584,7 +622,8 @@ class _MyPageState extends BaseState<MyPage> {
                                 height: 88,
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(top: 15.0, bottom: 15),
+                                padding: const EdgeInsets.only(
+                                    top: 15.0, bottom: 15),
                                 child: Text(
                                   title,
                                   style: TextStyles.textC333S18,
@@ -593,7 +632,8 @@ class _MyPageState extends BaseState<MyPage> {
                               Container(
                                 height: 104,
                                 width: double.infinity,
-                                padding: const EdgeInsets.only(left: 24.0, right: 24),
+                                padding: const EdgeInsets.only(
+                                    left: 24.0, right: 24),
                                 child: SingleChildScrollView(
                                   child: Text(
                                     message,
@@ -608,7 +648,7 @@ class _MyPageState extends BaseState<MyPage> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 26.0),
                                 child: ClickOvalButton(
-                                  "立即体验",
+                                  S.of(context).experience_now,
                                   () {
                                     _launch(updateEntity);
                                   },

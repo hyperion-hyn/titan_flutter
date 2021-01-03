@@ -70,7 +70,9 @@ class _RPLevelWidgetState extends State<RPLevelWidget> {
                   width: 4,
                 ),
                 Text(
-                  isZeroLevel ? '当前量级无法参与红包空投' : '等级下降了',
+                  isZeroLevel
+                      ? S.of(context).current_level_can_not_join_airdrop
+                      : S.of(context).level_drop,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 13,
@@ -80,7 +82,9 @@ class _RPLevelWidgetState extends State<RPLevelWidget> {
             ),
           )
         : Text(
-            currentLevel < 5 ? '去提升' : '去查看',
+            currentLevel < 5
+                ? S.of(context).go_level_up
+                : S.of(context).go_check,
             style: TextStyle(
               color: Colors.blue,
               fontSize: 13,
@@ -111,21 +115,23 @@ class _RPLevelWidgetState extends State<RPLevelWidget> {
         text: TextSpan(
       children: [
         TextSpan(
-          text: '当前Y',
+          text: '${S.of(context).current_str}Y',
           style: TextStyle(
             color: Colors.black,
             fontSize: 12,
           ),
         ),
         TextSpan(
-          text: '(RP发行比)',
+          text: '(${S.of(context).rp_supply_ratio})',
           style: TextStyle(
             color: DefaultColors.color999,
             fontSize: 11,
           ),
         ),
         TextSpan(
-          text: isShowNextRankY ? '即将提升到$nextYPercent' : '为$currentYPercent',
+          text: isShowNextRankY
+              ? '${S.of(context).gonna_level_up_to}$nextYPercent'
+              : '${S.of(context).is_str}$currentYPercent',
           style: TextStyle(
             color: Colors.black,
             fontSize: 12,
@@ -139,7 +145,7 @@ class _RPLevelWidgetState extends State<RPLevelWidget> {
         Row(
           children: [
             Text(
-              '持币量级',
+              S.of(context).rp_holding_level,
               style: TextStyle(
                 color: HexColor('#333333'),
                 fontSize: 14,
@@ -171,8 +177,7 @@ class _RPLevelWidgetState extends State<RPLevelWidget> {
                     verticalOffset: 16,
                     margin: EdgeInsets.symmetric(horizontal: 32.0),
                     padding: EdgeInsets.all(16.0),
-                    message:
-                        '每个量级的最小持币量将随着Y增长而增长，如果Y增长导致你的持币量不满足最小持币量，你的量级就自动下降！请适当增加持币量以避免掉级。',
+                    message: S.of(context).rp_y_tooltip_content,
                     child: Image.asset(
                       'res/drawable/ic_tooltip.png',
                       width: 10,

@@ -335,7 +335,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
               },
               child: BlocBuilder<AppTabBarBloc, AppTabBarState>(builder: (context, state) {
                 if (state is CheckNewAnnouncementState && state.announcement != null) {
-                  _isShowAnnounceDialog = false;
+                  _isShowAnnounceDialog = true;
                   Application.isUpdateAnnounce = true;
                 }
 

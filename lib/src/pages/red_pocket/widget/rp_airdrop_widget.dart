@@ -292,11 +292,11 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
         RedPocketInheritedModel.of(context).rpMyLevelInfo?.currentLevel ?? 0;
     var hint = '';
     if (currentLevel == 0) {
-      hint = '提升量级可参与';
+      hint = S.of(context).level_up_to_join_airdrop;
     } else if (currentLevel == 5) {
-      hint = '你正在参与空投';
+      hint = S.of(context).already_join_airdrop;
     } else {
-      hint = '提升量级可获得更多红包';
+      hint = S.of(context).level_up_to_get_more_rp;
     }
 
     try {
@@ -706,7 +706,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                         children: [
                           Text.rich(TextSpan(children: [
                             TextSpan(
-                              text: '量级红包',
+                              text: S.of(context).level_rp,
                               style: TextStyle(
                                 color: Colors.red,
                                 fontWeight: FontWeight.bold,
@@ -848,7 +848,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       child: RichText(
           text: TextSpan(children: [
         TextSpan(
-          text: '$levelName级',
+          text: '$levelName${S.of(context).level}',
           style: TextStyle(
             fontSize: 13,
             color: Colors.black,

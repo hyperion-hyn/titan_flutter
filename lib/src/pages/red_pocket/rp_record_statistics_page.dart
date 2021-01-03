@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -104,7 +105,7 @@ class _RpRecordStatisticsState extends BaseState<RpRecordStatisticsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '每日统计',
+        baseTitle: S.of(context).every_day_statistics,
         backgroundColor: Colors.white,
       ),
       backgroundColor: HexColor('#F8F8F8'),
@@ -206,15 +207,15 @@ class _RpRecordStatisticsState extends BaseState<RpRecordStatisticsPage> {
     RedPocketType rpType = RedPocketType.values[model.type];
     switch (rpType) {
       case RedPocketType.LUCKY:
-        title = '幸运红包';
+        title = S.of(context).lucky_rp;
         break;
 
       case RedPocketType.LEVEL:
-        title = '量级红包';
+        title = S.of(context).level_rp;
         break;
 
       case RedPocketType.PROMOTION:
-        title = '晋升红包';
+        title = S.of(context).promotion_rp;
         break;
 
       default:

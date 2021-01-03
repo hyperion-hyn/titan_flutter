@@ -16,15 +16,15 @@ class AddPositionImagePage extends StatefulWidget {
 class _AddPositionImageState extends State<AddPositionImagePage> with TickerProviderStateMixin {
   int _currentIndex = 0;
   List<String> _titleList = [
-    S.of(Keys.rootKey.currentContext).store_name_clear_when_shooting,
-    S.of(Keys.rootKey.currentContext).shooting_picture_adjacent_shops,
-    S.of(Keys.rootKey.currentContext).photo_outdoor_indoor_high_quality,
-    S.of(Keys.rootKey.currentContext).not_take_mobile_booths_unfixed_locations
+    S.of(Keys.rootKey.currentContext).add_position_image_title_1,
+    S.of(Keys.rootKey.currentContext).add_position_image_title_2,
+    S.of(Keys.rootKey.currentContext).add_position_image_title_3,
+    S.of(Keys.rootKey.currentContext).add_position_image_title_4
   ];
 
   List<String> _subtitleList = [
     "",
-    S.of(Keys.rootKey.currentContext).no_shops_nearby_surrounding_environment,
+    S.of(Keys.rootKey.currentContext).add_position_image_subtitle_2,
     "",
     "",
   ];

@@ -56,7 +56,8 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
 
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '邀请好友',
+        baseTitle: S.of(context).invite_friends
+        ,
       ),
       body: _body(context),
     );
@@ -130,7 +131,7 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
                               ),
                             ),
                             Text(
-                              "邀请你加入泰坦",
+                              S.of(context).invite_join_titan,
                               style: TextStyle(
                                 fontSize: 18,
                                 color: Colors.white,
@@ -165,7 +166,7 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
         ),
         _bottomImageList(),
         ClickOvalButton(
-          "邀请好友",
+          S.of(context).invite_friends,
           () async {
             scrollController.jumpTo(scrollController.position.maxScrollExtent);
             await _shareQr(context);
@@ -234,7 +235,7 @@ void showTitanInviteDialog(BuildContext context, String inviterAddress, String w
     {Function callback}) {
   UiUtil.showAlertView(
     context,
-    title: "邀请加入",
+    title: S.of(context).invite_join,
     actions: [
       ClickOvalButton(
         S.of(context).cancel,

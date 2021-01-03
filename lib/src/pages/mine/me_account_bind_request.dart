@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -88,7 +89,7 @@ class _MeAccountBindRequestState extends BaseState<MeAccountBindRequestPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: BaseAppBar(
-        baseTitle:'新的申请',
+        baseTitle: S.of(context).new_apply,
       ),
       body: _pageView(),
     );
@@ -207,7 +208,7 @@ class _MeAccountBindRequestState extends BaseState<MeAccountBindRequestPage> {
                                           left: 16,
                                         ),
                                         child: Text(
-                                          '拒绝',
+                                          S.of(context).rejected,
                                           style: _flatTextStyle,
                                         ),
                                       ),
@@ -224,14 +225,14 @@ class _MeAccountBindRequestState extends BaseState<MeAccountBindRequestPage> {
                                           left: 16,
                                         ),
                                         child: Text(
-                                          '同意',
+                                          S.of(context).agree,
                                           style: _flatTextStyle,
                                         ),
                                       ),
                                     ),
                                   if (done)
                                     Text(
-                                      request.state == 1 ? '已同意' : '已拒绝',
+                                      request.state == 1 ? S.of(context).agreed : S.of(context).rejected,
                                       style: TextStyle(
                                         color: HexColor("#999999"),
                                         fontSize: 12,
@@ -273,13 +274,13 @@ class _MeAccountBindRequestState extends BaseState<MeAccountBindRequestPage> {
       if (isOk.code == 0) {
         loadDataBloc.add(LoadingEvent());
       } else if (isOk.code == -1003) {
-        Fluttertoast.showToast(msg: '没操作权限');
+        Fluttertoast.showToast(msg: S.of(context).no_opt_permisson);
       } else if (isOk.code == -1004) {
-        Fluttertoast.showToast(msg: '审核的账号已经是子账号或者有子账号申请在等待审核');
+        Fluttertoast.showToast(msg: S.of(context).already_sub_account_or_pending);
       } else if (isOk.code == -1007) {
-        Fluttertoast.showToast(msg: '子账号已经到达上限');
+        Fluttertoast.showToast(msg: S.of(context).reach_max_sub_account);
       } else {
-        Fluttertoast.showToast(msg: isOk?.msg ?? '未知错误');
+        Fluttertoast.showToast(msg: isOk?.msg ?? S.of(context).unkown_error);
       }
     } catch (e) {
       LogUtil.toastException(e);

@@ -136,15 +136,15 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
     RedPocketType rpType = RedPocketType.values[model.type];
     switch (rpType) {
       case RedPocketType.LUCKY:
-        title = '幸运红包';
+        title = S.of(context).lucky_rp;
         break;
 
       case RedPocketType.LEVEL:
-        title = '量级红包';
+        title = S.of(context).level_rp;
         break;
 
       case RedPocketType.PROMOTION:
-        title = '晋升红包';
+        title = S.of(context).promotion_rp;
         break;
 
       default:

@@ -162,7 +162,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '取回持币',
+        baseTitle: S.of(context).rp_retrive_holding,
       ),
       backgroundColor: Colors.white,
       body: Column(
@@ -185,12 +185,12 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                       child: Column(
                         children: <Widget>[
                           rpRowText(
-                            title: '当前量级${levelValueToLevelName(_currentLevel)}需持币',
+                            title: '${S.of(context).rp_current_level}${levelValueToLevelName(_currentLevel)}${S.of(context).rp_hold_need_amount}',
                             amount: '${_currentLevelRule?.holdingStr ?? '0'} RP',
                             width: 110,
                           ),
                           rpRowText(
-                            title: '当前持币',
+                            title: S.of(context).rp_current_holding,
                             amount: '${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
                             width: 110,
                           ),
@@ -199,7 +199,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                             child: Row(
                               children: <Widget>[
                                 Text(
-                                  '取回持币',
+                                  S.of(context).rp_retrive_holding,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 14,
@@ -254,10 +254,10 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                                         var holding = _currentHoldValue;
 
                                         if (textStr.length == 0 || inputValue == Decimal.fromInt(0)) {
-                                          return '请输入有效提币数量';
+                                          return S.of(context).input_valid_withdraw_amount;
                                         }
                                         if (inputValue > holding) {
-                                          return '大于当前持币';
+                                          return S.of(context).rp_over_current_holding;
                                         }
                                       },
                                     ),
@@ -289,7 +289,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                                                     right: 4,
                                                   ),
                                                   child: Text(
-                                                    '量级',
+                                                    S.of(context).rp_level,
                                                     style: TextStyle(
                                                       fontWeight: FontWeight.normal,
                                                       fontSize: 12,
@@ -359,7 +359,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                                         fontSize: 16,
                                       )),
                                 ),
-                                rowTipsItem('取回持币如果掉级将导致燃烧量减少一半，你需要重新燃烧才能回到当前量级！'),
+                                rowTipsItem(S.of(context).rp_re_burn_to_previous_level),
                               ],
                             ),
                           ),
@@ -384,7 +384,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
         padding: const EdgeInsets.only(top: 60),
         child: Center(
           child: ClickOvalButton(
-            '取回持币',
+            S.of(context).rp_retrive_holding,
             _confirmAction,
             height: 42,
             width: MediaQuery.of(context).size.width - 37 * 2,
@@ -417,10 +417,10 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
 
     UiUtil.showAlertView(
       context,
-      title: '重要提醒',
+      title: S.of(context).important_hint,
       actions: [
         ClickOvalButton(
-          '取消',
+          S.of(context).cancel,
           () {
             Navigator.pop(context, true);
           },
@@ -432,7 +432,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
           btnColor: [Colors.transparent],
         ),
         ClickOvalButton(
-          '确认取回',
+          S.of(context).rp_confirm_retrive,
           () {
             _withdrawAction(true);
           },
@@ -444,7 +444,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
         ),
       ],
       content:
-          '您要取回${_inputValue}RP到钱包，当前持币量级${levelValueToLevelName(_currentLevel)}，您的量级将掉到量级${levelValueToLevelName(_toLevel)}，请谨慎操作',
+          S.of(context).rp_retrive_detail(_inputValue, levelValueToLevelName(_currentLevel), levelValueToLevelName(_toLevel)),
       isInputValue: false,
     );
   }

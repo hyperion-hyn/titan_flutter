@@ -77,9 +77,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                   ],
                 ),
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) => BurnHistoryPage(),
-                  ));
+                  Application.router.navigateTo(context, Routes.map3node_burn_history_page);
                 },
               ),
               Spacer(),
