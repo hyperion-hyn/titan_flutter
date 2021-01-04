@@ -89,11 +89,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
           S.of(context).check,
           () async {
             Navigator.pop(context);
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => PolicyConfirmPage(
-                PolicyType.DEX,
-              ),
-            ));
+           UiUtil.showConfirmPolicyDialog(context, PolicyType.DEX);
           },
           width: 160,
           height: 38,

@@ -17,6 +17,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
+import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -76,7 +77,11 @@ class UiUtil {
   }
 
   static toast(String message) {
-    Fluttertoast.showToast(msg: message, backgroundColor: Colors.black, textColor: Colors.white, timeInSecForIosWeb: 3);
+    Fluttertoast.showToast(
+        msg: message,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        timeInSecForIosWeb: 3);
   }
 
   static String shortEthAddress(String address, {int limitLength = 9}) {
@@ -86,7 +91,9 @@ class UiUtil {
     if (address.length < limitLength) {
       return address;
     }
-    return address.substring(0, limitLength) + "..." + address.substring(address.length - limitLength, address.length);
+    return address.substring(0, limitLength) +
+        "..." +
+        address.substring(address.length - limitLength, address.length);
   }
 
   static String shortString(String address, {int limitLength = 9}) {
@@ -133,7 +140,8 @@ class UiUtil {
       context: context,
       // 构建 Dialog 的视图
       builder: (_) => AnimatedPadding(
-        padding: MediaQuery.of(context).viewInsets + const EdgeInsets.symmetric(horizontal: 36.0),
+        padding: MediaQuery.of(context).viewInsets +
+            const EdgeInsets.symmetric(horizontal: 36.0),
         duration: const Duration(milliseconds: 100),
         curve: Curves.decelerate,
         child: Column(
@@ -142,7 +150,8 @@ class UiUtil {
           children: <Widget>[
             Container(
               //alignment: Alignment.center,
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
               child: Stack(
                 children: <Widget>[
                   isShowCloseIcon
@@ -174,19 +183,34 @@ class UiUtil {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            top: 16, left: 24, right: 24, bottom: (contentItem != null || detail.isNotEmpty) ? 0 : 18),
+                            top: 16,
+                            left: 24,
+                            right: 24,
+                            bottom: (contentItem != null || detail.isNotEmpty)
+                                ? 0
+                                : 18),
                         child: RichText(
                             text: TextSpan(
                                 text: content,
-                                style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.8),
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: HexColor("#333333"),
+                                    height: 1.8),
                                 children: [
                               TextSpan(
                                 text: boldContent,
-                                style: boldStyle ?? TextStyle(fontSize: 14, color: HexColor("#FF4C3B"), height: 1.8),
+                                style: boldStyle ??
+                                    TextStyle(
+                                        fontSize: 14,
+                                        color: HexColor("#FF4C3B"),
+                                        height: 1.8),
                               ),
                               TextSpan(
                                 text: suffixContent,
-                                style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.8),
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: HexColor("#333333"),
+                                    height: 1.8),
                               ),
                             ])),
                       ),
@@ -238,7 +262,8 @@ class UiUtil {
       context: context,
       // 构建 Dialog 的视图
       builder: (_) => AnimatedPadding(
-        padding: MediaQuery.of(context).viewInsets + const EdgeInsets.symmetric(horizontal: 36.0),
+        padding: MediaQuery.of(context).viewInsets +
+            const EdgeInsets.symmetric(horizontal: 36.0),
         duration: const Duration(milliseconds: 100),
         curve: Curves.decelerate,
         child: Column(
@@ -247,7 +272,8 @@ class UiUtil {
           children: <Widget>[
             Container(
               //alignment: Alignment.center,
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
               child: Stack(
                 children: <Widget>[
                   isShowCloseIcon
@@ -309,7 +335,8 @@ class UiUtil {
     );
   }
 
-  static Future<T> showConfirmDialogWidget<T>(BuildContext context, {Widget content, List<Widget> actions}) {
+  static Future<T> showConfirmDialogWidget<T>(BuildContext context,
+      {Widget content, List<Widget> actions}) {
     return showDialog<T>(
       context: context,
       builder: (context) {
@@ -337,10 +364,13 @@ class UiUtil {
     ]);
   }
 
-  static Future<bool> showRequestLocationAuthDialog<T>(BuildContext context, bool isServiceTurnOff) {
+  static Future<bool> showRequestLocationAuthDialog<T>(
+      BuildContext context, bool isServiceTurnOff) {
     return showDialogs<T>(
       context: context,
-      title: isServiceTurnOff == true ? S.of(context).open_location_service : S.of(context).require_location,
+      title: isServiceTurnOff == true
+          ? S.of(context).open_location_service
+          : S.of(context).require_location,
       content: isServiceTurnOff == true
           ? S.of(context).open_location_service_message
           : S.of(context).require_location_message,
@@ -668,6 +698,37 @@ class UiUtil {
 //    }
 //  }
 
+  static showConfirmPolicyDialog(
+    BuildContext context,
+    PolicyType policyType, {
+    bool isShowConfirm = true,
+  }) {
+    var height = MediaQuery.of(context).size.height - 80;
+    showDialog(
+      context: context,
+      builder: (_) => Material(
+        type: MaterialType.transparency,
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            height: height,
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+              child: PolicyConfirmPage(
+                policyType,
+                isShowConfirm: isShowConfirm,
+                isDialog: true,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   static showHintToast(BuildContext context, Widget icon, msg) {
     Widget widget = Center(
       child: ClipRRect(
@@ -686,7 +747,10 @@ class UiUtil {
               ),
               Text(
                 msg,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.white),
               ),
               Spacer()
             ],
@@ -722,14 +786,17 @@ class UiUtil {
             Navigator.pop(context);
 
             ///
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
           },
         ),
       ],
     );
   }
 
-  static Future<T> showDialogsNoCallback<T>(BuildContext context, String title, String content, {String confirm = ""}) {
+  static Future<T> showDialogsNoCallback<T>(
+      BuildContext context, String title, String content,
+      {String confirm = ""}) {
     return showDialogWidget<T>(
       context,
       title: Text(title),
@@ -747,14 +814,16 @@ class UiUtil {
     );
   }
 
-  static Future<bool> showScanImagePickerSheet(BuildContext context, {ImageCallback callback}) async {
+  static Future<bool> showScanImagePickerSheet(BuildContext context,
+      {ImageCallback callback}) async {
     return await showModalBottomSheet(
         context: context,
         builder: (BuildContext dialogContext) {
           return Wrap(
             children: <Widget>[
               ListTile(
-                title: Text(S.of(context).camera_scan, textAlign: TextAlign.center),
+                title: Text(S.of(context).camera_scan,
+                    textAlign: TextAlign.center),
                 onTap: () async {
                   Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext, true);
@@ -765,7 +834,8 @@ class UiUtil {
                 },
               ),
               ListTile(
-                title: Text(S.of(context).import_from_album, textAlign: TextAlign.center),
+                title: Text(S.of(context).import_from_album,
+                    textAlign: TextAlign.center),
                 onTap: () async {
                   Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext, true);
@@ -779,8 +849,10 @@ class UiUtil {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
-                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
-                    RScanResult mnemonicWords = await RScan.scanImagePath(tempListImagePaths[0].path);
+                  if (tempListImagePaths != null &&
+                      tempListImagePaths.length == 1) {
+                    RScanResult mnemonicWords =
+                        await RScan.scanImagePath(tempListImagePaths[0].path);
                     String mnemonicWord = mnemonicWords?.message;
                     callback(mnemonicWord);
                   }
@@ -797,7 +869,8 @@ class UiUtil {
         });
   }
 
-  static Future<bool> showIconImagePickerSheet(BuildContext context, {ImageCallback callback}) async {
+  static Future<bool> showIconImagePickerSheet(BuildContext context,
+      {ImageCallback callback}) async {
     return await showModalBottomSheet(
         context: context,
         builder: (BuildContext dialogContext) {
@@ -814,7 +887,8 @@ class UiUtil {
                 },
               ),
               ListTile(
-                title: Text(S.of(context).import_from_album, textAlign: TextAlign.center),
+                title: Text(S.of(context).import_from_album,
+                    textAlign: TextAlign.center),
                 onTap: () async {
                   Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext, true);
@@ -828,7 +902,8 @@ class UiUtil {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
-                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
+                  if (tempListImagePaths != null &&
+                      tempListImagePaths.length == 1) {
                     var path = tempListImagePaths[0].path;
                     callback(path);
                   }
