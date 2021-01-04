@@ -711,12 +711,17 @@ class _ExchangePageState extends BaseState<ExchangePage>
     var base = marketItemEntity?.base;
     var quote = marketItemEntity?.quote;
 
+    var _vol24H = '--';
+    try {
+      _vol24H = FormatUtil.truncateDoubleNum(
+            marketItemEntity.kLineEntity?.vol,
+            2,
+          ) ??
+          '--';
+    } catch (e) {}
+
     // 24hour
-    var _vol24H =
-        '${S.of(context).exchange_24h_vol} ${FormatUtil.truncateDoubleNum(
-      marketItemEntity.kLineEntity?.vol,
-      2,
-    )}';
+    var _vol24HText = '${S.of(context).exchange_24h_vol} $_vol24H';
 
     // price
     var _latestPrice = '--';
@@ -819,7 +824,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                               height: 4,
                             ),
                             Text(
-                              _vol24H ?? '-',
+                              _vol24HText ?? '-',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 12,
