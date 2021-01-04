@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:android_intent/android_intent.dart';
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -41,6 +42,37 @@ class UiUtil {
       ),
       content: Text(message),
     ));
+  }
+
+  static showErrorTopHint(BuildContext context, String message) {
+    Flushbar(
+      padding: EdgeInsets.symmetric(
+        vertical: 20.0,
+      ),
+      backgroundColor: HexColor('#FFEB8686'),
+      icon: Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Image.asset(
+          'res/drawable/ic_warning_triangle.png',
+          width: 18,
+          height: 18,
+          color: Colors.white,
+        ),
+      ),
+      messageText: Padding(
+        padding: const EdgeInsets.only(right: 16.0),
+        child: Text(
+          message,
+          style: TextStyle(
+            fontSize: 13.0,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      flushbarStyle: FlushbarStyle.GROUNDED,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: Duration(seconds: 5),
+    ).show(context);
   }
 
   static toast(String message) {
