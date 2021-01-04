@@ -331,7 +331,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 10),
-                              child: Row(
+                              child: Wrap(
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.only(

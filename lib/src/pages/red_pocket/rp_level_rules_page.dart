@@ -12,9 +12,6 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_deposit_page.dart';
@@ -295,33 +292,6 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     // 过滤出Old
     LevelRule dynamicModel =
     _oldModelList.firstWhere((element) => element.level == staticModel.level, orElse: () => null);
-
-    /*
-    LevelRule oldModelMax =
-        _oldModelList.firstWhere((element) => element.level > dynamicModel.level, orElse: () => null);
-
-    bool isNotMax = (oldModelMax != null);
-
-    if (!isNotMax) {
-      leftTagTitle = '可恢复最高量级';
-    } else {
-      leftTagTitle = '可恢复量级';
-    }
-
-    var zeroValue = Decimal.zero;
-
-    // 燃烧
-    var burningValue = Decimal.tryParse(dynamicModel?.burnStr ?? '0') ?? zeroValue;
-    var currentBurnValue = Decimal.tryParse(_myLevelInfo?.currBurningStr ?? '0') ?? zeroValue;
-    var _needBurnValue = burningValue - currentBurnValue;
-    _needBurnValue = _needBurnValue > zeroValue ? _needBurnValue : zeroValue;
-
-    // 持币
-    var holdValue = Decimal.tryParse(dynamicModel?.holdingStr ?? '0') ?? zeroValue;
-    var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
-    var _needHoldMinValue = holdValue - currentHoldValue;
-    _needHoldMinValue = _needHoldMinValue > zeroValue ? _needHoldMinValue : zeroValue;
-    */
 
     String oldLevelDesc = '提升至该量级需燃烧 ${dynamicModel?.burnStr ?? '0'}RP, 增持${dynamicModel?.holdingStr ?? '0'}RP';
 

@@ -348,53 +348,58 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                   ),
                                 ],
                               ),
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: 8,
-                                    ),
-                                    child: Text(
-                                      '*',
-                                      style: TextStyle(
-                                        color: HexColor('#FF4C3B'),
-                                        fontSize: 24,
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4,),
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 8,
+                                      ),
+                                      child: Text(
+                                        '*',
+                                        style: TextStyle(
+                                          color: HexColor('#FF4C3B'),
+                                          fontSize: 24,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 6,
-                                  ),
-                                  Text.rich(
-                                    TextSpan(
-                                        text: S
-                                            .of(context)
-                                            .rp_add_holding_prevent_level_drop_1,
-                                        style: TextStyle(
-                                          color: HexColor('#333333'),
-                                          fontSize: 12,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: ' Y ',
-                                            style: TextStyle(
-                                              color: HexColor('#333333'),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          TextSpan(
+                                    SizedBox(
+                                      width: 6,
+                                    ),
+                                    Expanded(
+                                      child: Text.rich(
+                                        TextSpan(
                                             text: S
                                                 .of(context)
-                                                .rp_add_holding_prevent_level_drop_2,
+                                                .rp_add_holding_prevent_level_drop_1,
                                             style: TextStyle(
                                               color: HexColor('#333333'),
                                               fontSize: 12,
                                             ),
-                                          ),
-                                        ]),
-                                  )
-                                ],
+                                            children: [
+                                              TextSpan(
+                                                text: ' Y ',
+                                                style: TextStyle(
+                                                  color: HexColor('#333333'),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                text: S
+                                                    .of(context)
+                                                    .rp_add_holding_prevent_level_drop_2,
+                                                style: TextStyle(
+                                                  color: HexColor('#333333'),
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ]),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                               StreamBuilder<Object>(
                                   stream: _inputController.stream,
