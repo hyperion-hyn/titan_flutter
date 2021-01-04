@@ -84,7 +84,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
       onLoadData();
     }
 
-    BlocProvider.of<UpdateBloc>(context).add(CheckUpdate(lang: Localizations.localeOf(context).languageCode));
+    //BlocProvider.of<UpdateBloc>(context).add(CheckUpdate(lang: Localizations.localeOf(context).languageCode));
   }
 
   @override

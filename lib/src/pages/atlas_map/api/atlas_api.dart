@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:decimal/decimal.dart';
+import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:package_info/package_info.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -11,6 +14,7 @@ import 'package:titan/src/components/setting/system_config_entity.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/entity/app_update_info.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_http.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
@@ -42,6 +46,7 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
 import '../../../../config.dart';
 import '../../../../env.dart';
+import 'package:detect_testflight/detect_testflight.dart';
 
 class AtlasApi {
   Future<List<HynTransferHistory>> queryHYNHistory(
@@ -69,7 +74,8 @@ class AtlasApi {
       String address, int page, String contractAddress) async {
     Map result = await AtlasHttpCore.instance.post(
       "v1/wallet/account_internal_txs",
-      data: "{\"address\": \"$address\",\"contract_address\": \"$contractAddress\",\"page\": $page,\"size\": 20}",
+      data:
+          "{\"address\": \"$address\",\"contract_address\": \"$contractAddress\",\"page\": $page,\"size\": 20}",
     );
 
     if (result["code"] == 0) {
@@ -125,29 +131,30 @@ class AtlasApi {
   }
 
   static goToAtlasMap3HelpPage(BuildContext context) {
-    String webUrl =
-        FluroConvertUtils.fluroCnParamsEncode(Const.HELP_PAGE);
+    String webUrl = FluroConvertUtils.fluroCnParamsEncode(Const.HELP_PAGE);
     String webTitle = FluroConvertUtils.fluroCnParamsEncode(
         S.of(Keys.rootKey.currentContext).help);
     Application.router.navigateTo(context,
         Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
   }
 
-  static goToHynScanPage(BuildContext context,String walletAddress) {
-    if(walletAddress == null){
+  static goToHynScanPage(BuildContext context, String walletAddress) {
+    if (walletAddress == null) {
       return;
     }
-    if(walletAddress.contains("@")){
+    if (walletAddress.contains("@")) {
       return;
     }
-    if(walletAddress.startsWith("0x")){
+    if (walletAddress.startsWith("0x")) {
       walletAddress = WalletUtil.ethAddressToBech32Address(walletAddress);
     }
     String webUrl;
-    if(env.buildType == BuildType.DEV){
-      webUrl = FluroConvertUtils.fluroCnParamsEncode("https://test.hynscan.io/address/$walletAddress/transactions");
-    }else{
-      webUrl = FluroConvertUtils.fluroCnParamsEncode("https://hynscan.io/address/$walletAddress/transactions");
+    if (env.buildType == BuildType.DEV) {
+      webUrl = FluroConvertUtils.fluroCnParamsEncode(
+          "https://test.hynscan.io/address/$walletAddress/transactions");
+    } else {
+      webUrl = FluroConvertUtils.fluroCnParamsEncode(
+          "https://hynscan.io/address/$walletAddress/transactions");
     }
     String webTitle = FluroConvertUtils.fluroCnParamsEncode("");
     Application.router.navigateTo(context,
@@ -674,7 +681,8 @@ class AtlasApi {
   }
 
   // 上传图片
-  Future<String> postUploadImageFile(String address, String path, ProgressCallback onSendProgress) async {
+  Future<String> postUploadImageFile(
+      String address, String path, ProgressCallback onSendProgress) async {
     try {
       Map<String, dynamic> params = {};
       params["address"] = address;
@@ -1000,5 +1008,66 @@ class AtlasApi {
       "key": 'app:config',
     }, options: RequestOptions(contentType: "application/json"));
     return configEntity;
+  }
+
+  Future<AppUpdateInfo> checkUpdate() async {
+    var walletAddress = WalletInheritedModel.of(Keys.rootKey.currentContext)
+            ?.activatedWallet
+            ?.wallet
+            ?.getAtlasAccount()
+            ?.address ??
+        '';
+    var packageInfo = AtlasHttpCore.instance.packageInfo;
+    if (packageInfo == null) {
+      packageInfo = await PackageInfo.fromPlatform();
+    }
+
+    var deviceInfoPlugin = DeviceInfoPlugin();
+    var deviceId = '';
+    var channel = '';
+
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo deviceInfo = await deviceInfoPlugin?.androidInfo;
+      deviceId = deviceInfo?.androidId;
+      if (env.channel == BuildChannel.OFFICIAL) {
+        channel = 'android-titan';
+      } else if (env.channel == BuildChannel.STORE) {
+        channel = 'android-google';
+      }
+    } else if (Platform.isIOS) {
+      IosDeviceInfo deviceInfo = await deviceInfoPlugin?.iosInfo;
+      deviceId = deviceInfo?.identifierForVendor;
+
+      bool isTestFlight = await DetectTestflight.isTestflight;
+      if (isTestFlight) {
+        channel = 'ios-testflight';
+      } else {
+        channel = 'ios-appstore';
+      }
+    }
+
+    var versionName = packageInfo?.version ?? '';
+    var versionCode = packageInfo?.buildNumber ?? '';
+    var versionType = '';
+
+    if (env.buildType == BuildType.DEV) {
+      versionType = 'test';
+    }
+
+    return AtlasHttpCore.instance.postEntity(
+      '/v1/app/version_check',
+      EntityFactory<AppUpdateInfo>(
+        (data) {
+          return AppUpdateInfo.fromJson(data);
+        },
+      ),
+      params: {
+        "address": walletAddress,
+        "channel": channel,
+        "device_id": deviceId,
+        "version": '$versionName.$versionCode.$versionType'
+      },
+      options: RequestOptions(contentType: "application/json"),
+    );
   }
 }

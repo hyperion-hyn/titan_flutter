@@ -173,6 +173,8 @@ dependencies:
   animate_do: 1.7.5
   assets_audio_player: ^2.0.13+1
   pie_chart: ^4.0.1
+  #https://pub:dev/packages/detect_testflight/install:
+  detect_testflight: ^1.0.3
 
 dev_dependencies:
   flutter_driver:
