@@ -69,14 +69,20 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPageV2> {
                 children: <Widget>[
                   Text(
                     '备份助记词',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                   SizedBox(
                     height: 8,
                   ),
                   Text(
                     '请按顺序抄写助记词，确保备份正确。',
-                    style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                    style: TextStyle(
+                      color: Color(0xFF9B9B9B),
+                      fontSize: 14,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 36.0),
@@ -86,7 +92,7 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPageV2> {
                         gridDelegate:
                             new SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
-                          childAspectRatio: 2.5,
+                          childAspectRatio: 2.2,
                         ),
                         itemCount: _resumeWords.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -192,14 +198,72 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPageV2> {
         ));
   }
 
+  Widget rowTipsItem(
+    String title, {
+    double top = 8,
+    String subTitle = "",
+    GestureTapCallback onTap,
+  }) {
+    var _nodeWidget = Padding(
+      padding: const EdgeInsets.only(right: 10, top: 10),
+      child: Container(
+        width: 3,
+        height: 3,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: DefaultColors.color999,
+            border: Border.all(color: DefaultColors.color999, width: 1.0)),
+      ),
+    );
+
+    return Padding(
+      padding: EdgeInsets.only(top: top),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _nodeWidget,
+          Expanded(
+              child: InkWell(
+            onTap: onTap,
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: subTitle,
+                    style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
+                  )
+                ],
+                text: title,
+                style: TextStyle(
+                    height: 1.8, color: DefaultColors.color999, fontSize: 12),
+              ),
+            ),
+          )),
+        ],
+      ),
+    );
+  }
+
   _reminder(String text) {
     return Padding(
-      padding: EdgeInsets.only(right: 16, left: 16, top: 16),
+      padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Container(
+              width: 5,
+              height: 5,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: DefaultColors.color999,
+                  border:
+                      Border.all(color: DefaultColors.color999, width: 1.0)),
+            ),
+          ),
           Expanded(
             child: Text(
-              text,
+              '$text',
               style: TextStyle(
                 fontSize: 14,
                 color: DefaultColors.color999,

@@ -64,16 +64,13 @@ class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
                   ),
                   child: Column(
                     children: <Widget>[
-                      Container(
-                        width: double.infinity,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 32.0, bottom: 25),
-                          child: Image.asset(
-                            'res/drawable/ic_snap.png',
-                            width: 60,
-                            height: 60,
-                            color: DefaultColors.primary,
-                          ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+                        child: Image.asset(
+                          'res/drawable/ic_snap.png',
+                          width: 80,
+                          height: 80,
+                          color: DefaultColors.primary,
                         ),
                       ),
                       Center(
@@ -85,7 +82,7 @@ class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
+                          horizontal: 24.0,
                           vertical: 16.0,
                         ),
                         child: Text(
@@ -98,9 +95,8 @@ class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
                           ),
                         ),
                       ),
-
                       Padding(
-                        padding: const EdgeInsets.all(24.0),
+                        padding: const EdgeInsets.only(top: 16.0, bottom: 24.0),
                         child: ClickOvalButton(
                           S.of(context).no_screenshot_dialog_confirm,
                           () {

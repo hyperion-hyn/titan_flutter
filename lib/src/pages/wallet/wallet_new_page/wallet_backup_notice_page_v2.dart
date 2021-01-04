@@ -17,7 +17,7 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/screenshot_warning_dialog.dart';
 
 class WalletBackupNoticePageV2 extends StatefulWidget {
-  Wallet wallet;
+  final Wallet wallet;
 
   WalletBackupNoticePageV2(this.wallet);
 
@@ -64,7 +64,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
                           Text(
                             S.of(context).backup_notice_label,
                             style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 14,
                                 color: Color(0xFF252525),
                                 fontWeight: FontWeight.w500),
                           ),
@@ -74,7 +74,9 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
                           Text(
                             S.of(context).backup_wallet_notice_text1,
                             style: TextStyle(
-                                fontSize: 14, color: Color(0xFF9B9B9B)),
+                              fontSize: 12,
+                              color: Color(0xFF9B9B9B),
+                            ),
                             softWrap: true,
                           ),
                         ],
@@ -93,43 +95,13 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
                     color: DefaultColors.colorf2f2f2,
                   ),
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          '•  助记词由英文单词组成，请抄写并妥善保管。',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: DefaultColors.color999,
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                _reminder('助记词由英文单词组成，请抄写并妥善保管。'),
                 SizedBox(
                   height: 16,
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        '•  助记词丢失，无法找回，请务必备份助记词。',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: DefaultColors.color999,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                _reminder('助记词丢失，无法找回，请务必备份助记词。'),
                 SizedBox(
-                  height: 100,
+                  height: 120,
                 ),
                 ClickOvalButton(
                   '立即备份',
@@ -162,6 +134,33 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
           ),
         ),
       ),
+    );
+  }
+
+  _reminder(String text) {
+    return Row(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+          child: Container(
+            width: 5,
+            height: 5,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: DefaultColors.color999,
+                border: Border.all(color: DefaultColors.color999, width: 1.0)),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            '$text',
+            style: TextStyle(
+              fontSize: 14,
+              color: DefaultColors.color999,
+            ),
+          ),
+        )
+      ],
     );
   }
 
