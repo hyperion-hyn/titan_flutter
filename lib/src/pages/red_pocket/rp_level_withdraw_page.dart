@@ -329,11 +329,13 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                               SizedBox(
                                 width: 6,
                               ),
-                              Text(
-                                '为保证当前量级不下降，请保持持币量大于${_currentLevelRule?.holdingStr ?? '0'}RP',
-                                style: TextStyle(
-                                  color: HexColor('#333333'),
-                                  fontSize: 12,
+                              Expanded(
+                                child: Text(
+                                  '为保证当前量级不下降，请保持持币量大于${_currentLevelRule?.holdingStr ?? '0'}RP',
+                                  style: TextStyle(
+                                    color: HexColor('#333333'),
+                                    fontSize: 12,
+                                  ),
                                 ),
                               )
                             ],

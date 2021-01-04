@@ -418,12 +418,12 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     var level = model.level ?? 0;
     var levelName = '${S.of(context).rp_level} ${levelValueToLevelName(level)}';
 
-    var burnTitle = S.of(context).rp_need_burn_amount;
+    var burnTitle = S.of(context).rp_need_burn_amount_abc;
     var burnRpValue = '${model.burnStr} RP';
 
     var formula = model.holdingFormula;
 
-    var stakingTitle = S.of(context).rp_min_holding;
+    var stakingTitle = S.of(context).rp_min_holding_abc;
     var stakingValue = '${model.holdingStr} RP';
 
     return Container(

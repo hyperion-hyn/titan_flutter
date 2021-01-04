@@ -61,7 +61,6 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
 
   List<LevelCounts> get _levelCountList => _rpStatistics?.levelCounts ?? [];
 
-  // todo: 有空加开关
   bool _isOpenLevelCounts = false;
 
   Decimal get _currentHoldingValue =>
