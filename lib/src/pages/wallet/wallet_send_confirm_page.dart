@@ -48,7 +48,11 @@ class WalletSendConfirmPage extends StatefulWidget {
 
 class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   final TextEditingController _gasPriceController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _nonceController = TextEditingController();
+
+  final _gasPriceFormKey = GlobalKey<FormState>();
+  final _nonceFormKey = GlobalKey<FormState>();
+
   final StreamController<String> _inputController = StreamController.broadcast();
 
   double ethFee = 0.0;
@@ -62,6 +66,10 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   WalletVo activatedWallet;
   ActiveQuoteVoAndSign activatedQuoteSign;
   var gasPriceRecommend;
+
+  int get _nonce {
+    return int.tryParse(_nonceController.text) ?? null;
+  }
 
   Decimal get _gasPrice {
     if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
@@ -498,7 +506,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _textField(_gasPriceController, "自定义 Gas Price", "GWEI"),
+                _textField(_gasPriceController, "请输入Gas Price", "GWEI", _gasPriceFormKey, 'Gas Price'),
+                SizedBox(height: 8,),
+                _textField(_nonceController, "请输入 Nonce（可选）", "", _nonceFormKey, 'Nonce 值'),
               ],
             ),
         ],
@@ -506,14 +516,16 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     );
   }
 
-  Widget _textField(TextEditingController controller, String hintText, String suffixText) {
+  Widget _textField(TextEditingController controller, String hintText, String suffixText, Key key, String title,) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0),
       child: Row(
         children: <Widget>[
+          Text(title,),
+          SizedBox(width: 10,),
           Expanded(
             child: Form(
-              key: _formKey,
+              key: key,
               child: TextFormField(
                 controller: controller,
                 validator: (textStr) {
@@ -522,6 +534,10 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                   }
 
                   if (Decimal.tryParse(textStr) == null) {
+                    return null;
+                  }
+
+                  if (controller == _nonceController) {
                     return null;
                   }
 
@@ -538,7 +554,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                 onChanged: (String inputText) {
                   //print('[add] --> onChanged, inputText:$inputText');
 
-                  _formKey.currentState.validate();
+                  _gasPriceFormKey.currentState.validate();
 
                   _inputController.add(inputText);
                 },
@@ -712,11 +728,14 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Future _transferEth(String password, BigInt amount, String toAddress, Wallet wallet) async {
+    print('[HYN] _transferErc20，_gasPrice $_gasPrice,  _nonce:$_nonce');
+
     final txHash = await wallet.sendEthTransaction(
       password: password,
-      toAddress: toAddress,
       gasPrice: BigInt.parse(_gasPrice.toStringAsFixed(0)),
       value: amount,
+      toAddress: toAddress,
+      nonce: _nonce,
     );
 
     logger.i('ETH transaction committed，txhash $txHash');
@@ -724,7 +743,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
   Future<String> _transferErc20(String password, BigInt amount, String toAddress, Wallet wallet) async {
     var contractAddress = widget.coinVo.contractAddress;
-    //logger.i('[HYN] _transferErc20，_gasPrice $_gasPrice ');
+    print('[HYN] _transferErc20，_gasPrice $_gasPrice,  _nonce:$_nonce');
 
     final txHash = await wallet.sendErc20Transaction(
       contractAddress: contractAddress,
@@ -732,6 +751,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       gasPrice: BigInt.parse(_gasPrice.toStringAsFixed(0)),
       value: amount,
       toAddress: toAddress,
+      nonce: _nonce,
     );
 
     logger.i('HYN transaction committed，txhash $txHash ');
