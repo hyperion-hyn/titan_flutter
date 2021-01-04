@@ -325,17 +325,20 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
     // fastest
     var fastGasPrice = double.parse(responseFromEtherScanDict["FastGasPrice"]) * 10.0;
     var fastest = double.parse(responseFromEthGasStationDict["fastest"].toString());
-    responseFromEthGasStationDict["fastest"] = max(fastGasPrice, fastest);
+    // responseFromEthGasStationDict["fastest"] = max(fastGasPrice, fastest);
+    responseFromEthGasStationDict["fastest"] = (fastGasPrice + fastest) / 2;
 
     // fast
     var proposeGasPrice = double.parse(responseFromEtherScanDict["ProposeGasPrice"]) * 10.0;
     var fast = double.parse(responseFromEthGasStationDict["fast"].toString());
-    responseFromEthGasStationDict["fast"] = max(proposeGasPrice, fast);
+    // responseFromEthGasStationDict["fast"] = max(proposeGasPrice, fast);
+    responseFromEthGasStationDict["fast"] = (proposeGasPrice + fast) / 2;
 
     // average
     var safeGasPrice = double.parse(responseFromEtherScanDict["SafeGasPrice"]) * 10.0;
     var average = double.parse(responseFromEthGasStationDict["average"].toString());
-    responseFromEthGasStationDict["average"] = max(safeGasPrice, average);
+    // responseFromEthGasStationDict["average"] = max(safeGasPrice, average);
+    responseFromEthGasStationDict["average"] = (safeGasPrice + average) / 2;
 
     //print("[object] requestGasPrice，2, responseFromEtherScanDict:$responseFromEtherScanDict, responseFromEthGasStationDict:$responseFromEthGasStationDict");
 
