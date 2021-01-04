@@ -11,7 +11,8 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'bloc.dart';
 
-class UpdateBloc extends Bloc<UpdateEvent, UpdateState> {
+/*
+class UpdateBlocOld extends Bloc<UpdateEvent, UpdateState> {
   BuildContext context;
 
   UpdateBloc({this.context});
@@ -47,9 +48,10 @@ class UpdateBloc extends Bloc<UpdateEvent, UpdateState> {
     }
   }
 }
+*/
 
-/*
-class UpdateBlocNew extends Bloc<UpdateEvent, UpdateState> {
+
+class UpdateBloc extends Bloc<UpdateEvent, UpdateState> {
   BuildContext context;
 
   UpdateBloc({this.context});
@@ -93,4 +95,3 @@ class UpdateBlocNew extends Bloc<UpdateEvent, UpdateState> {
     }
   }
 }
-*/

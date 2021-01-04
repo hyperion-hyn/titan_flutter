@@ -28,7 +28,8 @@ class UpdaterComponent extends StatefulWidget {
   }
 }
 
-class _UpdaterComponentState extends State<UpdaterComponent> {
+/*
+class _UpdaterComponentStateOld extends State<UpdaterComponent> {
   StreamSubscription _appBlocSubscription;
   int _lastCancelBuildNumber = 0;
   bool _lastHaveVisible = false;
@@ -206,9 +207,10 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
     super.dispose();
   }
 }
+*/
 
-/*
-class _UpdaterComponentStateNew extends State<UpdaterComponent> {
+
+class _UpdaterComponentState extends State<UpdaterComponent> {
   StreamSubscription _appBlocSubscription;
   int _lastCancelBuildNumber = 0;
   bool _lastHaveVisible = false;
@@ -386,4 +388,3 @@ class _UpdaterComponentStateNew extends State<UpdaterComponent> {
     super.dispose();
   }
 }
-*/
