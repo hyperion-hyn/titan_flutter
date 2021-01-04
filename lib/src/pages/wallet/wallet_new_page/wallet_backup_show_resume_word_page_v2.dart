@@ -5,8 +5,11 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_confirm_resume_word_page.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/wallet/wallet_new_page/wallet_backup_confirm_resume_words_page_v2.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import '../mnemonic_qrcode_page.dart';
 
@@ -56,145 +59,130 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPageV2> {
           height: double.infinity,
           child: SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 10),
+              padding: EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 16.0,
+              ),
               alignment: Alignment.center,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      '备份助记词',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      S.of(context).save_mnemonic_notice,
-                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
-                    ),
+                  Text(
+                    '备份助记词',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                   SizedBox(
                     height: 8,
                   ),
-                  GridView.builder(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      gridDelegate:
-                          new SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 10.0,
-                        crossAxisSpacing: 10.0,
-                        childAspectRatio: 3,
-                      ),
-                      itemCount: _resumeWords.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                            alignment: Alignment.center,
+                  Text(
+                    '请按顺序抄写助记词，确保备份正确。',
+                    style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 36.0),
+                    child: GridView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        gridDelegate:
+                            new SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          childAspectRatio: 2.5,
+                        ),
+                        itemCount: _resumeWords.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          var borderRadius = BorderRadius.zero;
+                          if (index == 0) {
+                            borderRadius = BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                            );
+                          } else if (index == 2) {
+                            borderRadius = BorderRadius.only(
+                              topRight: Radius.circular(8),
+                            );
+                          } else if (index == _resumeWords.length - 1) {
+                            borderRadius = BorderRadius.only(
+                              bottomRight: Radius.circular(8),
+                            );
+                          } else if (index == _resumeWords.length - 3) {
+                            borderRadius = BorderRadius.only(
+                              bottomLeft: Radius.circular(8),
+                            );
+                          }
+
+                          return Container(
                             decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: HexColor("#FFB7B7B7")),
-                                borderRadius: BorderRadius.circular(12)),
-                            child: Text("${index + 1} ${_resumeWords[index]}"));
-                      }),
-                  Container(
-                    child: InkWell(
-                      onTap: () {
-                        Clipboard.setData(ClipboardData(text: widget.mnemonic));
-                        UiUtil.toast(S.of(context).copyed);
-                      },
-                      child: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: <Widget>[
-                          Image.asset(
-                            'res/drawable/ic_copy.png',
-                            height: 23,
-                            width: 23,
-                          ),
-                          SizedBox(
-                            width: 8.0,
-                          ),
-                          Text(
-                            S.of(context).copy,
-                            style: TextStyle(color: Colors.black, fontSize: 15),
-                          )
-                        ],
-                      ),
-                    ),
-                    padding: EdgeInsets.only(top: 24),
-                  ),
-                  SizedBox(
-                    height: 32.0,
-                  ),
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(color: HexColor("#FFFAEAEC")),
-                    child: Row(
-                      children: <Widget>[
-                        SizedBox(
-                          width: 16.0,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Icon(
-                            Icons.warning,
-                            color: Color(0xFFD0021B),
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            S.of(context).save_mnemonic_safe_notice,
-                            style: TextStyle(
-                              color: Color(0xFFD0021B),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                              color: HexColor('#FFF6F6F6'),
+                              border: Border.all(
+                                color: HexColor("#FFDEDEDE"),
+                                width: 0.5,
+                              ),
+                              borderRadius: borderRadius,
                             ),
-                            softWrap: true,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 16.0,
-                        )
-                      ],
-                    ),
+                            child: Stack(
+                              children: [
+                                Align(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            '${_resumeWords[index]}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  alignment: Alignment.center,
+                                ),
+                                Positioned(
+                                  child: Text(
+                                    "${index + 1}",
+                                    style: TextStyle(
+                                        color: DefaultColors.color999,
+                                        fontSize: 10),
+                                  ),
+                                  top: 4,
+                                  right: 4,
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
                   ),
+                  _reminder('妥善保管助记词至隔离网络的安全地方'),
+                  _reminder('请勿将助记词在联网环境下分享和存储，比如邮件、相册、社交应用等。'),
                   SizedBox(
-                    height: 32.0,
+                    height: 64,
                   ),
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
-                    constraints: BoxConstraints.expand(height: 48),
-                    child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      disabledColor: Colors.grey[600],
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      disabledTextColor: Colors.white,
-                      onPressed: () {
+                  Center(
+                    child: ClickOvalButton(
+                      '已确认备份',
+                      () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    BackupConfirmResumeWordPage(
-                                        widget.wallet, widget.mnemonic)));
+                              builder: (context) =>
+                                  BackupConfirmResumeWordPageV2(
+                                widget.wallet,
+                                widget.mnemonic,
+                              ),
+                            ));
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              S.of(context).continue_text,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            ),
-                          ],
-                        ),
-                      ),
+                      width: 300,
+                      height: 46,
+                      btnColor: [
+                        HexColor("#F7D33D"),
+                        HexColor("#E7C01A"),
+                      ],
+                      fontSize: 16,
+                      fontColor: DefaultColors.color333,
                     ),
                   ),
                 ],
@@ -202,5 +190,24 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPageV2> {
             ),
           ),
         ));
+  }
+
+  _reminder(String text) {
+    return Padding(
+      padding: EdgeInsets.only(right: 16, left: 16, top: 16),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 14,
+                color: DefaultColors.color999,
+              ),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

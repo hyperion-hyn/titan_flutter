@@ -6,6 +6,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_show_resume_word_page.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/wallet/wallet_new_page/wallet_backup_show_resume_word_page_v2.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -194,7 +195,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    BackupShowResumeWordPage(wallet, mnemonic)));
+                    BackupShowResumeWordPageV2(wallet, mnemonic)));
       } else {
         print(S.of(context).isnt_trustwallet_cant_export);
       }
