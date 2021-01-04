@@ -444,7 +444,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                   stream: _inputController.stream,
                                   builder: (context, snapshot) {
                                     var isFullBurn =
-                                        _inputValue > _needBurnValue;
+                                        _inputValue >= _needBurnValue;
                                     var preBurnStr = isFullBurn
                                         ? widget?.levelRule?.burnStr
                                         : '0';

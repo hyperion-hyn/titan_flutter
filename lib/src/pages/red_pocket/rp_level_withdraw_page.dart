@@ -97,7 +97,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
           _currentLevelRule?.holdingStr ?? '0',
         ) ??
         Decimal.zero;
-    var level = 0;
+    var level = _currentLevel;
 
     // 1.先和当前量级需持币比较
     if ((needHolding > Decimal.zero) && (remainHolding > Decimal.zero) && (remainHolding >= needHolding)) {
@@ -120,7 +120,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
         level = 0;
       }
     }
-    // print('[_getLevelByHolding] inputValue: $_inputValue， level：$level');
+    print('[_getLevelByHolding] inputValue: $_inputValue， level：$level');
 
     return level;
   }

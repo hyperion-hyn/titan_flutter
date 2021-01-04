@@ -110,7 +110,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
 
       //print("firstObj:${firstObj?.level??0}");
 
-      level = firstObj?.level ?? 0;
+      level = firstObj?.level ?? _currentLevel;
     } else {
       level = _currentLevel;
     }
