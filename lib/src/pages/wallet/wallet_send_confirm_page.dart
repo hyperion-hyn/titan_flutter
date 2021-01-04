@@ -599,7 +599,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                 // keyboardType: TextInputType.number,
                 keyboardType: TextInputType.numberWithOptions(decimal: false),
                 inputFormatters: [
-                  LengthLimitingTextInputFormatter(8),
+                  LengthLimitingTextInputFormatter(controller == _nonceController?18:8),
                   FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                 ],
               ),
