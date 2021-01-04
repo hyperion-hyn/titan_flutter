@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
@@ -161,14 +162,17 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
         baseTitle: S.of(context).transfer_confirm,
         backgroundColor: Colors.white,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            _totalWidget(),
-            _transferWidget(),
-            _gasWidget(),
-            _sendWidget(),
-          ],
+      body: BaseGestureDetector(
+        context: context,
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              _totalWidget(),
+              _transferWidget(),
+              _gasWidget(),
+              _sendWidget(),
+            ],
+          ),
         ),
       ),
     );
@@ -564,17 +568,24 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                   ),
                   errorStyle: TextStyle(fontSize: 14, color: Colors.blue[300]),
                   hintStyle: TextStyle(fontSize: 14, color: Colors.grey[300]),
+                  focusedErrorBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
                   focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
-                  //输入框启用时，下划线的样式
+                  // //输入框启用时，下划线的样式
                   disabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(width: 0.5, color: Colors.grey[300], style: BorderStyle.solid)),
+                      borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
                   //输入框启用时，下划线的样式
                   enabledBorder: UnderlineInputBorder(
                       borderSide:
-                          BorderSide(width: 0.5, color: Colors.grey[300], style: BorderStyle.solid)), //输入框启用时，下划线的样式
+                          BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)), //输入框启用时，下划线的样式
                 ),
-                keyboardType: TextInputType.number,
+                // keyboardType: TextInputType.number,
+                keyboardType: TextInputType.numberWithOptions(decimal: false),
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(8),
+                  FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+                ],
               ),
             ),
           ),
