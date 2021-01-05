@@ -218,7 +218,7 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '第 ${burnHistory.id} 轮',
+                            S.of(context).rp_burn_progress_func(burnHistory.id),
                             style: TextStyle(fontSize: 13),
                           ),
                           Padding(
@@ -226,7 +226,8 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
                               top: 4.0,
                             ),
                             child: Text(
-                              '区块高度 ${burnHistory.block}',
+                              S.of(context).block_height_block(burnHistory.block),
+                              //'区块高度 ${burnHistory.block}',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: DefaultColors.color999,
@@ -243,7 +244,7 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              '燃烧 ${FormatUtil.stringFormatCoinNum(burnHistory.getTotalAmount())} HYN',
+                              S.of(context).combustion_num_hyn(FormatUtil.stringFormatCoinNum(burnHistory.getTotalAmount())),
                               style: TextStyle(
                                 fontSize: 11,
                               ),
