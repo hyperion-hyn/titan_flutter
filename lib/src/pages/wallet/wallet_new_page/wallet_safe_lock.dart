@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pinput/pin_put/pin_put.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 class WalletSafeLock extends StatefulWidget {
   final Function onUnlock;
@@ -86,8 +87,20 @@ class _WalletSafeLockState extends State<WalletSafeLock> {
     );
   }
 
-  _submit(String pin) {
-    Fluttertoast.showToast(msg: pin);
-    widget.onUnlock?.call();
+  _submit(String pin) async {
+    if (await _checkPwdValid(pin)) {
+      widget.onUnlock?.call();
+    } else {
+      UiUtil.showErrorTopHint(context, '密码错误,请重试');
+      _pinPutController.text = '';
+    }
+  }
+
+  Future<bool> _checkPwdValid(String pin) async {
+    if (pin == '111111') {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
