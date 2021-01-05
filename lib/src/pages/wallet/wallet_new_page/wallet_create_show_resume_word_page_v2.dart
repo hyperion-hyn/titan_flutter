@@ -1,49 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/config/extends_icon_font.dart';
-import 'package:titan/src/pages/wallet/wallet_backup_confirm_resume_word_page.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_backup_confirm_resume_words_page_v2.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-import '../mnemonic_qrcode_page.dart';
+class WalletCreateShowResumeWordPageV2 extends StatefulWidget {
+  final String walletName;
+  final String password;
 
-class BackupShowResumeWordPageV2 extends StatefulWidget {
-  final Wallet wallet;
-  final String mnemonic;
-
-  BackupShowResumeWordPageV2(
-    this.wallet,
-    this.mnemonic,
-  );
+  WalletCreateShowResumeWordPageV2(this.walletName, this.password);
 
   @override
   State<StatefulWidget> createState() {
-    return _BackupShowResumeWordState();
+    return _ShowResumeWordState();
   }
 }
 
-class _BackupShowResumeWordState extends State<BackupShowResumeWordPageV2> {
+class _ShowResumeWordState extends State<WalletCreateShowResumeWordPageV2> {
   List _resumeWords = [];
+  String createWalletMnemonicTemp;
 
   @override
   void initState() {
-    getMnemonic();
     super.initState();
+    getMnemonic();
   }
 
   Future getMnemonic() async {
-    var mnemonic = widget.mnemonic;
-
-    logger.i("mnemonic:$mnemonic");
-
+    var mnemonic = await WalletUtil.makeMnemonic();
     if (mnemonic != null && mnemonic.isNotEmpty) {
       _resumeWords = mnemonic.split(" ");
+      createWalletMnemonicTemp = mnemonic;
       setState(() {});
     }
   }
@@ -174,15 +168,10 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPageV2> {
                     child: ClickOvalButton(
                       '已确认备份',
                       () {
-                        Navigator.push(
+                        Application.router.navigateTo(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  BackupConfirmResumeWordPageV2(
-                                widget.wallet,
-                                widget.mnemonic,
-                              ),
-                            ));
+                            Routes.wallet_confirm_resume_word +
+                                '?mnemonic=$createWalletMnemonicTemp&walletName=${FluroConvertUtils.fluroCnParamsEncode(widget.walletName)}&password=${widget.password}');
                       },
                       width: 300,
                       height: 46,
