@@ -12,6 +12,7 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/utils/format_util.dart';
+import "package:collection/collection.dart";
 
 class RpRecordListPage extends StatefulWidget {
   final RedPocketType rpType; // 1: 已经打开，2：未打开
@@ -32,10 +33,8 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
 
   var _address = "";
   List<RpOpenRecordEntity> _dataList = [];
-  // List<RpOpenRecordEntity> get _filterDataList =>
-  //     _dataList?.where((element) => element.type == widget.rpType.index)?.toList() ?? [];
-
-  int lastDay;
+  Map<String, List<RpOpenRecordEntity>> get _filterDataMap =>
+      groupBy(_dataList, (model) => FormatUtil.humanReadableDay(model.createdAt));
 
   @override
   bool get wantKeepAlive => true;
@@ -86,38 +85,31 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
           SliverList(
               delegate: SliverChildBuilderDelegate(
             (context, index) {
-              var model = _dataList[index];
-
-              var currentDate = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
-
-              bool isNewDay = false;
-              if (index == 0) {
-                isNewDay = true;
-              } else {
-                if (currentDate.day != lastDay) {
-                  isNewDay = true;
-                }
-              }
-              lastDay = currentDate.day;
-
-              //print("[$runtimeType] model.createdAt:${model.createdAt},length:${model.createdAt.toString().length}");
+              var key = _filterDataMap.keys.toList()[index];
+              var value = _filterDataMap[key];
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (isNewDay)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
-                      child: Text(
-                        FormatUtil.humanReadableDay(model.createdAt),
-                        style: TextStyle(color: Color(0xff999999)),
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
+                    child: Text(
+                      key,
+                      style: TextStyle(color: Color(0xff999999)),
                     ),
-                  _itemBuilder(index),
+                  ),
+                  ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return _itemBuilder(index);
+                    },
+                    itemCount: value.length,
+                  ),
                 ],
               );
             },
-            childCount: _dataList?.length ?? 0,
+            childCount: _filterDataMap?.length ?? 0,
           ))
         ],
       ),
@@ -300,6 +292,11 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
         _dataList = filterRpOpenDataList(netData.data);
+
+        for (var key in _filterDataMap.keys) {
+          var value = _filterDataMap[key];
+          print("[$runtimeType] _filterDataList.key:${key}, value.length:${value.length}");
+        }
 
         if (mounted) {
           setState(() {
