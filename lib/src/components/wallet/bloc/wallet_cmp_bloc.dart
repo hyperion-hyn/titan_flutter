@@ -195,11 +195,18 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         var response = await futureRetry(3, requestGasPrice);
         var gasPriceRecommend = GasPriceRecommend(
             parseGasPriceToBigIntWei(response['fastest']),
+            0.5,
+            parseGasPriceToBigIntWei(response['fast']),
+            4,
+            parseGasPriceToBigIntWei(response['average']),
+            15);
+        /*var gasPriceRecommend = GasPriceRecommend(
+            parseGasPriceToBigIntWei(response['fastest']),
             response['fastestWait'],
             parseGasPriceToBigIntWei(response['fast']),
             response['fastWait'],
             parseGasPriceToBigIntWei(response['average']),
-            response['avgWait']);
+            response['avgWait']);*/
 
         await AppCache.saveValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY, json.encode(gasPriceRecommend.toJson()));
         yield GasPriceState(status: Status.success, gasPriceRecommend: gasPriceRecommend);
@@ -316,10 +323,30 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
   Future requestGasPrice() async {
     var responseFromEtherScan = await EtherscanApi().getGasFromEtherScan();
+
     var responseFromEtherScanDict = responseFromEtherScan.data as Map;
 
+    // fastest
+    var fastGasPrice = double.parse(responseFromEtherScanDict["FastGasPrice"]);
+    responseFromEtherScanDict["fastest"] = fastGasPrice;
+
+    // fast
+    var proposeGasPrice = double.parse(responseFromEtherScanDict["ProposeGasPrice"]);
+    responseFromEtherScanDict["fast"] = proposeGasPrice;
+
+    // average
+    var safeGasPrice = double.parse(responseFromEtherScanDict["SafeGasPrice"]);
+    responseFromEtherScanDict["average"] = safeGasPrice;
+
     return responseFromEtherScanDict;
+  }
+
+  Future requestGasPriceOld() async {
+    var responseFromEtherScan = await EtherscanApi().getGasFromEtherScan();
     var responseFromEthGasStation = await requestGasFromEthGasStation();
+    //print("[object] requestGasPrice，1, responseFromEtherScan:$responseFromEtherScan, responseFromEthGasStation:$responseFromEthGasStation");
+
+    var responseFromEtherScanDict = responseFromEtherScan.data as Map;
     var responseFromEthGasStationDict = responseFromEthGasStation as Map;
 
     // fastest
@@ -352,6 +379,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
   Decimal parseGasPriceToBigIntWei(double num) {
     // return Decimal.parse(num.toString()) / Decimal.fromInt(10) * Decimal.fromInt(TokenUnit.G_WEI);
-    return Decimal.parse(num.toString()) / Decimal.fromInt(TokenUnit.G_WEI);
+    return Decimal.parse(num.toString()) * Decimal.fromInt(TokenUnit.G_WEI);
   }
 }
