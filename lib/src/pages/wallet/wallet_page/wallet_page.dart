@@ -19,6 +19,7 @@ import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
+import 'package:titan/src/pages/wallet/wallet_new_page/wallet_safe_lock.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -43,6 +44,8 @@ class _WalletPageState extends BaseState<WalletPage>
   ExchangeApi _exchangeApi = ExchangeApi();
 
   bool _isExchangeAccountAbnormal = false;
+
+  bool _isSafeLockUnlock = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -260,6 +263,14 @@ class _WalletPageState extends BaseState<WalletPage>
       aspect: WalletAspect.activatedWallet,
     ).activatedWallet;
     if (activatedWalletVo != null) {
+      if (!_isSafeLockUnlock)
+        return WalletSafeLock(
+          onUnlock: () {
+            _isSafeLockUnlock = true;
+            if (mounted) setState(() {});
+          },
+        );
+
       return LoadDataContainer(
         bloc: loadDataBloc,
         enablePullUp: false,

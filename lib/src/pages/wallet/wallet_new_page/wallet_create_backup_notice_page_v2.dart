@@ -98,7 +98,7 @@ class _CreateWalletBackupNoticePageV2State
                   height: 120,
                 ),
                 ClickOvalButton(
-                  '下一步',
+                  '立即备份',
                   () {
                     _next();
                   },
@@ -111,6 +111,18 @@ class _CreateWalletBackupNoticePageV2State
                   fontSize: 16,
                   fontColor: DefaultColors.color333,
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    onTap: () {},
+                    child: Text(
+                      '稍后备份',
+                      style: TextStyle(
+                        color: DefaultColors.primary,
+                      ),
+                    ),
+                  ),
+                )
               ],
             ),
           ),

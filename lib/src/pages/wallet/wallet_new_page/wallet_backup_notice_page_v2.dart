@@ -104,7 +104,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
                   height: 120,
                 ),
                 ClickOvalButton(
-                  '立即备份',
+                  '下一步',
                   () {
                     _showScreenshotWarningDailog();
                   },
@@ -117,18 +117,6 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
                   fontSize: 16,
                   fontColor: DefaultColors.color333,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: InkWell(
-                    onTap: () {},
-                    child: Text(
-                      '稍后备份',
-                      style: TextStyle(
-                        color: DefaultColors.primary,
-                      ),
-                    ),
-                  ),
-                )
               ],
             ),
           ),

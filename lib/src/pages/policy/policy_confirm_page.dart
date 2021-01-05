@@ -158,10 +158,20 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
         policyUrl = Config.WALLET_DEX_EN_URL;
       }
     }
-    return InAppWebViewContainer(
-      initUrl: policyUrl,
-      title: "",
-      isShowAppBar: false,
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey[200],
+            blurRadius: 40.0,
+          ),
+        ],
+      ),
+      child: InAppWebViewContainer(
+        initUrl: policyUrl,
+        title: '',
+        isShowAppBar: false,
+      ),
     );
   }
 
