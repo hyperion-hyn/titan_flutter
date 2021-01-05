@@ -199,7 +199,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
             ),
             Expanded(
               child: Text(
-                '当前已发行 $totalSupplyStr RP，百分比Y = $promotionSupplyRatioPercent（$stepPercent为1梯度）',
+                S.of(context).rp_level_total_supply_func(totalSupplyStr, promotionSupplyRatioPercent, stepPercent),
                 style: TextStyle(
                   color: HexColor('#333333'),
                   fontSize: 12,
@@ -293,7 +293,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     LevelRule dynamicModel =
     _oldModelList.firstWhere((element) => element.level == staticModel.level, orElse: () => null);
 
-    String oldLevelDesc = '提升至该量级需燃烧 ${dynamicModel?.burnStr ?? '0'}RP, 增持${dynamicModel?.holdingStr ?? '0'}RP';
+    String oldLevelDesc = S.of(context).rp_level_upgrade_func(dynamicModel?.burnStr ?? '0', dynamicModel?.holdingStr ?? '0');
 
     return Stack(
       children: [
@@ -452,7 +452,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
               top: 8,
             ),
             child: Text(
-              '计算公式: $formula',
+              '${S.of(context).rp_level_formula}: $formula',
               style: TextStyle(
                 color: HexColor('#999999'),
                 fontSize: 10,
@@ -546,7 +546,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
   _navToLevelAddStakingAction() {
     if (_currentLevel == 0) {
       Fluttertoast.showToast(
-        msg: '当前量级为0, 请先提升量级！',
+        msg: S.of(context).rp_level_zero_toast,
         gravity: ToastGravity.CENTER,
       );
       return;

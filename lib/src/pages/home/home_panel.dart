@@ -394,7 +394,7 @@ class HomePanelState extends State<HomePanel> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'RP 红包',
+                          S.of(context).red_pocket,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),

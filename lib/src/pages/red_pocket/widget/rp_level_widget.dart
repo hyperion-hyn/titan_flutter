@@ -170,7 +170,7 @@ class _RPLevelWidgetState extends State<RPLevelWidget> {
                         height: 15,
                       ),
                     ),
-                  yValueHint,
+                  Expanded(child: yValueHint),
                   SizedBox(width: 2),
                   Tooltip(
                     key: _toolTipKey,

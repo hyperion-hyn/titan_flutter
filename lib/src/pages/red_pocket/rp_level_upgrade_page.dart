@@ -163,6 +163,14 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    var levelName = levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4);
+    var tips = S.of(context).rp_upgrade_tips_func(levelName);
+
+    var currentHoldingStr = FormatUtil.stringFormatCoinNum(_myLevelInfo?.currentHoldingStr ?? '0');
+    var currBurningStr = FormatUtil.stringFormatCoinNum(_myLevelInfo?.currBurningStr ?? '0');
+    var currentHoldingBurning = S.of(context).rp_upgrade_current_func(currentHoldingStr, currBurningStr);
+
     return Scaffold(
       appBar: BaseAppBar(
         baseTitle: S.of(context).rp_level_up,
@@ -338,7 +346,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                         left: 16,
                                       ),
                                       child: Text(
-                                          '当前持币 ${FormatUtil.stringFormatCoinNum(_myLevelInfo?.currentHoldingStr ?? '0')} RP，燃烧量 ${FormatUtil.stringFormatCoinNum(_myLevelInfo?.currBurningStr ?? '0')} RP',
+                                          currentHoldingBurning,
                                           style: TextStyle(
                                             fontWeight: FontWeight.normal,
                                             fontSize: 12,
@@ -468,7 +476,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                         children: <Widget>[
                                           Expanded(
                                             child: Text(
-                                              '(其中：燃烧:$preBurnStr RP, 持币:$preHoldingStr RP)',
+                                              S.of(context).rp_upgrade_detail_func(preBurnStr, preHoldingStr),
                                               style: TextStyle(
                                                   fontWeight: FontWeight.normal,
                                                   fontSize: 12,
@@ -504,7 +512,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                     )),
                               ),
                               rowTipsItem(
-                                  '如果你还没有推荐人，系统将为你随机设定一个量级 ${levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4)} 以上的账户地址为推荐人'),
+                                  tips),
                             ],
                           ),
                         ),
@@ -631,7 +639,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
     _addressEditController.text = "";
 
-    //var defaultHint = '请先设置推荐人的HYN地址';
     var _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
     var addressExample = 'hyn1ntjklkvx9jlkrz9';
     var addressHint = S.of(context).example + ': $addressExample...';
@@ -674,7 +681,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
               String inviteResult = await _rpApi.postRpInviter(
                   inviteAddress, _activatedWallet?.wallet);
               if (inviteResult?.isNotEmpty ?? false) {
-                Fluttertoast.showToast(msg: "邀请成功, 继续升级吧！");
+                Fluttertoast.showToast(msg: S.of(context).rp_upgrade_continue_toast);
 
                 getRPMinerList();
 
@@ -773,8 +780,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   }
 
   Future<String> _parseText(String scanStr) async {
-    print("[扫描结果] scanStr:$scanStr");
-
     if (scanStr == null) {
       return '';
     } else if (scanStr.contains(PromoteQrCodePage.downloadDomain) ||
