@@ -1,9 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_pickers/UIConfig.dart';
+import 'package:image_pickers/image_pickers.dart';
+import 'package:r_scan/r_scan.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/image_util.dart';
 import 'package:titan/src/utils/psw_strength/password_strength_util.dart';
@@ -12,17 +18,18 @@ import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart'
     as all_page_state;
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 
-class WalletCreateAccountPage2 extends StatefulWidget {
-  WalletCreateAccountPage2();
+class WalletCreateAccountPageV2 extends StatefulWidget {
+  WalletCreateAccountPageV2();
 
   @override
   State<StatefulWidget> createState() {
-    return _WalletCreateAccountPage2State();
+    return _WalletCreateAccountPageV2State();
   }
 }
 
-class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
+class _WalletCreateAccountPageV2State extends State<WalletCreateAccountPageV2> {
   TextEditingController _walletNameController = TextEditingController();
   TextEditingController _walletPwsController = TextEditingController();
   TextEditingController _walletRePwsController = TextEditingController();
@@ -31,6 +38,10 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
   int _pswLevel = 0;
   bool isShowPws = false;
   bool isCreateWallet = false;
+  BuildContext dialogContext;
+  String usetImagePath;
+  AtlasApi _atlasApi = AtlasApi();
+  FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -40,6 +51,12 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
       var pswStr = _walletPwsController.text;
       _pswLevel = PasswordStrengthUtil.getPasswordLevel(pswStr, limitLength: 8);
       setState(() {});
+    });
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {//有焦点
+        UiUtil.showErrorTopHint();
+      }else{ //失去焦点
+      }
     });
   }
 
@@ -96,17 +113,52 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {
-                              UiUtil.showScanImagePickerSheet(context,
-                                  callback: (String text) {
-                                // _parseText(text);
-                              });
+                            onTap: () async {
+                              var tempListImagePaths =
+                                  await ImagePickers.pickerPaths(
+                                galleryMode: GalleryMode.image,
+                                selectCount: 1,
+                                showCamera: true,
+                                cropConfig: null,
+                                compressSize: 500,
+                                uiConfig:
+                                    UIConfig(uiThemeColor: Color(0xff0f95b0)),
+                              );
+                              if (tempListImagePaths != null &&
+                                  tempListImagePaths.length == 1) {
+                                UiUtil.showLoadingDialog(context, "头像上传中...",
+                                    (context) {
+                                  dialogContext = context;
+                                });
+
+                                var netImagePath =
+                                    await _atlasApi.postUploadImageFile(
+                                  "0x",
+                                  tempListImagePaths[0].path,
+                                  (count, total) {},
+                                );
+                                if (netImagePath != null &&
+                                    netImagePath.isNotEmpty) {
+                                  usetImagePath = netImagePath;
+                                  setState(() {});
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: S.of(context).scan_upload_error);
+                                }
+                                if (dialogContext != null) {
+                                  Navigator.pop(dialogContext);
+                                }
+                              }
                             },
                             child: SizedBox(
                               width: 60,
                               height: 60,
                               child: ImageUtil.getCoinImage(
-                                  "res/drawable/ic_user_avatar_default.png"),
+                                  usetImagePath != null
+                                      ? usetImagePath
+                                      : "res/drawable/ic_user_avatar_default.png",
+                                  placeholder:
+                                      "res/drawable/ic_user_avatar_default.png"),
                             ),
                           )
                         ],
@@ -151,9 +203,9 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
                           children: [
                             Expanded(
                               child: TextFormField(
-                                obscureText: !isShowPws,
                                 //obscureText为false则显示
-                                keyboardType: TextInputType.text,
+                                obscureText: !isShowPws,
+                                keyboardType: TextInputType.visiblePassword,
                                 validator: (value) {
                                   if (value.isEmpty) {
                                     return S.of(context).input_wallet_name_hint;
@@ -162,6 +214,7 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
                                   }
                                 },
                                 controller: _walletPwsController,
+                                focusNode: _focusNode,
                                 decoration: InputDecoration(
                                   hintText: "密码",
                                   hintStyle: TextStyles.textCaaaS14,
@@ -227,7 +280,7 @@ class _WalletCreateAccountPage2State extends State<WalletCreateAccountPage2> {
                             Expanded(
                               child: TextFormField(
                                 obscureText: !isShowPws,
-                                keyboardType: TextInputType.text,
+                                keyboardType: TextInputType.visiblePassword,
                                 validator: (value) {
                                   if (value.isEmpty) {
                                     return S.of(context).input_wallet_name_hint;
