@@ -157,7 +157,6 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
 
     switch (_rpType) {
       case RedPocketType.LUCKY:
-        // title = '$name 的幸运红包';
         title = S.of(context).rp_lucky_pocket;
 
         amount = luckState == RpLuckState.MISS ? zeroAmountStr : amountStr;
@@ -277,7 +276,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '量级$from -> 量级$to',
+                      '${S.of(context).rp_level} $from -> ${S.of(context).rp_level} $to',
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 10,
@@ -354,7 +353,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
                       Tooltip(
                         key: _toolTipKey,
                         verticalOffset: 20,
-                        message: '因量级过低，你错过获得$amountStr 机会',
+                        message: S.of(context).rp_detail_ignore_func(amountStr),
                         child: Image.asset(
                           'res/drawable/ic_tooltip.png',
                           width: 10,
@@ -390,7 +389,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
       child: Row(
         children: [
           Text(
-            '红包共 $totalAmountStr RP',
+            S.of(context).rp_detail_total_func(totalAmountStr),
             style: TextStyle(
               color: Color(0xff333333),
               fontWeight: FontWeight.w500,
@@ -490,8 +489,6 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
     var role = '';
     switch (RpAddressRoleType.values[model.role]) {
       case RpAddressRoleType.BURN:
-        //desc = '量级不足，错过机会';
-
         role = S.of(context).rp_burn;
         break;
 
@@ -614,7 +611,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
                     ),
                   ),
                   Text(
-                    '当时量级 $level ',
+                    '${S.of(context).rp_detail_current_level} $level ',
                     style: TextStyle(
                       color: HexColor("#999999"),
                       fontSize: 10,
@@ -720,7 +717,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
                       ),
                     ),
                     Text(
-                      ' ${otherEntity?.otherUserCount ?? 0} 个',
+                      ' ${otherEntity?.otherUserCount ?? 0} ${S.of(context).rp_unit}',
                       style: TextStyle(
                         color: HexColor("#999999"),
                         fontSize: 12,
@@ -881,7 +878,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
         _manageFeeAmount = valueByDecimal;
       }
     });
-    var _manageFeeAmountStr = '管理费 ' + FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString(), decimal: 4,) + ' RP';
+    var _manageFeeAmountStr = '${S.of(context).manage_fee} ' + FormatUtil.stringFormatCoinNum(_manageFeeAmount.toString(), decimal: 4,) + ' RP';
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),

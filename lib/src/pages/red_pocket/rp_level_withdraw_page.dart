@@ -160,6 +160,10 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    var holdingStr = _currentLevelRule?.holdingStr ?? '0';
+    var holdingStrTips = S.of(context).rp_withdraw_tips_func(holdingStr);
+
     return Scaffold(
       appBar: BaseAppBar(
         baseTitle: S.of(context).rp_retrive_holding,
@@ -331,7 +335,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                               ),
                               Expanded(
                                 child: Text(
-                                  '为保证当前量级不下降，请保持持币量大于${_currentLevelRule?.holdingStr ?? '0'}RP',
+                                  holdingStrTips,
                                   style: TextStyle(
                                     color: HexColor('#333333'),
                                     fontSize: 12,
