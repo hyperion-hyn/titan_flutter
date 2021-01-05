@@ -45,12 +45,20 @@ class UiUtil {
     ));
   }
 
-  static showErrorTopHint(BuildContext context, String message) {
+  static showErrorTopHint(BuildContext context, String message, {ErrorHintType errorHintType = ErrorHintType.ERROR}) {
+    List<Color> backColors;
+    if(errorHintType == ErrorHintType.ERROR){
+      backColors = [HexColor('#FFEB8686'),HexColor('#FFEB8686')];
+    }else if(errorHintType == ErrorHintType.REMIND){
+      backColors = [HexColor('#F7D33D'),HexColor('#E7C01A')];
+    }
     Flushbar(
       padding: EdgeInsets.symmetric(
         vertical: 20.0,
       ),
-      backgroundColor: HexColor('#FFEB8686'),
+      backgroundGradient: LinearGradient(
+        colors: backColors,
+      ),
       icon: Padding(
         padding: const EdgeInsets.only(left: 16.0),
         child: Image.asset(
@@ -72,7 +80,7 @@ class UiUtil {
       ),
       flushbarStyle: FlushbarStyle.GROUNDED,
       flushbarPosition: FlushbarPosition.TOP,
-      duration: Duration(seconds: 5),
+      duration: errorHintType == ErrorHintType.ERROR ? Duration(seconds: 5) : null,
     ).show(context);
   }
 
@@ -981,4 +989,9 @@ void callLater(FrameCallback callback) {
   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
     callback(timeStamp);
   });
+}
+
+enum ErrorHintType{
+  ERROR,
+  REMIND
 }

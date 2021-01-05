@@ -72,7 +72,7 @@ class EmptyWalletView extends StatelessWidget {
                       await Application.router.navigateTo(
                         context,
                         Routes.wallet_create +
-                            '?entryRouteName=$currentRouteName',
+                            '?entryRouteName=$currentRouteName&isCreate=1',
                       );
                       backAndupdatePage(context);
                     }
@@ -109,7 +109,7 @@ class EmptyWalletView extends StatelessWidget {
                             RouteUtil.encodeRouteNameWithoutParams(context);
                         Application.router.navigateTo(
                           context,
-                          Routes.wallet_import +
+                          Routes.wallet_create +
                               '?entryRouteName=$currentRouteName',
                         );
                         backAndupdatePage(context);

@@ -74,7 +74,8 @@ var rootHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<S
 //wallet
 var createWalletHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return WalletCreateAccountPageV2();
+  //isCreate 1、创建钱包 2、导入钱包
+  return WalletCreateAccountPageV2(params['isCreate']?.first == "1");
 });
 
 var importWalletHandler = Handler(handlerFunc: (context, params) {
