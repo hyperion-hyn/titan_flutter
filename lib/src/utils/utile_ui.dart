@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:android_intent/android_intent.dart';
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -16,6 +17,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
+import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -41,6 +43,37 @@ class UiUtil {
       ),
       content: Text(message),
     ));
+  }
+
+  static showErrorTopHint(BuildContext context, String message) {
+    Flushbar(
+      padding: EdgeInsets.symmetric(
+        vertical: 20.0,
+      ),
+      backgroundColor: HexColor('#FFEB8686'),
+      icon: Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Image.asset(
+          'res/drawable/ic_warning_triangle.png',
+          width: 18,
+          height: 18,
+          color: Colors.white,
+        ),
+      ),
+      messageText: Padding(
+        padding: const EdgeInsets.only(right: 16.0),
+        child: Text(
+          message,
+          style: TextStyle(
+            fontSize: 13.0,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      flushbarStyle: FlushbarStyle.GROUNDED,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: Duration(seconds: 5),
+    ).show(context);
   }
 
   static toast(String message) {
@@ -665,7 +698,38 @@ class UiUtil {
 //    }
 //  }
 
-  static showHintToast(BuildContext context, Widget icon, msg,) {
+  static showConfirmPolicyDialog(
+    BuildContext context,
+    PolicyType policyType, {
+    bool isShowConfirm = true,
+  }) {
+    var height = MediaQuery.of(context).size.height - 80;
+    showDialog(
+      context: context,
+      builder: (_) => Material(
+        type: MaterialType.transparency,
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            height: height,
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+              child: PolicyConfirmPage(
+                policyType,
+                isShowConfirm: isShowConfirm,
+                isDialog: true,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static showHintToast(BuildContext context, Widget icon, msg) {
     Widget widget = Center(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),
@@ -686,8 +750,7 @@ class UiUtil {
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
-                    color: Colors.white,
-                    decoration: TextDecoration.none),
+                    color: Colors.white),
               ),
               Spacer()
             ],

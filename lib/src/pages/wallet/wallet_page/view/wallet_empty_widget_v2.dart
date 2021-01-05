@@ -13,6 +13,7 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 class EmptyWalletViewV2 extends StatelessWidget {
   final String tips;
@@ -74,11 +75,15 @@ class EmptyWalletViewV2 extends StatelessWidget {
                   _optionItem(context, S.of(context).create_wallet, '第一次使用钱包',
                       () async {
                     if (await _checkConfirmWalletPolicy()) {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => PolicyConfirmPage(
-                          PolicyType.WALLET,
-                        ),
-                      ));
+                      UiUtil.showConfirmPolicyDialog(
+                        context,
+                        PolicyType.WALLET,
+                      );
+                      // Navigator.of(context).push(MaterialPageRoute(
+                      //   builder: (BuildContext context) => PolicyConfirmPage(
+                      //     PolicyType.WALLET,
+                      //   ),
+                      // ));
                     } else {
                       var currentRouteName =
                           RouteUtil.encodeRouteNameWithoutParams(context);
