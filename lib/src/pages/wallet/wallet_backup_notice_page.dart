@@ -15,7 +15,7 @@ import 'package:titan/src/widget/screenshot_warning_dialog.dart';
 import 'wallet_new_page/wallet_backup_show_resume_word_page_v2.dart';
 
 class WalletBackupNoticePage extends StatefulWidget {
-  Wallet wallet;
+  final Wallet wallet;
 
   WalletBackupNoticePage(this.wallet);
 

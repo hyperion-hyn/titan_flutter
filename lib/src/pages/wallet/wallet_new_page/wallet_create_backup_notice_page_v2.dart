@@ -1,33 +1,27 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/pages/wallet/wallet_backup_show_resume_word_page.dart';
-import 'package:titan/src/global.dart';
-import 'package:titan/src/pages/wallet/wallet_new_page/wallet_backup_show_resume_word_page_v2.dart';
-import 'package:titan/src/plugins/wallet/keystore.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:titan/src/widget/screenshot_warning_dialog.dart';
 
-class WalletBackupNoticePageV2 extends StatefulWidget {
-  final Wallet wallet;
+// ignore: must_be_immutable
+class CreateWalletBackupNoticePageV2 extends StatefulWidget {
+  String walletName;
+  String password;
 
-  WalletBackupNoticePageV2(this.wallet);
+  CreateWalletBackupNoticePageV2(this.walletName, this.password);
 
   @override
   State<StatefulWidget> createState() {
-    return _WalletBackupNoticeState();
+    return _CreateWalletBackupNoticePageV2State();
   }
 }
 
-class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
+class _CreateWalletBackupNoticePageV2State
+    extends State<CreateWalletBackupNoticePageV2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,9 +98,9 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
                   height: 120,
                 ),
                 ClickOvalButton(
-                  '下一步',
+                  '立即备份',
                   () {
-                    _showScreenshotWarningDailog();
+                    _next();
                   },
                   width: 300,
                   height: 46,
@@ -117,6 +111,18 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
                   fontSize: 16,
                   fontColor: DefaultColors.color333,
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    onTap: () {},
+                    child: Text(
+                      '稍后备份',
+                      style: TextStyle(
+                        color: DefaultColors.primary,
+                      ),
+                    ),
+                  ),
+                )
               ],
             ),
           ),
@@ -152,48 +158,11 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
     );
   }
 
-  _showScreenshotWarningDailog() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return ScreenshotWarningDialog(
-            onConfirm: _showVerifyDialog,
-          );
-        });
-  }
-
-  _showVerifyDialog() async {
-    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
-      context,
-      widget.wallet,
-    );
-    print("walletPassword:$walletPassword");
-    if (walletPassword == null) {
-      return;
-    }
-    var wallet = widget.wallet;
-    try {
-      if ((wallet.keystore is KeyStore) && wallet.keystore.isMnemonic) {
-        var mnemonic = await WalletUtil.exportMnemonic(
-            fileName: wallet.keystore.fileName, password: walletPassword);
-        logger.i('your mnemonic is: $mnemonic');
-
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    BackupShowResumeWordPageV2(wallet, mnemonic)));
-      } else {
-        print(S.of(context).isnt_trustwallet_cant_export);
-      }
-    } catch (_) {
-      _ as PlatformException;
-      logger.e(_);
-      if (_.code == WalletError.PASSWORD_WRONG) {
-        Fluttertoast.showToast(msg: S.of(context).wallet_password_error);
-      } else {
-        Fluttertoast.showToast(msg: S.of(context).extract_mnemonic_fail);
-      }
-    }
+  void _next() {
+    var walletName = FluroConvertUtils.fluroCnParamsEncode(widget.walletName);
+    Application.router.navigateTo(
+        context,
+        Routes.wallet_show_resume_word +
+            '?walletName=$walletName&password=${widget.password}');
   }
 }
