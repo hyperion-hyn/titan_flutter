@@ -13,6 +13,7 @@ import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'entity/rp_release_info.dart';
+import "package:collection/collection.dart";
 
 class RpTransmitRecordsPage extends StatefulWidget {
 
@@ -31,6 +32,9 @@ class _RpTransmitRecordsState extends BaseState<RpTransmitRecordsPage> {
   int _currentPage = 1;
   var _address = "";
   List<RpReleaseInfo> _dataList = [];
+  Map<String, List<RpReleaseInfo>> get _filterDataMap =>
+      groupBy(_dataList, (model) => FormatUtil.humanReadableDay(model.updatedAt));
+
 
   int lastDay;
 
@@ -81,38 +85,33 @@ class _RpTransmitRecordsState extends BaseState<RpTransmitRecordsPage> {
         slivers: <Widget>[
           SliverList(
               delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              var model = _dataList[index];
+                    (context, index) {
+                  var key = _filterDataMap.keys.toList()[index];
+                  var value = _filterDataMap[key];
 
-              var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
-
-              bool isNewDay = false;
-              if (index == 0) {
-                isNewDay = true;
-              } else {
-                if (currentDate.day != lastDay) {
-                  isNewDay = true;
-                }
-              }
-              lastDay = currentDate.day;
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (isNewDay)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
-                      child: Text(
-                        FormatUtil.humanReadableDay(model.updatedAt),
-                        style: TextStyle(color: Color(0xff999999)),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
+                        child: Text(
+                          key,
+                          style: TextStyle(color: Color(0xff999999)),
+                        ),
                       ),
-                    ),
-                  _itemBuilder(index),
-                ],
-              );
-            },
-            childCount: _dataList?.length ?? 0,
-          ))
+                      ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return _itemBuilder(index);
+                        },
+                        itemCount: value.length,
+                      ),
+                    ],
+                  );
+                },
+                childCount: _filterDataMap?.length ?? 0,
+              ))
         ],
       ),
     );
@@ -126,7 +125,7 @@ class _RpTransmitRecordsState extends BaseState<RpTransmitRecordsPage> {
     var amount = model?.amount ?? 0;
 
     var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
-    // rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
+    rpAmount = FormatUtil.stringFormatCoinNum(rpAmount);
     // rpAmount = '00000000000000000000000000000000000000000000000000000000000000';
 
     var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
