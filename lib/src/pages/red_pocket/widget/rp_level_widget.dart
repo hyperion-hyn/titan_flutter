@@ -112,6 +112,7 @@ class _RPLevelWidgetState extends State<RPLevelWidget> {
     var nextYPercent = FormatUtil.formatPercent(nextYRatio);
 
     var yValueHint = RichText(
+      textAlign: TextAlign.right,
         text: TextSpan(
       children: [
         TextSpan(
@@ -170,8 +171,8 @@ class _RPLevelWidgetState extends State<RPLevelWidget> {
                         height: 15,
                       ),
                     ),
-                  Expanded(child: yValueHint),
-                  SizedBox(width: 2),
+                  Flexible(child: yValueHint),
+                  SizedBox(width: 4),
                   Tooltip(
                     key: _toolTipKey,
                     verticalOffset: 16,
