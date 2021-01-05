@@ -53,7 +53,7 @@ class _ExchangeWithdrawConfirmPageState
   var isTransferring = false;
   var isLoadingGasFee = false;
 
-  int selectedPriceLevel = 2;
+  int selectedPriceLevel = 1;
 
   WalletVo activatedWallet;
   ActiveQuoteVoAndSign activatedQuoteSign;

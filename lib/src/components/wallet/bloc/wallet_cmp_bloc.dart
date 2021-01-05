@@ -316,10 +316,10 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
   Future requestGasPrice() async {
     var responseFromEtherScan = await EtherscanApi().getGasFromEtherScan();
-    var responseFromEthGasStation = await requestGasFromEthGasStation();
-    //print("[object] requestGasPrice，1, responseFromEtherScan:$responseFromEtherScan, responseFromEthGasStation:$responseFromEthGasStation");
-
     var responseFromEtherScanDict = responseFromEtherScan.data as Map;
+
+    return responseFromEtherScanDict;
+    var responseFromEthGasStation = await requestGasFromEthGasStation();
     var responseFromEthGasStationDict = responseFromEthGasStation as Map;
 
     // fastest
@@ -351,6 +351,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   }
 
   Decimal parseGasPriceToBigIntWei(double num) {
-    return Decimal.parse(num.toString()) / Decimal.fromInt(10) * Decimal.fromInt(TokenUnit.G_WEI);
+    // return Decimal.parse(num.toString()) / Decimal.fromInt(10) * Decimal.fromInt(TokenUnit.G_WEI);
+    return Decimal.parse(num.toString()) / Decimal.fromInt(TokenUnit.G_WEI);
   }
 }
