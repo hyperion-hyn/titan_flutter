@@ -294,7 +294,9 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
               child: ClickOvalButton(
                 S.of(context).action_atals_receive_award,
                 _collect,
-                fontSize: 16,
+                fontSize: 14,
+                width: 160,
+                height: 36,
                 fontWeight: FontWeight.normal,
               ),
             ),
@@ -429,9 +431,9 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
                   ),
                 ));
           },
-          width: 200,
+          width: 160,
           height: 38,
-          fontSize: 16,
+          fontSize: 14,
         ),
       ],
       content: S.of(context).confirm_collect_reward_to_wallet(
