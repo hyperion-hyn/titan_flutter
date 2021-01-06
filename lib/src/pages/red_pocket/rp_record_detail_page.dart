@@ -1104,6 +1104,10 @@ enum RedPocketType {
   PROMOTION,
 }
 
+enum RpTransmitType {
+  DIRECT,
+  MAP3,
+}
 
 enum RpLuckState {
   MISS,             // 错过：0

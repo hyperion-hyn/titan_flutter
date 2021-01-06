@@ -15,7 +15,6 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
-import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -26,12 +25,10 @@ import 'entity/rp_util.dart';
 class RpTransmitDetailPage extends StatefulWidget {
   final RPStatistics rpStatistics;
   final RpStakingInfo rpStakingInfo;
-  final RpTransmitType type;
 
   RpTransmitDetailPage(
     this.rpStatistics,
     this.rpStakingInfo,
-    this.type,
   );
 
   @override
@@ -40,7 +37,8 @@ class RpTransmitDetailPage extends StatefulWidget {
   }
 }
 
-class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage> with RouteAware {
+class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage>
+    with RouteAware {
   final RPApi _rpApi = RPApi();
 
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
@@ -62,7 +60,8 @@ class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage> with Ro
 
     _rpStatistics = widget.rpStatistics;
 
-    _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    _activeWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
   }
 
   @override
@@ -97,7 +96,9 @@ class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage> with Ro
           FlatButton(
             onPressed: () {
               WalletShowAccountInfoPage.jumpToAccountInfoPage(
-                  context, widget.rpStakingInfo?.txHash ?? '', SupportedTokens.HYN_Atlas.symbol);
+                  context,
+                  widget.rpStakingInfo?.txHash ?? '',
+                  SupportedTokens.HYN_Atlas.symbol);
             },
             child: Text(
               S.of(context).rp_check_staking_tx,
@@ -140,7 +141,8 @@ class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage> with Ro
 
     var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
     var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
-    var hynPerRpBig = ConvertTokenUnit.strToBigInt(_rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
+    var hynPerRpBig = ConvertTokenUnit.strToBigInt(
+        _rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
     var amountBig = (hynAmountBig / hynPerRpBig);
 
     if (amountBig.isNaN || amountBig.isInfinite) {
@@ -152,8 +154,11 @@ class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage> with Ro
       amount = 1;
     }
 
-    var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
-    var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectRetrieveTime ?? '0', isSecond: true);
+    var stakingAt =
+        FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
+    var expectReleaseTime = FormatUtil.newFormatUTCDateStr(
+        model?.expectRetrieveTime ?? '0',
+        isSecond: true);
 
     return SliverToBoxAdapter(
       child: Container(
@@ -184,7 +189,7 @@ class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage> with Ro
                         right: 10,
                       ),
                       child: Image.asset(
-                        "res/drawable/red_pocket_${widget.type == RpTransmitType.DIRECT ? 'contract' : 'map3'}.png",
+                        "res/drawable/red_pocket_contract.png",
                         width: 28,
                         height: 28,
                       ),
@@ -213,7 +218,9 @@ class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage> with Ro
                               width: 6,
                             ),
                             Text(
-                              S.of(context).rp_staking_days(model?.releaseTimes ?? 0),
+                              S
+                                  .of(context)
+                                  .rp_staking_days(model?.releaseTimes ?? 0),
                               style: TextStyle(
                                 color: HexColor("#999999"),
                                 fontSize: 12,
@@ -286,7 +293,7 @@ class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage> with Ro
                     color: HexColor('#F2F2F2'),
                   ),
                 ),
-                 Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Text(
@@ -299,7 +306,7 @@ class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage> with Ro
                       textAlign: TextAlign.left,
                     ),
                     Spacer(),
-                    if (status >= 3 && status <= 5 && widget.type == RpTransmitType.DIRECT)
+                    if (status >= 3 && status <= 5)
                       Text(
                         '${S.of(context).rp_staking_end_time} ${expectReleaseTime ?? '--'}',
                         //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
@@ -366,7 +373,8 @@ class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage> with Ro
         child: Container(
           color: HexColor('#F8F8F8'),
           child: Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 160),
+            padding: const EdgeInsets.only(
+                left: 16.0, right: 16.0, top: 16.0, bottom: 160),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16.0),
               child: emptyListWidget(
@@ -395,7 +403,8 @@ class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage> with Ro
     //rpAmount = '00000000000000000000000000000000000000000000000000000000000000';
     //rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
 
-    var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
+    var currentDate =
+        DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
     var updatedAt = Const.DATE_FORMAT.format(currentDate);
 
     return InkWell(
@@ -406,7 +415,8 @@ class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage> with Ro
       child: Container(
         color: HexColor('#F8F8F8'),
         child: Padding(
-          padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
+          padding:
+              const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
           child: Container(
             padding: const EdgeInsets.symmetric(
               vertical: 16,
@@ -471,6 +481,7 @@ class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage> with Ro
           _loadDataBloc.add(RefreshSuccessEvent());
         });
       }
+
     } catch (e) {
       _loadDataBloc.add(LoadFailEvent());
     }

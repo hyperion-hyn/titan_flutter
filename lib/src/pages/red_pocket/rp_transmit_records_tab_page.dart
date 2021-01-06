@@ -5,46 +5,37 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_record_list_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
 
-class RpRecordTabPage extends StatefulWidget {
+
+class RpTransmitRecordsTabPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _RpRecordTabState();
+    return _RpTransmitRecordsTabState();
   }
 }
 
-class _RpRecordTabState extends BaseState<RpRecordTabPage> {
+class _RpTransmitRecordsTabState extends BaseState<RpTransmitRecordsTabPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: BaseAppBar(
-          baseTitle: S.of(context).my_redpocket,
-          backgroundColor: Colors.white,
-          /*
+          baseTitle: S.of(context).rp_transmit_detail,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           actions: <Widget>[
-            FlatButton(
-              onPressed: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RpRecordStatisticsPage(),
-                  ),
-                );
-              },
-              child: Text(
-                '每日统计',
-                style: TextStyle(
-                  color: HexColor("#1F81FF"),
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                ),
+            IconButton(
+              icon: Image.asset(
+                "res/drawable/ic_tooltip.png",
+                width: 16,
+                height: 16,
               ),
+              onPressed: () {
+                //_showInfoAlertView();
+              },
             ),
           ],
-          */
         ),
         body: Scaffold(
           appBar: new PreferredSize(
@@ -53,7 +44,7 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
               width: double.infinity,
               height: 50.0,
               //color: HexColor('#F8F8F8'),
-              color: Colors.white,
+              //color: Colors.white,
               child: Row(
                 children: <Widget>[
                   Expanded(
@@ -74,27 +65,21 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
                       ),
                       unselectedLabelColor: HexColor("#FF333333"),
                       tabs: [
-
                         Tab(
                           child: Text(
-                            S.of(context).lucky_rp,
+                            '直接传导',
                           ),
                         ),
                         Tab(
                           child: Text(
-                            S.of(context).level_rp,
-                          ),
-                        ),
-                        Tab(
-                          child: Text(
-                            S.of(context).promotion_rp,
+                            'Map3传导',
                           ),
                         ),
                       ],
                     ),
                   ),
                   Expanded(
-                    flex: 1,
+                    flex: 6,
                     child: Container(),
                   )
                 ],
@@ -103,9 +88,8 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
           ),
           body: TabBarView(
             children: [
-              RpRecordListPage(rpType: RedPocketType.LUCKY,),
-              RpRecordListPage(rpType: RedPocketType.LEVEL,),
-              RpRecordListPage(rpType: RedPocketType.PROMOTION,),
+              RpTransmitRecordsPage(type: RpTransmitType.DIRECT,),
+              RpTransmitRecordsPage(type: RpTransmitType.MAP3,),
             ],
           ),
         ),

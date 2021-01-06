@@ -23,6 +23,7 @@ import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/app_tabbar/bottom_fabs_widget.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_node_tabs_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/event/node_event.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
@@ -137,18 +138,15 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
       _urlLauncherAction(values);
     };
 
-  }
-
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-  }
-
-  @override
-  void didUpdateWidget(AppTabBarPage oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
+    Application.eventBus.on().listen((event) async {
+      if (event is UpdateTabsPageIndexEvent) {
+        if (mounted) {
+          this.setState(() {
+            this._currentTabIndex = event.index;
+          });
+        }
+      }
+    });
   }
 
   @override
@@ -198,7 +196,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     } else if (type == "rp" && subType == "detail") {
       var inviterAddress = content["from"];
       var walletName = content["name"];
-      showInviteDialog(context,inviterAddress,walletName);
+      showInviteDialog(context, inviterAddress, walletName);
     } else if (type == "richinvite" && subType == "detail") {
       var inviterAddress = content["from"];
       var walletName = content["name"];
@@ -276,17 +274,14 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
             listener: (context, state) {
               if (state is ActiveDMapState) {
                 DMapCreationModel model = DMapDefine.kMapList[state.name];
-                print("[app_Dmap] ---1");
 
                 if (model != null) {
                   this.setState(() {
-                    print("[app_Dmap] ---2 - 2");
                     createDAppWidgetFunction = model.createDAppWidgetFunction;
                   });
                 }
               } else {
                 this.setState(() {
-                  print("[app_Dmap] ---2 - 3");
                   createDAppWidgetFunction = null;
                 });
               }

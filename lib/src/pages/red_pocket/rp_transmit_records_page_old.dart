@@ -9,7 +9,6 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
-import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -18,8 +17,7 @@ import "package:collection/collection.dart";
 
 class RpTransmitRecordsPage extends StatefulWidget {
 
-  final RpTransmitType type;
-  RpTransmitRecordsPage({this.type = RpTransmitType.DIRECT});
+  RpTransmitRecordsPage();
 
   @override
   State<StatefulWidget> createState() {
@@ -62,7 +60,11 @@ class _RpTransmitRecordsState extends BaseState<RpTransmitRecordsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: HexColor('#F8F8F8'),
+      backgroundColor: HexColor('#F8F8F8'),
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).rp_transmit_detail,
+        backgroundColor: HexColor('#F8F8F8'),
+      ),
       body: _pageView(),
     );
   }

@@ -9,6 +9,7 @@ import 'package:flutter_html/style.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -18,18 +19,14 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/pages/atlas_map/event/node_event.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
-import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_transmit_detail_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_transmit_records_tab_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_transmit_records_page_old.dart';
+import 'package:titan/src/pages/red_pocket/rp_transmit_detail_page_old.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
-import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -39,8 +36,8 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'entity/rp_util.dart';
 
 class RpTransmitPage extends StatefulWidget {
-  final RpTransmitType type;
-  RpTransmitPage({this.type = RpTransmitType.DIRECT});
+
+  RpTransmitPage();
 
   @override
   State<StatefulWidget> createState() {
@@ -67,6 +64,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   RPStatistics _rpStatistics;
   int _currentPage = 1;
   List<RpStakingInfo> _dataList = [];
+
 
   @override
   void initState() {
@@ -108,6 +106,23 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).rp_transmit_pool,
+        backgroundColor: HexColor('#F8F8F8'),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: _pushRecordAction,
+            child: Text(
+              S.of(context).rp_transmit_detail,
+              style: TextStyle(
+                color: HexColor("#1F81FF"),
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
+      ),
       body: LoadDataContainer(
         bloc: _loadDataBloc,
         onLoadData: () async {
@@ -121,6 +136,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
         },
         child: CustomScrollView(
           slivers: [
+            _poolInfo(),
             _myRPInfo(),
             _myContractHeader(),
             _myContractList(),
@@ -163,6 +179,56 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     );
   }
 
+  _poolInfo() {
+    String totalStakingHyn = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalStakingHynStr) ?? '--';
+    String transmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.transmitStr) ?? '--';
+    //String totalTransmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalTransmitStr) ?? '--';
+
+    return SliverToBoxAdapter(
+      child: Container(
+        color: HexColor('#F8F8F8'),
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 10,
+            bottom: 6,
+            left: 26,
+            right: 16,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              _columnWidget(
+                '${_rpStatistics?.rpContractInfo?.poolPercent ?? '--'}${S.of(context).rp_million_rp}',
+                S.of(context).rp_total_available_transmit,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: _lineWidget(),
+              ),
+              Expanded(
+                child: _columnWidget(
+                  '$totalStakingHyn HYN',
+                  S.of(context).rp_global_hyn_staking,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: _lineWidget(),
+              ),
+              Expanded(
+                child: _columnWidget(
+                  '$transmit RP',
+                  S.of(context).rp_global_transmit,
+                ),
+              ),
+              //Spacer(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   _myRPInfo() {
     int totalAmount = _rpStatistics?.self?.totalAmount ?? 0;
     String totalStakingHyn = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalStakingHynStr) ?? '--';
@@ -170,11 +236,12 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
 
     String baseRp = _rpStatistics?.rpContractInfo?.baseRpStr ?? '--';
-    var baseRpStr = _rpStatistics?.rpContractInfo?.baseRpStr ?? '0';
-    var baseRpValue = Decimal.tryParse(baseRpStr) ?? Decimal.zero;
+    var baseRpStr = _rpStatistics?.rpContractInfo?.baseRpStr??'0';
+    var baseRpValue = Decimal.tryParse(baseRpStr)??Decimal.zero;
     if (baseRpValue > Decimal.one) {
       baseRp = FormatUtil.stringFormatCoinNum(baseRpStr, decimal: 4) ?? '--';
-    } else {
+    }
+    else {
       baseRp = FormatUtil.stringFormatCoinNum(baseRpStr, decimal: 8) ?? '--';
     }
 
@@ -189,7 +256,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     htmlData = S.of(context).rp_swap_pool_transmit_func(_hynPerRp, baseRp, releaseDay, stakingDay);
     return SliverToBoxAdapter(
       child: Container(
-        // color: HexColor('#F8F8F8'),
+        color: HexColor('#F8F8F8'),
         child: Padding(
           padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
           child: Container(
@@ -201,48 +268,55 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(
-                    top: 16,
+                    top: 26,
+                    //bottom: 16,
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: 4,
-                            ),
-                            child: Text(
-                              '${S.of(context).rp_already_stake}',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: DefaultColors.color999,
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 12,
+                          // right: 20,
+                        ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                bottom: 4,
                               ),
-                            ),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              Text(
-                                '$totalAmount${S.of(context).rp_amount_unit}',
+                              child: Text(
+                                '${S.of(context).rp_already_stake}',
                                 style: TextStyle(
-                                  color: DefaultColors.color333,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              Text(
-                                '（$totalStakingHyn HYN）',
-                                style: TextStyle(
-                                  fontSize: 10,
+                                  fontSize: 12,
                                   color: DefaultColors.color999,
                                 ),
                               ),
-                            ],
-                          ),
-                        ],
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Text(
+                                  '$totalAmount${S.of(context).rp_amount_unit}',
+                                  style: TextStyle(
+                                    color: DefaultColors.color333,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Text(
+                                  '（$totalStakingHyn HYN）',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: DefaultColors.color999,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                        ),
                       ),
                       _columnWidget('$totalRp RP', S.of(context).rp_my_total_transmit, isBold: true),
                       Padding(
@@ -276,130 +350,126 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                     ],
                   ),
                 ),
-                widget.type == RpTransmitType.DIRECT
-                    ? Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 30,
-                              right: 30,
-                              top: 16,
-                              bottom: 0,
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 0,
+                    top: 16,
+                    left: 30,
+                    right: 30,
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      /*
+                      Expanded(
+                        flex: 2,
+                        child: RichText(
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            text: S.of(context).rp_transmit_desc_1(_hynPerRp),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: HexColor("#999999"),
+                              fontWeight: FontWeight.normal,
+                              height: 1.5,
                             ),
-                            child: Html(
-                              data: htmlData,
-                              style: {
-                                "p": Style(
-                                  textAlign: TextAlign.center,
-                                  fontSize: FontSize(10),
-                                  color: HexColor('#999999'),
-                                  lineHeight: 1.8,
+                            children: [
+                              TextSpan(
+                                text: '$baseRp',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: HexColor("#333333"),
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.8,
                                 ),
-                                "span": Style(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: FontSize(10),
-                                  color: HexColor('#333333'),
-                                )
-                              },
-                            ),
+                              ),
+                              TextSpan(
+                                text: ' ${S.of(context).rp_transmit_desc_2(
+                                  releaseDay,
+                                  stakingDay,
+                                )}',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: HexColor("#999999"),
+                                  fontWeight: FontWeight.normal,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: 6,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                ClickOvalButton(
-                                  S.of(context).rp_retrive_hyn,
-                                  _showCollectAlertView,
-                                  width: 120,
-                                  height: 32,
-                                  fontSize: 12,
-                                  btnColor: [HexColor('#00B97C')],
-                                ),
-                                SizedBox(
-                                  width: 14,
-                                ),
-                                Stack(
-                                  children: <Widget>[
-                                    Container(
-                                      child: ClickOvalButton(
-                                        S.of(context).rp_stake_hyn,
-                                        _showStakingAlertView,
-                                        width: 120,
-                                        height: 32,
-                                        fontSize: 12,
-                                        btnColor: [HexColor('#107EDC')],
-                                      ),
-                                      padding: const EdgeInsets.all(
-                                        16,
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 2,
-                                      right: 10,
-                                      child: Image.asset(
-                                        "res/drawable/red_pocket_exchange_hot.png",
-                                        width: 35,
-                                        height: 20,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          top: 20,
-                          bottom: 25,
-                        ),
-                        child: Column(
-                          children: [
-                            rowTipsItem(
-                              '当前每份($_hynPerRp HYN)总共可传导出$baseRp RP，分$releaseDay天释放',
-                              top: 2,
-                            ),
-                            rowTipsItem(
-                              '抵押Map3节点并启动成功后，以$_hynPerRp HYN单位抵押为1份自动生效；',
-                              top: 2,
-                            ),
-                            rowTipsItem(
-                              '每完成2000份传导，传导比例递减5%；',
-                              top: 2,
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                ClickOvalButton(
-                                  '创建/抵押Map3节点',
-                                  () {
-                                    Application.eventBus.fire(UpdateTabsPageIndexEvent(
-                                      index: 2,
-                                    ));
-                                    Routes.popUntilCachedEntryRouteName(context);
-                                  },
-                                  width: 160,
-                                  height: 32,
-                                  fontSize: 12,
-                                  btnColor: [
-                                    HexColor('#FFFF4D4D'),
-                                    HexColor('#FFFF0829'),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
                         ),
                       ),
+                      */
+                      Expanded(
+                        //width: 230,
+                        child: Html(
+                          data: htmlData,
+                          style: {
+                            "p": Style(
+                              textAlign: TextAlign.center,
+                              fontSize: FontSize(10),
+                              color: HexColor('#999999'),
+                              lineHeight: 1.8,
+                            ),
+                            "span": Style(
+                              fontWeight: FontWeight.bold,
+                              fontSize: FontSize(10),
+                              color: HexColor('#333333'),
+                            )
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 6,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      ClickOvalButton(
+                        S.of(context).rp_retrive_hyn,
+                        _showCollectAlertView,
+                        width: 120,
+                        height: 32,
+                        fontSize: 12,
+                        btnColor: [HexColor('#00B97C')],
+                      ),
+                      SizedBox(
+                        width: 14,
+                      ),
+                      Stack(
+                        children: <Widget>[
+                          Container(
+                            child: ClickOvalButton(
+                              S.of(context).rp_stake_hyn,
+                              _showStakingAlertView,
+                              width: 120,
+                              height: 32,
+                              fontSize: 12,
+                              btnColor: [HexColor('#107EDC')],
+                            ),
+                            padding: const EdgeInsets.all(
+                              16,
+                            ),
+                          ),
+                          Positioned(
+                            top: 2,
+                            right: 10,
+                            child: Image.asset(
+                              "res/drawable/red_pocket_exchange_hot.png",
+                              width: 35,
+                              height: 20,
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -411,7 +481,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   _myContractHeader() {
     return SliverToBoxAdapter(
       child: Container(
-        // color: HexColor('#F8F8F8'),
+        color: HexColor('#F8F8F8'),
         child: Padding(
           padding: const EdgeInsets.only(
             top: 20,
@@ -422,7 +492,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
-                widget.type == RpTransmitType.DIRECT ? S.of(context).rp_my_hyn_staking : 'Map3传导',
+                S.of(context).rp_my_hyn_staking,
                 style: TextStyle(
                   color: HexColor("#333333"),
                   fontSize: 14,
@@ -440,7 +510,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     if (_dataList?.isEmpty ?? true) {
       return SliverToBoxAdapter(
         child: Container(
-          // color: HexColor('#F8F8F8'),
+          color: HexColor('#F8F8F8'),
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 160),
             child: ClipRRect(
@@ -487,11 +557,12 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     return InkWell(
       onTap: () => _pushStakingInfoAction(index),
       child: Container(
-        // color: HexColor('#F8F8F8'),
+        color: HexColor('#F8F8F8'),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 8,
-            horizontal: 16,
+          padding: const EdgeInsets.only(
+            top: 12,
+            left: 16,
+            right: 16,
           ),
           child: Container(
             padding: const EdgeInsets.symmetric(
@@ -513,7 +584,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                         right: 10,
                       ),
                       child: Image.asset(
-                        "res/drawable/red_pocket_${widget.type == RpTransmitType.DIRECT ? 'contract' : 'map3'}.png",
+                        "res/drawable/red_pocket_contract.png",
                         width: 28,
                         height: 28,
                       ),
@@ -550,33 +621,15 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                         SizedBox(
                           height: 6,
                         ),
-                        widget.type == RpTransmitType.DIRECT
-                            ? Text(
-                                '${S.of(context).rp_staking_id}：${(model?.stakingId ?? -1) == -1 ? '--' : model?.stakingId ?? 0}',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: HexColor('#333333'),
-                                ),
-                                textAlign: TextAlign.left,
-                              )
-                            : RichText(
-                                text: TextSpan(
-                                    text:
-                                        '${S.of(context).rp_staking_id}：${(model?.stakingId ?? -1) == -1 ? '--' : model?.stakingId ?? 0}',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: HexColor('#333333'),
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                        text: ' ${S.of(context).node}',
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: HexColor('#999999'),
-                                        ),
-                                      ),
-                                    ]),
-                              ),
+                        Text(
+                          '${S.of(context).rp_staking_id}：${(model?.stakingId ?? -1) == -1 ? '--' : model?.stakingId ?? 0}',
+                          //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: HexColor('#333333'),
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
                       ],
                     ),
                     Spacer(),
@@ -608,7 +661,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                     ),
                   ],
                 ),
-                if (status >= 3 && status <= 5 && widget.type == RpTransmitType.DIRECT)
+                if (status >= 3 && status <= 5)
                   Padding(
                     padding: const EdgeInsets.only(
                       top: 6,
@@ -639,6 +692,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   void getNetworkData() async {
     _currentPage = 1;
     try {
+
       if (context != null) {
         BlocProvider.of<RedPocketBloc>(context).add(UpdateStatisticsEvent());
       }
@@ -654,6 +708,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       if (netData?.isNotEmpty ?? false) {
         _dataList = netData;
       }
+
     } catch (e) {
       if (mounted) {
         _loadDataBloc.add(LoadFailEvent());
@@ -941,7 +996,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpTransmitRecordsTabPage(),
+        builder: (context) => RpTransmitRecordsPage(),
       ),
     );
   }
@@ -950,7 +1005,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpTransmitDetailPage(_rpStatistics, _dataList[index], widget.type),
+        builder: (context) => RpTransmitDetailPage(_rpStatistics, _dataList[index]),
       ),
     );
   }

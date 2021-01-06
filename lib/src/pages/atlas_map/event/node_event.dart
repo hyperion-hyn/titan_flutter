@@ -3,3 +3,10 @@ class UpdateMap3TabsPageIndexEvent {
 
   UpdateMap3TabsPageIndexEvent({this.index});
 }
+
+class UpdateTabsPageIndexEvent {
+  final int index;
+
+  UpdateTabsPageIndexEvent({this.index});
+}
+
