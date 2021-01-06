@@ -580,51 +580,8 @@ class _WalletCreateAccountPageV2State
       var userPayload = UserPayloadWithAddressEntity(Payload(userName: wallet.keystore.name,userPic: usetImagePath),wallet.getAtlasAccount().address,);
       await AtlasApi.postUserSync(userPayload);
 
-      if(widget.isCreateWallet) {
-        UiUtil.showAlertView(
-          context,
-          title: "创建成功",
-          content: "钱包身份创建成功，是否立即备份助记词",
-          actions: [
-            ClickOvalButton(
-              S.of(context)
-                  .cancel,
-                  () {
-                Navigator.pop(context);
-              },
-              width: 120,
-              height: 32,
-              fontSize: 14,
-              fontColor: DefaultColors.color999,
-              btnColor: [Colors.transparent],
-            ),
-            SizedBox(
-              width: 8,
-            ),
-            ClickOvalButton(
-              "备份",
-                  () async {
-                Navigator.pop(context);
-                // mnemonic
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //       builder: (context) =>
-                //           Map3NodeConfirmPage(
-                //             message: message,
-                //           ),
-                //     ));
-              },
-              width: 120,
-              height: 38,
-              fontSize: 16,
-            ),
-          ],
-        );
-      } else {
-        Fluttertoast.showToast(msg: "导入成功");
-        Routes.popUntilCachedEntryRouteName(context, wallet);
-      }
+      Fluttertoast.showToast(msg: widget.isCreateWallet ? "创建成功" : "导入成功");
+      Routes.popUntilCachedEntryRouteName(context, wallet);
     }catch(error){
       LogUtil.toastException(error);
     }
