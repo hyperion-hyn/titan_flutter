@@ -7,7 +7,6 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 
-
 class RpTransmitTabPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -16,13 +15,10 @@ class RpTransmitTabPage extends StatefulWidget {
 }
 
 class _RpTransmitTabState extends BaseState<RpTransmitTabPage> {
-
-
   final GlobalKey _toolTipKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-
     var message = '''
 HYN传导RP是用户进入红包网络的通道，不同RP持有量和燃烧量可助用户满足晋升门槛，获得更多被空投红包砸中的机会。根据变化的Y值，可计算当下某个量级对应要求的最小RP持有量和累计燃烧量，以及需要抵押传导的HYN数额。
     ''';
@@ -44,11 +40,10 @@ HYN传导RP是用户进入红包网络的通道，不同RP持有量和燃烧量�
                 tooltip?.ensureTooltipVisible();
                 //print("tooltip: $tooltip");
               },
-              tooltip: '',
+              tooltip: message,
             ),
             Tooltip(
               key: _toolTipKey,
-              verticalOffset: 16,
               margin: EdgeInsets.symmetric(horizontal: 16),
               padding: EdgeInsets.all(16.0),
               message: message,
@@ -106,8 +101,12 @@ HYN传导RP是用户进入红包网络的通道，不同RP持有量和燃烧量�
           ),
           body: TabBarView(
             children: [
-              RpTransmitPage(type: RpTransmitType.DIRECT,),
-              RpTransmitPage(type: RpTransmitType.MAP3,),
+              RpTransmitPage(
+                type: RpTransmitType.DIRECT,
+              ),
+              RpTransmitPage(
+                type: RpTransmitType.MAP3,
+              ),
             ],
           ),
         ),
@@ -115,4 +114,3 @@ HYN传导RP是用户进入红包网络的通道，不同RP持有量和燃烧量�
     );
   }
 }
-
