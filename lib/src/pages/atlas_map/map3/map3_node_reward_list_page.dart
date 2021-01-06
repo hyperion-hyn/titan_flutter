@@ -8,6 +8,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
@@ -19,6 +20,8 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -26,6 +29,8 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart';
+
+import '../../../../env.dart';
 
 class Map3NodeRewardListPage extends StatefulWidget {
   Map3NodeRewardListPage();
@@ -501,86 +506,97 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
             ? _rewardMap[map3infoEntity.address?.toLowerCase()]
             : '0';
     var bigIntValue = BigInt.tryParse(valueInRewardMap) ?? BigInt.from(0);
-    var _collectable = ConvertTokenUnit.weiToEther(
+    var _collectible = ConvertTokenUnit.weiToEther(
       weiBigInt: bigIntValue,
     );
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              iconMap3Widget(map3infoEntity),
-              SizedBox(
-                width: 8,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return InkWell(
+      onTap: () {
+        if (!showLog) {
+          return;
+        }
+        Application.router.navigateTo(
+          context,
+          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}',
+        );
+      },
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                iconMap3Widget(map3infoEntity),
+                SizedBox(
+                  width: 8,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text.rich(TextSpan(children: [
+                        TextSpan(
+                            text: nodeName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            )),
+                        TextSpan(text: "", style: TextStyles.textC333S14bold),
+                      ])),
+                      Container(
+                        height: 4,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            '${S.of(context).node_addrees}: ${nodeAddress}',
+                            style: TextStyle(
+                                color: DefaultColors.color999, fontSize: 11),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Text.rich(TextSpan(children: [
-                      TextSpan(
-                          text: nodeName,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
-                          )),
-                      TextSpan(text: "", style: TextStyles.textC333S14bold),
-                    ])),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Text(
+                        '${FormatUtil.stringFormatCoinNum(_collectible.toString())}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
                     Container(
                       height: 4,
                     ),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          '${S.of(context).node_addrees}: ${nodeAddress}',
-                          style: TextStyle(
-                              color: DefaultColors.color999, fontSize: 11),
-                        )
-                      ],
+                    Text(
+                      S.of(context).map3_current_reward,
+                      style: TextStyle(
+                        color: DefaultColors.color999,
+                        fontSize: 12,
+                      ),
                     )
                   ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                    child: Text(
-                      '${FormatUtil.stringFormatCoinNum(_collectable.toString())}',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 4,
-                  ),
-                  Text(
-                    S.of(context).map3_current_reward,
-                    style: TextStyle(
-                      color: DefaultColors.color999,
-                      fontSize: 12,
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
-        ),
-        if (isShowDivider)
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16.0,
+                )
+              ],
             ),
-            child: Divider(height: 0, color: HexColor('#FFF2F2F2')),
-          )
-      ],
+          ),
+          if (isShowDivider)
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 16.0,
+              ),
+              child: Divider(height: 0, color: HexColor('#FFF2F2F2')),
+            )
+        ],
+      ),
     );
   }
 }
