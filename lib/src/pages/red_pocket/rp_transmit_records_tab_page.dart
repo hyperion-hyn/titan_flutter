@@ -16,6 +16,7 @@ class RpTransmitRecordsTabPage extends StatefulWidget {
 }
 
 class _RpTransmitRecordsTabState extends BaseState<RpTransmitRecordsTabPage> {
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -23,19 +24,7 @@ class _RpTransmitRecordsTabState extends BaseState<RpTransmitRecordsTabPage> {
       child: Scaffold(
         appBar: BaseAppBar(
           baseTitle: S.of(context).rp_transmit_detail,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          actions: <Widget>[
-            IconButton(
-              icon: Image.asset(
-                "res/drawable/ic_tooltip.png",
-                width: 16,
-                height: 16,
-              ),
-              onPressed: () {
-                //_showInfoAlertView();
-              },
-            ),
-          ],
+          //backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         ),
         body: Scaffold(
           appBar: new PreferredSize(
@@ -44,7 +33,7 @@ class _RpTransmitRecordsTabState extends BaseState<RpTransmitRecordsTabPage> {
               width: double.infinity,
               height: 50.0,
               //color: HexColor('#F8F8F8'),
-              //color: Colors.white,
+              color: Colors.white,
               child: Row(
                 children: <Widget>[
                   Expanded(

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -17,7 +16,6 @@ import 'entity/rp_release_info.dart';
 import "package:collection/collection.dart";
 
 class RpTransmitRecordsPage extends StatefulWidget {
-
   final RpTransmitType type;
   RpTransmitRecordsPage({this.type = RpTransmitType.DIRECT});
 
@@ -27,7 +25,7 @@ class RpTransmitRecordsPage extends StatefulWidget {
   }
 }
 
-class _RpTransmitRecordsState extends BaseState<RpTransmitRecordsPage> {
+class _RpTransmitRecordsState extends BaseState<RpTransmitRecordsPage> with AutomaticKeepAliveClientMixin  {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
@@ -37,8 +35,10 @@ class _RpTransmitRecordsState extends BaseState<RpTransmitRecordsPage> {
   Map<String, List<RpReleaseInfo>> get _filterDataMap =>
       groupBy(_dataList, (model) => FormatUtil.humanReadableDay(model.updatedAt));
 
-
   int lastDay;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -83,33 +83,33 @@ class _RpTransmitRecordsState extends BaseState<RpTransmitRecordsPage> {
         slivers: <Widget>[
           SliverList(
               delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                  var key = _filterDataMap.keys.toList()[index];
-                  var value = _filterDataMap[key];
+            (context, index) {
+              var key = _filterDataMap.keys.toList()[index];
+              var value = _filterDataMap[key];
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
-                        child: Text(
-                          key,
-                          style: TextStyle(color: Color(0xff999999)),
-                        ),
-                      ),
-                      ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return _itemBuilder(index);
-                        },
-                        itemCount: value.length,
-                      ),
-                    ],
-                  );
-                },
-                childCount: _filterDataMap?.length ?? 0,
-              ))
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
+                    child: Text(
+                      key,
+                      style: TextStyle(color: Color(0xff999999)),
+                    ),
+                  ),
+                  ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return _itemBuilder(index);
+                    },
+                    itemCount: value.length,
+                  ),
+                ],
+              );
+            },
+            childCount: _filterDataMap?.length ?? 0,
+          ))
         ],
       ),
     );
@@ -205,7 +205,9 @@ class _RpTransmitRecordsState extends BaseState<RpTransmitRecordsPage> {
               // Spacer(),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 12,),
+                  padding: const EdgeInsets.only(
+                    left: 12,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,

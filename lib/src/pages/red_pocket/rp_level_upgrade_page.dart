@@ -202,7 +202,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                 child: Row(
                                   children: <Widget>[
                                     SizedBox(
-                                      width: 100,
+                                      width: 120,
                                       child: Text(S.of(context).rp_level_up,
                                           style: TextStyle(
                                             fontWeight: FontWeight.normal,
@@ -357,12 +357,13 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                 ],
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(top: 4,),
+                                padding: const EdgeInsets.only(top: 8,),
                                 child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                        top: 8,
+                                        right: 4,
                                       ),
                                       child: Text(
                                         '*',
@@ -892,7 +893,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 Widget rpRowText({
   String title,
   String amount,
-  double width = 100,
+  double width = 120,
 }) {
   return Padding(
     padding: const EdgeInsets.only(top: 18),

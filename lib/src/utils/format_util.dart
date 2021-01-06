@@ -186,12 +186,17 @@ class FormatUtil {
     );
   }
 
-  static String coinBalanceHumanReadFormat(CoinVo coinVo, [isFloor = true]) {
+  static String coinBalanceHumanReadFormat(CoinVo coinVo, [isFloor = true, decimal = 6]) {
     var value = double.tryParse(coinBalanceHumanRead(coinVo)) ?? 0;
     if (isFloor) {
       value = (value * 1000000).floor() / 1000000;
     }
-    return NumberFormat("#,###,###.######").format(value);
+
+    var format = '#,###,###.';
+    for (int i = 0; i < decimal; i++) {
+      format += '#';
+    }
+    return NumberFormat(format).format(value);
   }
 
   static String formatCoinNum(double coinNum, [isFloor = true]) {

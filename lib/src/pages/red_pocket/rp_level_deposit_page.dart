@@ -221,13 +221,15 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                                   SizedBox(
                                     width: 5,
                                   ),
-                                  Text(
-                                      '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 12,
-                                        color: HexColor('#999999'),
-                                      )),
+                                  Flexible(
+                                    child: Text(
+                                        '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo,true,4),)}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 12,
+                                          color: HexColor('#999999'),
+                                        )),
+                                  ),
                                 ],
                               ),
                             ),
@@ -331,11 +333,13 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 10),
-                              child: Wrap(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.only(
                                       right: 6,
+                                      top: 2,
                                     ),
                                     child: Image.asset(
                                       "res/drawable/add_position_image_detail.png",
@@ -344,23 +348,31 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                                       color: HexColor('#999999'),
                                     ),
                                   ),
-                                  Text(
-                                    S.of(context).rp_add_holding_prevent_level_drop_1,
-                                    style: TextStyle(
-                                      color: HexColor('#999999'),
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                  Text(
-                                    ' Y',
-                                    style: TextStyle(
-                                        color: HexColor('#333333'), fontSize: 12, fontWeight: FontWeight.w600),
-                                  ),
-                                  Text(
-                                    S.of(context).rp_add_holding_prevent_level_drop_2,
-                                    style: TextStyle(
-                                      color: HexColor('#999999'),
-                                      fontSize: 10,
+                                  Expanded(
+                                    child: Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: S.of(context).rp_add_holding_prevent_level_drop_1,
+                                            style: TextStyle(
+                                              color: HexColor('#999999'),
+                                              fontSize: 10,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: ' Y',
+                                            style: TextStyle(
+                                                color: HexColor('#333333'), fontSize: 12, fontWeight: FontWeight.w600),
+                                          ),
+                                          TextSpan(
+                                            text: S.of(context).rp_add_holding_prevent_level_drop_2,
+                                            style: TextStyle(
+                                              color: HexColor('#999999'),
+                                              fontSize: 10,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],

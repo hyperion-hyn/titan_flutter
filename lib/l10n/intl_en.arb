@@ -2848,7 +2848,7 @@
   "@rp_retrive_detail": {},
   "rp_retrive_holding": "Retrieve holding token",
   "@rp_retrive_holding": {},
-  "rp_retrive_holding_null": "Available holding amount is null",
+  "rp_retrive_holding_null": "Available holding amount is 0",
   "@rp_retrive_holding_null": {},
   "rp_retrive_hyn": "Click to retrieve all",
   "@rp_retrive_hyn": {},
