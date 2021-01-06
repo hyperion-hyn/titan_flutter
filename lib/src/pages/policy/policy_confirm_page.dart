@@ -217,12 +217,17 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
                               height: 20,
                             ),
                           ),
-                    Text(
-                      '${S.of(context).i_hava_read_and_agree_policy}"${S.of(context).user_policy}"',
-                      softWrap: true,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                    Container(
+                      constraints: BoxConstraints(
+                        maxWidth: 150,
+                      ),
+                      child: Text(
+                        '${S.of(context).i_hava_read_and_agree_policy}"${S.of(context).user_policy}"',
+                        softWrap: true,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ],
