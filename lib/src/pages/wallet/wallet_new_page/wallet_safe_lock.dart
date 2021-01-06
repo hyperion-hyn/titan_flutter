@@ -44,7 +44,7 @@ class _WalletSafeLockState extends State<WalletSafeLock> {
         children: [
           Padding(
             padding: const EdgeInsets.only(
-              top: 64.0,
+              top: 48.0,
               bottom: 64,
             ),
             child: Image.asset(
@@ -91,7 +91,10 @@ class _WalletSafeLockState extends State<WalletSafeLock> {
     if (await _checkPwdValid(pin)) {
       widget.onUnlock?.call();
     } else {
-      UiUtil.showErrorTopHint(context, '密码错误,请重试');
+      UiUtil.showErrorTopHint(
+        context,
+        '密码错误，请重试',
+      );
       _pinPutController.text = '';
     }
   }

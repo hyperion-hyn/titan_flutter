@@ -28,11 +28,41 @@ class App extends StatefulWidget {
   }
 }
 
-class _AppState extends State<App> {
+class _AppState extends State<App> with WidgetsBindingObserver {
   _AppState() {
     var router = MyRouter();
     Routes.configureRoutes(router);
     Application.router = router;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.inactive:
+        print('-----[App] inactive');
+        break;
+      case AppLifecycleState.paused:
+        print('-----[App] paused');
+        break;
+      case AppLifecycleState.detached:
+        print('-----[App] detached');
+        break;
+      case AppLifecycleState.resumed:
+        print('-----[App] resumed');
+        break;
+    }
   }
 
   @override
@@ -51,8 +81,10 @@ class _AppState extends State<App> {
         ],
         child: MultiBlocProvider(
           providers: [
-            BlocProvider<UpdateBloc>(create: (context) => UpdateBloc(context: context)),
-            BlocProvider<RootPageControlBloc>(create: (context) => RootPageControlBloc()),
+            BlocProvider<UpdateBloc>(
+                create: (context) => UpdateBloc(context: context)),
+            BlocProvider<RootPageControlBloc>(
+                create: (context) => RootPageControlBloc()),
           ],
           child: Builder(
             builder: (context) {
@@ -72,7 +104,10 @@ class _AppState extends State<App> {
                 child: MaterialApp(
                   key: Keys.materialAppKey,
                   debugShowCheckedModeBanner: false,
-                  locale: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel?.locale,
+                  locale: SettingInheritedModel.of(context,
+                          aspect: SettingAspect.language)
+                      .languageModel
+                      ?.locale,
                   title: 'titan',
                   theme: appTheme,
                   localizationsDelegates: [
