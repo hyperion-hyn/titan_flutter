@@ -98,6 +98,7 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
       appBar: BaseAppBar(
         baseTitle: S.of(context).data_contribute,
         backgroundColor: Colors.white,
+        showBottom: true,
         actions: <Widget>[
           FlatButton(
             onPressed: _navToCheckInRecords,
@@ -262,7 +263,6 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
 
     return ListView(
       children: <Widget>[
-        _lineWidget(),
         _activatedWalletWidget(),
         _lineWidget(
           height: 8,
