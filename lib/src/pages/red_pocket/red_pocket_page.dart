@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -298,8 +299,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                    left: 0,
-                    right: 0,
                     top: 16,
                     bottom: 10,
                   ),
@@ -323,8 +322,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                                 left: 12,
                               ),
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 4.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
@@ -442,7 +440,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
   }
 
-  _rpPool() {
+  _rpPoolOld() {
     var rpYesterday = '--';
     var myHYNStaking = '--';
     var poolPercent = _rpStatistics?.rpContractInfo?.poolPercent ?? '--';
@@ -576,6 +574,214 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
   }
 
+  _rpPool() {
+    var rpYesterday = '--';
+    var myHYNStaking = '--';
+    var poolPercent = _rpStatistics?.rpContractInfo?.poolPercent ?? '--';
+
+    try {
+      rpYesterday = FormatUtil.stringFormatCoinNum(
+        _rpStatistics?.self?.yesterdayStr,
+      );
+      var totalStakingHyn = Decimal.tryParse(_rpStatistics?.self?.totalStakingHynStr??'0')??Decimal.zero;
+      var myHYNStakingShare = totalStakingHyn/Decimal.fromInt(1000);
+      if (myHYNStakingShare.isNegative || myHYNStakingShare.isNaN) {
+        myHYNStakingShare = Decimal.zero;
+      }
+      myHYNStaking = '$myHYNStakingShare ${S.of(context).rp_amount_unit}';
+    } catch (e) {}
+
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: 16.0,
+          right: 16.0,
+          top: 16.0,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(16.0)),
+          ),
+          child: Padding(
+            padding: _cardPadding(),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      S.of(context).rp_transmit_pool,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 4,
+                      ),
+                      child: Text(
+                        S.of(context).rp_total_amount_percent(poolPercent),
+                        style: TextStyle(
+                          color: DefaultColors.color999,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '+8${S.of(context).ten_thousand}',
+                      style: TextStyle(
+                        color: DefaultColors.color999,
+                        fontSize: 12,
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 32,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+
+                  children: [1,2,3].map((index) {
+
+                    var title = '';
+                    var amount = '';
+                    var subTitle = '';
+                    switch(index) {
+                      case 1:
+                        title = '我的直接传导';
+                        subTitle = '直接';
+                        amount = myHYNStaking;
+                        break;
+
+                      case 2:
+                        // todo:缺少
+                        title = '我的Map3传导';
+                        subTitle = 'Map3';
+                        amount = '0 份';
+                        break;
+
+                      case 3:
+                        title = S.of(context).rp_transmit_yesterday;
+                        subTitle = '';
+                        amount = '$rpYesterday RP';
+                        break;
+                    }
+                    return Stack(
+                      children: [
+                        if (index == 2)Positioned(
+                          right:12,
+                          child: Image.asset(
+                            'res/drawable/rp_transmit_new.png',
+                            width: 17,
+                            height: 15,
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              amount,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2,),
+                              child: Row(
+                                children: [
+                                  if (index != 3)Container(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 2.0,
+                                      horizontal: 3.0,
+                                    ),
+                                    color: DefaultColors.colorf2f2f2,
+                                    child: RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: subTitle,
+                                            style: TextStyle(
+                                              color: DefaultColors.color999,
+                                              fontSize: 8,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  if (index != 3)SizedBox(width: 4,),
+                                  Text(
+                                    title,
+                                    style: TextStyle(
+                                      color: DefaultColors.color999,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 20,
+                  ),
+                  child: Container(
+                    height: 0.5,
+                    color: HexColor('#F2F2F2'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 4,
+                          ),
+                          child: Text(
+                            S.of(context).sooner_get_more_rp,
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      ClickOvalButton(
+                        S.of(context).rp_transmit_now,
+                        _navToRPPool,
+                        width: 120,
+                        height: 32,
+                        fontSize: 14,
+                        btnColor: [
+                          HexColor('#FFFF4D4D'),
+                          HexColor('#FFFF0829'),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   _statisticsWidget() {
     return SliverToBoxAdapter(
       child: Padding(
@@ -644,10 +850,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         String webTitle = FluroConvertUtils.fluroCnParamsEncode(
                           S.of(context).detailed_introduction,
                         );
-                        Application.router.navigateTo(
-                            context,
-                            Routes.toolspage_webview_page +
-                                '?initUrl=$webUrl&title=$webTitle');
+                        Application.router
+                            .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                       },
                       child: Text(
                         S.of(context).detailed_introduction,
@@ -709,7 +913,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         ),
       ],
     );
-  }*/
+  }
 
   Widget _toolTipColumn(
     String content,
@@ -772,7 +976,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         ],
       ),
     );
-  }
+  }*/
 
   Widget _tipRow(
     String title, {
@@ -810,8 +1014,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   )
                 ],
                 text: title,
-                style: TextStyle(
-                    height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
               ),
             ),
           )),
@@ -848,7 +1051,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     } else {
       Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
     }
-  }*/
+  }
 
   _navToLevel() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
@@ -862,7 +1065,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     } else {
       Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
     }
-  }
+  }*/
 
   _navToManageWallet() {
     WalletManagerPage.jumpWalletManager(context, hasWalletUpdate: (wallet) {
@@ -943,8 +1146,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       }
 
       if (context != null) {
-        BlocProvider.of<WalletCmpBloc>(context)
-            .add(UpdateActivatedWalletBalanceEvent());
+        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
       }
 
       _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(_address);
