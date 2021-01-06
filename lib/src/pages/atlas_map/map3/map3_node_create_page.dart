@@ -101,6 +101,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     S.of(Keys.rootKey.currentContext).please_enter_node_address,
     S.of(Keys.rootKey.currentContext).please_enter_node_description
   ];
+  bool _isJoinRpTransmit = true;
 
   @override
   void initState() {
@@ -387,6 +388,15 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
             focusNode: _focusNode,
             suggestList: _reCreateList,
             map3introduceEntity: _introduceEntity,
+          ),
+          rpTransmitWidget(
+            context: context,
+            initValue: _isJoinRpTransmit,
+            onChanged: (bool value) {
+              setState(() {
+                _isJoinRpTransmit = value;
+              });
+            },
           ),
           divider,
           managerSpendWidgetConst(

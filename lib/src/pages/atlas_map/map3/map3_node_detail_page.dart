@@ -955,7 +955,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   Widget _topNextEpisodeNotifyWidget() {
     var notification = _notifyMessage;
     if (notification == null || _map3nodeInformationEntity == null) {
-      return Container();
+      return Container(
+        height: 5,
+        color: HexColor('#F8F8F8'),
+      );
     }
 
     // var bgColor = (_isRunning) ? HexColor("#FF4C3B") : HexColor("#1FB9C7").withOpacity(0.08);

@@ -1488,6 +1488,74 @@ Widget topNotifyWidget({String notification = '', bool isWarning = false}) {
   );
 }
 
+Widget rpTransmitWidget({BuildContext context, bool initValue = true, ValueChanged<bool> onChanged}) {
+  var content = '额外获得RP红包奖励，每1000HYN节 点抵押产生1份传导协议，你的抵押量必须是1000的整数倍。节点启动后协议生效;';
+
+  return Container(
+    padding: const EdgeInsets.symmetric(
+      horizontal: 14,
+    ),
+    child: Column(
+      children: [
+        Container(
+          color: HexColor('#F2F2F2'),
+          height: 0.5,
+        ),
+        SizedBox(height: 8,),
+        Row(
+          children: <Widget>[
+            Image.asset(
+              "res/drawable/red_pocket_logo.png",
+              width: 17,
+              height: 22,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 4,
+              ),
+              child: Text(
+                '加入RP红包传导',
+                style: TextStyle(
+                  color: HexColor("#333333"),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            Image.asset(
+              'res/drawable/ic_tooltip.png',
+              width: 14,
+              height: 14,
+            ),
+            Spacer(),
+            Switch(
+              value: initValue,
+              activeColor: Colors.white,
+              activeTrackColor: Theme.of(context).primaryColor,
+              onChanged: onChanged,
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 2,
+            bottom: 20,
+          ),
+          child: Text(
+            content,
+            style: TextStyle(
+              color: HexColor('#999999'),
+              fontSize: 12,
+              height: 1.6,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 Future<String> _reminderMessage(
   Map3InfoEntity map3infoEntity,
   Map3NodeInformationEntity map3nodeInformationEntity,

@@ -31,8 +31,7 @@ import 'map3_node_public_widget.dart';
 
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart'
-    as all_page_state;
+import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
@@ -65,6 +64,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   final client = WalletUtil.getWeb3Client(true);
   Map3NodeInformationEntity _map3nodeInformationEntity;
   Map3IntroduceEntity _map3introduceEntity;
+  bool _isJoinRpTransmit = true;
 
   @override
   void initState() {
@@ -82,8 +82,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
     super.didChangeDependencies();
 
     if (context != null) {
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateActivatedWalletBalanceEvent());
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
     }
   }
 
@@ -127,13 +126,11 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
       _map3introduceEntity = requestList[1];
 
       if ((widget?.map3infoEntity?.address ?? "").isNotEmpty) {
-        var map3Address =
-            EthereumAddress.fromHex(widget.map3infoEntity.address);
+        var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
 
         print('map3Address: $map3Address');
 
-        _map3nodeInformationEntity =
-            await client.getMap3NodeInformation(map3Address);
+        _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
       }
 
       if (mounted) {
@@ -159,9 +156,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   void getCurrentSpend(String inputText) {
-    if (widget.map3infoEntity == null ||
-        !mounted ||
-        originInputStr == inputText) {
+    if (widget.map3infoEntity == null || !mounted || originInputStr == inputText) {
       return;
     }
 
@@ -182,16 +177,14 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
             // 设置内容
             text: inputText,
             // 保持光标在最后
-            selection: TextSelection.fromPosition(TextPosition(
-                affinity: TextAffinity.downstream, offset: inputText.length)));
+            selection:
+                TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
       });
     }
   }
 
   Widget _pageView(BuildContext context) {
-    if (_currentState != null ||
-        widget.map3infoEntity == null ||
-        _map3introduceEntity == null) {
+    if (_currentState != null || widget.map3infoEntity == null || _map3introduceEntity == null) {
       return Scaffold(
         body: AllPageStateContainer(_currentState, () {
           setState(() {
@@ -216,9 +209,9 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
             child: BaseGestureDetector(
               context: context,
               child: SingleChildScrollView(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     _nodeWidget(context),
                     spaceWidget,
                     getHoldInNum(
@@ -232,9 +225,20 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                       suggestList: _suggestList,
                       map3introduceEntity: _map3introduceEntity,
                     ),
+                    rpTransmitWidget(
+                      context: context,
+                      initValue: _isJoinRpTransmit,
+                      onChanged: (bool value) {
+                        setState(() {
+                          _isJoinRpTransmit = value;
+                        });
+                      },
+                    ),
                     spaceWidget,
                     _tipsWidget(),
-                  ])),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -244,10 +248,8 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   Widget _tipsWidget() {
-    var startMin =
-        FormatUtil.formatPrice(double.parse(_map3introduceEntity.startMin));
-    var delegateMin =
-        FormatUtil.formatPrice(double.parse(_map3introduceEntity.delegateMin));
+    var startMin = FormatUtil.formatPrice(double.parse(_map3introduceEntity.startMin));
+    var delegateMin = FormatUtil.formatPrice(double.parse(_map3introduceEntity.delegateMin));
     return Container(
       color: Colors.white,
       //height: MediaQuery.of(context).size.height-50,
@@ -257,8 +259,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 16.0, bottom: 8),
-            child: Text(S.of(context).precautions,
-                style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
+            child: Text(S.of(context).precautions, style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
           rowTipsItem(S.of(context).cant_cancel_delegation_with_7, top: 0),
           rowTipsItem(S.of(context).map3_delegate_amount_hint(
@@ -293,33 +294,21 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   Widget _delegateCountWidget() {
-    var totalPendingDelegation =
-        _map3nodeInformationEntity?.totalPendingDelegation?.toDouble() ?? 0;
+    var totalPendingDelegation = _map3nodeInformationEntity?.totalPendingDelegation?.toDouble() ?? 0;
     print("totalPendingDelegation: $totalPendingDelegation");
 
     var totalPendingDelegationValue = ConvertTokenUnit.weiToEther(
-            weiBigInt: BigInt.parse(
-                '${FormatUtil.clearScientificCounting(totalPendingDelegation)}'))
+            weiBigInt: BigInt.parse('${FormatUtil.clearScientificCounting(totalPendingDelegation)}'))
         .toDouble();
 
     return Padding(
-      padding:
-          const EdgeInsets.only(top: 20.0, bottom: 16.0, left: 16, right: 16),
+      padding: const EdgeInsets.only(top: 20.0, bottom: 16.0, left: 16, right: 16),
       child: profitListBigWidget(
         [
-          {
-            S.of(context).total_staking: FormatUtil.formatPrice(
-                double.parse(_map3introduceEntity.startMin))
-          },
+          {S.of(context).total_staking: FormatUtil.formatPrice(double.parse(_map3introduceEntity.startMin))},
           {S.of(context).current_staking: FormatUtil.formatPrice(totalPendingDelegationValue)},
-          {
-            S.of(context).manage_fee: FormatUtil.formatPercent(
-                double.parse(widget.map3infoEntity.getFeeRate()))
-          },
-          {
-            S.of(context).min_staking: FormatUtil.formatPrice(
-                double.parse(_map3introduceEntity.delegateMin))
-          }
+          {S.of(context).manage_fee: FormatUtil.formatPercent(double.parse(widget.map3infoEntity.getFeeRate()))},
+          {S.of(context).min_staking: FormatUtil.formatPrice(double.parse(_map3introduceEntity.delegateMin))}
         ],
       ),
     );
@@ -333,14 +322,13 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
         child: Center(
           child: ClickOvalButton(
             S.of(context).confirm,
-            () async{
+            () async {
               if (!(_joinCoinFormKey.currentState?.validate() ?? false)) {
                 return;
               }
 
               if (_joinCoinController?.text?.isEmpty ?? true) {
-                Fluttertoast.showToast(
-                    msg: S.of(context).please_input_hyn_count);
+                Fluttertoast.showToast(msg: S.of(context).please_input_hyn_count);
                 return;
               }
 
@@ -348,9 +336,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
               var delegateMin = double.parse(_map3introduceEntity.delegateMin);
               var inputValue = double.parse(staking);
               if (delegateMin > inputValue && inputValue > 0) {
-                Fluttertoast.showToast(
-                    msg: S.of(context).mintotal_buy(
-                        FormatUtil.formatNumDecimal(delegateMin)));
+                Fluttertoast.showToast(msg: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(delegateMin)));
                 return;
               }
 
@@ -359,14 +345,10 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                 aspect: WalletAspect.activatedWallet,
               ).getCoinVoBySymbol('HYN');
 
-              var balance =
-                  Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
+              var balance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
               var stakingValue = Decimal.tryParse(staking);
-              if (stakingValue == null ||
-                  stakingValue >
-                      Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
-                Fluttertoast.showToast(
-                    msg: S.of(context).hyn_balance_no_enough);
+              if (stakingValue == null || stakingValue > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
+                Fluttertoast.showToast(msg: S.of(context).hyn_balance_no_enough);
                 return;
               }
 
@@ -386,10 +368,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                 entity: entity,
                 map3NodeAddress: widget.map3infoEntity.address,
                 amount: staking,
-                pendingAmount: _map3nodeInformationEntity
-                        ?.totalPendingDelegation
-                        ?.toString() ??
-                    "0",
+                pendingAmount: _map3nodeInformationEntity?.totalPendingDelegation?.toString() ?? "0",
                 nodeId: widget.map3infoEntity.nodeId,
               );
               Navigator.push(
@@ -410,17 +389,13 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   Widget _nodeOwnerWidget() {
-    var oldYear =
-        double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
-    var oldYearValue = oldYear > 0
-        ? "  ${S.of(context).node_age}: ${FormatUtil.formatPrice(oldYear.toDouble())}"
-        : "";
+    var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
+    var oldYearValue = oldYear > 0 ? "  ${S.of(context).node_age}: ${FormatUtil.formatPrice(oldYear.toDouble())}" : "";
     var nodeAddress =
         "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(widget?.map3infoEntity?.address ?? "") ?? "***", limitLength: 9)}";
 
     return Padding(
-      padding:
-          const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
+      padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
       child: Row(
         children: <Widget>[
           iconMap3Widget(widget.map3infoEntity),
@@ -433,11 +408,8 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
               Text.rich(TextSpan(children: [
                 TextSpan(
                     text: widget?.map3infoEntity?.name ?? "",
-                    style:
-                        TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                TextSpan(
-                    text: oldYearValue,
-                    style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                TextSpan(text: oldYearValue, style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
               ])),
               Container(
                 height: 4,
