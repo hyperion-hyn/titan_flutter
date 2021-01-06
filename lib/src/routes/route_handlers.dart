@@ -46,7 +46,6 @@ import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_import_account_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_backup_notice_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_confirm_resume_word_page_v2.dart';
-import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_import_account_page2.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_backup_notice_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_show_resume_word_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
