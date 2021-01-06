@@ -45,7 +45,11 @@ class UiUtil {
     ));
   }
 
-  static showErrorTopHint(BuildContext context, String message) {
+  static showErrorTopHint(
+    BuildContext context,
+    String message, {
+    Duration duration = const Duration(seconds: 5),
+  }) {
     Flushbar(
       padding: EdgeInsets.symmetric(
         vertical: 20.0,
@@ -72,7 +76,7 @@ class UiUtil {
       ),
       flushbarStyle: FlushbarStyle.GROUNDED,
       flushbarPosition: FlushbarPosition.TOP,
-      duration: Duration(seconds: 5),
+      duration: duration,
     ).show(context);
   }
 
