@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_pickers/UIConfig.dart';
 import 'package:image_pickers/image_pickers.dart';
@@ -9,10 +10,19 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
+import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/image_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/psw_strength/password_strength_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
@@ -20,6 +30,7 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart'
     as all_page_state;
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:bip39/bip39.dart' as bip39;
 
 class WalletCreateAccountPageV2 extends StatefulWidget {
   final bool isCreateWallet;
@@ -457,10 +468,8 @@ class _WalletCreateAccountPageV2State
           padding: const EdgeInsets.only(bottom: 36.0, top: 22),
           child: ClickOvalButton(
             widget.isCreateWallet ? "创建" : "恢复身份",
-            () {
-              if(!_formKey.currentState.validate()){
-                return;
-              }
+            () async {
+              await submitAction();
             },
             width: 300,
             height: 46,
@@ -516,6 +525,108 @@ class _WalletCreateAccountPageV2State
         return "res/drawable/ic_input_psw_level_4.png";
       default:
         return "res/drawable/ic_input_psw_level_0.png";
+    }
+  }
+
+  Future submitAction() async{
+    try {
+      if(!_formKey.currentState.validate()){
+        return;
+      }
+
+      var wallet;
+      var mnemonic;
+      if(widget.isCreateWallet){
+        mnemonic = await WalletUtil.makeMnemonic();
+        if (mnemonic != null && mnemonic.isNotEmpty) {
+          wallet = await WalletUtil.storeByMnemonic(
+              name: _walletNameController.text,
+              password: _walletPwsController.text,
+              mnemonic: mnemonic);
+        }else{
+          Fluttertoast.showToast(msg: "钱包身份创建失败");
+        }
+      } else {
+        mnemonic = _mnemonicController.text.trim();
+        if (!bip39.validateMnemonic(mnemonic)) {
+          Fluttertoast.showToast(
+              msg: S.of(context).illegal_mnemonic);
+          return;
+        }
+        wallet = await WalletUtil.storeByMnemonic(
+            name: _walletNameController.text,
+            password: _walletPwsController.text,
+            mnemonic: mnemonic);
+      }
+
+      BlocProvider.of<WalletCmpBloc>(context)
+          .add(ActiveWalletEvent(wallet: wallet));
+      ///Use digits password now
+      WalletUtil.useDigitsPwd(wallet);
+      ///Clear exchange account when switch wallet
+      BlocProvider.of<ExchangeCmpBloc>(context)
+          .add(ClearExchangeAccountEvent());
+      await Future.delayed(Duration(milliseconds: 300));
+
+      if(MemoryCache.rpInviteKey != null && widget.isCreateWallet) {
+        RPApi _rpApi = RPApi();
+        String inviteResult = await _rpApi.postRpInviter(MemoryCache.rpInviteKey, wallet);
+        if(inviteResult != null) {
+          Fluttertoast.showToast(msg: "邀请成功");
+          MemoryCache.rpInviteKey = null;
+        }
+      }
+
+      var userPayload = UserPayloadWithAddressEntity(Payload(userName: wallet.keystore.name,userPic: usetImagePath),wallet.getAtlasAccount().address,);
+      await AtlasApi.postUserSync(userPayload);
+
+      if(widget.isCreateWallet) {
+        UiUtil.showAlertView(
+          context,
+          title: "创建成功",
+          content: "钱包身份创建成功，是否立即备份助记词",
+          actions: [
+            ClickOvalButton(
+              S.of(context)
+                  .cancel,
+                  () {
+                Navigator.pop(context);
+              },
+              width: 120,
+              height: 32,
+              fontSize: 14,
+              fontColor: DefaultColors.color999,
+              btnColor: [Colors.transparent],
+            ),
+            SizedBox(
+              width: 8,
+            ),
+            ClickOvalButton(
+              "备份",
+                  () async {
+                Navigator.pop(context);
+                // mnemonic
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (context) =>
+                //           Map3NodeConfirmPage(
+                //             message: message,
+                //           ),
+                //     ));
+              },
+              width: 120,
+              height: 38,
+              fontSize: 16,
+            ),
+          ],
+        );
+      } else {
+        Fluttertoast.showToast(msg: "导入成功");
+        Routes.popUntilCachedEntryRouteName(context, wallet);
+      }
+    }catch(error){
+      LogUtil.toastException(error);
     }
   }
 }
