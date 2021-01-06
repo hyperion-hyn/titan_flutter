@@ -175,7 +175,7 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
                   onPressed: () {
                     Application.router.navigateTo(context,
-                        Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
+                        Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&isCreate=1');
                   },
                   child: Container(
                     child: Padding(
@@ -199,7 +199,7 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
                   onPressed: () {
                     Application.router.navigateTo(context,
-                        Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
+                        Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
                   },
                   child: Container(
                     child: Padding(

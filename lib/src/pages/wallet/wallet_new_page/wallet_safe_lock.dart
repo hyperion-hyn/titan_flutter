@@ -94,7 +94,6 @@ class _WalletSafeLockState extends State<WalletSafeLock> {
       UiUtil.showErrorTopHint(
         context,
         '密码错误，请重试',
-        duration: Duration(seconds: 2),
       );
       _pinPutController.text = '';
     }

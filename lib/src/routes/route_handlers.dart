@@ -43,9 +43,9 @@ import 'package:titan/src/pages/wallet/confirm_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
+import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_import_account_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_backup_notice_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_confirm_resume_word_page_v2.dart';
-import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_import_account_page2.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_backup_notice_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_show_resume_word_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
@@ -78,7 +78,8 @@ var rootHandler = Handler(
 //wallet
 var createWalletHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return CreateAccountPage();
+  //isCreate 1、创建钱包 2、导入钱包
+  return WalletCreateAccountPageV2(params['isCreate']?.first == "1");
 });
 
 var importWalletHandler = Handler(handlerFunc: (context, params) {

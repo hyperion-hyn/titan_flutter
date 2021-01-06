@@ -45,16 +45,20 @@ class UiUtil {
     ));
   }
 
-  static showErrorTopHint(
-    BuildContext context,
-    String message, {
-    Duration duration = const Duration(seconds: 5),
-  }) {
+  static showErrorTopHint(BuildContext context, String message, {ErrorHintType errorHintType = ErrorHintType.ERROR}) {
+    List<Color> backColors;
+    if(errorHintType == ErrorHintType.ERROR){
+      backColors = [HexColor('#FFEB8686'),HexColor('#FFEB8686')];
+    }else if(errorHintType == ErrorHintType.REMIND){
+      backColors = [HexColor('#F7D33D'),HexColor('#E7C01A')];
+    }
     Flushbar(
       padding: EdgeInsets.symmetric(
         vertical: 20.0,
       ),
-      backgroundColor: HexColor('#FFEB8686'),
+      backgroundGradient: LinearGradient(
+        colors: backColors,
+      ),
       icon: Padding(
         padding: const EdgeInsets.only(left: 16.0),
         child: Image.asset(
@@ -76,7 +80,7 @@ class UiUtil {
       ),
       flushbarStyle: FlushbarStyle.GROUNDED,
       flushbarPosition: FlushbarPosition.TOP,
-      duration: duration,
+      duration: errorHintType == ErrorHintType.ERROR ? Duration(seconds: 5) : null,
     ).show(context);
   }
 
@@ -769,6 +773,60 @@ class UiUtil {
     );
   }
 
+  static Future showLoadingDialog(BuildContext context, msg, Function createContext) async {
+    Widget widget = Center(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0),
+        child: Container(
+          width: 150,
+          height: 150,
+          color: HexColor('#4D000000'),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Spacer(),
+              SizedBox(
+                height: 32,
+                width: 32,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 1.5,
+                ),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Text(
+                msg,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.white,
+                    decoration: TextDecoration.none),
+              ),
+              Spacer()
+            ],
+          ),
+        ),
+      ),
+    );
+    await showDialog<bool>(
+          barrierColor: Colors.transparent,
+          barrierDismissible: false,
+          // 传入 context
+          context: context,
+          // 构建 Dialog 的视图
+          builder: (_) => Builder(builder: (context){
+            createContext(context);
+            return WillPopScope(
+                onWillPop: () {
+                  Navigator.pop(context,true);
+                  return;
+                },
+                child: widget);
+          }));
+  }
+
   static Future<T> showExchangeAuthAgainDialog<T>(
     BuildContext context, {
     Widget title,
@@ -931,4 +989,9 @@ void callLater(FrameCallback callback) {
   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
     callback(timeStamp);
   });
+}
+
+enum ErrorHintType{
+  ERROR,
+  REMIND
 }
