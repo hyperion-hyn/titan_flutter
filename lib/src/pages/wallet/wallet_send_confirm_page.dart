@@ -529,16 +529,11 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               child: TextFormField(
                 controller: controller,
                 validator: (textStr) {
-                  if (textStr.length == 0) {
-                    return null;
-                  }
-
-                  if (Decimal.tryParse(textStr) == null) {
-                    return null;
-                  }
-
                   if (controller == _nonceController) {
                     return null;
+                  }
+                  if (_gasPrice == null || _gasPrice == Decimal.zero) {
+                    return '请输入Gas Price';
                   }
 
                   if (gasPriceRecommend.safeLow > _gasPrice) {
@@ -584,6 +579,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                   ),
                   errorStyle: TextStyle(fontSize: 14, color: Colors.blue[300]),
                   hintStyle: TextStyle(fontSize: 14, color: Colors.grey[300]),
+                  errorBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
                   focusedErrorBorder: UnderlineInputBorder(
                       borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
                   focusedBorder: UnderlineInputBorder(
@@ -617,6 +614,10 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Future _transferAction() async {
+    if(selectedPriceLevel == 3 && !_gasPriceFormKey.currentState.validate()){
+      return;
+    }
+
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
       activatedWallet.wallet,

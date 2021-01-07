@@ -402,7 +402,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     var amountColor;
     var amountText = "";
     var amountSubText = "";
-    amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)} ${transactionDetail.symbol}";
+    amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)}";
 
     if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       if (transactionDetail.amount > 0) {
