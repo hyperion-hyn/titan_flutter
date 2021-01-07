@@ -110,28 +110,62 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           ),
         ],
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: LoadDataContainer(
-            bloc: _loadDataBloc,
-            enablePullUp: false,
-            onLoadData: () async {
-              _requestData();
-            },
-            onRefresh: () async {
-              _requestData();
-            },
-            child: CustomScrollView(
-              physics: BouncingScrollPhysics(),
-              slivers: <Widget>[
-                _myRPInfo(),
-                _rpPool(),
-                _airdropWidget(),
-                _statisticsWidget(),
-                _projectIntro(),
-              ],
-            )),
+      body: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: LoadDataContainer(
+                bloc: _loadDataBloc,
+                enablePullUp: false,
+                onLoadData: () async {
+                  _requestData();
+                },
+                onRefresh: () async {
+                  _requestData();
+                },
+                child: CustomScrollView(
+                  physics: BouncingScrollPhysics(),
+                  slivers: <Widget>[
+                    _myRPInfo(),
+                    _rpPool(),
+                    _airdropWidget(),
+                    _statisticsWidget(),
+                    _projectIntro(),
+                  ],
+                )),
+          ),
+          Positioned(
+            right: 0,
+            top: MediaQuery.of(context).size.height * 0.5,
+            child: _floatingWidget(),
+          ),
+        ],
+      ),
+      //floatingActionButton: _floatingWidget(),
+    );
+  }
+
+  Widget _floatingWidget() {
+    return SizedBox(
+      width: 100,
+      height: 100,
+      child: IconButton(
+        onPressed: () {
+          // todo: 分享红包
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RpTypePickerPage(),
+            ),
+          );
+        },
+        icon: Image.asset(
+          'res/drawable/rp_share_floating.png',
+          width: 80,
+          height: 69,
+          // color: HexColor('#FF1F81FF'),
+        ),
       ),
     );
   }
@@ -821,21 +855,12 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   _navToRPPool() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
     if (activeWallet != null) {
-      // todo: 分享红包
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RpTypePickerPage(),
-        ),
-      );
-
-      /*
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => RpTransmitPage(),
         ),
-      );*/
+      );
     } else {
       Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
     }
