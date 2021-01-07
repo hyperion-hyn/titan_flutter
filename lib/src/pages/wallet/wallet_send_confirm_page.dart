@@ -544,7 +544,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                   if (controller == _nonceController) {
                     return null;
                   }
-                  if (_gasPrice == null || _gasPrice == Decimal.zero) {
+
+                  if (Decimal.tryParse(textStr) == null || textStr.length == 0) {
                     return '请输入Gas Price';
                   }
 
@@ -625,7 +626,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Future _transferAction() async {
-    if (selectedPriceLevel == 3 && !_gasPriceFormKey.currentState.validate()) {
+    if (selectedPriceLevel == 3 && _gasPrice <= Decimal.zero) {
+      UiUtil.toast('请输入Gas Price');
       return;
     }
 
