@@ -103,7 +103,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
     _positionBloc.listen((state) {
       if (state is PostConfirmPoiDataV2ResultSuccessState) {
         print("PostConfirmPoiDataV2ResultSuccessState----1111");
-        _finishCheckIn(S.of(context).thank_you_for_contribute_data, []);
+        // _finishCheckIn(S.of(context).thank_you_for_contribute_data, []);
 
         Application.router.navigateTo(
             context,
@@ -125,11 +125,13 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
                         CheckInModelState confirmPoiState = checkInModel.detail.firstWhere((element) {
                           return element.action == ContributionTasksPage.confirmPOI;
                         }).state;
-                        if (confirmPoiState.total == 0 || confirmPoiState == null) {
-                          _finishCheckIn(S.of(context).thank_you_for_contribute_data, []);
-                        } else {
-                          Navigator.of(context)..pop()..pop();
-                        }
+                        Navigator.of(context)..pop()..pop();
+
+                        // if (confirmPoiState.total == 0 || confirmPoiState == null) {
+                        //   _finishCheckIn(S.of(context).thank_you_for_contribute_data, []);
+                        // } else {
+                        //   Navigator.of(context)..pop()..pop();
+                        // }
                       },
                       child: Text(S.of(context).confirm))
                 ],

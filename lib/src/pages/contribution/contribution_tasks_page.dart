@@ -99,7 +99,7 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
         baseTitle: S.of(context).data_contribute,
         backgroundColor: Colors.white,
         showBottom: true,
-        actions: <Widget>[
+        /*actions: <Widget>[
           FlatButton(
             onPressed: _navToCheckInRecords,
             child: Text(
@@ -111,7 +111,7 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
               ),
             ),
           ),
-        ],
+        ],*/
       ),
       body: _buildView(context),
     );
@@ -490,13 +490,13 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            if (todayTimes < 0)
-              Container()
-            else
-              Text(
-                S.of(context).task_is_finished_func(todayTimes.toString(), taskTimes.toString()),
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              ),
+            // if (todayTimes < 0)
+            //   Container()
+            // else
+            //   Text(
+            //     S.of(context).task_is_finished_func(todayTimes.toString(), taskTimes.toString()),
+            //     style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            //   ),
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 12,

@@ -30,20 +30,17 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:web3dart/json_rpc.dart';
-import 'package:titan/src/domain/transaction_interactor.dart';
-import 'package:titan/src/components/inject/injector.dart';
-import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 
 class ExchangeDepositConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
   final String transferAmount;
-  final String exchangeAddress;
+  final String receiverAddress;
 
   ExchangeDepositConfirmPage(
     String coinVo,
     this.transferAmount,
-    this.exchangeAddress,
+    this.receiverAddress,
   ) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
@@ -55,7 +52,6 @@ class ExchangeDepositConfirmPage extends StatefulWidget {
 class _ExchangeDepositConfirmPageState extends BaseState<ExchangeDepositConfirmPage> {
   var isTransferring = false;
   var isLoadingGasFee = false;
-  AccountTransferService _accountTransferService = AccountTransferService();
 
   int selectedPriceLevel = 1;
 
@@ -63,11 +59,9 @@ class _ExchangeDepositConfirmPageState extends BaseState<ExchangeDepositConfirmP
   ActiveQuoteVoAndSign activatedQuoteSign;
   var gasPriceRecommend;
 
-  // TransactionInteractor transactionInteractor;
-
   @override
   void onCreated() {
-    // transactionInteractor = Injector.of(context).transactionInteractor;
+
     activatedQuoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
@@ -468,90 +462,12 @@ class _ExchangeDepositConfirmPageState extends BaseState<ExchangeDepositConfirmP
   }
 
   Future _transfer() async {
-    // if (widget.coinVo.coinType == CoinType.ETHEREUM) {
-    //   var tempTransList = await getEthTransferList(_accountTransferService);
-    //   if (tempTransList.length > 0) {
-    //     await widget.transactionInteractor
-    //         .confirmTransactionOfNonce(tempTransList[0].nonce);
-    //   }
-    //
-    //   bool isHavePendingTx = false;
-    //   if (widget.coinVo.contractAddress != null) {
-    //     var localTransfer = await widget.transactionInteractor
-    //         .getShareTransaction(
-    //             LocalTransferType.LOCAL_TRANSFER_ERC20, false,
-    //             contractAddress: widget.coinVo.contractAddress);
-    //     if (localTransfer != null) {
-    //       isHavePendingTx = true;
-    //     }
-    //   } else {
-    //     var localTransfer = await widget.transactionInteractor
-    //         .getShareTransaction(LocalTransferType.LOCAL_TRANSFER_ETH, false);
-    //     if (localTransfer != null) {
-    //       isHavePendingTx = true;
-    //     }
-    //   }
-    //
-    //   if (isHavePendingTx) {
-    //     await UiUtil.showDialogWidget(context,
-    //         content: Text(S.of(context).unconfirmed_transfer_speed_transfer_increase_fee),
-    //         actions: [
-    //           FlatButton(
-    //               child: Text(S.of(context).check),
-    //               onPressed: () async {
-    //                 Navigator.pop(context);
-    //                 var coinVo = widget.coinVo;
-    //                 var coinVoJsonStr =
-    //                     FluroConvertUtils.object2string(coinVo.toJson());
-    //                 Application.router.navigateTo(
-    //                     context,
-    //                     Routes.wallet_account_detail +
-    //                         '?coinVo=$coinVoJsonStr');
-    //               }),
-    //         ]);
-    //     return;
-    //   }
-    // } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-    //   bool isShowDialog = false;
-    //   WalletVo walletVo =
-    //       WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    //   String fromAddress = walletVo.wallet.getEthAccount().address;
-    //   var coinVo = CoinVo(
-    //       symbol: "HYN", address: fromAddress, coinType: CoinType.HYN_ATLAS);
-    //   //只获取hyn的交易历史，hrc30的交易列表中没有pending状态
-    //   var transferList =
-    //       await _accountTransferService.getTransferList(coinVo, 1);
-    //   if (transferList != null && transferList.length > 0) {
-    //     var transactionDetailVo = transferList[0];
-    //     if ((transactionDetailVo.state == 1 ||
-    //         transactionDetailVo.state == 2)) {
-    //       isShowDialog = true;
-    //     }
-    //   }
-    //
-    //   if (isShowDialog) {
-    //     await UiUtil.showDialogWidget(context,
-    //         content: Text(S.of(context).unconfirmed_transfer_wait_moment),
-    //         actions: [
-    //           FlatButton(
-    //               child: Text(S.of(context).confirm),
-    //               onPressed: () async {
-    //                 Navigator.pop(context);
-    //               }),
-    //         ]);
-    //     return;
-    //   }
-    // }
 
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
       activatedWallet.wallet,
     );
 
-    _transferWithPwd(walletPassword);
-  }
-
-  _transferWithPwd(String walletPassword) async {
     if (walletPassword == null) {
       return;
     }
@@ -559,12 +475,13 @@ class _ExchangeDepositConfirmPageState extends BaseState<ExchangeDepositConfirmP
       setState(() {
         isTransferring = true;
       });
+
       var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
       if (widget.coinVo.symbol == "ETH") {
         await _transferEth(
           walletPassword,
           ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
-          widget.exchangeAddress,
+          widget.receiverAddress,
           activatedWallet.wallet,
         );
       } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
@@ -572,7 +489,7 @@ class _ExchangeDepositConfirmPageState extends BaseState<ExchangeDepositConfirmP
           var txHash = await HYNApi.sendTransferHYNHrc30(
             walletPassword,
             ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
-            widget.exchangeAddress,
+            widget.receiverAddress,
             activatedWallet.wallet,
             widget.coinVo.contractAddress,
           );
@@ -586,7 +503,7 @@ class _ExchangeDepositConfirmPageState extends BaseState<ExchangeDepositConfirmP
           await HYNApi.sendTransferHYN(
             walletPassword,
             activatedWallet.wallet,
-            toAddress: widget.exchangeAddress,
+            toAddress: widget.receiverAddress,
             amount: ConvertTokenUnit.strToBigInt(
               widget.transferAmount,
               widget.coinVo.decimals,
@@ -600,7 +517,7 @@ class _ExchangeDepositConfirmPageState extends BaseState<ExchangeDepositConfirmP
             widget.transferAmount,
             widget.coinVo.decimals,
           ),
-          widget.exchangeAddress,
+          widget.receiverAddress,
           activatedWallet.wallet,
         );
         if (txHash == null) {

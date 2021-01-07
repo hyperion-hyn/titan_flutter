@@ -507,7 +507,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _textField(_gasPriceController, "请输入Gas Price", "GWEI", _gasPriceFormKey, 'Gas Price'),
-                SizedBox(height: 8,),
+                SizedBox(
+                  height: 8,
+                ),
                 _textField(_nonceController, "请输入 Nonce（可选）", "", _nonceFormKey, 'Nonce 值'),
               ],
             ),
@@ -516,13 +518,23 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     );
   }
 
-  Widget _textField(TextEditingController controller, String hintText, String suffixText, Key key, String title,) {
+  Widget _textField(
+    TextEditingController controller,
+    String hintText,
+    String suffixText,
+    Key key,
+    String title,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0),
       child: Row(
         children: <Widget>[
-          Text(title,),
-          SizedBox(width: 10,),
+          Text(
+            title,
+          ),
+          SizedBox(
+            width: 10,
+          ),
           Expanded(
             child: Form(
               key: key,
@@ -590,13 +602,12 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                       borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
                   //输入框启用时，下划线的样式
                   enabledBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)), //输入框启用时，下划线的样式
+                      borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)), //输入框启用时，下划线的样式
                 ),
                 // keyboardType: TextInputType.number,
                 keyboardType: TextInputType.numberWithOptions(decimal: false),
                 inputFormatters: [
-                  LengthLimitingTextInputFormatter(controller == _nonceController?18:8),
+                  LengthLimitingTextInputFormatter(controller == _nonceController ? 18 : 8),
                   FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                 ],
               ),
@@ -614,7 +625,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Future _transferAction() async {
-    if(selectedPriceLevel == 3 && !_gasPriceFormKey.currentState.validate()){
+    if (selectedPriceLevel == 3 && !_gasPriceFormKey.currentState.validate()) {
       return;
     }
 
@@ -728,7 +739,12 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     }
   }
 
-  Future _transferEth(String password, BigInt amount, String toAddress, Wallet wallet) async {
+  Future _transferEth(
+    String password,
+    BigInt amount,
+    String toAddress,
+    Wallet wallet,
+  ) async {
     print('[HYN] _transferErc20，_gasPrice $_gasPrice,  _nonce:$_nonce');
 
     final txHash = await wallet.sendEthTransaction(
@@ -742,7 +758,12 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     logger.i('ETH transaction committed，txhash $txHash');
   }
 
-  Future<String> _transferErc20(String password, BigInt amount, String toAddress, Wallet wallet) async {
+  Future<String> _transferErc20(
+    String password,
+    BigInt amount,
+    String toAddress,
+    Wallet wallet,
+  ) async {
     var contractAddress = widget.coinVo.contractAddress;
     print('[HYN] _transferErc20，_gasPrice $_gasPrice,  _nonce:$_nonce');
 

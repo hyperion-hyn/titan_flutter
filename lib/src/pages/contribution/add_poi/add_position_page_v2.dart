@@ -200,7 +200,7 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
       condition: (AllPageState fromState, AllPageState state) {
         if (state is PostPoiDataV2ResultSuccessState) {
           if (_isUploading) {
-            _finishCheckIn(S.of(context).thank_you_for_contribute_data);
+            // _finishCheckIn(S.of(context).thank_you_for_contribute_data);
 
             Application.router.navigateTo(
                 context,
