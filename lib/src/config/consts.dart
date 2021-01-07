@@ -57,7 +57,6 @@ class Const {
     }
   }
 
-
   static String get CONTRIBUTIONS_DOMAIN {
     if (env.buildType == BuildType.DEV) {
       return Config.CONTRIBUTIONS_API_URL_TEST;
@@ -154,7 +153,9 @@ class PrefsKey {
   static final lastAnnouncement = 'last_announcement';
   static final newsUpdateTime = 'news_update_time';
 
-  static final WALLET_USE_DIGITS_PWD_PREFIX = 'digits_pwd';
+  static const WALLET_USE_DIGITS_PWD_PREFIX = 'digits_pwd';
+
+  static const WALLET_MNEMONIC_BACK_UP_PREFIX = 'mnemonic_backup';
 
   ///auth
   static const String AUTH_CONFIG = 'auth_config';
@@ -187,7 +188,6 @@ class PrefsKey {
   static const String IS_CONFIRM_DEX_POLICY = 'dex_policy_confirmed';
 
   static const String WALLET_ICON_LAST_KEY = "wallet_icon_last_key";
-
 }
 
 class SecurePrefsKey {

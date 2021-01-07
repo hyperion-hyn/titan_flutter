@@ -501,19 +501,39 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                           ],
                         ),
                       ),
-                      Image.asset(
-                        'res/drawable/ic_warning_triangle_v2.png',
-                        width: 16,
-                        height: 16,
-                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          '未备份',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: HexColor('#E7BB00'),
+                        child: FutureBuilder(
+                          future: WalletUtil.checkIsBackUpMnemonic(
+                            ethAccount.address,
                           ),
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData) {
+                              bool result = snapshot.data;
+                              return result
+                                  ? SizedBox()
+                                  : Row(
+                                      children: [
+                                        Image.asset(
+                                          'res/drawable/ic_warning_triangle_v2.png',
+                                          width: 16,
+                                          height: 16,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          '未备份',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: HexColor('#E7BB00'),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                            } else {
+                              return SizedBox();
+                            }
+                          },
                         ),
                       ),
                     ],
