@@ -211,7 +211,9 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
     } else {
       var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
       Application.router.navigateTo(
-          context, Routes.wallet_create + '?entryRouteName=$currentRouteName');
+          context,
+          Routes.wallet_create +
+              '?entryRouteName=$currentRouteName&isCreate=1');
     }
   }
 
@@ -225,9 +227,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
     } else {
       var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
       Application.router.navigateTo(
-          context,
-          Routes.wallet_create +
-              '?entryRouteName=$currentRouteName&isCreate=1');
+          context, Routes.wallet_create + '?entryRouteName=$currentRouteName');
     }
   }
 
