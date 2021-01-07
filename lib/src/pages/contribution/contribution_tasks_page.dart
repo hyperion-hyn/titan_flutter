@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -297,8 +298,13 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
           var latlng = await getLatlng();
           if (latlng != null) {
             // 注释：第0次，自检：图片， 后面，第N次，ta检查，都是第三方验证，多任务校验
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            var lastDate = prefs.getInt(PrefsKey.VERIFY_DATE) ?? 0;
+            var duration = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastDate));
+            print(
+                "[Radion] confirmPoiTimes:$confirmPoiTimes, lastDate:$lastDate, day:${duration.inDays}, inHours:${duration.inHours}");
 
-            if (confirmPoiTimes == 0 /*|| env.buildType == BuildType.DEV*/) {
+            if (lastDate == 0 || (lastDate > 0 && duration.inDays > 0)) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
