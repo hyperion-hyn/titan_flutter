@@ -718,8 +718,11 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 
     try {
       transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
-
       if (page == getStartPage()) {
+        if(!mounted){
+          return retList;
+        }
+
         retList.add('header');
 
         //update balance
