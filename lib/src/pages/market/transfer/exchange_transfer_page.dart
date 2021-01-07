@@ -48,14 +48,12 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _selectedCoinSymbol = widget.coinSymbol ?? 'HYN';
   }

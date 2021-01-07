@@ -13,12 +13,10 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -35,16 +33,12 @@ import 'package:web3dart/json_rpc.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/config/consts.dart';
-import '../../../pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
-import '../../wallet/wallet_show_account_widget.dart';
 
 class ExchangeDepositConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
   final String transferAmount;
   final String exchangeAddress;
-  TransactionInteractor transactionInteractor =
-      Injector.of(Keys.rootKey.currentContext).transactionInteractor;
 
   ExchangeDepositConfirmPage(
     String coinVo,
@@ -58,8 +52,7 @@ class ExchangeDepositConfirmPage extends StatefulWidget {
   }
 }
 
-class _ExchangeDepositConfirmPageState
-    extends BaseState<ExchangeDepositConfirmPage> {
+class _ExchangeDepositConfirmPageState extends BaseState<ExchangeDepositConfirmPage> {
   var isTransferring = false;
   var isLoadingGasFee = false;
   AccountTransferService _accountTransferService = AccountTransferService();
@@ -70,20 +63,18 @@ class _ExchangeDepositConfirmPageState
   ActiveQuoteVoAndSign activatedQuoteSign;
   var gasPriceRecommend;
 
+  // TransactionInteractor transactionInteractor;
+
   @override
   void onCreated() {
-    activatedQuoteSign = WalletInheritedModel.of(context)
-        .activatedQuoteVoAndSign(widget.coinVo.symbol);
+    // transactionInteractor = Injector.of(context).transactionInteractor;
+    activatedQuoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
-      gasPriceRecommend =
-          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
-              .btcGasPriceRecommend;
+      gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).btcGasPriceRecommend;
     } else {
-      gasPriceRecommend =
-          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
-              .gasPriceRecommend;
+      gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).gasPriceRecommend;
     }
     _speedOnTap(1);
   }
@@ -121,50 +112,28 @@ class _ExchangeDepositConfirmPageState
         aspect: WalletAspect.gasPrice,
       ).btcGasPriceRecommend;
       var fees = ConvertTokenUnit.weiToDecimal(
-        BigInt.parse((gasPrice * Decimal.fromInt(BitcoinConst.BTC_RAWTX_SIZE))
-            .toString()),
+        BigInt.parse((gasPrice * Decimal.fromInt(BitcoinConst.BTC_RAWTX_SIZE)).toString()),
         8,
       );
       var gasPriceEstimate = fees * Decimal.parse(quotePrice.toString());
-      gasPriceEstimateStr =
-          "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
+      gasPriceEstimateStr = "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
     } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      var hynQuotePrice = WalletInheritedModel.of(context)
-              .activatedQuoteVoAndSign('HYN')
-              ?.quoteVo
-              ?.price ??
-          0;
-      var gasLimit = SettingInheritedModel.ofConfig(context)
-          .systemConfigEntity
-          .ethTransferGasLimit;
+      var hynQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN')?.quoteVo?.price ?? 0;
+      var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
       var gasEstimate = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(
-              (gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
-      var gasPriceEstimate =
-          gasEstimate * Decimal.parse(hynQuotePrice.toString());
+          weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+      var gasPriceEstimate = gasEstimate * Decimal.parse(hynQuotePrice.toString());
       gasPriceEstimateStr =
           '${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} G_DUST (≈ $quoteSign${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())})';
     } else {
-      var ethQuotePrice = WalletInheritedModel.of(context)
-              .activatedQuoteVoAndSign('ETH')
-              ?.quoteVo
-              ?.price ??
-          0;
-      gasPriceRecommend =
-          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
-              .gasPriceRecommend;
+      var ethQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0;
+      gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).gasPriceRecommend;
       var gasLimit = widget.coinVo.symbol == "ETH"
-          ? SettingInheritedModel.ofConfig(context)
-              .systemConfigEntity
-              .ethTransferGasLimit
-          : SettingInheritedModel.ofConfig(context)
-              .systemConfigEntity
-              .erc20TransferGasLimit;
+          ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
+          : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
       var gasEstimate = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(
-              (gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
-      var gasPriceEstimate =
-          gasEstimate * Decimal.parse(ethQuotePrice.toString());
+          weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+      var gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
       gasPriceEstimateStr =
           "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
     }
@@ -202,20 +171,15 @@ class _ExchangeDepositConfirmPageState
                           size: 48,
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                           child: Text(
                             "-${widget.transferAmount} ${widget.coinVo.symbol}",
-                            style: TextStyle(
-                                color: Color(0xFF252525),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20),
+                            style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
                           ),
                         ),
                         Text(
                           "≈ $quoteSign${FormatUtil.formatPrice(double.parse(widget.transferAmount) * quotePrice)}",
-                          style:
-                              TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                          style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                         )
                       ],
                     ),
@@ -247,10 +211,7 @@ class _ExchangeDepositConfirmPageState
                             children: <Widget>[
                               Text(
                                 "${activatedWallet.wallet.keystore.name}",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFF333333),
-                                    fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 14, color: Color(0xFF333333), fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: true,
                               ),
@@ -259,10 +220,7 @@ class _ExchangeDepositConfirmPageState
                                   widget.coinVo,
                                   widget.coinVo.address,
                                 ))})",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFF999999),
-                                    fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 14, color: Color(0xFF999999), fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: true,
                               )
@@ -364,8 +322,7 @@ class _ExchangeDepositConfirmPageState
                   ),
                   if (widget.coinVo.coinType != CoinType.HYN_ATLAS)
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 0, vertical: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
                       child: Row(
                         children: <Widget>[
                           Expanded(
@@ -377,29 +334,20 @@ class _ExchangeDepositConfirmPageState
                                 padding: EdgeInsets.symmetric(vertical: 4),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                    color: selectedPriceLevel == 0
-                                        ? Colors.grey
-                                        : Colors.grey[200],
+                                    color: selectedPriceLevel == 0 ? Colors.grey : Colors.grey[200],
                                     border: Border(),
                                     borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(30),
-                                        bottomLeft: Radius.circular(30))),
+                                        topLeft: Radius.circular(30), bottomLeft: Radius.circular(30))),
                                 child: Column(
                                   children: <Widget>[
                                     Text(
                                       S.of(context).speed_slow,
                                       style: TextStyle(
-                                          color: selectedPriceLevel == 0
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontSize: 12),
+                                          color: selectedPriceLevel == 0 ? Colors.white : Colors.black, fontSize: 12),
                                     ),
                                     Text(
-                                      S.of(context).wait_min(gasPriceRecommend
-                                          .safeLowWait
-                                          .toString()),
-                                      style: TextStyle(
-                                          fontSize: 10, color: Colors.black38),
+                                      S.of(context).wait_min(gasPriceRecommend.safeLowWait.toString()),
+                                      style: TextStyle(fontSize: 10, color: Colors.black38),
                                     )
                                   ],
                                 ),
@@ -419,27 +367,19 @@ class _ExchangeDepositConfirmPageState
                                 padding: EdgeInsets.symmetric(vertical: 4),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                    color: selectedPriceLevel == 1
-                                        ? Colors.grey
-                                        : Colors.grey[200],
+                                    color: selectedPriceLevel == 1 ? Colors.grey : Colors.grey[200],
                                     border: Border(),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(0))),
+                                    borderRadius: BorderRadius.all(Radius.circular(0))),
                                 child: Column(
                                   children: <Widget>[
                                     Text(
                                       S.of(context).speed_normal,
                                       style: TextStyle(
-                                          color: selectedPriceLevel == 1
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontSize: 12),
+                                          color: selectedPriceLevel == 1 ? Colors.white : Colors.black, fontSize: 12),
                                     ),
                                     Text(
-                                      S.of(context).wait_min(
-                                          gasPriceRecommend.avgWait.toString()),
-                                      style: TextStyle(
-                                          fontSize: 10, color: Colors.black38),
+                                      S.of(context).wait_min(gasPriceRecommend.avgWait.toString()),
+                                      style: TextStyle(fontSize: 10, color: Colors.black38),
                                     )
                                   ],
                                 ),
@@ -459,29 +399,20 @@ class _ExchangeDepositConfirmPageState
                                 padding: EdgeInsets.symmetric(vertical: 4),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                    color: selectedPriceLevel == 2
-                                        ? Colors.grey
-                                        : Colors.grey[200],
+                                    color: selectedPriceLevel == 2 ? Colors.grey : Colors.grey[200],
                                     border: Border(),
                                     borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(30),
-                                        bottomRight: Radius.circular(30))),
+                                        topRight: Radius.circular(30), bottomRight: Radius.circular(30))),
                                 child: Column(
                                   children: <Widget>[
                                     Text(
                                       S.of(context).speed_fast,
                                       style: TextStyle(
-                                          color: selectedPriceLevel == 2
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontSize: 12),
+                                          color: selectedPriceLevel == 2 ? Colors.white : Colors.black, fontSize: 12),
                                     ),
                                     Text(
-                                      S.of(context).wait_min(gasPriceRecommend
-                                          .fastWait
-                                          .toString()),
-                                      style: TextStyle(
-                                          fontSize: 10, color: Colors.black38),
+                                      S.of(context).wait_min(gasPriceRecommend.fastWait.toString()),
+                                      style: TextStyle(fontSize: 10, color: Colors.black38),
                                     )
                                   ],
                                 ),
@@ -501,8 +432,7 @@ class _ExchangeDepositConfirmPageState
               margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
               constraints: BoxConstraints.expand(height: 48),
               child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 disabledColor: Colors.grey[600],
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
@@ -514,9 +444,7 @@ class _ExchangeDepositConfirmPageState
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        isTransferring
-                            ? S.of(context).please_waiting
-                            : S.of(context).send,
+                        isTransferring ? S.of(context).please_waiting : S.of(context).send,
                         style: TextStyle(
                           fontWeight: FontWeight.normal,
                           fontSize: 16,
@@ -540,80 +468,80 @@ class _ExchangeDepositConfirmPageState
   }
 
   Future _transfer() async {
-    if (widget.coinVo.coinType == CoinType.ETHEREUM) {
-      var tempTransList = await getEthTransferList(_accountTransferService);
-      if (tempTransList.length > 0) {
-        await widget.transactionInteractor
-            .deleteSameNonce(tempTransList[0].nonce);
-      }
-
-      bool isShowDialog = false;
-      if (widget.coinVo.contractAddress != null) {
-        var localTransfer = await widget.transactionInteractor
-            .getShareTransaction(
-                LocalTransferType.LOCAL_TRANSFER_HYN_USDT, false,
-                contractAddress: widget.coinVo.contractAddress);
-        if (localTransfer != null) {
-          isShowDialog = true;
-        }
-      } else {
-        var localTransfer = await widget.transactionInteractor
-            .getShareTransaction(LocalTransferType.LOCAL_TRANSFER_ETH, false);
-        if (localTransfer != null) {
-          isShowDialog = true;
-        }
-      }
-
-      if (isShowDialog) {
-        await UiUtil.showDialogWidget(context,
-            content: Text(S.of(context).unconfirmed_transfer_speed_transfer_increase_fee),
-            actions: [
-              FlatButton(
-                  child: Text(S.of(context).check),
-                  onPressed: () async {
-                    Navigator.pop(context);
-                    var coinVo = widget.coinVo;
-                    var coinVoJsonStr =
-                        FluroConvertUtils.object2string(coinVo.toJson());
-                    Application.router.navigateTo(
-                        context,
-                        Routes.wallet_account_detail +
-                            '?coinVo=$coinVoJsonStr');
-                  }),
-            ]);
-        return;
-      }
-    } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      bool isShowDialog = false;
-      WalletVo walletVo =
-          WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-      String fromAddress = walletVo.wallet.getEthAccount().address;
-      var coinVo = CoinVo(
-          symbol: "HYN", address: fromAddress, coinType: CoinType.HYN_ATLAS);
-      //只获取hyn的交易历史，hrc30的交易列表中没有pending状态
-      var transferList =
-          await _accountTransferService.getTransferList(coinVo, 1);
-      if (transferList != null && transferList.length > 0) {
-        var transactionDetailVo = transferList[0];
-        if ((transactionDetailVo.state == 1 ||
-            transactionDetailVo.state == 2)) {
-          isShowDialog = true;
-        }
-      }
-
-      if (isShowDialog) {
-        await UiUtil.showDialogWidget(context,
-            content: Text(S.of(context).unconfirmed_transfer_wait_moment),
-            actions: [
-              FlatButton(
-                  child: Text(S.of(context).confirm),
-                  onPressed: () async {
-                    Navigator.pop(context);
-                  }),
-            ]);
-        return;
-      }
-    }
+    // if (widget.coinVo.coinType == CoinType.ETHEREUM) {
+    //   var tempTransList = await getEthTransferList(_accountTransferService);
+    //   if (tempTransList.length > 0) {
+    //     await widget.transactionInteractor
+    //         .confirmTransactionOfNonce(tempTransList[0].nonce);
+    //   }
+    //
+    //   bool isHavePendingTx = false;
+    //   if (widget.coinVo.contractAddress != null) {
+    //     var localTransfer = await widget.transactionInteractor
+    //         .getShareTransaction(
+    //             LocalTransferType.LOCAL_TRANSFER_ERC20, false,
+    //             contractAddress: widget.coinVo.contractAddress);
+    //     if (localTransfer != null) {
+    //       isHavePendingTx = true;
+    //     }
+    //   } else {
+    //     var localTransfer = await widget.transactionInteractor
+    //         .getShareTransaction(LocalTransferType.LOCAL_TRANSFER_ETH, false);
+    //     if (localTransfer != null) {
+    //       isHavePendingTx = true;
+    //     }
+    //   }
+    //
+    //   if (isHavePendingTx) {
+    //     await UiUtil.showDialogWidget(context,
+    //         content: Text(S.of(context).unconfirmed_transfer_speed_transfer_increase_fee),
+    //         actions: [
+    //           FlatButton(
+    //               child: Text(S.of(context).check),
+    //               onPressed: () async {
+    //                 Navigator.pop(context);
+    //                 var coinVo = widget.coinVo;
+    //                 var coinVoJsonStr =
+    //                     FluroConvertUtils.object2string(coinVo.toJson());
+    //                 Application.router.navigateTo(
+    //                     context,
+    //                     Routes.wallet_account_detail +
+    //                         '?coinVo=$coinVoJsonStr');
+    //               }),
+    //         ]);
+    //     return;
+    //   }
+    // } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+    //   bool isShowDialog = false;
+    //   WalletVo walletVo =
+    //       WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    //   String fromAddress = walletVo.wallet.getEthAccount().address;
+    //   var coinVo = CoinVo(
+    //       symbol: "HYN", address: fromAddress, coinType: CoinType.HYN_ATLAS);
+    //   //只获取hyn的交易历史，hrc30的交易列表中没有pending状态
+    //   var transferList =
+    //       await _accountTransferService.getTransferList(coinVo, 1);
+    //   if (transferList != null && transferList.length > 0) {
+    //     var transactionDetailVo = transferList[0];
+    //     if ((transactionDetailVo.state == 1 ||
+    //         transactionDetailVo.state == 2)) {
+    //       isShowDialog = true;
+    //     }
+    //   }
+    //
+    //   if (isShowDialog) {
+    //     await UiUtil.showDialogWidget(context,
+    //         content: Text(S.of(context).unconfirmed_transfer_wait_moment),
+    //         actions: [
+    //           FlatButton(
+    //               child: Text(S.of(context).confirm),
+    //               onPressed: () async {
+    //                 Navigator.pop(context);
+    //               }),
+    //         ]);
+    //     return;
+    //   }
+    // }
 
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
@@ -635,33 +563,15 @@ class _ExchangeDepositConfirmPageState
       if (widget.coinVo.symbol == "ETH") {
         await _transferEth(
           walletPassword,
-          ConvertTokenUnit.strToBigInt(
-              widget.transferAmount, widget.coinVo.decimals),
+          ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
           widget.exchangeAddress,
           activatedWallet.wallet,
         );
-      } else if (widget.coinVo.coinType == CoinType.BITCOIN) {
-        var activatedWalletVo = activatedWallet.wallet;
-        var transResult = await activatedWalletVo.sendBitcoinTransaction(
-            walletPassword,
-            activatedWalletVo.getBitcoinZPub(),
-            widget.exchangeAddress,
-            gasPrice.toInt(),
-            ConvertTokenUnit.decimalToWei(
-                    Decimal.parse(widget.transferAmount), 8)
-                .toInt());
-        if (transResult["code"] != 0) {
-          LogUtil.uploadException(transResult, "bitcoin upload");
-          Fluttertoast.showToast(
-              msg: "${transResult.toString()}", toastLength: Toast.LENGTH_LONG);
-          return;
-        }
       } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
         if (widget.coinVo.contractAddress != null) {
           var txHash = await HYNApi.sendTransferHYNHrc30(
             walletPassword,
-            ConvertTokenUnit.strToBigInt(
-                widget.transferAmount, widget.coinVo.decimals),
+            ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
             widget.exchangeAddress,
             activatedWallet.wallet,
             widget.coinVo.contractAddress,
@@ -693,7 +603,7 @@ class _ExchangeDepositConfirmPageState
           widget.exchangeAddress,
           activatedWallet.wallet,
         );
-        if(txHash == null){
+        if (txHash == null) {
           setState(() {
             isTransferring = false;
           });
@@ -708,8 +618,7 @@ class _ExchangeDepositConfirmPageState
         msg = S.of(context).transfer_broadcase_success_description;
       }
       msg = FluroConvertUtils.fluroCnParamsEncode(msg);
-      Application.router
-          .navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
+      Application.router.navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
     } catch (_) {
       LogUtil.uploadException(_, "ETH or Bitcoin upload");
       setState(() {
@@ -722,9 +631,7 @@ class _ExchangeDepositConfirmPageState
           Fluttertoast.showToast(msg: S.of(context).transfer_fail);
         }
       } else if (_ is RPCError) {
-        Fluttertoast.showToast(
-            msg: MemoryCache.contractErrorStr(_.message),
-            toastLength: Toast.LENGTH_LONG);
+        Fluttertoast.showToast(msg: MemoryCache.contractErrorStr(_.message), toastLength: Toast.LENGTH_LONG);
       } else {
         Fluttertoast.showToast(msg: S.of(context).transfer_fail);
       }
@@ -765,7 +672,7 @@ class _ExchangeDepositConfirmPageState
     );
 
     logger.i(
-        'HYN transaction committed，txhash $txHash exchangeAddress: $toAddress walletAddress: ${activatedWallet.wallet.getEthAccount().address}');
+        'ERC20 transaction committed，txhash $txHash exchangeAddress: $toAddress walletAddress: ${activatedWallet.wallet.getEthAccount().address}');
     return txHash;
   }
 }
