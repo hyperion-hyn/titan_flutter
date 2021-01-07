@@ -51,10 +51,10 @@ class _MeSettingState extends State<MeSettingPage> {
         appBar: BaseAppBar(
           baseTitle: S.of(context).setting,
           backgroundColor: Colors.white,
+          showBottom: true,
         ),
         body: Column(
           children: <Widget>[
-            _lineWidget(),
             _buildMenuBar(S.of(context).price_show, quoteStr, () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => MePricePage()));

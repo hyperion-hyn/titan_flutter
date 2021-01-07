@@ -2148,8 +2148,8 @@ dealDepthData(List<ExcDetailEntity> buyChartList,
   var buyList = deptList(data["buy"], "buy");
   if (buyList.isNotEmpty) {
     var defaultLength = buyList.length;
-    if (enable && defaultLength > 5) {
-      defaultLength = 5;
+    if (enable && defaultLength > ExchangeDetailPage.depthLength) {
+      defaultLength = ExchangeDetailPage.depthLength;
       buyList = buyList.sublist(0, defaultLength);
     }
 
@@ -2167,8 +2167,8 @@ dealDepthData(List<ExcDetailEntity> buyChartList,
   var sellList = deptList(data["sell"], "sell");
   if (sellList.isNotEmpty) {
     var defaultLength = sellList.length;
-    if (enable && defaultLength > 5) {
-      defaultLength = 5;
+    if (enable && defaultLength > ExchangeDetailPage.depthLength) {
+      defaultLength = ExchangeDetailPage.depthLength;
       sellList = sellList.sublist(0, defaultLength);
     }
     var max = maxDepthEntity(sellList);
