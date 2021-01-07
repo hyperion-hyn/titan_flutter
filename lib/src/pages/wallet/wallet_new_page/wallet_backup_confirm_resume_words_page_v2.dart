@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -106,6 +107,9 @@ class _BackupConfirmResumeWordState
                               .i("selectedMnemonitc.trim() $selectedMnemonitc");
                           if (selectedMnemonitc.trim() ==
                               widget.mnemonic.trim()) {
+                            WalletUtil.confirmBackUpMnemonic(
+                              widget.wallet.getEthAccount()?.address,
+                            );
                             Fluttertoast.showToast(
                                 msg: S.of(context).backup_finish);
                             Routes.popUntilCachedEntryRouteName(context);
