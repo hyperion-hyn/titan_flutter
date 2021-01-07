@@ -50,6 +50,8 @@ class _RpTypePickerPageState extends BaseState<RpTypePickerPage> {
     _actionTitle = S.of(context).next_step;
     _callback = () {
       print("[$runtimeType] onCreated, next!");
+
+      showSendAlertView(context);
     };
   }
 
@@ -281,4 +283,26 @@ class _RpTypePickerPageState extends BaseState<RpTypePickerPage> {
       ),
     );
   }
+
+  static Future<bool> showSendAlertView<T>(
+      BuildContext context,) {
+    return showDialog<bool>(
+      barrierDismissible: true,
+      // 传入 context
+      context: context,
+      // 构建 Dialog 的视图
+      builder: (context) {
+        return Material(
+          child: SafeArea(
+            child: Container(
+              child: Text(
+                '转账确认',
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
+
