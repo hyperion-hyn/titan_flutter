@@ -14,6 +14,7 @@ import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
@@ -48,7 +49,7 @@ class _WalletCreateAccountPageV2State
   TextEditingController _walletPwsController = TextEditingController();
   TextEditingController _walletRePwsController = TextEditingController();
   TextEditingController _walletPwsHintController = TextEditingController();
-  TextEditingController _mnemonicController = TextEditingController(text: "");
+  TextEditingController _mnemonicController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   int _pswLevel = 0;
@@ -98,7 +99,28 @@ class _WalletCreateAccountPageV2State
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: BaseAppBar(baseTitle: ""),
+        appBar: BaseAppBar(baseTitle: "",
+        actions: [
+          InkWell(
+            onTap: () async {
+              UiUtil.showScanImagePickerSheet(context, callback: (String text) {
+                if (text.isEmpty || (text.isNotEmpty && !bip39.validateMnemonic(text))) {
+                  Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
+                } else {
+                  _mnemonicController.text = text;
+                }
+              });
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  top: 8.0, bottom: 8, left: 15, right: 15),
+              child: Icon(
+                ExtendsIconFont.qrcode_scan,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ],),
         body: _pageWidget(context));
   }
 

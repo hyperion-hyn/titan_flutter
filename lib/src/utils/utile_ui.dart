@@ -45,12 +45,13 @@ class UiUtil {
     ));
   }
 
-  static showErrorTopHint(BuildContext context, String message, {ErrorHintType errorHintType = ErrorHintType.ERROR}) {
+  static showErrorTopHint(BuildContext context, String message,
+      {ErrorHintType errorHintType = ErrorHintType.ERROR}) {
     List<Color> backColors;
-    if(errorHintType == ErrorHintType.ERROR){
-      backColors = [HexColor('#FFEB8686'),HexColor('#FFEB8686')];
-    }else if(errorHintType == ErrorHintType.REMIND){
-      backColors = [HexColor('#F7D33D'),HexColor('#E7C01A')];
+    if (errorHintType == ErrorHintType.ERROR) {
+      backColors = [HexColor('#FFEB8686'), HexColor('#FFEB8686')];
+    } else if (errorHintType == ErrorHintType.REMIND) {
+      backColors = [HexColor('#F7D33D'), HexColor('#E7C01A')];
     }
     Flushbar(
       padding: EdgeInsets.symmetric(
@@ -80,7 +81,8 @@ class UiUtil {
       ),
       flushbarStyle: FlushbarStyle.GROUNDED,
       flushbarPosition: FlushbarPosition.TOP,
-      duration: errorHintType == ErrorHintType.ERROR ? Duration(seconds: 5) : null,
+      duration:
+          errorHintType == ErrorHintType.ERROR ? Duration(seconds: 5) : null,
     ).show(context);
   }
 
@@ -263,9 +265,12 @@ class UiUtil {
     Widget contentWidget,
     bool barrierDismissible = true,
     bool isShowCloseIcon = true,
+    bool isShowBottom = false,
+    Color barrierColor,
   }) {
     return showDialog<bool>(
       barrierDismissible: barrierDismissible,
+      barrierColor: barrierColor,
       // 传入 context
       context: context,
       // 构建 Dialog 的视图
@@ -275,25 +280,38 @@ class UiUtil {
         duration: const Duration(milliseconds: 100),
         curve: Curves.decelerate,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment:
+              isShowBottom ? MainAxisAlignment.end : MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Container(
+              margin: EdgeInsets.only(bottom: isShowBottom ? 65 : 0),
               //alignment: Alignment.center,
               decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey[200],
+                    blurRadius: 1.0,
+                  ),
+                ],
+              ),
               child: Stack(
                 children: <Widget>[
                   isShowCloseIcon
                       ? Positioned(
-                          right: 10,
-                          top: 10,
+                          right: 0,
+                          top: 0,
                           child: GestureDetector(
-                            onTap: () => Navigator.pop(_, false),
-                            child: Image.asset(
-                              "res/drawable/map3_node_close.png",
-                              width: 18,
-                              height: 18,
+                            onTap: () => Navigator.pop(context, false),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Image.asset(
+                                "res/drawable/map3_node_close.png",
+                                width: 18,
+                                height: 18,
+                              ),
                             ),
                           ),
                         )
@@ -773,7 +791,8 @@ class UiUtil {
     );
   }
 
-  static Future showLoadingDialog(BuildContext context, msg, Function createContext) async {
+  static Future showLoadingDialog(
+      BuildContext context, msg, Function createContext) async {
     Widget widget = Center(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),
@@ -811,20 +830,20 @@ class UiUtil {
       ),
     );
     await showDialog<bool>(
-          barrierColor: Colors.transparent,
-          barrierDismissible: false,
-          // 传入 context
-          context: context,
-          // 构建 Dialog 的视图
-          builder: (_) => Builder(builder: (context){
-            createContext(context);
-            return WillPopScope(
-                onWillPop: () {
-                  Navigator.pop(context,true);
-                  return;
-                },
-                child: widget);
-          }));
+        barrierColor: Colors.transparent,
+        barrierDismissible: false,
+        // 传入 context
+        context: context,
+        // 构建 Dialog 的视图
+        builder: (_) => Builder(builder: (context) {
+              createContext(context);
+              return WillPopScope(
+                  onWillPop: () {
+                    Navigator.pop(context, true);
+                    return;
+                  },
+                  child: widget);
+            }));
   }
 
   static Future<T> showExchangeAuthAgainDialog<T>(
@@ -991,7 +1010,4 @@ void callLater(FrameCallback callback) {
   });
 }
 
-enum ErrorHintType{
-  ERROR,
-  REMIND
-}
+enum ErrorHintType { ERROR, REMIND }

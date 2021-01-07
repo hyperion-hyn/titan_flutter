@@ -4,6 +4,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/market/exchange/exchange_page.dart';
+import 'package:titan/src/pages/wallet/wallet_new_page/wallet_page_v2.dart';
 import 'wallet_page/wallet_page.dart';
 
 class WalletTabsPage extends StatefulWidget {
@@ -82,7 +83,7 @@ class _WalletTabsPageState extends State<WalletTabsPage>
         body: TabBarView(
           controller: _tabController,
           children: [
-            WalletPage(),
+            WalletPageV2(),
             ExchangePage(),
           ],
         ),

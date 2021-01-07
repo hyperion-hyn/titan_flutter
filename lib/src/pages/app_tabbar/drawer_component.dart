@@ -10,6 +10,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/app.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
+import 'package:titan/src/pages/wallet/wallet_new_page/wallet_page_v2.dart';
 import 'package:titan/src/pages/wallet_demo/ApiDemo.dart';
 import 'package:titan/src/pages/wallet_demo/WalletDemo.dart';
 import 'package:titan/src/pages/wallet/wallet_page/wallet_page.dart';
@@ -160,7 +161,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => Scaffold(
-                                  body: SafeArea(child: WalletPage()),
+                                  body: SafeArea(child: WalletPageV2()),
                                 )));
                   },
                   leading: Icon(Icons.account_balance_wallet),
