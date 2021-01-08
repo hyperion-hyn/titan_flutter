@@ -83,6 +83,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
   bool _isOnPressed = false;
   bool _isLoadingOpenCage = false;
+  bool _isOnlyNewerGet = true;
 
   int _requestOpenCageDataCount = 0;
   String language;
@@ -245,37 +246,59 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
   }
 
   Widget _buildBody() {
+    Widget child;
+    if (widget.shareType == RedPocketShareType.NEWER) {
+      child = Column(
+        children: <Widget>[
+          SizedBox(
+            height: 10,
+          ),
+          _buildAmountCell(),
+          SizedBox(
+            height: 20,
+          ),
+          _buildRpCountCell(),
+          _buildBlessingCell(),
+          _buildPasswordCell(),
+          _buildTipsView(),
+          _confirmButtonWidget(),
+        ],
+      );
+    } else {
+      child = Column(
+        children: <Widget>[
+          SizedBox(
+            height: 10,
+          ),
+          _buildAmountCell(),
+          SizedBox(
+            height: 20,
+          ),
+          _buildAddressCell(),
+          _buildZoneCell(),
+          SizedBox(
+            height: 20,
+          ),
+          _buildRpCountCell(),
+          _buildBlessingCell(),
+          _buildSwitchCell(),
+          SizedBox(
+            height: 20,
+          ),
+          _buildPasswordCell(),
+          _buildTipsView(),
+          _confirmButtonWidget(),
+        ],
+      );
+    }
+
     return Stack(
       children: <Widget>[
         BaseGestureDetector(
           context: context,
           child: SingleChildScrollView(
             controller: _scrollController,
-            child: Column(
-              children: <Widget>[
-                SizedBox(
-                  height: 10,
-                ),
-                _buildAmountCell(),
-                SizedBox(
-                  height: 20,
-                ),
-                _buildAddressCell(),
-                _buildZoneCell(),
-                SizedBox(
-                  height: 20,
-                ),
-                _buildRpCountCell(),
-                _buildBlessingCell(),
-                _buildSwitchCell(),
-                SizedBox(
-                  height: 20,
-                ),
-                _buildPasswordCell(),
-                _buildTipsView(),
-                _confirmButtonWidget(),
-              ],
-            ),
+            child: child,
           ),
         ),
         _buildLoading(),
@@ -331,7 +354,9 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(width: 16,),
+        SizedBox(
+          width: 16,
+        ),
         Expanded(
           child: Form(
             key: key,
@@ -400,17 +425,20 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
             ),
           ),
         ),
-        if(unit.isNotEmpty) Padding(
-          padding: const EdgeInsets.only(left: 16,),
-          child: Text(
-            unit,
-            style: TextStyle(
-              color: HexColor('#333333'),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
+        if (unit.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 16,
+            ),
+            child: Text(
+              unit,
+              style: TextStyle(
+                color: HexColor('#333333'),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-        ),
       ],
     );
   }
@@ -570,6 +598,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
   Widget _buildSwitchCell() {
     return _clipRectWidget(
         desc: '如果只允许新人领取，你要为每个新人至少要塞 0.001 HYN 作为他之后矿工费所用',
+        vertical: 4,
         child: Column(
           children: [
             Row(
@@ -582,6 +611,17 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
+                Spacer(),
+                Switch(
+                  value: _isOnlyNewerGet,
+                  activeColor: Colors.white,
+                  activeTrackColor: HexColor('#FF4D4D'),
+                  onChanged: (bool value) {
+                    setState(() {
+                      _isOnlyNewerGet = value;
+                    });
+                  },
+                )
               ],
             )
           ],
