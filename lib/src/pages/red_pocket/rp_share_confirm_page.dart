@@ -160,6 +160,7 @@ class RpShareConfirmPage extends StatelessWidget {
                       if (password == null) {
                         return;
                       }
+                      // todo:
                     },
                     btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
                     fontSize: 16,
@@ -190,7 +191,12 @@ class RpShareConfirmPage extends StatelessWidget {
     );
   }
 
-  Widget _rowText({String title = '', String content = '', String subContent = '', bool showLine = true}) {
+  Widget _rowText({
+    String title = '',
+    String content = '',
+    String subContent = '',
+    bool showLine = true,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
