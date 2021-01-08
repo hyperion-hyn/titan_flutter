@@ -129,17 +129,16 @@ class TransactionInteractor {
   }
 
   Future<String> cancelTransaction(BuildContext context, TransactionDetailVo vo, String password) async {
-    var amount = ConvertTokenUnit.etherToWei(etherDouble: 0);
-    return _replaceTransaction(context, vo, password, OptType.CANCEL, amount);
+    // var amount = ConvertTokenUnit.etherToWei(etherDouble: 0);
+    return _replaceTransaction(context, vo, password, OptType.CANCEL);
   }
 
   Future<String> speedUpTransaction(BuildContext context, TransactionDetailVo vo, String password) async {
-    var amount = ConvertTokenUnit.etherToWei(etherDouble: vo.amount);
-    return _replaceTransaction(context, vo, password, OptType.SPEED_UP, amount);
+    // var amount = ConvertTokenUnit.etherToWei(etherDouble: vo.amount);
+    return _replaceTransaction(context, vo, password, OptType.SPEED_UP);
   }
 
-  Future<String> _replaceTransaction(BuildContext context, TransactionDetailVo transactionDetailVo, String password,
-      int optType, BigInt amount) async {
+  Future<String> _replaceTransaction(BuildContext context, TransactionDetailVo transactionDetailVo, String password, int optType) async {
     var gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).gasPriceRecommend;
     var walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
 
@@ -152,14 +151,14 @@ class TransactionInteractor {
       resultGasPrice = speedGasPrice;
     }
 
+    double amount = optType == OptType.SPEED_UP ? transactionDetailVo.amount : 0;
     if (transactionDetailVo.localTransferType == LocalTransferType.LOCAL_TRANSFER_ETH) {
-      // var amount = ConvertTokenUnit.etherToWei(etherDouble: transactionDetailVo.amount);
       var txHash = await walletVo.wallet.sendEthTransaction(
           optType: optType,
           password: password,
-          value: amount,
+          value: ConvertTokenUnit.etherToWei(etherDouble: amount),
           toAddress: transactionDetailVo.toAddress,
-          gasPrice: BigInt.from(resultGasPrice.toInt()),
+          gasPrice: BigInt.parse(resultGasPrice.toString()),
           nonce: int.parse(transactionDetailVo.nonce));
       logger.i('ETH交易已提交，交易nonce ${transactionDetailVo.nonce}, hash $txHash');
       return txHash;
@@ -170,13 +169,12 @@ class TransactionInteractor {
           decimal = element.decimals;
         }
       });
-      // var amount = ConvertTokenUnit.numToWei(transactionDetailVo.amount, decimal);
       var txHash = await walletVo.wallet.sendErc20Transaction(
           optType: optType,
           contractAddress: transactionDetailVo.contractAddress,
           password: password,
-          gasPrice: BigInt.from(resultGasPrice.toInt()),
-          value: amount,
+          gasPrice: BigInt.parse(resultGasPrice.toString()),
+          value: ConvertTokenUnit.numToWei(amount, decimal),
           toAddress: transactionDetailVo.toAddress,
           nonce: int.parse(transactionDetailVo.nonce));
       logger.i('ETH交易已提交，交易hash $txHash');

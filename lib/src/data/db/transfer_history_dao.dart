@@ -44,7 +44,7 @@ class TransferHistoryDao {
 
     if (vo.lastOptType == OptType.SPEED_UP) {
       vo.speedUpTimes++;
-    } else if (vo.lastOptType == OptType.SPEED_UP) {
+    } else if (vo.lastOptType == OptType.CANCEL) {
       vo.cancelTimes++;
     }
 
@@ -78,7 +78,9 @@ class TransferHistoryDao {
     if (encoded != null && encoded != '') {
       List decoded = json.decode(encoded);
       var deList = decoded.map((item) => TransactionDetailVo.fromJson(item)).toList();
-      deList.sort(([a, b]) => int.parse(b.nonce) - int.parse(a.nonce));
+      if(deList.length > 1) {
+        deList.sort(([a, b]) => int.parse(b.nonce) - int.parse(a.nonce));
+      }
       return deList;
     }
     /*else {

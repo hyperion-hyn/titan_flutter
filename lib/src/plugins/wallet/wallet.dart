@@ -186,7 +186,8 @@ class Wallet {
       WalletVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
       String fromAddress = walletVo?.wallet?.getEthAccount()?.address ?? "";
       if (fromAddress != null && fromAddress.isNotEmpty) {
-        nonce = await WalletUtil.getWeb3Client().getTransactionCount(EthereumAddress.fromHex(fromAddress));
+        nonce = await WalletUtil.getWeb3Client().getTransactionCount(EthereumAddress.fromHex(fromAddress), atBlock: const BlockNum.pending());
+        // nonce = await WalletUtil.getWeb3Client().getTransactionCount(EthereumAddress.fromHex(fromAddress));
       }
 //      String localNonce = await transactionInteractor.getTransactionDBNonce(fromAddress);
 //      if (localNonce != null && int.parse(localNonce) >= nonce) {

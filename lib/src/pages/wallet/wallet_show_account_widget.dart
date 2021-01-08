@@ -48,7 +48,7 @@ import 'api/etherscan_api.dart';
 import 'api/hyn_api.dart';
 
 class ShowAccountPage extends StatefulWidget {
-  final CoinVo coinVo;
+  CoinVo coinVo;
 
   ShowAccountPage(this.coinVo);
 
@@ -117,10 +117,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
   void didChangeDependencies() async {
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
-    // var tempTransList = await getEthTransferList(_accountTransferService);
-    // if (tempTransList.length > 0) {
-    //   await widget.transactionInteractor.confirmTransactionOfNonce(tempTransList[0].nonce);
-    // }
+    widget.coinVo = WalletInheritedModel.of(context).getCoinVoBySymbol(widget.coinVo.symbol);
   }
 
   @override
