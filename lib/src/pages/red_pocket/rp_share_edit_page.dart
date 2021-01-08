@@ -123,7 +123,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
           textColor: "#333333",
           textSize: 16,
           geometry: latlng,
-          iconImage: "hyn_marker_big",
+          iconImage: "rp_marker",
           iconAnchor: "bottom",
           //iconOffset: Offset(0.0, 3.0),
         ),
