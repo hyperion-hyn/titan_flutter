@@ -70,6 +70,8 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
   }
 
   void _checkInAction() {
+    return;
+
     var activeWalletVo = WalletInheritedModel.of(context).activatedWallet;
     var isLogged = activeWalletVo != null;
     if (isLogged) {
@@ -224,7 +226,6 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
   }
 
   Widget _taskListView() {
-    var checkInModel = AccountInheritedModel.of(context, aspect: AccountAspect.checkIn)?.checkInModel;
     var scanTimes = 0;
     var postPoiTimes = 0;
     var confirmPoiTimes = 0;
@@ -232,6 +233,8 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
     var postPoiTimesReal = 0;
     var confirmPoiTimesReal = 0;
 
+    /*
+    var checkInModel = AccountInheritedModel.of(context, aspect: AccountAspect.checkIn)?.checkInModel;
     if (checkInModel != null) {
       print("[Task] _taskListView, total:${checkInModel.total}, length:${checkInModel.detail.length}");
 
@@ -254,6 +257,7 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
       confirmPoiTimes = confirmPoiState.total;
       confirmPoiTimesReal = confirmPoiState.real;
     }
+    */
 
     Widget _lineWidget({double height = 5}) {
       return Container(
