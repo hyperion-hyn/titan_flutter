@@ -148,8 +148,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   Widget _floatingWidget() {
     return SizedBox(
-      width: 104,
-      height: 89,
+      width: 80,
+      height: 80,
       child: IconButton(
         onPressed: () {
           // todo: 分享红包
@@ -160,12 +160,41 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             ),
           );
         },
-        icon: Image.asset(
-          'res/drawable/rp_share_floating.png',
-          width: 80,
-          height: 69,
-          fit: BoxFit.cover,
-          // color: HexColor('#FF1F81FF'),
+        icon: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            Image.asset(
+              'res/drawable/rp_share_floating.png',
+              // width: 80,
+              // height: 69,
+              fit: BoxFit.cover,
+              // color: HexColor('#FF1F81FF'),
+            ),
+            Positioned(
+              top: 30,
+              child: Column(
+                //crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '攒好友',
+                    style: TextStyle(
+                      color: HexColor('#FFFFFF'),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 6,
+                    ),
+                  ),
+                  Text(
+                    '发红包',
+                    style: TextStyle(
+                      color: HexColor('#FFFFFF'),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 8,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -1104,6 +1104,10 @@ enum RedPocketType {
   PROMOTION,
 }
 
+enum RedPocketShareType {
+  NEWER,
+  LOCATION,
+}
 
 enum RpLuckState {
   MISS,             // 错过：0

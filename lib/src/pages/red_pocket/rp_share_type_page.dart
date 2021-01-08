@@ -5,7 +5,9 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_confirm_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_edit_page.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class RpShareTypePage extends StatefulWidget {
@@ -17,9 +19,7 @@ class RpShareTypePage extends StatefulWidget {
 
 class _RpShareTypePageState extends BaseState<RpShareTypePage> {
   String _title;
-  int _initIndex;
-  String _actionTitle;
-  VoidCallback _callback;
+  int _initIndex = 0;
 
   ScrollController scrollController = ScrollController();
   WalletVo walletVo;
@@ -43,15 +43,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
 
   _setupData() {
     walletVo = WalletInheritedModel.of(context).activatedWallet;
-
     _title = '选择红包类型';
-    _initIndex = 0;
-    _actionTitle = S.of(context).next_step;
-    _callback = () {
-      print("[$runtimeType] onCreated, next!");
-
-      showSendAlertView(context);
-    };
   }
 
   @override
@@ -84,8 +76,17 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
           ),
         ),
         ClickOvalButton(
-          _actionTitle,
-          _callback,
+          S.of(context).next_step,
+          (){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RpShareEditPage(
+                  shareType: RedPocketShareType.values[_initIndex],
+                ),
+              ),
+            );
+          },
           btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
           fontSize: 16,
           width: 260,
@@ -283,34 +284,6 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
           ),
         ],
       ),
-    );
-  }
-
-  static Future<bool> showSendAlertView<T>(
-    BuildContext context,
-  ) {
-    return showDialog<bool>(
-      barrierDismissible: true,
-      // 传入 context
-      context: context,
-      // 构建 Dialog 的视图
-      builder: (context) {
-        return _buildAlertView();
-      },
-    );
-  }
-
-  static Widget _buildAlertView({
-    String hynAmount = '0',
-    String rpAmount = '0',
-    String hynFee = '0',
-    String rpFee = '0',
-  }) {
-    return RpShareConfirmPage(
-      hynAmount: hynAmount,
-      rpAmount: rpAmount,
-      hynFee: hynFee,
-      rpFee: rpFee,
     );
   }
 }
