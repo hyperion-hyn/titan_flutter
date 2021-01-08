@@ -148,8 +148,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   Widget _floatingWidget() {
     return SizedBox(
-      width: 100,
-      height: 100,
+      width: 104,
+      height: 89,
       child: IconButton(
         onPressed: () {
           // todo: 分享红包
@@ -164,6 +164,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           'res/drawable/rp_share_floating.png',
           width: 80,
           height: 69,
+          fit: BoxFit.cover,
           // color: HexColor('#FF1F81FF'),
         ),
       ),

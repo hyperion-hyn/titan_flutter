@@ -5,6 +5,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/red_pocket/rp_transfer_confirm_dialog.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class RpTypePickerPage extends StatefulWidget {
@@ -31,7 +32,6 @@ class _RpTypePickerPageState extends BaseState<RpTypePickerPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
   }
 
   @override
@@ -42,7 +42,6 @@ class _RpTypePickerPageState extends BaseState<RpTypePickerPage> {
   }
 
   _setupData() {
-
     walletVo = WalletInheritedModel.of(context).activatedWallet;
 
     _title = '选择红包类型';
@@ -57,7 +56,6 @@ class _RpTypePickerPageState extends BaseState<RpTypePickerPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: BaseAppBar(
         baseTitle: _title,
@@ -95,7 +93,7 @@ class _RpTypePickerPageState extends BaseState<RpTypePickerPage> {
         ),
         SizedBox(
           height: 40,
-        )
+        ),
       ],
     );
   }
@@ -109,7 +107,9 @@ class _RpTypePickerPageState extends BaseState<RpTypePickerPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _createChildWidget(title: '新人红包', sutTitle: '赞好友', index: 0),
-            SizedBox(width: 36,),
+            SizedBox(
+              width: 36,
+            ),
             _createChildWidget(title: '位置红包', sutTitle: '在附近可领取', index: 1),
           ],
         ),
@@ -154,7 +154,9 @@ class _RpTypePickerPageState extends BaseState<RpTypePickerPage> {
               )
           ],
         ),
-        SizedBox(height: 10,),
+        SizedBox(
+          height: 10,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -285,24 +287,30 @@ class _RpTypePickerPageState extends BaseState<RpTypePickerPage> {
   }
 
   static Future<bool> showSendAlertView<T>(
-      BuildContext context,) {
+    BuildContext context,
+  ) {
     return showDialog<bool>(
       barrierDismissible: true,
       // 传入 context
       context: context,
       // 构建 Dialog 的视图
       builder: (context) {
-        return Material(
-          child: SafeArea(
-            child: Container(
-              child: Text(
-                '转账确认',
-              ),
-            ),
-          ),
-        );
+        return _buildAlertView();
       },
     );
   }
-}
 
+  static Widget _buildAlertView({
+    String hynAmount = '0',
+    String rpAmount = '0',
+    String hynFee = '0',
+    String rpFee = '0',
+  }) {
+    return RpTransferConfirmDialog(
+      hynAmount: hynAmount,
+      rpAmount: rpAmount,
+      hynFee: hynFee,
+      rpFee: rpFee,
+    );
+  }
+}
