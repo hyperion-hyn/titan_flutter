@@ -5,17 +5,17 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/pages/red_pocket/rp_transfer_confirm_dialog.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_confirm_page.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class RpTypePickerPage extends StatefulWidget {
+class RpShareTypePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _RpTypePickerPageState();
+    return _RpShareTypePageState();
   }
 }
 
-class _RpTypePickerPageState extends BaseState<RpTypePickerPage> {
+class _RpShareTypePageState extends BaseState<RpShareTypePage> {
   String _title;
   int _initIndex;
   String _actionTitle;
@@ -306,7 +306,7 @@ class _RpTypePickerPageState extends BaseState<RpTypePickerPage> {
     String hynFee = '0',
     String rpFee = '0',
   }) {
-    return RpTransferConfirmDialog(
+    return RpShareConfirmPage(
       hynAmount: hynAmount,
       rpAmount: rpAmount,
       hynFee: hynFee,

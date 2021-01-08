@@ -8,14 +8,14 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class RpTransferConfirmDialog extends StatelessWidget {
+class RpShareConfirmPage extends StatelessWidget {
   final String hynAmount;
   final String rpAmount;
   final String hynFee;
   final String rpFee;
   final ScrollController _scrollController = ScrollController();
 
-  RpTransferConfirmDialog({
+  RpShareConfirmPage({
     this.hynAmount = '0',
     this.rpAmount = '0',
     this.hynFee = '0',
