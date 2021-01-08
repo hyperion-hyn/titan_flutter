@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/pages/wallet/wallet_backup_show_resume_word_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -12,7 +11,7 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/screenshot_warning_dialog.dart';
 
-import 'wallet_new_page/wallet_backup_show_resume_word_page_v2.dart';
+import 'wallet_new_page/wallet_backup_show_seed_phrase_page_v2.dart';
 
 class WalletBackupNoticePage extends StatefulWidget {
   final Wallet wallet;
@@ -241,7 +240,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    BackupShowResumeWordPageV2(wallet, mnemonic)));
+                    WalletBackupShowSeedPhrasePageV2(wallet, mnemonic)));
       } else {
         print(S.of(context).isnt_trustwallet_cant_export);
       }

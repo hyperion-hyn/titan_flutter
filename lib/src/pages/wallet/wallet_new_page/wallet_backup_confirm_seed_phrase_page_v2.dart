@@ -1,4 +1,3 @@
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
@@ -11,11 +10,11 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class BackupConfirmResumeWordPageV2 extends StatefulWidget {
+class WalletBackupConfirmSeedPhrasePageV2 extends StatefulWidget {
   final Wallet wallet;
   final String mnemonic;
 
-  BackupConfirmResumeWordPageV2(this.wallet, this.mnemonic);
+  WalletBackupConfirmSeedPhrasePageV2(this.wallet, this.mnemonic);
 
   @override
   State<StatefulWidget> createState() {
@@ -24,7 +23,7 @@ class BackupConfirmResumeWordPageV2 extends StatefulWidget {
 }
 
 class _BackupConfirmResumeWordState
-    extends State<BackupConfirmResumeWordPageV2> {
+    extends State<WalletBackupConfirmSeedPhrasePageV2> {
   List<CandidateWordVo> _candidateWords = [];
 
   List<CandidateWordVo> _selectedResumeWords = [];

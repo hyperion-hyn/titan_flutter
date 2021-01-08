@@ -130,12 +130,6 @@ class Routes {
     router.define(wallet_setting, handler: settingWalletHandler, transitionType: pushNewPageTransitionType);
     router.define(wallet_setting_wallet_backup_notice,
         handler: settingBackupNoticeWalletHandler, transitionType: pushNewPageTransitionType);
-    router.define(wallet_backup_notice_for_creation,
-        handler: backUpMnemoicNoticeForCreation, transitionType: pushNewPageTransitionType);
-    router.define(wallet_show_resume_word,
-        handler: showResumeWordForCreation, transitionType: pushNewPageTransitionType);
-    router.define(wallet_confirm_resume_word,
-        handler: confirmResumeWordForCreation, transitionType: pushNewPageTransitionType);
     router.define(confirm_success_papge, handler: confirmSuccessHandler, transitionType: pushNewPageTransitionType);
 
     ///Exchange

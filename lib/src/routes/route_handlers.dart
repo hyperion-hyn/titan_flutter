@@ -40,23 +40,15 @@ import 'package:titan/src/pages/market/transfer/exchange_withdraw_confirm_page.d
 import 'package:titan/src/pages/mine/qr_code_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/confirm_success_page.dart';
-import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
-import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
-import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_import_account_page_v2.dart';
-import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_backup_notice_page_v2.dart';
-import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_confirm_resume_word_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_backup_notice_page_v2.dart';
-import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_show_resume_word_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
-import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/contribution/contribution_finish_page.dart';
 import 'package:titan/src/pages/contribution/contribution_tasks_page.dart';
 import 'package:titan/src/pages/contribution/signal_scan/scan_signal_contribution_page.dart';
-import 'package:titan/src/pages/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/pages/wallet/wallet_import_account_page.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/bloc/bloc.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
@@ -156,27 +148,6 @@ var settingBackupNoticeWalletHandler = Handler(handlerFunc: (context, params) {
   Wallet wallet =
       Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
   return WalletBackupNoticePageV2(wallet);
-});
-
-var backUpMnemoicNoticeForCreation = Handler(handlerFunc: (context, params) {
-  var walletName = params['walletName']?.first != null
-      ? FluroConvertUtils.fluroCnParamsDecode(params['walletName']?.first)
-      : 'MyWallet';
-  return CreateWalletBackupNoticePageV2(walletName, params['password']?.first);
-});
-
-var showResumeWordForCreation = Handler(handlerFunc: (context, params) {
-  var walletName = params['walletName']?.first != null
-      ? FluroConvertUtils.fluroCnParamsDecode(params['walletName']?.first)
-      : 'MyWallet';
-  return WalletCreateShowResumeWordPageV2(walletName, params['password']?.first);
-});
-
-var confirmResumeWordForCreation = Handler(handlerFunc: (context, params) {
-  return WalletCreateConfirmResumeWordPageV2(
-      params['mnemonic']?.first,
-      FluroConvertUtils.fluroCnParamsDecode(params['walletName']?.first),
-      params['password']?.first);
 });
 
 var confirmSuccessHandler = Handler(handlerFunc: (context, params) {
