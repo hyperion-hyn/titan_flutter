@@ -292,10 +292,10 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
         _currentPageKey = netData.pagingKey;
         _dataList = filterRpOpenDataList(netData.data);
 
-        for (var key in _filterDataMap.keys) {
-          var value = _filterDataMap[key];
-          print("[$runtimeType] _filterDataList.key:${key}, value.length:${value.length}");
-        }
+        // for (var key in _filterDataMap.keys) {
+        //   var value = _filterDataMap[key];
+        //   print("[$runtimeType] _filterDataList.key:${key}, value.length:${value.length}");
+        // }
 
         if (mounted) {
           setState(() {
