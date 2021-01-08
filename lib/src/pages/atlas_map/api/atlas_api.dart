@@ -1030,7 +1030,7 @@ class AtlasApi {
       AndroidDeviceInfo deviceInfo = await deviceInfoPlugin?.androidInfo;
       deviceId = deviceInfo?.androidId;
       if (env.channel == BuildChannel.OFFICIAL) {
-        channel = 'android-titan';
+        channel = 'android-official';
       } else if (env.channel == BuildChannel.STORE) {
         channel = 'android-google';
       }
