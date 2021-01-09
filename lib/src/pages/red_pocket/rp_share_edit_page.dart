@@ -60,12 +60,12 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
   PublishSubject<int> _filterSubject = PublishSubject<int>();
   MapboxMapController _mapController;
 
-  TextEditingController _rpAmountController = TextEditingController();
-  TextEditingController _hynAmountController = TextEditingController();
-  TextEditingController _zoneLengthController = TextEditingController();
-  TextEditingController _rpCountController = TextEditingController();
-  TextEditingController _blessingController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _rpAmountController = TextEditingController();
+  final TextEditingController _hynAmountController = TextEditingController();
+  final TextEditingController _zoneLengthController = TextEditingController();
+  final TextEditingController _rpCountController = TextEditingController();
+  final TextEditingController _blessingController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   final _rpAmountKey = GlobalKey<FormState>();
   final _hynAmountKey = GlobalKey<FormState>();
@@ -200,15 +200,35 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
           var country = _openCageData["country"] ?? "";
           var provinces = _openCageData["state"];
           var city = _openCageData["city"];
+          var road = _openCageData["road"];
+          var building = _openCageData["building"];
 
           String countryCode = _openCageData["country_code"] ?? "CN";
           _saveCountryCode(countryCode: countryCode.toUpperCase());
 
+          /*
+          "components": {
+          "ISO_3166-1_alpha-2": "CN",
+          "ISO_3166-1_alpha-3": "CHN",
+          "_type": "building",
+          "building": "东区181",
+          "city": "海珠区",
+          "continent": "Asia",
+          "country": "中国",
+          "country_code": "cn",
+          "county": "",
+          "postcode": "510275",
+          "road": "园东路",
+          "state": "广东省"
+          },
+          "confidence": 10,
+          "formatted": "东区181, 181 园东路, 新港街道, 510275 广东省, 中国",
+        */
           setState(() {
             //_addressText = country + " " + provinces + " " + city + " " + county;
             //_addressText = county + "，" + city + "，" + provinces + "，" + country;
             //_addressText = "中国 广东省 广州市 天河区 中山大道 环球都会广场 2601楼";
-            _addressText = provinces + city + country;
+            _addressText = country + provinces + city + road + building;
           });
         }
 
@@ -346,17 +366,17 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
               : SizedBox(
                   width: 50,
                 ),
-        Text(
-          title,
-          style: TextStyle(
-            color: HexColor('#333333'),
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        SizedBox(
-          width: 16,
-        ),
+        // Text(
+        //   title,
+        //   style: TextStyle(
+        //     color: HexColor('#333333'),
+        //     fontSize: 14,
+        //     fontWeight: FontWeight.w500,
+        //   ),
+        // ),
+        // SizedBox(
+        //   width: 16,
+        // ),
         Expanded(
           child: Form(
             key: key,
@@ -365,11 +385,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
               textAlign: TextAlign.end,
               validator: (textStr) {
                 if (textStr.length == 0) {
-                  return null;
-                }
-
-                if (Decimal.tryParse(textStr) == null) {
-                  return null;
+                  return hintText;
                 }
 
                 return null;
@@ -377,7 +393,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
               onChanged: (String inputText) {
                 //print('[add] --> onChanged, inputText:$inputText');
 
-                key.currentState.validate();
+                //key.currentState.validate();
               },
               onEditingComplete: () {
                 //_onEditingComplete();
@@ -392,53 +408,67 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
               //光标宽度
               cursorWidth: 1.8,
               decoration: InputDecoration(
+                // prefixText: title,
+                // prefixStyle: TextStyle(
+                //   color: HexColor('#333333'),
+                //   fontSize: 14,
+                //   fontWeight: FontWeight.w500,
+                // ),
+                prefixIcon: Padding(
+                  padding: EdgeInsets.only(
+                    top: 12,
+                  ),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: HexColor('#333333'),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+
                 border: InputBorder.none,
                 hintText: hintText,
-                // suffixIcon: SizedBox(
-                //   child: Center(
-                //     widthFactor: 0.0,
-                //     child: Text(
-                //       'suffixText',
-                //       style: TextStyle(color: Colors.grey[300]),
-                //     ),
-                //   ),
-                // ),
-                // errorStyle: TextStyle(fontSize: 14, color: Colors.red[300]),
+                errorText: hintText,
+                suffixIcon: unit.isNotEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.only(
+                          left: 32,
+                          top: 12,
+                        ),
+                        child: Text(
+                          unit,
+                          style: TextStyle(
+                            color: HexColor('#333333'),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      )
+                    : null,
+                errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
                 hintStyle: TextStyle(fontSize: 12, color: HexColor('#999999')),
-                // focusedErrorBorder: UnderlineInputBorder(
-                //     borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
-                // focusedBorder: UnderlineInputBorder(
-                //     borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
-                // // //输入框启用时，下划线的样式
-                // disabledBorder: UnderlineInputBorder(
-                //     borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
-                // //输入框启用时，下划线的样式
-                // enabledBorder: UnderlineInputBorder(
-                //     borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)), //输入框启用时，下划线的样式
+                focusedErrorBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.none)),
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.none)),
+                //输入框启用时，下划线的样式
+                disabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
+                //输入框启用时，下划线的样式
+                enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)), //输入框启用时，下划线的样式
               ),
               // keyboardType: TextInputType.number,
-              keyboardType: TextInputType.numberWithOptions(decimal: false),
+              //keyboardType: TextInputType.numberWithOptions(decimal: false),
               inputFormatters: [
                 LengthLimitingTextInputFormatter(maxLength),
-                FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+                //FilteringTextInputFormatter.allow(RegExp("[0-9]"))
               ],
             ),
           ),
         ),
-        if (unit.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 16,
-            ),
-            child: Text(
-              unit,
-              style: TextStyle(
-                color: HexColor('#333333'),
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
       ],
     );
   }
