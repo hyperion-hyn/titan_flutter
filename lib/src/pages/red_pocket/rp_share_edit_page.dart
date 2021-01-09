@@ -1,12 +1,7 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_pickers/Media.dart';
-import 'package:image_pickers/UIConfig.dart';
-import 'package:image_pickers/image_pickers.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,29 +14,17 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
-import 'package:titan/src/pages/contribution/add_poi/add_position_image_page.dart';
 import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
-import 'package:titan/src/pages/contribution/add_poi/business_time_page.dart';
-import 'package:titan/src/pages/contribution/add_poi/model/business_time.dart';
-import 'package:titan/src/pages/contribution/add_poi/model/category_item.dart';
-import 'package:titan/src/pages/contribution/add_poi/model/poi_collector.dart';
-import 'package:titan/src/pages/contribution/add_poi/model/poi_data.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
-import 'package:titan/src/pages/contribution/add_poi/select_category_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/src/pages/contribution/add_poi/select_position_page.dart';
 import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v2.dart';
-import 'package:titan/src/pages/mine/api/contributions_api.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_confirm_page.dart';
-import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
-import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'package:titan/src/utils/log_util.dart';
-import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
@@ -425,13 +408,6 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                         child: TextFormField(
                           controller: controller,
                           textAlign: TextAlign.end,
-                          /*validator: (textStr) {
-                          if (textStr.length == 0) {
-                            return hintText;
-                          }
-
-                          return null;
-                        },*/
                           onChanged: (String inputText) {
                             print('[$runtimeType] --> onChanged, inputText:$inputText');
 
@@ -461,56 +437,17 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                           //光标宽度
                           cursorWidth: 1.8,
                           decoration: InputDecoration(
-                            /*prefixIcon: Padding(
-                            padding: EdgeInsets.only(
-                              top: 12,
-                            ),
-                            child: Text(
-                              title,
-                              style: TextStyle(
-                                color: HexColor('#333333'),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),*/
-
                             border: InputBorder.none,
                             hintText: hintText,
-                            // errorText: hintText,
-                            /*suffixIcon: unit.isNotEmpty
-                              ? Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 32,
-                                    top: 12,
-                                  ),
-                                  child: Text(
-                                    unit,
-                                    style: TextStyle(
-                                      color: HexColor('#333333'),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                )
-                              : null,*/
                             errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
-                            hintStyle: TextStyle(fontSize: 12, color: HexColor('#999999')),
-                            // focusedErrorBorder: UnderlineInputBorder(
-                            //     borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.none)),
-                            // focusedBorder: UnderlineInputBorder(
-                            //     borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.none)),
-                            // //输入框启用时，下划线的样式
-                            // disabledBorder: UnderlineInputBorder(
-                            //     borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
-                            // //输入框启用时，下划线的样式
-                            // enabledBorder: UnderlineInputBorder(
-                            //     borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)), //输入框启用时，下划线的样式
+                            hintStyle: TextStyle(
+                              fontSize: 12,
+                              color: HexColor('#999999'),
+                            ),
                           ),
                           keyboardType: keyboardType ?? TextInputType.numberWithOptions(decimal: false),
                           inputFormatters: [
                             LengthLimitingTextInputFormatter(maxLength),
-                            //FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                           ],
                         ),
                       ),
