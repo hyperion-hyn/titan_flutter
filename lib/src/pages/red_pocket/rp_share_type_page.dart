@@ -67,6 +67,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
                 _createSelectedWidget(
                   size: Size(220, 300),
                   fontSize: 14,
+                  index: _initIndex,
                 ),
                 _bottomImageList(),
               ],
@@ -136,6 +137,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
                 gap: 8,
                 imageSize: 12,
                 padding: 6,
+                index: index,
               ),
             ),
             if (isSelected)
@@ -197,13 +199,14 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
   Widget _titleWidget() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        42,
+        36,
         12,
-        42,
+        36,
         20,
       ),
       child: Text(
         _initIndex == 0 ? '只有新人才能领取，领取后他将成为你的好友' : '只有在红包投放的位置附近才可以拼手气领取',
+        textAlign: TextAlign.center,
         style: TextStyle(
           color: HexColor('#333333'),
           fontSize: 14,
@@ -219,6 +222,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
     double gap = 28,
     double imageSize = 44,
     double padding = 0,
+    int index = 0,
   }) {
     return Container(
       width: size.width,
@@ -270,7 +274,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
                   ),
                 ),
                 Text(
-                  '发的${_initIndex == 0 ? '新人' : '位置'}红包',
+                  '发的${index == 0 ? '新人' : '位置'}红包',
                   style: TextStyle(
                     fontSize: fontSize,
                     color: Colors.white,

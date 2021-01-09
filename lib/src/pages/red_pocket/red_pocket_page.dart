@@ -135,7 +135,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   ],
                 )),
           ),
-          Positioned(
+          if (_latestRoundInfo != null) Positioned(
             right: 0,
             top: MediaQuery.of(context).size.height * 0.5,
             child: _floatingWidget(),
