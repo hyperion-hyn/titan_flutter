@@ -18,11 +18,10 @@ class RpShareTypePage extends StatefulWidget {
 }
 
 class _RpShareTypePageState extends BaseState<RpShareTypePage> {
-  String _title;
-  int _initIndex = 0;
 
-  ScrollController scrollController = ScrollController();
-  WalletVo walletVo;
+  final ScrollController _scrollController = ScrollController();
+  WalletVo _walletVo;
+  int _initIndex = 0;
 
   @override
   void initState() {
@@ -42,15 +41,14 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
   }
 
   _setupData() {
-    walletVo = WalletInheritedModel.of(context).activatedWallet;
-    _title = '选择红包类型';
+    _walletVo = WalletInheritedModel.of(context).activatedWallet;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: _title,
+        baseTitle: '选择红包类型',
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
       body: _body(context),
@@ -62,7 +60,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
       children: <Widget>[
         Expanded(
           child: SingleChildScrollView(
-            controller: scrollController,
+            controller: _scrollController,
             child: Column(
               children: [
                 _titleWidget(),
@@ -262,7 +260,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
                   padding: EdgeInsets.only(top: gap * 0.5, bottom: gap * 0.25, left: 15, right: 15),
                   child: RichText(
                     text: TextSpan(
-                      text: "${walletVo.wallet.keystore.name}  ",
+                      text: "${_walletVo.wallet.keystore.name}  ",
                       style: TextStyle(
                         fontSize: fontSize,
                         fontWeight: FontWeight.w500,
