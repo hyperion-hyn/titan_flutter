@@ -3562,7 +3562,7 @@
   "@wallet_test": {},
   "wallet_transaction_finish_tips": "交易即將完成，無法取消。",
   "@wallet_transaction_finish_tips": {},
-  "wallet_transfer_title": "妳有未確認的交易，請等待原交易成功後再發起新的交易。",
+  "wallet_transfer_title": "你有未確認的交易，確定要發起新的交易嗎？",
   "@wallet_transfer_title": {},
   "wallet_translation_finish_not_speed_tips": "交易即將完成，無法加速。",
   "@wallet_translation_finish_not_speed_tips": {},

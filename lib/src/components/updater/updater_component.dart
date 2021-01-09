@@ -227,7 +227,6 @@ class _UpdaterComponentStateNew extends State<UpdaterComponent> {
           ?.listen((UpdateState state) async {
         if (state is UpdateCheckState) {
           if (state.appData.appUpdateInfo != null) {
-            print('xxxxx');
             if (state.appData.appUpdateInfo.needUpdate == 1) {
               if (!_lastHaveVisible) {
                 _showUpdateDialog(state.appData.appUpdateInfo);

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -69,6 +70,8 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
   }
 
   void _checkInAction() {
+    return;
+
     var activeWalletVo = WalletInheritedModel.of(context).activatedWallet;
     var isLogged = activeWalletVo != null;
     if (isLogged) {
@@ -99,7 +102,7 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
         baseTitle: S.of(context).data_contribute,
         backgroundColor: Colors.white,
         showBottom: true,
-        actions: <Widget>[
+        /*actions: <Widget>[
           FlatButton(
             onPressed: _navToCheckInRecords,
             child: Text(
@@ -111,7 +114,7 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
               ),
             ),
           ),
-        ],
+        ],*/
       ),
       body: _buildView(context),
     );
@@ -223,7 +226,6 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
   }
 
   Widget _taskListView() {
-    var checkInModel = AccountInheritedModel.of(context, aspect: AccountAspect.checkIn)?.checkInModel;
     var scanTimes = 0;
     var postPoiTimes = 0;
     var confirmPoiTimes = 0;
@@ -231,6 +233,8 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
     var postPoiTimesReal = 0;
     var confirmPoiTimesReal = 0;
 
+    /*
+    var checkInModel = AccountInheritedModel.of(context, aspect: AccountAspect.checkIn)?.checkInModel;
     if (checkInModel != null) {
       print("[Task] _taskListView, total:${checkInModel.total}, length:${checkInModel.detail.length}");
 
@@ -253,6 +257,7 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
       confirmPoiTimes = confirmPoiState.total;
       confirmPoiTimesReal = confirmPoiState.real;
     }
+    */
 
     Widget _lineWidget({double height = 5}) {
       return Container(
@@ -297,8 +302,13 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
           var latlng = await getLatlng();
           if (latlng != null) {
             // 注释：第0次，自检：图片， 后面，第N次，ta检查，都是第三方验证，多任务校验
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            var lastDate = prefs.getInt(PrefsKey.VERIFY_DATE) ?? 0;
+            var duration = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastDate));
+            print(
+                "[Radion] confirmPoiTimes:$confirmPoiTimes, lastDate:$lastDate, day:${duration.inDays}, inHours:${duration.inHours}");
 
-            if (confirmPoiTimes == 0 /*|| env.buildType == BuildType.DEV*/) {
+            if (lastDate == 0 || (lastDate > 0 && duration.inDays > 0)) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -490,13 +500,13 @@ class _DataContributionState extends BaseState<ContributionTasksPage> with Route
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            if (todayTimes < 0)
-              Container()
-            else
-              Text(
-                S.of(context).task_is_finished_func(todayTimes.toString(), taskTimes.toString()),
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              ),
+            // if (todayTimes < 0)
+            //   Container()
+            // else
+            //   Text(
+            //     S.of(context).task_is_finished_func(todayTimes.toString(), taskTimes.toString()),
+            //     style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            //   ),
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 12,

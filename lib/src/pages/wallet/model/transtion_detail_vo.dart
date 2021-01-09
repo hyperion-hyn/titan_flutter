@@ -1,9 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
-import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
-import 'dart:convert' as jsonUtils;
 
-import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/utils/format_util.dart';
 
@@ -15,10 +12,7 @@ part 'transtion_detail_vo.g.dart';
 
 @JsonSerializable()
 class TransactionDetailVo {
-  int id;
   String contractAddress;
-  int localTransferType;
-
   int type; //1、转出 2、转入
   String hash;
   int state; //1 success, 0 pending, -1 failed
@@ -62,8 +56,15 @@ class TransactionDetailVo {
   @JsonKey(name: 'internal_trans')
   List<InternalTransactions> internalTransactions;
 
+  //加速，取消相关
+  int speedUpTimes = 0;
+  int cancelTimes = 0;
+  int lastOptType; //1 speedUp, 0 cancel
+  int localTransferType;
+  // int id;
+
   TransactionDetailVo({
-    this.id,
+    // this.id,
     this.contractAddress,
     this.localTransferType,
     this.type,
@@ -89,6 +90,9 @@ class TransactionDetailVo {
     this.logsDecoded,
     this.payload,
     this.internalTransactions,
+    this.speedUpTimes,
+    this.cancelTimes,
+    this.lastOptType,
   });
 
   String getDecodedAmount() {
@@ -101,20 +105,15 @@ class TransactionDetailVo {
       bigAmount = dataDecoded['amount'] ?? '0';
     }
 
-    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(bigAmount))
-        .toString();
+    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(bigAmount)).toString();
     return amount;
   }
 
   String getAtlasRewardAmount() {
-    if (logsDecoded == null ||
-        logsDecoded.rewards == null ||
-        logsDecoded.rewards.isEmpty) {
+    if (logsDecoded == null || logsDecoded.rewards == null || logsDecoded.rewards.isEmpty) {
       return "0.0";
     }
-    var amount = ConvertTokenUnit.weiToEther(
-            weiBigInt: BigInt.parse(logsDecoded.rewards[0].amount))
-        .toString();
+    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(logsDecoded.rewards[0].amount)).toString();
     return amount;
   }
 
@@ -123,8 +122,7 @@ class TransactionDetailVo {
       return "0";
     }
     var amount = ConvertTokenUnit.weiToEther(
-            weiBigInt: BigInt.parse(FormatUtil.clearScientificCounting(
-                double.parse(payload.amount))))
+            weiBigInt: BigInt.parse(FormatUtil.clearScientificCounting(double.parse(payload.amount))))
         .toString();
     return FormatUtil.stringFormatCoinNum(amount);
   }
@@ -134,16 +132,13 @@ class TransactionDetailVo {
       return "0";
     }
     var amount = ConvertTokenUnit.weiToEther(
-        weiBigInt: BigInt.parse(FormatUtil.clearScientificCounting(
-            double.parse(payload.reward))))
+            weiBigInt: BigInt.parse(FormatUtil.clearScientificCounting(double.parse(payload.reward))))
         .toString();
     return FormatUtil.stringFormatCoinNum(amount);
   }
 
   String getMap3RewardAmount() {
-    if (logsDecoded == null ||
-        logsDecoded.rewards == null ||
-        logsDecoded.rewards.isEmpty) {
+    if (logsDecoded == null || logsDecoded.rewards == null || logsDecoded.rewards.isEmpty) {
       return "0.0";
     }
     BigInt amount = BigInt.parse("0");
@@ -154,7 +149,7 @@ class TransactionDetailVo {
     return amountStr;
   }
 
-  BigInt getAllContractValue(){
+  BigInt getAllContractValue() {
     BigInt value = BigInt.from(0);
     internalTransactions.forEach((element) {
       value += BigInt.parse(element.value);
@@ -172,9 +167,7 @@ class TransactionDetailVo {
       state: hynTransferHistory.status,
       amount: AtlasApi.isTransferBill(hynTransferHistory.type)
           ? AtlasApi.getTransferBillAmount(hynTransferHistory)
-          : ConvertTokenUnit.weiToEther(
-                  weiBigInt: BigInt.parse(hynTransferHistory.value))
-              .toDouble(),
+          : ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(hynTransferHistory.value)).toDouble(),
       symbol: symbol,
       fromAddress: AtlasApi.isTransferBill(hynTransferHistory.type)
           ? hynTransferHistory.payload.map3Node
@@ -203,19 +196,16 @@ class TransactionDetailVo {
   }
 
   factory TransactionDetailVo.fromHynHrc30TransferHistory(
-      HynTransferHistory hynTransferHistory,
-      int transactionType,
-      String symbol,
-      ) {
-
+    HynTransferHistory hynTransferHistory,
+    int transactionType,
+    String symbol,
+  ) {
     return TransactionDetailVo(
       type: transactionType,
       state: hynTransferHistory.status,
       amount: AtlasApi.isTransferBill(hynTransferHistory.type)
           ? AtlasApi.getTransferBillAmount(hynTransferHistory)
-          : ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(hynTransferHistory.value))
-          .toDouble(),
+          : ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(hynTransferHistory.value)).toDouble(),
       symbol: symbol,
       fromAddress: hynTransferHistory.from,
       toAddress: hynTransferHistory.to,
@@ -239,8 +229,7 @@ class TransactionDetailVo {
     );
   }
 
-  factory TransactionDetailVo.fromJson(Map<String, dynamic> json) =>
-      _$TransactionDetailVoFromJson(json);
+  factory TransactionDetailVo.fromJson(Map<String, dynamic> json) => _$TransactionDetailVoFromJson(json);
 
   Map<String, dynamic> toJson() => _$TransactionDetailVoToJson(this);
 
@@ -252,6 +241,12 @@ class TransactionDetailVo {
 
 class LocalTransferType {
   static const LOCAL_TRANSFER_ETH = 1;
-  static const LOCAL_TRANSFER_HYN_USDT = 2;
+  static const LOCAL_TRANSFER_ERC20 = 2;
   static const LOCAL_TRANSFER_MAP3 = 3;
+}
+
+class OptType {
+  static const TRANSFER = 0; //转账
+  static const SPEED_UP = 1; //加速
+  static const CANCEL = 2; //取消
 }

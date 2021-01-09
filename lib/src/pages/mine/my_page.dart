@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:detect_testflight/detect_testflight.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info/package_info.dart';
@@ -44,6 +45,8 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends BaseState<MyPage> {
   Wallet _wallet;
   String _version = "";
+  String _channel = "";
+
   bool _haveNewVersion = false;
   UpdateEntity _updateEntity;
 
@@ -67,23 +70,35 @@ class _MyPageState extends BaseState<MyPage> {
         platform = "android";
       } else if (Platform.isIOS) {
         platform = "ios";
+
+        bool isTestFlight = await DetectTestflight.isTestflight;
+        if (isTestFlight) {
+          _channel = 'TestFlight';
+        } else {
+          _channel = 'AppStore';
+        }
       }
       var lang = Localizations.localeOf(context).languageCode;
-      var versionModel =
-          await injector.repository.checkNewVersion(channel, lang, platform);
+      var versionModel = await injector.repository.checkNewVersion(channel, lang, platform);
 
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
       var newBuildNumber = versionModel?.build ?? 0;
       if (int.parse(packageInfo.buildNumber) < newBuildNumber) {
-        _version = '${versionModel.versionName}.${versionModel.build}';
-        _haveNewVersion = true;
-        _updateEntity = versionModel;
+        if (mounted) {
+          setState(() {
+            _version = '${versionModel.versionName}.${versionModel.build}';
+            _haveNewVersion = true;
+            _updateEntity = versionModel;
+          });
+        }
       } else {
+
+        _setupVersion();
+
         print('[updater] 已经是最新版本');
       }
-      if (mounted) {
-        setState(() {});
-      }
+
     } catch (err) {
       logger.e(err);
     }
@@ -95,12 +110,20 @@ class _MyPageState extends BaseState<MyPage> {
 
     _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
 
+    _setupVersion();
+  }
+
+  _setupVersion() {
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       if (mounted) {
         setState(() {
           _version = packageInfo.version;
           if (env.buildType != BuildType.PROD) {
             _version += '(Test1.3)';
+          }
+
+          if (_channel.isNotEmpty) {
+            _version = '$_channel：$_version';
           }
         });
       }
@@ -137,8 +160,7 @@ class _MyPageState extends BaseState<MyPage> {
                           color: HexColor("#D8D8D8").withOpacity(0.1),
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(216),
-                              bottomRight: Radius.circular(216)), // 也可控件一边圆角大小
+                              topRight: Radius.circular(216), bottomRight: Radius.circular(216)), // 也可控件一边圆角大小
                         ),
                       ),
                       Container(
@@ -148,8 +170,7 @@ class _MyPageState extends BaseState<MyPage> {
                         decoration: BoxDecoration(
                           color: HexColor("#D8D8D8").withOpacity(0.1),
                           shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(289.39)), // 也可控件一边圆角大小
+                          borderRadius: BorderRadius.only(topRight: Radius.circular(289.39)), // 也可控件一边圆角大小
                         ),
                       ),
                       Padding(
@@ -159,9 +180,7 @@ class _MyPageState extends BaseState<MyPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             SizedBox(height: 16),
-                            _wallet == null
-                                ? _buildWalletCreateRow()
-                                : _buildWalletDetailRow(_wallet),
+                            _wallet == null ? _buildWalletCreateRow() : _buildWalletDetailRow(_wallet),
                             SizedBox(height: 16),
                             _buildSloganRow(),
                           ],
@@ -232,10 +251,7 @@ class _MyPageState extends BaseState<MyPage> {
                   _buildMenuBar(
                     S.of(context).preferences,
                     Icons.settings,
-                    () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MeSettingPage())),
+                    () => Navigator.push(context, MaterialPageRoute(builder: (context) => MeSettingPage())),
                     imageName: "ic_me_page_setting",
                     color: Colors.cyan[400],
                   ),
@@ -271,8 +287,7 @@ class _MyPageState extends BaseState<MyPage> {
                   _buildMenuBar(
                     S.of(context).about_us,
                     Icons.info,
-                    () => Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => AboutMePage())),
+                    () => Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage())),
                     imageName: "ic_me_page_about_us",
                     color: Colors.cyan[300],
                   ),
@@ -287,9 +302,8 @@ class _MyPageState extends BaseState<MyPage> {
                       if (_haveNewVersion) {
                         _showUpdateDialog(_updateEntity);
                       } else {
-                        BlocProvider.of<UpdateBloc>(context).add(CheckUpdate(
-                            lang: Localizations.localeOf(context).languageCode,
-                            isManual: true));
+                        BlocProvider.of<UpdateBloc>(context)
+                            .add(CheckUpdate(lang: Localizations.localeOf(context).languageCode, isManual: true));
                       }
                     },
                     subText: _version,
@@ -306,10 +320,7 @@ class _MyPageState extends BaseState<MyPage> {
                         S.of(context).map_smart_contract_management,
                         Icons.book,
                         () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    Map3ContractControlPage()))),
+                            context, MaterialPageRoute(builder: (context) => Map3ContractControlPage()))),
                   Divider(
                     height: 0,
                   ),
@@ -318,13 +329,8 @@ class _MyPageState extends BaseState<MyPage> {
                     '0x9D05DDfC30bc83e7215EB3C5C3C7A443e7Ee1dB6'.toLowerCase(),
                     '0x5AD1e746E6610401f598486d8747d9907Cf114b2'.toLowerCase(),
                   ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
-                    _buildMenuBar(
-                        '链上子钱包',
-                        Icons.account_balance_wallet,
-                        () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DexWalletManagerPage()))),
+                    _buildMenuBar('链上子钱包', Icons.account_balance_wallet,
+                        () => Navigator.push(context, MaterialPageRoute(builder: (context) => DexWalletManagerPage()))),
                 ],
               ),
             ),
@@ -422,8 +428,7 @@ class _MyPageState extends BaseState<MyPage> {
           alignment: Alignment.center,
           width: 52,
           height: 52,
-          decoration: BoxDecoration(
-              shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
           child: InkWell(
             onTap: () {},
             child: Stack(
@@ -462,8 +467,7 @@ class _MyPageState extends BaseState<MyPage> {
   Widget _buildWalletDetailRow(Wallet wallet) {
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
-    String walletName =
-        walletKeyStore.name[0].toUpperCase() + walletKeyStore.name.substring(1);
+    String walletName = walletKeyStore.name[0].toUpperCase() + walletKeyStore.name.substring(1);
 
     return Row(
       children: <Widget>[
@@ -471,8 +475,7 @@ class _MyPageState extends BaseState<MyPage> {
           alignment: Alignment.center,
 //          width: 52,
 //          height: 52,
-          decoration: BoxDecoration(
-              shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
           child: InkWell(
             onTap: () {
               goSetWallet(wallet);
@@ -507,10 +510,7 @@ class _MyPageState extends BaseState<MyPage> {
               children: <Widget>[
                 Text(
                   walletName,
-                  style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 SizedBox(
                   height: 4,
@@ -539,10 +539,8 @@ class _MyPageState extends BaseState<MyPage> {
     var walletStr = FluroConvertUtils.object2string(wallet.toJson());
     var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
 
-    Application.router.navigateTo(
-        context,
-        Routes.wallet_setting +
-            '?entryRouteName=$currentRouteName&walletStr=$walletStr');
+    Application.router
+        .navigateTo(context, Routes.wallet_setting + '?entryRouteName=$currentRouteName&walletStr=$walletStr');
   }
 
   Widget _buildSloganRow() {
@@ -557,16 +555,14 @@ class _MyPageState extends BaseState<MyPage> {
             height: 36,
           ),
           SizedBox(width: 16),
-          Text(S.of(context).titan_encrypted_map_ecology,
-              style: TextStyle(color: Colors.white70))
+          Text(S.of(context).titan_encrypted_map_ecology, style: TextStyle(color: Colors.white70))
         ],
       ),
     );
   }
 
   void shareApp() async {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => PromoteQrCodePage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => PromoteQrCodePage()));
     /*
     return;
 
@@ -622,8 +618,7 @@ class _MyPageState extends BaseState<MyPage> {
                                 height: 88,
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 15.0, bottom: 15),
+                                padding: const EdgeInsets.only(top: 15.0, bottom: 15),
                                 child: Text(
                                   title,
                                   style: TextStyles.textC333S18,
@@ -632,8 +627,7 @@ class _MyPageState extends BaseState<MyPage> {
                               Container(
                                 height: 104,
                                 width: double.infinity,
-                                padding: const EdgeInsets.only(
-                                    left: 24.0, right: 24),
+                                padding: const EdgeInsets.only(left: 24.0, right: 24),
                                 child: SingleChildScrollView(
                                   child: Text(
                                     message,

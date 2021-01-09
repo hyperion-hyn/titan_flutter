@@ -681,7 +681,6 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 onTap: () {
                   //_mockReqTime();
                   // debounceLater.debounceInterval(() {
-                  //   print('xxx 1');
                   //   AssetsAudioPlayer.playAndForget(rewardAudio);
                   // }, t: 1000, runImmediately: false);
                 },

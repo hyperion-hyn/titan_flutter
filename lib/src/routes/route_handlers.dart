@@ -182,8 +182,9 @@ var exchangeQrcodeDepositHandler = Handler(handlerFunc: (context, params) {
   return ExchangeQrcodeDepositPage(params['coinType']?.first);
 });
 
+
 var exchangeDepositConfirmHandler = Handler(handlerFunc: (context, params) {
-  return ExchangeDepositConfirmPage(
+  return WalletSendConfirmPage(
       params['coinVo']?.first, '${params['transferAmount']?.first ?? 0}', params['exchangeAddress']?.first);
 });
 

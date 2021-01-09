@@ -102,7 +102,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return _itemBuilder(index);
+                      return _itemBuilder(value[index]);
                     },
                     itemCount: value.length,
                   ),
@@ -116,8 +116,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
     );
   }
 
-  Widget _itemBuilder(int index) {
-    var model = _dataList[index];
+  Widget _itemBuilder(RpOpenRecordEntity model) {
 
     var luckState = RpLuckState.values[(model?.luck ?? 0)];
     var rpInfoModel = getRpLuckStateInfo(model);
@@ -293,10 +292,10 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
         _currentPageKey = netData.pagingKey;
         _dataList = filterRpOpenDataList(netData.data);
 
-        for (var key in _filterDataMap.keys) {
-          var value = _filterDataMap[key];
-          print("[$runtimeType] _filterDataList.key:${key}, value.length:${value.length}");
-        }
+        // for (var key in _filterDataMap.keys) {
+        //   var value = _filterDataMap[key];
+        //   print("[$runtimeType] _filterDataList.key:${key}, value.length:${value.length}");
+        // }
 
         if (mounted) {
           setState(() {

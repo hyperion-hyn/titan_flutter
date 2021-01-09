@@ -327,9 +327,8 @@ class _ApiDemoState extends State {
               AtlasApi atlasApi = AtlasApi();
               try {
                 var appUpdateInfo = await atlasApi.checkUpdate();
-                print('xxx needUpdate:${appUpdateInfo.needUpdate}');
               } catch (e) {
-                print('xxx $e');
+                print(e);
               }
             },
           )

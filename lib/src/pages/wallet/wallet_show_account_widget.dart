@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,14 +22,12 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
-import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
-import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -38,21 +36,19 @@ import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/pages/wallet/wallet_receive_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
-import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:titan/generated/l10n.dart';
+import 'package:web3dart/web3dart.dart';
 
 import '../../pages/wallet/model/transtion_detail_vo.dart';
 import 'api/etherscan_api.dart';
 import 'api/hyn_api.dart';
 
 class ShowAccountPage extends StatefulWidget {
-  final CoinVo coinVo;
-  TransactionInteractor transactionInteractor = Injector.of(Keys.rootKey.currentContext).transactionInteractor;
+  CoinVo coinVo;
 
   ShowAccountPage(this.coinVo);
 
@@ -63,10 +59,33 @@ class ShowAccountPage extends StatefulWidget {
 }
 
 class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAware {
+  TransactionInteractor transactionInteractor;
+
   DateFormat _dateFormat = new DateFormat("HH:mm MM/dd");
 
   AccountTransferService _accountTransferService = AccountTransferService();
   bool shouldRefresh = false;
+
+  int txCount;
+  bool isHaveNearestPendingTx = false;
+
+  List<TransactionDetailVo> localPendingTxs = [];
+
+  // void mergeLocalPendingTxs() {
+  //   if (localPendingTxs.length > 0 && dataList.length > 1) {
+  //     var dataListOrig = dataList.where((element) {
+  //       if (element is TransactionDetailVo) {
+  //         return element.localTransferType == null;
+  //       }
+  //       return false;
+  //     }).toList();
+  //
+  //     var newList = ['header', ...localPendingTxs, ...dataListOrig];
+  //     setState(() {
+  //       dataList = newList;
+  //     });
+  //   }
+  // }
 
   @override
   int getStartPage() {
@@ -79,9 +98,15 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
   }
 
   @override
+  void onCreated() {
+    transactionInteractor = Injector.of(context).transactionInteractor;
+  }
+
+  @override
   void didPopNext() {
     if (mounted && shouldRefresh) {
       shouldRefresh = false;
+      // 手动帮刷新
       onWidgetRefreshCallback();
     }
 
@@ -92,11 +117,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
   void didChangeDependencies() async {
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
-
-    var tempTransList = await getEthTransferList(_accountTransferService);
-    if (tempTransList.length > 0) {
-      await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
-    }
+    widget.coinVo = WalletInheritedModel.of(context).getCoinVoBySymbol(widget.coinVo.symbol);
   }
 
   @override
@@ -111,8 +132,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     ActiveQuoteVoAndSign activeQuoteVoAndSign =
         WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
 
-    var coinVo =
-        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).getCoinVoBySymbol(widget.coinVo.symbol);
+    // var coinVo =
+    //     WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).getCoinVoBySymbol(widget.coinVo.symbol);
 
     return Scaffold(
         appBar: AppBar(
@@ -160,17 +181,17 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                 alignment: Alignment.center,
                                 width: 80,
                                 height: 80,
-                                child: Image.asset(coinVo.logo),
+                                child: Image.asset(widget.coinVo.logo),
                               ),
                             ),
                             Text(
-                              "${FormatUtil.coinBalanceHumanReadFormat(coinVo)} ${coinVo.symbol}",
+                              "${FormatUtil.coinBalanceHumanReadFormat(widget.coinVo)} ${widget.coinVo.symbol}",
                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coinVo) * (activeQuoteVoAndSign?.quoteVo?.price ?? 0))}",
+                                "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(widget.coinVo) * (activeQuoteVoAndSign?.quoteVo?.price ?? 0))}",
                                 style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
                               ),
                             ),
@@ -187,32 +208,31 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: <Widget>[
+                                    //发起新交易按钮
                                     InkWell(
                                       onTap: () async {
+                                        //以太坊链 token
                                         if (widget.coinVo.coinType == CoinType.ETHEREUM) {
-                                          TransactionDetailVo localTransfer = await getLocalTransfer(true);
-                                          if (localTransfer != null) {
+                                          if (isHaveNearestPendingTx == true) {
                                             await UiUtil.showDialogWidget(context,
                                                 content: Text(S.of(context).wallet_transfer_title),
                                                 actions: [
-//                                                  FlatButton(
-//                                                      child: Text(S.of(context).cancel),
-//                                                      onPressed: () async {
-//                                                        Navigator.pop(context);
-//                                                      }),
+                                                  FlatButton(
+                                                      child: Text(S.of(context).cancel),
+                                                      onPressed: () async {
+                                                        Navigator.pop(context);
+                                                      }),
                                                   FlatButton(
                                                       child: Text(S.of(context).confirm),
                                                       onPressed: () async {
                                                         Navigator.pop(context);
-//                                                        Application.router.navigateTo(
-//                                                            context,
-//                                                            Routes.wallet_account_send_transaction +
-//                                                                '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
+                                                        gotoSendTokenPage();
                                                       }),
                                                 ]);
                                             return;
                                           }
                                         }
+                                        // 比特币还在转账中
                                         if (dataList.length > 1) {
                                           TransactionDetailVo transaction = dataList[1];
                                           if (transaction.state == 0 && widget.coinVo.coinType == CoinType.BITCOIN) {
@@ -224,11 +244,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                           }
                                         }
 
-                                        shouldRefresh = true;
-                                        Application.router.navigateTo(
-                                            context,
-                                            Routes.wallet_account_send_transaction +
-                                                '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
+                                        gotoSendTokenPage();
                                       },
                                       child: Row(
                                         children: <Widget>[
@@ -260,7 +276,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                     InkWell(
                                       onTap: () {
                                         Navigator.push(context,
-                                            MaterialPageRoute(builder: (context) => WalletReceivePage(coinVo)));
+                                            MaterialPageRoute(builder: (context) => WalletReceivePage(widget.coinVo)));
                                       },
                                       child: Row(
                                         children: <Widget>[
@@ -299,10 +315,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) => ExchangeDetailPage(
-                                                        quote: 'HYN',
-                                                          base: 'USDT', exchangeType: ExchangeType.BUY)));
+                                                          quote: 'HYN', base: 'USDT', exchangeType: ExchangeType.BUY)));
                                             } else {
-                                              Fluttertoast.showToast(msg: S.of(context).exchange_is_not_yet_open(widget.coinVo.symbol));
+                                              Fluttertoast.showToast(
+                                                  msg: S.of(context).exchange_is_not_yet_open(widget.coinVo.symbol));
                                             }
                                             /*Clipboard.setData(ClipboardData(text: coinVo.address));
                                             Scaffold.of(context)
@@ -342,29 +358,32 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                           ],
                         ),
                       ),
-                      dataList.length > 1?
-                        ListView.builder(
-                          primary: false,
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context, int index) {
-                            if (index == 0) {
-                              return SizedBox.shrink();
-                            } else {
-                              var currentTransactionDetail = dataList[index];
-                              return _buildTransactionItem(context, currentTransactionDetail);
-                            }
-                          },
-                          itemCount: max<int>(0, dataList.length),
-                        ):Padding(
-                          padding: const EdgeInsets.only(top: 20,),
-                          child: Container(
-                          width: double.infinity,
-                          child: emptyListWidget(
-                            title: S.of(context).no_data,
-                            isAdapter: false,
-                          ),
-                      ),
-                        )
+                      dataList.length > 1
+                          ? ListView.builder(
+                              primary: false,
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, int index) {
+                                if (index == 0) {
+                                  return SizedBox.shrink();
+                                } else {
+                                  var currentTransactionDetail = dataList[index];
+                                  return _buildTransactionItem(context, currentTransactionDetail);
+                                }
+                              },
+                              itemCount: max<int>(0, dataList.length),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(
+                                top: 20,
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                child: emptyListWidget(
+                                  title: S.of(context).no_data,
+                                  isAdapter: false,
+                                ),
+                              ),
+                            )
                     ]),
               ),
             ),
@@ -380,7 +399,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     var amountColor;
     var amountText = "";
     var amountSubText = "";
-    amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)} ${transactionDetail.symbol}";
+    amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)}";
 
     if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       if (transactionDetail.amount > 0) {
@@ -422,9 +441,11 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
         (widget.coinVo.coinType == CoinType.BITCOIN && transactionDetail.state >= 6)) {
       title = S.of(context).completed;
       if (HYNApi.isContractTokenAddress(transactionDetail.toAddress)) {
+        // 代币
         title = S.of(context).contract_call;
         iconPath = "res/drawable/ic_hyn_wallet_contract.png";
       } else if (WalletConfig.map3ContractAddress.toLowerCase() == transactionDetail.toAddress.toLowerCase()) {
+        // map3抵押
         title = S.of(context).map_contract_execution;
       }
     } else if ((widget.coinVo.coinType == CoinType.ETHEREUM && transactionDetail.state == -1)) {
@@ -433,6 +454,21 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     }
 
     var time = _dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transactionDetail.time));
+    if (transactionDetail.localTransferType != null) {
+      // TODO test
+      // transactionDetail.lastOptType = 1;
+      // transactionDetail.speedUpTimes = 1;
+      // transactionDetail.cancelTimes = 2;
+      // transactionDetail.nonce = '2';
+
+      if (transactionDetail.lastOptType == OptType.SPEED_UP) {
+        // speed up
+        title = '加速x${transactionDetail.speedUpTimes}...';
+      } else if (transactionDetail.lastOptType == OptType.CANCEL) {
+        //cancel
+        title = '取消x${transactionDetail.cancelTimes}...';
+      }
+    }
 
     return Ink(
       color: Color(0xFFF5F5F5),
@@ -454,17 +490,17 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                 title: '',
                               )));
                 } else {
-                    var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland ?? true == true;
-                    var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
-                    if (url != null) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => InAppWebViewContainer(
-                                    initUrl: url,
-                                    title: '',
-                                  )));
-                    }
+                  var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland ?? true == true;
+                  var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
+                  if (url != null) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => InAppWebViewContainer(
+                                  initUrl: url,
+                                  title: '',
+                                )));
+                  }
                 }
               },
               child: Padding(
@@ -544,88 +580,100 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
               ),
             ),
           ),
-          if (transactionDetail.localTransferType != null)
+          if (isPendingTx(transactionDetail))
             Padding(
-              padding: const EdgeInsets.only(top: 11, right: 21.0),
+              padding: const EdgeInsets.only(top: 8, right: 18.0, left: 18),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  ClickOvalButton(S.of(context).cancel, () async {
-                    var password = await UiUtil.showDialogWidget(context,
-                        content: Text(S.of(context).wallet_cancel_transfer_tips),
-                        actions: [
-                          FlatButton(
-                              child: Text(S.of(context).cancel),
-                              onPressed: () async {
-                                Navigator.pop(context);
-                              }),
-                          FlatButton(
-                              child: Text(S.of(context).confirm),
-                              onPressed: () async {
-                                var password = await widget.transactionInteractor.showPasswordDialog(context);
-                                Navigator.pop(context, password);
-                              }),
-                        ]);
+                  SizedBox(width: 36),
+                  Text('nonce ', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                  Text('${transactionDetail.nonce}', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                  SizedBox(width: 16),
+                  Text('${S.of(context).price} ', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                  Text(
+                      '${ConvertTokenUnit.weiToGWei(weiInt: int.parse(transactionDetail.gasPrice)).toStringAsFixed(1)} GWEI',
+                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                  Spacer(),
+                  if (isNearestPendingTx(transactionDetail)) ...[
+                    //取消交易按钮
+                    ClickOvalButton(S.of(context).cancel, () async {
+                      var password = await UiUtil.showDialogWidget(context,
+                          content: Text(S.of(context).wallet_cancel_transfer_tips),
+                          actions: [
+                            FlatButton(
+                                child: Text(S.of(context).cancel),
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                }),
+                            FlatButton(
+                                child: Text(S.of(context).confirm),
+                                onPressed: () async {
+                                  var password = await transactionInteractor.showPasswordDialog(context);
+                                  Navigator.pop(context, password);
+                                }),
+                          ]);
 
-                    try {
-                      if (password == null) {
-                        return;
-                      }
+                      try {
+                        if (password == null) {
+                          return;
+                        }
 
-                      var txHash = await widget.transactionInteractor.cancelTransaction(context, transactionDetail, password);
-                      if(txHash != null) {
-                        Fluttertoast.showToast(
-                            msg: S
-                                .of(context)
-                                .wallet_cancel_send_tips, toastLength: Toast.LENGTH_LONG);
+                        var txHash =
+                            await transactionInteractor.cancelTransaction(context, transactionDetail, password);
+                        if (txHash != null) {
+                          Fluttertoast.showToast(
+                              msg: S.of(context).wallet_cancel_send_tips, toastLength: Toast.LENGTH_LONG);
+                        }
+                      } catch (exception) {
+                        if (exception.toString().contains("nonce too low") ||
+                            exception.toString().contains("known transaction")) {
+                          Fluttertoast.showToast(
+                              msg: S.of(context).wallet_transaction_finish_tips, toastLength: Toast.LENGTH_LONG);
+                        }
                       }
-                    } catch (exception) {
-                      if (exception.toString().contains("nonce too low") ||
-                          exception.toString().contains("known transaction")) {
-                        Fluttertoast.showToast(
-                            msg: S.of(context).wallet_transaction_finish_tips, toastLength: Toast.LENGTH_LONG);
-                      }
-                    }
-                  }, width: 52, height: 22, fontSize: 12, btnColor: [Color(0xffDEDEDE)]),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  ClickOvalButton(S.of(context).wallet_speed, () async {
-                    var password = await UiUtil.showDialogWidget(context,
-                        content: Text(S.of(context).wallet_speed_transfer_tips),
-                        actions: [
-                          FlatButton(
-                              child: Text(S.of(context).cancel),
-                              onPressed: () async {
-                                Navigator.pop(context);
-                              }),
-                          FlatButton(
-                              child: Text(S.of(context).confirm),
-                              onPressed: () async {
-                                var password = await widget.transactionInteractor.showPasswordDialog(context);
-                                Navigator.pop(context, password);
-                              }),
-                        ]);
+                    }, width: 52, height: 22, fontSize: 12, btnColor: [Color(0xffDEDEDE)]),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    //加速交易按钮
+                    ClickOvalButton(S.of(context).wallet_speed, () async {
+                      var password = await UiUtil.showDialogWidget(context,
+                          content: Text(S.of(context).wallet_speed_transfer_tips),
+                          actions: [
+                            FlatButton(
+                                child: Text(S.of(context).cancel),
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                }),
+                            FlatButton(
+                                child: Text(S.of(context).confirm),
+                                onPressed: () async {
+                                  var password = await transactionInteractor.showPasswordDialog(context);
+                                  Navigator.pop(context, password);
+                                }),
+                          ]);
 
-                    try {
-                      if (password == null) {
-                        return;
+                      try {
+                        if (password == null) {
+                          return;
+                        }
+                        var txHash =
+                            await transactionInteractor.speedUpTransaction(context, transactionDetail, password);
+                        if (txHash != null) {
+                          Fluttertoast.showToast(
+                              msg: S.of(context).wallet_have_speed_tips, toastLength: Toast.LENGTH_LONG);
+                        }
+                      } catch (exception) {
+                        if (exception.toString().contains("nonce too low") ||
+                            exception.toString().contains("known transaction")) {
+                          Fluttertoast.showToast(
+                              msg: S.of(context).wallet_translation_finish_not_speed_tips,
+                              toastLength: Toast.LENGTH_LONG);
+                        }
                       }
-                      var txHash = await widget.transactionInteractor.speedTransaction(context, transactionDetail, password);
-                      if(txHash != null) {
-                        Fluttertoast.showToast(msg: S
-                            .of(context)
-                            .wallet_have_speed_tips, toastLength: Toast.LENGTH_LONG);
-                      }
-                    } catch (exception) {
-                      if (exception.toString().contains("nonce too low") ||
-                          exception.toString().contains("known transaction")) {
-                        Fluttertoast.showToast(
-                            msg: S.of(context).wallet_translation_finish_not_speed_tips,
-                            toastLength: Toast.LENGTH_LONG);
-                      }
-                    }
-                  }, width: 52, height: 22, fontSize: 12, btnColor: [Theme.of(context).primaryColor]),
+                    }, width: 52, height: 22, fontSize: 12, btnColor: [Theme.of(context).primaryColor])
+                  ],
                 ],
               ),
             ),
@@ -642,63 +690,101 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     );
   }
 
+  bool isPendingTx(TransactionDetailVo transactionDetail) {
+    // var ethAddress = WalletInheritedModel.of(context).activatedWallet?.wallet?.getEthAccount()?.address;
+    return transactionDetail.localTransferType != null;
+  }
+
+  bool isNearestPendingTx(TransactionDetailVo transactionDetail) {
+    // var ethAddress = WalletInheritedModel.of(context).activatedWallet?.wallet?.getEthAccount()?.address;
+    return /*transactionDetail.fromAddress == ethAddress && */ int.parse(transactionDetail.nonce) == txCount;
+  }
+
+  Future gotoSendTokenPage() {
+    shouldRefresh = true;
+    return Application.router.navigateTo(
+        context,
+        Routes.wallet_account_send_transaction +
+            '?coinVo=${FluroConvertUtils.object2string(widget.coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
+  }
+
   @override
   Future<List<dynamic>> onLoadData(int page) async {
     var retList = [];
-    if (page == getStartPage()) {
-      retList.add('header');
-
-      //update balance
-      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent(
-        symbol: widget.coinVo.symbol,
-        contractAddress: widget.coinVo.contractAddress,
-      ));
-    }
-
     List<TransactionDetailVo> transferList = [];
 
     try {
       transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
-
-      //delete local transaction
-      var tempTransList = await getEthTransferList(_accountTransferService);
-      if (tempTransList.length > 0) {
-        await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
-      }
-
-      //add local transaction
       if (page == getStartPage()) {
-        TransactionDetailVo localTransfer = await getLocalTransfer(false);
-        if (localTransfer != null) {
-          retList.add(localTransfer);
+        if(!mounted){
+          return retList;
+        }
+
+        retList.add('header');
+
+        //update balance
+        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent(
+          symbol: widget.coinVo.symbol,
+          contractAddress: widget.coinVo.contractAddress,
+        ));
+
+        //merge local pending txs
+        if (widget.coinVo.coinType == CoinType.ETHEREUM) {
+          try {
+            isHaveNearestPendingTx = false;
+            var ethAddress = WalletInheritedModel.of(context).activatedWallet?.wallet?.getEthAccount()?.address;
+            if (ethAddress != null && ethAddress != '') {
+              var localTransferType = widget.coinVo.symbol == 'ETH'
+                  ? LocalTransferType.LOCAL_TRANSFER_ETH
+                  : LocalTransferType.LOCAL_TRANSFER_ERC20;
+              final client = WalletUtil.getWeb3Client(false);
+              txCount = await client.getTransactionCount(EthereumAddress.fromHex(ethAddress));
+              //test
+              // txCount = 11;
+              await transactionInteractor.removeLocalPendingConfirmedTxsByNonce(
+                  ethAddress, localTransferType, widget.coinVo.contractAddress, txCount);
+              localPendingTxs = await transactionInteractor.getLocalPendingTransactions(
+                  ethAddress, localTransferType, widget.coinVo.contractAddress);
+              print('xxx $txCount, ${localPendingTxs.length}');
+              for (var tx in localPendingTxs) {
+                if (int.parse(tx.nonce) == txCount) {
+                  isHaveNearestPendingTx = true;
+                }
+              }
+              retList.addAll(localPendingTxs);
+            }
+          } catch (e) {
+            print(e);
+          }
         }
       }
 
       retList.addAll(transferList);
-    } catch (e) {
+    } catch (e, stacktrace) {
+      print(stacktrace);
       logger.e(e);
     }
     return retList;
   }
 
-  Future<TransactionDetailVo> getLocalTransfer(bool isAllLocal) async {
-    TransactionDetailVo localTransfer;
-    if (isAllLocal) {
-      localTransfer =
-          await widget.transactionInteractor.getShareTransaction(LocalTransferType.LOCAL_TRANSFER_ETH, isAllLocal);
-    } else {
-      if (widget.coinVo.symbol == "ETH") {
-        localTransfer =
-            await widget.transactionInteractor.getShareTransaction(LocalTransferType.LOCAL_TRANSFER_ETH, isAllLocal);
-      } else {
-        localTransfer = await widget.transactionInteractor.getShareTransaction(
-            LocalTransferType.LOCAL_TRANSFER_HYN_USDT, isAllLocal,
-            contractAddress: widget.coinVo.contractAddress);
-      }
-    }
-
-    return localTransfer;
-  }
+// Future<TransactionDetailVo> getLocalTransfer(bool isAllLocal) async {
+//   TransactionDetailVo localTransfer;
+//   if (isAllLocal) {
+//     localTransfer =
+//         await transactionInteractor.getShareTransaction(LocalTransferType.LOCAL_TRANSFER_ETH, isAllLocal);
+//   } else {
+//     if (widget.coinVo.symbol == "ETH") {
+//       localTransfer =
+//           await transactionInteractor.getShareTransaction(LocalTransferType.LOCAL_TRANSFER_ETH, isAllLocal);
+//     } else {
+//       localTransfer = await widget.transactionInteractor.getShareTransaction(
+//           LocalTransferType.LOCAL_TRANSFER_ERC20, isAllLocal,
+//           contractAddress: widget.coinVo.contractAddress);
+//     }
+//   }
+//
+//   return localTransfer;
+// }
 }
 
 Future<List<TransactionDetailVo>> getEthTransferList(AccountTransferService _accountTransferService) async {

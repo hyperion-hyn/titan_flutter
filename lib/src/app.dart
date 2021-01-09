@@ -47,7 +47,7 @@ class _AppState extends State<App> {
           SocketComponent(),
           AtlasComponent(),
           RedPocketComponent(),
-          AccountComponent(),
+          //AccountComponent(),
         ],
         child: MultiBlocProvider(
           providers: [

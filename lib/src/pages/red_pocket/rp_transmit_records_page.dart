@@ -103,7 +103,7 @@ class _RpTransmitRecordsState extends BaseState<RpTransmitRecordsPage> {
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          return _itemBuilder(index);
+                          return _itemBuilder(value[index]);
                         },
                         itemCount: value.length,
                       ),
@@ -117,8 +117,7 @@ class _RpTransmitRecordsState extends BaseState<RpTransmitRecordsPage> {
     );
   }
 
-  Widget _itemBuilder(int index) {
-    var model = _dataList[index];
+  Widget _itemBuilder(RpReleaseInfo model) {
 
     var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
 
