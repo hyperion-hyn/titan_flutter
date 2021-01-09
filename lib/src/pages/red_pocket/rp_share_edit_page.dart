@@ -345,6 +345,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     int maxLength = 18,
     TextInputType keyboardType,
     String error,
+    bool isOptional = false,
   }) {
     return StreamBuilder<Object>(
         stream: _validController.stream,
@@ -353,7 +354,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
           var errorText = error ?? hintText;
 
-          if (snapshot?.data == null) {
+          if (snapshot?.data == null || isOptional) {
             invalid = false;
           } else {
             // 分：检查所有 / 检查某个
@@ -698,11 +699,12 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
         child: _rowInputWidget(
           key: _blessingKey,
           controller: _blessingController,
-          hintText: '填写祝福语，例如：恭喜发财',
+          hintText: '填写祝福语，例如：恭喜发财（可选）',
           error: '请填写祝福语',
           title: '祝福',
           unit: '',
           keyboardType: TextInputType.text,
+          isOptional: true,
         ));
   }
 
@@ -718,6 +720,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
           title: '口令',
           unit: '',
           keyboardType: TextInputType.text,
+          isOptional: true,
         ));
   }
 
