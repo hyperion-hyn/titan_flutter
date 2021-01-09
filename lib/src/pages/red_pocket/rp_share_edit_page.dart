@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,8 +36,10 @@ import 'package:titan/src/pages/mine/api/contributions_api.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_confirm_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
@@ -54,11 +57,7 @@ class RpShareEditPage extends StatefulWidget {
 }
 
 class _RpShareEditState extends BaseState<RpShareEditPage> {
-  PositionBloc _positionBloc = PositionBloc();
-
-  var _addMarkerSubject = PublishSubject<dynamic>();
-  PublishSubject<int> _filterSubject = PublishSubject<int>();
-  MapboxMapController _mapController;
+  final ScrollController _scrollController = ScrollController();
 
   final TextEditingController _rpAmountController = TextEditingController();
   final TextEditingController _hynAmountController = TextEditingController();
@@ -74,12 +73,22 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
   final _blessingKey = GlobalKey<FormState>();
   final _passwordKey = GlobalKey<FormState>();
 
+  final PositionBloc _positionBloc = PositionBloc();
+  final _addMarkerSubject = PublishSubject<dynamic>();
+
+  final PublishSubject<int> _filterSubject = PublishSubject<int>();
+  final _addressNameKey = GlobalKey<FormState>();
+
+  final StreamController<bool> _validController = StreamController.broadcast();
+  GlobalKey<FormState> _focusKey;
+
+  MapboxMapController _mapController;
+
   String _addressText;
 
   Map<String, dynamic> _openCageData;
 
   bool _isUploading = false;
-  final _addressNameKey = GlobalKey<FormState>();
 
   bool _isOnPressed = false;
   bool _isLoadingOpenCage = false;
@@ -91,8 +100,6 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
   LatLng _selectedPosition;
   LatLng _initSelectedPosition;
-
-  ScrollController _scrollController = ScrollController();
 
   String get _baseTitle => widget.shareType == RedPocketShareType.NEWER ? '新人红包' : '位置红包';
 
@@ -154,6 +161,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     _positionBloc.close();
     _filterSubject.close();
     _addMarkerSubject.close();
+    _validController.close();
     super.dispose();
   }
 
@@ -335,142 +343,218 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     String leftTitle = '',
     bool showLeft = false,
     int maxLength = 18,
+    TextInputType keyboardType,
+    String error,
   }) {
-    return Row(
-      children: [
-        if (showLeft)
-          leftTitle.isNotEmpty
-              ? Container(
-                  margin: const EdgeInsets.only(
-                    right: 15,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 5,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                    colors: [
-                      HexColor('#FF0527'),
-                      HexColor('#FF4D4D'),
-                    ],
-                  )),
-                  child: Text(
-                    leftTitle,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
+    return StreamBuilder<Object>(
+        stream: _validController.stream,
+        builder: (context, snapshot) {
+          bool invalid = false;
+
+          var errorText = error ?? hintText;
+
+          if (snapshot?.data == null) {
+            invalid = false;
+          } else {
+            // 分：检查所有 / 检查某个
+            if (_focusKey == null) {
+              invalid = (controller?.text?.isEmpty ?? true);
+            } else {
+              invalid = !(snapshot?.data ?? true) && _focusKey == key && (controller?.text?.isEmpty ?? true);
+            }
+          }
+          print("[$runtimeType] invalid: $invalid");
+
+          var textColor = invalid ? HexColor('#FF001B') : HexColor('#333333');
+          return Column(
+            children: [
+              Container(
+                // color: Colors.blue,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (showLeft)
+                      leftTitle.isNotEmpty
+                          ? Container(
+                              margin: const EdgeInsets.only(
+                                right: 16,
+                                top: 16,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                colors: [
+                                  HexColor('#FF0527'),
+                                  HexColor('#FF4D4D'),
+                                ],
+                              )),
+                              child: Text(
+                                leftTitle,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            )
+                          : SizedBox(
+                              width: 50,
+                            ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 16,
+                      ),
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
-                  ),
-                )
-              : SizedBox(
-                  width: 50,
-                ),
-        // Text(
-        //   title,
-        //   style: TextStyle(
-        //     color: HexColor('#333333'),
-        //     fontSize: 14,
-        //     fontWeight: FontWeight.w500,
-        //   ),
-        // ),
-        // SizedBox(
-        //   width: 16,
-        // ),
-        Expanded(
-          child: Form(
-            key: key,
-            child: TextFormField(
-              controller: controller,
-              textAlign: TextAlign.end,
-              validator: (textStr) {
-                if (textStr.length == 0) {
-                  return hintText;
-                }
-
-                return null;
-              },
-              onChanged: (String inputText) {
-                //print('[add] --> onChanged, inputText:$inputText');
-
-                //key.currentState.validate();
-              },
-              onEditingComplete: () {
-                //_onEditingComplete();
-              },
-              onFieldSubmitted: (String inputText) {
-                FocusScope.of(context).requestFocus(FocusNode());
-              },
-              style: TextStyle(fontSize: 16),
-              cursorColor: Theme.of(context).primaryColor,
-              //光标圆角
-              cursorRadius: Radius.circular(5),
-              //光标宽度
-              cursorWidth: 1.8,
-              decoration: InputDecoration(
-                // prefixText: title,
-                // prefixStyle: TextStyle(
-                //   color: HexColor('#333333'),
-                //   fontSize: 14,
-                //   fontWeight: FontWeight.w500,
-                // ),
-                prefixIcon: Padding(
-                  padding: EdgeInsets.only(
-                    top: 12,
-                  ),
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      color: HexColor('#333333'),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                    SizedBox(
+                      width: 16,
                     ),
-                  ),
-                ),
+                    Flexible(
+                      child: Form(
+                        key: key,
+                        child: TextFormField(
+                          controller: controller,
+                          textAlign: TextAlign.end,
+                          /*validator: (textStr) {
+                          if (textStr.length == 0) {
+                            return hintText;
+                          }
 
-                border: InputBorder.none,
-                hintText: hintText,
-                errorText: hintText,
-                suffixIcon: unit.isNotEmpty
-                    ? Padding(
+                          return null;
+                        },*/
+                          onChanged: (String inputText) {
+                            print('[$runtimeType] --> onChanged, inputText:$inputText');
+
+                            _focusKey = key;
+
+                            bool isValid = key.currentState.validate();
+
+                            if (inputText.isEmpty || inputText.length == 0) {
+                              isValid = false;
+                            }
+
+                            _validController.add(isValid);
+                          },
+                          onEditingComplete: () {
+                            //_onEditingComplete();
+                          },
+                          onFieldSubmitted: (String inputText) {
+                            FocusScope.of(context).requestFocus(FocusNode());
+                          },
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          cursorColor: Theme.of(context).primaryColor,
+                          //光标圆角
+                          cursorRadius: Radius.circular(5),
+                          //光标宽度
+                          cursorWidth: 1.8,
+                          decoration: InputDecoration(
+                            /*prefixIcon: Padding(
+                            padding: EdgeInsets.only(
+                              top: 12,
+                            ),
+                            child: Text(
+                              title,
+                              style: TextStyle(
+                                color: HexColor('#333333'),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),*/
+
+                            border: InputBorder.none,
+                            hintText: hintText,
+                            // errorText: hintText,
+                            /*suffixIcon: unit.isNotEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 32,
+                                    top: 12,
+                                  ),
+                                  child: Text(
+                                    unit,
+                                    style: TextStyle(
+                                      color: HexColor('#333333'),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                )
+                              : null,*/
+                            errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
+                            hintStyle: TextStyle(fontSize: 12, color: HexColor('#999999')),
+                            // focusedErrorBorder: UnderlineInputBorder(
+                            //     borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.none)),
+                            // focusedBorder: UnderlineInputBorder(
+                            //     borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.none)),
+                            // //输入框启用时，下划线的样式
+                            // disabledBorder: UnderlineInputBorder(
+                            //     borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
+                            // //输入框启用时，下划线的样式
+                            // enabledBorder: UnderlineInputBorder(
+                            //     borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)), //输入框启用时，下划线的样式
+                          ),
+                          keyboardType: keyboardType ?? TextInputType.numberWithOptions(decimal: false),
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(maxLength),
+                            //FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (unit.isNotEmpty)
+                      Padding(
                         padding: const EdgeInsets.only(
-                          left: 32,
-                          top: 12,
+                          left: 16,
+                          top: 16,
                         ),
                         child: Text(
                           unit,
                           style: TextStyle(
-                            color: HexColor('#333333'),
+                            color: textColor,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                      )
-                    : null,
-                errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
-                hintStyle: TextStyle(fontSize: 12, color: HexColor('#999999')),
-                focusedErrorBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.none)),
-                focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.none)),
-                //输入框启用时，下划线的样式
-                disabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
-                //输入框启用时，下划线的样式
-                enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)), //输入框启用时，下划线的样式
+                      ),
+                  ],
+                ),
               ),
-              // keyboardType: TextInputType.number,
-              //keyboardType: TextInputType.numberWithOptions(decimal: false),
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(maxLength),
-                //FilteringTextInputFormatter.allow(RegExp("[0-9]"))
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
+              invalid
+                  ? Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 8,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            errorText,
+                            style: TextStyle(
+                              color: HexColor('#FF001B'),
+                              fontWeight: FontWeight.normal,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(),
+            ],
+          );
+        });
   }
 
   Widget _clipRectWidget({
@@ -524,15 +608,37 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
   }
 
   Widget _buildAmountCell() {
+    var rpBalanceStr = '--';
+    var hynBalanceStr = '--';
+
+    var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
+      SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
+    );
+    var hynToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
+      SupportedTokens.HYN_Atlas.symbol,
+    );
+    try {
+      rpBalanceStr = FormatUtil.coinBalanceHumanReadFormat(
+        rpToken,
+      );
+      hynBalanceStr = FormatUtil.coinBalanceHumanReadFormat(
+        hynToken,
+      );
+    } catch (e) {}
+
+    var rpBalance = '$rpBalanceStr RP';
+    var hynBalance = '$hynBalanceStr HYN';
+
     return _clipRectWidget(
         vertical: 8,
-        desc: '钱包余额 100 RP，120 HYN',
+        desc: '${S.of(context).wallet_balance} $rpBalance，$hynBalance',
         child: Column(
           children: [
             _rowInputWidget(
               key: _rpAmountKey,
               controller: _rpAmountController,
               hintText: '0.00',
+              error: '请输入RP金额',
               title: 'RP金额',
               unit: 'RP',
               showLeft: true,
@@ -551,6 +657,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
               key: _hynAmountKey,
               controller: _hynAmountController,
               hintText: '0.00',
+              error: '请输入HYN金额',
               title: 'HYN金额',
               unit: 'HYN',
               showLeft: true,
@@ -563,48 +670,39 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     return _clipRectWidget(
         vertical: 4,
         desc: '最大距离100千米',
-        child: Column(
-          children: [
-            _rowInputWidget(
-              key: _zoneLengthKey,
-              controller: _zoneLengthController,
-              hintText: '填写附近可领取距离',
-              title: '可领取范围',
-              unit: '米',
-            ),
-          ],
+        child: _rowInputWidget(
+          key: _zoneLengthKey,
+          controller: _zoneLengthController,
+          hintText: '填写附近可领取距离',
+          title: '可领取范围',
+          unit: '米',
         ));
   }
 
   Widget _buildRpCountCell() {
     return _clipRectWidget(
         vertical: 4,
-        child: Column(
-          children: [
-            _rowInputWidget(
-              key: _rpCountKey,
-              controller: _rpCountController,
-              hintText: '填写个数，平均领取',
-              title: '红包个数',
-              unit: '个',
-            ),
-          ],
+        child: _rowInputWidget(
+          key: _rpCountKey,
+          controller: _rpCountController,
+          hintText: '填写个数，平均领取',
+          error: '请填写个数',
+          title: '红包个数',
+          unit: '个',
         ));
   }
 
   Widget _buildBlessingCell() {
     return _clipRectWidget(
         vertical: 4,
-        child: Column(
-          children: [
-            _rowInputWidget(
-              key: _blessingKey,
-              controller: _blessingController,
-              hintText: '填写祝福语',
-              title: '祝福',
-              unit: '',
-            ),
-          ],
+        child: _rowInputWidget(
+          key: _blessingKey,
+          controller: _blessingController,
+          hintText: '填写祝福语，例如：恭喜发财',
+          error: '请填写祝福语',
+          title: '祝福',
+          unit: '',
+          keyboardType: TextInputType.text,
         ));
   }
 
@@ -612,16 +710,14 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     return _clipRectWidget(
         vertical: 4,
         desc: '新人正确输入口令才能拆解红包 (可选)',
-        child: Column(
-          children: [
-            _rowInputWidget(
-              key: _passwordKey,
-              controller: _passwordController,
-              hintText: '填写红包口令',
-              title: '口令',
-              unit: '',
-            ),
-          ],
+        child: _rowInputWidget(
+          key: _passwordKey,
+          controller: _passwordController,
+          hintText: '填写红包口令，例如：888，发发发',
+          error: '请填写红包口令',
+          title: '口令',
+          unit: '',
+          keyboardType: TextInputType.text,
         ));
   }
 
@@ -629,30 +725,26 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     return _clipRectWidget(
         desc: '如果只允许新人领取，你要为每个新人至少要塞 0.001 HYN 作为他之后矿工费所用',
         vertical: 4,
-        child: Column(
+        child: Row(
           children: [
-            Row(
-              children: [
-                Text(
-                  '只允许新人领取',
-                  style: TextStyle(
-                    color: HexColor('#333333'),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Spacer(),
-                Switch(
-                  value: _isOnlyNewerGet,
-                  activeColor: Colors.white,
-                  activeTrackColor: HexColor('#FF4D4D'),
-                  onChanged: (bool value) {
-                    setState(() {
-                      _isOnlyNewerGet = value;
-                    });
-                  },
-                )
-              ],
+            Text(
+              '只允许新人领取',
+              style: TextStyle(
+                color: HexColor('#333333'),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Spacer(),
+            Switch(
+              value: _isOnlyNewerGet,
+              activeColor: Colors.white,
+              activeTrackColor: HexColor('#FF4D4D'),
+              onChanged: (bool value) {
+                setState(() {
+                  _isOnlyNewerGet = value;
+                });
+              },
             )
           ],
         ));
@@ -872,7 +964,10 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
           });
           //_uploadPoiData();
 
-          showSendAlertView(context);
+          _focusKey = null;
+          _validController.add(false);
+
+          //showSendAlertView(context);
         },
         isLoading: _isOnPressed,
         btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
