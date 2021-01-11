@@ -27,14 +27,11 @@ class UpdatePromotionRuleState extends RedPocketState {
   UpdatePromotionRuleState(this.rpPromotionRule);
 }
 
-
-
 class UpdateShareConfigState extends RedPocketState {
   final RpShareConfigEntity rpShareConfig;
 
   UpdateShareConfigState(this.rpShareConfig);
 }
-
 
 class UpdateFailState extends RedPocketState {}
 

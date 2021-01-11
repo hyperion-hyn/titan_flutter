@@ -10,6 +10,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -121,8 +122,10 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     });
 
     _addMarkerAndMoveToPoi();
-
-    _rpShareConfig = RedPocketInheritedModel.of(context).rpShareConfig;
+    
+    if (context != null) {
+      BlocProvider.of<RedPocketBloc>(context).add(UpdateShareConfigEvent());
+    }
 
     super.onCreated();
   }
@@ -138,7 +141,9 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     super.didChangeDependencies();
   }
 
-  void _setupData() {}
+  void _setupData() {
+    _rpShareConfig = RedPocketInheritedModel.of(context).rpShareConfig;
+  }
 
   @override
   void dispose() {
