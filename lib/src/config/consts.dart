@@ -57,7 +57,6 @@ class Const {
     }
   }
 
-
   static String get CONTRIBUTIONS_DOMAIN {
     if (env.buildType == BuildType.DEV) {
       return Config.CONTRIBUTIONS_API_URL_TEST;
@@ -178,8 +177,10 @@ class PrefsKey {
   static const String EXCHANGE_ACCOUNT = 'exchange_account';
   static const String EXCHANGE_ACCOUNT_LAST_AUTH_TIME =
       'exchange_account_last_auth_time';
+
   // static const String PENDING_TRANSFER_KEY_PREFIX = 'pending_transfer_key_';
-  static const String PENDING_TRANSACTIONS_KEY_PREFIX = 'pending_transactions_key_';
+  static const String PENDING_TRANSACTIONS_KEY_PREFIX =
+      'pending_transactions_key_';
 
   static const String EXCHANGE_ACCOUNT_ABNORMAL = 'exchange_account_abnormal_';
 
@@ -188,7 +189,6 @@ class PrefsKey {
   static const String IS_CONFIRM_DEX_POLICY = 'dex_policy_confirmed';
 
   static const String WALLET_ICON_LAST_KEY = "wallet_icon_last_key";
-
 }
 
 class SecurePrefsKey {

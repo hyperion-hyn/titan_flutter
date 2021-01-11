@@ -81,7 +81,7 @@ class UpdateBloc extends Bloc<UpdateEvent, UpdateState> {
         // var versionModel = await injector.repository.checkNewVersion(channel, event.lang, platform);
         var appUpdateInfo;
         try {
-          appUpdateInfo = await AtlasApi().checkUpdate();
+          appUpdateInfo = await AtlasApi.checkUpdate();
         } catch (e) {}
         yield UpdateCheckState(
             isChecking: false,

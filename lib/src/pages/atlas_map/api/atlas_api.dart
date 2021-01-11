@@ -711,7 +711,8 @@ class AtlasApi {
         return null;
       }
     } catch (_) {
-      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).image_upload_failed);
+      Fluttertoast.showToast(
+          msg: S.of(Keys.rootKey.currentContext).image_upload_failed);
       LogUtil.uploadException("[Atlas] upload image", 'post upload fail');
       return null;
     }
@@ -849,56 +850,72 @@ class AtlasApi {
         switch (type) {
           case MessageType.typeTerminateMap3:
             Fluttertoast.showToast(
-              msg: S.of(Keys.rootKey.currentContext).termination_request_being_processed,
+              msg: S
+                  .of(Keys.rootKey.currentContext)
+                  .termination_request_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case MessageType.typeUnMicroDelegate:
             Fluttertoast.showToast(
-              msg: S.of(Keys.rootKey.currentContext).cancellation_request_being_processed,
+              msg: S
+                  .of(Keys.rootKey.currentContext)
+                  .cancellation_request_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case MessageType.typeCollectMicroStakingRewards:
             Fluttertoast.showToast(
-              msg: S.of(Keys.rootKey.currentContext).withdrawal_request_being_processed,
+              msg: S
+                  .of(Keys.rootKey.currentContext)
+                  .withdrawal_request_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case MessageType.typeRenewMap3:
             Fluttertoast.showToast(
-              msg: S.of(Keys.rootKey.currentContext).renewal_request_being_processed,
+              msg: S
+                  .of(Keys.rootKey.currentContext)
+                  .renewal_request_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case MessageType.typeEditMap3:
             Fluttertoast.showToast(
-              msg: S.of(Keys.rootKey.currentContext).edit_request_being_processed,
+              msg: S
+                  .of(Keys.rootKey.currentContext)
+                  .edit_request_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case MessageType.typeReDelegate:
             Fluttertoast.showToast(
-              msg: S.of(Keys.rootKey.currentContext).double_mortgage_being_processed,
+              msg: S
+                  .of(Keys.rootKey.currentContext)
+                  .double_mortgage_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case MessageType.typeUnReDelegate:
             Fluttertoast.showToast(
-              msg: S.of(Keys.rootKey.currentContext).cancellation_remortgage_being_processed,
+              msg: S
+                  .of(Keys.rootKey.currentContext)
+                  .cancellation_remortgage_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case MessageType.typeCollectReStakingReward:
             Fluttertoast.showToast(
-              msg: S.of(Keys.rootKey.currentContext).block_reward_being_processed,
+              msg: S
+                  .of(Keys.rootKey.currentContext)
+                  .block_reward_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
@@ -964,14 +981,18 @@ class AtlasApi {
         switch (status) {
           case TransactionStatus.pending:
             Fluttertoast.showToast(
-              msg: S.of(Keys.rootKey.currentContext).termination_request_being_processed,
+              msg: S
+                  .of(Keys.rootKey.currentContext)
+                  .termination_request_being_processed,
               gravity: ToastGravity.CENTER,
             );
             break;
 
           case TransactionStatus.success:
             Fluttertoast.showToast(
-              msg: S.of(Keys.rootKey.currentContext).termination_request_complete,
+              msg: S
+                  .of(Keys.rootKey.currentContext)
+                  .termination_request_complete,
               gravity: ToastGravity.CENTER,
             );
             break;
@@ -1010,7 +1031,7 @@ class AtlasApi {
     return configEntity;
   }
 
-  Future<AppUpdateInfo> checkUpdate() async {
+  static Future<AppUpdateInfo> checkUpdate() async {
     var walletAddress = WalletInheritedModel.of(Keys.rootKey.currentContext)
             ?.activatedWallet
             ?.wallet
@@ -1067,7 +1088,11 @@ class AtlasApi {
         "device_id": deviceId,
         "version": '$versionName.$versionCode.$versionType'
       },
-      options: RequestOptions(contentType: "application/json"),
+      ///use same url on both env
+      options: RequestOptions(
+        contentType: "application/json",
+        baseUrl: Config.ATLAS_API_URL,
+      ),
     );
   }
 }
