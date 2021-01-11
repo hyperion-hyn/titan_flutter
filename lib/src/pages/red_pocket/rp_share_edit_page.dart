@@ -65,6 +65,10 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
   MapboxMapController _mapController;
 
   GlobalKey<FormState> _focusKey;
+  bool _isInvalidRpAmount = false;
+  bool _isInvalidHynAmount = false;
+  bool _isInvalidCount = false;
+  bool _isInvalidRange = false;
 
   String _addressText;
 
@@ -134,9 +138,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     super.didChangeDependencies();
   }
 
-  void _setupData() {
-
-  }
+  void _setupData() {}
 
   @override
   void dispose() {
@@ -287,58 +289,28 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     TextInputType keyboardType,
     String defaultErrorText,
     bool isOptional = false,
+    FormFieldValidator<String> validator,
   }) {
     return StreamBuilder<Object>(
         stream: _validController.stream,
         builder: (context, snapshot) {
           var errorText = '';
 
+          //print("[$runtimeType] snapshot?.data: ${snapshot?.data}");
+
           if (snapshot?.data == null || isOptional) {
             errorText = '';
           } else {
             // 分：检查所有 / 检查某个
-            if (_focusKey == null) {
+
+            // todo:
+            errorText = validator(controller.text);
+
+            if (snapshot?.data == '-1' && errorText.isEmpty) {
               errorText = (controller?.text?.isEmpty ?? true) ? defaultErrorText ?? hintText : '';
-            } else if (_focusKey != null && (_focusKey == _rpAmountKey || _focusKey == _hynAmountKey)) {
-              var inputText = snapshot?.data;
-              var inputValue = Decimal.tryParse(inputText ?? '0') ?? Decimal.zero;
-
-              if (_focusKey == _rpAmountKey) {
-                var coinVo = WalletInheritedModel.of(
-                  context,
-                  aspect: WalletAspect.activatedWallet,
-                ).getCoinVoBySymbol('RP');
-                var rpBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
-
-                var minRp = _rpShareConfig?.rpMin??'0';
-                if (inputValue > Decimal.zero && inputValue <= Decimal.parse(minRp)) {
-                  errorText = '至少$minRp RP';
-                }
-
-                if (rpBalance > Decimal.zero && inputValue > rpBalance) {
-                  errorText = 'RP余额不足';
-                }
-
-              } else if (_focusKey == _hynAmountKey) {
-                var coinVo = WalletInheritedModel.of(
-                  context,
-                  aspect: WalletAspect.activatedWallet,
-                ).getCoinVoBySymbol('HYN');
-
-                var hynBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
-
-                 var minHyn = _rpShareConfig?.hynMin??'0';
-                 if (inputValue > Decimal.zero && inputValue <= Decimal.parse(minHyn)) {
-                   errorText = '至少$minHyn HYN';
-                 }
-
-                if (hynBalance > Decimal.zero && inputValue > hynBalance) {
-                  errorText = S.of(context).hyn_balance_no_enough;
-                }
-              }
             }
           }
-          print("[$runtimeType] errorText: $errorText");
+          //print("[$runtimeType] errorText: $errorText");
 
           var textColor = errorText.isNotEmpty ? HexColor('#FF001B') : HexColor('#333333');
           return Column(
@@ -399,21 +371,9 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                         child: TextFormField(
                           controller: controller,
                           textAlign: TextAlign.end,
-                          onChanged: (String inputText) {
-                            print('[$runtimeType] --> onChanged, inputText:$inputText');
-
+                          onChanged: (String inputValue) {
                             _focusKey = key;
-
-                            // bool isValid = key.currentState.validate();
-                            //
-                            // if (inputText.isEmpty || inputText.length == 0) {
-                            //   isValid = false;
-                            // }
-
-                            _validController.add(inputText);
-                          },
-                          onEditingComplete: () {
-                            //_onEditingComplete();
+                            _validController.add(inputValue);
                           },
                           onFieldSubmitted: (String inputText) {
                             FocusScope.of(context).requestFocus(FocusNode());
@@ -421,6 +381,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
+                            color: textColor,
                           ),
                           cursorColor: Theme.of(context).primaryColor,
                           //光标圆角
@@ -559,66 +520,156 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     var hynBalance = '$hynBalanceStr HYN';
 
     return _clipRectWidget(
-        vertical: 8,
-        desc: '${S.of(context).wallet_balance} $rpBalance，$hynBalance',
-        child: Column(
-          children: [
-            _rowInputWidget(
-              key: _rpAmountKey,
-              controller: _rpAmountController,
-              hintText: '0.00',
-              defaultErrorText: '请输入RP金额',
-              title: 'RP金额',
-              unit: 'RP',
-              showLeft: true,
-              leftTitle: widget.shareType == RedPocketShareType.NEWER ? '新人' : '位置',
+      vertical: 8,
+      desc: '${S.of(context).wallet_balance} $rpBalance，$hynBalance',
+      child: Column(
+        children: [
+          _rowInputWidget(
+            key: _rpAmountKey,
+            controller: _rpAmountController,
+            hintText: '0.00',
+            defaultErrorText: '请输入RP金额',
+            title: 'RP金额',
+            unit: 'RP',
+            showLeft: true,
+            leftTitle: widget.shareType == RedPocketShareType.NEWER ? '新人' : '位置',
+            validator: (String inputText) {
+              if (inputText.isEmpty || inputText == null) {
+                return '';
+              }
+              var errorText = '';
+              var inputValue = Decimal.tryParse(inputText ?? '0') ?? Decimal.zero;
+
+              var coinVo = WalletInheritedModel.of(
+                context,
+                aspect: WalletAspect.activatedWallet,
+              ).getCoinVoBySymbol('RP');
+              var rpBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
+
+              var minRp = _rpShareConfig?.rpMin ?? '0';
+              if (inputValue > Decimal.zero && inputValue <= Decimal.parse(minRp)) {
+                errorText = '至少$minRp RP';
+              }
+
+              if (rpBalance > Decimal.zero && inputValue > rpBalance) {
+                errorText = 'RP余额不足';
+              }
+
+              _isInvalidRpAmount = errorText.isNotEmpty;
+
+              return errorText;
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 60,
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 60,
-              ),
-              child: Container(
-                height: 0.5,
-                color: HexColor('#F2F2F2'),
-              ),
+            child: Container(
+              height: 0.5,
+              color: HexColor('#F2F2F2'),
             ),
-            _rowInputWidget(
-              key: _hynAmountKey,
-              controller: _hynAmountController,
-              hintText: '0.00',
-              defaultErrorText: '请输入HYN金额',
-              title: 'HYN金额',
-              unit: 'HYN',
-              showLeft: true,
-            ),
-          ],
-        ));
+          ),
+          _rowInputWidget(
+            key: _hynAmountKey,
+            controller: _hynAmountController,
+            hintText: '0.00',
+            defaultErrorText: '请输入HYN金额',
+            title: 'HYN金额',
+            unit: 'HYN',
+            showLeft: true,
+            validator: (String inputText) {
+              if (inputText.isEmpty || inputText == null) {
+                return '';
+              }
+              var errorText = '';
+              var inputValue = Decimal.tryParse(inputText ?? '0') ?? Decimal.zero;
+
+              var coinVo = WalletInheritedModel.of(
+                context,
+                aspect: WalletAspect.activatedWallet,
+              ).getCoinVoBySymbol('HYN');
+
+              var hynBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
+
+              var minHyn = _rpShareConfig?.hynMin ?? '0';
+              if (inputValue > Decimal.zero && inputValue <= Decimal.parse(minHyn)) {
+                errorText = '至少$minHyn HYN';
+              }
+
+              if (hynBalance > Decimal.zero && inputValue > hynBalance) {
+                errorText = S.of(context).hyn_balance_no_enough;
+              }
+
+              _isInvalidHynAmount = errorText.isNotEmpty;
+
+              return errorText;
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildZoneCell() {
     return _clipRectWidget(
-        vertical: 4,
-        desc: '最大距离100千米',
-        child: _rowInputWidget(
-          key: _rangeKey,
-          controller: _rangeController,
-          hintText: '填写附近可领取距离',
-          title: '可领取范围',
-          unit: '米',
-        ));
+      vertical: 4,
+      desc: '最大距离100千米',
+      child: _rowInputWidget(
+        key: _rangeKey,
+        controller: _rangeController,
+        hintText: '填写附近可领取距离',
+        title: '可领取范围',
+        unit: '米',
+        validator: (String inputText) {
+          if (inputText.isEmpty || inputText == null) {
+            return '';
+          }
+
+          var inputValue = double.tryParse(inputText ?? '0') ?? 0;
+
+          var errorText = '';
+
+          if (inputValue > 0 && inputValue > 100) {
+            errorText = '最大距离100千米';
+          }
+
+          _isInvalidRange = errorText.isNotEmpty;
+
+          return errorText;
+        },
+      ),
+    );
   }
 
   Widget _buildRpCountCell() {
     return _clipRectWidget(
-        vertical: 4,
-        child: _rowInputWidget(
-          key: _countKey,
-          controller: _countController,
-          hintText: '填写个数，平均领取',
-          defaultErrorText: '请填写个数',
-          title: '红包个数',
-          unit: '个',
-        ));
+      vertical: 4,
+      child: _rowInputWidget(
+        key: _countKey,
+        controller: _countController,
+        hintText: '填写个数，平均领取',
+        defaultErrorText: '请填写红包个数',
+        title: '红包个数',
+        unit: '个',
+        validator: (String inputText) {
+          if (inputText.isEmpty || inputText == null) {
+            return '';
+          }
+
+          var inputValue = int.tryParse(inputText ?? '0') ?? 0;
+
+          var errorText = '';
+
+          if (inputValue > 0 && inputValue > 100) {
+            errorText = '一次最多发100个红包';
+          }
+
+          _isInvalidCount = errorText.isNotEmpty;
+
+          return errorText;
+        },
+      ),
+    );
   }
 
   Widget _buildBlessingCell() {
@@ -938,8 +989,13 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     RpShareReqEntity reqEntity = RpShareReqEntity.only('0');
 
     _focusKey = null;
-    _validController.add('');
+    _validController.add('-1');
 
+    if (_isInvalidHynAmount || _isInvalidRpAmount || _isInvalidCount || (_isInvalidRange && _isLocation)) {
+      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+
+      return;
+    }
     /*
     * 1.检查数据有效性
     * 2.检查是否超过余额
@@ -951,9 +1007,6 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
       Fluttertoast.showToast(msg: '请输入RP金额！');
       _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
-      _focusKey = _rpAmountKey;
-      _validController.add('');
-
       return;
     }
     reqEntity.rpAmount = rpValue.toString();
@@ -963,9 +1016,6 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     if (hynValue <= Decimal.zero) {
       Fluttertoast.showToast(msg: '请输入HYN金额！');
       _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
-
-      _focusKey = _hynAmountKey;
-      _validController.add('');
 
       return;
     } else if (hynValue > Decimal.zero && hynValue <= Decimal.parse('0.001')) {
@@ -981,9 +1031,6 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     if (count <= 0) {
       Fluttertoast.showToast(msg: '请填写红包个数！');
       _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
-
-      _focusKey = _countKey;
-      _validController.add('');
 
       return;
     }
