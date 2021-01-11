@@ -47,7 +47,6 @@ class _AuthManagerState extends BaseState<_AuthManager> {
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
   }
 

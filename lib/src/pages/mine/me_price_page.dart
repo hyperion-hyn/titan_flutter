@@ -9,7 +9,6 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/components/setting/bloc/bloc.dart';
 
 class MePricePage extends StatefulWidget {
   @override
@@ -32,13 +31,6 @@ class _MePriceState extends State<MePricePage> {
       activeQuotesSign = WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeQuotesSign;
     }
 
-    Widget _lineWidget({double height = 5}) {
-      return Container(
-        height: height,
-        color: HexColor('#F8F8F8'),
-      );
-    }
-
     Widget _dividerWidget() {
       return Padding(
         padding: const EdgeInsets.only(left: 16,),
@@ -55,6 +47,7 @@ class _MePriceState extends State<MePricePage> {
       appBar: BaseAppBar(
         baseTitle: S.of(context).price_show,
         backgroundColor: Colors.white,
+        showBottom: true,
         actions: <Widget>[
           FlatButton(
             onPressed: () {
@@ -79,7 +72,6 @@ class _MePriceState extends State<MePricePage> {
       ),
         body: Column(
           children: <Widget>[
-            _lineWidget(),
             _buildInfoContainer(quotesSigns[0]),
             _dividerWidget(),
             _buildInfoContainer(quotesSigns[1]),

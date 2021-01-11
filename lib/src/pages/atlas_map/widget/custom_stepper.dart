@@ -5,7 +5,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-// TODO(dragostis): Missing functionality:
 //   * mobile horizontal mode with adding/removing steps
 //   * alternative labeling
 //   * stepper feedback in the case of high-latency interactions
@@ -772,7 +771,6 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
       double tickLeft = itemWidth * (widget.currentStep + 0.5 + widget.currentStepProgress);
       double tickRight = 0;
       if(isRightTick) {
-        // todo: jison_1024
         tickRight = maxWidth - tickLeft;
       }
 

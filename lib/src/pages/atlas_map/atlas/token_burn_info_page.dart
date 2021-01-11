@@ -34,7 +34,6 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getHynQuote();
   }
@@ -89,7 +88,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
                 width: 16,
               ),
               Expanded(
-                child: Text(S.of(context).atlas_automatically_completed_burning_plan(widget._burnHistory.epoch)),
+                child: Text(S.of(context).atlas_automatically_completed_burning_plan(' ${widget._burnHistory.epoch} ')),
               ),
             ],
           ),

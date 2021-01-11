@@ -110,7 +110,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
 
       //print("firstObj:${firstObj?.level??0}");
 
-      level = firstObj?.level ?? 0;
+      level = firstObj?.level ?? _currentLevel;
     } else {
       level = _currentLevel;
     }
@@ -331,7 +331,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 10),
-                              child: Row(
+                              child: Wrap(
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.only(

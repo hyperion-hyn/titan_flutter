@@ -241,7 +241,7 @@ class _SocketState extends State<_SocketManager> {
             'low': double.parse(itemList[3].toString()),
             'close': double.parse(itemList[4].toString()),
             'amount': double.parse(itemList[5].toString()),
-            'vol': double.parse(itemList[5].toString()),
+            'vol': double.parse(itemList[6].toString()),
             'count': 0,
             'id': int.parse(itemList[0].toString()) / 1000,
           };

@@ -98,7 +98,7 @@ class HomePanelState extends State<HomePanel> {
   }
 
   Widget _focusArea(context) {
-    var userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo)?.userInfoModel;
+    //var userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo)?.userInfoModel;
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -289,6 +289,7 @@ class HomePanelState extends State<HomePanel> {
                           height: 32,
                           color: Colors.white,
                         )),
+                    /*
                     if ((userInfo?.effectiveAcceleration ?? 0) > 0)
                       Positioned(
                           top: 16,
@@ -299,6 +300,7 @@ class HomePanelState extends State<HomePanel> {
                             height: 20,
                             color: Colors.white,
                           )),
+                    */
                   ],
                 ),
               ),
@@ -394,7 +396,7 @@ class HomePanelState extends State<HomePanel> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'RP 红包',
+                          S.of(context).red_pocket,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),

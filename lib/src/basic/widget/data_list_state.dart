@@ -92,14 +92,16 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
   }
 
   void _updateDataListOnReceive(List<dynamic> list, int page) {
-    setState(() {
-      if (page == getStartPage()) {
-        dataList.clear();
-        dataList.addAll(list);
-      } else {
-        dataList.addAll(list);
-      }
-    });
+    if(mounted) {
+      setState(() {
+        if (page == getStartPage()) {
+          dataList.clear();
+          dataList.addAll(list);
+        } else {
+          dataList.addAll(list);
+        }
+      });
+    }
   }
 
   @override

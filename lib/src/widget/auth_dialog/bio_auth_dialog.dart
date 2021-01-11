@@ -30,20 +30,17 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
 
   void initState() {
     super.initState();
-    // TODO: implement initState
     authDialogBloc.add(CheckAuthConfigEvent());
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     authDialogBloc.close();
   }
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
   }
 

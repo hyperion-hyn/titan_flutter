@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/burn_history_page.dart';
@@ -45,8 +46,9 @@ class _HynBurnBannerState extends State<HynBurnBanner> {
 
   @override
   Widget build(BuildContext context) {
+
     var round = _burnMsg?.latestBurnHistory?.id;
-    var msg = round != null ? '第$round轮 HYN燃烧完成' : '';
+    var msg = round != null ? S.of(context).rp_burn_func(round) : '';
     return InkWell(
       onTap: () {
         Application.router.navigateTo(context, Routes.map3node_burn_history_page);

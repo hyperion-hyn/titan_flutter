@@ -31,13 +31,6 @@ class _MeAreaState extends State<MeAreaPage> {
       selectedAppArea = SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel;
     }
 
-    Widget _lineWidget({double height = 5}) {
-      return Container(
-        height: height,
-        color: HexColor('#F8F8F8'),
-      );
-    }
-
     Widget _dividerWidget() {
       return Padding(
         padding: const EdgeInsets.only(left: 16,),
@@ -54,6 +47,7 @@ class _MeAreaState extends State<MeAreaPage> {
       appBar: BaseAppBar(
         baseTitle: S.of(context).language,
         backgroundColor: Colors.white,
+        showBottom: true,
         actions: <Widget>[
           FlatButton(
             onPressed: () {
@@ -73,7 +67,6 @@ class _MeAreaState extends State<MeAreaPage> {
       ),
       body: Column(
         children: <Widget>[
-          _lineWidget(),
           _buildInfoContainer(areas[0]),
           _dividerWidget(),
           _buildInfoContainer(areas[1]),

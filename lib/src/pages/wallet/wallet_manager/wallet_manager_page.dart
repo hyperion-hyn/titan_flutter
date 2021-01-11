@@ -130,6 +130,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
     return Scaffold(
         appBar: BaseAppBar(
           baseTitle: S.of(context).wallet_manage,
+          showBottom: true,
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -255,167 +256,159 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
     Account ethAccount = wallet.getEthAccount();
     return Container(
       color: Colors.white,
-      child: Column(
-        children: [
-          if (index == 0) Container(
-            height: 5,
-            color: Theme.of(context).scaffoldBackgroundColor,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8,),
-            child: Column(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8,),
+        child: Column(
+          children: <Widget>[
+            Row(
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          if (!isSelected) {
-                            UiUtil.showAlertView(
-                              context,
-                              title: S.of(context).tips,
-                              actions: [
-                                ClickOvalButton(
-                                  S.of(context).cancel,
-                                      () {
-                                    Navigator.pop(context);
-                                  },
-                                  width: 120,
-                                  height: 32,
-                                  fontSize: 14,
-                                  fontColor: DefaultColors.color999,
-                                  btnColor: [Colors.transparent],
-                                ),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                ClickOvalButton(
-                                  S.of(context).switch_wallet,
-                                      () async {
-                                    Navigator.pop(context);
-
-                                    var password = await UiUtil.showWalletPasswordDialogV2(
-                                      context,
-                                      wallet,
-                                    );
-                                    if(password == null || password.isEmpty){
-                                      return;
-                                    }
-
-                                    setState(() {
-                                      selectWallet = wallet;
-                                    });
-                                  },
-                                  width: 120,
-                                  height: 38,
-                                  fontSize: 16,
-                                ),
-                              ],
-                              content: S.of(context).will_switch_current_continue(walletKeyStore.name),
-                            );
-                          }
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: <Widget>[
-                            Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Theme.of(context).primaryColor),
-                              width: 45,
-                              height: 45,
-                              child: Stack(
-                                children: <Widget>[
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: walletHeaderWidget(
-                                      walletKeyStore.name.isEmpty
-                                          ? "Name is empty"
-                                          : walletKeyStore.name.characters.first,
-                                      address: ethAccount.address,
-                                      size: 52,
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                  if (isSelected)
-                                    Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: Container(
-                                        padding: EdgeInsets.all(0),
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.white),
-                                        child: Icon(
-                                          Icons.check_circle,
-                                          size: 18,
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                    )
-                                ],
-                              ),
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      if (!isSelected) {
+                        UiUtil.showAlertView(
+                          context,
+                          title: S.of(context).tips,
+                          actions: [
+                            ClickOvalButton(
+                              S.of(context).cancel,
+                                  () {
+                                Navigator.pop(context);
+                              },
+                              width: 120,
+                              height: 32,
+                              fontSize: 14,
+                              fontColor: DefaultColors.color999,
+                              btnColor: [Colors.transparent],
                             ),
                             SizedBox(
                               width: 8,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    walletKeyStore.name,
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF252525)),
-                                  ),
-                                  SizedBox(
-                                    height: 4,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
-                                    child: Text(
-                                      shortBlockChainAddress(
-                                          WalletUtil.ethAddressToBech32Address(
-                                        ethAccount.address,
-                                      )),
-                                      style: TextStyle(
-                                          fontSize: 14, color: Color(0xFF9B9B9B)),
+                            ClickOvalButton(
+                              S.of(context).switch_wallet,
+                                  () async {
+                                Navigator.pop(context);
+
+                                var password = await UiUtil.showWalletPasswordDialogV2(
+                                  context,
+                                  wallet,
+                                );
+                                if(password == null || password.isEmpty){
+                                  return;
+                                }
+
+                                setState(() {
+                                  selectWallet = wallet;
+                                });
+                              },
+                              width: 120,
+                              height: 38,
+                              fontSize: 16,
+                            ),
+                          ],
+                          content: S.of(context).will_switch_current_continue(walletKeyStore.name),
+                        );
+                      }
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Theme.of(context).primaryColor),
+                          width: 45,
+                          height: 45,
+                          child: Stack(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.center,
+                                child: walletHeaderWidget(
+                                  walletKeyStore.name.isEmpty
+                                      ? "Name is empty"
+                                      : walletKeyStore.name.characters.first,
+                                  address: ethAccount.address,
+                                  size: 52,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              if (isSelected)
+                                Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: Container(
+                                    padding: EdgeInsets.all(0),
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white),
+                                    child: Icon(
+                                      Icons.check_circle,
+                                      size: 18,
+                                      color: Colors.blue,
                                     ),
                                   ),
-                                ],
-                              ),
-                            )
-                          ],
+                                )
+                            ],
+                          ),
                         ),
-                      ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                walletKeyStore.name,
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF252525)),
+                              ),
+                              SizedBox(
+                                height: 4,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: Text(
+                                  shortBlockChainAddress(
+                                      WalletUtil.ethAddressToBech32Address(
+                                    ethAccount.address,
+                                  )),
+                                  style: TextStyle(
+                                      fontSize: 14, color: Color(0xFF9B9B9B)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
                     ),
-                    InkWell(
-                      onTap: () {
-                        var walletStr =
-                            FluroConvertUtils.object2string(wallet.toJson());
-                        var currentRouteName =
-                            RouteUtil.encodeRouteNameWithoutParams(context);
-
-                        Application.router.navigateTo(
-                            context,
-                            Routes.wallet_setting +
-                                '?entryRouteName=$currentRouteName&walletStr=$walletStr');
-                      },
-                      child: Icon(
-                        Icons.info_outline,
-                        color: Color(0xFF9B9B9B),
-                      ),
-                    )
-                  ],
+                  ),
                 ),
-                //Divider()
+                InkWell(
+                  onTap: () {
+                    var walletStr =
+                        FluroConvertUtils.object2string(wallet.toJson());
+                    var currentRouteName =
+                        RouteUtil.encodeRouteNameWithoutParams(context);
+
+                    Application.router.navigateTo(
+                        context,
+                        Routes.wallet_setting +
+                            '?entryRouteName=$currentRouteName&walletStr=$walletStr');
+                  },
+                  child: Icon(
+                    Icons.info_outline,
+                    color: Color(0xFF9B9B9B),
+                  ),
+                )
               ],
             ),
-          ),
-        ],
+            //Divider()
+          ],
+        ),
       ),
     );
   }

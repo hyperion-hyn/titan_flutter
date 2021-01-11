@@ -88,7 +88,6 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
       annualized90 = ConvertTokenUnit.weiToDecimal(rets[3].first, 2);
       annualized180 = ConvertTokenUnit.weiToDecimal(rets[4].first, 2);
       var paused = rets[5].first;
-      print('xxx');
       print(paused);
 
       setState(() {

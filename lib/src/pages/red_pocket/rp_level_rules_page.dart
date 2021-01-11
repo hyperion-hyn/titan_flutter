@@ -12,9 +12,6 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_deposit_page.dart';
@@ -202,7 +199,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
             ),
             Expanded(
               child: Text(
-                '当前已发行 $totalSupplyStr RP，百分比Y = $promotionSupplyRatioPercent（$stepPercent为1梯度）',
+                S.of(context).rp_level_total_supply_func(totalSupplyStr, promotionSupplyRatioPercent, stepPercent),
                 style: TextStyle(
                   color: HexColor('#333333'),
                   fontSize: 12,
@@ -296,34 +293,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     LevelRule dynamicModel =
     _oldModelList.firstWhere((element) => element.level == staticModel.level, orElse: () => null);
 
-    /*
-    LevelRule oldModelMax =
-        _oldModelList.firstWhere((element) => element.level > dynamicModel.level, orElse: () => null);
-
-    bool isNotMax = (oldModelMax != null);
-
-    if (!isNotMax) {
-      leftTagTitle = '可恢复最高量级';
-    } else {
-      leftTagTitle = '可恢复量级';
-    }
-
-    var zeroValue = Decimal.zero;
-
-    // 燃烧
-    var burningValue = Decimal.tryParse(dynamicModel?.burnStr ?? '0') ?? zeroValue;
-    var currentBurnValue = Decimal.tryParse(_myLevelInfo?.currBurningStr ?? '0') ?? zeroValue;
-    var _needBurnValue = burningValue - currentBurnValue;
-    _needBurnValue = _needBurnValue > zeroValue ? _needBurnValue : zeroValue;
-
-    // 持币
-    var holdValue = Decimal.tryParse(dynamicModel?.holdingStr ?? '0') ?? zeroValue;
-    var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
-    var _needHoldMinValue = holdValue - currentHoldValue;
-    _needHoldMinValue = _needHoldMinValue > zeroValue ? _needHoldMinValue : zeroValue;
-    */
-
-    String oldLevelDesc = '提升至该量级需燃烧 ${dynamicModel?.burnStr ?? '0'}RP, 增持${dynamicModel?.holdingStr ?? '0'}RP';
+    String oldLevelDesc = S.of(context).rp_level_upgrade_func(dynamicModel?.burnStr ?? '0', dynamicModel?.holdingStr ?? '0');
 
     return Stack(
       children: [
@@ -448,12 +418,12 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     var level = model.level ?? 0;
     var levelName = '${S.of(context).rp_level} ${levelValueToLevelName(level)}';
 
-    var burnTitle = S.of(context).rp_need_burn_amount;
+    var burnTitle = S.of(context).rp_need_burn_amount_abc;
     var burnRpValue = '${model.burnStr} RP';
 
     var formula = model.holdingFormula;
 
-    var stakingTitle = S.of(context).rp_min_holding;
+    var stakingTitle = S.of(context).rp_min_holding_abc;
     var stakingValue = '${model.holdingStr} RP';
 
     return Container(
@@ -482,7 +452,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
               top: 8,
             ),
             child: Text(
-              '计算公式: $formula',
+              '${S.of(context).rp_level_formula}: $formula',
               style: TextStyle(
                 color: HexColor('#999999'),
                 fontSize: 10,
@@ -576,7 +546,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
   _navToLevelAddStakingAction() {
     if (_currentLevel == 0) {
       Fluttertoast.showToast(
-        msg: '当前量级为0, 请先提升量级！',
+        msg: S.of(context).rp_level_zero_toast,
         gravity: ToastGravity.CENTER,
       );
       return;

@@ -29,19 +29,16 @@ class _ExchangeTransferHistoryDetailPageState
     extends BaseState<ExchangeTransferHistoryDetailPage> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 

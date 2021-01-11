@@ -103,7 +103,9 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
     _positionBloc.listen((state) {
       if (state is PostConfirmPoiDataV2ResultSuccessState) {
         print("PostConfirmPoiDataV2ResultSuccessState----1111");
-        _finishCheckIn(S.of(context).thank_you_for_contribute_data, []);
+        // _finishCheckIn(S.of(context).thank_you_for_contribute_data, []);
+
+        _saveData();
 
         Application.router.navigateTo(
             context,
@@ -120,16 +122,21 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
                 actions: <Widget>[
                   FlatButton(
                       onPressed: () {
-                        var checkInModel =
-                            AccountInheritedModel.of(context, aspect: AccountAspect.checkIn).checkInModel;
-                        CheckInModelState confirmPoiState = checkInModel.detail.firstWhere((element) {
-                          return element.action == ContributionTasksPage.confirmPOI;
-                        }).state;
-                        if (confirmPoiState.total == 0 || confirmPoiState == null) {
-                          _finishCheckIn(S.of(context).thank_you_for_contribute_data, []);
-                        } else {
-                          Navigator.of(context)..pop()..pop();
-                        }
+                        // var checkInModel =
+                        //     AccountInheritedModel.of(context, aspect: AccountAspect.checkIn).checkInModel;
+                        // CheckInModelState confirmPoiState = checkInModel.detail.firstWhere((element) {
+                        //   return element.action == ContributionTasksPage.confirmPOI;
+                        // }).state;
+
+                        _saveData();
+
+                        Navigator.of(context)..pop()..pop();
+
+                        // if (confirmPoiState.total == 0 || confirmPoiState == null) {
+                        //   _finishCheckIn(S.of(context).thank_you_for_contribute_data, []);
+                        // } else {
+                        //   Navigator.of(context)..pop()..pop();
+                        // }
                       },
                       child: Text(S.of(context).confirm))
                 ],
@@ -612,6 +619,11 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
   }
 
   bool _isSendCheckIn = false;
+
+  void _saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(PrefsKey.VERIFY_DATE, DateTime.now().millisecondsSinceEpoch);
+  }
 
   Future _finishCheckIn(String successTip, List<String> optLogIDs) async {
     var address =

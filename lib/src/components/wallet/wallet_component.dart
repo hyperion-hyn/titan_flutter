@@ -131,6 +131,8 @@ class _WalletManagerState extends State<_WalletManager> {
             _btcGasPriceRecommend = state.btcGasPriceRecommend;
           }
         } else if (state is UpdatedWalletBalanceState) {
+          //因为UpdatedWalletBalanceState继承WalletVoAwareCmpState，所以不用处理state.walletVo
+          // _activatedWallet = state.walletVo;
         } else if (state is WalletVoAwareCmpState) {
           //基本不用,一般使用UpdateWalletPageState
           _activatedWallet = state.walletVo;

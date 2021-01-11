@@ -492,15 +492,18 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         ),
                       ),
                     ),
-                    Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 4,
-                      ),
-                      child: Text(
-                        S.of(context).sooner_get_more_rp,
-                        style: TextStyle(
-                          fontSize: 12,
+                    //Spacer(),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 4,
+                        ),
+                        child: Text(
+                          S.of(context).sooner_get_more_rp,
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ),

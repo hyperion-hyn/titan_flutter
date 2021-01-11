@@ -363,7 +363,7 @@ class _ContributionState extends State<ScanSignalContributionPage> {
     var isFinish = await _uploadCollectData();
 
     if (isFinish) {
-      _finishCheckIn(S.of(context).thank_you_for_contribute_data);
+      // _finishCheckIn(S.of(context).thank_you_for_contribute_data);
 
       Application.router.navigateTo(context, Routes.contribute_done, replace: true);
     } else {
