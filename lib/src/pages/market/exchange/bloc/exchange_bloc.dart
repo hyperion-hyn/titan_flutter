@@ -10,7 +10,6 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
   Stream<ExchangeState> mapEventToState(
     ExchangeEvent event,
   ) async* {
-    // TODO: Add Logic
     if (event is SwitchToAuthEvent) {
       yield SwitchToAuthState();
     } else if (event is SwitchToContentEvent) {

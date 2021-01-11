@@ -30,7 +30,6 @@ class BioAuthDialogBloc extends Bloc<BioAuthDialogEvent, BioAuthDialogState> {
   Stream<BioAuthDialogState> mapEventToState(
     BioAuthDialogEvent event,
   ) async* {
-    // TODO: Add Logic
     if (event is CheckAuthConfigEvent) {
 //      var authConfigStr = await AppCache.getValue<String>(PrefsKey.AUTH_CONFIG);
       // _authConfigModel = AuthConfigModel.fromJson(json.decode(authConfigStr));

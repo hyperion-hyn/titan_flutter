@@ -34,7 +34,6 @@ class _ExchangeBannerWidgetState extends BaseState<ExchangeBannerWidget> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
 
     if (_timer != null) {

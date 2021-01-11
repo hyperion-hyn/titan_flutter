@@ -536,7 +536,7 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
     } catch (e) {
       LogUtil.printMessage(e);
       LogUtil.toastException(e);
-      // todo: "code":-10000,"msg":"Unknown error","data":null,"subMsg":"-32000 | delegation amount too small"}
+      ///  "code":-10000,"msg":"Unknown error","data":null,"subMsg":"-32000 | delegation amount too small"}
     }
 
     return false;

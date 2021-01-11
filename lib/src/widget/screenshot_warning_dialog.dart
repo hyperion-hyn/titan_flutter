@@ -24,18 +24,15 @@ class ScreenshotWarningDialog extends StatefulWidget {
 class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
   void initState() {
     super.initState();
-    // TODO: implement initState
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
   }
 
