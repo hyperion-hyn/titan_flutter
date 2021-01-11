@@ -3,31 +3,35 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class RpShareConfirmPage extends StatelessWidget {
-  final String hynAmount;
-  final String rpAmount;
-  final String hynFee;
-  final String rpFee;
+  // final String hynAmount;
+  // final String rpAmount;
+  // final String hynFee;
+  // final String rpFee;
+
+  final RpShareReqEntity reqEntity;
   final ScrollController _scrollController = ScrollController();
 
-  RpShareConfirmPage({
-    this.hynAmount = '0',
-    this.rpAmount = '0',
-    this.hynFee = '0',
-    this.rpFee = '0',
-  });
+  RpShareConfirmPage({this.reqEntity});
 
   @override
   Widget build(BuildContext context) {
     var walletVo = WalletInheritedModel.of(context).activatedWallet;
-    var walletName = walletVo.wallet.keystore.name;
-    var hynAddress = WalletUtil.ethAddressToBech32Address(walletVo.wallet.getAtlasAccount().address);
+    var wallet = walletVo.wallet;
+    var address = wallet.getAtlasAccount().address;
+
+    var walletName = wallet.keystore.name;
+    var hynAddress = WalletUtil.ethAddressToBech32Address(address);
     var walletAddress = shortBlockChainAddress(hynAddress);
+    var rpFee = '0.0001';
+    var hynFee = '0.0001';
 
     return Material(
       color: Colors.transparent,
@@ -93,7 +97,7 @@ class RpShareConfirmPage extends StatelessWidget {
                                   top: 16,
                                 ),
                                 child: Text(
-                                  '$rpAmount RP',
+                                  '${this.reqEntity?.rpAmount??'0'} RP',
                                   style: TextStyle(
                                     color: HexColor('#333333'),
                                     fontWeight: FontWeight.w600,
@@ -111,7 +115,7 @@ class RpShareConfirmPage extends StatelessWidget {
                                   top: 4,
                                 ),
                                 child: Text(
-                                  '$hynAmount HYN',
+                                  '${this.reqEntity?.hynAmount??'0'} HYN',
                                   style: TextStyle(
                                     color: HexColor('#333333'),
                                     fontWeight: FontWeight.w600,
@@ -156,11 +160,20 @@ class RpShareConfirmPage extends StatelessWidget {
                   ClickOvalButton(
                     S.of(context).send,
                     () async {
-                      var password = await UiUtil.showWalletPasswordDialogV2(context, walletVo.wallet);
+                      var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
                       if (password == null) {
                         return;
                       }
-                      // todo:
+
+                      try {
+                        RPApi().postSendShareRp(
+                          password: password,
+                          activeWallet: walletVo,
+                          reqEntity: this.reqEntity,
+                        );
+                      } catch (e) {
+                        UiUtil.toast(e);
+                      }
                     },
                     btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
                     fontSize: 16,

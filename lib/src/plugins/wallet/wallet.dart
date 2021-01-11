@@ -395,6 +395,46 @@ class Wallet {
     return txHash;
   }
 
+  Future<String> signHYNHrc30Transaction({
+    String contractAddress,
+    String password,
+    String toAddress,
+    BigInt value,
+    BigInt gasPrice,
+    int nonce,
+    int gasLimit = 0,
+  }) async {
+    var hynBalance = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('HYN').balance;
+
+    var gasFees = BigInt.from(gasLimit) * gasPrice;
+    if (gasFees > hynBalance) {
+      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas);
+      return null;
+    }
+
+    var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+    final client = WalletUtil.getWeb3Client(true);
+    final credentials = await client.credentialsFromPrivateKey(privateKey);
+    final contract = WalletUtil.getHynErc20Contract(contractAddress);
+    final rawTx = await client.signTransaction(
+      credentials,
+      web3.Transaction.callContract(
+          contract: contract,
+          function: contract.function('transfer'),
+          parameters: [web3.EthereumAddress.fromHex(toAddress), value],
+          gasPrice: web3.EtherAmount.inWei(gasPrice),
+          maxGas: gasLimit,
+          nonce: nonce,
+          type: MessageType.typeNormal),
+      fetchChainIdFromNetworkId: false,
+    );
+
+    if (rawTx == null) {
+      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).broadcast_exception);
+    }
+    return bytesToHex(rawTx, include0x: true, padToEvenLength: true);
+  }
+
   Future<dynamic> sendBitcoinTransaction(String password, String pubString, String toAddr, int fee, int amount) async {
     var transResult =
         await BitcoinApi.sendBitcoinTransaction(keystore.fileName, password, pubString, toAddr, fee, amount);

@@ -5,6 +5,7 @@ import 'package:package_info/package_info.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
+import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -18,11 +19,15 @@ import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
+import 'package:titan/src/pages/wallet/api/hyn_api.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as WalletClass;
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -312,10 +317,10 @@ class RPApi {
   }
 
   Future<RpMyRpRecordEntity> getMyRpRecordStatistics(
-      String address, {
-        int size = 200,
-        pagingKey = '',
-      }) async {
+    String address, {
+    int size = 200,
+    pagingKey = '',
+  }) async {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/redpocket/list/$address',
       EntityFactory<RpMyRpRecordEntity>((json) {
@@ -604,5 +609,104 @@ class RPApi {
     print('[rp_api] postRpApprove, amount:$amount, approveHex: $approveHex');
 
     return approveHex;
+  }
+
+  // 新人/位置红包领取列表+信息
+  Future<RpShareEntity> getNewBeeDetail(
+    String address, {
+    String id = '',
+  }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/new-bee/$address/detail',
+      EntityFactory<RpShareEntity>((json) {
+        return RpShareEntity.fromJson(json);
+      }),
+      params: {
+        'id': id,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  // 新人/位置红包信息
+  Future<RpShareInfoEntity> getNewBeeInfo(
+    String address, {
+    String id = '',
+  }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/new-bee/$address/info',
+      EntityFactory<RpShareInfoEntity>((json) {
+        return RpShareInfoEntity.fromJson(json);
+      }),
+      params: {
+        'id': id,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  // 领取新人/位置红包
+  Future<dynamic> postOpenShareRp({
+    RpShareReqEntity reqEntity,
+    String address,
+  }) async {
+    return await RPHttpCore.instance.postEntity(
+      "/v1/rp/new-bee/$address/open",
+      EntityFactory<dynamic>((json) => json),
+      params: reqEntity.toJson(),
+      options: RequestOptions(contentType: "application/json"),
+    );
+  }
+
+  // 发新人/位置红包
+  Future<dynamic> postSendShareRp({
+    RpShareReqEntity reqEntity,
+    WalletVo activeWallet,
+    String password = '',
+  }) async {
+    var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
+
+    final client = WalletUtil.getWeb3Client(true);
+    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
+
+    // rp
+    var rawTxRp = await HYNApi.signTransferHYNHrc30(
+      password,
+      ConvertTokenUnit.strToBigInt(reqEntity.rpAmount),
+      reqEntity.address,
+      activeWallet.wallet,
+      WalletConfig.hynRPHrc30Address,
+      nonce: nonce,
+    );
+    print('[rp_api] postSendShareRp, rawTxRp: $rawTxRp');
+
+    if (rawTxRp == null) {
+      throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
+    }
+
+    // hyn
+    var rawTxHyn = await HYNApi.signTransferHYN(
+      password,
+      activeWallet.wallet,
+      toAddress: reqEntity.address,
+      amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount),
+      nonce: nonce + 1,
+    );
+
+    print('[rp_api] postSendShareRp, rawTxHyn: $rawTxHyn');
+    if (rawTxHyn?.isEmpty ?? true) {
+      throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
+    }
+
+    return await RPHttpCore.instance.postEntity(
+      "/v1/rp/new-bee/$address/send",
+      EntityFactory<dynamic>((json) => json),
+      params: reqEntity.toJson(),
+      options: RequestOptions(contentType: "application/json"),
+    );
   }
 }

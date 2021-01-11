@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,15 +16,13 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
-import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/src/pages/contribution/add_poi/select_position_page.dart';
-import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v2.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_confirm_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
-import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -41,67 +40,59 @@ class RpShareEditPage extends StatefulWidget {
 
 class _RpShareEditState extends BaseState<RpShareEditPage> {
   final ScrollController _scrollController = ScrollController();
+  final PublishSubject<int> _filterSubject = PublishSubject<int>();
+  final StreamController<String> _validController = StreamController.broadcast();
 
   final TextEditingController _rpAmountController = TextEditingController();
   final TextEditingController _hynAmountController = TextEditingController();
-  final TextEditingController _zoneLengthController = TextEditingController();
-  final TextEditingController _rpCountController = TextEditingController();
-  final TextEditingController _blessingController = TextEditingController();
+  final TextEditingController _rangeController = TextEditingController();
+  final TextEditingController _countController = TextEditingController();
+  final TextEditingController _greetingController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   final _rpAmountKey = GlobalKey<FormState>();
   final _hynAmountKey = GlobalKey<FormState>();
-  final _zoneLengthKey = GlobalKey<FormState>();
-  final _rpCountKey = GlobalKey<FormState>();
-  final _blessingKey = GlobalKey<FormState>();
+  final _rangeKey = GlobalKey<FormState>();
+  final _countKey = GlobalKey<FormState>();
+  final _greetingKey = GlobalKey<FormState>();
   final _passwordKey = GlobalKey<FormState>();
 
   final PositionBloc _positionBloc = PositionBloc();
   final _addMarkerSubject = PublishSubject<dynamic>();
 
-  final PublishSubject<int> _filterSubject = PublishSubject<int>();
-  final _addressNameKey = GlobalKey<FormState>();
-
-  final StreamController<bool> _validController = StreamController.broadcast();
-  GlobalKey<FormState> _focusKey;
-
   MapboxMapController _mapController;
+
+  GlobalKey<FormState> _focusKey;
 
   String _addressText;
 
   Map<String, dynamic> _openCageData;
 
-  bool _isUploading = false;
-
-  bool _isOnPressed = false;
   bool _isLoadingOpenCage = false;
-  bool _isOnlyNewerGet = true;
+  bool _isNewBee = true;
 
   int _requestOpenCageDataCount = 0;
-  String language;
-  String address;
+  String _language;
 
   LatLng _selectedPosition;
   LatLng _initSelectedPosition;
 
   String get _baseTitle => widget.shareType == RedPocketShareType.NEWER ? '新人红包' : '位置红包';
+  bool get _isLocation => widget.shareType == RedPocketShareType.LOCATION;
+  String get _rpType => widget.shareType == RedPocketShareType.LOCATION ? 'location' : 'normal';
 
   @override
   void onCreated() {
     _initSelectedPosition = widget.userPosition;
 
-    language = SettingInheritedModel.of(context).languageCode;
-    address = WalletInheritedModel.of(context).activatedWallet.wallet.accounts[0].address;
+    _language = SettingInheritedModel.of(context).languageCode;
 
-    //_positionBloc.add(GetOpenCageEvent(widget.userPosition, language));
     _filterSubject.debounceTime(Duration(seconds: 1)).listen((count) {
-      //print('[add] ---> count:$count, _requestOpenCageDataCount:$_requestOpenCageDataCount');
-      _positionBloc.add(GetOpenCageEvent(_selectedPosition, language));
+      _positionBloc.add(GetOpenCageEvent(_selectedPosition, _language));
     });
 
     _addMarkerSubject.debounceTime(Duration(milliseconds: 500)).listen((_) {
       var latlng = _selectedPosition;
-      //print("[Verify] add, name:${confirmPoiItem.name}, latlng:$latlng");
 
       var poiName = '';
 
@@ -164,28 +155,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     return BlocBuilder<PositionBloc, AllPageState>(
       bloc: _positionBloc,
       condition: (AllPageState fromState, AllPageState state) {
-        if (state is PostPoiDataV2ResultSuccessState) {
-          if (_isUploading) {
-            Application.router.navigateTo(
-                context,
-                Routes.contribute_position_finish +
-                    '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_ADD}');
-          }
-        } else if (state is PostPoiDataV2ResultFailState) {
-          setState(() {
-            _isUploading = false;
-          });
-
-          var msg = S.of(context).add_failed_hint + "," + S.of(context).error_code_func(state.code);
-          if (state.code == -409) {
-            msg = S.of(context).add_failed_exist_hint;
-          } else if (state.code == -1) {
-            msg = S.of(context).network_connection_timeout_please_try_again_later_toast;
-          } else if (state.code == -10004) {
-            msg = S.of(context).picture_format_is_not_supported_yet_toast;
-          }
-          Fluttertoast.showToast(msg: msg);
-        } else if (state is GetOpenCageState) {
+        if (state is GetOpenCageState) {
           _openCageData = state.openCageData;
 
           var country = _openCageData["country"] ?? "";
@@ -241,21 +211,6 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     prefs.setString(PrefsKey.mapboxCountryCode, countryCode);
   }
 
-  Widget _buildLoading() {
-    return Visibility(
-      visible: _isUploading,
-      child: Center(
-        child: SizedBox(
-          height: 40,
-          width: 40,
-          child: CircularProgressIndicator(
-            strokeWidth: 1.5,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildBody() {
     Widget child;
     if (widget.shareType == RedPocketShareType.NEWER) {
@@ -303,17 +258,12 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
       );
     }
 
-    return Stack(
-      children: <Widget>[
-        BaseGestureDetector(
-          context: context,
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: child,
-          ),
-        ),
-        _buildLoading(),
-      ],
+    return BaseGestureDetector(
+      context: context,
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        child: child,
+      ),
     );
   }
 
@@ -327,29 +277,51 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     bool showLeft = false,
     int maxLength = 18,
     TextInputType keyboardType,
-    String error,
+    String defaultErrorText,
     bool isOptional = false,
   }) {
     return StreamBuilder<Object>(
         stream: _validController.stream,
         builder: (context, snapshot) {
-          bool invalid = false;
-
-          var errorText = error ?? hintText;
+          var errorText = '';
 
           if (snapshot?.data == null || isOptional) {
-            invalid = false;
+            errorText = '';
           } else {
             // 分：检查所有 / 检查某个
             if (_focusKey == null) {
-              invalid = (controller?.text?.isEmpty ?? true);
-            } else {
-              invalid = !(snapshot?.data ?? true) && _focusKey == key && (controller?.text?.isEmpty ?? true);
+              errorText = (controller?.text?.isEmpty ?? true) ? defaultErrorText ?? hintText : '';
+            } else if (_focusKey != null && (_focusKey == _rpAmountKey || _focusKey == _hynAmountKey)) {
+              var inputText = snapshot?.data;
+              var inputValue = Decimal.tryParse(inputText ?? '0') ?? Decimal.zero;
+
+              if (_focusKey == _rpAmountKey) {
+                var coinVo = WalletInheritedModel.of(
+                  context,
+                  aspect: WalletAspect.activatedWallet,
+                ).getCoinVoBySymbol('RP');
+                var rpBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
+
+                if (rpBalance > Decimal.zero && inputValue > rpBalance) {
+                  errorText = 'RP余额不足';
+                }
+              } else if (_focusKey == _hynAmountKey) {
+                var coinVo = WalletInheritedModel.of(
+                  context,
+                  aspect: WalletAspect.activatedWallet,
+                ).getCoinVoBySymbol('HYN');
+
+                var hynBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
+
+                if (hynBalance > Decimal.zero && inputValue > hynBalance) {
+                  errorText = S.of(context).hyn_balance_no_enough;
+                }
+              }
             }
           }
-          print("[$runtimeType] invalid: $invalid");
+          print("[$runtimeType] errorText: $errorText");
 
-          var textColor = invalid ? HexColor('#FF001B') : HexColor('#333333');
+          var textColor = errorText.isNotEmpty ? HexColor('#FF001B') : HexColor('#333333');
           return Column(
             children: [
               Container(
@@ -413,13 +385,13 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
                             _focusKey = key;
 
-                            bool isValid = key.currentState.validate();
+                            // bool isValid = key.currentState.validate();
+                            //
+                            // if (inputText.isEmpty || inputText.length == 0) {
+                            //   isValid = false;
+                            // }
 
-                            if (inputText.isEmpty || inputText.length == 0) {
-                              isValid = false;
-                            }
-
-                            _validController.add(isValid);
+                            _validController.add(inputText);
                           },
                           onEditingComplete: () {
                             //_onEditingComplete();
@@ -470,7 +442,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                   ],
                 ),
               ),
-              invalid
+              errorText.isNotEmpty
                   ? Padding(
                       padding: const EdgeInsets.only(
                         bottom: 8,
@@ -576,7 +548,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
               key: _rpAmountKey,
               controller: _rpAmountController,
               hintText: '0.00',
-              error: '请输入RP金额',
+              defaultErrorText: '请输入RP金额',
               title: 'RP金额',
               unit: 'RP',
               showLeft: true,
@@ -595,7 +567,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
               key: _hynAmountKey,
               controller: _hynAmountController,
               hintText: '0.00',
-              error: '请输入HYN金额',
+              defaultErrorText: '请输入HYN金额',
               title: 'HYN金额',
               unit: 'HYN',
               showLeft: true,
@@ -609,8 +581,8 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
         vertical: 4,
         desc: '最大距离100千米',
         child: _rowInputWidget(
-          key: _zoneLengthKey,
-          controller: _zoneLengthController,
+          key: _rangeKey,
+          controller: _rangeController,
           hintText: '填写附近可领取距离',
           title: '可领取范围',
           unit: '米',
@@ -621,10 +593,10 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     return _clipRectWidget(
         vertical: 4,
         child: _rowInputWidget(
-          key: _rpCountKey,
-          controller: _rpCountController,
+          key: _countKey,
+          controller: _countController,
           hintText: '填写个数，平均领取',
-          error: '请填写个数',
+          defaultErrorText: '请填写个数',
           title: '红包个数',
           unit: '个',
         ));
@@ -634,10 +606,10 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     return _clipRectWidget(
         vertical: 4,
         child: _rowInputWidget(
-          key: _blessingKey,
-          controller: _blessingController,
+          key: _greetingKey,
+          controller: _greetingController,
           hintText: '填写祝福语，例如：恭喜发财（可选）',
-          error: '请填写祝福语',
+          defaultErrorText: '请填写祝福语',
           title: '祝福',
           unit: '',
           keyboardType: TextInputType.text,
@@ -653,7 +625,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
           key: _passwordKey,
           controller: _passwordController,
           hintText: '填写红包口令，例如：888，发发发',
-          error: '请填写红包口令',
+          defaultErrorText: '请填写红包口令',
           title: '口令',
           unit: '',
           keyboardType: TextInputType.text,
@@ -677,12 +649,12 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
             ),
             Spacer(),
             Switch(
-              value: _isOnlyNewerGet,
+              value: _isNewBee,
               activeColor: Colors.white,
               activeTrackColor: HexColor('#FF4D4D'),
               onChanged: (bool value) {
                 setState(() {
-                  _isOnlyNewerGet = value;
+                  _isNewBee = value;
                 });
               },
             )
@@ -893,23 +865,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
       ),
       child: ClickOvalButton(
         S.of(context).next_step,
-        () {
-          setState(() {
-            _isOnPressed = true;
-          });
-          Future.delayed(Duration(seconds: 1), () {
-            setState(() {
-              _isOnPressed = false;
-            });
-          });
-          //_uploadPoiData();
-
-          _focusKey = null;
-          _validController.add(false);
-
-          //showSendAlertView(context);
-        },
-        isLoading: _isOnPressed,
+        _confirmAction,
         btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
         fontSize: 16,
         width: 260,
@@ -957,71 +913,133 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     }
   }
 
-  _uploadPoiData() async {
-    print('[add] --> 存储中。。。');
+  _confirmAction() async {
+    print('[$runtimeType] _confirmDataAction, 1');
 
-    // 0. 检测地点名称
-    if (!_addressNameKey.currentState.validate()) {
+    RpShareReqEntity reqEntity = RpShareReqEntity.only('0');
+
+    _focusKey = null;
+    _validController.add('');
+
+    /*
+    * 1.检查数据有效性
+    * 2.检查是否超过余额
+    * */
+
+    // rpAmount
+    var rpValue = Decimal.tryParse(_rpAmountController?.text ?? '0') ?? Decimal.zero;
+    if (rpValue <= Decimal.zero) {
+      Fluttertoast.showToast(msg: '请输入RP金额！');
       _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+
+      _focusKey = _rpAmountKey;
+      _validController.add('');
+
       return;
     }
+    reqEntity.rpAmount = rpValue.toString();
 
-    // 2.检测网络数据
-    if (_openCageData == null) {
-      _positionBloc.add(GetOpenCageEvent(_selectedPosition, language));
-      Fluttertoast.showToast(msg: S.of(context).please_edit_location_hint);
+    // hynAmount
+    var hynValue = Decimal.tryParse(_hynAmountController?.text ?? '0') ?? Decimal.zero;
+    if (hynValue <= Decimal.zero) {
+      Fluttertoast.showToast(msg: '请输入HYN金额！');
       _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+
+      _focusKey = _hynAmountKey;
+      _validController.add('');
+
+      return;
+    } else if (hynValue > Decimal.zero && hynValue <= Decimal.parse('0.001')) {
+      Fluttertoast.showToast(msg: '你要为每个新人至少要塞 0.001 HYN作为他之后矿工费所用');
+      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+
       return;
     }
+    reqEntity.hynAmount = hynValue.toString();
 
-    var option =
-        await showConfirmDialog(context, S.of(context).add_location_data_please_confirm_actual_situation_toast);
-    if (!option) return;
+    // amount
+    var count = int.tryParse(_countController.text ?? '0') ?? 0;
+    if (count <= 0) {
+      Fluttertoast.showToast(msg: '请填写红包个数！');
+      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
-    _positionBloc.add(PostPoiDataV2Event(null, address));
-    setState(() {
-      _isUploading = true;
-    });
+      _focusKey = _countKey;
+      _validController.add('');
+
+      return;
+    }
+    reqEntity.count = count;
+
+    // password
+    reqEntity.password = _maxLengthLimit(_passwordController);
+
+    // greeting
+    reqEntity.greeting = _maxLengthLimit(_greetingController);
+
+    // rpType
+    reqEntity.rpType = _rpType;
+
+    // address
+    var walletVo = WalletInheritedModel.of(context).activatedWallet;
+    var wallet = walletVo.wallet;
+    var address = wallet.getAtlasAccount().address;
+    reqEntity.address = address;
+
+    // only location rp
+    if (_isLocation) {
+      if (_openCageData == null) {
+        _positionBloc.add(GetOpenCageEvent(_selectedPosition, _language));
+        Fluttertoast.showToast(msg: S.of(context).please_edit_location_hint);
+        _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+        return;
+      }
+
+      // coordinates
+      var coordinates = [_selectedPosition.latitude, _selectedPosition.longitude];
+      reqEntity.coordinates = coordinates;
+
+      // isNewBee: 新人可以领
+      reqEntity.isNewBee = _isNewBee;
+
+      // range
+      var rangeValue = Decimal.tryParse(_rangeController?.text ?? '0') ?? Decimal.zero;
+      if (rangeValue <= Decimal.zero) {
+        Fluttertoast.showToast(msg: '请填写可领取的距离！');
+
+        _focusKey = _rangeKey;
+        _validController.add('');
+
+        return;
+      } else if (hynValue > Decimal.zero && hynValue <= Decimal.parse('1000')) {
+        Fluttertoast.showToast(msg: '最大距离不能超过100千米');
+        return;
+      }
+      reqEntity.range = rangeValue.toDouble();
+    }
+
+    print('[$runtimeType] _confirmDataAction, 2, reqEntity.toJson:${reqEntity.toJson()}');
+
+    showSendAlertView(reqEntity);
   }
 
-  static Future<bool> showSendAlertView<T>(
-    BuildContext context,
+  Future<bool> showSendAlertView<T>(
+    RpShareReqEntity reqEntity,
   ) {
     return showDialog<bool>(
       barrierDismissible: true,
-      // 传入 context
       context: context,
-      // 构建 Dialog 的视图
       builder: (context) {
-        return _buildAlertView();
+        return RpShareConfirmPage(
+          reqEntity: reqEntity,
+        );
       },
     );
   }
 
-  static Widget _buildAlertView({
-    String hynAmount = '0',
-    String rpAmount = '0',
-    String hynFee = '0',
-    String rpFee = '0',
-  }) {
-    return RpShareConfirmPage(
-      hynAmount: hynAmount,
-      rpAmount: rpAmount,
-      hynFee: hynFee,
-      rpFee: rpFee,
-    );
-  }
-
-  String _maxLengthLimit(TextEditingController controller, {bool isDetailAddress = false}) {
+  String _maxLengthLimit(TextEditingController controller, {int length = 20}) {
     String text = controller.text ?? "";
-    if (isDetailAddress) {
-      if (text.length > 200) {
-        text = text.substring(0, 200);
-      }
-    } else {
-      if (text.length > 50) {
-        text = text.substring(0, 50);
-      }
+    if (text.length > length) {
+      text = text.substring(0, length);
     }
     return text;
   }

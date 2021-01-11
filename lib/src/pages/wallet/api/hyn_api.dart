@@ -29,9 +29,9 @@ class HYNApi {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
     }
     if (gasLimit == null) {
-      final client = WalletUtil.getWeb3Client(isAtlasTrans);
-      var walletAddress =
-          WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
+      // final client = WalletUtil.getWeb3Client(isAtlasTrans);
+      // var walletAddress =
+      //     WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
       if (message == null || message?.type == MessageType.typeNormal) {
         gasLimit = 21000;
       } else {
@@ -42,7 +42,7 @@ class HYNApi {
         gasLimit = 100000;
       }
     }
-    final txHash = await wallet.signEthTransaction(
+    final rawTx = await wallet.signEthTransaction(
       password: password,
       toAddress: toAddress,
       gasPrice: BigInt.parse(gasPrice),
@@ -54,8 +54,8 @@ class HYNApi {
       nonce: nonce,
     );
 
-    logger.i('HYN transaction committed，txHash $txHash');
-    return txHash;
+    logger.i('HYN transaction committed，rawTx $rawTx');
+    return rawTx;
   }
 
   static Future<String> sendTransferHYN(String password, localWallet.Wallet wallet,
@@ -100,8 +100,14 @@ class HYNApi {
   }
 
   static Future<String> sendTransferHYNHrc30(
-      String password, BigInt amount, String toAddress, localWallet.Wallet wallet, String contractAddress,
-      {String gasPrice, int gasLimit}) async {
+    String password,
+    BigInt amount,
+    String toAddress,
+    localWallet.Wallet wallet,
+    String contractAddress, {
+    String gasPrice,
+    int gasLimit,
+  }) async {
     if (gasPrice == null) {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
     }
@@ -119,6 +125,36 @@ class HYNApi {
 
     logger.i('HYN transaction committed，value(==amount):$amount, txHash $txHash ');
     return txHash;
+  }
+
+  static Future<String> signTransferHYNHrc30(
+    String password,
+    BigInt amount,
+    String toAddress,
+    localWallet.Wallet wallet,
+    String contractAddress, {
+    String gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    if (gasPrice == null) {
+      gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
+    }
+    if (gasLimit == null) {
+      gasLimit = 100000;
+    }
+    final rawTx = await wallet.signHYNHrc30Transaction(
+      contractAddress: contractAddress,
+      password: password,
+      gasPrice: BigInt.parse(gasPrice),
+      value: amount,
+      toAddress: toAddress,
+      gasLimit: gasLimit,
+      nonce: nonce,
+    );
+
+    logger.i('HYN transaction committed，value(==amount):$amount, rawTx $rawTx ');
+    return rawTx;
   }
 
   static Future<String> transCreateAtlasNode(
@@ -600,7 +636,7 @@ class HYNApi {
   }
 
   static bool isHynHrc30ContractAddress(String contractAddress) {
-    contractAddress = contractAddress?.toLowerCase()??'';
+    contractAddress = contractAddress?.toLowerCase() ?? '';
     if (contractAddress == WalletConfig.hynRPHrc30Address.toLowerCase() ||
         contractAddress == WalletConfig.hynStakingContractAddress.toLowerCase() ||
         contractAddress == "0x0000000000000000000000000000000000000000") {
@@ -609,24 +645,25 @@ class HYNApi {
     return false;
   }
 
-  static bool isGasFeeEnough(BigInt gasPrice, int gasLimit,{BigInt stakingAmount}) {
-    var hynCoin = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol(SupportedTokens.HYN_Atlas.symbol);
+  static bool isGasFeeEnough(BigInt gasPrice, int gasLimit, {BigInt stakingAmount}) {
+    var hynCoin =
+        WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol(SupportedTokens.HYN_Atlas.symbol);
     var gasFees = gasPrice * BigInt.from(gasLimit);
-    if(stakingAmount == null){
+    if (stakingAmount == null) {
       stakingAmount = BigInt.from(0);
     }
-    if((hynCoin.balance - stakingAmount) < gasFees){
-      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).insufficient_gas_fee,gravity: ToastGravity.CENTER);
+    if ((hynCoin.balance - stakingAmount) < gasFees) {
+      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).insufficient_gas_fee, gravity: ToastGravity.CENTER);
       return false;
     }
     return true;
   }
 
   static String getHynSymbol(String contractAddress) {
-    contractAddress = contractAddress?.toLowerCase()??'';
-    if(contractAddress == WalletConfig.hynRPHrc30Address.toLowerCase()){
+    contractAddress = contractAddress?.toLowerCase() ?? '';
+    if (contractAddress == WalletConfig.hynRPHrc30Address.toLowerCase()) {
       return SupportedTokens.HYN_RP_HRC30.symbol;
-    }else{
+    } else {
       return SupportedTokens.HYN_Atlas.symbol;
     }
   }
