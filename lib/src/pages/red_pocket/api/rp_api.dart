@@ -19,6 +19,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_config_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
@@ -709,4 +710,44 @@ class RPApi {
       options: RequestOptions(contentType: "application/json"),
     );
   }
+
+  // 新人/位置红包配置
+  Future<RpShareConfigEntity> getNewBeeConfig(
+      String address) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/new-bee/$address/config',
+      EntityFactory<RpShareConfigEntity>((json) {
+        return RpShareConfigEntity.fromJson(json);
+      }),
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+
+  Future<List<RpStakingInfo>> getRPStakingInfoList(
+      String address, {
+        int page = 1,
+        int size = 20,
+      }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/staking/$address',
+      EntityFactory<List<RpStakingInfo>>((json) {
+        var data = (json['data'] as List).map((map) {
+          return RpStakingInfo.fromJson(map);
+        }).toList();
+
+        return data;
+      }),
+      params: {
+        'page': page,
+        'size': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
 }

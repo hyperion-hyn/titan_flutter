@@ -29,9 +29,9 @@ RpShareDetailEntity _$RpShareDetailEntityFromJson(Map<String, dynamic> json) {
   return RpShareDetailEntity(
     json['address'] as String,
     json['avatar'] as String,
-    json['hynAmount'] as int,
+    json['hynAmount'] as String,
     json['isBest'] as bool,
-    json['rpAmount'] as int,
+    json['rpAmount'] as String,
     json['username'] as String,
   );
 }

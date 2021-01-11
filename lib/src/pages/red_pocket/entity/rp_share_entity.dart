@@ -31,13 +31,13 @@ part 'rp_share_entity.g.dart';
   String avatar;
 
   @JsonKey(name: 'hynAmount')
-  int hynAmount;
+  String hynAmount;
 
   @JsonKey(name: 'isBest')
   bool isBest;
 
   @JsonKey(name: 'rpAmount')
-  int rpAmount;
+  String rpAmount;
 
   @JsonKey(name: 'username')
   String username;
