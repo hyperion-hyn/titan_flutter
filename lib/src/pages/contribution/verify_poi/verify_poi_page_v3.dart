@@ -159,7 +159,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
     _positionBloc.listen((state) {
       if (state is PostConfirmPoiDataResultSuccessState) {
 
-        _finishCheckIn(S.of(context).thank_you_for_contribute_data);
+        // _finishCheckIn(S.of(context).thank_you_for_contribute_data);
 
         Application.router.navigateTo(
             context,
@@ -175,7 +175,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
                 actions: <Widget>[
                   FlatButton(
                       onPressed: () {
-                        _finishCheckIn(S.of(context).thank_you_for_contribute_data);
+                        // _finishCheckIn(S.of(context).thank_you_for_contribute_data);
 
                         Navigator.of(context)..pop()..pop();
                       },

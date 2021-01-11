@@ -10,7 +10,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Stream<AuthState> mapEventToState(
     AuthEvent event,
   ) async* {
-    // TODO: Add Logic
     if (event is SetBioAuthEvent) {
       yield SetBioAuthState(
         event.biometricType,

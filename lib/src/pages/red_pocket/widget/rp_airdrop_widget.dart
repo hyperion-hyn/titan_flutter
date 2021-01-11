@@ -681,7 +681,6 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 onTap: () {
                   //_mockReqTime();
                   // debounceLater.debounceInterval(() {
-                  //   print('xxx 1');
                   //   AssetsAudioPlayer.playAndForget(rewardAudio);
                   // }, t: 1000, runImmediately: false);
                 },
@@ -714,9 +713,14 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                             ),
                             TextSpan(
                               text:
-                                  ' $levelAirdropRoundText ( $levelTotalAmount RP)',
+                              ' $levelAirdropRoundText',
                               style: TextStyle(fontSize: 13),
-                            )
+                            ),
+                            TextSpan(
+                              text:
+                              ' ( $levelTotalAmount RP)',
+                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold,),
+                            ),
                           ])),
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
@@ -746,9 +750,14 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                               ),
                               TextSpan(
                                 text:
-                                    ' $luckyAirdropRoundText ( $luckyTotalAmount RP)',
+                                    ' $luckyAirdropRoundText',
                                 style: TextStyle(fontSize: 13),
-                              )
+                              ),
+                              TextSpan(
+                                text:
+                                ' ( $luckyTotalAmount RP)',
+                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold,),
+                              ),
                             ])),
                           ),
                           activeWallet != null

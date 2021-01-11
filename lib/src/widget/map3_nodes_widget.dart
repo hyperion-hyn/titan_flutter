@@ -18,7 +18,6 @@ class Map3NodesWidget extends StatefulWidget {
 class _Map3NodesWidgetState extends State<Map3NodesWidget> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     print('[Map3NodesWidget] points: ${widget.points}');
   }

@@ -28,7 +28,6 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
 
   @override
   Future<void> onCreated() async {
-    // TODO: implement onCreated
     super.onCreated();
     authConfigModel = await AuthUtil.getAuthConfigByWallet(
       widget._wallet,
@@ -38,7 +37,6 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getAvailableBiometrics();
   }

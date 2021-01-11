@@ -97,7 +97,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
           _currentLevelRule?.holdingStr ?? '0',
         ) ??
         Decimal.zero;
-    var level = 0;
+    var level = _currentLevel;
 
     // 1.先和当前量级需持币比较
     if ((needHolding > Decimal.zero) && (remainHolding > Decimal.zero) && (remainHolding >= needHolding)) {
@@ -120,7 +120,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
         level = 0;
       }
     }
-    // print('[_getLevelByHolding] inputValue: $_inputValue， level：$level');
+    print('[_getLevelByHolding] inputValue: $_inputValue， level：$level');
 
     return level;
   }
@@ -160,6 +160,10 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    var holdingStr = _currentLevelRule?.holdingStr ?? '0';
+    var holdingStrTips = S.of(context).rp_withdraw_tips_func(holdingStr);
+
     return Scaffold(
       appBar: BaseAppBar(
         baseTitle: S.of(context).rp_retrive_holding,
@@ -329,11 +333,13 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                               SizedBox(
                                 width: 6,
                               ),
-                              Text(
-                                '为保证当前量级不下降，请保持持币量大于${_currentLevelRule?.holdingStr ?? '0'}RP',
-                                style: TextStyle(
-                                  color: HexColor('#333333'),
-                                  fontSize: 12,
+                              Expanded(
+                                child: Text(
+                                  holdingStrTips,
+                                  style: TextStyle(
+                                    color: HexColor('#333333'),
+                                    fontSize: 12,
+                                  ),
                                 ),
                               )
                             ],

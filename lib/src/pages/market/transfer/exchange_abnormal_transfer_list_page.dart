@@ -42,14 +42,12 @@ class ExchangeAbnormalTransferListPageState
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loadDataBloc.add(LoadingEvent());
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _loadDataBloc.close();
   }
@@ -368,6 +366,5 @@ class ExchangeAbnormalTransferListPageState
   }
 
   @override
-// TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }

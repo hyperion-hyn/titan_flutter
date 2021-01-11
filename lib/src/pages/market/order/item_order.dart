@@ -31,7 +31,6 @@ class OrderItemState extends State<OrderItem> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if ((widget?._order?.market?.split('/')?.length ?? -1) == 2) {
       _base = widget._order.market.split('/')[0];

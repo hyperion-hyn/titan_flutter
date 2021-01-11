@@ -61,7 +61,6 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
 
   List<LevelCounts> get _levelCountList => _rpStatistics?.levelCounts ?? [];
 
-  // todo: 有空加开关
   bool _isOpenLevelCounts = false;
 
   Decimal get _currentHoldingValue =>
@@ -693,7 +692,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
                             Row(
                               children: <Widget>[
                                 Text(
-                                  '${levelValueToLevelName(levelTo)} 级',
+                                  '${levelValueToLevelName(levelTo)} ${S.of(context).level}',
                                   style: TextStyle(
                                     color: HexColor("#333333"),
                                     fontSize: 14,
@@ -706,7 +705,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
                               height: 6,
                             ),
                             Text(
-                              '${levelValueToLevelName(levelFrom)}级 -> ${levelValueToLevelName(levelTo)}级',
+                              '${levelValueToLevelName(levelFrom)} ${S.of(context).level} -> ${levelValueToLevelName(levelTo)} ${S.of(context).level}',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: HexColor('#999999'),

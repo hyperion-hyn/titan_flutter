@@ -70,7 +70,6 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
               _mnemonic = await WalletUtil.makeMnemonic();
-//              print('xxx $_mnemonic');
 //              return ;
 
 //              ripple scissors kick mammal hire column oak again sun offer wealth tomorrow wagon turn fatal  //常用的测试网
@@ -706,7 +705,7 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
               var gas = await WalletUtil.ethGasPrice();
-              logger.i('-油费是 $gas ${gas / BigInt.from(TokenUnit.G_WEI)}');
+              logger.i('-油费是 ${gas / BigInt.from(TokenUnit.G_WEI)} GWEI');
             },
             child: Text('查看以太坊油费'),
           ),

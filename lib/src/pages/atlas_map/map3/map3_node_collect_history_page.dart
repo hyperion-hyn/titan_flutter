@@ -50,6 +50,7 @@ class _Map3NodeCollectHistoryState extends DataListState<Map3NodeCollectHistoryP
       backgroundColor: Colors.white,
       appBar: BaseAppBar(
         baseTitle: S.of(context).extract_records,
+        showBottom: true,
       ),
       body: LoadDataContainer(
         bloc: loadDataBloc,

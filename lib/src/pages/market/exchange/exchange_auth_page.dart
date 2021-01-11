@@ -31,13 +31,11 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
 
   @override
   Future<void> onCreated() async {
-    // TODO: implement onCreated
     super.onCreated();
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((callback) {
       ///

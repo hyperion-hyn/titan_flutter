@@ -70,9 +70,9 @@ class HYNApi {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
     }
     if (gasLimit == null) {
-      final client = WalletUtil.getWeb3Client(isAtlasTrans);
-      var walletAddress =
-          WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
+      // final client = WalletUtil.getWeb3Client(isAtlasTrans);
+      // var walletAddress =
+      //     WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
       if (message == null || message?.type == MessageType.typeNormal) {
         gasLimit = 21000;
       } else {

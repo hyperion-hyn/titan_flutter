@@ -248,7 +248,7 @@ class _RpFriendListState extends BaseState<RpFriendListPage> {
                           : SizedBox(),
                     ),
                     Text(
-                      ' $inviterLevel 级',
+                      ' $inviterLevel ${S.of(context).level}',
                       style: TextStyle(
                         color: HexColor("#999999"),
                         fontSize: 12,
@@ -366,7 +366,7 @@ class _RpFriendListState extends BaseState<RpFriendListPage> {
                             : SizedBox(),
                       ),
                       Text(
-                        ' $level 级',
+                        ' $level ${S.of(context).level}',
                         style: TextStyle(
                           color: HexColor("#999999"),
                           fontSize: 12,

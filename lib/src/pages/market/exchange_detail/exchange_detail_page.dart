@@ -48,6 +48,7 @@ class ExchangeDetailPage extends StatefulWidget {
   var exchangeType = ExchangeType.SELL;
   var quote = '';
   var base = '';
+  static final int depthLength = 8;
 
   ExchangeDetailPage({
     this.exchangeType,
@@ -488,7 +489,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                   ],
                 ),
                 delegationListView(context, _buyChartList, _sailChartList,
-                    limitNum: 5, clickPrice: (depthPrice) {
+                    limitNum: ExchangeDetailPage.depthLength, clickPrice: (depthPrice) {
                   if (depthPrice == "null") return;
 
                   currentPrice = Decimal.parse(depthPrice);

@@ -115,7 +115,7 @@ class Wallet {
     String contractAddress,
     String ownAddress,
     String approveToAddress,
-      bool isAtlas,
+    bool isAtlas,
   ) async {
     final contract = WalletUtil.getHynErc20Contract(contractAddress);
     final balanceFun = contract.function('allowance');
@@ -185,9 +185,9 @@ class Wallet {
     if (nonce == null) {
       WalletVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
       String fromAddress = walletVo?.wallet?.getEthAccount()?.address ?? "";
-      if(fromAddress != null && fromAddress.isNotEmpty) {
-        nonce = await WalletUtil.getWeb3Client().getTransactionCount(
-            EthereumAddress.fromHex(fromAddress));
+      if (fromAddress != null && fromAddress.isNotEmpty) {
+        nonce = await WalletUtil.getWeb3Client().getTransactionCount(EthereumAddress.fromHex(fromAddress), atBlock: const BlockNum.pending());
+        // nonce = await WalletUtil.getWeb3Client().getTransactionCount(EthereumAddress.fromHex(fromAddress));
       }
 //      String localNonce = await transactionInteractor.getTransactionDBNonce(fromAddress);
 //      if (localNonce != null && int.parse(localNonce) >= nonce) {
@@ -202,16 +202,16 @@ class Wallet {
   /// 如果[message]设置了，则为抵押相关的操作
   /// 如果[type]和[message]都是null，则为ethereum转账
   Future<String> sendEthTransaction(
-      {int id,
-        String password,
-        String toAddress,
-        BigInt value,
-        BigInt gasPrice,
-        int nonce,
-        int gasLimit = 0,
-        int type,
-        web3.IMessage message,
-        bool isAtlasTrans = false}) async {
+      {int optType = OptType.TRANSFER,
+      String password,
+      String toAddress,
+      BigInt value,
+      BigInt gasPrice,
+      int nonce,
+      int gasLimit = 0,
+      int type,
+      web3.IMessage message,
+      bool isAtlasTrans = false}) async {
     /*if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
     }
@@ -234,7 +234,7 @@ class Wallet {
     );*/
 
     //方法内已判断nonce是否为空
-    if(!isAtlasTrans){
+    if (!isAtlasTrans) {
       nonce = await getCurrentWalletNonce(nonce: nonce);
     }
 
@@ -255,7 +255,7 @@ class Wallet {
     if (type == null && responseMap['result'] != null) {
       await transactionInteractor.insertTransactionDB(
           responseMap['result'], toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce,
-          id: id);
+          optType: optType);
     } else if (responseMap['error'] != null) {
       var errorEntity = responseMap['error'];
       throw RPCError(errorEntity['code'], errorEntity['message'], "");
@@ -304,7 +304,7 @@ class Wallet {
   }
 
   Future<String> sendErc20Transaction({
-    int id,
+    int optType = OptType.TRANSFER,
     String contractAddress,
     String password,
     String toAddress,
@@ -346,8 +346,8 @@ class Wallet {
 
     if (txHash != null) {
       await transactionInteractor.insertTransactionDB(
-          txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_HYN_USDT, nonce,
-          id: id, contractAddress: contractAddress);
+          txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ERC20, nonce,
+          optType: optType, contractAddress: contractAddress);
     } else {
       Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).broadcast_exception);
     }
@@ -364,7 +364,6 @@ class Wallet {
     int nonce,
     int gasLimit = 0,
   }) async {
-
     var hynBalance = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('HYN').balance;
 
     var gasFees = BigInt.from(gasLimit) * gasPrice;
@@ -413,7 +412,6 @@ class Wallet {
     final credentials = await client.credentialsFromPrivateKey(privateKey);
     return credentials;
   }
-
 
   Future<String> sendApproveErc20Token({
     String contractAddress,
@@ -509,8 +507,8 @@ class Wallet {
   Future<String> sendHynStakeWithdraw(
     HynContractMethod methodType,
     String password, {
-        BigInt stakingAmount,
-        BigInt gasPrice,
+    BigInt stakingAmount,
+    BigInt gasPrice,
     int gasLimit,
   }) async {
     if (gasPrice == null) {
@@ -519,7 +517,7 @@ class Wallet {
     if (gasLimit == null) {
       gasLimit = 300000;
     }
-    if(!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)){
+    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
       return null;
     }
 
@@ -543,16 +541,14 @@ class Wallet {
   }
 
   Future<String> sendRpHolding(
-      RpHoldingMethod methodType,
-      String password, {
-        BigInt depositAmount,
-        BigInt burningAmount,
-        BigInt withdrawAmount,
-        BigInt gasPrice,
-        int gasLimit,
-      }) async {
-
-
+    RpHoldingMethod methodType,
+    String password, {
+    BigInt depositAmount,
+    BigInt burningAmount,
+    BigInt withdrawAmount,
+    BigInt gasPrice,
+    int gasLimit,
+  }) async {
     if (gasPrice == null) {
       gasPrice = BigInt.from(1 * TokenUnit.G_WEI);
     }
@@ -560,7 +556,7 @@ class Wallet {
       gasLimit = 300000;
     }
     BigInt stakingAmount;
-    if(!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)){
+    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
       return null;
     }
 
@@ -592,17 +588,15 @@ class Wallet {
   }
 
   Future<String> signRpHolding(
-      RpHoldingMethod methodType,
-      String password, {
-        BigInt depositAmount,
-        BigInt burningAmount,
-        BigInt withdrawAmount,
-        BigInt gasPrice,
-        int gasLimit,
-        int nonce,
-      }) async {
-
-
+    RpHoldingMethod methodType,
+    String password, {
+    BigInt depositAmount,
+    BigInt burningAmount,
+    BigInt withdrawAmount,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
     if (gasPrice == null) {
       gasPrice = BigInt.from(1 * TokenUnit.G_WEI);
     }
@@ -610,7 +604,7 @@ class Wallet {
       gasLimit = 300000;
     }
     BigInt stakingAmount;
-    if(!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)){
+    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
       throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas);
     }
 
@@ -798,6 +792,5 @@ class Wallet {
 }
 
 enum HynContractMethod { STAKE, WITHDRAW }
-
 
 enum RpHoldingMethod { DEPOSIT_BURN, WITHDRAW }
