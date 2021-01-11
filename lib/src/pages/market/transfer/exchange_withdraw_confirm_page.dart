@@ -50,58 +50,55 @@ class ExchangeWithdrawConfirmPage extends StatefulWidget {
 
 class _ExchangeWithdrawConfirmPageState
     extends BaseState<ExchangeWithdrawConfirmPage> {
-  var isTransferring = false;
   var isGasFeeLoadingSuccess = false;
-
   int selectedPriceLevel = 1;
+  Decimal _gasFeeByToken = Decimal.zero;
+  String _gasPriceEstimateStr = '';
+  StreamController<Status> _gasFeeController = StreamController.broadcast();
 
-  WalletVo activatedWallet;
-  ActiveQuoteVoAndSign activatedQuoteSign;
+  Decimal _actualAmount = Decimal.zero;
+
   ExchangeApi _exchangeApi = ExchangeApi();
+  var isTransferring = false;
 
-  var gasPriceRecommend;
+  WalletVo get activatedWallet {
+    return WalletInheritedModel.of(context).activatedWallet;
+  }
 
-  StreamController<Status> gasFeeController = StreamController.broadcast();
+  double get quotePrice {
+    return WalletInheritedModel.of(context)
+            .activatedQuoteVoAndSign(widget.coinVo.symbol)
+            ?.quoteVo
+            ?.price ??
+        0;
+  }
 
-  @override
-  void onCreated() async {
-    activatedQuoteSign =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign(
-      widget.coinVo.symbol,
-    );
+  String get quoteSign {
+    return WalletInheritedModel.of(context)
+            .activatedQuoteVoAndSign(widget.coinVo.symbol)
+            ?.sign
+            ?.sign ??
+        '';
+  }
 
-    activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-
+  dynamic get gasPriceRecommend {
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
-      gasPriceRecommend = WalletInheritedModel.of(
+      return WalletInheritedModel.of(
         context,
         aspect: WalletAspect.gasPrice,
       ).btcGasPriceRecommend;
     } else {
-      gasPriceRecommend = WalletInheritedModel.of(
+      return WalletInheritedModel.of(
         context,
         aspect: WalletAspect.gasPrice,
       ).gasPriceRecommend;
     }
   }
 
-  @override
-  void dispose() {
-    gasFeeController?.close();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
-  }
-
   Decimal get gasPrice {
     if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
       return Decimal.fromInt(1 * TokenUnit.G_WEI);
     }
-
     switch (selectedPriceLevel) {
       case 0:
         return gasPriceRecommend.safeLow;
@@ -115,18 +112,21 @@ class _ExchangeWithdrawConfirmPageState
   }
 
   @override
-  Widget build(BuildContext context) {
-    var _quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
-    var _quoteSign = activatedQuoteSign?.sign?.sign;
+  void onCreated() async {}
 
-    var _amountString = '- ${widget.amount} ${widget.coinVo.symbol}';
-    var _amountQuotePriceString =
-        "≈ $_quoteSign ${FormatUtil.formatPrice(double.parse(widget.amount) * _quotePrice)}";
+  @override
+  void dispose() {
+    _gasFeeController?.close();
+    super.dispose();
+  }
 
-    var _gasPriceEstimateStr;
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
+  }
 
-    Decimal _gasFeeByToken = Decimal.fromInt(0);
-
+  initData() {
     try {
       if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
         var hynQuotePrice = WalletInheritedModel.of(context)
@@ -152,8 +152,8 @@ class _ExchangeWithdrawConfirmPageState
             Decimal.parse(hynQuotePrice.toString()) *
             Decimal.parse(widget.withdrawFeeByGas);
 
-        _gasFeeByToken = (Decimal.parse('$gasFeeQuotePrice') /
-            Decimal.parse('$_quotePrice'));
+        _gasFeeByToken =
+            (Decimal.parse('$gasFeeQuotePrice') / Decimal.parse('$quotePrice'));
 
         _gasPriceEstimateStr =
             " ${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GDUST ($gasPriceEstimate HYN)";
@@ -163,9 +163,6 @@ class _ExchangeWithdrawConfirmPageState
                 ?.quoteVo
                 ?.price ??
             0;
-        gasPriceRecommend =
-            WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
-                .gasPriceRecommend;
         var gasLimit = widget.coinVo.symbol == "ETH"
             ? SettingInheritedModel.ofConfig(context)
                 .systemConfigEntity
@@ -182,7 +179,7 @@ class _ExchangeWithdrawConfirmPageState
             Decimal.parse(widget.withdrawFeeByGas);
 
         _gasFeeByToken = Decimal.parse(FormatUtil.truncateDecimalNum(
-          Decimal.parse('$gasFeeQuotePrice') / Decimal.parse('$_quotePrice'),
+          Decimal.parse('$gasFeeQuotePrice') / Decimal.parse('$quotePrice'),
           8,
         ));
 
@@ -191,20 +188,25 @@ class _ExchangeWithdrawConfirmPageState
       }
     } catch (e) {}
 
-    var _actualAmount =
+    _actualAmount =
         Decimal.parse(widget.amount) - Decimal.parse(_gasFeeByToken.toString());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    initData();
 
     return BlocListener<WalletCmpBloc, WalletCmpState>(
       listener: (context, state) {
         if (state is GasPriceState) {
           if (state.status == Status.loading) {
-            gasFeeController.add(Status.loading);
+            _gasFeeController.add(Status.loading);
             isGasFeeLoadingSuccess = false;
           } else if (state.status == Status.success) {
-            gasFeeController.add(Status.success);
+            _gasFeeController.add(Status.success);
             isGasFeeLoadingSuccess = true;
           } else if (state.status == Status.failed) {
-            gasFeeController.add(Status.failed);
+            _gasFeeController.add(Status.failed);
             isGasFeeLoadingSuccess = false;
           }
         }
@@ -227,300 +229,8 @@ class _ExchangeWithdrawConfirmPageState
             body: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          color: Color(0xFFF5F5F5),
-                          padding: const EdgeInsets.only(top: 24, bottom: 24),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                ExtendsIconFont.send,
-                                color: Theme.of(context).primaryColor,
-                                size: 48,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12.0, vertical: 8),
-                                child: Text(
-                                  _amountString,
-                                  style: TextStyle(
-                                      color: Color(0xFF252525),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                              ),
-                              Text(
-                                _amountQuotePriceString,
-                                style: TextStyle(
-                                    color: Color(0xFF9B9B9B), fontSize: 14),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Text(
-                                S.of(context).exchange_from,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: HexColor('#FF999999'),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                                padding: const EdgeInsets.only(top: 4.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Text(
-                                      S.of(context).exchange_account,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: HexColor('#FF333333'),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      softWrap: true,
-                                    )
-                                  ],
-                                )),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Divider(
-                      height: 2,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Text(
-                                S.of(context).exchange_to,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: HexColor('#FF999999'),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                                padding: const EdgeInsets.only(top: 4.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Text(
-                                      "${activatedWallet.wallet.keystore.name}",
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: Color(0xFF333333),
-                                          fontWeight: FontWeight.bold),
-                                      overflow: TextOverflow.ellipsis,
-                                      softWrap: true,
-                                    ),
-                                    Text(
-                                      "(${shortBlockChainAddress(WalletUtil.formatToHynAddrIfAtlasChain(
-                                        widget.coinVo,
-                                        widget.coinVo.address,
-                                      ))})",
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: Color(0xFF999999),
-                                          fontWeight: FontWeight.bold),
-                                      overflow: TextOverflow.ellipsis,
-                                      softWrap: true,
-                                    )
-                                  ],
-                                )),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Divider(
-                      height: 2,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Text(
-                            S.of(context).exchange_network_fee,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: HexColor('#FF999999'),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: _gasPriceEstimateStr != null
-                                        ? Text(
-                                            _gasPriceEstimateStr,
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Color(0xFF333333),
-                                                fontWeight: FontWeight.bold,
-                                                height: 1.6),
-                                          )
-                                        : SizedBox(),
-                                  ),
-                                  StreamBuilder<Status>(
-                                      stream: gasFeeController.stream,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          if (snapshot.data == Status.loading) {
-                                            return SizedBox(
-                                              width: 30,
-                                              height: 10,
-                                              child:
-                                                  CupertinoActivityIndicator(),
-                                            );
-                                          } else if (snapshot.data ==
-                                              Status.failed) {
-                                            return InkWell(
-                                              onTap: () {
-                                                BlocProvider.of<WalletCmpBloc>(
-                                                        context)
-                                                    .add(UpdateGasPriceEvent());
-                                              },
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(bottom: 0.0),
-                                                child: Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.autorenew,
-                                                      size: 20,
-                                                      color: Colors.blue,
-                                                    ),
-                                                    Text(
-                                                      '点击刷新',
-                                                      style: TextStyle(
-                                                        color: Colors.blue,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        }
-                                        return SizedBox();
-                                      })
-                                ],
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 4.0),
-                                child: widget.coinVo.symbol != 'HYN'
-                                    ? Text(
-                                        '≈ $_gasFeeByToken ${widget.coinVo.symbol}',
-                                        style: TextStyle(
-                                          color: DefaultColors.color999,
-                                          fontSize: 13,
-                                        ),
-                                      )
-                                    : SizedBox(),
-                              ),
-                              Text(
-                                S.of(context).fee_deducted_offset_by_symbol(
-                                    widget.coinVo.symbol),
-                                style: TextStyle(
-                                  color: DefaultColors.color999,
-                                  fontSize: 12,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Divider(
-                      height: 2,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Text(
-                                S.of(context).exchange_withdraw_actual_amount,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: HexColor('#FF999999'),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                                padding: const EdgeInsets.only(top: 4.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Text(
-                                      '$_actualAmount ${widget.coinVo.symbol}',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: HexColor('#FF333333'),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      softWrap: true,
-                                    )
-                                  ],
-                                )),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  Divider(
-                    height: 2,
-                  ),
+                  info(),
+                  detail(),
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
                     constraints: BoxConstraints.expand(height: 48),
@@ -563,6 +273,312 @@ class _ExchangeWithdrawConfirmPageState
             ),
           );
         },
+      ),
+    );
+  }
+
+  info() {
+    var _amountString = '- ${widget.amount} ${widget.coinVo.symbol}';
+    var _amountQuotePriceString =
+        "≈ $quoteSign ${FormatUtil.formatPrice(double.parse(widget.amount) * quotePrice)}";
+
+    return Column(
+      children: [
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                color: Color(0xFFF5F5F5),
+                padding: const EdgeInsets.only(top: 24, bottom: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      ExtendsIconFont.send,
+                      color: Theme.of(context).primaryColor,
+                      size: 48,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12.0, vertical: 8),
+                      child: Text(
+                        _amountString,
+                        style: TextStyle(
+                            color: Color(0xFF252525),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20),
+                      ),
+                    ),
+                    Text(
+                      _amountQuotePriceString,
+                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      S.of(context).exchange_from,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: HexColor('#FF999999'),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            S.of(context).exchange_account,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: HexColor('#FF333333'),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                          )
+                        ],
+                      )),
+                ],
+              )
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Divider(
+            height: 2,
+          ),
+        ),
+      ],
+    );
+  }
+
+  detail() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      S.of(context).exchange_to,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: HexColor('#FF999999'),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            "${activatedWallet.wallet.keystore.name}",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Color(0xFF333333),
+                                fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                          ),
+                          Text(
+                            "(${shortBlockChainAddress(WalletUtil.formatToHynAddrIfAtlasChain(
+                              widget.coinVo,
+                              widget.coinVo.address,
+                            ))})",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Color(0xFF999999),
+                                fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                          )
+                        ],
+                      )),
+                ],
+              )
+            ],
+          ),
+        ),
+        divider(),
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Text(
+                  S.of(context).exchange_network_fee,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: HexColor('#FF999999'),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: _gasPriceEstimateStr != null
+                              ? Text(
+                                  _gasPriceEstimateStr,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0xFF333333),
+                                      fontWeight: FontWeight.bold,
+                                      height: 1.6),
+                                )
+                              : SizedBox(),
+                        ),
+                        StreamBuilder<Status>(
+                            stream: _gasFeeController.stream,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                if (snapshot.data == Status.loading) {
+                                  return SizedBox(
+                                    width: 30,
+                                    height: 10,
+                                    child: CupertinoActivityIndicator(),
+                                  );
+                                } else if (snapshot.data == Status.failed) {
+                                  return InkWell(
+                                    onTap: () {
+                                      BlocProvider.of<WalletCmpBloc>(context)
+                                          .add(UpdateGasPriceEvent());
+                                    },
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 0.0),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.autorenew,
+                                            size: 20,
+                                            color: Colors.blue,
+                                          ),
+                                          Text(
+                                            '点击刷新',
+                                            style: TextStyle(
+                                              color: Colors.blue,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                              return SizedBox();
+                            })
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: widget.coinVo.symbol != 'HYN'
+                          ? Text(
+                              '≈ $_gasFeeByToken ${widget.coinVo.symbol}',
+                              style: TextStyle(
+                                color: DefaultColors.color999,
+                                fontSize: 13,
+                              ),
+                            )
+                          : SizedBox(),
+                    ),
+                    Text(
+                      S
+                          .of(context)
+                          .fee_deducted_offset_by_symbol(widget.coinVo.symbol),
+                      style: TextStyle(
+                        color: DefaultColors.color999,
+                        fontSize: 12,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        divider(),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      S.of(context).exchange_withdraw_actual_amount,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: HexColor('#FF999999'),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            '$_actualAmount ${widget.coinVo.symbol}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: HexColor('#FF333333'),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                          )
+                        ],
+                      )),
+                ],
+              )
+            ],
+          ),
+        ),
+        divider(),
+      ],
+    );
+  }
+
+  divider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Divider(
+        height: 2,
       ),
     );
   }
