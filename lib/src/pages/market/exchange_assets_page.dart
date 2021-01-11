@@ -139,11 +139,11 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                 child: Row(
                   children: [
                     Text(
-                      '你的快捷充USDT交易正在等待区块链确认...',
+                      S.of(context).charge_usdt_waiting_confirmation,
                       style: TextStyle(fontSize: 12),
                     ),
                     Spacer(),
-                    Text('查看', style: TextStyle(fontSize: 12, color: Colors.blue)),
+                    Text(S.of(context).check, style: TextStyle(fontSize: 12, color: Colors.blue)),
                   ],
                 ),
               ),
