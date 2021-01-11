@@ -713,8 +713,7 @@ class RPApi {
   }
 
   // 新人/位置红包配置
-  Future<RpShareConfigEntity> getNewBeeConfig(
-      String address) async {
+  Future<RpShareConfigEntity> getNewBeeConfig(String address) async {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/new-bee/$address/config',
       EntityFactory<RpShareConfigEntity>((json) {
@@ -726,12 +725,12 @@ class RPApi {
     );
   }
 
-
+  // 我领取的新人/位置红包配置
   Future<List<RpShareOpenEntity>> getShareGetList(
-      String address, {
-        int page = 1,
-        int size = 20,
-      }) async {
+    String address, {
+    int page = 1,
+    int size = 20,
+  }) async {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/new-bee/$address/get/list',
       EntityFactory<List<RpShareOpenEntity>>((json) {
@@ -750,12 +749,13 @@ class RPApi {
       ),
     );
   }
-  
+
+  // 我发送的新人/位置红包配置
   Future<List<RpShareSendEntity>> getShareSendList(
-      String address, {
-        int page = 1,
-        int size = 20,
-      }) async {
+    String address, {
+    int page = 1,
+    int size = 20,
+  }) async {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/new-bee/$address/send/list',
       EntityFactory<List<RpShareSendEntity>>((json) {
@@ -774,5 +774,4 @@ class RPApi {
       ),
     );
   }
-
 }

@@ -13,10 +13,6 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class RpShareConfirmPage extends StatelessWidget {
-  // final String hynAmount;
-  // final String rpAmount;
-  // final String hynFee;
-  // final String rpFee;
 
   final RpShareReqEntity reqEntity;
   final ScrollController _scrollController = ScrollController();
