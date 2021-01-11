@@ -442,7 +442,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
         _divider(),
         _item(
           index: 3,
-          title: '自定义',
+          title: S.of(context).customize,
           waite: '',
           borderRadius: BorderRadius.only(topRight: Radius.circular(30), bottomRight: Radius.circular(30)),
         ),
@@ -506,11 +506,11 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _textField(_gasPriceController, "请输入Gas Price", "GWEI", _gasPriceFormKey, 'Gas Price'),
+                _textField(_gasPriceController, S.of(context).please_input_gas_price, "GWEI", _gasPriceFormKey, 'Gas Price'),
                 SizedBox(
                   height: 8,
                 ),
-                _textField(_nonceController, "请输入 Nonce（可选）", "", _nonceFormKey, 'Nonce 值'),
+                _textField(_nonceController, S.of(context).please_enter_nonce_optional, "", _nonceFormKey, S.of(context).nonce_value),
               ],
             ),
         ],
@@ -546,15 +546,15 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                   }
 
                   if (Decimal.tryParse(textStr) == null || textStr.length == 0) {
-                    return '请输入Gas Price';
+                    return S.of(context).please_input_gas_price;
                   }
 
                   if (gasPriceRecommend.safeLow > _gasPrice) {
-                    return 'Gas Price过低，将会影响交易确认时间';
+                    return S.of(context).gas_low_affect_confirmation;
                   }
 
                   if (_gasPrice > gasPriceRecommend.fast) {
-                    return 'Gas Price过高，将会造成矿工费浪费';
+                    return S.of(context).gas_high_cause_waste_fees;
                   }
 
                   return null;
@@ -627,7 +627,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
   Future _transferAction() async {
     if (selectedPriceLevel == 3 && _gasPrice <= Decimal.zero) {
-      UiUtil.toast('请输入Gas Price');
+      UiUtil.toast(S.of(context).please_input_gas_price);
       return;
     }
 
