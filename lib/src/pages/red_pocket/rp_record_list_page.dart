@@ -117,7 +117,6 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
   }
 
   Widget _itemBuilder(RpOpenRecordEntity model) {
-
     var luckState = RpLuckState.values[(model?.luck ?? 0)];
     var rpInfoModel = getRpLuckStateInfo(model);
     var desc = rpInfoModel.desc;
@@ -282,6 +281,16 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
     _countRequest = 0;
 
     try {
+      if (widget.rpType == RedPocketType.SHARE) {
+        var res = await _rpApi.getShareGetList(
+          _address,
+          page: 0,
+          size: 20,
+        );
+        return;
+      }
+
+
       var netData = await _rpApi.getMyRpRecordList(
         _address,
         pagingKey: _currentPageKey,
@@ -291,11 +300,6 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
         _dataList = filterRpOpenDataList(netData.data);
-
-        // for (var key in _filterDataMap.keys) {
-        //   var value = _filterDataMap[key];
-        //   print("[$runtimeType] _filterDataList.key:${key}, value.length:${value.length}");
-        // }
 
         if (mounted) {
           setState(() {
@@ -325,6 +329,15 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
     }
 
     try {
+      if (widget.rpType == RedPocketType.SHARE) {
+        var res = await _rpApi.getShareGetList(
+          _address,
+          page: 1,
+          size: 20,
+        );
+        return;
+      }
+
       var netData = await _rpApi.getMyRpRecordList(
         _address,
         pagingKey: _currentPageKey,
@@ -352,111 +365,4 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
       _loadDataBloc.add(LoadMoreFailEvent());
     }
   }
-
-  /*
-  void getNetworkDataOld() async {
-    _currentPageKey = null;
-    _countRequest = 0;
-
-    try {
-      var netData = await _rpApi.getMyRpRecordList(
-        _address,
-        pagingKey: _currentPageKey,
-        rpType: widget.rpType,
-      );
-
-      if (netData?.data?.isNotEmpty ?? false) {
-        _currentPageKey = netData.pagingKey;
-        _dataList = filterRpOpenDataList(netData.data);
-      }
-
-      if ((_filterDataList?.length ?? 0) < 15) {
-        if (_isNotEmptyKey) {
-          getMoreNetworkData();
-        } else {
-          if (_filterDataList.isNotEmpty) {
-            if (mounted) {
-              setState(() {
-                _loadDataBloc.add(RefreshSuccessEvent());
-              });
-            }
-          } else {
-            if (mounted) {
-              setState(() {
-                _loadDataBloc.add(LoadEmptyEvent());
-              });
-            }
-          }
-        }
-      } else {
-        if (mounted) {
-          setState(() {
-            _loadDataBloc.add(RefreshSuccessEvent());
-          });
-        }
-      }
-    } catch (e) {
-      _loadDataBloc.add(LoadFailEvent());
-    }
-  }
-
-  void getMoreNetworkDataOld() async {
-    _countRequest += 1;
-
-    print("[$runtimeType] getNetworkData,_isNotEmptyKey:$_isNotEmptyKey, _countRequest:$_countRequest");
-
-    if (!_isNotEmptyKey) {
-      _loadDataBloc.add(LoadMoreEmptyEvent());
-      return;
-    }
-
-    try {
-      var netData = await _rpApi.getMyRpRecordList(
-        _address,
-        pagingKey: _currentPageKey,
-        rpType: widget.rpType,
-      );
-
-      var isNotEmpty = netData?.data?.isNotEmpty ?? false;
-      if (isNotEmpty) {
-        _currentPageKey = netData.pagingKey;
-        _dataList.addAll(filterRpOpenDataList(netData.data));
-      }
-
-      if (!_isNotEmptyKey) {
-        if (_filterDataList?.isEmpty ?? true) {
-          if (mounted) {
-            setState(() {
-              _loadDataBloc.add(LoadEmptyEvent());
-            });
-          }
-        } else {
-          if (mounted) {
-            setState(() {
-              _loadDataBloc.add(LoadMoreEmptyEvent());
-            });
-          }
-
-          if (mounted) {
-            setState(() {
-              _loadDataBloc.add(RefreshSuccessEvent());
-            });
-          }
-        }
-      } else {
-        if ((_filterDataList?.length ?? 0) < 15) {
-          getMoreNetworkData();
-        } else {
-          if (mounted) {
-            setState(() {
-              _loadDataBloc.add(LoadingMoreSuccessEvent());
-            });
-          }
-        }
-      }
-    } catch (e) {
-      _loadDataBloc.add(LoadMoreFailEvent());
-    }
-  }
-  */
 }

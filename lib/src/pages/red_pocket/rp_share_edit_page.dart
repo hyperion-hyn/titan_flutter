@@ -122,7 +122,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     });
 
     _addMarkerAndMoveToPoi();
-    
+
     if (context != null) {
       BlocProvider.of<RedPocketBloc>(context).add(UpdateShareConfigEvent());
     }
@@ -1077,11 +1077,8 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
       if (rangeValue <= Decimal.zero) {
         Fluttertoast.showToast(msg: '请填写可领取的距离！');
 
-        _focusKey = _rangeKey;
-        _validController.add('');
-
         return;
-      } else if (hynValue > Decimal.zero && hynValue <= Decimal.parse('1000')) {
+      } else if (hynValue > Decimal.zero && hynValue > Decimal.parse('100')) {
         Fluttertoast.showToast(msg: '最大距离不能超过100千米');
         return;
       }

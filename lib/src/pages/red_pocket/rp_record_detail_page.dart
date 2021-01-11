@@ -1102,6 +1102,7 @@ enum RedPocketType {
   LUCKY,
   LEVEL,
   PROMOTION,
+  SHARE,
 }
 
 enum RedPocketShareType {

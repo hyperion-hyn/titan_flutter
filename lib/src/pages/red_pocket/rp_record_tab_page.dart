@@ -19,7 +19,7 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: BaseAppBar(
           baseTitle: S.of(context).my_redpocket,
@@ -91,13 +91,14 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
                             S.of(context).promotion_rp,
                           ),
                         ),
+                        Tab(
+                          child: Text(
+                            S.of(context).share,
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: Container(),
-                  )
                 ],
               ),
             ),
@@ -107,6 +108,7 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
               RpRecordListPage(rpType: RedPocketType.LUCKY,),
               RpRecordListPage(rpType: RedPocketType.LEVEL,),
               RpRecordListPage(rpType: RedPocketType.PROMOTION,),
+              RpRecordListPage(rpType: RedPocketType.SHARE,),
             ],
           ),
         ),
