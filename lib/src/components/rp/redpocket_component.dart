@@ -4,6 +4,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_config_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'bloc/bloc.dart';
 import 'package:nested/nested.dart';
@@ -35,6 +36,7 @@ class _RedPocketState extends BaseState<_RedPocketManager> {
   RpMyLevelInfo _myLevelInfo;
   RPStatistics _rpStatistics;
   RpPromotionRuleEntity _rpPromotionRule;
+  RpShareConfigEntity _rpShareConfig;
 
   @override
   void onCreated() {
@@ -58,6 +60,8 @@ class _RedPocketState extends BaseState<_RedPocketManager> {
           _rpStatistics = state.rpStatistics;
         }else if (state is UpdatePromotionRuleState) {
           _rpPromotionRule = state.rpPromotionRule;
+        } else if (state is UpdateShareConfigState) {
+          _rpShareConfig = state.rpShareConfig;
         } else if (state is ClearMyLevelInfoState) {
           _myLevelInfo = null;
         }
@@ -68,6 +72,7 @@ class _RedPocketState extends BaseState<_RedPocketManager> {
             rpMyLevelInfo: _myLevelInfo,
             rpStatistics: _rpStatistics,
             rpPromotionRule: _rpPromotionRule,
+            rpShareConfig: _rpShareConfig,
             child: widget.child,
           );
         },
@@ -97,6 +102,11 @@ class _RedPocketState extends BaseState<_RedPocketManager> {
           BlocProvider.of<RedPocketBloc>(context)
               .add(UpdatePromotionRuleEvent(address: _address));
         }
+
+        if (context != null) {
+          BlocProvider.of<RedPocketBloc>(context)
+              .add(UpdateShareConfigEvent(address: _address));
+        }
       }
     });
 
@@ -110,18 +120,21 @@ enum RedPocketAspect {
   levelInfo,
   statistics,
   promotion,
+  config,
 }
 
 class RedPocketInheritedModel extends InheritedModel<RedPocketAspect> {
   final RpMyLevelInfo rpMyLevelInfo;
   final RPStatistics rpStatistics;
   final RpPromotionRuleEntity rpPromotionRule;
+  final RpShareConfigEntity rpShareConfig;
 
   const RedPocketInheritedModel({
     Key key,
     @required this.rpMyLevelInfo,
     @required this.rpStatistics,
     @required this.rpPromotionRule,
+    @required this.rpShareConfig,
     @required Widget child,
   }) : super(key: key, child: child);
 
@@ -146,6 +159,8 @@ class RedPocketInheritedModel extends InheritedModel<RedPocketAspect> {
         (rpStatistics != oldWidget.rpStatistics &&
             dependencies.contains(RedPocketAspect.statistics)) ||
         (rpPromotionRule != oldWidget.rpPromotionRule &&
-            dependencies.contains(RedPocketAspect.promotion));
+            dependencies.contains(RedPocketAspect.promotion)) ||
+        (rpShareConfig != oldWidget.rpShareConfig &&
+            dependencies.contains(RedPocketAspect.config));
   }
 }

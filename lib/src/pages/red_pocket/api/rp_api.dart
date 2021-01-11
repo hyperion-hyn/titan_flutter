@@ -632,14 +632,14 @@ class RPApi {
   }
 
   // 新人/位置红包信息
-  Future<RpShareInfoEntity> getNewBeeInfo(
+  Future<RpShareSendEntity> getNewBeeInfo(
     String address, {
     String id = '',
   }) async {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/new-bee/$address/info',
-      EntityFactory<RpShareInfoEntity>((json) {
-        return RpShareInfoEntity.fromJson(json);
+      EntityFactory<RpShareSendEntity>((json) {
+        return RpShareSendEntity.fromJson(json);
       }),
       params: {
         'id': id,
@@ -668,6 +668,7 @@ class RPApi {
     RpShareReqEntity reqEntity,
     WalletVo activeWallet,
     String password = '',
+    String toAddress,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
@@ -678,7 +679,7 @@ class RPApi {
     var rawTxRp = await HYNApi.signTransferHYNHrc30(
       password,
       ConvertTokenUnit.strToBigInt(reqEntity.rpAmount),
-      reqEntity.address,
+      toAddress,
       activeWallet.wallet,
       WalletConfig.hynRPHrc30Address,
       nonce: nonce,
@@ -693,7 +694,7 @@ class RPApi {
     var rawTxHyn = await HYNApi.signTransferHYN(
       password,
       activeWallet.wallet,
-      toAddress: reqEntity.address,
+      toAddress: toAddress,
       amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount),
       nonce: nonce + 1,
     );
@@ -726,23 +727,47 @@ class RPApi {
   }
 
 
-  Future<List<RpStakingInfo>> getRPStakingInfoList(
+  Future<List<RpShareOpenEntity>> getShareGetList(
       String address, {
         int page = 1,
         int size = 20,
       }) async {
     return await RPHttpCore.instance.getEntity(
-      '/v1/rp/staking/$address',
-      EntityFactory<List<RpStakingInfo>>((json) {
-        var data = (json['data'] as List).map((map) {
-          return RpStakingInfo.fromJson(map);
+      '/v1/rp/new-bee/$address/get/list',
+      EntityFactory<List<RpShareOpenEntity>>((json) {
+        var data = (json as List).map((map) {
+          return RpShareOpenEntity.fromJson(map);
         }).toList();
 
         return data;
       }),
       params: {
         'page': page,
-        'size': size,
+        'pageSize': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+  
+  Future<List<RpShareSendEntity>> getShareSendList(
+      String address, {
+        int page = 1,
+        int size = 20,
+      }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/new-bee/$address/send/list',
+      EntityFactory<List<RpShareSendEntity>>((json) {
+        var data = (json as List).map((map) {
+          return RpShareSendEntity.fromJson(map);
+        }).toList();
+
+        return data;
+      }),
+      params: {
+        'page': page,
+        'pageSize': size,
       },
       options: RequestOptions(
         contentType: "application/json",

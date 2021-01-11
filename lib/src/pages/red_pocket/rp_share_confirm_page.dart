@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
@@ -26,6 +28,8 @@ class RpShareConfirmPage extends StatelessWidget {
     var walletVo = WalletInheritedModel.of(context).activatedWallet;
     var wallet = walletVo.wallet;
     var address = wallet.getAtlasAccount().address;
+
+    var rpShareConfig = RedPocketInheritedModel.of(context).rpShareConfig;
 
     var walletName = wallet.keystore.name;
     var hynAddress = WalletUtil.ethAddressToBech32Address(address);
@@ -165,11 +169,18 @@ class RpShareConfirmPage extends StatelessWidget {
                         return;
                       }
 
+                      var toAddress = rpShareConfig.receiveAddr;
+                      if (toAddress.isEmpty) {
+                        Fluttertoast.showToast(msg: '发送异常，请稍后重试!');
+                        return;
+                      }
+                      
                       try {
                         RPApi().postSendShareRp(
                           password: password,
                           activeWallet: walletVo,
                           reqEntity: this.reqEntity,
+                          toAddress: toAddress,
                         );
                       } catch (e) {
                         UiUtil.toast(e);

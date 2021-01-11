@@ -7,10 +7,10 @@ part 'rp_share_entity.g.dart';
   class RpShareEntity extends Object {
 
   @JsonKey(name: 'details')
-  List<RpShareDetailEntity> details;
+  List<RpShareOpenEntity> details;
 
   @JsonKey(name: 'info')
-  RpShareInfoEntity info;
+  RpShareSendEntity info;
 
   RpShareEntity(this.details,this.info,);
 
@@ -22,7 +22,7 @@ part 'rp_share_entity.g.dart';
 
   
 @JsonSerializable()
-  class RpShareDetailEntity extends Object {
+  class RpShareOpenEntity extends Object {
 
   @JsonKey(name: 'address')
   String address;
@@ -42,17 +42,17 @@ part 'rp_share_entity.g.dart';
   @JsonKey(name: 'username')
   String username;
 
-  RpShareDetailEntity(this.address,this.avatar,this.hynAmount,this.isBest,this.rpAmount,this.username,);
+  RpShareOpenEntity(this.address,this.avatar,this.hynAmount,this.isBest,this.rpAmount,this.username,);
 
-  factory RpShareDetailEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareDetailEntityFromJson(srcJson);
+  factory RpShareOpenEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareOpenEntityFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$RpShareDetailEntityToJson(this);
+  Map<String, dynamic> toJson() => _$RpShareOpenEntityToJson(this);
 
 }
 
   
 @JsonSerializable()
-  class RpShareInfoEntity extends Object {
+  class RpShareSendEntity extends Object {
 
   @JsonKey(name: 'address')
   String address;
@@ -96,11 +96,11 @@ part 'rp_share_entity.g.dart';
   @JsonKey(name: 'userIsNewBee')
   bool userIsNewBee;
 
-  RpShareInfoEntity(this.address,this.alreadyGot,this.avatar,this.coordinates,this.createdAt,this.greeting,this.hasPWD,this.id,this.isNewBee,this.owner,this.range,this.rpType,this.state,this.userIsNewBee,);
+  RpShareSendEntity(this.address,this.alreadyGot,this.avatar,this.coordinates,this.createdAt,this.greeting,this.hasPWD,this.id,this.isNewBee,this.owner,this.range,this.rpType,this.state,this.userIsNewBee,);
 
-  factory RpShareInfoEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareInfoEntityFromJson(srcJson);
+  factory RpShareSendEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareSendEntityFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$RpShareInfoEntityToJson(this);
+  Map<String, dynamic> toJson() => _$RpShareSendEntityToJson(this);
 
 }
 

@@ -10,6 +10,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -19,6 +20,7 @@ import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/src/pages/contribution/add_poi/select_position_page.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_config_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_confirm_page.dart';
@@ -81,6 +83,8 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
   bool get _isLocation => widget.shareType == RedPocketShareType.LOCATION;
   String get _rpType => widget.shareType == RedPocketShareType.LOCATION ? 'location' : 'normal';
 
+  RpShareConfigEntity _rpShareConfig;
+
   @override
   void onCreated() {
     _initSelectedPosition = widget.userPosition;
@@ -114,6 +118,8 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
     _addMarkerAndMoveToPoi();
 
+    _rpShareConfig = RedPocketInheritedModel.of(context).rpShareConfig;
+
     super.onCreated();
   }
 
@@ -128,7 +134,9 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     super.didChangeDependencies();
   }
 
-  void _setupData() {}
+  void _setupData() {
+
+  }
 
   @override
   void dispose() {
@@ -302,9 +310,15 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                 ).getCoinVoBySymbol('RP');
                 var rpBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
 
+                var minRp = _rpShareConfig?.rpMin??'0';
+                if (inputValue > Decimal.zero && inputValue <= Decimal.parse(minRp)) {
+                  errorText = '至少$minRp RP';
+                }
+
                 if (rpBalance > Decimal.zero && inputValue > rpBalance) {
                   errorText = 'RP余额不足';
                 }
+
               } else if (_focusKey == _hynAmountKey) {
                 var coinVo = WalletInheritedModel.of(
                   context,
@@ -312,6 +326,11 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                 ).getCoinVoBySymbol('HYN');
 
                 var hynBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
+
+                 var minHyn = _rpShareConfig?.hynMin??'0';
+                 if (inputValue > Decimal.zero && inputValue <= Decimal.parse(minHyn)) {
+                   errorText = '至少$minHyn HYN';
+                 }
 
                 if (hynBalance > Decimal.zero && inputValue > hynBalance) {
                   errorText = S.of(context).hyn_balance_no_enough;

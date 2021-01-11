@@ -151,15 +151,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       width: 80,
       height: 80,
       child: IconButton(
-        onPressed: () {
-          // todo: 分享红包
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RpShareTypePage(),
-            ),
-          );
-        },
+        onPressed: _navToShareRp,
         icon: Stack(
           alignment: Alignment.topCenter,
           children: [
@@ -979,6 +971,21 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         context,
         MaterialPageRoute(
           builder: (context) => RpFriendInvitePage(),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
+    }
+  }
+
+
+  _navToShareRp() {
+    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+    if (activeWallet != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RpShareTypePage(),
         ),
       );
     } else {

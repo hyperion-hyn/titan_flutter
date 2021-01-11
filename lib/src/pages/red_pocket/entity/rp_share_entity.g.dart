@@ -11,11 +11,11 @@ RpShareEntity _$RpShareEntityFromJson(Map<String, dynamic> json) {
     (json['details'] as List)
         ?.map((e) => e == null
             ? null
-            : RpShareDetailEntity.fromJson(e as Map<String, dynamic>))
+            : RpShareOpenEntity.fromJson(e as Map<String, dynamic>))
         ?.toList(),
     json['info'] == null
         ? null
-        : RpShareInfoEntity.fromJson(json['info'] as Map<String, dynamic>),
+        : RpShareSendEntity.fromJson(json['info'] as Map<String, dynamic>),
   );
 }
 
@@ -25,8 +25,8 @@ Map<String, dynamic> _$RpShareEntityToJson(RpShareEntity instance) =>
       'info': instance.info,
     };
 
-RpShareDetailEntity _$RpShareDetailEntityFromJson(Map<String, dynamic> json) {
-  return RpShareDetailEntity(
+RpShareOpenEntity _$RpShareOpenEntityFromJson(Map<String, dynamic> json) {
+  return RpShareOpenEntity(
     json['address'] as String,
     json['avatar'] as String,
     json['hynAmount'] as String,
@@ -36,8 +36,8 @@ RpShareDetailEntity _$RpShareDetailEntityFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$RpShareDetailEntityToJson(
-        RpShareDetailEntity instance) =>
+Map<String, dynamic> _$RpShareOpenEntityToJson(
+        RpShareOpenEntity instance) =>
     <String, dynamic>{
       'address': instance.address,
       'avatar': instance.avatar,
@@ -47,8 +47,8 @@ Map<String, dynamic> _$RpShareDetailEntityToJson(
       'username': instance.username,
     };
 
-RpShareInfoEntity _$RpShareInfoEntityFromJson(Map<String, dynamic> json) {
-  return RpShareInfoEntity(
+RpShareSendEntity _$RpShareSendEntityFromJson(Map<String, dynamic> json) {
+  return RpShareSendEntity(
     json['address'] as String,
     json['alreadyGot'] as bool,
     json['avatar'] as String,
@@ -66,7 +66,7 @@ RpShareInfoEntity _$RpShareInfoEntityFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$RpShareInfoEntityToJson(RpShareInfoEntity instance) =>
+Map<String, dynamic> _$RpShareSendEntityToJson(RpShareSendEntity instance) =>
     <String, dynamic>{
       'address': instance.address,
       'alreadyGot': instance.alreadyGot,
