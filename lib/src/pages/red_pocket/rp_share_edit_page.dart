@@ -143,6 +143,8 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
   void _setupData() {
     _rpShareConfig = RedPocketInheritedModel.of(context).rpShareConfig;
+
+    print("[$runtimeType] _setupData, _rpShareConfig:${_rpShareConfig?.toJson()}");
   }
 
   @override
@@ -204,7 +206,11 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
             //_addressText = country + " " + provinces + " " + city + " " + county;
             //_addressText = county + "，" + city + "，" + provinces + "，" + country;
             //_addressText = "中国 广东省 广州市 天河区 中山大道 环球都会广场 2601楼";
-            _addressText = country + provinces + city + road + building;
+            if (country == '中国') {
+              _addressText = country + provinces + city + road + building;
+            } else {
+              _addressText = provinces + city + road + building;
+            }
           });
         }
 
@@ -552,7 +558,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
               var rpBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
 
               var minRp = _rpShareConfig?.rpMin ?? '0';
-              if (inputValue > Decimal.zero && inputValue <= Decimal.parse(minRp)) {
+              if (inputValue > Decimal.zero && inputValue < Decimal.parse(minRp)) {
                 errorText = '至少$minRp RP';
               }
 
@@ -597,7 +603,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
               var hynBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
 
               var minHyn = _rpShareConfig?.hynMin ?? '0';
-              if (inputValue > Decimal.zero && inputValue <= Decimal.parse(minHyn)) {
+              if (inputValue > Decimal.zero && inputValue < Decimal.parse(minHyn)) {
                 errorText = '至少$minHyn HYN';
               }
 
@@ -654,6 +660,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
         controller: _countController,
         hintText: '填写个数，平均领取',
         defaultErrorText: '请填写红包个数',
+        keyboardType: TextInputType.numberWithOptions(decimal: true),
         title: '红包个数',
         unit: '个',
         validator: (String inputText) {
@@ -773,28 +780,31 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                     ),
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    if (_selectedPosition != null && _openCageData == null) {
-                      _requestOpenCageDataCount += 1;
-                      _filterSubject.sink.add(_requestOpenCageDataCount);
-                    } else {
-                      _pushPosition();
-                    }
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                    ),
-                    child: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '$address',
-                            style: TextStyle(
-                                color: _openCageData == null ? HexColor('#1F81FF') : HexColor('#999999'), fontSize: 12),
-                          ),
-                        ],
+                Flexible(
+                  child: InkWell(
+                    onTap: () {
+                      if (_selectedPosition != null && _openCageData == null) {
+                        _requestOpenCageDataCount += 1;
+                        _filterSubject.sink.add(_requestOpenCageDataCount);
+                      } else {
+                        _pushPosition();
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                      ),
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '$address',
+                              style: TextStyle(
+                                  color: _openCageData == null ? HexColor('#1F81FF') : HexColor('#999999'),
+                                  fontSize: 12),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -834,7 +844,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                           color: Colors.black.withOpacity(0.30),
                           child: Center(
                             child: Text(
-                              _isLoadingOpenCage ? "" : S.of(context).click_where_to_edit,
+                              _isLoadingOpenCage ? "" : '点击编辑投放位置',
                               style: TextStyle(color: Colors.white, fontSize: 14),
                             ),
                           ),
@@ -993,6 +1003,11 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
     RpShareReqEntity reqEntity = RpShareReqEntity.only('0');
 
+    // todo
+    showSendAlertView(reqEntity);
+
+    return;
+
     _focusKey = null;
     _validController.add('-1');
 
@@ -1066,8 +1081,9 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
       }
 
       // coordinates
-      var coordinates = [_selectedPosition.latitude, _selectedPosition.longitude];
-      reqEntity.coordinates = coordinates;
+      //var coordinates = [_selectedPosition.latitude, _selectedPosition.longitude];
+      reqEntity.lat = _selectedPosition?.latitude ?? 0;
+      reqEntity.lng = _selectedPosition?.longitude ?? 0;
 
       // isNewBee: 新人可以领
       reqEntity.isNewBee = _isNewBee;
@@ -1083,6 +1099,16 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
         return;
       }
       reqEntity.range = rangeValue.toDouble();
+    } else {
+      // isNewBee: 新人可以领
+      reqEntity.isNewBee = true;
+
+      // range
+      reqEntity.range = 0;
+
+      // coordinates
+      reqEntity.lat = 0;
+      reqEntity.lng = 0;
     }
 
     print('[$runtimeType] _confirmDataAction, 2, reqEntity.toJson:${reqEntity.toJson()}');

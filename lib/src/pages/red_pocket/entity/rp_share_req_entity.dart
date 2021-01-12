@@ -10,8 +10,14 @@ class RpShareReqEntity extends Object {
   @JsonKey(name: 'address')
   String address;
 
-  @JsonKey(name: 'coordinates')
-  List<double> coordinates;
+  // @JsonKey(name: 'coordinates')
+  // List<double> coordinates;
+
+  @JsonKey(name: 'lat')
+  double lat;
+
+  @JsonKey(name: 'lng')
+  double lng;
 
   @JsonKey(name: 'count')
   int count;
@@ -46,7 +52,8 @@ class RpShareReqEntity extends Object {
   RpShareReqEntity(
     this.id,
     this.address,
-    this.coordinates,
+    this.lat,
+    this.lng,
     this.count,
     this.greeting,
     this.hynAmount,

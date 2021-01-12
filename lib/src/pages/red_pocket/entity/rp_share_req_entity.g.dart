@@ -10,7 +10,8 @@ RpShareReqEntity _$RpShareReqEntityFromJson(Map<String, dynamic> json) {
   return RpShareReqEntity(
     json['id'] as String,
     json['address'] as String,
-    (json['coordinates'] as List)?.map((e) => (e as num)?.toDouble())?.toList(),
+    (json['lat'] as num)?.toDouble(),
+    (json['lng'] as num)?.toDouble(),
     json['count'] as int,
     json['greeting'] as String,
     json['hynamount'] as String,
@@ -28,7 +29,8 @@ Map<String, dynamic> _$RpShareReqEntityToJson(RpShareReqEntity instance) =>
     <String, dynamic>{
       'id': instance.id,
       'address': instance.address,
-      'coordinates': instance.coordinates,
+      'lat': instance.lat,
+      'lng': instance.lng,
       'count': instance.count,
       'greeting': instance.greeting,
       'hynamount': instance.hynAmount,

@@ -38,6 +38,7 @@ import 'package:titan/src/pages/market/transfer/exchange_transfer_success_page.d
 import 'package:titan/src/pages/market/transfer/exchange_withdraw_confirm_page.dart';
 import 'package:titan/src/pages/mine/qr_code_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
 import 'package:titan/src/pages/wallet/confirm_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
@@ -164,6 +165,12 @@ var confirmResumeWordForCreation = Handler(handlerFunc: (context, params) {
 var confirmSuccessHandler = Handler(handlerFunc: (context, params) {
   var msg = params['msg']?.first != null ? FluroConvertUtils.fluroCnParamsDecode(params['msg']?.first) : null;
   return ConfirmSuccessPage(msg: msg);
+});
+
+// rp
+var redPocketHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return RedPocketPage();
 });
 
 ///Exchange

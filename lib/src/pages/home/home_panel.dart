@@ -367,10 +367,12 @@ class HomePanelState extends State<HomePanel> {
           ),
           InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => RedPocketPage()),
-              );
+              var entryRouteName = Uri.encodeComponent(Routes.red_pocket_page);
+
+              Application.router.navigateTo(
+                 context,
+                 Routes.red_pocket_page +
+                     "?entryRouteName=$entryRouteName");
             },
             child: Container(
               decoration: BoxDecoration(

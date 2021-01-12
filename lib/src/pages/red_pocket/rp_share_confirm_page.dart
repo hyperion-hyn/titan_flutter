@@ -3,21 +3,35 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_broadcast_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class RpShareConfirmPage extends StatelessWidget {
-
+class RpShareConfirmPage extends StatefulWidget {
   final RpShareReqEntity reqEntity;
-  final ScrollController _scrollController = ScrollController();
-
   RpShareConfirmPage({this.reqEntity});
+
+  @override
+  State<StatefulWidget> createState() {
+    return _RpShareConfirmState();
+  }
+}
+
+class _RpShareConfirmState extends BaseState<RpShareConfirmPage> {
+  final ScrollController _scrollController = ScrollController();
+  final RPApi _rpApi = RPApi();
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +111,7 @@ class RpShareConfirmPage extends StatelessWidget {
                                   top: 16,
                                 ),
                                 child: Text(
-                                  '${this.reqEntity?.rpAmount??'0'} RP',
+                                  '${widget.reqEntity?.rpAmount ?? '0'} RP',
                                   style: TextStyle(
                                     color: HexColor('#333333'),
                                     fontWeight: FontWeight.w600,
@@ -115,7 +129,7 @@ class RpShareConfirmPage extends StatelessWidget {
                                   top: 4,
                                 ),
                                 child: Text(
-                                  '${this.reqEntity?.hynAmount??'0'} HYN',
+                                  '${widget.reqEntity?.hynAmount ?? '0'} HYN',
                                   style: TextStyle(
                                     color: HexColor('#333333'),
                                     fontWeight: FontWeight.w600,
@@ -160,6 +174,16 @@ class RpShareConfirmPage extends StatelessWidget {
                   ClickOvalButton(
                     S.of(context).send,
                     () async {
+
+                      // todo
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RpShareBroadcastPage(),
+                        ),
+                      );
+                      return;
+
                       var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
                       if (password == null) {
                         return;
@@ -170,13 +194,24 @@ class RpShareConfirmPage extends StatelessWidget {
                         Fluttertoast.showToast(msg: '发送异常，请稍后重试!');
                         return;
                       }
-                      
+
+                      var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('RP');
+
                       try {
-                        RPApi().postSendShareRp(
+                        var result = _rpApi.postSendShareRp(
                           password: password,
                           activeWallet: walletVo,
-                          reqEntity: this.reqEntity,
+                          reqEntity: widget.reqEntity,
                           toAddress: toAddress,
+                          coinVo: coinVo,
+                        );
+                        print("【$runtimeType】postSendShareRp， result:$result");
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RpShareBroadcastPage(),
+                          ),
                         );
                       } catch (e) {
                         UiUtil.toast(e);
@@ -186,6 +221,7 @@ class RpShareConfirmPage extends StatelessWidget {
                     fontSize: 16,
                     width: 260,
                     height: 42,
+                    isLoading: _isLoading,
                   ),
                   SizedBox(
                     height: 40,

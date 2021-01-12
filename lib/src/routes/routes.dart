@@ -28,6 +28,9 @@ class Routes {
   static const String wallet_confirm_resume_word = '/wallet/create/confirm_resume_word';
   static const String confirm_success_papge = '/wallet/transfer/success_page';
 
+  ///RP
+  static const String red_pocket_page = '/rp/red_pocket_page';
+
   ///Exchange
   static const String exchange_assets_page = '/exchange/assets';
   static const String exchange_transfer_page = '/exchange/transfer';
@@ -65,7 +68,6 @@ class Routes {
   static const String map3node_introduction_page = '/map3node/pre_create_contract_page';
 
   static const String map3node_burn_history_page = '/map3node/map3node_burn_history_page';
-
 
   static const String map3node_my_page = '/map3node/my_page';
 
@@ -242,8 +244,6 @@ class Routes {
       transitionType: pushNewPageTransitionType,
     );
 
-
-
     router.define(
       map3node_my_page_reward,
       handler: map3NodeMyHandlerReward,
@@ -314,6 +314,13 @@ class Routes {
       handler: atlasDetailHandler,
       transitionType: pushNewPageTransitionType,
     );
+
+    /// rp
+    router.define(
+      red_pocket_page,
+      handler: redPocketHandler,
+      transitionType: pushNewPageTransitionType,
+    );
   }
 
   static TransitionType get pushNewPageTransitionType {
@@ -345,14 +352,11 @@ class MyRouter extends FluroRouter {
     } else if (routeSettings.arguments == null) {
       settingsToUse = routeSettings.copyWith(arguments: Map());
     }
-    return super.matchRoute(
-      buildContext,
-      path,
-      routeSettings: settingsToUse,
-      transitionType: transitionType,
-      transitionDuration: transitionDuration,
-      transitionsBuilder: transitionsBuilder,
-      maintainState: maintainState
-    );
+    return super.matchRoute(buildContext, path,
+        routeSettings: settingsToUse,
+        transitionType: transitionType,
+        transitionDuration: transitionDuration,
+        transitionsBuilder: transitionsBuilder,
+        maintainState: maintainState);
   }
 }

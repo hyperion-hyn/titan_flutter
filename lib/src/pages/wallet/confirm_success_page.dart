@@ -29,11 +29,6 @@ class _ConfirmSuccessPage extends State<ConfirmSuccessPage> {
             baseTitle: '',
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           ),
-          // appBar: AppBar(
-          //   backgroundColor: Colors.white,
-          //   elevation: 0,
-          //   iconTheme: IconThemeData(color: Colors.black),
-          // ),
           body: Center(
             child: Container(
               padding: EdgeInsets.all(16),

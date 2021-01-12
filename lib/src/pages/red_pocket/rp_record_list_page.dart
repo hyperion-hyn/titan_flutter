@@ -284,7 +284,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
       if (widget.rpType == RedPocketType.SHARE) {
         var res = await _rpApi.getShareGetList(
           _address,
-          page: 0,
+          page: 1,
           size: 20,
         );
         return;
@@ -332,7 +332,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
       if (widget.rpType == RedPocketType.SHARE) {
         var res = await _rpApi.getShareGetList(
           _address,
-          page: 1,
+          page: 2,
           size: 20,
         );
         return;

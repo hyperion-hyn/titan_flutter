@@ -669,40 +669,46 @@ class RPApi {
     WalletVo activeWallet,
     String password = '',
     String toAddress,
+    CoinVo coinVo,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
     final client = WalletUtil.getWeb3Client(true);
-    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
+    var rpNonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
 
     // rp
-    var rawTxRp = await HYNApi.signTransferHYNHrc30(
+    var rpSignedTX = await HYNApi.signTransferHYNHrc30(
       password,
-      ConvertTokenUnit.strToBigInt(reqEntity.rpAmount),
+      ConvertTokenUnit.strToBigInt(reqEntity.rpAmount, coinVo.decimals),
       toAddress,
       activeWallet.wallet,
-      WalletConfig.hynRPHrc30Address,
-      nonce: nonce,
+      coinVo.contractAddress,
+      nonce: rpNonce,
     );
-    print('[rp_api] postSendShareRp, rawTxRp: $rawTxRp');
+    print('[rp_api] postSendShareRp, nonce:$rpNonce, rawTxRp: $rpSignedTX');
 
-    if (rawTxRp == null) {
+    if (rpSignedTX == null) {
       throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
     }
+    reqEntity.rpSignedTX = rpSignedTX;
 
     // hyn
-    var rawTxHyn = await HYNApi.signTransferHYN(
+    var hynNonce = rpNonce + 1;
+    var hynSignedTX = await HYNApi.signTransferHYN(
       password,
       activeWallet.wallet,
       toAddress: toAddress,
-      amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount),
-      nonce: nonce + 1,
+      amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount, coinVo.decimals),
+      nonce: hynNonce,
+      message: null,
     );
 
-    print('[rp_api] postSendShareRp, rawTxHyn: $rawTxHyn');
-    if (rawTxHyn?.isEmpty ?? true) {
+    print('[rp_api] postSendShareRp, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
+
+    if (hynSignedTX?.isEmpty ?? true) {
       throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
     }
+    reqEntity.hynSignedTX = hynSignedTX;
 
     return await RPHttpCore.instance.postEntity(
       "/v1/rp/new-bee/$address/send",
