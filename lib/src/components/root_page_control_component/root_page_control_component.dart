@@ -107,7 +107,7 @@ class RootPageControlComponentState
             create: (context) => ScaffoldMapBloc(context)),
         BlocProvider<AppTabBarBloc>(create: (context) => AppTabBarBloc()),
         BlocProvider<DiscoverBloc>(create: (context) => DiscoverBloc(context)),
-        BlocProvider<AuthBloc>(create: (context) => AuthBloc()),
+        BlocProvider<AppLockBloc>(create: (context) => AppLockBloc()),
       ],
       child: BlocBuilder<RootPageControlBloc, RootPageControlState>(
         builder: (ctx, state) {

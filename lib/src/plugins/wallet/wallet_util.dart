@@ -44,17 +44,60 @@ class WalletUtil {
     return Future.value(bip39.generateMnemonic(strength: 128));
   }
 
-  static Future<bool> checkIsBackUpMnemonic(String walletAddress) async {
+  static Future<bool> checkIsBackUpMnemonic(
+    String walletAddress,
+  ) async {
     bool isMnemonicBackUp = await AppCache.getValue(
         '${PrefsKey.WALLET_MNEMONIC_BACK_UP_PREFIX}_$walletAddress');
 
     return (isMnemonicBackUp ?? false);
   }
 
-  static confirmBackUpMnemonic(String walletAddress) async {
+  static confirmBackUpMnemonic(
+    String walletAddress,
+  ) async {
     await AppCache.saveValue(
       '${PrefsKey.WALLET_MNEMONIC_BACK_UP_PREFIX}_$walletAddress',
       true,
+    );
+  }
+
+  static Future<bool> checkWalletSafeLockIsOn(
+    String walletAddress,
+  ) async {
+    bool isSafeLockOn = await AppCache.getValue(
+        '${PrefsKey.WALLET_SAFE_LOCK_IS_ON_PREFIX}_$walletAddress');
+
+    return (isSafeLockOn ?? false);
+  }
+
+  static setWalletSafeLockIsOn(
+    String walletAddress,
+    bool isOn,
+  ) async {
+    await AppCache.saveValue(
+      '${PrefsKey.WALLET_SAFE_LOCK_IS_ON_PREFIX}_$walletAddress',
+      isOn,
+    );
+  }
+
+  static Future<bool> checkWalletSafeLockPwd(
+    String walletAddress,
+    String input,
+  ) async {
+    String pwd = await AppCache.secureGetValue(
+      '${PrefsKey.WALLET_SAFE_LOCK_PWD_PREFIX}_$walletAddress',
+    );
+    return (pwd == (input ?? ''));
+  }
+
+  static setWalletSafeLockPwd(
+    String walletAddress,
+    String pwd,
+  ) async {
+    await AppCache.secureSaveValue(
+      '${PrefsKey.WALLET_SAFE_LOCK_PWD_PREFIX}_$walletAddress',
+      pwd,
     );
   }
 

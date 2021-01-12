@@ -22,8 +22,8 @@ class AuthComponent extends SingleChildStatelessWidget {
   Widget buildWithChild(BuildContext context, Widget child) {
     //print("[$runtimeType] buildWithChild, context:$context, child:$child");
 
-    return BlocProvider<AuthBloc>(
-      create: (ctx) => AuthBloc(),
+    return BlocProvider<AppLockBloc>(
+      create: (ctx) => AppLockBloc(),
       child: _AuthManager(child: child),
     );
   }
@@ -53,7 +53,7 @@ class _AuthManagerState extends BaseState<_AuthManager> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
+    return BlocListener<AppLockBloc, AuthState>(
       listener: (context, state) async {
         if (state is RefreshBioAuthConfigState) {
           var authConfigStr = await AppCache.getValue<String>(
@@ -110,7 +110,7 @@ class _AuthManagerState extends BaseState<_AuthManager> {
           setState(() {});
         }
       },
-      child: BlocBuilder<AuthBloc, AuthState>(
+      child: BlocBuilder<AppLockBloc, AuthState>(
         builder: (context, state) {
           return AuthInheritedModel(
             authConfigModel: authConfigModel,

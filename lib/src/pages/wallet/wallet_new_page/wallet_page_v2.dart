@@ -323,7 +323,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
       if (!_isSafeLockUnlock)
         return WalletSafeLock(
           onUnlock: () {
-            _isSafeLockUnlock = true;
+            _isSafeLockUnlock = true;;
             if (mounted) setState(() {});
           },
         );

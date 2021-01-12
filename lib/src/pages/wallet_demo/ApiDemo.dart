@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/basic/http/signer.dart';
+import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
+import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -12,6 +14,7 @@ import 'package:titan/src/pages/atlas_map/atlas/token_burn_info_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
+import 'package:titan/src/pages/market/exchange/bloc/bloc.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/wallet_demo/recaptcha_test_page.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
@@ -318,6 +321,23 @@ class _ApiDemoState extends State {
               NodeApi _nodeApi = NodeApi();
               List list = await _nodeApi.getNodeProviderList();
               print(' Map3 providers ${list.length}');
+            },
+          ),
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: Text(
+                'Wallet Lock is ${AppLockInheritedModel.of(context).lockStatus?.wallet}'),
+          ),
+          RaisedButton(
+            child: Text('Lock wallet'),
+            onPressed: () async {
+              BlocProvider.of<AppLockBloc>(context).add(LockWalletEvent());
+            },
+          ),
+          RaisedButton(
+            child: Text('Unlock wallet'),
+            onPressed: () async {
+              BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
             },
           )
         ],

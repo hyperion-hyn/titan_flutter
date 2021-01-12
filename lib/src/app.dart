@@ -6,12 +6,14 @@ import 'package:oktoast/oktoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/account/account_component.dart';
+import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/components/style/theme.dart';
+import 'components/app_lock/app_lock_component.dart';
 import 'components/root_page_control_component/bloc/bloc.dart';
 import 'components/setting/setting_component.dart';
 import 'components/socket/socket_component.dart';
@@ -51,16 +53,18 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.inactive:
-        print('-----[App] inactive');
+        //print('-----[App] inactive');
         break;
       case AppLifecycleState.paused:
+        BlocProvider.of<AppLockBloc>(Keys.rootKey.currentContext)
+            .add(LockWalletEvent());
         print('-----[App] paused');
         break;
       case AppLifecycleState.detached:
-        print('-----[App] detached');
+        //print('-----[App] detached');
         break;
       case AppLifecycleState.resumed:
-        print('-----[App] resumed');
+        //print('-----[App] resumed');
         break;
     }
   }
@@ -78,6 +82,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
           AtlasComponent(),
           RedPocketComponent(),
           AccountComponent(),
+          AppLockComponent(),
         ],
         child: MultiBlocProvider(
           providers: [

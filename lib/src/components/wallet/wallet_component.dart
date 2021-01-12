@@ -104,7 +104,7 @@ class _WalletManagerState extends State<_WalletManager> {
                 this._activatedWallet.copyWith(WalletVo(balance: balance));
 
             ///Refresh bio-auth config
-            BlocProvider.of<AuthBloc>(context).add(RefreshBioAuthConfigEvent(
+            BlocProvider.of<AppLockBloc>(context).add(RefreshBioAuthConfigEvent(
               _activatedWallet.wallet,
             ));
           }
