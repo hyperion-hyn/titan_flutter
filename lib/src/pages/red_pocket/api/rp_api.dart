@@ -651,20 +651,20 @@ class RPApi {
   }
 
   // 领取新人/位置红包
-  Future<dynamic> postOpenShareRp({
+  Future<RpShareReqEntity> postOpenShareRp({
     RpShareReqEntity reqEntity,
     String address,
   }) async {
     return await RPHttpCore.instance.postEntity(
       "/v1/rp/new-bee/$address/open",
-      EntityFactory<dynamic>((json) => json),
+      EntityFactory<RpShareReqEntity>((json) => RpShareReqEntity.fromJson(json)),
       params: reqEntity.toJson(),
       options: RequestOptions(contentType: "application/json"),
     );
   }
 
   // 发新人/位置红包
-  Future<dynamic> postSendShareRp({
+  Future<RpShareReqEntity> postSendShareRp({
     RpShareReqEntity reqEntity,
     WalletVo activeWallet,
     String password = '',
@@ -679,7 +679,7 @@ class RPApi {
     // rp
     var rpSignedTX = await HYNApi.signTransferHYNHrc30(
       password,
-      ConvertTokenUnit.strToBigInt(reqEntity.rpAmount, coinVo.decimals),
+      ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
       toAddress,
       activeWallet.wallet,
       coinVo.contractAddress,
@@ -698,7 +698,7 @@ class RPApi {
       password,
       activeWallet.wallet,
       toAddress: toAddress,
-      amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount, coinVo.decimals),
+      amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
       nonce: hynNonce,
       message: null,
     );
@@ -712,7 +712,7 @@ class RPApi {
 
     return await RPHttpCore.instance.postEntity(
       "/v1/rp/new-bee/$address/send",
-      EntityFactory<dynamic>((json) => json),
+      EntityFactory<RpShareReqEntity>((json) => RpShareReqEntity.fromJson(json)),
       params: reqEntity.toJson(),
       options: RequestOptions(contentType: "application/json"),
     );

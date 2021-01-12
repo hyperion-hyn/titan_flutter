@@ -1,17 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 
 
 class RpShareOpenPage extends StatelessWidget {
   final String walletName;
   final String address;
+  final String id;
   final RedPocketShareType shareType;
+  final RPApi _rpApi = RPApi();
 
   RpShareOpenPage({
     this.walletName = '',
     this.address = '',
+    this.id = '',
     this.shareType = RedPocketShareType.NEWER,
   });
 
@@ -44,78 +49,96 @@ class RpShareOpenPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Container(
-                      width: double.infinity,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            height: 36,
-                          ),
-                          Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                border: Border.all(width: 2, color: Colors.transparent),
-                                image: DecorationImage(
-                                  image: AssetImage("res/drawable/app_invite_default_icon.png"),
-                                  fit: BoxFit.cover,
-                                )),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: 16,
-                              bottom: 16,
+                    InkWell(
+                      onTap: () async{
+
+                        RpShareReqEntity reqEntity = RpShareReqEntity.only(this.id);
+                        print("[$runtimeType] open rp, 1, reqEntity:${reqEntity.toJson()}");
+
+                        reqEntity = await _rpApi.postOpenShareRp(
+                          reqEntity: reqEntity,
+                          address: this.address,
+                        );
+                        print("[$runtimeType] open rp, 2, reqEntity:${reqEntity.toJson()}");
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            SizedBox(
+                              height: 36,
                             ),
-                            child: RichText(
-                              text: TextSpan(
-                                text: "${this.walletName} 发的${shareType.index == 0 ? '新人' : '位置'}红包",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: HexColor('#FFFFFF'),
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(width: 2, color: Colors.transparent),
+                                  image: DecorationImage(
+                                    image: AssetImage("res/drawable/app_invite_default_icon.png"),
+                                    fit: BoxFit.cover,
+                                  )),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: 16,
+                                bottom: 16,
+                              ),
+                              child: RichText(
+                                text: TextSpan(
+                                  text: "${this.walletName} 发的${shareType.index == 0 ? '新人' : '位置'}红包",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: HexColor('#FFFFFF'),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Text(
-                            greeting,
-                            style: TextStyle(
-                              fontSize: greeting.length > 12 ? 12 : 18,
-                              fontWeight: FontWeight.w600,
-                              color: HexColor('#FFFFFF'),
+                            Text(
+                              greeting,
+                              style: TextStyle(
+                                fontSize: greeting.length > 12 ? 12 : 18,
+                                fontWeight: FontWeight.w600,
+                                color: HexColor('#FFFFFF'),
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 16,
-                          ),
-                        ],
+                            SizedBox(
+                              height: 16,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Positioned(
                       bottom: 12,
-                      child: Row(
-                        children: [
-                          Text(
-                            '看看大家的手气',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
-                              color: HexColor('#FBE945'),
+                      child: InkWell(
+                        onTap: (){
+                          // todo:
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              '看看大家的手气',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                                color: HexColor('#FBE945'),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 8,
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 8,
+                              ),
+                              child: Image.asset(
+                                'res/drawable/rp_share_open_arrow.png',
+                                height: 11,
+                                width: 6,
+                              ),
                             ),
-                            child: Image.asset(
-                              'res/drawable/rp_share_open_arrow.png',
-                              height: 11,
-                              width: 6,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -148,14 +171,15 @@ class RpShareOpenPage extends StatelessWidget {
 
 
 
-Future<bool> showShareRpOpenDialog(BuildContext context, String inviterAddress, String walletName) {
+Future<bool> showShareRpOpenDialog(BuildContext context, String walletName, String address, String id) {
   return showDialog<bool>(
     barrierDismissible: true,
     context: context,
     builder: (context) {
       return RpShareOpenPage(
-        walletName: inviterAddress,
-        address: walletName,
+        walletName: walletName,
+        id: id,
+        address: address,
       );
     },
   );

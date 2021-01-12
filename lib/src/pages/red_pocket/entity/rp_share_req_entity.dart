@@ -26,7 +26,7 @@ class RpShareReqEntity extends Object {
   String greeting;
 
   @JsonKey(name: 'hynamount')
-  String hynAmount;
+  double hynAmount;
 
   @JsonKey(name: 'hynsignedTX')
   String hynSignedTX;
@@ -41,7 +41,7 @@ class RpShareReqEntity extends Object {
   double range;
 
   @JsonKey(name: 'rpamount')
-  String rpAmount;
+  double rpAmount;
 
   @JsonKey(name: 'rpsignedTX')
   String rpSignedTX;

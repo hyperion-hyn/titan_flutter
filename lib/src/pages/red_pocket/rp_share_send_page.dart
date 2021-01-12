@@ -6,7 +6,6 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
@@ -18,17 +17,17 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class RpShareConfirmPage extends StatefulWidget {
+class RpShareSendPage extends StatefulWidget {
   final RpShareReqEntity reqEntity;
-  RpShareConfirmPage({this.reqEntity});
+  RpShareSendPage({this.reqEntity});
 
   @override
   State<StatefulWidget> createState() {
-    return _RpShareConfirmState();
+    return _RpShareSendState();
   }
 }
 
-class _RpShareConfirmState extends BaseState<RpShareConfirmPage> {
+class _RpShareSendState extends BaseState<RpShareSendPage> {
   final ScrollController _scrollController = ScrollController();
   final RPApi _rpApi = RPApi();
   bool _isLoading = false;
@@ -196,23 +195,30 @@ class _RpShareConfirmState extends BaseState<RpShareConfirmPage> {
                       }
 
                       var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('RP');
+                      print("【$runtimeType】postSendShareRp， 1");
 
                       try {
-                        var result = _rpApi.postSendShareRp(
+                        RpShareReqEntity result = await _rpApi.postSendShareRp(
                           password: password,
                           activeWallet: walletVo,
                           reqEntity: widget.reqEntity,
                           toAddress: toAddress,
                           coinVo: coinVo,
                         );
-                        print("【$runtimeType】postSendShareRp， result:$result");
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RpShareBroadcastPage(),
-                          ),
-                        );
+                        print("[$runtimeType] postSendShareRp, 2, result:${result.toJson()}");
+
+                        if (result.id.isNotEmpty) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RpShareBroadcastPage(),
+                            ),
+                          );
+                        } else {
+                          Fluttertoast.showToast(msg: '发送红包失败！');
+                        }
+
                       } catch (e) {
                         UiUtil.toast(e);
                       }

@@ -14,12 +14,18 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_open_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/widget_shot.dart';
 
 class RpShareBroadcastPage extends StatefulWidget {
+
+  final String id;
+
+  RpShareBroadcastPage({this.id});
+
   @override
   State<StatefulWidget> createState() {
     return _RpShareBroadcastPageState();
@@ -35,6 +41,7 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
   int _initIndex = 0;
   bool _isSharing = false;
   String get _address =>  _walletVo.wallet.getAtlasAccount().address;
+  String get _walletName =>  _walletVo.wallet.keystore.name;
 
   @override
   void initState() {
@@ -114,6 +121,9 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
           '分享给新人',
           () async{
 
+            showShareRpOpenDialog(context, widget.id, _address, _walletName,);
+            return;
+
             if (mounted) {
               setState(() {
                 _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
@@ -190,8 +200,7 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
 
 
     String walletAddress = WalletUtil.ethAddressToBech32Address(_address);
-    String walletName = _walletVo.wallet.keystore.name;
-    var qrData = "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$walletName";
+    var qrData = "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$_walletName";
 
     var greeting = '恭喜发财，大吉大利,恭喜发财，大吉大利xxxx';
      greeting = '恭喜发财，大吉大利!xx';

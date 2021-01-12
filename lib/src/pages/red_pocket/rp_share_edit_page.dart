@@ -24,13 +24,16 @@ import 'package:titan/src/pages/contribution/add_poi/select_position_page.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_config_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_confirm_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_send_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class RpShareEditPage extends StatefulWidget {
+  static String shareTypeNormal = 'normal';
+  static String shareTypeLocation = 'location';
+
   final LatLng userPosition;
   final RedPocketShareType shareType;
   RpShareEditPage({this.userPosition, this.shareType = RedPocketShareType.NEWER});
@@ -86,7 +89,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
   String get _baseTitle => widget.shareType == RedPocketShareType.NEWER ? '新人红包' : '位置红包';
   bool get _isLocation => widget.shareType == RedPocketShareType.LOCATION;
-  String get _rpType => widget.shareType == RedPocketShareType.LOCATION ? 'location' : 'normal';
+  String get _rpType => widget.shareType == RedPocketShareType.LOCATION ? RpShareEditPage.shareTypeLocation : RpShareEditPage.shareTypeNormal;
 
   RpShareConfigEntity _rpShareConfig;
 
@@ -1029,7 +1032,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
       return;
     }
-    reqEntity.rpAmount = rpValue.toString();
+    reqEntity.rpAmount = rpValue.toDouble();
 
     // hynAmount
     var hynValue = Decimal.tryParse(_hynAmountController?.text ?? '0') ?? Decimal.zero;
@@ -1044,7 +1047,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
       return;
     }
-    reqEntity.hynAmount = hynValue.toString();
+    reqEntity.hynAmount = hynValue.toDouble();
 
     // amount
     var count = int.tryParse(_countController.text ?? '0') ?? 0;
@@ -1123,7 +1126,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
       barrierDismissible: true,
       context: context,
       builder: (context) {
-        return RpShareConfirmPage(
+        return RpShareSendPage(
           reqEntity: reqEntity,
         );
       },
