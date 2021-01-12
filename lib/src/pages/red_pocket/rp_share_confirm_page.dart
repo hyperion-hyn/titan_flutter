@@ -176,13 +176,13 @@ class _RpShareConfirmState extends BaseState<RpShareConfirmPage> {
                     () async {
 
                       // todo
-                      Navigator.push(
+                      /*Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => RpShareBroadcastPage(),
                         ),
                       );
-                      return;
+                      return;*/
 
                       var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
                       if (password == null) {

@@ -1004,9 +1004,10 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     RpShareReqEntity reqEntity = RpShareReqEntity.only('0');
 
     // todo
+    /*
     showSendAlertView(reqEntity);
 
-    return;
+    return;*/
 
     _focusKey = null;
     _validController.add('-1');
