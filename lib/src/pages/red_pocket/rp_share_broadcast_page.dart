@@ -184,7 +184,6 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
     Size size,
     double fontSize,
     double imageSize = 44,
-    double padding = 0,
     int index = 0,
   }) {
 
@@ -193,13 +192,16 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
     String walletName = _walletVo.wallet.keystore.name;
     var qrData = "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$walletName";
 
+    var greeting = '恭喜发财，大吉大利,恭喜发财，大吉大利xxxx';
+     greeting = '恭喜发财，大吉大利!xx';
+
     return WidgetShot(
       controller: _shotController,
       child: RepaintBoundary(
         key: _qrImageBoundaryKey,
         child: Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30,),
+          // color: Theme.of(context).scaffoldBackgroundColor,
+          // padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30,),
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
@@ -211,7 +213,7 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
                     image: AssetImage(
                       'res/drawable/rp_share_bg_big.png',
                     ),
-                    //fit: BoxFit.contain,
+                    fit: BoxFit.fill,
                   ),
                 ),
               ),
@@ -249,9 +251,9 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
                     ),
 
                     Text(
-                      '恭喜发财，大吉大利',
+                      greeting,
                       style: TextStyle(
-                        fontSize: 22,
+                        fontSize: greeting.length > 12?14:22,
                         fontWeight: FontWeight.w600,
                         color: HexColor('#333333'),
                       ),
