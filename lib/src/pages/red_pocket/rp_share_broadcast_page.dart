@@ -113,6 +113,7 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
         ClickOvalButton(
           '分享给新人',
           () async{
+
             if (mounted) {
               setState(() {
                 _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
@@ -328,4 +329,5 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
       });
     }
   }
+
 }
