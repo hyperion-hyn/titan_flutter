@@ -1072,7 +1072,7 @@ class AtlasApi {
     var versionType = '';
 
     if (env.buildType == BuildType.DEV) {
-      versionType = 'test';
+      versionType = '.test';
     }
 
     return AtlasHttpCore.instance.postEntity(
@@ -1086,8 +1086,9 @@ class AtlasApi {
         "address": walletAddress,
         "channel": channel,
         "device_id": deviceId,
-        "version": '$versionName.$versionCode.$versionType'
+        "version": '$versionName.$versionCode$versionType'
       },
+
       ///use same url on both env
       options: RequestOptions(
         contentType: "application/json",
