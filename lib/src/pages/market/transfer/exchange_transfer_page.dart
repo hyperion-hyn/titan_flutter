@@ -403,15 +403,22 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   _confirm() {
     return Padding(
-      padding: const EdgeInsets.only(left:48.0,right: 48,bottom: 32),
-      child: ClickOvalButton(_fromExchangeToWallet
-          ? S.of(context).exchange_withdraw
-          : S.of(context).exchange_deposit, () async {
-        FocusScope.of(context).requestFocus(FocusNode());
-        if (_formKey.currentState.validate()) {
-          await _transfer();
-        }
-      },height: 51,width: double.infinity,fontSize: 14,btnColor: [Theme.of(context).primaryColor],),
+      padding: const EdgeInsets.only(left: 48.0, right: 48, bottom: 32),
+      child: ClickOvalButton(
+        _fromExchangeToWallet
+            ? S.of(context).exchange_withdraw
+            : S.of(context).exchange_deposit,
+        () async {
+          FocusScope.of(context).requestFocus(FocusNode());
+          if (_formKey.currentState.validate()) {
+            await _transfer();
+          }
+        },
+        height: 51,
+        width: double.infinity,
+        fontSize: 14,
+        btnColor: [Theme.of(context).primaryColor],
+      ),
     );
   }
 
@@ -530,7 +537,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                   controller: _amountController,
                   validator: (value) {
                     value = value.trim();
-                    if (value == '0') {
+                    if (Decimal.parse(value) <= Decimal.zero) {
                       return S.of(context).input_corrent_count_hint;
                     }
                     if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
