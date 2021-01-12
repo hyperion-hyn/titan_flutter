@@ -17,11 +17,13 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/atlas_map/widget/hyn_burn_banner.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_safe_lock.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -341,7 +343,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
         child: CustomScrollView(
           slivers: <Widget>[
             _headerWidget(activatedWalletVo),
-            _coinListWidget(activatedWalletVo)
+            _coinListWidget(activatedWalletVo),
+            _hynBurnWidget(),
           ],
         ),
       );
@@ -366,56 +369,88 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            InkWell(
+              onTap: (){
+                WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (wallet){
+                  setState(() {
+                    // _isRefreshBalances = true;
+                  });
+                },noWalletUpdate: (){
+                  setState(() {
+                  });
+                });
+              },
+              child: Row(
+                children: [
+                  Text(
+                    activatedWalletVo?.wallet?.keystore?.name ?? "",
+                    style: TextStyles.textC333S16bold,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 6, right: 2.0),
+                    child: Text(
+                      "身份管理",
+                      style: TextStyles.textC333S12,
+                    ),
+                  ),
+                  Image.asset(
+                    "res/drawable/ic_jump_arrow_right.png",
+                    height: 11,
+                    width: 11,
+                  ),
+                  Spacer(),
+                  if(!_hasBackupWallet)
+                    Row(
+                      children: [
+                        Image.asset(
+                          "res/drawable/ic_remind_user.png",
+                          height: 13,
+                          width: 14,
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          "未备份",
+                          style: TextStyles.textC333S12,
+                        ),
+                      ],
+                    )
+                ],
+              ),
+            ),
             Row(
               children: [
-                Text(
-                  activatedWalletVo?.wallet?.keystore?.name ?? "",
-                  style: TextStyles.textC333S16bold,
-                ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 6, right: 2.0),
-                  child: Text(
-                    "身份管理",
-                    style: TextStyles.textC333S12,
-                  ),
-                ),
-                Image.asset(
-                  "res/drawable/ic_jump_arrow_right.png",
-                  height: 11,
-                  width: 11,
+                  padding: const EdgeInsets.only(left:8.0,top: 8,bottom: 8),
+                  child: SizedBox(width: 20,),
                 ),
                 Spacer(),
-                if(!_hasBackupWallet)
-                  Row(
-                    children: [
-                      Image.asset(
-                        "res/drawable/ic_remind_user.png",
-                        height: 13,
-                        width: 14,
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        "未备份",
-                        style: TextStyles.textC333S12,
-                      ),
-                    ],
-                  )
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, bottom: 30.0),
-              child: Text(
-                _isShowBalances
-                    ? '${FormatUtil.formatPrice(activatedWalletVo.balance)}'
-                    : '${activeQuotesSign?.sign ?? ''} *******',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 28,
-                  color: DefaultColors.color333,
+                Padding(
+                  padding: const EdgeInsets.only(top: 20, bottom: 30.0),
+                  child: Text(
+                    _isShowBalances
+                        ? '${activeQuotesSign?.sign ?? ''} ${FormatUtil.formatPrice(activatedWalletVo.balance)}'
+                        : '${activeQuotesSign?.sign ?? ''} *******',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 28,
+                      color: DefaultColors.color333,
+                    ),
+                  ),
                 ),
-              ),
+                Spacer(),
+                InkWell(
+                    onTap: (){
+                      setState(() {
+                        _isShowBalances = !_isShowBalances;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left:8.0,top: 8,bottom: 8),
+                      child: Image.asset(_isShowBalances ? "res/drawable/ic_input_psw_show.png" : "res/drawable/ic_input_psw_hide.png",width: 20,),
+                    ))
+              ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -488,6 +523,19 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
           },
           child: _buildAccountItem(context, coinVo, hasPrice: hasPrice));
     }, childCount: activatedWalletVo.coins.length));
+  }
+
+  _hynBurnWidget(){
+    return SliverToBoxAdapter(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 16,
+          ),
+          HynBurnBanner(),
+        ],
+      ),
+    );
   }
 
   Widget _buildAccountItem(BuildContext context, CoinVo coin,
