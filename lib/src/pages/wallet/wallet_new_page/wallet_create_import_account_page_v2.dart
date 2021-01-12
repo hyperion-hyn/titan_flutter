@@ -57,7 +57,7 @@ class _WalletCreateAccountPageV2State
   bool showErrorHint = false;
   bool isShowRemind = true;
   BuildContext dialogContext;
-  String usetImagePath;
+  String userImagePath;
   AtlasApi _atlasApi = AtlasApi();
   FocusNode _focusNode = FocusNode();
 
@@ -218,7 +218,7 @@ class _WalletCreateAccountPageV2State
                                   );
                                   if (netImagePath != null &&
                                       netImagePath.isNotEmpty) {
-                                    usetImagePath = netImagePath;
+                                    userImagePath = netImagePath;
                                     setState(() {});
                                   } else {
                                     Fluttertoast.showToast(
@@ -233,8 +233,8 @@ class _WalletCreateAccountPageV2State
                                 width: 60,
                                 height: 60,
                                 child: ImageUtil.getCoinImage(
-                                    usetImagePath != null
-                                        ? usetImagePath
+                                    userImagePath != null
+                                        ? userImagePath
                                         : "res/drawable/ic_user_avatar_default.png",
                                     placeholder:
                                         "res/drawable/ic_user_avatar_default.png"),
@@ -599,7 +599,7 @@ class _WalletCreateAccountPageV2State
         }
       }
 
-      var userPayload = UserPayloadWithAddressEntity(Payload(userName: wallet.keystore.name,userPic: usetImagePath),wallet.getAtlasAccount().address,);
+      var userPayload = UserPayloadWithAddressEntity(Payload(userName: wallet.keystore.name,userPic: userImagePath),wallet.getAtlasAccount().address,);
       await AtlasApi.postUserSync(userPayload);
 
       Fluttertoast.showToast(msg: widget.isCreateWallet ? "创建成功" : "导入成功");
