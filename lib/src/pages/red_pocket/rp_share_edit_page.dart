@@ -941,7 +941,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                   fontSize: 16,
                 )),
           ),
-          rowTipsItem('只有新人才能领取，领取后他将成为你的好友；'),
+          rowTipsItem('只有新人才能领取，', subTitleBold: '领取后他将成为你的好友；'),
           rowTipsItem('你要为每个新人至少要塞 0.001 HYN作为他之后矿工费所用；'),
           rowTipsItem('24小时候后，如果还剩红包没领取，将自动退回你的钱包；'),
         ],

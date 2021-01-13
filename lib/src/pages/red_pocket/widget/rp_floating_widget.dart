@@ -4,9 +4,13 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_open_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_type_page.dart';
 
 class RpFloatingWidget extends StatefulWidget {
+  final int actionType;
+  RpFloatingWidget({this.actionType});
+
   @override
   _RpFloatingWidgetState createState() => _RpFloatingWidgetState();
 }
@@ -48,8 +52,6 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> {
   @override
   void initState() {
     super.initState();
-
-
   }
 
   @override
@@ -58,6 +60,10 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> {
 
     var size = MediaQuery.of(context).size;
     offset = Offset(size.width - 80, size.height * 0.5);
+
+    if (widget.actionType == -1) {
+      offset = Offset(size.width - 80, size.height * 0.65);
+    }
   }
 
   @override
@@ -107,7 +113,7 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> {
                     ),
                   ),
                   Text(
-                    '发红包',
+                    widget.actionType == -1 ? '开红包' : '发红包',
                     style: TextStyle(
                       color: HexColor('#FFFFFF'),
                       fontWeight: FontWeight.w500,
@@ -126,11 +132,13 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> {
   _navToShareRp() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
 
-    // var _address  = activeWallet.wallet.getAtlasAccount().address;
-    // var _walletName = activeWallet.wallet.keystore.name;
-    // showShareRpOpenDialog(context:context, id:'BVABHH', address:_address, walletName: _walletName,);
-    //
-    // return;
+    if (widget.actionType == -1) {
+      var _address  = activeWallet.wallet.getAtlasAccount().address;
+      var _walletName = activeWallet.wallet.keystore.name;
+      showShareRpOpenDialog(context:context, id:'9LLQ42', address:_address, walletName: _walletName,);
+      return;
+    }
+
 
     if (activeWallet != null) {
       Navigator.push(

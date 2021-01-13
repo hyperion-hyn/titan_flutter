@@ -172,7 +172,6 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
                   ClickOvalButton(
                     S.of(context).send,
                     () async {
-
                       // todo
                       /*Navigator.push(
                         context,
@@ -193,6 +192,12 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
                         return;
                       }
 
+                      if (mounted) {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                      }
+
                       var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('RP');
                       print("【$runtimeType】postSendShareRp， 1");
 
@@ -208,18 +213,33 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
                         print("[$runtimeType] postSendShareRp, 2, result:${result.toJson()}");
 
                         if (result.id.isNotEmpty) {
+                          widget.reqEntity.id = result.id;
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => RpShareBroadcastPage(),
+                              builder: (context) => RpShareBroadcastPage(
+                                reqEntity: widget.reqEntity,
+                              ),
                             ),
                           );
                         } else {
                           Fluttertoast.showToast(msg: '发送红包失败！');
                         }
 
+                        if (mounted) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        }
                       } catch (e) {
                         LogUtil.toastException(e);
+
+                        if (mounted) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        }
                       }
                     },
                     btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
@@ -310,11 +330,10 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
   }
 }
 
-
 Future<bool> showSendAlertView<T>(
-    BuildContext context,
-    RpShareReqEntity reqEntity,
-    ) {
+  BuildContext context,
+  RpShareReqEntity reqEntity,
+) {
   return showDialog<bool>(
     barrierDismissible: true,
     context: context,
