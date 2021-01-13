@@ -20,7 +20,7 @@ class RpShareOpenPage extends StatefulWidget {
     this.walletName = '',
     this.address = '',
     this.id = '',
-    this.shareType = RedPocketShareType.NEWER,
+    this.shareType = RedPocketShareType.NORMAL,
   });
 
   @override

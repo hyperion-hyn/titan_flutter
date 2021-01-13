@@ -19,10 +19,10 @@ class RpShareTypePage extends StatefulWidget {
 }
 
 class _RpShareTypePageState extends BaseState<RpShareTypePage> {
-
   final ScrollController _scrollController = ScrollController();
   WalletVo _walletVo;
-  int _initIndex = 0;
+
+  RpShareTypeEntity _selectedEntity = SupportedShareType.NORMAL;
 
   @override
   void initState() {
@@ -68,7 +68,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
                 _createSelectedWidget(
                   size: Size(220, 300),
                   fontSize: 14,
-                  index: _initIndex,
+                  entity: _selectedEntity,
                 ),
                 _bottomImageList(),
               ],
@@ -77,12 +77,12 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
         ),
         ClickOvalButton(
           S.of(context).next_step,
-          (){
+          () {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => RpShareEditPage(
-                  shareType: RedPocketShareType.values[_initIndex],
+                  shareTypeEntity: _selectedEntity,
                 ),
               ),
             );
@@ -107,19 +107,19 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _createChildWidget(title: '新人红包', sutTitle: '赞好友', index: 0),
+            _createChildWidget(entity: SupportedShareType.NORMAL),
             SizedBox(
               width: 36,
             ),
-            _createChildWidget(title: '位置红包', sutTitle: '在附近可领取', index: 1),
+            _createChildWidget(entity: SupportedShareType.LOCATION),
           ],
         ),
       ),
     );
   }
 
-  Widget _createChildWidget({String title, String sutTitle, int index = 0}) {
-    bool isSelected = _initIndex == index;
+  Widget _createChildWidget({RpShareTypeEntity entity}) {
+    bool isSelected = _selectedEntity.index == entity.index;
 
     return Column(
       children: [
@@ -129,7 +129,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
             InkWell(
               onTap: () {
                 setState(() {
-                  _initIndex = index;
+                  _selectedEntity = entity;
                 });
               },
               child: _createSelectedWidget(
@@ -138,7 +138,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
                 gap: 8,
                 imageSize: 12,
                 padding: 6,
-                index: index,
+                entity: entity,
               ),
             ),
             if (isSelected)
@@ -163,7 +163,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              title,
+              entity.fullNameZh,
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
@@ -175,7 +175,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
               verticalOffset: 16,
               margin: EdgeInsets.symmetric(horizontal: 32.0),
               padding: EdgeInsets.all(16.0),
-              message: title,
+              message: entity.fullNameZh,
               child: Image.asset(
                 'res/drawable/ic_tooltip.png',
                 width: 10,
@@ -186,7 +186,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
           ],
         ),
         Text(
-          sutTitle,
+          entity.desc,
           style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.normal,
@@ -206,7 +206,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
         20,
       ),
       child: Text(
-        _initIndex == 0 ? '只有新人才能领取，领取后他将成为你的好友' : '只有在红包投放的位置附近才可以拼手气领取',
+        _selectedEntity.fullDesc,
         textAlign: TextAlign.center,
         style: TextStyle(
           color: HexColor('#333333'),
@@ -223,12 +223,12 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
     double gap = 28,
     double imageSize = 44,
     double padding = 0,
-    int index = 0,
+    RpShareTypeEntity entity,
   }) {
 
     var language = SettingInheritedModel.of(context).languageCode;
-    var suffix = language == 'zh'?'zh':'en';
-    var typeName = index == 0 ? RpShareType.normal:RpShareType.location;
+    var suffix = language == 'zh' ? 'zh' : 'en';
+    var typeName = entity.nameEn;
     var imageName = 'rp_share_${typeName}_$suffix';
     return Container(
       width: size.width,
@@ -280,7 +280,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
                   ),
                 ),
                 Text(
-                  '发的${index == 0 ? '新人' : '位置'}红包',
+                  '发的${entity.fullNameZh}',
                   style: TextStyle(
                     fontSize: fontSize,
                     color: Colors.white,

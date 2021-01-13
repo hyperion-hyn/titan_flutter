@@ -34,8 +34,12 @@ import 'entity/rp_util.dart';
 
 class RpShareEditPage extends StatefulWidget {
   final LatLng userPosition;
-  final RedPocketShareType shareType;
-  RpShareEditPage({this.userPosition, this.shareType = RedPocketShareType.NEWER});
+  final RpShareTypeEntity shareTypeEntity;
+  
+  RpShareEditPage({
+    this.userPosition,
+    this.shareTypeEntity = SupportedShareType.NORMAL,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -86,9 +90,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
   LatLng _selectedPosition;
   LatLng _initSelectedPosition;
 
-  String get _baseTitle => widget.shareType == RedPocketShareType.NEWER ? '新人红包' : '位置红包';
-  bool get _isLocation => widget.shareType == RedPocketShareType.LOCATION;
-  String get _rpType => widget.shareType == RedPocketShareType.LOCATION ? RpShareType.location : RpShareType.normal;
+  bool get _isLocation => widget.shareTypeEntity.index == RedPocketShareType.LOCATION.index;
 
   RpShareConfigEntity _rpShareConfig;
 
@@ -162,7 +164,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: _baseTitle,
+        baseTitle: widget.shareTypeEntity.fullNameZh,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
       body: _buildView(context),
@@ -236,7 +238,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
   Widget _buildBody() {
     Widget child;
-    if (widget.shareType == RedPocketShareType.NEWER) {
+    if (!_isLocation) {
       child = Column(
         children: <Widget>[
           SizedBox(
@@ -545,7 +547,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
             title: 'RP金额',
             unit: 'RP',
             showLeft: true,
-            leftTitle: widget.shareType == RedPocketShareType.NEWER ? '新人' : '位置',
+            leftTitle: widget.shareTypeEntity.nameZh,
             validator: (String inputText) {
               if (inputText.isEmpty || inputText == null) {
                 return '';
@@ -1067,7 +1069,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     reqEntity.greeting = _maxLengthLimit(_greetingController);
 
     // rpType
-    reqEntity.rpType = _rpType;
+    reqEntity.rpType = widget.shareTypeEntity.nameEn;
 
     // address
     var walletVo = WalletInheritedModel.of(context).activatedWallet;

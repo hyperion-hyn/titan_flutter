@@ -175,6 +175,11 @@ int levelNameToLevelValue(String levelName) {
 }
 
 
+enum RedPocketShareType {
+  NORMAL,
+  LOCATION,
+}
+
 /*
 waitForTX: 待转账
 Pending: 已转账，待确认
@@ -195,23 +200,32 @@ class RpShareType {
   static const String location = 'location';
 }
 
-
 class RpShareTypeEntity {
   final int index;
   final String nameZh;
   final String nameEn;
   final String desc;
+  final String fullNameZh;
+  final String fullDesc;
 
-  const RpShareTypeEntity({this.index, this.nameZh, this.nameEn, this.desc});
+  const RpShareTypeEntity({
+    this.index,
+    this.nameZh,
+    this.nameEn,
+    this.desc,
+    this.fullNameZh,
+    this.fullDesc,
+  });
 }
 
 class SupportedShareType {
-
   static const NORMAL = const RpShareTypeEntity(
     index: 0,
     nameZh: '新人',
     nameEn: RpShareType.normal,
     desc: '赞好友',
+    fullNameZh: '新人红包',
+    fullDesc: '只有新人才能领取，领取后他将成为你的好友',
   );
 
   static const LOCATION = const RpShareTypeEntity(
@@ -219,7 +233,7 @@ class SupportedShareType {
     nameZh: '位置',
     nameEn: RpShareType.location,
     desc: '在附近可领取',
+    fullNameZh: '位置红包',
+    fullDesc: '只有在红包投放的位置附近才可以拼手气领取',
   );
-
-
 }

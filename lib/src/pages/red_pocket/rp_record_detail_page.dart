@@ -1105,11 +1105,6 @@ enum RedPocketType {
   SHARE,
 }
 
-enum RedPocketShareType {
-  NEWER,
-  LOCATION,
-}
-
 enum RpLuckState {
   MISS,             // 错过：0
   GET,              // 获取：1
