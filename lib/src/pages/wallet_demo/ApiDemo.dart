@@ -324,9 +324,8 @@ class _ApiDemoState extends State {
           RaisedButton(
             child: Text('检查更新'),
             onPressed: () async {
-              AtlasApi atlasApi = AtlasApi();
               try {
-                var appUpdateInfo = await atlasApi.checkUpdate();
+                var appUpdateInfo = AtlasApi.checkUpdate();
               } catch (e) {
                 print(e);
               }

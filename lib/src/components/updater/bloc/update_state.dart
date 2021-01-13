@@ -14,27 +14,29 @@ class InitialAppState extends UpdateState {}
 class UpdateCheckState extends UpdateState {
   final bool isManual;
 
-  /*
-  UpdateCheckStateNew({AppUpdateInfo appUpdateInfo, bool isError, bool isChecking, this.isManual = false}) {
+
+  UpdateCheckState({AppUpdateInfo appUpdateInfo, bool isError, bool isChecking, this.isManual = false}) {
     appData.appUpdateInfo = appUpdateInfo;
+    appData.isError = isError ?? appData.isError;
+    appData.isChecking = isChecking ?? appData.isChecking;
+  }
+
+
+  /*
+  UpdateCheckStateOld({UpdateEntity updateEntity, bool isError, bool isChecking, this.isManual = false}) {
+    appData.updateEntity = updateEntity;
     appData.isError = isError ?? appData.isError;
     appData.isChecking = isChecking ?? appData.isChecking;
   }
   */
 
-  UpdateCheckState({UpdateEntity updateEntity, bool isError, bool isChecking, this.isManual = false}) {
-    appData.updateEntity = updateEntity;
-    appData.isError = isError ?? appData.isError;
-    appData.isChecking = isChecking ?? appData.isChecking;
-  }
-
   @override
   String toString() {
-    return 'UpdateState(isChecking: ${appData.isChecking}, isError: ${appData.isError}, versionModel: ${appData.updateEntity})';
+    return 'UpdateState(isChecking: ${appData.isChecking}, isError: ${appData.isError}, versionModel: ${appData.appUpdateInfo})';
   }
 }
 
-
+/*
 class AppData {
   //-------------
   //  update
@@ -54,9 +56,10 @@ class AppData {
     return 'AppData(isChecking: $isChecking, isError: $isError,versionModel: $updateEntity)';
   }
 }
+*/
 
-/*
-class AppDataNew {
+
+class AppData {
   //-------------
   //  update
   //-------------
@@ -75,4 +78,3 @@ class AppDataNew {
     return 'AppData(isChecking: $isChecking, isError: $isError,versionModel: $appUpdateInfo)';
   }
 }
-*/
