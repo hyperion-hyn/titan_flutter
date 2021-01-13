@@ -172,7 +172,6 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
                   ClickOvalButton(
                     S.of(context).send,
                     () async {
-
                       // todo
                       /*Navigator.push(
                         context,
@@ -208,16 +207,19 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
                         print("[$runtimeType] postSendShareRp, 2, result:${result.toJson()}");
 
                         if (result.id.isNotEmpty) {
+                          widget.reqEntity.id = result.id;
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => RpShareBroadcastPage(),
+                              builder: (context) => RpShareBroadcastPage(
+                                reqEntity: widget.reqEntity,
+                              ),
                             ),
                           );
                         } else {
                           Fluttertoast.showToast(msg: '发送红包失败！');
                         }
-
                       } catch (e) {
                         LogUtil.toastException(e);
                       }
@@ -310,11 +312,10 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
   }
 }
 
-
 Future<bool> showSendAlertView<T>(
-    BuildContext context,
-    RpShareReqEntity reqEntity,
-    ) {
+  BuildContext context,
+  RpShareReqEntity reqEntity,
+) {
   return showDialog<bool>(
     barrierDismissible: true,
     context: context,

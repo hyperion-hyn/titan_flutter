@@ -13,6 +13,8 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_open_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -21,10 +23,8 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/widget_shot.dart';
 
 class RpShareBroadcastPage extends StatefulWidget {
-
-  final String id;
-
-  RpShareBroadcastPage({this.id});
+  final RpShareReqEntity reqEntity;
+  RpShareBroadcastPage({this.reqEntity});
 
   @override
   State<StatefulWidget> createState() {
@@ -38,10 +38,13 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
   GlobalKey _qrImageBoundaryKey = GlobalKey();
 
   WalletVo _walletVo;
-  int _initIndex = 0;
+
   bool _isSharing = false;
-  String get _address =>  _walletVo.wallet.getAtlasAccount().address;
-  String get _walletName =>  _walletVo.wallet.keystore.name;
+  String get _address => _walletVo.wallet.getAtlasAccount().address;
+  String get _walletName => _walletVo.wallet.keystore.name;
+  RpShareTypeEntity get _shareTypeEntity => (widget.reqEntity?.rpType ?? RpShareType.normal) == RpShareType.normal
+      ? SupportedShareType.NORMAL
+      : SupportedShareType.LOCATION;
 
   @override
   void initState() {
@@ -100,11 +103,7 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
             child: Center(
               child: Column(
                 children: [
-                  _createSelectedWidget(
-                    size: Size(315, 452),
-                    fontSize: 14,
-                    index: _initIndex,
-                  ),
+                  _createSelectedWidget(),
                 ],
               ),
             ),
@@ -119,9 +118,13 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
         ),
         ClickOvalButton(
           '分享给新人',
-          () async{
-
-            showShareRpOpenDialog(context:context, id:widget.id, address:_address, walletName: _walletName,);
+          () async {
+            showShareRpOpenDialog(
+              context: context,
+              id: widget.reqEntity.id,
+              address: _address,
+              walletName: _walletName,
+            );
             return;
 
             if (mounted) {
@@ -191,19 +194,10 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
     );
   }
 
-  Widget _createSelectedWidget({
-    Size size,
-    double fontSize,
-    double imageSize = 44,
-    int index = 0,
-  }) {
-
-
+  Widget _createSelectedWidget() {
     String walletAddress = WalletUtil.ethAddressToBech32Address(_address);
     var qrData = "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$_walletName";
-
-    var greeting = '恭喜发财，大吉大利,恭喜发财，大吉大利xxxx';
-     greeting = '恭喜发财，大吉大利!xx';
+    var greeting = (widget.reqEntity?.greeting?.isNotEmpty ?? false) ? widget.reqEntity?.greeting : '恭喜发财，大吉大利!';
 
     return WidgetShot(
       controller: _shotController,
@@ -216,8 +210,8 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
             alignment: Alignment.center,
             children: <Widget>[
               Container(
-                width: size.width,
-                height: size.height,
+                width: 315,
+                height: 452,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage(
@@ -236,8 +230,8 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
                       height: 34,
                     ),
                     Container(
-                      width: imageSize,
-                      height: imageSize,
+                      width: 315,
+                      height: 452,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -248,10 +242,13 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
                           )),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 16, bottom: 16,),
+                      padding: EdgeInsets.only(
+                        top: 16,
+                        bottom: 16,
+                      ),
                       child: RichText(
                         text: TextSpan(
-                          text: "${_walletVo.wallet.keystore.name} 发的${index == 0 ? '新人' : '位置'}红包",
+                          text: "${_walletVo.wallet.keystore.name} 发的${_shareTypeEntity.fullNameZh}",
                           style: TextStyle(
                             fontSize: 14,
                             color: HexColor('#333333'),
@@ -263,12 +260,14 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
                     Text(
                       greeting,
                       style: TextStyle(
-                        fontSize: greeting.length > 12?14:22,
+                        fontSize: greeting.length > 12 ? 14 : 22,
                         fontWeight: FontWeight.w600,
                         color: HexColor('#333333'),
                       ),
                     ),
-                    SizedBox(height: 16,),
+                    SizedBox(
+                      height: 16,
+                    ),
                     Stack(
                       alignment: Alignment.center,
                       children: [
@@ -283,9 +282,8 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
                         Positioned(
                           top: 140,
                           child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.all(Radius.circular(5))),
+                            decoration:
+                                BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
                             width: 84,
                             height: 84,
                             child: QrImage(
@@ -313,13 +311,11 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
     bool result = false;
 
     try {
-      RenderRepaintBoundary boundary =
-      _qrImageBoundaryKey.currentContext.findRenderObject();
+      RenderRepaintBoundary boundary = _qrImageBoundaryKey.currentContext.findRenderObject();
       var image = await boundary.toImage();
       ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData.buffer.asUint8List();
-      result = await ImageSave.saveImage(pngBytes, "png",
-          albumName: 'rp_address_$address');
+      result = await ImageSave.saveImage(pngBytes, "png", albumName: 'rp_address_$address');
     } catch (e) {
       result = false;
     }
@@ -330,7 +326,7 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
 
   Future _shareQr(BuildContext context) async {
     Uint8List imageByte = await _shotController.makeImageUint8List();
-    await Share.file('分享新人红包', 'app.png', imageByte, 'image/png');
+    await Share.file('分享${_shareTypeEntity.fullNameZh}', 'app.png', imageByte, 'image/png');
 
     if (mounted) {
       setState(() {
@@ -338,5 +334,4 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
       });
     }
   }
-
 }
