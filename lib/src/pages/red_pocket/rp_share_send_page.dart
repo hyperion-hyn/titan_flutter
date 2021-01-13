@@ -198,7 +198,6 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
                         });
                       }
 
-
                       var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('RP');
                       print("【$runtimeType】postSendShareRp， 1");
 

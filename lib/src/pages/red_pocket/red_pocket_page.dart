@@ -140,6 +140,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           ),
 
           if (_latestRoundInfo != null) RpFloatingWidget(),
+          if (_latestRoundInfo != null) RpFloatingWidget(actionType: -1,),
         ],
       ),
 

@@ -58,12 +58,11 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
               child: Row(
                 children: <Widget>[
                   Expanded(
-                    flex: 10,
                     child: TabBar(
                       labelColor: HexColor('#FF001B'),
                       labelStyle: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                        fontSize: 14,
                       ),
                       indicatorSize: TabBarIndicatorSize.label,
                       indicatorColor: HexColor('#FF001B'),
