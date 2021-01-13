@@ -192,6 +192,13 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
                         return;
                       }
 
+                      if (mounted) {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                      }
+
+
                       var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('RP');
                       print("【$runtimeType】postSendShareRp， 1");
 
@@ -220,8 +227,20 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
                         } else {
                           Fluttertoast.showToast(msg: '发送红包失败！');
                         }
+
+                        if (mounted) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        }
                       } catch (e) {
                         LogUtil.toastException(e);
+
+                        if (mounted) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        }
                       }
                     },
                     btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],

@@ -119,6 +119,7 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
         ClickOvalButton(
           '分享给新人',
           () async {
+            /*
             showShareRpOpenDialog(
               context: context,
               id: widget.reqEntity.id,
@@ -126,6 +127,7 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
               walletName: _walletName,
             );
             return;
+            */
 
             if (mounted) {
               setState(() {
@@ -230,8 +232,8 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
                       height: 34,
                     ),
                     Container(
-                      width: 315,
-                      height: 452,
+                      width: 44,
+                      height: 44,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
