@@ -2,9 +2,11 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_open_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/fl_pie_chart.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 
 import 'atlas_map_widget.dart';
 import 'clip_tab_bar.dart';
@@ -65,6 +67,11 @@ class _WidgetDemoPageState extends State<WidgetDemoPage>
               physics: BouncingScrollPhysics(),
               slivers: <Widget>[
                 _statisticsWidget(),
+                SliverToBoxAdapter(
+                  child: FlatButton(onPressed: (){
+                    showShareRpOpenDialog(context,id: "BVABHH",walletName: "abc",address: "0x1D51C89ed09F28Ddc78C7de7A30976F64fC7866D");
+                  }, child: Text("分享红包"),color: DefaultColors.color999,),
+                ),
               ],
             ),
           )),
