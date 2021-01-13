@@ -36,7 +36,7 @@ class _AppLockManager extends StatefulWidget {
 }
 
 class _AppLockManagerState extends State<_AppLockManager> {
-  LockStatus _lockStatus = LockStatus()..wallet = Wallet();
+  LockStatus _lockStatus = LockStatus();
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +54,9 @@ class _AppLockManagerState extends State<_AppLockManager> {
           _lockStatus.wallet.isOn = state.isEnabled;
         }
         if (state is LockWalletState) {
-          _lockStatus.wallet.isOn = true;
+          if (_lockStatus.wallet.isEnabled) _lockStatus.wallet.isOn = true;
         } else if (state is UnlockWalletState) {
-          _lockStatus.wallet.isOn = false;
+          if (_lockStatus.wallet.isEnabled) _lockStatus.wallet.isOn = false;
         }
         if (mounted) setState(() {});
       },

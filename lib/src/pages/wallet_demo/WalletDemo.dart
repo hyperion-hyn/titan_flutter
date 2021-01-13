@@ -896,7 +896,7 @@ class _WalletDemoState extends State<WalletDemo> {
             child: Text('identifier'),
           ),
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.symmetric(vertical: 16),
             child: Text(
                 'Wallet Lock is ${AppLockInheritedModel.of(context).isWalletLockOn}'),
           ),
