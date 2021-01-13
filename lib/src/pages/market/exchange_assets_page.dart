@@ -198,23 +198,23 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
             ),
             child: Column(
               children: [
-                InkWell(
-                  onTap: () {
-                    ///close popup
-                    Navigator.of(context).pop();
-
-                    ///close asset page
-                    Navigator.of(context).pop();
-                    WalletManagerPage.jumpWalletManager(context);
-
-                    /*Application.router
-                        .navigateTo(context, Routes.wallet_manager);*/
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(S.of(context).exchange_change_wallet),
-                  ),
-                ),
+                // InkWell(
+                //   onTap: () {
+                //     ///close popup
+                //     Navigator.of(context).pop();
+                //
+                //     ///close asset page
+                //     Navigator.of(context).pop();
+                //     WalletManagerPage.jumpWalletManager(context);
+                //
+                //     /*Application.router
+                //         .navigateTo(context, Routes.wallet_manager);*/
+                //   },
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(16.0),
+                //     child: Text(S.of(context).exchange_change_wallet),
+                //   ),
+                // ),
                 InkWell(
                   onTap: () {
                     Navigator.of(context).pop();
