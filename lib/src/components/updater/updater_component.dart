@@ -209,7 +209,6 @@ class _UpdaterComponentStateOld extends State<UpdaterComponent> {
 }
 */
 
-
 class _UpdaterComponentState extends State<UpdaterComponent> {
   StreamSubscription _appBlocSubscription;
   int _lastCancelBuildNumber = 0;
@@ -369,7 +368,8 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
 
     Navigator.maybePop(context);
 
-    launchUrl(versionModel.newVersion?.urlJump);
+    ///For mm, use urlInstall
+    launchUrl(versionModel.newVersion?.urlInstall);
 
     if (versionModel.newVersion?.force != 1) {
       Navigator.pop(context);

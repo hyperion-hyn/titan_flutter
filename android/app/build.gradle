@@ -95,7 +95,7 @@ android {
             applicationVariants.all { variant ->
                 variant.outputs.each { output ->
                     if (output.outputFileName.contains('-release')) {
-                        def fileName = "mm_titan_${defaultConfig.versionCode}_v${defaultConfig.versionName}.apk"
+                        def fileName = "android-mm_${defaultConfig.versionName}.${defaultConfig.versionCode}.apk"
                         output.outputFileName = fileName
                     }
                 }

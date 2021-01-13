@@ -9,6 +9,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/components/updater/bloc/bloc.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
@@ -29,10 +30,11 @@ class PartnerExchangeLoginPage extends StatefulWidget {
   }
 }
 
-class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage> {
+class _PartnerExchangeLoginPageState
+    extends BaseState<PartnerExchangeLoginPage> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController _userApiKeyController = TextEditingController(text:'');
+  TextEditingController _userApiKeyController = TextEditingController(text: '');
   TextEditingController _userSecretController = TextEditingController(text: '');
 
   ExchangeApi _exchangeApi = ExchangeApi();
@@ -52,7 +54,8 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
 
   @override
   void onCreated() async {
-    List apiKeyList = await AppCache.getValue(PrefsKey.SHARED_PREF_LOGIN_USER_API_KEY_LIST);
+    List apiKeyList =
+        await AppCache.getValue(PrefsKey.SHARED_PREF_LOGIN_USER_API_KEY_LIST);
     if (apiKeyList != null && apiKeyList.length > 0) {
       _apiKeyList = apiKeyList;
       apiKeyList.forEach((element) {
@@ -68,7 +71,8 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
       });
     }
 
-    List apiSecretList = await AppCache.getValue(PrefsKey.SHARED_PREF_LOGIN_USER_API_SECRET_LIST);
+    List apiSecretList = await AppCache.getValue(
+        PrefsKey.SHARED_PREF_LOGIN_USER_API_SECRET_LIST);
     if (apiSecretList != null && apiSecretList.length > 0) {
       _apiSecretList = apiSecretList;
       apiSecretList.forEach((element) {
@@ -83,6 +87,12 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
         );
       });
     }
+
+    ///Check update
+    BlocProvider.of<UpdateBloc>(context).add(CheckUpdate(
+      lang: Localizations.localeOf(context).languageCode,
+      isManual: false,
+    ));
 
     setState(() {});
 
@@ -116,7 +126,10 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
                   ),
                   Text(
                     'API Key',
-                    style: TextStyle(color: HexColor('#333333'), fontSize: 14, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                        color: HexColor('#333333'),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600),
                   ),
                   Expanded(
                     child: Padding(
@@ -128,7 +141,8 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
                           size: 30,
                         ),
                         decoration: InputDecoration(
-                            labelStyle: TextStyle(color: HexColor("#00000000")), border: InputBorder.none),
+                            labelStyle: TextStyle(color: HexColor("#00000000")),
+                            border: InputBorder.none),
                         onChanged: (value) {
                           setState(() {
                             _userApiKeyController.text = value;
@@ -149,7 +163,10 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
                   ),
                   Text(
                     'API Secret',
-                    style: TextStyle(color: HexColor('#333333'), fontSize: 14, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                        color: HexColor('#333333'),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600),
                   ),
                   Expanded(
                     child: Padding(
@@ -161,7 +178,8 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
                           size: 30,
                         ),
                         decoration: InputDecoration(
-                            labelStyle: TextStyle(color: HexColor("#00000000")), border: InputBorder.none),
+                            labelStyle: TextStyle(color: HexColor("#00000000")),
+                            border: InputBorder.none),
                         onChanged: (value) {
                           setState(() {
                             _userSecretController.text = value;
@@ -178,15 +196,19 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  ClickOvalButton("一键清除记录",() async {
-                    _apiKeyList.clear();
-                    _apiSecretList.clear();
-                    await AppCache.remove(PrefsKey.SHARED_PREF_LOGIN_USER_API_KEY_LIST);
-                    await AppCache.remove(PrefsKey.SHARED_PREF_LOGIN_USER_API_SECRET_LIST);
-                    setState(() {
-
-                    });
-                  },width: 150,),
+                  ClickOvalButton(
+                    "一键清除记录",
+                    () async {
+                      _apiKeyList.clear();
+                      _apiSecretList.clear();
+                      await AppCache.remove(
+                          PrefsKey.SHARED_PREF_LOGIN_USER_API_KEY_LIST);
+                      await AppCache.remove(
+                          PrefsKey.SHARED_PREF_LOGIN_USER_API_SECRET_LIST);
+                      setState(() {});
+                    },
+                    width: 150,
+                  ),
                 ],
               ),
             Expanded(
@@ -200,7 +222,8 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
                   child: Form(
                     key: _formKey,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 24),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 36, vertical: 24),
                       alignment: Alignment.center,
                       child: Column(
                         children: <Widget>[
@@ -208,7 +231,8 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
                             alignment: Alignment.center,
                             width: 64,
                             height: 64,
-                            child: Image.asset("res/drawable/ic_hyn_logo_new.png"),
+                            child:
+                                Image.asset("res/drawable/ic_hyn_logo_new.png"),
                           ),
                           SizedBox(
                             height: 30,
@@ -217,19 +241,24 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
                             padding: const EdgeInsets.only(top: 16, bottom: 50),
                             child: Text(
                               '使用API方式登录',
-                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 16),
                             ),
                           ),
                           Row(
                             children: [
                               Text(
                                 'API Key',
-                                style: TextStyle(color: HexColor('#333333'), fontSize: 14, fontWeight: FontWeight.w600),
+                                style: TextStyle(
+                                    color: HexColor('#333333'),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600),
                               ),
                             ],
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 10),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               validator: (value) {
@@ -288,12 +317,16 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
                             children: [
                               Text(
                                 'API Secret',
-                                style: TextStyle(color: HexColor('#333333'), fontSize: 14, fontWeight: FontWeight.w600),
+                                style: TextStyle(
+                                    color: HexColor('#333333'),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600),
                               ),
                             ],
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 10),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               validator: (value) {
@@ -352,7 +385,8 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
                             margin: EdgeInsets.fromLTRB(0, 24, 0, 48),
                             constraints: BoxConstraints.expand(height: 48),
                             child: RaisedButton(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30)),
                               disabledColor: Colors.grey[600],
                               color: Theme.of(context).primaryColor,
                               textColor: Colors.white,
@@ -373,7 +407,9 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     Text(
-                                      _isProcessing ? '处理中' : S.of(context).next,
+                                      _isProcessing
+                                          ? '处理中'
+                                          : S.of(context).next,
                                       style: TextStyle(
                                         fontWeight: FontWeight.normal,
                                         fontSize: 16,
@@ -421,24 +457,30 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
         userApiSecret,
       );
 
-      List apiKeyList = await AppCache.getValue(PrefsKey.SHARED_PREF_LOGIN_USER_API_KEY_LIST);
+      List apiKeyList =
+          await AppCache.getValue(PrefsKey.SHARED_PREF_LOGIN_USER_API_KEY_LIST);
       if (apiKeyList != null && !apiKeyList.contains(userApiKey)) {
         apiKeyList.add(userApiKey);
-        await AppCache.saveValue(PrefsKey.SHARED_PREF_LOGIN_USER_API_KEY_LIST, apiKeyList);
+        await AppCache.saveValue(
+            PrefsKey.SHARED_PREF_LOGIN_USER_API_KEY_LIST, apiKeyList);
       } else if (apiKeyList == null) {
         apiKeyList = List();
         apiKeyList.add(userApiKey);
-        await AppCache.saveValue(PrefsKey.SHARED_PREF_LOGIN_USER_API_KEY_LIST, apiKeyList);
+        await AppCache.saveValue(
+            PrefsKey.SHARED_PREF_LOGIN_USER_API_KEY_LIST, apiKeyList);
       }
 
-      List apiSecretList = await AppCache.getValue(PrefsKey.SHARED_PREF_LOGIN_USER_API_SECRET_LIST);
+      List apiSecretList = await AppCache.getValue(
+          PrefsKey.SHARED_PREF_LOGIN_USER_API_SECRET_LIST);
       if (apiSecretList != null && !apiSecretList.contains(userApiSecret)) {
         apiSecretList.add(userApiSecret);
-        await AppCache.saveValue(PrefsKey.SHARED_PREF_LOGIN_USER_API_SECRET_LIST, apiSecretList);
+        await AppCache.saveValue(
+            PrefsKey.SHARED_PREF_LOGIN_USER_API_SECRET_LIST, apiSecretList);
       } else if (apiSecretList == null) {
         apiSecretList = List();
         apiSecretList.add(userApiSecret);
-        await AppCache.saveValue(PrefsKey.SHARED_PREF_LOGIN_USER_API_SECRET_LIST, apiSecretList);
+        await AppCache.saveValue(
+            PrefsKey.SHARED_PREF_LOGIN_USER_API_SECRET_LIST, apiSecretList);
       }
     }
   }
@@ -462,7 +504,8 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
       _exchangeAccount.assetList = _assetList;
 
       ///
-      BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateExchangeAccountEvent(_exchangeAccount));
+      BlocProvider.of<ExchangeCmpBloc>(context)
+          .add(UpdateExchangeAccountEvent(_exchangeAccount));
 
       ///
       _saveApiKeyAndSecret();

@@ -411,11 +411,14 @@ class AtlasApi {
   }
 
   // atlas节点图表数据
-  Future<List<RewardHistoryEntity>> postAtlasChartHistory(String nodeAddress, {int page = 1, int size = 20}) async {
+  Future<List<RewardHistoryEntity>> postAtlasChartHistory(String nodeAddress,
+      {int page = 1, int size = 20}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/reward_history",
-        EntityFactory<List<RewardHistoryEntity>>(
-            (list) => (list['data'] as List).map((item) => RewardHistoryEntity.fromJson(item)).toList()),
+        EntityFactory<List<RewardHistoryEntity>>((list) =>
+            (list['data'] as List)
+                .map((item) => RewardHistoryEntity.fromJson(item))
+                .toList()),
         params: {
           "node_address": nodeAddress,
           "page": page,
@@ -660,7 +663,6 @@ class AtlasApi {
         },
         options: RequestOptions(contentType: "application/json"));
   }
-
 
   // 获取节点的抵押人地址列表
   Future<List<Map3UserEntity>> getMap3UserList(String nodeId,
@@ -932,14 +934,16 @@ class AtlasApi {
   }
 
   static bool isTransferBill(int type) {
-    return (type == MessageType.typeUnMicrostakingReturn || type == MessageType.typeTerminateMap3Return);
+    return (type == MessageType.typeUnMicrostakingReturn ||
+        type == MessageType.typeTerminateMap3Return);
   }
 
   static double getTransferBillAmount(HynTransferHistory hynTransferHistory) {
-    var amountStr =
-        (Decimal.parse(hynTransferHistory.payload.amount) + Decimal.parse(hynTransferHistory.payload.reward))
-            .toString();
-    return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(amountStr)).toDouble();
+    var amountStr = (Decimal.parse(hynTransferHistory.payload.amount) +
+            Decimal.parse(hynTransferHistory.payload.reward))
+        .toString();
+    return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(amountStr))
+        .toDouble();
   }
 
   static bool isTransferMap3Atlas(int type) {
@@ -1017,10 +1021,9 @@ class AtlasApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
-
   Future<SystemConfigEntity> getSystemConfigData() async {
-    var configEntity =
-    await AtlasHttpCore.instance.postEntity('/v1/app/config', EntityFactory<SystemConfigEntity>((data) {
+    var configEntity = await AtlasHttpCore.instance.postEntity('/v1/app/config',
+        EntityFactory<SystemConfigEntity>((data) {
       return SystemConfigEntity.fromJson(json.decode(data));
     }), params: {
       "key": 'app:config',
@@ -1042,26 +1045,16 @@ class AtlasApi {
 
     var deviceInfoPlugin = DeviceInfoPlugin();
     var deviceId = '';
-    var channel = '';
+
+    ///hard-code mm
+    var channel = 'android-mm';
 
     if (Platform.isAndroid) {
       AndroidDeviceInfo deviceInfo = await deviceInfoPlugin?.androidInfo;
       deviceId = deviceInfo?.androidId;
-      if (env.channel == BuildChannel.OFFICIAL) {
-        channel = 'android-official';
-      } else if (env.channel == BuildChannel.STORE) {
-        channel = 'android-google';
-      }
     } else if (Platform.isIOS) {
       IosDeviceInfo deviceInfo = await deviceInfoPlugin?.iosInfo;
       deviceId = deviceInfo?.identifierForVendor;
-
-      bool isTestFlight = await DetectTestflight.isTestflight;
-      if (isTestFlight) {
-        channel = 'ios-testflight';
-      } else {
-        channel = 'ios-appstore';
-      }
     }
 
     var versionName = packageInfo?.version ?? '';
