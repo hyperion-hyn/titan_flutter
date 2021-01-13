@@ -55,14 +55,12 @@ class _ExchangeAssetHistoryPageState
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loadDataBloc.add(LoadingEvent());
   }
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
     symbolQuote =
         WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
@@ -71,9 +69,8 @@ class _ExchangeAssetHistoryPageState
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     _loadDataBloc.close();
+    super.dispose();
   }
 
   _updateTypeToCurrency() async {
@@ -336,8 +333,8 @@ class _ExchangeAssetHistoryPageState
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      WalletShowAccountInfoPage(transactionDetailVo.hash,transactionDetailVo.symbol)));
+                  builder: (context) => WalletShowAccountInfoPage(
+                      transactionDetailVo.hash, transactionDetailVo.symbol)));
         } else {
           var isChinaMainland =
               (SettingInheritedModel.of(context).areaModel?.isChinaMainland ??

@@ -4,22 +4,20 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/setting/system_config_entity.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 
 import 'bloc/bloc.dart';
+import 'package:nested/nested.dart';
 
-class SettingComponent extends StatelessWidget {
-  final Widget child;
+class SettingComponent extends SingleChildStatelessWidget {
 
-  SettingComponent({@required this.child});
+  SettingComponent({Key key, Widget child}): super(key: key, child: child);
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return BlocProvider<SettingBloc>(
       create: (ctx) => SettingBloc(),
       child: _SettingManager(child: child),

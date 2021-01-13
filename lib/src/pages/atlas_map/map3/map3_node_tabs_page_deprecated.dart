@@ -1,11 +1,8 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
-import 'package:titan/src/pages/atlas_map/event/node_event.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_nodes_page.dart';
 

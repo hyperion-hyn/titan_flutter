@@ -14,10 +14,22 @@ class RPStatistics extends Object {
   @JsonKey(name: 'rp_contract_info')
   Rp_contract_info rpContractInfo;
 
+  @JsonKey(name: 'rp_holding_contract_info')
+  Rp_holding_contract_info rpHoldingContractInfo;
+
+  @JsonKey(name: 'airdrop_info')
+  Airdrop_info airdropInfo;
+
+  @JsonKey(name: 'level_counts')
+  List<LevelCounts> levelCounts;
+
   RPStatistics(
     this.global,
     this.self,
     this.rpContractInfo,
+    this.rpHoldingContractInfo,
+    this.airdropInfo,
+    this.levelCounts,
   );
 
   factory RPStatistics.fromJson(Map<String, dynamic> srcJson) => _$RPStatisticsFromJson(srcJson);
@@ -112,6 +124,7 @@ class Rp_contract_info extends Object {
   int poolPercent;
 
   String get hynPerRpStr => FormatUtil.weiToEtherStr(hynPerRp) ?? '0';
+
   String get baseRpStr => FormatUtil.weiToEtherStr(baseRp) ?? '0';
 
   Rp_contract_info(
@@ -126,4 +139,97 @@ class Rp_contract_info extends Object {
   factory Rp_contract_info.fromJson(Map<String, dynamic> srcJson) => _$Rp_contract_infoFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$Rp_contract_infoToJson(this);
+}
+
+@JsonSerializable()
+class Rp_holding_contract_info extends Object {
+  @JsonKey(name: 'promotion_supply_ratio')
+  String promotionSupplyRatio;
+
+  @JsonKey(name: 'total_burning')
+  String totalBurning;
+
+  @JsonKey(name: 'total_holding')
+  String totalHolding;
+
+  @JsonKey(name: 'total_supply')
+  String totalSupply;
+
+  @JsonKey(name: 'random_min_level')
+  int randomMinLevel;
+
+  @JsonKey(name: 'gradient_ratio')
+  double gradientRatio;
+
+  String get totalBurningStr => FormatUtil.weiToEtherStr(totalBurning) ?? '--';
+
+  String get totalHoldingStr => FormatUtil.weiToEtherStr(totalHolding) ?? '--';
+
+  String get totalSupplyStr => FormatUtil.weiToEtherStr(totalSupply) ?? '0';
+
+  Rp_holding_contract_info(
+    this.promotionSupplyRatio,
+    this.totalBurning,
+    this.totalHolding,
+    this.totalSupply,
+    this.randomMinLevel,
+    this.gradientRatio,
+  );
+
+  factory Rp_holding_contract_info.fromJson(Map<String, dynamic> srcJson) =>
+      _$Rp_holding_contract_infoFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$Rp_holding_contract_infoToJson(this);
+}
+
+@JsonSerializable()
+class Airdrop_info extends Object {
+  @JsonKey(name: 'total_amount')
+  String totalAmount;
+
+  @JsonKey(name: 'today_amount')
+  String todayAmount;
+
+  @JsonKey(name: 'miss_amount')
+  String missRpAmount;
+
+  @JsonKey(name: 'yesterday_amount')
+  String yesterdayAmount;
+
+  String get totalAmountStr => FormatUtil.weiToEtherStr(totalAmount) ?? '--';
+
+  String get todayAmountStr => FormatUtil.weiToEtherStr(todayAmount) ?? '--';
+
+  String get yesterdayRpAmountStr => FormatUtil.weiToEtherStr(yesterdayAmount) ?? '--';
+
+  String get missRpAmountStr => FormatUtil.weiToEtherStr(missRpAmount) ?? '--';
+
+  Airdrop_info(
+    this.totalAmount,
+    this.missRpAmount,
+    this.todayAmount,
+    this.yesterdayAmount,
+  );
+
+  factory Airdrop_info.fromJson(Map<String, dynamic> srcJson) => _$Airdrop_infoFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$Airdrop_infoToJson(this);
+}
+
+@JsonSerializable()
+class LevelCounts extends Object {
+  @JsonKey(name: 'count')
+  int count;
+
+  @JsonKey(name: 'level')
+  int level;
+
+  LevelCounts(
+    this.count,
+    this.level,
+  );
+
+  factory LevelCounts.fromJson(Map<String, dynamic> srcJson) => _$LevelCountsFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$LevelCountsToJson(this);
 }

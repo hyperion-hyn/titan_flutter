@@ -6,6 +6,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -13,9 +14,11 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
+import 'package:titan/src/pages/mine/api/contributions_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
@@ -59,9 +62,9 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
   bool _isLoadedMap = false;
 
   List<String> _titles = [
-    "名称",
-    "类别",
-    "位置",
+  S.of(Keys.rootKey.currentContext).exchange_name,
+  S.of(Keys.rootKey.currentContext).category,
+  S.of(Keys.rootKey.currentContext).position,
   ];
 
   List<String> _questionList = [
@@ -71,11 +74,11 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
     "",
   ];
   String _currentAnswer;
-  List<String> _answerExistList = ["存在", "不存在"];
-  List<String> _answerTrueList = ["是", "否"];
-  List<String> _answerRadiusList = ["偏差小于50米", "偏差小于100米", "偏差小于200米", "偏差较大"]; // 忽略判断
-  List<String> _answerRegulationList = ["符合地方法规", "违反地方法规", "不确定"];
-  List<String> _answerDefaultList = ["是", "否", "不确定"];
+  List<String> _answerExistList = [S.of(Keys.rootKey.currentContext).exist, S.of(Keys.rootKey.currentContext).does_not_exist];
+  List<String> _answerTrueList = [S.of(Keys.rootKey.currentContext).isolation_yes, S.of(Keys.rootKey.currentContext).isolation_no];
+  List<String> _answerRadiusList = [S.of(Keys.rootKey.currentContext).deviation_less_than_50_meters, S.of(Keys.rootKey.currentContext).deviation_less_than_100_meters, S.of(Keys.rootKey.currentContext).deviation_less_than_200_meters, S.of(Keys.rootKey.currentContext).deviation_more_than_meters]; // 忽略判断
+  List<String> _answerRegulationList = [S.of(Keys.rootKey.currentContext).compliance_with_local_regulations, S.of(Keys.rootKey.currentContext).violation_of_local_regulations, S.of(Keys.rootKey.currentContext).uncertain];
+  List<String> _answerDefaultList = [S.of(Keys.rootKey.currentContext).isolation_yes, S.of(Keys.rootKey.currentContext).isolation_no, S.of(Keys.rootKey.currentContext).uncertain];
   List<String> _answerList = []; // 忽略判断
 
   List<Map<String, dynamic>> _answerDetailList = [];
@@ -156,6 +159,8 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
     _positionBloc.listen((state) {
       if (state is PostConfirmPoiDataResultSuccessState) {
 
+        // _finishCheckIn(S.of(context).thank_you_for_contribute_data);
+
         Application.router.navigateTo(
             context,
             Routes.contribute_position_finish +
@@ -170,6 +175,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
                 actions: <Widget>[
                   FlatButton(
                       onPressed: () {
+                        // _finishCheckIn(S.of(context).thank_you_for_contribute_data);
 
                         Navigator.of(context)..pop()..pop();
                       },
@@ -217,14 +223,9 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
 
               if (_confirmPoiItem?.name == null) {
                 return Scaffold(
-                  appBar: AppBar(
-                    elevation: 0,
-                    title: Text(
-                      S.of(context).check_poi_item_title,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    iconTheme: IconThemeData(color: Colors.white),
-                    centerTitle: true,
+                  appBar: BaseAppBar(
+                    baseTitle: S.of(context).check_poi_item_title,
+                    backgroundColor: Colors.white,
                   ),
                   body: Center(
                     child: Container(
@@ -401,7 +402,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
 
   Widget _mapView() {
     var style;
-    if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true) {
+    if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland ?? true) {
       style = Const.kWhiteWithoutMapStyleCn;
     } else {
       style = Const.kWhiteWithoutMapStyle;
@@ -701,7 +702,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: _isKo?0:8, right: 15, top: 8),
+                        padding: EdgeInsets.only(left: _isKo ? 0 : 8, right: 15, top: 8),
                         child: RadioButtonGroup(
                           key: GlobalKey(),
                           picked: imageAnswer,
@@ -881,6 +882,24 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
     );
   }
 
+  Future _finishCheckIn(String successTip) async {
+    var address =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+
+    if (address?.isEmpty ?? true) {
+      return;
+    }
+    ContributionsApi api = ContributionsApi();
+
+    try {
+      var coordinates = [widget.userPosition.latitude, widget.userPosition.longitude];
+      await api.postCheckIn('confirmPOI', coordinates, []);
+      UiUtil.toast(successTip);
+    } catch (e) {
+      LogUtil.process(e);
+    }
+  }
+
   void addMarkerAndMoveToPoi() {
     if (_mapController != null && _confirmPoiItem?.name != null) {
       _addMarkerSubject.sink.add(1);
@@ -978,7 +997,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
           ),
         ),
         SizedBox(
-          width: _isKo?10:20,
+          width: _isKo ? 10 : 20,
         ),
         ClickOvalButton(
           confirmTitle.isEmpty ? S.of(context).correct : confirmTitle,

@@ -39,14 +39,12 @@ class ExchangeTransferHistoryListPageState
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loadDataBloc.add(LoadingEvent());
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _loadDataBloc.close();
   }
@@ -62,7 +60,7 @@ class ExchangeTransferHistoryListPageState
           color: Colors.black,
         ),
         title: Text(
-          S.of(context).exchange_transfer_history,
+          "${widget.type}${S.of(context).exchange_transfer_history}",
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -311,6 +309,5 @@ class ExchangeTransferHistoryListPageState
   }
 
   @override
-// TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }

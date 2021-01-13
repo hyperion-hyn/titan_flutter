@@ -6,9 +6,6 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
-import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -17,8 +14,6 @@ import 'package:titan/src/plugins/wallet/wallet.dart' as localWallet;
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'package:titan/src/utils/log_util.dart';
-
 import 'package:web3dart/web3dart.dart';
 
 class HYNApi {
@@ -75,9 +70,9 @@ class HYNApi {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
     }
     if (gasLimit == null) {
-      final client = WalletUtil.getWeb3Client(isAtlasTrans);
-      var walletAddress =
-          WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
+      // final client = WalletUtil.getWeb3Client(isAtlasTrans);
+      // var walletAddress =
+      //     WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
       if (message == null || message?.type == MessageType.typeNormal) {
         gasLimit = 21000;
       } else {
@@ -122,7 +117,7 @@ class HYNApi {
       gasLimit: gasLimit,
     );
 
-    logger.i('HYN transaction committed，txhash $txHash ');
+    logger.i('HYN transaction committed，value(==amount):$amount, txHash $txHash ');
     return txHash;
   }
 
@@ -572,7 +567,7 @@ class HYNApi {
   static String getTransRecordAmount(String value) {
     var recordAmountStr = "";
     if (Decimal.parse(value) > Decimal.fromInt(0)) {
-      recordAmountStr = FormatUtil.stringFormatCoinNumWithFour(value);
+      recordAmountStr = FormatUtil.stringFormatCoinNum(value, decimal: 4);
     }
     return recordAmountStr;
   }

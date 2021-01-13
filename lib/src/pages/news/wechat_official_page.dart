@@ -13,14 +13,14 @@ import 'package:titan/src/pages/news/info_state.dart';
 import '../../global.dart';
 import 'news_tag_utils.dart';
 
-class WechatOfficialPage extends StatefulWidget {
+class WeChatOfficialPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return WechatOfficialState();
+    return WeChatOfficialState();
   }
 }
 
-class WechatOfficialState extends InfoState<WechatOfficialPage> with AutomaticKeepAliveClientMixin {
+class WeChatOfficialState extends InfoState<WeChatOfficialPage> with AutomaticKeepAliveClientMixin {
   static const String CATEGORY = "3";
 
   static const int FIRST_PAGE = 1;
@@ -112,17 +112,19 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> with AutomaticKe
                           return;
                         }
 
-                        setState(() {
-                          selectedVideoTag = value;
-                          _InfoItemVoList = _mapInfoItemVoList[selectedVideoTag];
+                        if (mounted) {
+                          setState(() {
+                            selectedVideoTag = value;
+                            _InfoItemVoList = _mapInfoItemVoList[selectedVideoTag];
 
-                          var isComplete = _mapPageCompleteVoList[getSelectTag(selectedTag)];
-                          if(isComplete){
-                            loadDataBloc.add(LoadMoreEmptyEvent());
-                          }else{
-                            loadDataBloc.add(LoadingMoreSuccessEvent());
-                          }
-                        });
+                            var isComplete = _mapPageCompleteVoList[getSelectTag(selectedTag)];
+                            if(isComplete){
+                              loadDataBloc.add(LoadMoreEmptyEvent());
+                            }else{
+                              loadDataBloc.add(LoadingMoreSuccessEvent());
+                            }
+                          });
+                        }
                       },
                     )
                 ],
@@ -136,16 +138,20 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> with AutomaticKe
                 try {
                   await loadOrRefreshData();
                 } catch (e) {
-                  logger.e(e);
-                  loadDataBloc.add(LoadFailEvent());
+                  if (mounted) {
+                    logger.e(e);
+                    loadDataBloc.add(LoadFailEvent());
+                  }
                 }
               },
               onRefresh: () async {
                 try {
                   await loadOrRefreshData();
                 } catch (e) {
-                  logger.e(e);
-                  loadDataBloc.add(RefreshFailEvent());
+                  if (mounted) {
+                    logger.e(e);
+                    loadDataBloc.add(LoadFailEvent());
+                  }
                 }
               },
               onLoadingMore: () async {
@@ -161,7 +167,9 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> with AutomaticKe
                     _InfoItemVoList = _mapInfoItemVoList[tempSelectTag];
                     loadDataBloc.add(LoadingMoreSuccessEvent());
 
-                    setState(() {});
+                    if (mounted) {
+                      setState(() {});
+                    }
                   }
                 } catch (e) {
                   logger.e(e);

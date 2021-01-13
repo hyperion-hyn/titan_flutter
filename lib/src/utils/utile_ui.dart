@@ -1,19 +1,24 @@
 import 'dart:io';
 
 import 'package:android_intent/android_intent.dart';
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_pickers/UIConfig.dart';
+import 'package:image_pickers/image_pickers.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:r_scan/r_scan.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/auth_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
@@ -49,9 +54,7 @@ class UiUtil {
     if (address.length < limitLength) {
       return address;
     }
-    return address.substring(0, limitLength) +
-        "..." +
-        address.substring(address.length - limitLength, address.length);
+    return address.substring(0, limitLength) + "..." + address.substring(address.length - limitLength, address.length);
   }
 
   static String shortString(String address, {int limitLength = 9}) {
@@ -78,20 +81,20 @@ class UiUtil {
 
   // alertView
   static Future<bool> showAlertView<T>(
-    BuildContext context, {
-    String title,
-    Color titleColor,
-    bool barrierDismissible = true,
-    bool isShowCloseIcon = true,
-    Widget contentItem,
-    List<Widget> actions,
-    String content,
-    String boldContent = "",
-    String suffixContent = "",
-    String detail = "",
-    TextStyle boldStyle,
-    bool isInputValue = false,
-  }) {
+      BuildContext context, {
+        String title,
+        Color titleColor,
+        bool barrierDismissible = true,
+        bool isShowCloseIcon = true,
+        Widget contentItem,
+        List<Widget> actions,
+        String content,
+        String boldContent = "",
+        String suffixContent = "",
+        String detail = "",
+        TextStyle boldStyle,
+        bool isInputValue = false,
+      }) {
     return showDialog<bool>(
       barrierDismissible: barrierDismissible,
       // 传入 context
@@ -107,23 +110,23 @@ class UiUtil {
           children: <Widget>[
             Container(
               //alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
               child: Stack(
                 children: <Widget>[
                   isShowCloseIcon
                       ? Positioned(
-                          right: 10,
-                          top: 10,
-                          child: GestureDetector(
-                            onTap: () => Navigator.pop(_, false),
-                            child: Image.asset(
-                              "res/drawable/map3_node_close.png",
-                              width: 18,
-                              height: 18,
-                            ),
-                          ),
-                        )
+                    right: 10,
+                    top: 10,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(_, false),
+                      child: Image.asset(
+                        "res/drawable/map3_node_close.png",
+                        width: 18,
+                        height: 18,
+                        color: Colors.black,
+                      ),
+                    ),
+                  )
                       : Container(),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -138,32 +141,24 @@ class UiUtil {
                                 decoration: TextDecoration.none)),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 24, left: 24, right: 24),
+                        padding: EdgeInsets.only(
+                            top: 16, left: 24, right: 24, bottom: (contentItem != null || detail.isNotEmpty) ? 0 : 18),
                         child: RichText(
                             text: TextSpan(
                                 text: content,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor("#333333"),
-                                    height: 1.8),
+                                style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.8),
                                 children: [
-                              TextSpan(
-                                text: boldContent,
-                                style: boldStyle ??
-                                    TextStyle(
-                                        fontSize: 14,
-                                        color: HexColor("#FF4C3B"),
-                                        height: 1.8),
-                              ),
-                              TextSpan(
-                                text: suffixContent,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor("#333333"),
-                                    height: 1.8),
-                              ),
-                            ])),
+                                  TextSpan(
+                                    text: boldContent,
+                                    style: boldStyle ?? TextStyle(fontSize: 14, color: HexColor("#FF4C3B"), height: 1.8),
+                                  ),
+                                  TextSpan(
+                                    text: suffixContent,
+                                    style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.8),
+                                  ),
+                                ])),
                       ),
+                      if (contentItem != null) contentItem,
                       if (detail.isNotEmpty)
                         Padding(
                           padding: EdgeInsets.only(top: 6, left: 24, right: 24),
@@ -211,8 +206,7 @@ class UiUtil {
       context: context,
       // 构建 Dialog 的视图
       builder: (_) => AnimatedPadding(
-        padding: MediaQuery.of(context).viewInsets +
-            const EdgeInsets.symmetric(horizontal: 36.0),
+        padding: MediaQuery.of(context).viewInsets + const EdgeInsets.symmetric(horizontal: 36.0),
         duration: const Duration(milliseconds: 100),
         curve: Curves.decelerate,
         child: Column(
@@ -260,44 +254,43 @@ class UiUtil {
   }
 
   static Future<T> showDialogWidget<T>(
-    BuildContext context, {
-    Widget title,
-    Widget content,
-    List<Widget> actions,
-  }) {
+      BuildContext context, {
+        Widget title,
+        Widget content,
+        List<Widget> actions,
+      }) {
     return showDialog<T>(
       context: context,
       builder: (context) {
         return Platform.isIOS
             ? CupertinoAlertDialog(
-                title: title,
-                content: content,
-                actions: actions,
-              )
+          title: title,
+          content: content,
+          actions: actions,
+        )
             : AlertDialog(
-                title: title,
-                content: content,
-                actions: actions,
-              );
+          title: title,
+          content: content,
+          actions: actions,
+        );
       },
     );
   }
 
-  static Future<T> showConfirmDialogWidget<T>(BuildContext context,
-      {Widget content, List<Widget> actions}) {
+  static Future<T> showConfirmDialogWidget<T>(BuildContext context, {Widget content, List<Widget> actions}) {
     return showDialog<T>(
       context: context,
       builder: (context) {
         return Platform.isIOS
             ? CupertinoAlertDialog(
-                title: Text(S.of(context).tips),
-                content: content,
-                actions: actions,
-              )
+          title: Text(S.of(context).tips),
+          content: content,
+          actions: actions,
+        )
             : AlertDialog(
-                title: content,
-                actions: actions,
-              );
+          title: content,
+          actions: actions,
+        );
       },
     );
   }
@@ -312,17 +305,14 @@ class UiUtil {
     ]);
   }
 
-  static Future<T> showRequestLocationAuthDialog<T>(
-      BuildContext context, bool isServiceTurnOff) {
+  static Future<bool> showRequestLocationAuthDialog<T>(BuildContext context, bool isServiceTurnOff) {
     return showDialogs<T>(
-      context,
-      isServiceTurnOff == true
-          ? S.of(context).open_location_service
-          : S.of(context).require_location,
-      isServiceTurnOff == true
+      context: context,
+      title: isServiceTurnOff == true ? S.of(context).open_location_service : S.of(context).require_location,
+      content: isServiceTurnOff == true
           ? S.of(context).open_location_service_message
           : S.of(context).require_location_message,
-      () => openSettingLocation(isServiceTurnOff),
+      func: () => openSettingLocation(isServiceTurnOff),
     );
   }
 
@@ -341,25 +331,45 @@ class UiUtil {
     }
   }
 
-  static Future<T> showDialogs<T>(
-      BuildContext context, String title, String content, Function func) {
-    return showDialogWidget<T>(
+  static Future<bool> showDialogs<T>({
+    BuildContext context,
+    String title,
+    String content,
+    Function func,
+    String ok = '',
+  }) {
+    return UiUtil.showAlertView(
       context,
-      title: Text(title),
-      content: Text(content),
-      actions: <Widget>[
-        FlatButton(
-          child: Text(S.of(context).cancel),
-          onPressed: () => Navigator.pop(context),
+      title: title,
+      actions: [
+        ClickOvalButton(
+          S.of(context).cancel,
+              () {
+            Navigator.pop(context);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+          fontColor: DefaultColors.color333,
+          btnColor: [Colors.transparent],
         ),
-        FlatButton(
-          child: Text(S.of(context).setting),
-          onPressed: () {
+        SizedBox(
+          width: 20,
+        ),
+        ClickOvalButton(
+          ok.isNotEmpty ? ok : S.of(context).setting,
+              () {
             func();
             Navigator.pop(context);
           },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
         ),
       ],
+      content: content,
     );
   }
 
@@ -371,17 +381,17 @@ class UiUtil {
   }
 
   static Future<T> showDecryptDialog<T>(
-    BuildContext context,
-    Function onClick,
-  ) {
+      BuildContext context,
+      Function onClick,
+      ) {
     return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
-              Radius.circular(30.0),
-            )),
+                  Radius.circular(30.0),
+                )),
             title: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Center(
@@ -426,7 +436,7 @@ class UiUtil {
                     Expanded(
                       child: ClickOvalButton(
                         S.of(context).open,
-                        () async {
+                            () async {
                           onClick();
                         },
                         height: 45,
@@ -457,11 +467,11 @@ class UiUtil {
 //  }
 
   static Future<String> showWalletPasswordDialogV2(
-    BuildContext context,
-    Wallet wallet, {
-    String dialogTitle,
-    AuthType authType = AuthType.pay,
-  }) async {
+      BuildContext context,
+      Wallet wallet, {
+        String dialogTitle,
+        AuthType authType = AuthType.pay,
+      }) async {
     CheckPwdValid onCheckPwdValid = (walletPwd) {
       return WalletUtil.checkPwdValid(
         context,
@@ -532,13 +542,13 @@ class UiUtil {
   }
 
   static Future<String> showPasswordDialog(
-    BuildContext context,
-    Wallet wallet, {
-    @required CheckPwdValid onCheckPwdValid,
-    bool isShowBioAuthIcon = true,
-    String dialogTitle,
-    AuthType authType = AuthType.pay,
-  }) async {
+      BuildContext context,
+      Wallet wallet, {
+        @required CheckPwdValid onCheckPwdValid,
+        bool isShowBioAuthIcon = true,
+        String dialogTitle,
+        AuthType authType = AuthType.pay,
+      }) async {
     var useDigits = await WalletUtil.checkUseDigitsPwd(
       wallet,
     );
@@ -644,10 +654,7 @@ class UiUtil {
               ),
               Text(
                 msg,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.white),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
               ),
               Spacer()
             ],
@@ -663,11 +670,11 @@ class UiUtil {
   }
 
   static Future<T> showExchangeAuthAgainDialog<T>(
-    BuildContext context, {
-    Widget title,
-    Widget content,
-    List<Widget> actions,
-  }) {
+      BuildContext context, {
+        Widget title,
+        Widget content,
+        List<Widget> actions,
+      }) {
     return showDialogWidget(
       context,
       title: Text(S.of(context).exchange_auth),
@@ -683,14 +690,131 @@ class UiUtil {
             Navigator.pop(context);
 
             ///
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
           },
         ),
       ],
     );
   }
+
+  static Future<T> showDialogsNoCallback<T>(BuildContext context, String title, String content, {String confirm = ""}) {
+    return showDialogWidget<T>(
+      context,
+      title: Text(title),
+      content: Text(content),
+      actions: <Widget>[
+        FlatButton(
+          child: Text(S.of(context).cancel),
+          onPressed: () => Navigator.pop(context, false),
+        ),
+        FlatButton(
+          child: Text(confirm.isNotEmpty ? confirm : S.of(context).setting),
+          onPressed: () => Navigator.pop(context, true),
+        ),
+      ],
+    );
+  }
+
+  static Future<bool> showScanImagePickerSheet(BuildContext context, {ImageCallback callback}) async {
+    return await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return Wrap(
+            children: <Widget>[
+              ListTile(
+                title: Text(S.of(context).camera_scan, textAlign: TextAlign.center),
+                onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    Navigator.pop(dialogContext, true);
+                  });
+
+                  String mnemonicWords = await BarcodeScanner.scan();
+                  callback(mnemonicWords);
+                },
+              ),
+              ListTile(
+                title: Text(S.of(context).import_from_album, textAlign: TextAlign.center),
+                onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    Navigator.pop(dialogContext, true);
+                  });
+
+                  var tempListImagePaths = await ImagePickers.pickerPaths(
+                    galleryMode: GalleryMode.image,
+                    selectCount: 1,
+                    showCamera: true,
+                    cropConfig: null,
+                    compressSize: 500,
+                    uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
+                  );
+                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
+                    RScanResult mnemonicWords = await RScan.scanImagePath(tempListImagePaths[0].path);
+                    String mnemonicWord = mnemonicWords?.message;
+                    callback(mnemonicWord);
+                  }
+                },
+              ),
+              ListTile(
+                title: Text(S.of(context).cancel, textAlign: TextAlign.center),
+                onTap: () {
+                  Navigator.pop(dialogContext, false);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  static Future<bool> showIconImagePickerSheet(BuildContext context, {ImageCallback callback}) async {
+    return await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return Wrap(
+            children: <Widget>[
+              ListTile(
+                title: Text(S.of(context).take_picture, textAlign: TextAlign.center),
+                onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    Navigator.pop(dialogContext, true);
+                  });
+
+                  callback('');
+                },
+              ),
+              ListTile(
+                title: Text(S.of(context).import_from_album, textAlign: TextAlign.center),
+                onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    Navigator.pop(dialogContext, true);
+                  });
+
+                  var tempListImagePaths = await ImagePickers.pickerPaths(
+                    galleryMode: GalleryMode.image,
+                    selectCount: 1,
+                    showCamera: true,
+                    cropConfig: null,
+                    compressSize: 500,
+                    uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
+                  );
+                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
+                    var path = tempListImagePaths[0].path;
+                    callback(path);
+                  }
+                },
+              ),
+              ListTile(
+                title: Text(S.of(context).cancel, textAlign: TextAlign.center),
+                onTap: () {
+                  Navigator.pop(dialogContext, false);
+                },
+              ),
+            ],
+          );
+        });
+  }
 }
+
+typedef ImageCallback = void Function(String text);
 
 void callLater(FrameCallback callback) {
   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {

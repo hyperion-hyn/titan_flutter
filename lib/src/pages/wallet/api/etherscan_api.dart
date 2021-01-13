@@ -62,7 +62,7 @@ class EtherscanApi {
       "apikey": Config.ETHERSCAN_APIKEY,
     });
 
-    if (result["status"] == "1") {
+    if (result["status"] == "1" || result["status"] == "0") {
       List resultList = result["result"] as List;
       return resultList
           .map((json) => EthTransferHistory.fromJson(json))

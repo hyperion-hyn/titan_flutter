@@ -7,7 +7,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/burn_history_page.dart';
@@ -29,6 +31,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/pages/wallet_demo/ApiDemo.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -57,6 +60,7 @@ import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:vibration/vibration.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart' as plugWallet;
 
 import '../../../../../config.dart';
 import '../../../../../env.dart';
@@ -74,9 +78,10 @@ class ShowWalletView extends StatefulWidget {
   }
 }
 
-class _ShowWalletViewState extends State<ShowWalletView> {
+class _ShowWalletViewState extends BaseState<ShowWalletView> {
   int _lastRequestCoinTime = 0;
   bool _isShowBalances = true;
+  bool _isRefreshBalances = false;
 
   @override
   void initState() {
@@ -87,6 +92,22 @@ class _ShowWalletViewState extends State<ShowWalletView> {
   void dispose() {
     widget.loadDataBloc.close();
     super.dispose();
+  }
+
+  @override
+  void onCreated() {
+    BlocProvider.of<WalletCmpBloc>(context).listen((state) {
+      if (state is UpdateWalletPageState && state.updateStatus == 0) {
+        _isRefreshBalances = false;
+      }else if(state is UpdateWalletPageState && (state.updateStatus == -1)){
+        Fluttertoast.showToast(msg: S.of(context).failed_request_balance);
+        _isRefreshBalances = false;
+      }else if(state is UpdateWalletPageState && (state.updateStatus == 1)){
+        _isRefreshBalances = true;
+      }
+    });
+    // BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
+    super.onCreated();
   }
 
   @override
@@ -115,11 +136,35 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             InkWell(
-                              onTap: () {
-                                Application.router.navigateTo(
+                              onTap: () async {
+                                WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (wallet){
+                                  setState(() {
+                                    _isRefreshBalances = true;
+                                  });
+                                },noWalletUpdate: (){
+                                  setState(() {
+                                  });
+                                });
+                                /*plugWallet.Wallet wallet = await Application.router.navigateTo(
                                   context,
                                   Routes.wallet_manager,
                                 );
+                                if(wallet != null) {
+                                  setState(() {
+                                    _isRefreshBalances = true;
+                                  });
+                                  BlocProvider.of<WalletCmpBloc>(context)
+                                      .add(ActiveWalletEvent(wallet: wallet));
+                                  await Future.delayed(Duration(milliseconds: 300));
+                                  BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
+
+                                  ///Clear exchange account when switch wallet
+                                  BlocProvider.of<ExchangeCmpBloc>(context)
+                                      .add(ClearExchangeAccountEvent());
+                                }else{
+                                  setState(() {
+                                  });
+                                }*/
                               },
                               child: Row(
                                 children: <Widget>[
@@ -191,6 +236,17 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                               color: Colors.white,
                             ),
                           ),
+                          Spacer(),
+                          if(_isRefreshBalances)
+                            SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                backgroundColor: Colors.white,
+                                valueColor: new AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                                strokeWidth: 1,
+                              ),
+                            )
                         ],
                       ),
                     ],
@@ -228,7 +284,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               _bitcoinEmptyView(context),
 //            _exchangeHYNView(context),
 //            if (env.buildType == BuildType.DEV) _testWalletView(context),
-            Wrap(
+            /*Wrap(
               children: [
                 Text(
                   S.of(context).atlas_mapping_completed,
@@ -251,7 +307,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                   ),
                 ),
               ],
-            ),
+            ),*/
             SizedBox(
               height: 16,
             ),
@@ -600,20 +656,20 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                 SizedBox(
                   height: 4,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Text(
-                        quotePrice,
-                        style: TextStyles.textC9b9b9bS12,
-                      ),
-                    ),
-                    if (symbolQuote?.quoteVo?.percentChange24h != null)
-                      getPercentChange(symbolQuote?.quoteVo?.percentChange24h)
-                  ],
-                )
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: <Widget>[
+                //     Padding(
+                //       padding: const EdgeInsets.symmetric(vertical: 4),
+                //       child: Text(
+                //         quotePrice,
+                //         style: TextStyles.textC9b9b9bS12,
+                //       ),
+                //     ),
+                //     if (symbolQuote?.quoteVo?.percentChange24h != null)
+                //       getPercentChange(symbolQuote?.quoteVo?.percentChange24h)
+                //   ],
+                // )
               ],
             ),
           ),

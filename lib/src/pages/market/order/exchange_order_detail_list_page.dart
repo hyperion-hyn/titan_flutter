@@ -43,14 +43,12 @@ class ExchangeOrderDetailListPageState
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loadDataBloc.add(LoadingEvent());
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _loadDataBloc.close();
   }
@@ -145,8 +143,12 @@ class ExchangeOrderDetailListPageState
       }
     }
 
-    _loadDataBloc.add(RefreshSuccessEvent());
-    if (mounted) setState(() {});
+    if (mounted) {
+      _loadDataBloc.add(RefreshSuccessEvent());
+
+      setState(() {});
+    }
+
     _refreshController.refreshCompleted();
   }
 
@@ -172,12 +174,15 @@ class ExchangeOrderDetailListPageState
         }
       }
     }
-    _loadDataBloc.add(LoadingMoreSuccessEvent());
-    if (mounted) setState(() {});
+    if (mounted) {
+      _loadDataBloc.add(LoadingMoreSuccessEvent());
+
+      setState(() {});
+    }
+
     _refreshController.refreshCompleted();
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }

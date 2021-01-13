@@ -38,7 +38,8 @@ class UpdateWalletPageState extends WalletVoAwareCmpState {
   final QuotesSign sign;
   final QuotesModel quoteModel;
   final WalletVo walletVo;
-  UpdateWalletPageState({this.sign,this.quoteModel,this.walletVo}): super(walletVo: walletVo);
+  final int updateStatus;//-1、fail 0、complete 1、loading
+  UpdateWalletPageState(this.updateStatus, {this.sign,this.quoteModel,this.walletVo}): super(walletVo: walletVo);
 }
 
 class UpdatingQuotesState extends WalletCmpState {}

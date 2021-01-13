@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 
 class EmptyWalletView extends StatelessWidget {
   final String tips;
+  final LoadDataBloc loadDataBloc;
 
-  EmptyWalletView({this.tips});
+  EmptyWalletView({this.loadDataBloc,this.tips});
 
   @override
   Widget build(BuildContext context) {
@@ -63,11 +69,12 @@ class EmptyWalletView extends StatelessWidget {
                     } else {
                       var currentRouteName =
                           RouteUtil.encodeRouteNameWithoutParams(context);
-                      Application.router.navigateTo(
+                      await Application.router.navigateTo(
                         context,
                         Routes.wallet_create +
                             '?entryRouteName=$currentRouteName',
                       );
+                      backAndupdatePage(context);
                     }
                   },
                   child: Container(
@@ -105,6 +112,7 @@ class EmptyWalletView extends StatelessWidget {
                           Routes.wallet_import +
                               '?entryRouteName=$currentRouteName',
                         );
+                        backAndupdatePage(context);
                       }
                     },
                     child: Container(
@@ -128,6 +136,15 @@ class EmptyWalletView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  backAndupdatePage(BuildContext context){
+    var activatedWalletVo =
+        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
+            ?.activatedWallet;
+    if(activatedWalletVo != null && loadDataBloc != null) {
+      loadDataBloc.add(LoadingEvent());
+    }
   }
 
   Future<bool> _checkConfirmWalletPolicy() async {

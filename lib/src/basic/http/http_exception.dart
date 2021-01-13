@@ -88,6 +88,14 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
     S.of(Keys.rootKey.currentContext).already_your_friend_cannot_be_referrer,
   ),
   HttpResponseCodeNotSuccess(
+    -2007,
+    S.of(Keys.rootKey.currentContext).invitations_number_full,
+  ),
+  HttpResponseCodeNotSuccess(
+    -3001,
+    S.of(Keys.rootKey.currentContext).transaction_progress_try_again,
+  ),
+  HttpResponseCodeNotSuccess(
     -20001,
     S.of(Keys.rootKey.currentContext).create_account_fail,
   ),
@@ -122,6 +130,14 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
   HttpResponseCodeNotSuccess(
     -20010,
     S.of(Keys.rootKey.currentContext).check_interval_less_thirty_minutes,
+  ),
+  HttpResponseCodeNotSuccess(
+    -30011,
+    S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas,
+  ),
+  HttpResponseCodeNotSuccess(
+    -30012,
+    S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh,
   ),
   ERROR_FUND_PASSWORD
 ];

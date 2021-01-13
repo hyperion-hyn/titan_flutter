@@ -5,8 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
 import 'package:titan/src/pages/contribution/add_poi/model/business_time.dart';
 import 'package:titan/src/pages/contribution/add_poi/model/category_item.dart';
@@ -79,22 +79,27 @@ class _BusinessTimeState extends BaseState<BusinessTimePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: Text(
-          S.of(context).business_time,
-          style: TextStyle(color: Colors.white),
+      appBar: BaseAppBar(
+        baseTitle:   S.of(context).business_time,
+        backgroundColor: Colors.white,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            );
+          },
         ),
-        iconTheme: IconThemeData(color: Colors.white),
-        centerTitle: true,
         actions: <Widget>[
-          InkWell(
-            onTap: () {
+          FlatButton(
+            onPressed: () {
               bool hasCheck = false;
               String customTimeStr = _timeController.text.trim();
               _dayList.forEach((item) => {
-                    if (item.isCheck) {hasCheck = true}
-                  });
+                if (item.isCheck) {hasCheck = true}
+              });
               if (!hasCheck || (currentTime == null /* && customTime.isEmpty*/)) {
                 Fluttertoast.showToast(msg: S.of(context).please_select_business_hours_hint);
                 return;
@@ -110,15 +115,15 @@ class _BusinessTimeState extends BaseState<BusinessTimePage> {
               BusinessInfo businessInfo = BusinessInfo(dayList: _dayList, timeStr: currentTime.label);
               Navigator.pop(context, businessInfo);
             },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              alignment: Alignment.centerRight,
-              child: Text(
-                S.of(context).finish,
-                style: TextStyle(fontSize: 16, color: Colors.white),
+            child: Text(
+              S.of(context).finish,
+              style: TextStyle(
+                color: HexColor("#1F81FF"),
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
               ),
             ),
-          )
+          ),
         ],
       ),
       body: _buildView(context),
@@ -198,12 +203,15 @@ class _BusinessTimeState extends BaseState<BusinessTimePage> {
   }
 
   Widget _buildBody() {
-    return ListView(padding: EdgeInsets.only(top: 20), children: <Widget>[
-      Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: _buildDayView()),
-      Padding(
-          padding: EdgeInsets.only(left: 15), child: Text(S.of(context).business_time, style: TextStyles.textC333S14)),
-      Column(children: _buildBusinessTime()),
-    ]);
+    return Container(
+      color: Colors.white,
+      child: ListView(padding: EdgeInsets.only(top: 20), children: <Widget>[
+        Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: _buildDayView()),
+        Padding(
+            padding: EdgeInsets.only(left: 15), child: Text(S.of(context).business_time, style: TextStyles.textC333S14)),
+        Column(children: _buildBusinessTime()),
+      ]),
+    );
   }
 
   List<Widget> _buildDayView() {

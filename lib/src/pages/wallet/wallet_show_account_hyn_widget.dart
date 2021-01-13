@@ -82,6 +82,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
   void didPopNext() {
     if (mounted && shouldRefresh) {
       shouldRefresh = false;
+      // 手动帮刷新
       onWidgetRefreshCallback();
     }
 

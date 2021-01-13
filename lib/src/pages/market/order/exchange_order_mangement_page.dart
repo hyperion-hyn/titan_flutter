@@ -1,13 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
-import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/pages/market/order/exchange_order_detail_list_page.dart';
 import 'package:titan/src/pages/market/order/exchange_order_history_page.dart';
-import 'package:titan/src/pages/market/order/item_order.dart';
 import 'package:titan/src/pages/market/order/exchange_active_order_list_page.dart';
 
 class ExchangeOrderManagementPage extends StatefulWidget {
@@ -21,26 +17,19 @@ class ExchangeOrderManagementPage extends StatefulWidget {
   }
 }
 
-class _ExchangeOrderManagementPageState
-    extends State<ExchangeOrderManagementPage>
-    with SingleTickerProviderStateMixin {
-  TabController _tabController;
-
+class _ExchangeOrderManagementPageState extends State<ExchangeOrderManagementPage> with SingleTickerProviderStateMixin {
   @override
   void initState() {
-    _tabController = TabController(initialIndex: 0, vsync: this, length: 3);
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -71,20 +60,20 @@ class _ExchangeOrderManagementPageState
                     Expanded(
                       child: TabBar(
                         isScrollable: true,
-                        labelColor: HexColor('#FF333333'),
+                        labelColor: HexColor('#FF228BA1'),
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
                         indicatorSize: TabBarIndicatorSize.label,
-                        indicatorColor: HexColor('#FF333333'),
-                        indicatorWeight: 3,
+                        indicatorColor: HexColor('#FF228BA1'),
+                        indicatorWeight: 2,
                         indicatorPadding: EdgeInsets.only(
                           bottom: 2,
                           right: 12,
                           left: 12,
                         ),
-                        unselectedLabelColor: HexColor("#FF999999"),
+                        unselectedLabelColor: HexColor("#FF333333"),
                         tabs: [
                           Tab(
                             child: Text(

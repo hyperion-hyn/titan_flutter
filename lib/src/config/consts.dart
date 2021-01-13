@@ -58,6 +58,14 @@ class Const {
   }
 
 
+  static String get CONTRIBUTIONS_DOMAIN {
+    if (env.buildType == BuildType.DEV) {
+      return Config.CONTRIBUTIONS_API_URL_TEST;
+    } else {
+      return Config.CONTRIBUTIONS_API_URL;
+    }
+  }
+
   static const String TITAN_SCHEMA = "titan://";
   static const String TITAN_SHARE_URL_PREFIX =
       'https://www.hyn.mobi/titan/sharev2/?key=';
@@ -103,6 +111,7 @@ class Const {
       "https://api.hyn.space/map-collector/upload/privacy-policy";
   static const String APP_POLICY =
       'https://github.com/hyperion-hyn/titan_flutter/blob/master/LICENSE';
+  static const String HELP_PAGE = "http://h.hyn.space/helpPage";
 }
 
 class Keys {
@@ -172,13 +181,17 @@ class PrefsKey {
   static const String EXCHANGE_ACCOUNT = 'exchange_account';
   static const String EXCHANGE_ACCOUNT_LAST_AUTH_TIME =
       'exchange_account_last_auth_time';
-  static const String PENDING_TRANSFER_KEY_PREFIX = 'pending_transfer_key_';
+  // static const String PENDING_TRANSFER_KEY_PREFIX = 'pending_transfer_key_';
+  static const String PENDING_TRANSACTIONS_KEY_PREFIX = 'pending_transactions_key_';
 
   static const String EXCHANGE_ACCOUNT_ABNORMAL = 'exchange_account_abnormal_';
 
   ///Policy
   static const String IS_CONFIRM_WALLET_POLICY = 'wallet_policy_confirmed';
   static const String IS_CONFIRM_DEX_POLICY = 'dex_policy_confirmed';
+
+  static const String WALLET_ICON_LAST_KEY = "wallet_icon_last_key";
+
 }
 
 class SecurePrefsKey {

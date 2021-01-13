@@ -22,6 +22,7 @@ import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/hyn_erc20_abi.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/map3_staking_abi.dart';
+import 'package:titan/src/plugins/wallet/rp_holding_abi.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
@@ -281,6 +282,13 @@ class WalletUtil {
     return contract;
   }
 
+
+  static web3.DeployedContract _newRpHoldingContract(String contractAddress) {
+    final contract = web3.DeployedContract(
+        web3.ContractAbi.fromJson(RP_HOLDING_ABI, 'RpHolding'), web3.EthereumAddress.fromHex(contractAddress));
+    return contract;
+  }
+
   static web3.DeployedContract _newMap3Contract(String contractAddress) {
     final contract = web3.DeployedContract(
         web3.ContractAbi.fromJson(MAP3_STAKING_ABI, 'Map3Staking'), web3.EthereumAddress.fromHex(contractAddress));
@@ -308,6 +316,7 @@ class WalletUtil {
   }
 
   static web3.DeployedContract _hynErc20Contract;
+  static web3.DeployedContract _rpHoldingContract;
   static web3.DeployedContract _map3StakingContract;
   static web3.DeployedContract _hynStakingContract;
 
@@ -323,6 +332,13 @@ class WalletUtil {
       _hynErc20Contract = WalletUtil._newHynContract(contractAddress);
     }
     return _hynErc20Contract;
+  }
+
+  static web3.DeployedContract getRpHoldingContract(String contractAddress) {
+    if (_rpHoldingContract == null || _rpHoldingContract?.address?.hex?.contains(contractAddress) != true) {
+      _rpHoldingContract = WalletUtil._newRpHoldingContract(contractAddress);
+    }
+    return _rpHoldingContract;
   }
 
   static web3.DeployedContract getMap3Contract(String contractAddress) {

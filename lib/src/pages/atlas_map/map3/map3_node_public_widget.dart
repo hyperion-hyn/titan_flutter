@@ -599,7 +599,7 @@ Widget managerSpendWidget(
               ),
               child: RichText(
                 text: TextSpan(
-                    text: '提示：当前全网的平均管理费',
+                    text: S.of(Keys.rootKey.currentContext).reminder_current_average_management_fee,
                     style: TextStyle(
                         fontSize: 12,
                         color: HexColor("#999999"),
@@ -1381,7 +1381,7 @@ Widget _billStateWidget(HynTransferHistory item) {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
           child: Text(
-            '进行中',
+            S.of(Keys.rootKey.currentContext).ongoing,
             style: TextStyle(
                 fontSize: 6,
                 color: HexColor("#FFFFFF"),
@@ -1418,7 +1418,7 @@ Widget _billStateWidget(HynTransferHistory item) {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
           child: Text(
-            "已完成",
+            S.of(Keys.rootKey.currentContext).completed,
             style: TextStyle(
                 fontSize: 6,
                 color: HexColor("#999999"),
@@ -1500,11 +1500,11 @@ Future<String> _reminderMessage(
 
   switch (_map3Status) {
     case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
-      return '终止请求处理中...';
+      return S.of(Keys.rootKey.currentContext).map3_exit_doing;
       break;
 
     case Map3InfoStatus.CANCEL_NODE_SUCCESS:
-      return '节点已终止，抵押金额已返回您的钱包';
+      return S.of(Keys.rootKey.currentContext).map3_exit_done;
       break;
 
     case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
@@ -1525,22 +1525,22 @@ Future<String> _reminderMessage(
         var startMinValue =
             FormatUtil.formatTenThousandNoUnit(startMin.toString()) +
                 S.of(context).ten_thousand;
-        return "抵押已满$startMinValue，将在下个纪元启动";
+        return S.of(Keys.rootKey.currentContext).mortgage_full_value_start_next_epoch(startMinValue);
       } else {
         var remain = startMin - staking;
-        return '还差' + FormatUtil.formatPrice(remain >= 0 ? remain : 0) + 'HYN';
+        return S.of(context).remain + FormatUtil.formatPrice(remain >= 0 ? remain : 0) + 'HYN';
       }
       break;
 
     case Map3InfoStatus.CONTRACT_IS_END:
       if (_currentEpoch <= (_releaseEpoch + 1)) {
-        return "节点已到期，将在下个纪元结算";
+        return S.of(context).map3_end_done;
       }
       break;
 
     case Map3InfoStatus.CONTRACT_HAS_STARTED:
       var remainEpoch = _releaseEpoch - _currentEpoch + 1;
-      var remainDefaultText = '剩余 ${remainEpoch > 0 ? remainEpoch : 0}纪元';
+      var remainDefaultText = S.of(Keys.rootKey.currentContext).remain_amount_epoch(remainEpoch > 0 ? remainEpoch : 0);
 
       var _isCreator = map3infoEntity?.isCreator() ?? false;
       var _isDelegate = map3infoEntity?.mine != null;
@@ -1584,9 +1584,9 @@ Future<String> _reminderMessage(
       if (_isDelegate) {
         if (map3infoEntity?.atlas == null) {
           if (_isCreator) {
-            return '您还未复投Atlas节点，复投可获得出块奖励';
+            return S.of(Keys.rootKey.currentContext).not_reinvested_atlas_get_rewards;
           } else {
-            return '请节点主尽快复抵押至atlas节点以享受出块奖励！';
+            return S.of(Keys.rootKey.currentContext).map3_notification_redelegate;
           }
         }
 
@@ -1599,10 +1599,10 @@ Future<String> _reminderMessage(
           // 没有设置过
           if (statusCreator == 0) {
             if (_currentEpoch < periodEpoch14) {
-              return "距离可以设置下期续约还有$leftEpoch纪元";
+              return S.of(Keys.rootKey.currentContext).num_era_before_next_renewal_set(leftEpoch);
             } else if (_currentEpoch >= periodEpoch14 &&
                 _currentEpoch < periodEpoch7) {
-              return '节点即将结束，请尽快设置下期续约';
+              return S.of(Keys.rootKey.currentContext).node_end_set_renewal_possible;
             } else {
               return remainDefaultText;
             }
@@ -1619,21 +1619,21 @@ Future<String> _reminderMessage(
           if (statusJoiner == 0) {
             if (statusCreator == 0) {
               if (_currentEpoch < periodEpoch7) {
-                return "距离可以设置下期续约还有$leftEpoch纪元";
+                return S.of(Keys.rootKey.currentContext).num_era_before_next_renewal_set(leftEpoch);
               } else if (_currentEpoch >= periodEpoch7 &&
                   _currentEpoch < _releaseEpoch) {
-                return '节点即将结束，请尽快设置下期是否跟随续约';
+                return S.of(Keys.rootKey.currentContext).node_end_set_renewal_possible;
               } else {
                 return remainDefaultText;
               }
             } else if (statusCreator == 1) {
-              return '节点主已经停止续约，该节点到期后自动终止';
+              return S.of(Keys.rootKey.currentContext).owner_stopped_renewing_node_automatically_terminate;
             } else if (statusCreator == 2) {
               if (_currentEpoch >= periodEpoch7 &&
                   _currentEpoch < _releaseEpoch) {
-                return '节点即将结束，请尽快设置下期是否跟随续约';
+                return S.of(Keys.rootKey.currentContext).node_end_set_renewal_possible;
               }
-              return '节点主已设置下期自动续约，请你设置下期是否跟随续约';
+              return S.of(Keys.rootKey.currentContext).node_owner_auto_renewal_whether_follow_renewal;
             }
           } else {
             return remainDefaultText;

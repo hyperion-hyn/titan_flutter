@@ -11,14 +11,21 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/exchange/model.dart';
+import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/transfer/exchange_asset_history_page.dart';
 import 'package:titan/src/pages/market/model/asset_list.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
+import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -44,27 +51,28 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   Decimal _usdtToCurrency;
   ExchangeModel _exchangeModel;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((callback) {
-      ///
-      _refreshAssets();
-    });
-  }
+  TransactionInteractor transactionInteractor;
+  var hasPendingDepositTx = false;
+  var usdtExchangeAddress;
 
   @override
   void onCreated() {
     symbolQuote =
         WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
     _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
+
+    transactionInteractor = Injector.of(context).transactionInteractor;
+
+    // WidgetsBinding.instance.addPostFrameCallback((callback) {
+    //   _refreshAssets();
+    // });
+    // _refreshAssets();
+
     super.onCreated();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _loadDataBloc.close();
   }
@@ -118,27 +126,63 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
           )
         ],
       ),
-      body: Container(
-        color: Colors.white,
-        child: LoadDataContainer(
-          bloc: _loadDataBloc,
-          enablePullUp: false,
-          onLoadData: () {
-            _refreshAssets();
-            _loadDataBloc.add(RefreshSuccessEvent());
-          },
-          onRefresh: () {
-            _refreshAssets();
-            _loadDataBloc.add(RefreshSuccessEvent());
-          },
-          child: ListView(
-            children: <Widget>[
-              //_totalBalances(),
-              _divider(),
-              _exchangeAssetListView(),
-            ],
+      body: Column(
+        children: [
+          if (hasPendingDepositTx)
+            InkWell(
+              onTap: () {
+                var coinVo =
+                    WalletInheritedModel.of(context).getCoinVoBySymbol('USDT');
+                if (coinVo != null) {
+                  var coinVoJsonStr =
+                      FluroConvertUtils.object2string(coinVo.toJson());
+                  Application.router.navigateTo(context,
+                      Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
+                }
+              },
+              child: Container(
+                color: Color(0xFFE7F2FB),
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  children: [
+                    Text(
+                      S.of(context).charge_usdt_waiting_confirmation,
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    Spacer(),
+                    Text(S.of(context).check,
+                        style: TextStyle(fontSize: 12, color: Colors.blue)),
+                  ],
+                ),
+              ),
+            ),
+          Expanded(
+            child: Container(
+              color: Colors.white,
+              child: LoadDataContainer(
+                bloc: _loadDataBloc,
+                enablePullUp: false,
+                onLoadData: () async {
+                  print('xxx onLoadData');
+                  _refreshAssets();
+                  _loadDataBloc.add(RefreshSuccessEvent());
+                },
+                onRefresh: () async {
+                  print('xxx onRefresh');
+                  _refreshAssets();
+                  _loadDataBloc.add(RefreshSuccessEvent());
+                },
+                child: ListView(
+                  children: <Widget>[
+                    //_totalBalances(),
+                    //_divider(),
+                    _exchangeAssetListView(),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -161,8 +205,10 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
 
                     ///close asset page
                     Navigator.of(context).pop();
-                    Application.router
-                        .navigateTo(context, Routes.wallet_manager);
+                    WalletManagerPage.jumpWalletManager(context);
+
+                    /*Application.router
+                        .navigateTo(context, Routes.wallet_manager);*/
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -195,28 +241,76 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
     );
   }
 
-  _refreshAssets() {
+  _refreshAssets() async {
+    print('xxxx _refreshAssets');
     if (_exchangeModel.hasActiveAccount()) {
       BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
-      _updateTypeToCurrency();
+      await _updateTypeToCurrency();
     } else {
       UiUtil.showExchangeAuthAgainDialog(context);
+    }
+
+    // 只显示USDT的pending转账提示
+    if (usdtExchangeAddress == null) {
+      var ret = await _exchangeApi.getAddress('USDT');
+      usdtExchangeAddress = ret['address'];
+    }
+    var lastPendingState = hasPendingDepositTx;
+    var ethAddress = WalletInheritedModel.of(context)
+        .activatedWallet
+        ?.wallet
+        ?.getEthAccount()
+        ?.address;
+    await transactionInteractor.removeLocalPendingConfirmedTxsOfAddress(
+        ethAddress,
+        LocalTransferType.LOCAL_TRANSFER_ERC20,
+        WalletConfig.getUsdtErc20Address());
+    var localPendingTxs =
+        await transactionInteractor.getLocalPendingTransactions(
+            ethAddress,
+            LocalTransferType.LOCAL_TRANSFER_ERC20,
+            WalletConfig.getUsdtErc20Address());
+    var hasPending = false;
+    for (var tx in localPendingTxs) {
+      if (tx.toAddress == usdtExchangeAddress) {
+        setState(() {
+          hasPending = true;
+        });
+        break;
+      }
+    }
+    hasPendingDepositTx = hasPending;
+    if (hasPendingDepositTx != lastPendingState) {
+      setState(() {});
     }
   }
 
   _totalBalances() {
     var _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
 
-    var _totalByHyn = _exchangeModel.isActiveAccountAndHasAssets()
-        ? FormatUtil.truncateDecimalNum(
-            _exchangeModel.activeAccount?.assetList?.getTotalHyn(), 6)
-        : null;
-
-    var _totalByUsdt = _exchangeModel.isActiveAccountAndHasAssets()
-        ? _exchangeModel.activeAccount?.assetList?.getTotalUsdt()
-        : null;
     var _isShowBalances =
         ExchangeInheritedModel.of(context).exchangeModel.isShowBalances;
+
+    var _totalByHyn = '--';
+
+    var _totalByUsdt = '--';
+
+    var _totalUSDTQuotePrice = '--';
+
+    try {
+      _totalByHyn = _exchangeModel.isActiveAccountAndHasAssets()
+          ? FormatUtil.truncateDecimalNum(
+              _exchangeModel.activeAccount?.assetList?.getTotalHyn(), 6)
+          : '--';
+      if (_exchangeModel.isActiveAccountAndHasAssets()) {
+        _totalUSDTQuotePrice = FormatUtil.truncateDecimalNum(
+          _usdtToCurrency *
+              _exchangeModel.activeAccount?.assetList?.getTotalUsdt(),
+          4,
+        );
+      }
+    } catch (e) {}
+
     return Container(
       color: Colors.white,
       child: Padding(
@@ -244,11 +338,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                       crossAxisAlignment: WrapCrossAlignment.end,
                       children: <Widget>[
                         Text(
-                          _isShowBalances
-                              ? _totalByHyn != null
-                                  ? '$_totalByHyn HYN'
-                                  : '- HYN'
-                              : '***** HYN',
+                          _isShowBalances ? '$_totalByHyn HYN' : '***** HYN',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -264,10 +354,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                                       _totalByHyn == null ||
                                       _totalByUsdt == null
                                   ? '--'
-                                  : '≈ ${FormatUtil.truncateDecimalNum(
-                                      _usdtToCurrency * _totalByUsdt,
-                                      4,
-                                    )} ${symbolQuote?.sign?.quote ?? '-'}'
+                                  : '≈ $_totalUSDTQuotePrice ${symbolQuote?.sign?.quote ?? '-'}'
                               : '≈ ***** ${symbolQuote?.sign?.quote ?? '-'}',
                           style: TextStyle(
                               fontSize: 12,
@@ -288,7 +375,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                     children: <Widget>[
                       Container(
                         height: 30,
-                        width: 120,
+                        width: 112,
                         child: OutlineButton(
                           child: Text(
                             S.of(context).exchange_transfer,
@@ -302,6 +389,39 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                               Application.router.navigateTo(
                                 context,
                                 Routes.exchange_transfer_page,
+                              );
+                            } else {
+                              UiUtil.showExchangeAuthAgainDialog(context);
+                            }
+                          },
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 1,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Container(
+                        height: 30,
+                        width: 112,
+                        child: OutlineButton(
+                          child: Text(
+                            S.of(context).ordinary_deposit,
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor),
+                          ),
+                          onPressed: () {
+                            if (ExchangeInheritedModel.of(context)
+                                .exchangeModel
+                                .hasActiveAccount()) {
+                              Application.router.navigateTo(
+                                context,
+                                Routes.exchange_qrcode_deposit_page,
                               );
                             } else {
                               UiUtil.showExchangeAuthAgainDialog(context);
@@ -507,7 +627,9 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
       _usdtToCurrency = Decimal.parse(ret.toString());
 
       setState(() {});
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 
   _divider() {
@@ -559,11 +681,11 @@ class AssetItemState extends State<AssetItem> {
     } catch (e) {}
     return InkWell(
       onTap: () {
-//        Navigator.push(
-//            context,
-//            MaterialPageRoute(
-//              builder: (context) => ExchangeAssetHistoryPage(widget._symbol),
-//            ));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ExchangeAssetHistoryPage(widget._symbol),
+            ));
       },
       child: Column(
         children: <Widget>[
@@ -687,6 +809,7 @@ class AssetItemState extends State<AssetItem> {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
+                                color: DefaultColors.color999,
                               ),
                             ),
                           ),

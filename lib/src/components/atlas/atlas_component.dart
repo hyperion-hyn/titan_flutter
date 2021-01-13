@@ -1,26 +1,22 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/atlas/bloc/atlas_state.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
+import 'package:nested/nested.dart';
 
-class AtlasComponent extends StatelessWidget {
-  final Widget child;
+class AtlasComponent extends SingleChildStatelessWidget {
 
-  AtlasComponent({@required this.child});
+  AtlasComponent({Key key, Widget child}): super(key: key, child: child);
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return BlocProvider<AuthBloc>(
       create: (ctx) => AuthBloc(),
       child: _AtlasManager(child: child),

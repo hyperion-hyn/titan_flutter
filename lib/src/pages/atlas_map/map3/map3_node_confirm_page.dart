@@ -266,7 +266,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
       child: ClickOvalButton(
-        _isRunningTimer && _isTransferring? '提交中...(倒计时：$_timerActionCount秒)':S.of(context).submit,
+        _isRunningTimer && _isTransferring? S.of(context).submitting_countdown_seconds(_timerActionCount):S.of(context).submit,
         _isTransferring ? null : _action,
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,
@@ -279,10 +279,10 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
   _showTimerAlert() {
     UiUtil.showAlertView(
       context,
-      title: '操作提示',
+      title: S.of(context).operation_tips,
       actions: [
         ClickOvalButton(
-          "知道了",
+          S.of(context).got_it,
           () {
             Navigator.pop(context);
 
@@ -294,7 +294,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
           isLoading: _isRunningTimer,
         ),
       ],
-      content: '首次设置需要较长时间哟！',
+      content: S.of(context).long_time_set_first_time,
     );
   }
 

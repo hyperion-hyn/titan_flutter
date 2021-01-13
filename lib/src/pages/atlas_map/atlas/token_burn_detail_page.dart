@@ -39,10 +39,10 @@ class TokenBurnDetailPageState extends BaseState<TokenBurnDetailPage> {
   @override
   void onCreated() async {
     _dataTitleList = [
-      '哈希值',
+      S.of(context).hash_value,
       S.of(context).transfer_amount,
-      '发送方',
-      '接收方',
+      S.of(context).tx_from_address,
+      S.of(context).tx_to_address,
       S.of(context).description,
     ];
 
@@ -51,7 +51,7 @@ class TokenBurnDetailPageState extends BaseState<TokenBurnDetailPage> {
       '${widget.burnHistory.getTotalAmountStr()} HYN',
       WalletUtil.ethAddressToBech32Address(widget.burnHistory.foundation),
       '0x00',
-      "HYN燃烧",
+      S.of(context).hyn_burning,
     ];
 
     super.onCreated();

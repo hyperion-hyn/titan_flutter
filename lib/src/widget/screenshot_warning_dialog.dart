@@ -24,18 +24,15 @@ class ScreenshotWarningDialog extends StatefulWidget {
 class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
   void initState() {
     super.initState();
-    // TODO: implement initState
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
   }
 
@@ -111,7 +108,7 @@ class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
                             flex: 1,
                             child: FlatButton(
                               child: Text(
-                                S.of(context).no_screenshot_dialog_cancel,
+                                S.of(context).cancel,
                                 style: TextStyle(
                                   color: HexColor('#FF9B9B9B'),
                                   fontSize: 16,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 
 class ClickOvalButton extends StatefulWidget {
@@ -12,8 +14,9 @@ class ClickOvalButton extends StatefulWidget {
   List<Color> btnColor;
   Color fontColor;
   double radius;
-  String loadingText;
+  String loadingText = S.of(Keys.rootKey.currentContext).submitting_request;
   FontWeight fontWeight = FontWeight.w500;
+  bool isDisable;
 
   ClickOvalButton(
     this.text,
@@ -25,9 +28,14 @@ class ClickOvalButton extends StatefulWidget {
     this.btnColor,
     this.radius,
     this.isLoading = false,
-    this.loadingText,
+    String loadingTextStr,
     this.fontWeight,
-  });
+    this.isDisable = false,
+  }){
+    if(loadingTextStr != null) {
+      this.loadingText = loadingTextStr;
+    }
+  }
 
   @override
   State<StatefulWidget> createState() {
@@ -45,45 +53,95 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
         borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
         gradient: getGradient(),
       ),
-      child: FlatButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
+      child: (widget.isLoading && !widget.isDisable)
+          ? Stack(
+              children: [
+                _flatBtnWidget(),
+                _loadingWidget(
+                  visible: widget.isLoading,
+                ),
+              ],
+            )
+          : _flatBtnWidget(),
+    );
+  }
+
+  Widget _flatBtnWidget() {
+    var title = '';
+    Color color;
+    if (widget.isDisable) {
+      title = widget.text;
+      color = DefaultColors.color999;
+    } else {
+      if (widget.isLoading) {
+        title = widget.loadingText ?? widget.text;
+        color = DefaultColors.color999;
+      } else {
+        title = widget.text;
+        color = widget?.fontColor ?? Colors.white;
+      }
+    }
+    return FlatButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
+        ),
+        padding: const EdgeInsets.all(0.0),
+        child: Center(
+          child: Text(
+            title,
+            style: TextStyle(
+              fontWeight: widget.fontWeight,
+              fontSize: widget.fontSize,
+              color: color,
+            ),
+            textAlign: TextAlign.center,
           ),
-          padding: const EdgeInsets.all(0.0),
-          child: Text(widget.isLoading ? widget.loadingText ?? widget.text : widget.text,
-              style: TextStyle(
-                fontWeight: widget.fontWeight,
-                fontSize: widget.fontSize,
-                color: widget.isLoading
-                    ? DefaultColors.color999
-                    : widget.fontColor != null ? widget.fontColor : Colors.white,
-              )),
-          onPressed: (widget.onTap == null || widget.isLoading)
-              ? null
-              : () async {
-                  if (mounted) {
-                    setState(() {
-                      widget.isLoading = true;
-                    });
-                  }
-                  await widget.onTap();
-                  if (mounted) {
-                    setState(() {
-                      widget.isLoading = false;
-                    });
-                  }
-                }),
+        ),
+        onPressed: (widget.onTap == null || widget.isLoading || widget.isDisable)
+            ? null
+            : () async {
+                if (mounted) {
+                  setState(() {
+                    widget.isDisable = true;
+                  });
+                }
+                await widget.onTap();
+                if (mounted) {
+                  setState(() {
+                    widget.isDisable = false;
+                  });
+                }
+              });
+  }
+
+  Widget _loadingWidget({
+    bool visible = false,
+  }) {
+    return Visibility(
+      visible: visible,
+      child: Positioned(
+        width: 20,
+        height: 20,
+        top: (widget.height - 20) * 0.5,
+        right: (widget.width - 20) * 0.25,
+        child: CircularProgressIndicator(
+          strokeWidth: 1.5,
+          valueColor: AlwaysStoppedAnimation<Color>(
+            DefaultColors.color999,
+          ),
+        ),
+      ),
     );
   }
 
   LinearGradient getGradient() {
-    if (widget.isLoading) {
+    if (widget.isLoading || widget.isDisable) {
       return LinearGradient(
         colors: <Color>[Color(0xffDEDEDE), Color(0xffDEDEDE)],
       );
     } else {
       if (widget.btnColor != null) {
-        if(widget.btnColor.length == 1){
+        if (widget.btnColor.length == 1) {
           widget.btnColor.add(widget.btnColor[0]);
         }
         return LinearGradient(

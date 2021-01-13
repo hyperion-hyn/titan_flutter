@@ -12,15 +12,15 @@ class NewsTagUtils {
         return NewsTagConsts.ZH_TUTORIAL_TAG.toString();
       } else if (tag == NewsState.VIDEO_TAG) {
         return NewsTagConsts.ZH_VIDEO_TAG.toString();
-      } else if (tag == WechatOfficialState.PAPER_TAG) {
+      } else if (tag == WeChatOfficialState.PAPER_TAG) {
         return NewsTagConsts.ZH_KAI_PAPER_TAG.toString();
-      } else if (tag == WechatOfficialState.VIDEO_TAG) {
+      } else if (tag == WeChatOfficialState.VIDEO_TAG) {
         return NewsTagConsts.ZH_KAI_VIDEO_TAG.toString();
-      } else if (tag == WechatOfficialState.AUDIO_TAG) {
+      } else if (tag == WeChatOfficialState.AUDIO_TAG) {
         return NewsTagConsts.ZH_KAI_AUDIO_TAG.toString();
-      } else if (tag == WechatOfficialState.DOMESTIC_VIDEO) {
+      } else if (tag == WeChatOfficialState.DOMESTIC_VIDEO) {
         return NewsTagConsts.ZH_KAI_DOMESTIC_VIDEO.toString();
-      } else if (tag == WechatOfficialState.FOREIGN_VIDEO) {
+      } else if (tag == WeChatOfficialState.FOREIGN_VIDEO) {
         return NewsTagConsts.ZH_KAI_FOREIGN_VIDEO.toString();
       }
     } else {
@@ -32,11 +32,11 @@ class NewsTagUtils {
         return NewsTagConsts.EN_TUTORIAL_TAG.toString();
       } else if (tag == NewsState.VIDEO_TAG) {
         return NewsTagConsts.EN_VIDEO_TAG.toString();
-      } else if (tag == WechatOfficialState.PAPER_TAG) {
+      } else if (tag == WeChatOfficialState.PAPER_TAG) {
         return NewsTagConsts.EN_KAI_PAPER_TAG.toString();
-      } else if (tag == WechatOfficialState.VIDEO_TAG) {
+      } else if (tag == WeChatOfficialState.VIDEO_TAG) {
         return NewsTagConsts.EN_KAI_VIDEO_TAG.toString();
-      } else if (tag == WechatOfficialState.AUDIO_TAG) {
+      } else if (tag == WeChatOfficialState.AUDIO_TAG) {
         return NewsTagConsts.EN_KAI_AUDIO_TAG.toString();
       }
     }
@@ -47,13 +47,13 @@ class NewsTagUtils {
     if (isZh) {
       if (category == NewsState.CATEGORY) {
         return NewsCategoryConsts.ZH_HYPERION_CATEGORY;
-      } else if (category == WechatOfficialState.CATEGORY) {
+      } else if (category == WeChatOfficialState.CATEGORY) {
         return NewsCategoryConsts.ZH_KAI_CATEGORY;
       }
     } else {
       if (category == NewsState.CATEGORY) {
         return NewsCategoryConsts.EN_HYPERION_CATEGORY;
-      } else if (category == WechatOfficialState.CATEGORY) {
+      } else if (category == WeChatOfficialState.CATEGORY) {
         return NewsCategoryConsts.EN_KAI_CATEGORY;
       }
     }

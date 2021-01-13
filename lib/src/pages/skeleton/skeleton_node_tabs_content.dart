@@ -30,7 +30,7 @@ class SkeletonNodeTabsContent extends StatelessWidget {
                   child: Container(
                     color: Colors.white,
                     child: Text(
-                      '节点列表',
+                      S.of(context).node_list,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -133,7 +133,7 @@ class SkeletonNodeTabsContent extends StatelessWidget {
                       );
                     },
                     fontSize: 16,
-                    isLoading: true,
+                    isDisable: true,
                   ),
                 ),
                 Expanded(

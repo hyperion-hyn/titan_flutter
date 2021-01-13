@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 
 import '../../extension/navigator_ext.dart';
 
@@ -18,8 +19,9 @@ class _FinishUploadState extends State<ContributionFinishUploadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.white),
+        appBar: BaseAppBar(
+          baseTitle: '',
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(

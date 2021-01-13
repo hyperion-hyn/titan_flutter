@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 import './load_data_container/bloc/bloc.dart';
 
@@ -21,20 +22,25 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
   Future<List<dynamic>> onLoadData(int page);
 
   Future onWidgetLoadDataCallback() async {
-//    try {
+   try {
       currentPage = getStartPage();
       var list = await onLoadData(currentPage);
       _updateDataListOnReceive(list, currentPage);
 
       if (dataList.length == 0) {
-        loadDataBloc.add(LoadEmptyEvent());
+        if (mounted) {
+          loadDataBloc.add(LoadEmptyEvent());
+        }
       } else {
-        loadDataBloc.add(RefreshSuccessEvent());
+        if (mounted) {
+          loadDataBloc.add(RefreshSuccessEvent());
+        }
       }
-//    } catch (e) {
-//      logger.e(e);
-//      loadDataBloc.add(LoadFailEvent());
-//    }
+   } catch (e) {
+     // logger.e(e);
+     LogUtil.toastException(e);
+     loadDataBloc.add(LoadFailEvent());
+   }
   }
 
   Future onWidgetRefreshCallback() async {
@@ -44,13 +50,19 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
       _updateDataListOnReceive(list, currentPage);
 
       if (dataList.length == 0) {
-        loadDataBloc.add(LoadEmptyEvent());
+        if (mounted) {
+          loadDataBloc.add(LoadEmptyEvent());
+        }
       } else {
-        loadDataBloc.add(RefreshSuccessEvent());
+        if (mounted) {
+          loadDataBloc.add(RefreshSuccessEvent());
+        }
       }
     } catch (e) {
-      logger.e(e);
-      loadDataBloc.add(RefreshFailEvent());
+      if(mounted) {
+        logger.e(e);
+        loadDataBloc.add(RefreshFailEvent());
+      }
     }
   }
 
@@ -63,25 +75,33 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
       _updateDataListOnReceive(list, currentPage);
 
       if (dataList.length == lastSize) {
-        loadDataBloc.add(LoadMoreEmptyEvent());
+        if (mounted) {
+          loadDataBloc.add(LoadMoreEmptyEvent());
+        }
       } else {
-        loadDataBloc.add(LoadingMoreSuccessEvent());
+        if (mounted) {
+          loadDataBloc.add(LoadingMoreSuccessEvent());
+        }
       }
     } catch (e) {
-      logger.e(e);
-      loadDataBloc.add(LoadMoreFailEvent());
+      if (mounted) {
+        logger.e(e);
+        loadDataBloc.add(LoadMoreFailEvent());
+      }
     }
   }
 
   void _updateDataListOnReceive(List<dynamic> list, int page) {
-    setState(() {
-      if (page == getStartPage()) {
-        dataList.clear();
-        dataList.addAll(list);
-      } else {
-        dataList.addAll(list);
-      }
-    });
+    if(mounted) {
+      setState(() {
+        if (page == getStartPage()) {
+          dataList.clear();
+          dataList.addAll(list);
+        } else {
+          dataList.addAll(list);
+        }
+      });
+    }
   }
 
   @override

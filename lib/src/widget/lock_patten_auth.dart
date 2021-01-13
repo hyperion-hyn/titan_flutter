@@ -3,6 +3,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:gesture_unlock/lock_pattern.dart';
 import 'package:gesture_unlock/lock_pattern_indicator.dart';
+import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/config/consts.dart';
 
 class LockPatternVerify extends StatefulWidget {
   final Function onVerifyPassed;
@@ -82,7 +84,7 @@ class LockPatternCreate extends StatefulWidget {
 
 class LockPatternCreateState extends State<LockPatternCreate> {
   var _status = LockPatternCreateStatus.Create;
-  var _msg = "请绘制解锁手势";
+  var _msg = S.of(Keys.rootKey.currentContext).please_draw_unlock_gasture;
   var _gesturePassword;
   LockPatternIndicator _indicator;
   LockPattern _lockPattern;
@@ -141,11 +143,11 @@ class LockPatternCreateState extends State<LockPatternCreate> {
         case LockPatternCreateStatus.Create:
         case LockPatternCreateStatus.Create_Failed:
           if (selected.length < 4) {
-            _msg = "连接数不能小于4个，请重新尝试";
+            _msg = S.of(context).number_connections_less_than_four;
             _status = LockPatternCreateStatus.Create_Failed;
             _lockPattern.updateStatus(LockPatternStatus.Failed);
           } else {
-            _msg = "请再次验证手势";
+            _msg = S.of(context).please_verify_gasture_again;
             _gesturePassword = LockPattern.selectedToString(selected);
             _status = LockPatternCreateStatus.Verify;
             _lockPattern.updateStatus(LockPatternStatus.Success);
@@ -156,11 +158,11 @@ class LockPatternCreateState extends State<LockPatternCreate> {
         case LockPatternCreateStatus.Verify_Failed:
           var password = LockPattern.selectedToString(selected);
           if (_gesturePassword == password) {
-            _msg = "设置成功,手势密码为$password";
+            _msg = S.of(context).setting_successful_gasture_password_is(password);
             widget.onPatternCreated(password);
             _lockPattern.updateStatus(LockPatternStatus.Success);
           } else {
-            _msg = "验证失败，请重新尝试";
+            _msg = S.of(context).verification_failed_try_again;
             _status = LockPatternCreateStatus.Verify_Failed;
             _lockPattern.updateStatus(LockPatternStatus.Failed);
           }

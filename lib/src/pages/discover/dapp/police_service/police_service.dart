@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
@@ -77,37 +78,21 @@ class PoliceServiceState extends State<PoliceService> {
             Container(), //need a container to expand.
             //top bar
             if (state is! FocusingRouteState)
-              Material(
-                elevation: 2,
-                child: Container(
-                  color: Theme.of(context).primaryColor,
-                  padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).padding.top + 56,
-                  child: Stack(
-                    children: <Widget>[
-                      Center(
-                          child: Text(
-                        S.of(context).police_security_station,
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
-                      )),
-                      Align(
-                        child: InkWell(
-                          onTap: () {
-                            BlocProvider.of<DiscoverBloc>(context).add(InitDiscoverEvent());
-                          },
-                          child: Ink(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              S.of(context).close,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                        alignment: Alignment.centerLeft,
-                      ),
-                    ],
+              Container(
+                height: MediaQuery.of(context).padding.top + 56,
+                child: BaseAppBar(
+                  leading: Builder(
+                    builder: (BuildContext context) {
+                      return IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          BlocProvider.of<DiscoverBloc>(context).add(InitDiscoverEvent());
+                        },
+                      );
+                    },
                   ),
+
+                  baseTitle: S.of(context).police_security_station,
                 ),
               ),
           ],

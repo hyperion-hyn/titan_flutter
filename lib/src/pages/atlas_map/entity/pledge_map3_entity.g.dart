@@ -36,3 +36,19 @@ Map<String, dynamic> _$PayloadToJson(Payload instance) => <String, dynamic>{
       'user_name': instance.userName,
       'user_pic': instance.userPic,
     };
+
+WalletInfoEntity _$WalletInfoEntityFromJson(Map<String, dynamic> json) {
+  return WalletInfoEntity(
+    address: json['address'] as String,
+    name: json['name'] as String,
+    pic: json['pic'] as String,
+    status: json['status'] as int,
+  );
+}
+
+Map<String, dynamic> _$WalletInfoEntityToJson(WalletInfoEntity instance) => <String, dynamic>{
+  'address': instance.address,
+  'name': instance.name,
+  'pic': instance.pic,
+  'status': instance.status,
+};

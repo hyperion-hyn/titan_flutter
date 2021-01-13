@@ -1,12 +1,11 @@
 import 'dart:async';
-
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -14,6 +13,8 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/rp/bloc/bloc.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -23,7 +24,7 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_staking_detail_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_transmit_detail_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -32,10 +33,11 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class RpTransmitPage extends StatefulWidget {
-  final RPStatistics rpStatistics;
+import 'entity/rp_util.dart';
 
-  RpTransmitPage(this.rpStatistics);
+class RpTransmitPage extends StatefulWidget {
+
+  RpTransmitPage();
 
   @override
   State<StatefulWidget> createState() {
@@ -63,11 +65,10 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   int _currentPage = 1;
   List<RpStakingInfo> _dataList = [];
 
+
   @override
   void initState() {
     super.initState();
-
-    _rpStatistics = widget.rpStatistics;
 
     _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
   }
@@ -79,6 +80,13 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
     super.onCreated();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _rpStatistics = RedPocketInheritedModel.of(context).rpStatistics;
   }
 
   @override
@@ -174,7 +182,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   _poolInfo() {
     String totalStakingHyn = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalStakingHynStr) ?? '--';
     String transmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.transmitStr) ?? '--';
-    String totalTransmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalTransmitStr) ?? '--';
+    //String totalTransmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalTransmitStr) ?? '--';
 
     return SliverToBoxAdapter(
       child: Container(
@@ -183,21 +191,15 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
           padding: const EdgeInsets.only(
             top: 10,
             bottom: 6,
+            left: 26,
+            right: 16,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                  ),
-                  child: _columnWidget(
-                    '${_rpStatistics?.rpContractInfo?.poolPercent ?? '--'}${S.of(context).rp_million_rp}',
-                    S.of(context).rp_total_available_transmit,
-                  ),
-                  // child: _columnWidget('$totalTransmit RP', '总可传导'),
-                ),
+              _columnWidget(
+                '${_rpStatistics?.rpContractInfo?.poolPercent ?? '--'}${S.of(context).rp_million_rp}',
+                S.of(context).rp_total_available_transmit,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -219,7 +221,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                   S.of(context).rp_global_transmit,
                 ),
               ),
-              Spacer(),
+              //Spacer(),
             ],
           ),
         ),
@@ -233,8 +235,15 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     String totalRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalRpStr) ?? '--';
     String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
 
-    // String baseRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.rpContractInfo?.baseRpStr) ?? '--';
     String baseRp = _rpStatistics?.rpContractInfo?.baseRpStr ?? '--';
+    var baseRpStr = _rpStatistics?.rpContractInfo?.baseRpStr??'0';
+    var baseRpValue = Decimal.tryParse(baseRpStr)??Decimal.zero;
+    if (baseRpValue > Decimal.one) {
+      baseRp = FormatUtil.stringFormatCoinNum(baseRpStr, decimal: 4) ?? '--';
+    }
+    else {
+      baseRp = FormatUtil.stringFormatCoinNum(baseRpStr, decimal: 8) ?? '--';
+    }
 
     var releaseDay = (_rpStatistics?.rpContractInfo?.releaseDay ?? '0');
     var stakingDay = (_rpStatistics?.rpContractInfo?.stakingDay ?? '0');
@@ -448,8 +457,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                             ),
                           ),
                           Positioned(
-                            top: 0,
-                            right: 0,
+                            top: 2,
+                            right: 10,
                             child: Image.asset(
                               "res/drawable/red_pocket_exchange_hot.png",
                               width: 35,
@@ -613,7 +622,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                           height: 6,
                         ),
                         Text(
-                          '${S.of(context).rp_staking_id}：${model?.stakingId ?? 0}',
+                          '${S.of(context).rp_staking_id}：${(model?.stakingId ?? -1) == -1 ? '--' : model?.stakingId ?? 0}',
                           //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                           style: TextStyle(
                             fontSize: 12,
@@ -683,9 +692,12 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   void getNetworkData() async {
     _currentPage = 1;
     try {
-      var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
-      _rpStatistics = await _rpApi.getRPStatistics(_address);
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(UpdateStatisticsEvent());
+      }
+
+      var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
       if (mounted) {
         setState(() {
@@ -696,11 +708,11 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       if (netData?.isNotEmpty ?? false) {
         _dataList = netData;
       }
-      // } else {
-      //   _loadDataBloc.add(LoadEmptyEvent());
-      // }
+
     } catch (e) {
-      _loadDataBloc.add(LoadFailEvent());
+      if (mounted) {
+        _loadDataBloc.add(LoadFailEvent());
+      }
     }
   }
 
@@ -710,13 +722,19 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
       if (netData?.isNotEmpty ?? false) {
-        _dataList.addAll(netData);
-        _loadDataBloc.add(LoadingMoreSuccessEvent());
+        if (mounted) {
+          setState(() {
+            _dataList.addAll(netData);
+            _loadDataBloc.add(LoadingMoreSuccessEvent());
+          });
+        }
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }
     } catch (e) {
-      _loadDataBloc.add(LoadMoreFailEvent());
+      if (mounted) {
+        _loadDataBloc.add(LoadMoreFailEvent());
+      }
     }
   }
 
@@ -917,7 +935,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
         ),
         ClickOvalButton(
           S.of(context).confirm,
-          _retrieveAction,
+          _withdrawAction,
           width: 115,
           height: 36,
           fontSize: 16,
@@ -928,7 +946,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     );
   }
 
-  void _retrieveAction() async {
+  void _withdrawAction() async {
     Navigator.pop(context, true);
 
     var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
@@ -978,7 +996,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpTransmitRecordsPage(_rpStatistics),
+        builder: (context) => RpTransmitRecordsPage(),
       ),
     );
   }
@@ -987,104 +1005,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpStakingDetailPage(_rpStatistics, _dataList[index]),
+        builder: (context) => RpTransmitDetailPage(_rpStatistics, _dataList[index]),
       ),
     );
   }
-}
-
-HexColor getStateColor(int status) {
-  HexColor stateColor = HexColor('#999999');
-  if (status == null) {
-    return stateColor;
-  }
-  //1:确认中 2:失败 3:成功 4:释放中 5:释放结束 6:可取回 7:取回中 8: 已提取
-
-  switch (status) {
-    case 1:
-      stateColor = HexColor('#FFC500');
-      break;
-
-    case 2:
-      stateColor = HexColor('#999999');
-      break;
-
-    case 3:
-      stateColor = HexColor('#333333');
-      break;
-
-    case 4:
-      stateColor = HexColor('#FFC500');
-      break;
-
-    case 5:
-      stateColor = HexColor('#333333');
-      break;
-
-    case 6:
-      stateColor = HexColor('#00C081');
-      break;
-
-    case 7:
-      stateColor = HexColor('#FFC500');
-      break;
-
-    case 8:
-      stateColor = HexColor('#999999');
-      break;
-
-    default:
-      stateColor = HexColor('#999999');
-      break;
-  }
-  return stateColor;
-}
-
-String getStateDesc(int status) {
-  if (status == null) {
-    return '';
-  }
-
-  String stateDesc = '运行中';
-
-  //1:确认中 2:失败 3:成功 4:释放中 5:释放结束 6:可取回 7:取回中 8: 已提取
-
-  switch (status) {
-    case 1:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_1;
-      break;
-
-    case 2:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_2;
-      break;
-
-    case 3:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_3;
-      break;
-
-    case 4:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_4;
-      break;
-
-    case 5:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_5;
-      break;
-
-    case 6:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_6;
-      break;
-
-    case 7:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_7;
-      break;
-
-    case 8:
-      stateDesc = S.of(Keys.rootKey.currentContext).rp_staking_state_8;
-      break;
-
-    default:
-      stateDesc = '';
-      break;
-  }
-  return stateDesc;
 }

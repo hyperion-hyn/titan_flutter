@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:k_chart/flutter_k_chart.dart';
@@ -11,18 +10,17 @@ import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
-import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:nested/nested.dart';
 
-class SocketComponent extends StatelessWidget {
-  final Widget child;
+class SocketComponent extends SingleChildStatelessWidget {
 
-  SocketComponent({@required this.child});
+  SocketComponent({Key key, Widget child}): super(key: key, child: child);
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return BlocProvider<SocketBloc>(
       create: (ctx) => SocketBloc(),
       child: _SocketManager(child: child),
@@ -82,7 +80,7 @@ class _SocketState extends State<_SocketManager> {
     _bloc.setSocketChannel(_socketChannel);
 
     _socketChannel.stream.listen((data) {
-      LogUtil.printMessage('[WS]  listen..., data');
+      //LogUtil.printMessage('[WS]  listen..., data');
 
       if (!_connecting) {
         _connecting = true;
@@ -182,7 +180,7 @@ class _SocketState extends State<_SocketManager> {
           _marketItemList = state.marketItemList;
           cacheDebounceLater.debounceInterval(() {
             _cacheSymbolList(_marketItemList);
-          }, 1000);
+          }, t: 1000, runImmediately: true);
         } else if (state is ChannelKLine24HourState) {
           // 24小时候成交数据  socket 方式
           _updateMarketItemList(state.response, symbol: state.symbol);
@@ -242,8 +240,8 @@ class _SocketState extends State<_SocketManager> {
             'high': double.parse(itemList[2].toString()),
             'low': double.parse(itemList[3].toString()),
             'close': double.parse(itemList[4].toString()),
-            'vol': double.parse(itemList[5].toString()),
-            'amount': double.parse(itemList[6].toString()),
+            'amount': double.parse(itemList[5].toString()),
+            'vol': double.parse(itemList[6].toString()),
             'count': 0,
             'id': int.parse(itemList[0].toString()) / 1000,
           };

@@ -9,18 +9,23 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/mine/api/contributions_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/data/entity/converter/model_converter.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/scan_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import 'vo/latlng.dart' as contributionLatlng;
 import 'vo/signal_collector.dart';
@@ -44,8 +49,6 @@ class _ContributionState extends State<ScanSignalContributionPage> {
   MapboxMapController mapController;
 
   Api _api = Api();
-
-//  WalletService _walletService = WalletService();
 
   StreamSubscription subscription;
 
@@ -241,7 +244,7 @@ class _ContributionState extends State<ScanSignalContributionPage> {
 
       if (value > 0 && value < 1.0 * item) {
         _currentScanType = SensorType.CELLULAR;
-      }  else if (value >= 1.0 * item && value < 1.0) {
+      } else if (value >= 1.0 * item && value < 1.0) {
         _currentScanType = SensorType.GPS;
       }
     } else {
@@ -306,7 +309,9 @@ class _ContributionState extends State<ScanSignalContributionPage> {
         return false;
       },
       child: Scaffold(
-        appBar: AppBar(
+        appBar: BaseAppBar(
+          baseTitle: S.of(context).scan_name_title,
+          backgroundColor: Colors.white,
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -315,13 +320,6 @@ class _ContributionState extends State<ScanSignalContributionPage> {
               );
             },
           ),
-          elevation: 0,
-          title: Text(
-            S.of(context).scan_name_title,
-            style: TextStyle(color: Colors.white),
-          ),
-          iconTheme: IconThemeData(color: Colors.white),
-          centerTitle: true,
         ),
         body: Stack(
           children: <Widget>[
@@ -337,11 +335,10 @@ class _ContributionState extends State<ScanSignalContributionPage> {
                       _buildStatusListView(),
                       Positioned(
                         child: SizedBox(
-                          height: 3,
+                          height: 1.5,
                           child: LinearProgressIndicator(
-                            backgroundColor: Theme.of(context).primaryColor,
                             value: snapshot?.data ?? 0.0,
-                            valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                           ),
                         ),
                         top: 0,
@@ -364,16 +361,33 @@ class _ContributionState extends State<ScanSignalContributionPage> {
 
   Future<void> _onPressed() async {
     var isFinish = await _uploadCollectData();
-    //print('[Request] --> isFinish: ${isFinish}');
+
     if (isFinish) {
-//      createWalletPopUtilName = '/data_contribution_page';
-//      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishUploadPage()));
+      // _finishCheckIn(S.of(context).thank_you_for_contribute_data);
+
       Application.router.navigateTo(context, Routes.contribute_done, replace: true);
     } else {
       Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
       setState(() {
         _isOnPressed = false;
       });
+    }
+  }
+
+  Future _finishCheckIn(String successTip) async {
+    var address =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+
+    if (address?.isEmpty ?? true) return;
+
+    try {
+      var coordinates = [widget.initLocation.latitude, widget.initLocation.longitude];
+      await ContributionsApi().postCheckIn('scanSignal', coordinates, []);
+
+      UiUtil.toast(successTip);
+    } catch (e) {
+      print('$runtimeType --> e:$e');
+      LogUtil.process(e);
     }
   }
 
@@ -505,8 +519,9 @@ class _ContributionState extends State<ScanSignalContributionPage> {
   }
 
   Widget _mapView() {
-    var style =
-        SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true ? Const.kBlackMapStyleCn : Const.kBlackMapStyle;
+    var style = SettingInheritedModel.of(context)?.areaModel?.isChinaMainland ?? true
+        ? Const.kBlackMapStyleCn
+        : Const.kBlackMapStyle;
 
     return MapboxMap(
       compassEnabled: false,
@@ -548,58 +563,48 @@ class _ContributionState extends State<ScanSignalContributionPage> {
     return uploadStatus;
   }
 
-  void _showCloseDialog() {
+  _showCloseDialog() {
     if (_isFinishScan) {
       Navigator.of(context).pop();
       return;
     }
 
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Platform.isIOS
-              ? CupertinoAlertDialog(
-                  content: Text(S.of(context).scan_exit_tips),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        S.of(context).cancel,
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text(
-                        S.of(context).confirm,
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                      onPressed: () {
-                        _sensorPlugin.stopScan();
-                        Navigator.pop(context);
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                )
-              : AlertDialog(
-                  content: Text(S.of(context).scan_exit_tips),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(S.of(context).cancel),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text(S.of(context).confirm),
-                      onPressed: () {
-                        _sensorPlugin.stopScan();
-                        Navigator.pop(context);
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-        });
+    UiUtil.showAlertView(
+      context,
+      title: S.of(context).tips,
+      actions: [
+        ClickOvalButton(
+          S.of(context).cancel,
+          () {
+            Navigator.pop(context, false);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+          fontColor: DefaultColors.color999,
+          btnColor: [Colors.transparent],
+        ),
+        SizedBox(
+          width: 20,
+        ),
+        ClickOvalButton(
+          S.of(context).confirm,
+          () {
+            _sensorPlugin.stopScan();
+            Navigator.pop(context);
+            Navigator.of(context).pop();
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      ],
+      content: S.of(context).scan_exit_tips,
+    );
   }
+
 }
 
 class RadarScan extends StatefulWidget {

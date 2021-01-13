@@ -39,18 +39,12 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        print('[webview]  -->11111');
         if (webView != null) {
-          print('[webview]  -->3333');
-
           if (await webView.canGoBack()) {
-            print('[webview]  -->4444');
-
             webView.goBack();
             return false;
           }
         }
-        print('[webview]  -->2222');
 
         return true;
       },
@@ -79,45 +73,11 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
                 ),
               )
             : null,
-        /*
-        appBar: AppBar(
-          leading: Builder(
-            builder: (BuildContext context) {
-              return IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              );
-            },
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.share),
-              color: Colors.white,
-              tooltip: S.of(context).share,
-              onPressed: () {
-                _shareQr(context);
-              },
-            ),
-          ],
-          iconTheme: IconThemeData(color: Colors.white),
-          centerTitle: true,
-          title: Text(
-            title ?? widget.title,
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-        */
         body: SafeArea(
           child: Column(
             children: <Widget>[
               if (isLoading)
-                SizedBox(
-                    height: 2,
-                    child: progress < 1.0
-                        ? LinearProgressIndicator(value: progress)
-                        : Container()),
+                SizedBox(height: 2, child: progress < 1.0 ? LinearProgressIndicator(value: progress) : Container()),
               Expanded(
                 child: _body(),
               ),
@@ -158,7 +118,7 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
   }
 
   Widget _body() {
-    print('[inapp] --> webView, url:${widget.initUrl}');
+    //print('[inapp] --> webView, url:${widget.initUrl}');
 
     return InAppWebView(
       initialUrl: widget.initUrl,
@@ -171,14 +131,14 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
         webView = controller;
       },
       onLoadStart: (InAppWebViewController controller, String url) {
-        print("onLoadStart $url");
+        //print("onLoadStart $url");
         setState(() {
           this.url = url;
         });
       },
       onLoadStop: (InAppWebViewController controller, String url) async {
         isLoading = false;
-        print("onLoadStop $url");
+        //print("onLoadStop $url");
         setState(() {
           this.url = url;
         });
@@ -186,7 +146,7 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
         updateBackOrForward();
       },
       onProgressChanged: (InAppWebViewController controller, int progress) {
-        print("onProgressChanged $url");
+        //print("onProgressChanged $url");
 
         setState(() {
           this.progress = progress / 100;
@@ -220,10 +180,9 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
     if (webView != null && !isLoading) {
       webView.takeScreenshot().then((imageByte) async {
         var len = imageByte.lengthInBytes;
-        debugPrint("screenshot taken bytes $len");
+        //debugPrint("screenshot taken bytes $len");
 
-        await Share.file(
-            S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
+        await Share.file(S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
       });
     }
   }

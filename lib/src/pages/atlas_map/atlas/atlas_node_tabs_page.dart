@@ -26,8 +26,6 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
   );
   ScrollController _scrollController = ScrollController();
 
-  StreamSubscription _eventBusSubscription;
-
   NodeTab _selectedNodeTab = NodeTab.map3;
 
   @override
@@ -40,7 +38,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
   }
 
   _listenEventBus() {
-    _eventBusSubscription = Application.eventBus.on().listen((event) async {
+    Application.eventBus.on().listen((event) async {
       if (event is UpdateMap3TabsPageIndexEvent) {
         _selectedNodeTab = event.index == 0 ? NodeTab.map3 : NodeTab.atlas;
         if (_pageController.hasClients) {

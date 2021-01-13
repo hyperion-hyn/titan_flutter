@@ -53,7 +53,6 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
     wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
   }

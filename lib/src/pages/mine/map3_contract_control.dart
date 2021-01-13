@@ -88,7 +88,6 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
       annualized90 = ConvertTokenUnit.weiToDecimal(rets[3].first, 2);
       annualized180 = ConvertTokenUnit.weiToDecimal(rets[4].first, 2);
       var paused = rets[5].first;
-      print('xxx');
       print(paused);
 
       setState(() {
@@ -114,7 +113,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
               height: 16,
               child: CircularProgressIndicator(
                 valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
-                strokeWidth: 2,
+                strokeWidth: 1.5,
               ),
             )
         ],
@@ -302,7 +301,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
                         width: 24,
                         height: 24,
                         child: CircularProgressIndicator(
-                          strokeWidth: 3,
+                          strokeWidth: 1.5,
                         ),
                       )
                   ],

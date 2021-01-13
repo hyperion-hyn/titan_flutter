@@ -52,6 +52,7 @@ class MemoryCache {
     return false;
   }
 
+  //ETH Error toast
   static setContractErrorStr() {
     var map = Map();
     var rootContext = Keys.rootKey.currentContext;

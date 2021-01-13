@@ -3,11 +3,8 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
-import 'package:intl/intl.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
-import 'package:titan/src/components/exchange/bloc/bloc.dart';
-import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/wallet/vo/symbol_quote_vo.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
@@ -15,20 +12,19 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 import 'bloc/bloc.dart';
 import 'wallet_repository.dart';
+import 'package:nested/nested.dart';
 
-class WalletComponent extends StatelessWidget {
-  final Widget child;
+class WalletComponent extends SingleChildStatelessWidget {
 
-  WalletComponent({@required this.child});
+  WalletComponent({Key key, Widget child}): super(key: key, child: child);
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return RepositoryProvider(
       create: (ctx) => WalletRepository(),
       child: BlocProvider<WalletCmpBloc>(
@@ -93,8 +89,8 @@ class _WalletManagerState extends State<_WalletManager> {
     return BlocListener<WalletCmpBloc, WalletCmpState>(
       listener: (context, state) {
         if (state is UpdateWalletPageState) {
-          _activatedWallet = state.walletVo;
-          if (_activatedWallet != null) {
+          if (state.walletVo != null) {
+            _activatedWallet = state.walletVo;
             var balance = _calculateTotalBalance(_activatedWallet);
             if (_activatedWallet.wallet != null) {
               var ethAddress =
@@ -135,6 +131,8 @@ class _WalletManagerState extends State<_WalletManager> {
             _btcGasPriceRecommend = state.btcGasPriceRecommend;
           }
         } else if (state is UpdatedWalletBalanceState) {
+          //因为UpdatedWalletBalanceState继承WalletVoAwareCmpState，所以不用处理state.walletVo
+          // _activatedWallet = state.walletVo;
         } else if (state is WalletVoAwareCmpState) {
           //基本不用,一般使用UpdateWalletPageState
           _activatedWallet = state.walletVo;

@@ -33,7 +33,7 @@ class AppBlocDelegate extends BlocDelegate {
       HeartSuccessState,
       HeartState
     ].contains(transition.currentState.runtimeType)) {
-      print(transition);
+      print("onTransition $transition");
     }
   }
 

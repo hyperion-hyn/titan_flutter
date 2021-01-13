@@ -13,6 +13,13 @@ RPStatistics _$RPStatisticsFromJson(Map<String, dynamic> json) {
     json['rp_contract_info'] == null
         ? null
         : Rp_contract_info.fromJson(json['rp_contract_info'] as Map<String, dynamic>),
+    json['rp_holding_contract_info'] == null
+        ? null
+        : Rp_holding_contract_info.fromJson(json['rp_holding_contract_info'] as Map<String, dynamic>),
+    json['airdrop_info'] == null ? null : Airdrop_info.fromJson(json['airdrop_info'] as Map<String, dynamic>),
+    (json['level_counts'] as List)
+        ?.map((e) => e == null ? null : LevelCounts.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
   );
 }
 
@@ -20,6 +27,8 @@ Map<String, dynamic> _$RPStatisticsToJson(RPStatistics instance) => <String, dyn
       'global': instance.global,
       'self': instance.self,
       'rp_contract_info': instance.rpContractInfo,
+      'airdrop_info': instance.airdropInfo,
+      'level_counts': instance.levelCounts,
     };
 
 Global _$GlobalFromJson(Map<String, dynamic> json) {
@@ -72,4 +81,52 @@ Map<String, dynamic> _$Rp_contract_infoToJson(Rp_contract_info instance) => <Str
       'staking_day': instance.stakingDay,
       'drop_on_percent': instance.dropOnPercent,
       'pool_percent': instance.poolPercent,
+    };
+
+Rp_holding_contract_info _$Rp_holding_contract_infoFromJson(Map<String, dynamic> json) {
+  return Rp_holding_contract_info(
+    json['promotion_supply_ratio'] as String,
+    json['total_burning'] as String,
+    json['total_holding'] as String,
+    json['total_supply'] as String,
+    json['random_min_level'] as int,
+    json['gradient_ratio'] as double,
+  );
+}
+
+Map<String, dynamic> _$Rp_holding_contract_infoToJson(Rp_holding_contract_info instance) => <String, dynamic>{
+      'promotion_supply_ratio': instance.promotionSupplyRatio,
+      'total_burning': instance.totalBurning,
+      'total_holding': instance.totalHolding,
+      'total_supply': instance.totalSupply,
+      'random_min_level': instance.randomMinLevel,
+      'gradient_ratio': instance.gradientRatio,
+    };
+
+Airdrop_info _$Airdrop_infoFromJson(Map<String, dynamic> json) {
+  return Airdrop_info(
+    json['total_amount'] as String,
+    json['miss_rp_amount'] as String,
+    json['today_amount'] as String,
+    json['yesterday_amount'] as String,
+  );
+}
+
+Map<String, dynamic> _$Airdrop_infoToJson(Airdrop_info instance) => <String, dynamic>{
+      'total_amount': instance.totalAmount,
+      'miss_rp_amount': instance.missRpAmount,
+      'today_amount': instance.todayAmount,
+      'yesterday_amount': instance.yesterdayAmount,
+    };
+
+LevelCounts _$LevelCountsFromJson(Map<String, dynamic> json) {
+  return LevelCounts(
+    json['count'] as int,
+    json['level'] as int,
+  );
+}
+
+Map<String, dynamic> _$LevelCountsToJson(LevelCounts instance) => <String, dynamic>{
+      'count': instance.count,
+      'level': instance.level,
     };

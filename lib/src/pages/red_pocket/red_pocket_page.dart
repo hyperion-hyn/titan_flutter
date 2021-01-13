@@ -8,15 +8,22 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/rp/bloc/bloc.dart';
+import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
-import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_my_rp_records_page.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_records_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_friend_list_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_record_tab_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
+import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
+import 'package:titan/src/pages/red_pocket/widget/rp_level_widget.dart';
+import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -26,6 +33,7 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
+import 'entity/rp_airdrop_round_info.dart';
 import 'entity/rp_statistics.dart';
 
 class RedPocketPage extends StatefulWidget {
@@ -41,6 +49,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   RPApi _rpApi = RPApi();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   RPStatistics _rpStatistics;
+  RpAirdropRoundInfo _latestRoundInfo;
+  RpLevelAirdropInfo _rpLevelAirdropInfo;
 
   @override
   void initState() {
@@ -50,12 +60,20 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   @override
   void onCreated() {
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
+
+    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
+    if (activeWallet == null) {
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(ClearMyLevelInfoEvent());
+      }
+    }
     super.onCreated();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _rpStatistics = RedPocketInheritedModel.of(context).rpStatistics;
   }
 
   @override
@@ -67,8 +85,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   @override
   void dispose() {
     Application.routeObserver.unsubscribe(this);
-    super.dispose();
     _loadDataBloc.close();
+    super.dispose();
   }
 
   @override
@@ -77,11 +95,11 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       appBar: BaseAppBar(
         baseTitle: S.of(context).rp_hrc30,
         backgroundColor: Colors.grey[50],
-        /*actions: <Widget>[
+        actions: <Widget>[
           FlatButton(
             onPressed: _navToMyRpRecords,
             child: Text(
-              '我的红包',
+              S.of(context).my_redpocket,
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
@@ -89,25 +107,31 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
               ),
             ),
           ),
-        ],*/
+        ],
       ),
-      body: LoadDataContainer(
-          bloc: _loadDataBloc,
-          enablePullUp: false,
-          onLoadData: () async {
-            _requestData();
-          },
-          onRefresh: () async {
-            _requestData();
-          },
-          child: CustomScrollView(
-            slivers: <Widget>[
-              _myRPInfo(),
-              _airdropWidget(),
-              _rpPool(),
-              _projectIntro(),
-            ],
-          )),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        child: LoadDataContainer(
+            bloc: _loadDataBloc,
+            enablePullUp: false,
+            onLoadData: () async {
+              _requestData();
+            },
+            onRefresh: () async {
+              _requestData();
+            },
+            child: CustomScrollView(
+              physics: BouncingScrollPhysics(),
+              slivers: <Widget>[
+                _myRPInfo(),
+                _rpPool(),
+                _airdropWidget(),
+                _statisticsWidget(),
+                _projectIntro(),
+              ],
+            )),
+      ),
     );
   }
 
@@ -150,39 +174,22 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   _myRPInfo() {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
-    // var level = _rpInfo?.level ?? '--';
-    //var rpToday = _rpStatistics?.self? ?? '--';
-    //var rpYesterday = _rpInfo?.rpYesterday ?? '--';
-    // var rpMissed = _rpInfo?.rpMissed ?? '--';
 
-    var rpBalance = '--';
+    var rpBalanceStr = '--';
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
       SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
     );
-
     try {
-      rpBalance = FormatUtil.coinBalanceHumanReadFormat(
+      rpBalanceStr = FormatUtil.coinBalanceHumanReadFormat(
         rpToken,
       );
     } catch (e) {}
 
-    var rpBalanceStr = '$rpBalance RP';
-
-    // var rpTodayStr = '$rpToday RP';
-    // var rpYesterdayStr = '$rpYesterday RP';
-    // var rpMissedStr = '$rpMissed RP';
-
-    var rpTodayStr = S.of(context).rp_not_airdrop_1;
-    var rpYesterdayStr = S.of(context).rp_not_airdrop_2;
-    var rpMissedStr = S.of(context).rp_not_airdrop_3;
-
-    // var avatarPath = activeWallet != null
-    //     ? 'res/drawable/ic_map3_node_default_icon.png'
-    //     : 'res/drawable/img_avatar_default.png';
+    var rpBalance = '$rpBalanceStr RP';
 
     var userName = activeWallet?.wallet?.keystore?.name ?? '--';
 
-    var walletAddress = activeWallet?.wallet?.getEthAccount()?.address ?? "";
+    var walletAddress = activeWallet?.wallet?.getAtlasAccount()?.address ?? "";
 
     var userAddress = shortBlockChainAddress(
       WalletUtil.ethAddressToBech32Address(
@@ -191,24 +198,60 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
 
     var accountInfoWidget = activeWallet != null
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                userName,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
+        ? InkWell(
+            onTap: _navToManageWallet,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      userName,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      userAddress,
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: DefaultColors.color999,
+                      ),
+                    )
+                  ],
                 ),
-              ),
-              Text(
-                userAddress,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: DefaultColors.color999,
+                SizedBox(
+                  height: 2,
                 ),
-              )
-            ],
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      S.of(context).wallet_balance,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: DefaultColors.color999,
+                      ),
+                      textAlign: TextAlign.end,
+                    ),
+                    SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        '$rpBalance',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
           )
         : InkWell(
             child: Text(
@@ -217,18 +260,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 color: Colors.blue,
               ),
             ),
-            onTap: () {
-              Application.router
-                  .navigateTo(
-                    context,
-                    Routes.wallet_manager,
-                  )
-                  .then((value) => () {
-                        if (mounted) {
-                          setState(() {});
-                        }
-                      });
-            },
+            onTap: _navToManageWallet,
           );
 
     return SliverToBoxAdapter(
@@ -262,64 +294,12 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     Expanded(
                       child: accountInfoWidget,
                     ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    // Column(
-                    //   children: [
-                    //     Text(
-                    //       level,
-                    //       style: TextStyle(
-                    //         color: Colors.red,
-                    //         fontSize: 20,
-                    //         fontWeight: FontWeight.w500,
-                    //       ),
-                    //     ),
-                    //     Text(
-                    //       '抵押量级',
-                    //       style: TextStyle(
-                    //         fontSize: 10,
-                    //         color: DefaultColors.color999,
-                    //       ),
-                    //     ),
-                    //   ],
-                    // )
                   ],
                 ),
-                SizedBox(
-                  height: 24,
-                ),
-                InkWell(
-                  onTap: _navToMyRpRecords,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _contentColumn(
-                            rpBalanceStr, S.of(context).rp_balance),
-                      ),
-                      _verticalLine(),
-                      Expanded(
-                        child:
-                            _contentColumn(rpTodayStr, S.of(context).rp_today_rp),
-                      ),
-                      _verticalLine(),
-                      Expanded(
-                        child: _contentColumn(
-                            rpYesterdayStr, S.of(context).rp_yesterday_rp),
-                      ),
-                      _verticalLine(),
-                      Expanded(
-                        child:
-                            _contentColumn(rpMissedStr, S.of(context).rp_missed),
-                      ),
-                    ],
-                  ),
-                ),
-                /*
                 Padding(
                   padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
+                    left: 0,
+                    right: 0,
                     top: 16,
                     bottom: 10,
                   ),
@@ -328,66 +308,110 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     color: HexColor('#F2F2F2'),
                   ),
                 ),
-                Row(
-                  children: <Widget>[
-                    InkWell(
-                      onTap: _navToMyFriends,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              right: 8,
-                              left: 12,
-                            ),
-                            child: _contentColumn(
-                              '${_rpStatistics?.self?.friends ?? 0}',
-                              S.of(context).rp_friends,
-                              contentFontSize: 16,
-                            ),
-                          ),
-                          Image.asset(
-                            'res/drawable/rp_add_friends_arrow.png',
-                            width: 15,
-                            height: 15,
-                          ),
-                        ],
-                      ),
-                    ),
-                    //Spacer(),
-                    Expanded(
-                      child: InkWell(
-                        onTap: _navToRPInviteFriends,
+                RPLevelWidget(),
+                if (activeWallet != null)
+                  Row(
+                    children: <Widget>[
+                      InkWell(
+                        onTap: _navToMyFriends,
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.only(
-                                left: 12,
                                 right: 8,
+                                left: 12,
                               ),
-                              child: Text(
-                                S.of(context).rp_invite_to_collect,
-                                style: TextStyle(
-                                  color: HexColor('#333333'),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      '${_rpStatistics?.self?.friends ?? 0}',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 4.0,
+                                    ),
+                                    Text(
+                                      S.of(context).rp_friends,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: DefaultColors.color999,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                maxLines: 2,
                               ),
+                              /*child: _contentColumn(
+                                '${_rpStatistics?.self?.friends ?? 0}',
+                                S.of(context).rp_friends,
+                                contentFontSize: 16,
+                              ),*/
                             ),
                             Image.asset(
-                              'res/drawable/rp_add_friends.png',
-                              width: 17,
-                              height: 17,
+                              'res/drawable/rp_add_friends_arrow.png',
+                              width: 15,
+                              height: 15,
+                              color: HexColor('#FF1F81FF'),
                             ),
                           ],
-                          mainAxisAlignment: MainAxisAlignment.end,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                */
+                      //Spacer(),
+                      Expanded(
+                        child: InkWell(
+                          onTap: _navToRPInviteFriends,
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 12,
+                                    right: 8,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        S.of(context).rp_invite_to_collect,
+                                        style: TextStyle(
+                                          color: HexColor('#333333'),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        maxLines: 2,
+                                      ),
+                                      Text(
+                                        S.of(context).more_friends_more_chances,
+                                        style: TextStyle(
+                                          color: DefaultColors.color999,
+                                          fontSize: 11,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Image.asset(
+                                'res/drawable/rp_add_friends.png',
+                                width: 17,
+                                height: 17,
+                                color: HexColor('#FF1F81FF'),
+                              ),
+                            ],
+                            mainAxisAlignment: MainAxisAlignment.end,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),
@@ -397,7 +421,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _airdropWidget() {
-    var airDropPercent = _rpStatistics?.rpContractInfo?.dropOnPercent ?? '--';
     return SliverToBoxAdapter(
       child: Padding(
         padding: _cardPadding(),
@@ -407,64 +430,11 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             borderRadius: BorderRadius.all(Radius.circular(16.0)),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Stack(
-              children: [
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 16.0,
-                      bottom: 8.0,
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 24,
-                        ),
-                        Image.asset(
-                          'res/drawable/img_rp_airdrop.png',
-                          width: 80,
-                          height: 80,
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Text(
-                          S.of(context).rp_available_soon,
-                          style: TextStyle(
-                            fontSize: 13,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      S.of(context).rp_airdrop,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: HexColor('#333333'),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 4,
-                      ),
-                      child: Text(
-                        S.of(context).rp_total_amount_percent(airDropPercent),
-                        style: TextStyle(
-                          color: DefaultColors.color999,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              ],
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: RPAirdropWidget(
+              rpStatistics: _rpStatistics,
+              rpAirdropRoundInfo: _latestRoundInfo,
+              rpLevelAirdropInfo: _rpLevelAirdropInfo,
             ),
           ),
         ),
@@ -475,8 +445,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   _rpPool() {
     var rpYesterday = '--';
     var myHYNStaking = '--';
-    var globalHYNStaking = '--';
-    var globalTransmit = '--';
     var poolPercent = _rpStatistics?.rpContractInfo?.poolPercent ?? '--';
 
     try {
@@ -486,17 +454,15 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       myHYNStaking = FormatUtil.stringFormatCoinNum(
         _rpStatistics?.self?.totalStakingHynStr,
       );
-      globalHYNStaking = FormatUtil.stringFormatCoinNum(
-        _rpStatistics?.global?.totalStakingHynStr,
-      );
-      globalTransmit = FormatUtil.stringFormatCoinNum(
-        _rpStatistics?.global?.transmitStr,
-      );
     } catch (e) {}
 
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+        padding: const EdgeInsets.only(
+          left: 16.0,
+          right: 16.0,
+          top: 16.0,
+        ),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -526,66 +492,118 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         ),
                       ),
                     ),
+                    //Spacer(),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 4,
+                        ),
+                        child: Text(
+                          S.of(context).sooner_get_more_rp,
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(
                   height: 16,
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: _inkwellColumn(
-                        '$myHYNStaking HYN',
-                        S.of(context).rp_my_hyn_staking,
-                        onTap: _navToRPPool,
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: _inkwellColumn(
-                        '$rpYesterday RP',
-                        S.of(context).rp_transmit_yesterday,
-                        onTap: _navToRPReleaseRecord,
-                      ),
-                    ),
-                  ],
+                Text(
+                  '$myHYNStaking',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text(
+                    '${S.of(context).rp_my_hyn_staking} (HYN)',
+                    style: TextStyle(
+                      color: DefaultColors.color999,
+                      fontSize: 12,
+                    ),
                   ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
                   child: Container(
-                    height: 0.5,
-                    color: HexColor('#F2F2F2'),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 2.0,
+                      horizontal: 8.0,
+                    ),
+                    color: DefaultColors.colorf2f2f2,
+                    child: RichText(
+                        text: TextSpan(children: [
+                      TextSpan(
+                          text: '${S.of(context).rp_transmit_yesterday}',
+                          style: TextStyle(
+                            color: DefaultColors.color999,
+                            fontSize: 13,
+                          )),
+                      TextSpan(
+                          text: '  $rpYesterday RP',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 13,
+                          ))
+                    ])),
                   ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _poolInfoColumn(
-                        '$globalHYNStaking HYN',
-                        S.of(context).rp_global_hyn_staking,
-                      ),
-                    ),
-                    Expanded(
-                      child: _poolInfoColumn(
-                        '$globalTransmit RP',
-                        S.of(context).rp_global_transmit,
-                      ),
-                    ),
-                  ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  padding: EdgeInsets.all(16.0),
                   child: ClickOvalButton(
-                    S.of(context).check,
+                    S.of(context).rp_transmit_now,
                     _navToRPPool,
-                    width: 160,
+                    width: 140,
                     height: 32,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal,
+                    fontSize: 13,
+                    btnColor: [
+                      HexColor('#FFFF4D4D'),
+                      HexColor('#FFFF0829'),
+                    ],
                   ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  _statisticsWidget() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: _cardPadding(),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(16.0)),
+          ),
+          child: Padding(
+            padding: _cardPadding(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      S.of(context).statistics,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Spacer(),
+                  ],
+                ),
+                RPStatisticsWidget(),
+                SizedBox(
+                  height: 16,
                 ),
               ],
             ),
@@ -663,6 +681,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   ///widgets
+  /*
   Widget _poolInfoColumn(
     String content,
     String subContent,
@@ -673,8 +692,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         Text(
           content,
           style: TextStyle(
-            fontSize: 12,
-            color: DefaultColors.color999,
+            fontSize: 14,
+            color: Colors.black,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -684,63 +703,72 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         Text(
           subContent,
           style: TextStyle(
-            fontSize: 8,
+            fontSize: 10,
             color: DefaultColors.color999,
           ),
         ),
       ],
     );
-  }
+  }*/
 
-  Widget _inkwellColumn(
+  Widget _toolTipColumn(
     String content,
-    String subContent, {
-    GestureTapCallback onTap,
-    double contentFontSize = 14,
-    double subContentFontSize = 10,
-    CrossAxisAlignment columnCrossAxisAlignment = CrossAxisAlignment.start,
-  }) {
+    String subContent,
+    String toolTipMsg,
+  ) {
+    GlobalKey _toolTipKey = GlobalKey();
     return InkWell(
-      onTap: onTap,
+      onTap: () {
+        final dynamic tooltip = _toolTipKey.currentState;
+        tooltip?.ensureTooltipVisible();
+      },
       child: Row(
         children: [
-          Container(
-            constraints: BoxConstraints(
-              maxWidth: 100,
-            ),
+          Expanded(
             child: Column(
-              crossAxisAlignment: columnCrossAxisAlignment,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text(
                   content,
                   style: TextStyle(
-                    fontSize: contentFontSize,
-                    color: Colors.black,
+                    fontSize: 12,
+                    color: DefaultColors.color999,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 SizedBox(
                   height: 4.0,
                 ),
-                Text(
-                  subContent,
-                  style: TextStyle(
-                    fontSize: subContentFontSize,
-                    color: DefaultColors.color999,
-                  ),
+                Row(
+                  children: [
+                    Spacer(),
+                    Text(
+                      subContent,
+                      style: TextStyle(
+                        fontSize: 8,
+                        color: DefaultColors.color999,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 2,
+                    ),
+                    if (toolTipMsg != null)
+                      Tooltip(
+                        key: _toolTipKey,
+                        verticalOffset: 16,
+                        message: toolTipMsg,
+                        child: Image.asset(
+                          'res/drawable/ic_tooltip.png',
+                          width: 10,
+                          height: 10,
+                        ),
+                      ),
+                    Spacer(),
+                  ],
                 ),
               ],
             ),
           ),
-          if (onTap != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(
-                Icons.arrow_forward_ios,
-                size: 15,
-                color: DefaultColors.color999,
-              ),
-            ),
         ],
       ),
     );
@@ -792,24 +820,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
   }
 
-  Widget _verticalLine({
-    bool havePadding = false,
-  }) {
-    return Center(
-      child: Container(
-        height: 20,
-        width: 0.5,
-        color: HexColor('#000000').withOpacity(0.2),
-        margin: havePadding
-            ? const EdgeInsets.only(
-                right: 4.0,
-                left: 4.0,
-              )
-            : null,
-      ),
-    );
-  }
-
   ///Actions
   _navToRPPool() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
@@ -817,7 +827,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpTransmitPage(_rpStatistics),
+          builder: (context) => RpTransmitPage(),
         ),
       );
     } else {
@@ -825,18 +835,52 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     }
   }
 
+  /*
   _navToRPReleaseRecord() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
     if (activeWallet != null) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpTransmitRecordsPage(_rpStatistics),
+          builder: (context) => RpTransmitRecordsPage(),
         ),
       );
     } else {
       Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
     }
+  }*/
+
+  _navToLevel() {
+    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+    if (activeWallet != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RpLevelRecordsPage(),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
+    }
+  }
+
+  _navToManageWallet() {
+    WalletManagerPage.jumpWalletManager(context, hasWalletUpdate: (wallet) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+
+    /*Application.router
+        .navigateTo(
+          context,
+          Routes.wallet_manager,
+        )
+        .then((value) => () {
+              if (mounted) {
+                setState(() {});
+              }
+            });*/
   }
 
   _navToMyFriends() {
@@ -845,7 +889,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpMyFriendsPage(),
+          builder: (context) => RpFriendListPage(),
         ),
       );
     } else {
@@ -854,14 +898,12 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _navToMyRpRecords() {
-    return;
-
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
     if (activeWallet != null) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpMyRpRecordsPage(),
+          builder: (context) => RpRecordTabPage(),
         ),
       );
     } else {
@@ -875,7 +917,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpInviteFriendPage(),
+          builder: (context) => RpFriendInvitePage(),
         ),
       );
     } else {
@@ -885,21 +927,34 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   _requestData() async {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
+    var _address = activeWallet?.wallet?.getAtlasAccount()?.address;
+
     try {
-      _rpStatistics = await _rpApi.getRPStatistics(
-        activeWallet?.wallet?.getAtlasAccount()?.address,
-      );
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(UpdateStatisticsEvent());
+      }
+
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEvent());
+      }
+
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(UpdatePromotionRuleEvent());
+      }
 
       if (context != null) {
         BlocProvider.of<WalletCmpBloc>(context)
             .add(UpdateActivatedWalletBalanceEvent());
       }
 
+      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(_address);
+
+      _rpLevelAirdropInfo = await _rpApi.getLatestLevelAirdropInfo(_address);
+
       if (mounted) {
+        _loadDataBloc.add(RefreshSuccessEvent());
         setState(() {});
       }
-
-      _loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
       _loadDataBloc.add(RefreshFailEvent());
     }

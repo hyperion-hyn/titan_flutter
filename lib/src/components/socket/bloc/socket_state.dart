@@ -53,7 +53,7 @@ class HeartSuccessState extends SocketState {}
 class ChannelKLine24HourState extends SocketState {
   final String symbol;
   final List response;
-  ChannelKLine24HourState({this.symbol,this.response});
+  ChannelKLine24HourState({this.symbol, this.response});
 }
 
 class ChannelKLinePeriodState extends SocketState {
@@ -63,18 +63,24 @@ class ChannelKLinePeriodState extends SocketState {
 }
 
 class ChannelExchangeDepthState extends SocketState {
+  final String channel;
   final Map<String, dynamic> response;
-  ChannelExchangeDepthState({this.response,});
+  ChannelExchangeDepthState({
+    this.channel,
+    this.response,
+  });
 }
 
 class ChannelTradeDetailState extends SocketState {
+  final String channel;
   final List<dynamic> response;
-  ChannelTradeDetailState({this.response});
+  ChannelTradeDetailState({this.channel, this.response});
 }
 
 class ChannelUserTickState extends SocketState {
+  final String channel;
   final List<dynamic> response;
-  ChannelUserTickState({this.response});
+  ChannelUserTickState({this.channel, this.response});
 }
 
 class MarketSymbolState extends SocketState {
