@@ -41,7 +41,7 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> {
       //print("[$runtimeType] 2, dy:$dy");
     }
 
-    print("[$runtimeType] size:${size.toString()}, dy:$dy");
+    //print("[$runtimeType] size:${size.toString()}, dy:$dy");
 
     return Offset(
       dx,
