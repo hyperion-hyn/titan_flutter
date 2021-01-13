@@ -247,7 +247,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                                         LengthLimitingTextInputFormatter(18),
                                         FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
                                       ],
-                                      hint: S.of(context).please_enter_withdraw_amount,
+                                      hintText: S.of(context).please_enter_withdraw_amount,
                                       validator: (textStr) {
                                         var inputValue = Decimal.tryParse(textStr);
 
