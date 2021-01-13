@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nested/nested.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
 import 'app_lock_bloc.dart';
 
@@ -34,16 +36,27 @@ class _AppLockManager extends StatefulWidget {
 }
 
 class _AppLockManagerState extends State<_AppLockManager> {
-  LockStatus _lockStatus = LockStatus()..wallet = false;
+  LockStatus _lockStatus = LockStatus()..wallet = Wallet();
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AppLockBloc, AppLockState>(
       listener: (context, state) async {
+        if (state is SetWalletLockState) {
+          await WalletUtil.setWalletSafeLockEnable(
+            state.walletAddress,
+            state.isEnabled,
+          );
+
+          _lockStatus.wallet.isEnabled = state.isEnabled;
+
+          ///set wallet on/off same as enabled
+          _lockStatus.wallet.isOn = state.isEnabled;
+        }
         if (state is LockWalletState) {
-          _lockStatus.wallet = true;
+          _lockStatus.wallet.isOn = true;
         } else if (state is UnlockWalletState) {
-          _lockStatus.wallet = false;
+          _lockStatus.wallet.isOn = false;
         }
         if (mounted) setState(() {});
       },
@@ -62,7 +75,13 @@ class _AppLockManagerState extends State<_AppLockManager> {
 enum AppLockAspect { none }
 
 class LockStatus {
-  bool wallet;
+  Wallet wallet = Wallet();
+}
+
+class Wallet {
+  bool isEnabled = false;
+
+  bool isOn = false;
 }
 
 class AppLockInheritedModel extends InheritedModel<AppLockAspect> {
@@ -73,6 +92,14 @@ class AppLockInheritedModel extends InheritedModel<AppLockAspect> {
     @required Widget child,
     @required this.lockStatus,
   }) : super(key: key, child: child);
+
+  bool get isWalletLockOn {
+    return lockStatus?.wallet?.isOn ?? false;
+  }
+
+  bool get isWalletLockEnable {
+    return lockStatus?.wallet?.isEnabled ?? false;
+  }
 
   @override
   bool updateShouldNotify(AppLockInheritedModel oldWidget) {

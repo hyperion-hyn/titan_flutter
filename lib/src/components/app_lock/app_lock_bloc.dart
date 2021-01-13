@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 part 'app_lock_event.dart';
+
 part 'app_lock_state.dart';
 
 class AppLockBloc extends Bloc<AppLockEvent, AppLockState> {
@@ -14,6 +15,9 @@ class AppLockBloc extends Bloc<AppLockEvent, AppLockState> {
   Stream<AppLockState> mapEventToState(
     AppLockEvent event,
   ) async* {
+    if (event is SetWalletLockEvent) {
+      yield SetWalletLockState(event.walletAddress, event.isEnabled);
+    }
     if (event is LockWalletEvent) {
       yield LockWalletState();
     } else if (event is UnLockWalletEvent) {

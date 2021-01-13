@@ -62,22 +62,22 @@ class WalletUtil {
     );
   }
 
-  static Future<bool> checkWalletSafeLockIsOn(
+  static Future<bool> checkWalletSafeLockIsEnable(
     String walletAddress,
   ) async {
-    bool isSafeLockOn = await AppCache.getValue(
-        '${PrefsKey.WALLET_SAFE_LOCK_IS_ON_PREFIX}_$walletAddress');
+    bool isEnabled = await AppCache.getValue(
+        '${PrefsKey.WALLET_SAFE_LOCK_IS_ENABLE_PREFIX}_$walletAddress');
 
-    return (isSafeLockOn ?? false);
+    return (isEnabled ?? false);
   }
 
-  static setWalletSafeLockIsOn(
+  static setWalletSafeLockEnable(
     String walletAddress,
-    bool isOn,
+    bool enabled,
   ) async {
     await AppCache.saveValue(
-      '${PrefsKey.WALLET_SAFE_LOCK_IS_ON_PREFIX}_$walletAddress',
-      isOn,
+      '${PrefsKey.WALLET_SAFE_LOCK_IS_ENABLE_PREFIX}_$walletAddress',
+      enabled,
     );
   }
 

@@ -335,7 +335,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
       aspect: WalletAspect.activatedWallet,
     ).activatedWallet;
     if (activatedWalletVo != null) {
-      if (AppLockInheritedModel.of(context).lockStatus?.wallet ?? false)
+      if (AppLockInheritedModel.of(context).isWalletLockOn)
         return WalletSafeLock(
           onUnlock: () {
             BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());

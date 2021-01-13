@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,6 +37,15 @@ class ApiDemo extends StatefulWidget {
 class _ApiDemoState extends State {
   ExchangeApi _exchangeApi = ExchangeApi();
   int _lastRequestCoinTime = 0;
+
+  final StreamController<bool> _walletLockStatusController =
+      StreamController.broadcast();
+
+  @override
+  void dispose() {
+    _walletLockStatusController?.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -326,7 +337,7 @@ class _ApiDemoState extends State {
           Padding(
             padding: EdgeInsets.all(16),
             child: Text(
-                'Wallet Lock is ${AppLockInheritedModel.of(context).lockStatus?.wallet}'),
+                'Wallet Lock is ${AppLockInheritedModel.of(context).isWalletLockOn}'),
           ),
           RaisedButton(
             child: Text('Lock wallet'),
@@ -339,6 +350,23 @@ class _ApiDemoState extends State {
             onPressed: () async {
               BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
             },
+          ),
+          Row(
+            children: [
+              Text('Wallet Lock Enabled'),
+              Switch(
+                  value: (AppLockInheritedModel.of(context).isWalletLockEnable),
+                  onChanged: (value) {
+                    var walletAddress = WalletInheritedModel.of(context)
+                            ?.activatedWallet
+                            ?.wallet
+                            ?.getAtlasAccount()
+                            ?.address ??
+                        '';
+                    BlocProvider.of<AppLockBloc>(context)
+                        .add(SetWalletLockEvent(walletAddress, value));
+                  })
+            ],
           )
         ],
       ),
