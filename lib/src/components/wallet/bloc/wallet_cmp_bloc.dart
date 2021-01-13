@@ -83,7 +83,10 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
         var userPayload = UserPayloadWithAddressEntity(
             Payload(userName: event?.wallet?.keystore?.name ?? ""), event?.wallet?.getAtlasAccount()?.address ?? "");
+
+
         AtlasApi.postUserSync(userPayload);
+
       }
 
       yield ActivatedWalletState(walletVo: _activatedWalletVo?.copyWith());

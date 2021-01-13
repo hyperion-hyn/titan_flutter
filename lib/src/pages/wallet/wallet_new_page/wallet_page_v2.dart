@@ -8,6 +8,8 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
+import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
@@ -155,8 +157,11 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
       context,
       aspect: WalletAspect.activatedWallet,
     ).activatedWallet;
-    _hasBackupWallet = await WalletUtil.checkIsBackUpMnemonic(activatedWalletVo?.wallet?.getEthAccount()?.address ?? "");
-    if(activatedWalletVo == null || _hasBackupWallet || Application.hasShowBackupWalletDialog){
+    _hasBackupWallet = await WalletUtil.checkIsBackUpMnemonic(
+        activatedWalletVo?.wallet?.getEthAccount()?.address ?? "");
+    if (activatedWalletVo == null ||
+        _hasBackupWallet ||
+        Application.hasShowBackupWalletDialog) {
       return;
     }
     Application.hasShowBackupWalletDialog = true;
@@ -171,8 +176,14 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset("res/drawable/ic_wallet_account_backup_remind.png",width: 16,height: 16,),
-                  SizedBox(width: 6,),
+                  Image.asset(
+                    "res/drawable/ic_wallet_account_backup_remind.png",
+                    width: 16,
+                    height: 16,
+                  ),
+                  SizedBox(
+                    width: 6,
+                  ),
                   Text("安全提醒",
                       style: TextStyle(
                           fontSize: 16,
@@ -183,7 +194,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top:13,bottom:21.0,left: 20,right: 20),
+              padding: const EdgeInsets.only(
+                  top: 13, bottom: 21.0, left: 20, right: 20),
               child: Text(
                   "你的身份助记词未备份，请务必备份助记词\n助记词可用于恢复身份钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失。",
                   style: TextStyle(
@@ -198,7 +210,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
             "立即备份",
             () async {
               Navigator.pop(context);
-              var walletStr = FluroConvertUtils.object2string(activatedWalletVo.wallet.toJson());
+              var walletStr = FluroConvertUtils.object2string(
+                  activatedWalletVo.wallet.toJson());
               Application.router.navigateTo(
                   context,
                   Routes.wallet_setting_wallet_backup_notice +
@@ -217,7 +230,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
   Widget build(BuildContext context) {
     super.build(context);
 
-    if (_isSafeLockUnlock){
+    if (_isSafeLockUnlock) {
       Future.delayed(Duration(milliseconds: 1000), () {
         _showBackupDialog();
       });
@@ -322,11 +335,10 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
       aspect: WalletAspect.activatedWallet,
     ).activatedWallet;
     if (activatedWalletVo != null) {
-      if (!_isSafeLockUnlock)
+      if (AppLockInheritedModel.of(context).lockStatus?.wallet ?? false)
         return WalletSafeLock(
           onUnlock: () {
-            _isSafeLockUnlock = true;;
-            if (mounted) setState(() {});
+            BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
           },
         );
 
@@ -370,14 +382,14 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             InkWell(
-              onTap: (){
-                WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (wallet){
+              onTap: () {
+                WalletManagerPage.jumpWalletManager(context,
+                    hasWalletUpdate: (wallet) {
                   setState(() {
                     // _isRefreshBalances = true;
                   });
-                },noWalletUpdate: (){
-                  setState(() {
-                  });
+                }, noWalletUpdate: () {
+                  setState(() {});
                 });
               },
               child: Row(
@@ -399,7 +411,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
                     width: 11,
                   ),
                   Spacer(),
-                  if(!_hasBackupWallet)
+                  if (!_hasBackupWallet)
                     Row(
                       children: [
                         Image.asset(
@@ -422,8 +434,10 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left:8.0,top: 8,bottom: 8),
-                  child: SizedBox(width: 20,),
+                  padding: const EdgeInsets.only(left: 8.0, top: 8, bottom: 8),
+                  child: SizedBox(
+                    width: 20,
+                  ),
                 ),
                 Spacer(),
                 Padding(
@@ -441,14 +455,20 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
                 ),
                 Spacer(),
                 InkWell(
-                    onTap: (){
+                    onTap: () {
                       setState(() {
                         _isShowBalances = !_isShowBalances;
                       });
                     },
                     child: Padding(
-                      padding: const EdgeInsets.only(left:8.0,top: 8,bottom: 8),
-                      child: Image.asset(_isShowBalances ? "res/drawable/ic_input_psw_show.png" : "res/drawable/ic_input_psw_hide.png",width: 20,),
+                      padding:
+                          const EdgeInsets.only(left: 8.0, top: 8, bottom: 8),
+                      child: Image.asset(
+                        _isShowBalances
+                            ? "res/drawable/ic_input_psw_show.png"
+                            : "res/drawable/ic_input_psw_hide.png",
+                        width: 20,
+                      ),
                     ))
               ],
             ),
@@ -525,7 +545,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
     }, childCount: activatedWalletVo.coins.length));
   }
 
-  _hynBurnWidget(){
+  _hynBurnWidget() {
     return SliverToBoxAdapter(
       child: Column(
         children: [
