@@ -33,19 +33,29 @@ class LogUtil {
   }
 
   static toastException(dynamic error) {
-    var walletAddr = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet?.getEthAccount()?.address ?? "no wallet";
+    var walletAddr =
+        WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet?.getEthAccount()?.address ??
+            "no wallet";
     if (error is HttpResponseCodeNotSuccess) {
-      uploadExceptionStr(error.toString(),"HttpResponseCodeNotSuccess $walletAddr");
-      if(error.subMsg != null) {
+      uploadExceptionStr(error.toString(), "HttpResponseCodeNotSuccess $walletAddr");
+      if (error.subMsg != null) {
         var rpcReturn = MemoryCache.contractErrorStr(error.subMsg);
-        if (rpcReturn != error.subMsg){
-          Fluttertoast.showToast(msg: rpcReturn, toastLength: Toast.LENGTH_LONG);
+        if (rpcReturn != error.subMsg) {
+          Fluttertoast.showToast(
+            msg: rpcReturn,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+          );
           return;
         }
 
         var atlasReturn = BaseError.getChainErrorReturn(error.subMsg);
-        if (atlasReturn != error.subMsg){
-          Fluttertoast.showToast(msg: "$atlasReturn", toastLength: Toast.LENGTH_LONG);
+        if (atlasReturn != error.subMsg) {
+          Fluttertoast.showToast(
+            msg: "$atlasReturn",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+          );
           return;
         }
       }
@@ -58,32 +68,49 @@ class LogUtil {
         }
         Fluttertoast.showToast(msg: "${S.of(Keys.rootKey.currentContext).undefind_error} ${error.code}");
       } else {
-        Fluttertoast.showToast(msg: notSuccessError.message);
+        Fluttertoast.showToast(
+          msg: notSuccessError.message,
+          gravity: ToastGravity.CENTER,
+        );
       }
     } else if (error is DioError) {
-      uploadExceptionStr(error.toString(),"DioError $walletAddr");
+      uploadExceptionStr(error.toString(), "DioError $walletAddr");
       if (error.type == DioErrorType.CONNECT_TIMEOUT) {
-        Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).network_error);
-      }else{
-        Fluttertoast.showToast(msg: error.toString());
+        Fluttertoast.showToast(
+          msg: S.of(Keys.rootKey.currentContext).network_error,
+          gravity: ToastGravity.CENTER,
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: error.toString(),
+          gravity: ToastGravity.CENTER,
+        );
       }
     } else if (error is PlatformException) {
-      uploadExceptionStr(error.toString(),"PlatformException $walletAddr");
+      uploadExceptionStr(error.toString(), "PlatformException $walletAddr");
       if (error.code == WalletError.PASSWORD_WRONG) {
         Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).password_incorrect);
       } else if (error.code == WalletError.PARAMETERS_WRONG) {
         Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).param_error);
       } else {
-        Fluttertoast.showToast(msg: error.message);
+        Fluttertoast.showToast(
+          msg: error.message,
+          gravity: ToastGravity.CENTER,
+        );
       }
-    } else if(error is RPCError){
-      uploadExceptionStr(error.toString(),"RPCError $walletAddr");
+    } else if (error is RPCError) {
+      uploadExceptionStr(error.toString(), "RPCError $walletAddr");
       Fluttertoast.showToast(
-          msg: MemoryCache.contractErrorStr(error.message),
-          toastLength: Toast.LENGTH_LONG);
+        msg: MemoryCache.contractErrorStr(error.message),
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+      );
     } else {
-      uploadExceptionStr(error.toString(),"OtherError $walletAddr");
-      Fluttertoast.showToast(msg: error.toString());
+      uploadExceptionStr(error.toString(), "OtherError $walletAddr");
+      Fluttertoast.showToast(
+        msg: error.toString(),
+        gravity: ToastGravity.CENTER,
+      );
     }
   }
 
@@ -100,18 +127,16 @@ class LogUtil {
     logger.e(exception);
   }
 
-  static uploadExceptionStr(String exceptionStr, [String errorPrefix]){
+  static uploadExceptionStr(String exceptionStr, [String errorPrefix]) {
     if (env.buildType == BuildType.PROD) {
-      FlutterBugly.uploadException(
-          message: "[$errorPrefix]: $exceptionStr", detail: "[$errorPrefix]: $exceptionStr");
+      FlutterBugly.uploadException(message: "[$errorPrefix]: $exceptionStr", detail: "[$errorPrefix]: $exceptionStr");
     }
     logger.e("$exceptionStr  $errorPrefix");
   }
 
-  static printMessage(dynamic message){
+  static printMessage(dynamic message) {
     if (showLog) {
       print(message);
     }
   }
-
 }

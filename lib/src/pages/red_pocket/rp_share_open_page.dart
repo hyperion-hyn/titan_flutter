@@ -1,17 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_edit_page.dart';
+import 'package:titan/src/utils/log_util.dart';
 
-
-class RpShareOpenPage extends StatelessWidget {
+class RpShareOpenPage extends StatefulWidget {
   final String walletName;
   final String address;
   final String id;
   final RedPocketShareType shareType;
-  final RPApi _rpApi = RPApi();
 
   RpShareOpenPage({
     this.walletName = '',
@@ -21,9 +24,50 @@ class RpShareOpenPage extends StatelessWidget {
   });
 
   @override
+  State<StatefulWidget> createState() {
+    return _RpShareSendState();
+  }
+}
+
+class _RpShareSendState extends BaseState<RpShareOpenPage> {
+  final RPApi _rpApi = RPApi();
+
+  RpShareEntity _shareEntity;
+
+  @override
+  void onCreated() {
+    super.onCreated();
+
+    _getNewBeeInfo();
+  }
+
+  void _getNewBeeInfo() async {
+    RpShareSendEntity shareSendEntity = await _rpApi.getNewBeeInfo(
+      widget.address,
+      id: widget.id,
+    );
+    print("[$runtimeType] shareSendEntity:${shareSendEntity.toJson()}");
+
+    _shareEntity = await _rpApi.getNewBeeDetail(
+      widget.address,
+      id: widget.id,
+    );
+    setState(() {});
+    print("[$runtimeType] shareEntity:${_shareEntity.info.toJson()}");
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var greeting = '恭喜发财，大吉大利,恭喜发财，大吉大利xxxx';
-    greeting = '恭喜发财，大吉大利!xx';
+    var greeting = _shareEntity?.info?.greeting ?? '恭喜发财，大吉大利';
+    var isNormal = (_shareEntity?.info?.rpType ?? 'normal') == RpShareEditPage.shareTypeNormal;
+
+    var language = SettingInheritedModel.of(context).languageCode;
+    var suffix = language == 'zh' ? 'zh' : 'en';
+    var typeName = isNormal ? RpShareEditPage.shareTypeNormal : RpShareEditPage.shareTypeLocation;
+    typeName = RpShareEditPage.shareTypeNormal;
+    suffix = 'zh';
+    var state = _shareEntity?.info?.state??'onGoging';
+    var imageName = 'rp_share_${typeName}_${suffix}_${state}';
 
     return Material(
       color: Colors.transparent,
@@ -33,35 +77,39 @@ class RpShareOpenPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Container(
-                child: Stack(
-                  alignment: Alignment.topCenter,
-                  children: <Widget>[
-                    Container(
-                      width: 260,
-                      height: 360,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                            'res/drawable/rp_share_open_bg.png',
+              GestureDetector(
+                onTap: () async {
+                  try {
+                    var id = _shareEntity?.info?.id ?? widget.id;
+                    RpShareReqEntity reqEntity = RpShareReqEntity.only(id);
+                    print("[$runtimeType] open rp, 1, reqEntity:${reqEntity.toJson()}");
+
+                    var result = await _rpApi.postOpenShareRp(
+                      reqEntity: reqEntity,
+                      address: widget.address,
+                    );
+                    print("[$runtimeType] open rp, 2, result:$result");
+                  } catch(e) {
+                    LogUtil.toastException(e);
+                  }
+                },
+                child: Container(
+                  child: Stack(
+                    alignment: Alignment.topCenter,
+                    children: <Widget>[
+                      Container(
+                        width: 260,
+                        height: 360,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                              'res/drawable/$imageName.png',
+                            ),
+                            fit: BoxFit.fill,
                           ),
-                          fit: BoxFit.fill,
                         ),
                       ),
-                    ),
-                    InkWell(
-                      onTap: () async{
-
-                        RpShareReqEntity reqEntity = RpShareReqEntity.only(this.id);
-                        print("[$runtimeType] open rp, 1, reqEntity:${reqEntity.toJson()}");
-
-                        reqEntity = await _rpApi.postOpenShareRp(
-                          reqEntity: reqEntity,
-                          address: this.address,
-                        );
-                        print("[$runtimeType] open rp, 2, reqEntity:${reqEntity.toJson()}");
-                      },
-                      child: Container(
+                      Container(
                         width: double.infinity,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -88,7 +136,7 @@ class RpShareOpenPage extends StatelessWidget {
                               ),
                               child: RichText(
                                 text: TextSpan(
-                                  text: "${this.walletName} 发的${shareType.index == 0 ? '新人' : '位置'}红包",
+                                  text: "${_shareEntity?.info?.owner ?? '--'} 发的${isNormal ? '新人' : '位置'}红包",
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: HexColor('#FFFFFF'),
@@ -110,38 +158,38 @@ class RpShareOpenPage extends StatelessWidget {
                           ],
                         ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 12,
-                      child: InkWell(
-                        onTap: (){
-                          // todo:
-                        },
-                        child: Row(
-                          children: [
-                            Text(
-                              '看看大家的手气',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal,
-                                color: HexColor('#FBE945'),
+                      Positioned(
+                        bottom: 20,
+                        child: InkWell(
+                          onTap: () {
+                            // todo:
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                '看看大家的手气',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                  color: HexColor('#FBE945'),
+                                ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 8,
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 8,
+                                ),
+                                child: Image.asset(
+                                  'res/drawable/rp_share_open_arrow.png',
+                                  height: 11,
+                                  width: 6,
+                                ),
                               ),
-                              child: Image.asset(
-                                'res/drawable/rp_share_open_arrow.png',
-                                height: 11,
-                                width: 6,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               InkWell(
@@ -169,9 +217,12 @@ class RpShareOpenPage extends StatelessWidget {
   }
 }
 
-
-
-Future<bool> showShareRpOpenDialog(BuildContext context, String walletName, String address, String id) {
+Future<bool> showShareRpOpenDialog({
+  BuildContext context,
+  String walletName,
+  String address,
+  String id,
+}) {
   return showDialog<bool>(
     barrierDismissible: true,
     context: context,
@@ -184,5 +235,3 @@ Future<bool> showShareRpOpenDialog(BuildContext context, String walletName, Stri
     },
   );
 }
-
-// showShareRpOpenDialog(context, 'inviterAddress', 'walletName');

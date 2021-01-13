@@ -121,7 +121,7 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
           '分享给新人',
           () async{
 
-            showShareRpOpenDialog(context, widget.id, _address, _walletName,);
+            showShareRpOpenDialog(context:context, id:widget.id, address:_address, walletName: _walletName,);
             return;
 
             if (mounted) {

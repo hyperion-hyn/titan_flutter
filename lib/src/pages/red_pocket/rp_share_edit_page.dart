@@ -30,6 +30,16 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
+/*
+
+waitForTX: 待转账
+Pending: 已转账，待确认
+expires: 已过期
+allGot: 已全部领取完
+ongoing: 进行中
+
+*/
+
 class RpShareEditPage extends StatefulWidget {
   static String shareTypeNormal = 'normal';
   static String shareTypeLocation = 'location';
@@ -89,7 +99,9 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
   String get _baseTitle => widget.shareType == RedPocketShareType.NEWER ? '新人红包' : '位置红包';
   bool get _isLocation => widget.shareType == RedPocketShareType.LOCATION;
-  String get _rpType => widget.shareType == RedPocketShareType.LOCATION ? RpShareEditPage.shareTypeLocation : RpShareEditPage.shareTypeNormal;
+  String get _rpType => widget.shareType == RedPocketShareType.LOCATION
+      ? RpShareEditPage.shareTypeLocation
+      : RpShareEditPage.shareTypeNormal;
 
   RpShareConfigEntity _rpShareConfig;
 
@@ -370,7 +382,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                       child: Text(
                         title,
                         style: TextStyle(
-                          color: textColor,
+                          color: HexColor('#333333'),
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
@@ -427,7 +439,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                         child: Text(
                           unit,
                           style: TextStyle(
-                            color: textColor,
+                            color: HexColor('#333333'),
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),
@@ -565,7 +577,9 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                 errorText = '至少$minRp RP';
               }
 
-              if (rpBalance > Decimal.zero && inputValue > rpBalance) {
+              //print("inputValue:$inputValue, rpBalance:$rpBalance");
+
+              if (rpBalance >= Decimal.zero && inputValue > rpBalance) {
                 errorText = 'RP余额不足';
               }
 
@@ -610,7 +624,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
                 errorText = '至少$minHyn HYN';
               }
 
-              if (hynBalance > Decimal.zero && inputValue > hynBalance) {
+              if (hynBalance >= Decimal.zero && inputValue > hynBalance) {
                 errorText = S.of(context).hyn_balance_no_enough;
               }
 
@@ -1116,21 +1130,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
     print('[$runtimeType] _confirmDataAction, 2, reqEntity.toJson:${reqEntity.toJson()}');
 
-    showSendAlertView(reqEntity);
-  }
-
-  Future<bool> showSendAlertView<T>(
-    RpShareReqEntity reqEntity,
-  ) {
-    return showDialog<bool>(
-      barrierDismissible: true,
-      context: context,
-      builder: (context) {
-        return RpShareSendPage(
-          reqEntity: reqEntity,
-        );
-      },
-    );
+    showSendAlertView(context, reqEntity);
   }
 
   String _maxLengthLimit(TextEditingController controller, {int length = 20}) {

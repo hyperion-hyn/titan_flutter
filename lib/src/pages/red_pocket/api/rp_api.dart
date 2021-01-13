@@ -651,13 +651,13 @@ class RPApi {
   }
 
   // 领取新人/位置红包
-  Future<RpShareReqEntity> postOpenShareRp({
+  Future<dynamic> postOpenShareRp({
     RpShareReqEntity reqEntity,
     String address,
   }) async {
     return await RPHttpCore.instance.postEntity(
       "/v1/rp/new-bee/$address/open",
-      EntityFactory<RpShareReqEntity>((json) => RpShareReqEntity.fromJson(json)),
+      EntityFactory<dynamic>((json) => json),
       params: reqEntity.toJson(),
       options: RequestOptions(contentType: "application/json"),
     );
@@ -685,7 +685,7 @@ class RPApi {
       coinVo.contractAddress,
       nonce: rpNonce,
     );
-    print('[rp_api] postSendShareRp, nonce:$rpNonce, rawTxRp: $rpSignedTX');
+    print('[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
 
     if (rpSignedTX == null) {
       throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
@@ -703,7 +703,7 @@ class RPApi {
       message: null,
     );
 
-    print('[rp_api] postSendShareRp, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
+    print('[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
 
     if (hynSignedTX?.isEmpty ?? true) {
       throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);

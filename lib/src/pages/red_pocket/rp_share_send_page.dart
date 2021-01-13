@@ -11,8 +11,7 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_broadcast_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
-import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -220,7 +219,7 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
                         }
 
                       } catch (e) {
-                        UiUtil.toast(e);
+                        LogUtil.toastException(e);
                       }
                     },
                     btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
@@ -309,4 +308,20 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
       ),
     );
   }
+}
+
+
+Future<bool> showSendAlertView<T>(
+    BuildContext context,
+    RpShareReqEntity reqEntity,
+    ) {
+  return showDialog<bool>(
+    barrierDismissible: true,
+    context: context,
+    builder: (context) {
+      return RpShareSendPage(
+        reqEntity: reqEntity,
+      );
+    },
+  );
 }

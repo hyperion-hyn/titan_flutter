@@ -367,27 +367,35 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                   isContain: widget.isContain,
                 )));
       },
-      child: Container(
-        color: Colors.white,
-        child: Row(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 16, bottom: 16.0, left: 15),
-              child: Text(
-                accountInfoItemView.leftStr,
-                style: TextStyles.textC333S13,
-              ),
+      child: Column(
+        children: [
+          Container(
+            color: Colors.white,
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 16, bottom: 16.0, left: 15),
+                  child: Text(
+                    accountInfoItemView.leftStr,
+                    style: TextStyles.textC333S13,
+                  ),
+                ),
+                Spacer(),
+                Image.asset(
+                  "res/drawable/add_position_image_next.png",
+                  height: 13,
+                ),
+                SizedBox(
+                  width: 15,
+                )
+              ],
             ),
-            Spacer(),
-            Image.asset(
-              "res/drawable/add_position_image_next.png",
-              height: 13,
-            ),
-            SizedBox(
-              width: 15,
-            )
-          ],
-        ),
+          ),
+          Container(
+            height: 11,
+            color: DefaultColors.colorf2f2f2,
+          )
+        ],
       ),
     );
   }

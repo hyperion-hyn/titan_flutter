@@ -20,6 +20,7 @@ import 'package:titan/src/pages/red_pocket/rp_level_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_list_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_tab_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_open_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_type_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
@@ -958,6 +959,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   _navToShareRp() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
     if (activeWallet != null) {
+
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -1123,6 +1125,13 @@ class _AppFloatBoxState extends BaseState<AppFloatBox> {
 
   _navToShareRp() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+
+    // var _address  = activeWallet.wallet.getAtlasAccount().address;
+    // var _walletName = activeWallet.wallet.keystore.name;
+    // showShareRpOpenDialog(context:context, id:'BVABHH', address:_address, walletName: _walletName,);
+    //
+    // return;
+
     if (activeWallet != null) {
       Navigator.push(
         context,
