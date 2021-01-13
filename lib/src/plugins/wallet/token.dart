@@ -123,11 +123,26 @@ class SupportedTokens {
       logo: "res/drawable/ic_hyn_logo_new.png",
       symbol: 'HYN ERC20');
 
+  static const HB_HT = const AssetToken(
+    name: "Huobi HT",
+    decimals: 18,
+    contractAddress: null,
+    logo: "res/drawable/ic_hb_logo_ht.png",
+    symbol: 'HT',
+  );
+
+  static final HB_HUSD = AssetToken(
+      name: 'Huobi HUSD',
+      decimals: 8,
+      contractAddress: ContractTestConfig.hbUsdtContractAddress,
+      logo: "res/drawable/ic_hb_logo_husd.png",
+      symbol: 'HUSD');
+
   static List<AssetToken> allContractTokens(EthereumNetType netType) {
     if (netType == EthereumNetType.main) {
-      return [USDT_ERC20, HYN_RP_HRC30];
+      return [USDT_ERC20, HYN_RP_HRC30, HB_HUSD,];
     } else if (netType == EthereumNetType.ropsten) {
-      return [USDT_ERC20_ROPSTEN, HYN_RP_HRC30_ROPSTEN];
+      return [USDT_ERC20_ROPSTEN, HYN_RP_HRC30_ROPSTEN, HB_HUSD,];
     } else if (netType == EthereumNetType.rinkeby) {
       return [];
     } else {

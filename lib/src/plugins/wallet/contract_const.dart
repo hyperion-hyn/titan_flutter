@@ -29,6 +29,13 @@ class ContractTestConfig {
     return '0x884845609ea5DC317FA74Ccc5bdEc161Ce58D357';
   }
 
+  static String get hbUsdtContractAddress {
+    if (WalletConfig.netType == EthereumNetType.ropsten) {
+      return '0x8dd66eefef4b503eb556b1f50880cc04416b916b';
+    }
+    return '0x0298c2b32eae4da002a15f36fdf7615bea3da047';
+  }
+
   static String get map3ContractAddress {
     if (WalletConfig.netType == EthereumNetType.rinkeby) {
       return '0x02061f896Da00fC459C05a6f864b479137Dcb34b';

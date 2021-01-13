@@ -258,6 +258,13 @@ class WalletUtil {
         });
       }
       backAccounts.add(account);
+      if (account['coinType'] == CoinType.ETHEREUM) {
+        backAccounts.add({
+          "address": account["address"],
+          "derivationPath": account['derivationPath'],
+          'coinType': CoinType.HB_HT
+        });
+      }
     }
 
     var accounts =
@@ -401,27 +408,27 @@ class WalletUtil {
   static Future<BigInt> getBalanceByCoinTypeAndAddress(int coinType, String address,
       [String contractAddress, String block = 'latest']) async {
     address = bech32ToEthAddress(address);
-    if ([CoinType.ETHEREUM, CoinType.HYN_ATLAS].contains(coinType)) {
-      if (contractAddress == null) {
-        //主链币
-        var response;
-        if (coinType == CoinType.ETHEREUM) {
-          response = await WalletUtil.postToEthereumNetwork(method: "eth_getBalance", params: [address, block]);
-        } else {
-          response = await WalletUtil.postToAtlasNetwork(method: "eth_getBalance", params: [address, block]);
-        }
-        if (response['result'] != null) {
-          return hexToInt(response['result']);
-        }
+    if (contractAddress == null) {
+      //主链币
+      var response;
+      if (coinType == CoinType.ETHEREUM) {
+        response = await WalletUtil.postToEthereumNetwork(method: "eth_getBalance", params: [address, block]);
+      } else if (coinType == CoinType.HB_HT) {
+        response = await WalletUtil.postToEthereumNetwork(method: "eth_getBalance", params: [address, block]);
       } else {
-        //合约币
-        final contract = WalletUtil.getHynErc20Contract(contractAddress);
-        final balanceFun = contract.function('balanceOf');
-        bool isAtlasCoin = coinType == CoinType.HYN_ATLAS;
-        final balance = await WalletUtil.getWeb3Client(isAtlasCoin)
-            .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(address)]);
-        return balance.first;
+        response = await WalletUtil.postToAtlasNetwork(method: "eth_getBalance", params: [address, block]);
       }
+      if (response['result'] != null) {
+        return hexToInt(response['result']);
+      }
+    } else {
+      //合约币
+      final contract = WalletUtil.getHynErc20Contract(contractAddress);
+      final balanceFun = contract.function('balanceOf');
+      bool isAtlasCoin = coinType == CoinType.HYN_ATLAS;
+      final balance = await WalletUtil.getWeb3Client(isAtlasCoin)
+          .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(address)]);
+      return balance.first;
     }
     return BigInt.from(0);
   }

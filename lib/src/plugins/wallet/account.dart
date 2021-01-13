@@ -55,6 +55,9 @@ class Account {
       }else{
         erc20Tokens.add(SupportedTokens.HYN_RP_HRC30_LOCAL);
       }
+    } else if (json['coinType'] == CoinType.HB_HT){
+      token = SupportedTokens.HB_HT;
+      erc20Tokens.add(SupportedTokens.HB_HUSD);
     }
     return Account(
       address: json['address'],

@@ -21,14 +21,14 @@ class WalletRepository {
 
   Future updateCoinBalance(Wallet wallet, CoinVo coin) async {
     var balance = BigInt.from(0);
-    if (coin.coinType == CoinType.ETHEREUM || coin.coinType == CoinType.HYN_ATLAS) {
+    if (coin.coinType == CoinType.BITCOIN) {
+      balance = await wallet.getBitcoinBalance(wallet.getBitcoinZPub());
+    } else {
       try {
         balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
       } catch (exception) {
         LogUtil.uploadException(exception, 'update Coin Balance!');
       }
-    } else if (coin.coinType == CoinType.BITCOIN) {
-      balance = await wallet.getBitcoinBalance(wallet.getBitcoinZPub());
     }
     coin.balance = balance;
 //    coin.balance = (Decimal.parse(balance.toString()) / Decimal.parse(pow(10, coin.decimals).toString())).toDouble();

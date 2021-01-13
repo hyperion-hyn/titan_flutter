@@ -63,6 +63,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         if (_activatedWalletVo?.wallet?.getEthAccount()?.address == event.wallet.getEthAccount().address) {
           isSameWallet = true;
         }
+        //币的顺序
         _activatedWalletVo = walletToWalletCoinsVo(event.wallet);
       }
 
@@ -131,7 +132,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         final symbolString = symbols.reduce((value, element) => value + ',' + element);
 
         var quotes = await _coinMarketApi.quotes(0);
-        var addQuotes = List<SymbolQuoteVo>();
+        /*var addQuotes = List<SymbolQuoteVo>();
         for (var quote in quotes) {
           if (quote.symbol == SupportedTokens.HYN_Atlas.symbol) {
 //            var q = symbolQuoteEntity.SymbolQuoteVo.clone(quote);
@@ -140,7 +141,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
             addQuotes.add(q);
           }
         }
-        quotes.addAll(addQuotes);
+        quotes.addAll(addQuotes);*/
 
         var currentQuotesModel =
             QuotesModel(quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
@@ -171,7 +172,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       final symbolString = symbols.reduce((value, element) => value + ',' + element);
 
       var quotes = await _coinMarketApi.quotes(0);
-      List<SymbolQuoteVo> addQuotes = [];
+      /*List<SymbolQuoteVo> addQuotes = [];
       for (var quote in quotes) {
         if (quote.symbol == SupportedTokens.HYN_Atlas.symbol) {
           var q = SymbolQuoteVo.clone(quote);
@@ -179,7 +180,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           addQuotes.add(q);
         }
       }
-      quotes.addAll(addQuotes);
+      quotes.addAll(addQuotes);*/
 
       var currentQuotesModel =
           QuotesModel(quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
@@ -251,8 +252,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   /// flat wallet accounts
   WalletVo walletToWalletCoinsVo(Wallet wallet) {
     List<CoinVo> coins = [];
-    var hynContractCoin;
-    var hynRPContractCoin;
     for (var account in wallet.accounts) {
       // add public chain coin
       CoinVo coin = CoinVo(
@@ -280,20 +279,8 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           logo: asset.logo,
           balance: BigInt.from(0),
         );
-        if (contractCoin.symbol == SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol) {
-          hynRPContractCoin = contractCoin;
-        } else if (contractCoin.symbol == SupportedTokens.HYN_ERC20.symbol) {
-          hynContractCoin = contractCoin;
-        } else {
-          coins.add(contractCoin);
-        }
+        coins.add(contractCoin);
       }
-    }
-    if (hynContractCoin != null) {
-      coins.add(hynContractCoin);
-    }
-    if (hynRPContractCoin != null) {
-      coins.add(hynRPContractCoin);
     }
     return WalletVo(wallet: wallet, coins: coins);
   }
