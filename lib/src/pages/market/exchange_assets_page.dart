@@ -681,11 +681,11 @@ class AssetItemState extends State<AssetItem> {
     } catch (e) {}
     return InkWell(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ExchangeAssetHistoryPage(widget._symbol),
-            ));
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => ExchangeAssetHistoryPage(widget._symbol),
+        //     ));
       },
       child: Column(
         children: <Widget>[
