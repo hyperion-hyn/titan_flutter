@@ -80,7 +80,6 @@ class LockStatus {
 
 class Wallet {
   bool isEnabled = false;
-
   bool isOn = false;
 }
 

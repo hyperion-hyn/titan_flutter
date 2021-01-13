@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
+import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -96,7 +98,9 @@ class _WalletDemoState extends State<WalletDemo> {
               var wallet = await WalletUtil.storeByMnemonic(
                   name: walletName, password: password, mnemonic: _mnemonic);
               if (wallet != null) {
-                var userPayload = UserPayloadWithAddressEntity(Payload(userName: wallet.keystore.name),wallet.getAtlasAccount().address);
+                var userPayload = UserPayloadWithAddressEntity(
+                    Payload(userName: wallet.keystore.name),
+                    wallet.getAtlasAccount().address);
                 AtlasApi.postUserSync(userPayload);
                 _mnemonic = null;
                 BlocProvider.of<WalletCmpBloc>(context)
@@ -111,9 +115,7 @@ class _WalletDemoState extends State<WalletDemo> {
             child: Text('快捷一步，创建一个新钱包, 并且激活新钱包'),
           ),
           RaisedButton(
-            onPressed: () async {
-
-            },
+            onPressed: () async {},
             child: Text('Atlas转账'),
           ),
           RaisedButton(
@@ -243,7 +245,8 @@ class _WalletDemoState extends State<WalletDemo> {
                     .contractAddress;
                 var approveToAddress = WalletConfig.map3ContractAddress;
                 try {
-                  var ret = await wallet0.getAllowance(hynErc20ContractAddress, wallet0.getEthAccount().address, approveToAddress, false);
+                  var ret = await wallet0.getAllowance(hynErc20ContractAddress,
+                      wallet0.getEthAccount().address, approveToAddress, false);
                   print(ret);
 
                   // var signedHex = await wallet0.signApproveErc20Token(
@@ -892,6 +895,40 @@ class _WalletDemoState extends State<WalletDemo> {
             },
             child: Text('identifier'),
           ),
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: Text(
+                'Wallet Lock is ${AppLockInheritedModel.of(context).isWalletLockOn}'),
+          ),
+          RaisedButton(
+            child: Text('Lock wallet'),
+            onPressed: () async {
+              BlocProvider.of<AppLockBloc>(context).add(LockWalletEvent());
+            },
+          ),
+          RaisedButton(
+            child: Text('Unlock wallet'),
+            onPressed: () async {
+              BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
+            },
+          ),
+          Row(
+            children: [
+              Text('Wallet Lock Enabled'),
+              Switch(
+                  value: (AppLockInheritedModel.of(context).isWalletLockEnable),
+                  onChanged: (value) {
+                    var walletAddress = WalletInheritedModel.of(context)
+                            ?.activatedWallet
+                            ?.wallet
+                            ?.getAtlasAccount()
+                            ?.address ??
+                        '';
+                    BlocProvider.of<AppLockBloc>(context)
+                        .add(SetWalletLockEvent(walletAddress, value));
+                  })
+            ],
+          )
         ],
       ),
     );

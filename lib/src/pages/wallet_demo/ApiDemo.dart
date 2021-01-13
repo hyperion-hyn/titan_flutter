@@ -334,40 +334,7 @@ class _ApiDemoState extends State {
               print(' Map3 providers ${list.length}');
             },
           ),
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Text(
-                'Wallet Lock is ${AppLockInheritedModel.of(context).isWalletLockOn}'),
-          ),
-          RaisedButton(
-            child: Text('Lock wallet'),
-            onPressed: () async {
-              BlocProvider.of<AppLockBloc>(context).add(LockWalletEvent());
-            },
-          ),
-          RaisedButton(
-            child: Text('Unlock wallet'),
-            onPressed: () async {
-              BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
-            },
-          ),
-          Row(
-            children: [
-              Text('Wallet Lock Enabled'),
-              Switch(
-                  value: (AppLockInheritedModel.of(context).isWalletLockEnable),
-                  onChanged: (value) {
-                    var walletAddress = WalletInheritedModel.of(context)
-                            ?.activatedWallet
-                            ?.wallet
-                            ?.getAtlasAccount()
-                            ?.address ??
-                        '';
-                    BlocProvider.of<AppLockBloc>(context)
-                        .add(SetWalletLockEvent(walletAddress, value));
-                  })
-            ],
-          )
+
         ],
       ),
     );
