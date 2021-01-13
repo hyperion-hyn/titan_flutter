@@ -6,6 +6,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_edit_page.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -227,7 +228,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
 
     var language = SettingInheritedModel.of(context).languageCode;
     var suffix = language == 'zh'?'zh':'en';
-    var typeName = index == 0 ? RpShareEditPage.shareTypeNormal:RpShareEditPage.shareTypeLocation;
+    var typeName = index == 0 ? RpShareType.normal:RpShareType.location;
     var imageName = 'rp_share_${typeName}_$suffix';
     return Container(
       width: size.width,

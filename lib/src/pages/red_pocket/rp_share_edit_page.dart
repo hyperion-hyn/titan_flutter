@@ -30,20 +30,9 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-/*
-
-waitForTX: 待转账
-Pending: 已转账，待确认
-expires: 已过期
-allGot: 已全部领取完
-ongoing: 进行中
-
-*/
+import 'entity/rp_util.dart';
 
 class RpShareEditPage extends StatefulWidget {
-  static String shareTypeNormal = 'normal';
-  static String shareTypeLocation = 'location';
-
   final LatLng userPosition;
   final RedPocketShareType shareType;
   RpShareEditPage({this.userPosition, this.shareType = RedPocketShareType.NEWER});
@@ -99,9 +88,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
   String get _baseTitle => widget.shareType == RedPocketShareType.NEWER ? '新人红包' : '位置红包';
   bool get _isLocation => widget.shareType == RedPocketShareType.LOCATION;
-  String get _rpType => widget.shareType == RedPocketShareType.LOCATION
-      ? RpShareEditPage.shareTypeLocation
-      : RpShareEditPage.shareTypeNormal;
+  String get _rpType => widget.shareType == RedPocketShareType.LOCATION ? RpShareType.location : RpShareType.normal;
 
   RpShareConfigEntity _rpShareConfig;
 

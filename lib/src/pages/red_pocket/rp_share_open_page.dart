@@ -6,8 +6,8 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_edit_page.dart';
 import 'package:titan/src/utils/log_util.dart';
 
 class RpShareOpenPage extends StatefulWidget {
@@ -59,12 +59,12 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
   @override
   Widget build(BuildContext context) {
     var greeting = _shareEntity?.info?.greeting ?? '恭喜发财，大吉大利';
-    var isNormal = (_shareEntity?.info?.rpType ?? 'normal') == RpShareEditPage.shareTypeNormal;
+    var isNormal = (_shareEntity?.info?.rpType ?? 'normal') == RpShareType.location;
 
     var language = SettingInheritedModel.of(context).languageCode;
     var suffix = language == 'zh' ? 'zh' : 'en';
-    var typeName = isNormal ? RpShareEditPage.shareTypeNormal : RpShareEditPage.shareTypeLocation;
-    typeName = RpShareEditPage.shareTypeNormal;
+    var typeName = isNormal ? RpShareType.normal : RpShareType.location;
+    typeName = RpShareType.location;
     suffix = 'zh';
     var state = _shareEntity?.info?.state??'onGoging';
     var imageName = 'rp_share_${typeName}_${suffix}_${state}';

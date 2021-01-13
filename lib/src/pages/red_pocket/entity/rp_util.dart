@@ -173,3 +173,53 @@ int levelNameToLevelValue(String levelName) {
   }
   return level;
 }
+
+
+/*
+waitForTX: 待转账
+Pending: 已转账，待确认
+expires: 已过期
+allGot: 已全部领取完
+ongoing: 进行中
+*/
+class RpShareState {
+  static const String waitForTX = 'waitForTX';
+  static const String pending = 'Pending';
+  static const String expires = 'expires';
+  static const String allGot = 'allGot';
+  static const String ongoing = 'ongoing';
+}
+
+class RpShareType {
+  static const String normal = 'normal';
+  static const String location = 'location';
+}
+
+
+class RpShareTypeEntity {
+  final int index;
+  final String nameZh;
+  final String nameEn;
+  final String desc;
+
+  const RpShareTypeEntity({this.index, this.nameZh, this.nameEn, this.desc});
+}
+
+class SupportedShareType {
+
+  static const NORMAL = const RpShareTypeEntity(
+    index: 0,
+    nameZh: '新人',
+    nameEn: RpShareType.normal,
+    desc: '赞好友',
+  );
+
+  static const LOCATION = const RpShareTypeEntity(
+    index: 1,
+    nameZh: '位置',
+    nameEn: RpShareType.location,
+    desc: '在附近可领取',
+  );
+
+
+}
