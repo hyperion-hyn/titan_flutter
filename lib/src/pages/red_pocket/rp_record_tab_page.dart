@@ -4,9 +4,9 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_list_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_record_statistics_page.dart';
+
 
 class RpRecordTabPage extends StatefulWidget {
   @override

@@ -1,8 +1,11 @@
+import 'package:decimal/decimal.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/utils/format_util.dart';
 
+/// BigInt
 String bigIntToEtherWithFormat(
   String bigIntValue, {
   int decimal = 4,
@@ -18,6 +21,110 @@ String bigIntToEtherWithFormat(
   } catch (e) {
     return '0';
   }
+}
+
+/// 过滤方法
+List<RpOpenRecordEntity> filterRpOpenDataList(List<RpOpenRecordEntity> dataList) {
+  List<RpOpenRecordEntity> tempList = dataList?.where((element) {
+        var amountValue = Decimal.tryParse(element?.amountStr ?? '0') ?? Decimal.zero;
+        var luckState = RpLuckState.values[(element?.luck ?? 0)];
+        return !(luckState == RpLuckState.MISS && amountValue <= Decimal.zero);
+      })?.toList() ??
+      [];
+
+  return tempList;
+}
+
+/// 红包状态
+class RpStateInfoModel extends Object {
+  final String desc;
+  final String amount;
+
+  RpStateInfoModel({this.desc, this.amount});
+}
+
+RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
+  if (entity == null) return RpStateInfoModel(desc: '', amount: '');
+
+  RedPocketType rpType = RedPocketType.values[entity.type];
+
+  var desc = '';
+
+  var amount = '--';
+  String amountStr = FormatUtil.stringFormatCoinNum(
+        entity?.amountStr ?? '0',
+        decimal: 4,
+      ) ??
+      '--';
+  amountStr += ' RP';
+
+  var luckState = RpLuckState.values[(entity?.luck ?? 0)];
+  switch (luckState) {
+    case RpLuckState.MISS:
+      desc = '${S.of(Keys.rootKey.currentContext).rp_missed} $amountStr';
+      amount = '0 RP';
+      break;
+
+    case RpLuckState.BEST:
+      desc = S.of(Keys.rootKey.currentContext).rp_best;
+      amount = amountStr;
+      break;
+
+    case RpLuckState.LUCKY:
+      if (rpType == RedPocketType.LUCKY) {
+        desc = S.of(Keys.rootKey.currentContext).rp_hit;
+      } else {
+        desc = '';
+      }
+      amount = amountStr;
+      break;
+
+    case RpLuckState.LUCKY_BEST:
+      desc = S.of(Keys.rootKey.currentContext).rp_hit_and_best;
+      amount = amountStr;
+      break;
+
+    case RpLuckState.LUCKY_MISS_QUOTA:
+      desc = S.of(Keys.rootKey.currentContext).rp_run_out_open_times;
+      amount = amountStr;
+      break;
+
+    case RpLuckState.GET:
+      desc = '';
+      amount = amountStr;
+      break;
+
+    default:
+      desc = '';
+      amount = '';
+      break;
+  }
+  return RpStateInfoModel(desc: desc, amount: amount);
+}
+
+// 1、燃烧 2、管理费 3、正常
+enum RpAddressRoleType {
+  ZERO,
+  BURN,
+  MANAGE_FEE,
+  NORMAL,
+}
+
+// 0:Lucky 1:Level 2:Promotion
+enum RedPocketType {
+  LUCKY,
+  LEVEL,
+  PROMOTION,
+  SHARE,
+}
+
+enum RpLuckState {
+  MISS, // 错过：0
+  GET, // 获取：1
+  BEST, // 最佳：2
+  LUCKY, // 砸中：3
+  LUCKY_BEST, // 砸中且最佳：4
+  LUCKY_MISS_QUOTA, // 可拆次数用尽：5
 }
 
 HexColor getStateColor(int status) {
@@ -116,6 +223,7 @@ String getStateDesc(int status) {
   return stateDesc;
 }
 
+/// 量级红包
 String levelValueToLevelName(int levelValue) {
   if (levelValue == null) return '--';
 
@@ -174,7 +282,7 @@ int levelNameToLevelValue(String levelName) {
   return level;
 }
 
-
+/// 分享红包
 enum RedPocketShareType {
   NORMAL,
   LOCATION,

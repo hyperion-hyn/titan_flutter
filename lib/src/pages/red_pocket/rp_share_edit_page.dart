@@ -35,7 +35,7 @@ import 'entity/rp_util.dart';
 class RpShareEditPage extends StatefulWidget {
   final LatLng userPosition;
   final RpShareTypeEntity shareTypeEntity;
-  
+
   RpShareEditPage({
     this.userPosition,
     this.shareTypeEntity = SupportedShareType.NORMAL,
