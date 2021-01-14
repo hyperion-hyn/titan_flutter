@@ -91,7 +91,10 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                     padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
                     child: Text(
                       key,
-                      style: TextStyle(color: Color(0xff999999), fontSize: 12,),
+                      style: TextStyle(
+                        color: Color(0xff999999),
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                   ListView.builder(
@@ -111,7 +114,6 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
       ),
     );
   }
-
 
   Widget _itemBuilder(RpShareOpenEntity model) {
     var isNormal = (model.rpType ?? RpShareType.normal) == RpShareType.normal;
