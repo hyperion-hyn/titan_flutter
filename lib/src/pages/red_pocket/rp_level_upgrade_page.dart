@@ -534,11 +534,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   }
 
   _checkAction() {
-    Future.delayed(Duration(milliseconds: 111)).then((_) {
-      _showInviteAlertView();
-    });
-    return;
-
     if (widget.levelRule == null) {
       Fluttertoast.showToast(
         msg: S.of(context).rp_select_upgrade_level,
@@ -585,14 +580,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   }
 
   _showInviteAlertView() {
-    var border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(30),
-      borderSide: BorderSide(
-        color: HexColor('#FFF2F2F2'),
-        width: 0.5,
-      ),
-    );
-
     _addressEditController.text = "";
 
     var _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);

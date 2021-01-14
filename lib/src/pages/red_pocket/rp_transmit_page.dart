@@ -32,11 +32,11 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/widget/round_border_textfield.dart';
 
 import 'entity/rp_util.dart';
 
 class RpTransmitPage extends StatefulWidget {
-
   RpTransmitPage();
 
   @override
@@ -64,7 +64,6 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   RPStatistics _rpStatistics;
   int _currentPage = 1;
   List<RpStakingInfo> _dataList = [];
-
 
   @override
   void initState() {
@@ -236,12 +235,11 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
 
     String baseRp = _rpStatistics?.rpContractInfo?.baseRpStr ?? '--';
-    var baseRpStr = _rpStatistics?.rpContractInfo?.baseRpStr??'0';
-    var baseRpValue = Decimal.tryParse(baseRpStr)??Decimal.zero;
+    var baseRpStr = _rpStatistics?.rpContractInfo?.baseRpStr ?? '0';
+    var baseRpValue = Decimal.tryParse(baseRpStr) ?? Decimal.zero;
     if (baseRpValue > Decimal.one) {
       baseRp = FormatUtil.stringFormatCoinNum(baseRpStr, decimal: 4) ?? '--';
-    }
-    else {
+    } else {
       baseRp = FormatUtil.stringFormatCoinNum(baseRpStr, decimal: 8) ?? '--';
     }
 
@@ -692,7 +690,6 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   void getNetworkData() async {
     _currentPage = 1;
     try {
-
       if (context != null) {
         BlocProvider.of<RedPocketBloc>(context).add(UpdateStatisticsEvent());
       }
@@ -708,7 +705,6 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       if (netData?.isNotEmpty ?? false) {
         _dataList = netData;
       }
-
     } catch (e) {
       if (mounted) {
         _loadDataBloc.add(LoadFailEvent());
@@ -739,14 +735,6 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   }
 
   _showStakingAlertView() {
-    var border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(30),
-      borderSide: BorderSide(
-        color: HexColor('#FFF2F2F2'),
-        width: 0.5,
-      ),
-    );
-
     _textEditController.text = "";
 
     UiUtil.showAlertView(
@@ -776,8 +764,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
             ),
             child: Column(
               children: <Widget>[
-                TextFormField(
-                  autofocus: true,
+                RoundBorderTextField(
                   controller: _textEditController,
                   keyboardType: TextInputType.numberWithOptions(decimal: false),
                   inputFormatters: [
@@ -814,31 +801,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
                     return null;
                   },
-                  decoration: InputDecoration(
-                    isDense: true,
-                    filled: true,
-                    fillColor: HexColor('#FFF2F2F2'),
-                    hintText: S.of(context).rp_input_staking_amount_with_hyn(_hynPerRp),
-                    hintStyle: TextStyle(
-                      color: HexColor('#FF999999'),
-                      fontSize: 13,
-                    ),
-                    focusedBorder: border,
-                    focusedErrorBorder: border,
-                    enabledBorder: border,
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: Colors.red,
-                        width: 0.5,
-                      ),
-                    ),
-                    //contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  ),
-                  style: TextStyle(fontSize: 13),
-                  onSaved: (value) {
-                    // print("[$runtimeType] onSaved, inputValue:$value");
-                  },
+                  hintText: S.of(context).rp_input_staking_amount_with_hyn(_hynPerRp),
                   onChanged: (String value) {
                     // print("[$runtimeType] onChanged, inputValue:$value");
 

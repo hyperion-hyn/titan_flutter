@@ -15,7 +15,7 @@ class RpFloatingWidget extends StatefulWidget {
   _RpFloatingWidgetState createState() => _RpFloatingWidgetState();
 }
 
-class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> {
+class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> with SingleTickerProviderStateMixin {
   Offset offset = Offset(10, 0);
 
   Offset _calOffset(Size size, Offset offset, Offset nextOffset) {
@@ -49,9 +49,13 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> {
     );
   }
 
+  AnimationController controller;
+
   @override
   void initState() {
     super.initState();
+
+    controller = AnimationController(duration: const Duration(seconds: 2), vsync: this);
   }
 
   @override
@@ -133,12 +137,115 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
 
     if (widget.actionType == -1) {
-      var _address  = activeWallet.wallet.getAtlasAccount().address;
+
+      /*
+      final curvedValue = Curves.easeInOutQuad.transform(Tween<double>(begin: 0, end: 1).animate(controller).value);
+
+      showGeneralDialog(
+          barrierColor: Colors.transparent,
+          transitionBuilder: (context, a1, a2, widget) {
+            final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
+            return Transform(
+              transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
+              child: Opacity(
+                // opacity: a1.value,
+                opacity: 1,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Center(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        child: Text('How are you?'),
+                        // child: AlertDialog(
+                        //   shape: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0)),
+                        //   title: Text('Hello!!'),
+                        //   content: Text('How are you?'),
+                        // ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+          transitionDuration: Duration(milliseconds: 200),
+          barrierDismissible: true,
+          barrierLabel: '',
+          context: context,
+          pageBuilder: (context, animation1, animation2) {});
+
+
+      showGeneralDialog(
+          barrierColor: Colors.black.withOpacity(0.5),
+          transitionBuilder: (context, a1, a2, widget) {
+            return Transform.scale(
+              scale: a1.value,
+              child: Opacity(
+                opacity: a1.value,
+                child: AlertDialog(
+                  shape: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.0)),
+                  title: Text('Hello!!'),
+                  content: Text('How are you?'),
+                ),
+              ),
+            );
+          },
+          transitionDuration: Duration(milliseconds: 200),
+          barrierDismissible: true,
+          barrierLabel: '',
+          context: context,
+          pageBuilder: (context, animation1, animation2) {});
+
+
+
+      showGeneralDialog(
+          context: context,
+          pageBuilder: (context, anim1, anim2) {
+            return null;
+          },
+          barrierDismissible: false,
+          // barrierColor: Colors.black54,
+          transitionDuration: Duration(milliseconds: 250),
+          transitionBuilder: (context, a1, a2, widget) {
+            return Transform(
+              transform: Matrix4.translationValues(0.0, (1.0 - curvedValue) * 200.0, 0.0),
+              child: Opacity(
+                opacity: curvedValue,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Dialog(
+                    // shape: RoundedRectangleBorder(
+                    //   borderRadius: BorderRadius.zero,
+                    // ),
+                    // elevation: 0.0,
+                    child: Container(
+                      color: Colors.red,
+                      // Add your content in here
+                      child: Text('你男神好富！'),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          });
+
+      return;
+      */
+
+      var _address = activeWallet.wallet.getAtlasAccount().address;
       var _walletName = activeWallet.wallet.keystore.name;
-      showShareRpOpenDialog(context, id:'9LLQ42', address:_address, walletName: _walletName,);
+      showShareRpOpenDialog(
+        context,
+        id: '9LLQ42',
+        address: _address,
+        walletName: _walletName,
+      );
       return;
     }
-
 
     if (activeWallet != null) {
       Navigator.push(

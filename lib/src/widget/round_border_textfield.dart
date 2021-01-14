@@ -19,6 +19,7 @@ class RoundBorderTextField extends StatefulWidget {
   final Color bgColor;
   final int maxLength;
   final List<TextInputFormatter> inputFormatters;
+  final String errorText;
 
   RoundBorderTextField({
     this.keyboardType,
@@ -35,6 +36,7 @@ class RoundBorderTextField extends StatefulWidget {
     this.bgColor,
     this.maxLength,
     this.inputFormatters,
+    this.errorText,
   });
 
   @override
@@ -65,6 +67,7 @@ class _RoundBorderTextFieldState extends State<RoundBorderTextField> {
           filled: true,
           fillColor: widget.bgColor != null ? widget.bgColor : HexColor('#FFF2F2F2'),
           hintText: widget.hintText,
+          errorText: widget.errorText,
           hintStyle: TextStyle(
             color: HexColor('#FF999999'),
             fontSize: 13,
