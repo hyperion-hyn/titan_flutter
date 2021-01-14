@@ -241,8 +241,6 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> with SingleTick
       showShareRpOpenDialog(
         context,
         id: '9LLQ42',
-        address: _address,
-        walletName: _walletName,
       );
       return;
     }

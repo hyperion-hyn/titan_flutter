@@ -66,7 +66,9 @@ class RpShareReqEntity extends Object {
     this.rpType,
   );
 
-  RpShareReqEntity.only(this.id);
+  RpShareReqEntity.onlyId(this.id);
+
+  RpShareReqEntity.only(this.id,this.address,this.lat,this.lng,this.password,);
 
   factory RpShareReqEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareReqEntityFromJson(srcJson);
 

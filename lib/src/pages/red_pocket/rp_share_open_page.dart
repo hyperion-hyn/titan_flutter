@@ -1,16 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
+import 'package:titan/src/pages/red_pocket/rp_receiver_success_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/utils/log_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as allPage;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/widget/round_border_textfield.dart';
 
 class RpShareOpenPage extends StatefulWidget {
   final String walletName;
@@ -34,12 +45,16 @@ class RpShareOpenPage extends StatefulWidget {
 class _RpShareSendState extends BaseState<RpShareOpenPage> {
   final RPApi _rpApi = RPApi();
   allPage.AllPageState _currentState = allPage.LoadingState();
-
   RpShareEntity _shareEntity;
+  final TextEditingController _textEditController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  var activeWallet;
+  LatLng latlng;
 
   @override
-  void onCreated() {
+  void onCreated() async {
     super.onCreated();
+    latlng = await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
 
     _getNewBeeInfo();
   }
@@ -87,8 +102,6 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
         : state;
     var imageName = 'rp_share_${typeName}_${state}_${suffix}';
 
-    var abc = 'res/drawable/$imageName.png';
-    print("!!!!3333 $abc");
     return Material(
       color: Colors.transparent,
       child: SafeArea(
@@ -104,18 +117,50 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
                       return;
                     }
 
+                    if(_shareEntity == null){
+                      return;
+                    }
+
+                    if (_shareEntity.info.state != RpShareState.ongoing) {
+                      return;
+                    }
+
+                    String rpSecret;
+                    if(_shareEntity.info.hasPWD){
+                      rpSecret = await _showStakingAlertView();
+                      if(rpSecret == null || rpSecret.isEmpty){
+                        return;
+                      }
+                    }
+
+                    setState(() {
+                      _currentState = allPage.LoadingState();
+                    });
+
                     var id = _shareEntity?.info?.id ?? widget.id;
-                    RpShareReqEntity reqEntity = RpShareReqEntity.only(id);
+                    RpShareReqEntity reqEntity = RpShareReqEntity.only(id,widget.address,latlng.latitude,latlng.longitude,rpSecret);
                     print(
                         "[$runtimeType] open rp, 1, reqEntity:${reqEntity.toJson()}");
 
                     var result = await _rpApi.postOpenShareRp(
                       reqEntity: reqEntity,
-                      address: widget.address,
                     );
                     print("[$runtimeType] open rp, 2, result:$result");
+
+                    if(mounted){
+                      Navigator.pop(context);
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => RpReceiverSuccessPage(
+                            _shareEntity
+                        ),
+                      ));
+                    }
+
                   } catch (e) {
                     LogUtil.toastException(e);
+                    setState(() {
+                      _currentState = null;
+                    });
                   }
                 },
                 child: Container(
@@ -191,14 +236,18 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
                           ),
                         ),
                       ),
-                      if (_currentState == null)
+                      if (_currentState == null && _shareEntity != null)
                         Positioned(
                           left: 0,
                           right: 0,
                           bottom: 20,
                           child: InkWell(
                             onTap: () {
-                              // todo:
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (BuildContext context) => RpReceiverSuccessPage(
+                                  _shareEntity
+                                ),
+                              ));
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -233,7 +282,7 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
                             child: AllPageStateContainer(
                               _currentState,
                               () {},
-                              child: InkWell(
+                              child: GestureDetector(
                                 onTap: () {
                                   setState(() {
                                     _currentState = allPage.LoadingState();
@@ -280,24 +329,78 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
       ),
     );
   }
+
+  Future<String> _showStakingAlertView() async {
+    _textEditController.text = "";
+
+    return await UiUtil.showAlertViewNew<String>(
+      context,
+      actions: [
+        ClickOvalButton(
+          S.of(context).confirm,
+              (){
+            Navigator.pop(context,_textEditController.text);
+          },
+          width: 200,
+          height: 38,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      ],
+      contentWidget: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top:19,bottom:32.0),
+            child: Text("输入红包口令",style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: HexColor("#333333"),
+                decoration: TextDecoration.none)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left:24,right:24.0,bottom: 20),
+            child: Material(
+              child: Form(
+                key: _formKey,
+                child: RoundBorderTextField(
+                  controller: _textEditController,
+                  keyboardType: TextInputType.text,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(
+                        20),
+                  ],
+                  hintText: "请输入口令",
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 Future<bool> showShareRpOpenDialog(
   BuildContext context, {
-  String walletName,
-  String address,
   String id,
 }) {
+  var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+  if(activeWallet == null){
+    Fluttertoast.showToast(msg: "请先导入钱包");
+  }
+  var _address  = activeWallet.wallet.getAtlasAccount().address;
+  var _walletName = activeWallet.wallet.keystore.name;
+
   return showDialog<bool>(
-    barrierDismissible: true,
+    barrierDismissible: false,
     context: context,
     builder: (context) {
       return Builder(
         builder: (BuildContext buildContext) {
           return RpShareOpenPage(
-            walletName: walletName,
+            walletName: _walletName,
             id: id,
-            address: address,
+            address: _address,
           );
         },
       );
