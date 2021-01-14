@@ -105,7 +105,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     });
 
     _addMarkerSubject.debounceTime(Duration(milliseconds: 500)).listen((_) {
-      var latlng = _selectedPosition;
+      var latLng = _selectedPosition;
 
       var poiName = '';
 
@@ -116,13 +116,13 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
           textOffset: Offset(0, 1),
           textColor: "#333333",
           textSize: 16,
-          geometry: latlng,
+          geometry: latLng,
           iconImage: "rp_marker",
           iconAnchor: "bottom",
           //iconOffset: Offset(0.0, 3.0),
         ),
       );
-      _mapController?.animateCamera(CameraUpdate.newLatLng(latlng));
+      _mapController?.animateCamera(CameraUpdate.newLatLng(latLng));
     });
 
     _addMarkerAndMoveToPoi();
@@ -525,9 +525,11 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     try {
       rpBalanceStr = FormatUtil.coinBalanceHumanReadFormat(
         rpToken,
+        decimal: 4,
       );
       hynBalanceStr = FormatUtil.coinBalanceHumanReadFormat(
         hynToken,
+        decimal: 4,
       );
     } catch (e) {}
 
@@ -1091,8 +1093,6 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
       reqEntity.lat = _selectedPosition?.latitude ?? 0;
       reqEntity.lng = _selectedPosition?.longitude ?? 0;
 
-      // isNewBee: 新人可以领
-      reqEntity.isNewBee = _isNewBee;
 
       // range
       var rangeValue = Decimal.tryParse(_rangeController?.text ?? '0') ?? Decimal.zero;
@@ -1107,7 +1107,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
       reqEntity.range = rangeValue.toDouble();
     } else {
       // isNewBee: 新人可以领
-      reqEntity.isNewBee = true;
+      _isNewBee = true;
 
       // range
       reqEntity.range = 0;
@@ -1116,6 +1116,9 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
       reqEntity.lat = 0;
       reqEntity.lng = 0;
     }
+    
+    // isNewBee: 新人可以领
+    reqEntity.isNewBee = _isNewBee;
 
     print('[$runtimeType] _confirmDataAction, 2, reqEntity.toJson:${reqEntity.toJson()}');
 
