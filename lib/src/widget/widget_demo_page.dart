@@ -140,7 +140,7 @@ class _WidgetDemoPageState extends State<WidgetDemoPage>
                     LengthLimitingTextInputFormatter(
                         20),
                   ],
-                  hint: "请输入口令",
+                  hintText: "请输入口令",
                 ),
               ),
             ),
