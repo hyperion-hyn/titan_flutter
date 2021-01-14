@@ -8,17 +8,17 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_edit_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_edit_info_page.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class RpShareTypePage extends StatefulWidget {
+class RpShareSelectTypePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _RpShareTypePageState();
+    return _RpShareSelectTypePageState();
   }
 }
 
-class _RpShareTypePageState extends BaseState<RpShareTypePage> {
+class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
   final ScrollController _scrollController = ScrollController();
   WalletVo _walletVo;
 
@@ -81,7 +81,7 @@ class _RpShareTypePageState extends BaseState<RpShareTypePage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => RpShareEditPage(
+                builder: (context) => RpShareEditInfoPage(
                   shareTypeEntity: _selectedEntity,
                 ),
               ),

@@ -32,22 +32,22 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import 'entity/rp_util.dart';
 
-class RpShareEditPage extends StatefulWidget {
+class RpShareEditInfoPage extends StatefulWidget {
   final LatLng userPosition;
   final RpShareTypeEntity shareTypeEntity;
 
-  RpShareEditPage({
+  RpShareEditInfoPage({
     this.userPosition,
     this.shareTypeEntity = SupportedShareType.NORMAL,
   });
 
   @override
   State<StatefulWidget> createState() {
-    return _RpShareEditState();
+    return _RpShareEditInfoState();
   }
 }
 
-class _RpShareEditState extends BaseState<RpShareEditPage> {
+class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
   final ScrollController _scrollController = ScrollController();
   final PublishSubject<int> _filterSubject = PublishSubject<int>();
   final StreamController<String> _validController = StreamController.broadcast();
@@ -1136,7 +1136,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
     print('[$runtimeType] _confirmDataAction, 2, reqEntity.toJson:${reqEntity.toJson()}');
 
-    showSendAlertView(context, reqEntity);
+    showShareRpSendDialog(context, reqEntity);
   }
 
   String _maxLengthLimit(TextEditingController controller, {int length = 20}) {

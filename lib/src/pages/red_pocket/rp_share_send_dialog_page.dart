@@ -330,7 +330,7 @@ class _RpShareSendDialogState extends BaseState<RpShareSendDialogPage> {
   }
 }
 
-Future<bool> showSendAlertView<T>(
+Future<bool> showShareRpSendDialog<T>(
   BuildContext context,
   RpShareReqEntity reqEntity,
 ) {

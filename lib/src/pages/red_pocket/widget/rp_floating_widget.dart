@@ -5,7 +5,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_type_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_select_type_page.dart';
 
 class RpFloatingWidget extends StatefulWidget {
   final int actionType;
@@ -249,7 +249,7 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> with SingleTick
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpShareTypePage(),
+          builder: (context) => RpShareSelectTypePage(),
         ),
       );
     } else {
