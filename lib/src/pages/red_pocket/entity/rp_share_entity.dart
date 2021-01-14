@@ -123,6 +123,12 @@ class RpShareSendEntity extends Object {
   @JsonKey(name: 'gotCount')
   int gotCount;
 
+  @JsonKey(name: 'hynAmount')
+  String hynAmount;
+
+  @JsonKey(name: 'rpAmount')
+  String rpAmount;
+
   RpShareSendEntity(
     this.address,
     this.alreadyGot,
@@ -141,6 +147,8 @@ class RpShareSendEntity extends Object {
     this.location,
     this.total,
     this.gotCount,
+    this.hynAmount,
+    this.rpAmount,
   );
 
   factory RpShareSendEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareSendEntityFromJson(srcJson);

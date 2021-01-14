@@ -94,7 +94,7 @@ class _RpReceiverSuccessPageState extends State<RpReceiverSuccessPage> {
                           )),
                     ),
                     Text(
-                      "${widget._shareEntity.info.owner}发的${widget._shareEntity.info.rpType == RpShareType.location ? "位置" : "新人"}红包",
+                      "${widget?._shareEntity?.info?.owner ?? ""}发的${(widget?._shareEntity?.info?.rpType ?? "") == RpShareType.location ? "位置" : "新人"}红包",
                       style: TextStyle(
                           fontSize: 18,
                           color: HexColor("#333333"),
@@ -107,7 +107,7 @@ class _RpReceiverSuccessPageState extends State<RpReceiverSuccessPage> {
                 "恭喜发财，大吉大利",
                 style: TextStyles.textC999S14,
               ),
-              if (widget._shareEntity.info.rpType == RpShareType.location)
+              if ((widget?._shareEntity?.info?.rpType ?? "") == RpShareType.location)
                 Padding(
                   padding: const EdgeInsets.only(top: 6.0),
                   child: Row(
@@ -121,14 +121,14 @@ class _RpReceiverSuccessPageState extends State<RpReceiverSuccessPage> {
                       SizedBox(
                         width: 6,
                       ),
-                      Text("广州。。。。; ${widget._shareEntity.info.range}千米内可领取",style: TextStyles.textC999S12,)
+                      Text("${widget?._shareEntity?.info?.location ?? ""}; ${widget?._shareEntity?.info?.range ?? ""}千米内可领取",style: TextStyles.textC999S12,)
                     ],
                   ),
                 ),
               SizedBox(
                 height: 26,
               ),
-              if(widget._shareEntity.info.alreadyGot)
+              if(widget?._shareEntity?.info?.alreadyGot ?? false)
                 Column(
                   children: [
                     RichText(
@@ -186,9 +186,9 @@ class _RpReceiverSuccessPageState extends State<RpReceiverSuccessPage> {
                 padding: const EdgeInsets.only(top:16,left:16.0,right: 16),
                 child: Row(
                   children: [
-                    Text("总共个红包；共RP，HYN",style: TextStyles.textC999S12,),
+                    Text("总共${widget?._shareEntity?.info?.gotCount ?? ""}个红包；共 ${widget?._shareEntity?.info?.rpAmount ?? ""} RP， ${widget?._shareEntity?.info?.hynAmount ?? ""} HYN",style: TextStyles.textC999S12,),
                     Spacer(),
-                    Text("${FormatUtil.formatDate(widget._shareEntity.info.createdAt)}",style: TextStyles.textC999S12,)
+                    Text("${FormatUtil.formatDate(widget?._shareEntity?.info?.createdAt ?? "",isSecond: true)}",style: TextStyles.textC999S12,)
                   ],
                 ),
               ),

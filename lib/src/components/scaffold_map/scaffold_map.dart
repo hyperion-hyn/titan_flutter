@@ -17,8 +17,10 @@ import 'package:titan/src/data/entity/poi/mapbox_poi.dart';
 import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/data/entity/poi/search_history_aware_poi.dart';
 import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
+import 'package:titan/src/data/entity/poi/user_rp_share_poi.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_open_page.dart';
 import 'package:titan/src/pages/search/search_page.dart';
 import 'package:titan/src/widget/header_height_notification.dart';
 
@@ -284,6 +286,9 @@ class ScaffoldCmpMapState extends State<ScaffoldMap> {
                     selectedPoiEntity: state.poi,
                     onClose: existPoiState,
                   );
+            } else if (state.poi is UserRpSharePoi) {
+              var rpSharePoi = (state.poi as UserRpSharePoi);
+              showShareRpOpenDialog(context,id: rpSharePoi.id);
             }
           }
         } else if (state.status == Status.failed) {

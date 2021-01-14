@@ -18,6 +18,7 @@ import 'package:titan/src/data/entity/poi/mapbox_poi.dart';
 import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/data/entity/poi/user_contribution_poi.dart' as position_model;
+import 'package:titan/src/data/entity/poi/user_rp_share_poi.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
 import 'bloc/bloc.dart';
@@ -418,10 +419,14 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       }
 
       var pid = firstFeature["properties"]["pid"];
+      var rpId = firstFeature["properties"]["rpId"];
       if (pid != null) {
         var l = position_model.Location.fromJson(firstFeature['geometry']);
         position_model.UserContributionPoi confirmPoiItem = position_model.UserContributionPoi.setPid(pid, l);
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: confirmPoiItem));
+      } else if (rpId != null) {
+        UserRpSharePoi userRpSharePoi = UserRpSharePoi(rpId, coordinates);
+        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: userRpSharePoi));
       } else {
         var poi = MapBoxPoi(name: name, latLng: coordinates);
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
