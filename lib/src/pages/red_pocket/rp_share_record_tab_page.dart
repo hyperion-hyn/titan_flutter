@@ -22,7 +22,7 @@ class _RpShareRecordTabState extends BaseState<RpShareRecordTabPage> {
           preferredSize: Size.fromHeight(kToolbarHeight),
           child: new Container(
             width: double.infinity,
-            height: 50.0,
+            height: 36.0,
             color: HexColor('#F8F8F8'),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,

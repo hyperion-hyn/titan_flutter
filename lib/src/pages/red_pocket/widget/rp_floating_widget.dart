@@ -4,7 +4,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_open_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_type_page.dart';
 
 class RpFloatingWidget extends StatefulWidget {

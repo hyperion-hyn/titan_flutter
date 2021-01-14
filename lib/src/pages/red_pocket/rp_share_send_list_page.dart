@@ -10,7 +10,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
-import 'package:titan/src/pages/red_pocket/rp_receiver_success_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_success_page.dart';
 import 'package:titan/src/utils/format_util.dart';
 import "package:collection/collection.dart";
 
@@ -88,7 +88,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 12, left: 24, bottom: 6),
+                    padding: const EdgeInsets.only(top: 0, left: 24, bottom: 6),
                     child: Text(
                       key,
                       style: TextStyle(
@@ -135,7 +135,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => RpReceiverSuccessPage(model.id),
+            builder: (context) => RpShareGetSuccessPage(model.id),
           ),
         );
       },
@@ -322,8 +322,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
       );
 
       if (netData?.isNotEmpty ?? false) {
-        _dataList = [];
-        _dataList.addAll(netData);
+        _dataList = netData;
 
         if (mounted) {
           setState(() {

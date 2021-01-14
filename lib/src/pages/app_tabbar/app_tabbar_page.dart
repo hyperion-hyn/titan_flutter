@@ -30,7 +30,7 @@ import 'package:titan/src/pages/home/bloc/bloc.dart';
 import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_open_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/wallet/wallet_tabs_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';

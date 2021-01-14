@@ -9,24 +9,24 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_broadcast_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_send_success_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class RpShareSendPage extends StatefulWidget {
+class RpShareSendDialogPage extends StatefulWidget {
   final RpShareReqEntity reqEntity;
-  RpShareSendPage({this.reqEntity});
+  RpShareSendDialogPage({this.reqEntity});
 
   @override
   State<StatefulWidget> createState() {
-    return _RpShareSendState();
+    return _RpShareSendDialogState();
   }
 }
 
-class _RpShareSendState extends BaseState<RpShareSendPage> {
+class _RpShareSendDialogState extends BaseState<RpShareSendDialogPage> {
   final ScrollController _scrollController = ScrollController();
   final RPApi _rpApi = RPApi();
   bool _isLoading = false;
@@ -218,7 +218,7 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => RpShareBroadcastPage(
+                              builder: (context) => RpShareSendSuccessPage(
                                 reqEntity: widget.reqEntity,
                               ),
                             ),
@@ -339,7 +339,7 @@ Future<bool> showSendAlertView<T>(
       backgroundColor: Colors.transparent,
       context: context,
       builder: (BuildContext context) {
-        return RpShareSendPage(
+        return RpShareSendDialogPage(
           reqEntity: reqEntity,
         );
       });
@@ -348,7 +348,7 @@ Future<bool> showSendAlertView<T>(
     barrierDismissible: true,
     context: context,
     builder: (context) {
-      return RpShareSendPage(
+      return RpShareSendDialogPage(
         reqEntity: reqEntity,
       );
     },

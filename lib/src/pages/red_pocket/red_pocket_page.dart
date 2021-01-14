@@ -20,7 +20,7 @@ import 'package:titan/src/pages/red_pocket/rp_level_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_list_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_tab_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_open_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_type_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';

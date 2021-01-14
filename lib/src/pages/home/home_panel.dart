@@ -22,7 +22,7 @@ import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_open_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -908,8 +908,8 @@ class HomePanelState extends State<HomePanel> {
           showInviteDialog(context, fromArr[0], fromArr[1]);
         }
       }
-    } else if(scanStr.contains(RpShareOpenPage.shareDomain)){
-      var rpIdArrAfter = scanStr.split(RpShareOpenPage.shareDomain + "?")[1];
+    } else if(scanStr.contains(RpShareGetDialogPage.shareDomain)){
+      var rpIdArrAfter = scanStr.split(RpShareGetDialogPage.shareDomain + "?")[1];
       if(rpIdArrAfter[1].length > 0){
         var rpIdBefore = rpIdArrAfter[1].split("&");
         showShareRpOpenDialog(context,id: rpIdBefore[0]);

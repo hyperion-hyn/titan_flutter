@@ -11,7 +11,9 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
-import 'package:titan/src/pages/red_pocket/rp_receiver_success_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_success_page.dart';
+import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
 import "package:collection/collection.dart";
 
@@ -134,7 +136,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => RpReceiverSuccessPage(model.id),
+            builder: (context) => RpShareGetSuccessPage(model.id),
           ),
         );
       },
@@ -237,6 +239,47 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
+                          /*
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  WalletShowAccountInfoPage.jumpToAccountInfoPage(
+                                      context, model?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+                                },
+                                child: Text(
+                                  "+ ${model.rpAmount} RP",
+                                  style: TextStyle(
+                                    color: HexColor("#333333"),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 3,
+                                  textAlign: TextAlign.right,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  WalletShowAccountInfoPage.jumpToAccountInfoPage(
+                                      context, model?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
+                                },
+                                child: Text(
+                                  " ,${model.hynAmount} HYN",
+                                  style: TextStyle(
+                                    color: HexColor("#333333"),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 3,
+                                  textAlign: TextAlign.right,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          */
                           Text(
                             '+ ${model.getRPAmount} RP，${model.getHYNAmount} HYN',
                             style: TextStyle(
@@ -255,7 +298,6 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                             children: [
                               Spacer(),
                               Text(
-                                //'最佳',
                                 model.isBest?'最佳':'',
                                 style: TextStyle(
                                   color: HexColor("#E8AC13"),
@@ -299,13 +341,15 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                       SizedBox(
                         width: 8,
                       ),
-                      Text(
-                        locationRange,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: HexColor('#999999'),
+                      Expanded(
+                        child: Text(
+                          locationRange,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: HexColor('#999999'),
+                          ),
+                          textAlign: TextAlign.left,
                         ),
-                        textAlign: TextAlign.left,
                       ),
                     ],
                   ),
@@ -320,7 +364,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
   void getNetworkData() async {
     _page = 1;
 
-    // try {
+    try {
       var netData = await _rpApi.getShareGetList(
         _address,
         page: _page,
@@ -328,7 +372,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
       );
 
       if (netData?.isNotEmpty ?? false) {
-        _dataList.addAll(netData);
+        _dataList = netData;
 
         if (mounted) {
           setState(() {
@@ -342,9 +386,9 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
           });
         }
       }
-    // } catch (e) {
-    //   _loadDataBloc.add(LoadFailEvent());
-    // }
+    } catch (e) {
+      _loadDataBloc.add(LoadFailEvent());
+    }
   }
 
   void getMoreNetworkData() async {

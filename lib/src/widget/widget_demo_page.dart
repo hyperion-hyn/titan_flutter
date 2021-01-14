@@ -5,8 +5,8 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
-import 'package:titan/src/pages/red_pocket/rp_receiver_success_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_open_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_success_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/fl_pie_chart.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
@@ -90,7 +90,7 @@ class _WidgetDemoPageState extends State<WidgetDemoPage>
                 SliverToBoxAdapter(
                   child: FlatButton(onPressed: (){
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => RpReceiverSuccessPage(
+                      builder: (BuildContext context) => RpShareGetSuccessPage(
                           null
                       ),
                     ));

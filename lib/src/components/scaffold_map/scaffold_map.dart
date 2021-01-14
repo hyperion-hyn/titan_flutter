@@ -20,7 +20,7 @@ import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
 import 'package:titan/src/data/entity/poi/user_rp_share_poi.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_open_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/search/search_page.dart';
 import 'package:titan/src/widget/header_height_notification.dart';
 

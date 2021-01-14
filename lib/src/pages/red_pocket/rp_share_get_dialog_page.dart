@@ -14,7 +14,7 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
-import 'package:titan/src/pages/red_pocket/rp_receiver_success_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_success_page.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as allPage;
@@ -22,14 +22,14 @@ import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
 
-class RpShareOpenPage extends StatefulWidget {
+class RpShareGetDialogPage extends StatefulWidget {
   static String shareDomain = "https://h.hyn.space/rpShare";
   final String walletName;
   final String address;
   final String id;
   final RedPocketShareType shareType;
 
-  RpShareOpenPage({
+  RpShareGetDialogPage({
     this.walletName = '',
     this.address = '',
     this.id = '',
@@ -38,11 +38,11 @@ class RpShareOpenPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _RpShareSendState();
+    return _RpShareGetDialogState();
   }
 }
 
-class _RpShareSendState extends BaseState<RpShareOpenPage> {
+class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
   final RPApi _rpApi = RPApi();
   allPage.AllPageState _currentState = allPage.LoadingState();
   RpShareEntity _shareEntity;
@@ -158,7 +158,7 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
                     if(mounted){
                       Navigator.pop(context);
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => RpReceiverSuccessPage(
+                        builder: (BuildContext context) => RpShareGetSuccessPage(
                             _shareEntity.info.id
                         ),
                       ));
@@ -252,7 +252,7 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
                           child: InkWell(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                builder: (BuildContext context) => RpReceiverSuccessPage(
+                                builder: (BuildContext context) => RpShareGetSuccessPage(
                                   _shareEntity.info.id
                                 ),
                               ));
@@ -405,7 +405,7 @@ Future<bool> showShareRpOpenDialog(
     builder: (context) {
       return Builder(
         builder: (BuildContext buildContext) {
-          return RpShareOpenPage(
+          return RpShareGetDialogPage(
             walletName: _walletName,
             id: id,
             address: _address,

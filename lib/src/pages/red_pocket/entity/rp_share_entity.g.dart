@@ -80,8 +80,8 @@ RpShareSendEntity _$RpShareSendEntityFromJson(Map<String, dynamic> json) {
     json['gotCount'] as int,
     json['hynAmount'] as String,
     json['rpAmount'] as String,
-    json['rpTxHash'] as String,
-    json['hynTxHash'] as String,
+    json['rpHash'] as String,
+    json['hynHash'] as String,
   );
 }
 

@@ -24,7 +24,7 @@ import 'package:titan/src/pages/contribution/add_poi/select_position_page.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_config_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_send_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_send_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';

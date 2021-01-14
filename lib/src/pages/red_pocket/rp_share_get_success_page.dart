@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
+import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -16,26 +20,47 @@ import 'entity/rp_share_entity.dart';
 import 'entity/rp_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as allPage;
 
-class RpReceiverSuccessPage extends StatefulWidget {
+class RpShareGetSuccessPage extends StatefulWidget {
   final String id;
 
-  RpReceiverSuccessPage(this.id);
+  RpShareGetSuccessPage(this.id);
 
   @override
   State<StatefulWidget> createState() {
-    return _RpReceiverSuccessPageState();
+    return _RpShareGetSuccessPageState();
   }
 }
 
-class _RpReceiverSuccessPageState extends BaseState<RpReceiverSuccessPage> {
-
+class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
   final RPApi _rpApi = RPApi();
   allPage.AllPageState _currentState = allPage.LoadingState();
   RpShareEntity _shareEntity;
+  TapGestureRecognizer _rpRecognizer;
+  TapGestureRecognizer _hynRecognizer;
 
   @override
   void initState() {
     super.initState();
+
+    _rpRecognizer = TapGestureRecognizer()..onTap = _rpHandlePress;
+    _hynRecognizer = TapGestureRecognizer()..onTap = _hynHandlePress;
+  }
+
+  void _rpHandlePress() {
+    WalletShowAccountInfoPage.jumpToAccountInfoPage(
+        context, _shareEntity?.info?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+  }
+
+  void _hynHandlePress() {
+    WalletShowAccountInfoPage.jumpToAccountInfoPage(
+        context, _shareEntity?.info?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
+  }
+
+  @override
+  void dispose() {
+    _rpRecognizer.dispose();
+    _hynRecognizer.dispose();
+    super.dispose();
   }
 
   @override
@@ -48,7 +73,7 @@ class _RpReceiverSuccessPageState extends BaseState<RpReceiverSuccessPage> {
   void _getNewBeeInfo() async {
     try {
       var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
-      var _address  = activeWallet.wallet.getAtlasAccount().address;
+      var _address = activeWallet.wallet.getAtlasAccount().address;
       _shareEntity = await _rpApi.getNewBeeDetail(
         _address,
         id: widget.id,
@@ -65,35 +90,30 @@ class _RpReceiverSuccessPageState extends BaseState<RpReceiverSuccessPage> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.white, body: _pageWidget(context));
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: _pageWidget(context),
+    );
   }
 
   Widget _pageWidget(BuildContext context) {
     return CustomScrollView(
       slivers: <Widget>[
         _headBarWidget(),
-        if(_currentState != null || _shareEntity == null)
-          ...[
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(top:200.0),
-                child: AllPageStateContainer(_currentState, () {
-                  setState(() {
-                    _currentState = LoadingState();
-                  });
-                  _getNewBeeInfo();
-            }),
-              ),
+        if (_currentState != null || _shareEntity == null) ...[
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 200.0),
+              child: AllPageStateContainer(_currentState, () {
+                setState(() {
+                  _currentState = LoadingState();
+                });
+                _getNewBeeInfo();
+              }),
+            ),
           ),
-        ]
-        else
-          ...[
+        ] else ...[
           _headWidget(),
           _listWidget(),
         ]
@@ -101,7 +121,7 @@ class _RpReceiverSuccessPageState extends BaseState<RpReceiverSuccessPage> {
     );
   }
 
-  _headBarWidget(){
+  _headBarWidget() {
     return SliverToBoxAdapter(
       child: Stack(
         children: [
@@ -115,8 +135,7 @@ class _RpReceiverSuccessPageState extends BaseState<RpReceiverSuccessPage> {
               Navigator.of(context).pop();
             },
             child: Padding(
-              padding: const EdgeInsets.only(
-                  top: 34, left: 16.0, right: 16, bottom: 16),
+              padding: const EdgeInsets.only(top: 34, left: 16.0, right: 16, bottom: 16),
               child: Image.asset(
                 "res/drawable/rp_receiver_success_arraw_back.png",
                 width: 17,
@@ -148,17 +167,13 @@ class _RpReceiverSuccessPageState extends BaseState<RpReceiverSuccessPage> {
                           color: Colors.white,
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                            image: AssetImage(
-                                "res/drawable/ic_rp_invite_friend_head_img_no_border.png"),
+                            image: AssetImage("res/drawable/ic_rp_invite_friend_head_img_no_border.png"),
                             fit: BoxFit.cover,
                           )),
                     ),
                     Text(
                       "${_shareEntity?.info?.owner ?? ""}发的${(_shareEntity?.info?.rpType ?? "") == RpShareType.location ? "位置" : "新人"}红包",
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: HexColor("#333333"),
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 18, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -169,7 +184,11 @@ class _RpReceiverSuccessPageState extends BaseState<RpReceiverSuccessPage> {
               ),
               if ((_shareEntity?.info?.rpType ?? "") == RpShareType.location)
                 Padding(
-                  padding: const EdgeInsets.only(top: 6.0),
+                  padding: const EdgeInsets.only(
+                    top: 6.0,
+                    left: 32,
+                    right: 32,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -181,51 +200,45 @@ class _RpReceiverSuccessPageState extends BaseState<RpReceiverSuccessPage> {
                       SizedBox(
                         width: 6,
                       ),
-                      Text("${_shareEntity?.info?.location ?? ""}; ${_shareEntity?.info?.range ?? ""}千米内可领取",style: TextStyles.textC999S12,)
+                      Expanded(
+                        child: Text(
+                          "${_shareEntity?.info?.location ?? ""}; ${_shareEntity?.info?.range ?? ""}千米内可领取休息休息",
+                          style: TextStyles.textC999S12,
+                        ),
+                      )
                     ],
                   ),
                 ),
               SizedBox(
                 height: 26,
               ),
-              if(_shareEntity?.info?.alreadyGot ?? false)
+              if (_shareEntity?.info?.alreadyGot ?? false)
                 Column(
                   children: [
                     RichText(
                       text: TextSpan(
                           text: _shareEntity.info.rpAmount,
-                          style: TextStyle(
-                              fontSize: 32,
-                              color: HexColor("#D09100"),
-                              fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 32, color: HexColor("#D09100"), fontWeight: FontWeight.bold),
+                          recognizer: _rpRecognizer,
                           children: [
                             TextSpan(
                               text: " RP",
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: HexColor("#D09100"),
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20, color: HexColor("#D09100"), fontWeight: FontWeight.bold),
+                              recognizer: _rpRecognizer,
                             ),
                             TextSpan(
                               text: "  +  ",
-                              style: TextStyle(
-                                  fontSize: 30,
-                                  color: HexColor("#333333"),
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 30, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                             ),
                             TextSpan(
                               text: _shareEntity.info.hynAmount,
-                              style: TextStyle(
-                                  fontSize: 32,
-                                  color: HexColor("#D09100"),
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 32, color: HexColor("#D09100"), fontWeight: FontWeight.bold),
+                              recognizer: _hynRecognizer,
                             ),
                             TextSpan(
                               text: " HYN",
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: HexColor("#D09100"),
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20, color: HexColor("#D09100"), fontWeight: FontWeight.bold),
+                              recognizer: _hynRecognizer,
                             ),
                           ]),
                     ),
@@ -243,12 +256,18 @@ class _RpReceiverSuccessPageState extends BaseState<RpReceiverSuccessPage> {
                   ],
                 ),
               Padding(
-                padding: const EdgeInsets.only(top:16,left:16.0,right: 16),
+                padding: const EdgeInsets.only(top: 16, left: 16.0, right: 16),
                 child: Row(
                   children: [
-                    Text("总共${_shareEntity?.info?.gotCount ?? ""}个红包；共 ${_shareEntity?.info?.rpAmount ?? ""} RP， ${_shareEntity?.info?.hynAmount ?? ""} HYN",style: TextStyles.textC999S12,),
+                    Text(
+                      "总共${_shareEntity?.info?.gotCount ?? ""}个红包；共 ${_shareEntity?.info?.rpAmount ?? ""} RP， ${_shareEntity?.info?.hynAmount ?? ""} HYN",
+                      style: TextStyles.textC999S12,
+                    ),
                     Spacer(),
-                    Text("${FormatUtil.formatDate(_shareEntity?.info?.createdAt ?? "",isSecond: true)}",style: TextStyles.textC999S12,)
+                    Text(
+                      "${FormatUtil.formatDate(_shareEntity?.info?.createdAt ?? "", isSecond: true)}",
+                      style: TextStyles.textC999S12,
+                    )
                   ],
                 ),
               ),
@@ -292,45 +311,72 @@ class _RpReceiverSuccessPageState extends BaseState<RpReceiverSuccessPage> {
                               ),
                             ),
                             Spacer(),
-                            Text(
-                              "${item.rpAmount} RP, ${item.hynAmount} HYN",
-                              style: TextStyle(
-                                color: HexColor("#333333"),
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                            GestureDetector(
+                              onTap: () {
+                                WalletShowAccountInfoPage.jumpToAccountInfoPage(
+                                    context, item?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+                              },
+                              child: Text(
+                                "${item.rpAmount} RP",
+                                style: TextStyle(
+                                  color: HexColor("#333333"),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 3,
+                                textAlign: TextAlign.right,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 3,
-                              textAlign: TextAlign.right,
-                              overflow: TextOverflow.ellipsis,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                WalletShowAccountInfoPage.jumpToAccountInfoPage(
+                                    context, item?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
+                              },
+                              child: Text(
+                                " ,${item.hynAmount} HYN",
+                                style: TextStyle(
+                                  color: HexColor("#333333"),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 3,
+                                textAlign: TextAlign.right,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),
-                        Row(children: [
-                          Text(
-                            shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(item.address)),
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: HexColor('#999999'),
-                            ),
-                          ),
-                          Spacer(),
-                          if(item.isBest)
+                        Row(
+                          children: [
                             Text(
-                              "最佳",
+                              shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(item.address)),
                               style: TextStyle(
-                                  fontSize: 12,
-                                  color: HexColor('#E8AC13')
+                                fontSize: 14,
+                                color: HexColor('#999999'),
                               ),
-                              textAlign: TextAlign.right,
                             ),
-                        ],)
+                            Spacer(),
+                            if (item.isBest)
+                              Text(
+                                "最佳",
+                                style: TextStyle(fontSize: 12, color: HexColor('#E8AC13')),
+                                textAlign: TextAlign.right,
+                              ),
+                          ],
+                        )
                       ],
                     ),
                   ),
                 ],
               ),
             ),
-            Divider(height: 0.5,color: HexColor("#F2F2F2"),indent: 16,endIndent: 16,)
+            Divider(
+              height: 0.5,
+              color: HexColor("#F2F2F2"),
+              indent: 16,
+              endIndent: 16,
+            )
           ],
         ),
       );

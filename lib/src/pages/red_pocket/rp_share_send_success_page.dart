@@ -16,23 +16,23 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_open_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/widget_shot.dart';
 
-class RpShareBroadcastPage extends StatefulWidget {
+class RpShareSendSuccessPage extends StatefulWidget {
   final RpShareReqEntity reqEntity;
-  RpShareBroadcastPage({this.reqEntity});
+  RpShareSendSuccessPage({this.reqEntity});
 
   @override
   State<StatefulWidget> createState() {
-    return _RpShareBroadcastPageState();
+    return _RpShareSendSuccessPageState();
   }
 }
 
-class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
+class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
   final ScrollController _scrollController = ScrollController();
   final ShotController _shotController = new ShotController();
   GlobalKey _qrImageBoundaryKey = GlobalKey();
@@ -198,9 +198,10 @@ class _RpShareBroadcastPageState extends BaseState<RpShareBroadcastPage> {
 
   Widget _createSelectedWidget() {
     String walletAddress = WalletUtil.ethAddressToBech32Address(_address);
-    var qrData = "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$_walletName";
+    // todo
+    // var qrData = "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$_walletName";
     var greeting = (widget.reqEntity?.greeting?.isNotEmpty ?? false) ? widget.reqEntity?.greeting : '恭喜发财，大吉大利!';
-
+    var qrData = 'http://rp/sendRp?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&greeting=$greeting';
     return WidgetShot(
       controller: _shotController,
       child: RepaintBoundary(
