@@ -102,8 +102,6 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
         : state;
     var imageName = 'rp_share_${typeName}_${state}_${suffix}';
 
-    var abc = 'res/drawable/$imageName.png';
-    print("!!!!3333 $abc");
     return Material(
       color: Colors.transparent,
       child: SafeArea(
