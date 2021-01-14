@@ -22,11 +22,11 @@ RpShareReqEntity _$RpShareReqEntityFromJson(Map<String, dynamic> json) {
     (json['rpamount'] as num)?.toDouble(),
     json['rpsignedTX'] as String,
     json['rptype'] as String,
+    json['location'] as String,
   );
 }
 
-Map<String, dynamic> _$RpShareReqEntityToJson(RpShareReqEntity instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$RpShareReqEntityToJson(RpShareReqEntity instance) => <String, dynamic>{
       'id': instance.id,
       'address': instance.address,
       'lat': instance.lat,
@@ -41,4 +41,5 @@ Map<String, dynamic> _$RpShareReqEntityToJson(RpShareReqEntity instance) =>
       'rpamount': instance.rpAmount,
       'rpsignedTX': instance.rpSignedTX,
       'rptype': instance.rpType,
+      'location': instance.location,
     };

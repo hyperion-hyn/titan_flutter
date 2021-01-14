@@ -1081,12 +1081,15 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
     // only location rp
     if (_isLocation) {
+
+      // location
       if (_openCageData == null) {
         _positionBloc.add(GetOpenCageEvent(_selectedPosition, _language));
         Fluttertoast.showToast(msg: S.of(context).please_edit_location_hint);
         _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
         return;
       }
+      reqEntity.location = _addressText??'';
 
       // coordinates
       //var coordinates = [_selectedPosition.latitude, _selectedPosition.longitude];

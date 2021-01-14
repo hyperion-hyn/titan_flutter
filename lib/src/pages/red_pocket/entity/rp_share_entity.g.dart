@@ -9,18 +9,13 @@ part of 'rp_share_entity.dart';
 RpShareEntity _$RpShareEntityFromJson(Map<String, dynamic> json) {
   return RpShareEntity(
     (json['details'] as List)
-        ?.map((e) => e == null
-            ? null
-            : RpShareOpenEntity.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null ? null : RpShareOpenEntity.fromJson(e as Map<String, dynamic>))
         ?.toList(),
-    json['info'] == null
-        ? null
-        : RpShareSendEntity.fromJson(json['info'] as Map<String, dynamic>),
+    json['info'] == null ? null : RpShareSendEntity.fromJson(json['info'] as Map<String, dynamic>),
   );
 }
 
-Map<String, dynamic> _$RpShareEntityToJson(RpShareEntity instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$RpShareEntityToJson(RpShareEntity instance) => <String, dynamic>{
       'details': instance.details,
       'info': instance.info,
     };
@@ -37,9 +32,7 @@ RpShareOpenEntity _$RpShareOpenEntityFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$RpShareOpenEntityToJson(
-        RpShareOpenEntity instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$RpShareOpenEntityToJson(RpShareOpenEntity instance) => <String, dynamic>{
       'address': instance.address,
       'avatar': instance.avatar,
       'hynAmount': instance.hynAmount,
@@ -65,11 +58,11 @@ RpShareSendEntity _$RpShareSendEntityFromJson(Map<String, dynamic> json) {
     json['rpType'] as String,
     json['state'] as String,
     json['userIsNewBee'] as bool,
+    json['location'] as String,
   );
 }
 
-Map<String, dynamic> _$RpShareSendEntityToJson(RpShareSendEntity instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$RpShareSendEntityToJson(RpShareSendEntity instance) => <String, dynamic>{
       'address': instance.address,
       'alreadyGot': instance.alreadyGot,
       'avatar': instance.avatar,
@@ -84,4 +77,5 @@ Map<String, dynamic> _$RpShareSendEntityToJson(RpShareSendEntity instance) =>
       'rpType': instance.rpType,
       'state': instance.state,
       'userIsNewBee': instance.userIsNewBee,
+      'location': instance.location,
     };

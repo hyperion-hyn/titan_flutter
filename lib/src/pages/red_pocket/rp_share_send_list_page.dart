@@ -289,7 +289,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                     ),
                     Text(
                       // todo
-                      '广州市天河区大街；${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取',
+                      '${model?.location??''}；${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取',
                       style: TextStyle(
                         fontSize: 12,
                         color: HexColor('#999999'),

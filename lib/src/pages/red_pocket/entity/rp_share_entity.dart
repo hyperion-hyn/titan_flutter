@@ -1,29 +1,27 @@
-import 'package:json_annotation/json_annotation.dart'; 
-  
+import 'package:json_annotation/json_annotation.dart';
+
 part 'rp_share_entity.g.dart';
 
-
 @JsonSerializable()
-  class RpShareEntity extends Object {
-
+class RpShareEntity extends Object {
   @JsonKey(name: 'details')
   List<RpShareOpenEntity> details;
 
   @JsonKey(name: 'info')
   RpShareSendEntity info;
 
-  RpShareEntity(this.details,this.info,);
+  RpShareEntity(
+    this.details,
+    this.info,
+  );
 
   factory RpShareEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RpShareEntityToJson(this);
-
 }
 
-  
 @JsonSerializable()
-  class RpShareOpenEntity extends Object {
-
+class RpShareOpenEntity extends Object {
   @JsonKey(name: 'address')
   String address;
 
@@ -45,18 +43,23 @@ part 'rp_share_entity.g.dart';
   @JsonKey(name: 'createdAt')
   int createdAt;
 
-  RpShareOpenEntity(this.address,this.avatar,this.hynAmount,this.isBest,this.rpAmount,this.username,this.createdAt,);
+  RpShareOpenEntity(
+    this.address,
+    this.avatar,
+    this.hynAmount,
+    this.isBest,
+    this.rpAmount,
+    this.username,
+    this.createdAt,
+  );
 
   factory RpShareOpenEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareOpenEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RpShareOpenEntityToJson(this);
-
 }
 
-  
 @JsonSerializable()
-  class RpShareSendEntity extends Object {
-
+class RpShareSendEntity extends Object {
   @JsonKey(name: 'address')
   String address;
 
@@ -99,12 +102,28 @@ part 'rp_share_entity.g.dart';
   @JsonKey(name: 'userIsNewBee')
   bool userIsNewBee;
 
-  RpShareSendEntity(this.address,this.alreadyGot,this.avatar,this.coordinates,this.createdAt,this.greeting,this.hasPWD,this.id,this.isNewBee,this.owner,this.range,this.rpType,this.state,this.userIsNewBee,);
+  @JsonKey(name: 'location')
+  String location;
+
+  RpShareSendEntity(
+    this.address,
+    this.alreadyGot,
+    this.avatar,
+    this.coordinates,
+    this.createdAt,
+    this.greeting,
+    this.hasPWD,
+    this.id,
+    this.isNewBee,
+    this.owner,
+    this.range,
+    this.rpType,
+    this.state,
+    this.userIsNewBee,
+    this.location,
+  );
 
   factory RpShareSendEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareSendEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RpShareSendEntityToJson(this);
-
 }
-
-  

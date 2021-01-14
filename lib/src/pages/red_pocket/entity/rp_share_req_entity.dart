@@ -10,9 +10,6 @@ class RpShareReqEntity extends Object {
   @JsonKey(name: 'address')
   String address;
 
-  // @JsonKey(name: 'coordinates')
-  // List<double> coordinates;
-
   @JsonKey(name: 'lat')
   double lat;
 
@@ -49,6 +46,9 @@ class RpShareReqEntity extends Object {
   @JsonKey(name: 'rptype')
   String rpType;
 
+  @JsonKey(name: 'location')
+  String location;
+
   RpShareReqEntity(
     this.id,
     this.address,
@@ -64,11 +64,18 @@ class RpShareReqEntity extends Object {
     this.rpAmount,
     this.rpSignedTX,
     this.rpType,
+    this.location,
   );
 
   RpShareReqEntity.onlyId(this.id);
 
-  RpShareReqEntity.only(this.id,this.address,this.lat,this.lng,this.password,);
+  RpShareReqEntity.only(
+    this.id,
+    this.address,
+    this.lat,
+    this.lng,
+    this.password,
+  );
 
   factory RpShareReqEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareReqEntityFromJson(srcJson);
 

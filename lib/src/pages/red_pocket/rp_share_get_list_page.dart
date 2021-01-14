@@ -155,7 +155,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                       right: 10,
                     ),
                     child: Image.asset(
-                      "res/drawable/red_pocket_logo.png",
+                      "res/drawable/rp_share_send_tag.png",
                       width: 28,
                       height: 28,
                     ),
