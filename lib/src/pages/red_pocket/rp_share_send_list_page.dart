@@ -132,12 +132,12 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
 
     return InkWell(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => RpReceiverSuccessPage(rpOpenRecordEntity: model),
-        //   ),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RpReceiverSuccessPage(model.id),
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),

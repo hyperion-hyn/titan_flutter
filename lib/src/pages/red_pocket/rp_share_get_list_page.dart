@@ -131,12 +131,12 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
 
     return InkWell(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => RpReceiverSuccessPage(rpOpenRecordEntity: model),
-        //   ),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RpReceiverSuccessPage(model.id),
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
@@ -199,7 +199,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                               right: 6,
                             ),
                             child: Text(
-                              model.username,
+                              '${model.username} 的红包',
                               style: TextStyle(
                                 color: HexColor("#333333"),
                                 fontSize: 14,

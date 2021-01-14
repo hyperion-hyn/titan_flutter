@@ -22,6 +22,7 @@ Map<String, dynamic> _$RpShareEntityToJson(RpShareEntity instance) => <String, d
 
 RpShareOpenEntity _$RpShareOpenEntityFromJson(Map<String, dynamic> json) {
   return RpShareOpenEntity(
+    json['id'] as String,
     json['address'] as String,
     json['avatar'] as String,
     json['hynAmount'] as String,
@@ -35,6 +36,8 @@ RpShareOpenEntity _$RpShareOpenEntityFromJson(Map<String, dynamic> json) {
     double.parse(json['range']?.toString() ?? "0"),
     json['rpType'] as String,
     json['greeting'] as String,
+    json['rpHash'] as String,
+    json['hynHash'] as String,
   );
 }
 
@@ -52,6 +55,8 @@ Map<String, dynamic> _$RpShareOpenEntityToJson(RpShareOpenEntity instance) => <S
       'range': instance.range,
       'rpType': instance.rpType,
       'greeting': instance.greeting,
+      'rpHash': instance.rpHash,
+      'hynHash': instance.hynHash,
     };
 
 RpShareSendEntity _$RpShareSendEntityFromJson(Map<String, dynamic> json) {
@@ -75,6 +80,8 @@ RpShareSendEntity _$RpShareSendEntityFromJson(Map<String, dynamic> json) {
     json['gotCount'] as int,
     json['hynAmount'] as String,
     json['rpAmount'] as String,
+    json['rpTxHash'] as String,
+    json['hynTxHash'] as String,
   );
 }
 
@@ -98,4 +105,6 @@ Map<String, dynamic> _$RpShareSendEntityToJson(RpShareSendEntity instance) => <S
       'gotCount': instance.gotCount,
       'hynAmount': instance.hynAmount,
       'rpAmount': instance.rpAmount,
+      'rpHash': instance.rpHash,
+      'hynHash': instance.hynHash,
     };

@@ -195,7 +195,7 @@ class _RpReceiverSuccessPageState extends BaseState<RpReceiverSuccessPage> {
                       text: TextSpan(
                           text: _shareEntity.info.rpAmount,
                           style: TextStyle(
-                              fontSize: 46,
+                              fontSize: 32,
                               color: HexColor("#D09100"),
                               fontWeight: FontWeight.bold),
                           children: [
@@ -216,7 +216,7 @@ class _RpReceiverSuccessPageState extends BaseState<RpReceiverSuccessPage> {
                             TextSpan(
                               text: _shareEntity.info.hynAmount,
                               style: TextStyle(
-                                  fontSize: 46,
+                                  fontSize: 32,
                                   color: HexColor("#D09100"),
                                   fontWeight: FontWeight.bold),
                             ),

@@ -22,6 +22,9 @@ class RpShareEntity extends Object {
 
 @JsonSerializable()
 class RpShareOpenEntity extends Object {
+  @JsonKey(name: 'id')
+  String id;
+
   @JsonKey(name: 'address')
   String address;
 
@@ -61,7 +64,14 @@ class RpShareOpenEntity extends Object {
   @JsonKey(name: 'greeting')
   String greeting;
 
+  @JsonKey(name: 'rpHash')
+  String rpHash;
+
+  @JsonKey(name: 'hynHash')
+  String hynHash;
+
   RpShareOpenEntity(
+    this.id,
     this.address,
     this.avatar,
     this.hynAmount,
@@ -75,6 +85,8 @@ class RpShareOpenEntity extends Object {
     this.range,
     this.rpType,
     this.greeting,
+    this.rpHash,
+    this.hynHash,
   );
 
   factory RpShareOpenEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareOpenEntityFromJson(srcJson);
@@ -141,6 +153,12 @@ class RpShareSendEntity extends Object {
   @JsonKey(name: 'rpAmount')
   String rpAmount;
 
+  @JsonKey(name: 'rpHash')
+  String rpHash;
+
+  @JsonKey(name: 'hynHash')
+  String hynHash;
+
   RpShareSendEntity(
     this.address,
     this.alreadyGot,
@@ -161,6 +179,8 @@ class RpShareSendEntity extends Object {
     this.gotCount,
     this.hynAmount,
     this.rpAmount,
+    this.rpHash,
+    this.hynHash,
   );
 
   factory RpShareSendEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareSendEntityFromJson(srcJson);
