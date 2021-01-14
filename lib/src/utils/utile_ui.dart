@@ -193,14 +193,14 @@ class UiUtil {
   }
 
   // alertView
-  static Future<bool> showAlertViewNew<T>(
+  static Future<T> showAlertViewNew<T>(
     BuildContext context, {
     List<Widget> actions,
     Widget contentWidget,
     bool barrierDismissible = true,
     bool isShowCloseIcon = true,
   }) {
-    return showDialog<bool>(
+    return showDialog<T>(
       barrierDismissible: barrierDismissible,
       // 传入 context
       context: context,

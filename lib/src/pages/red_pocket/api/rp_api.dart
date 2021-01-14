@@ -653,10 +653,9 @@ class RPApi {
   // 领取新人/位置红包
   Future<dynamic> postOpenShareRp({
     RpShareReqEntity reqEntity,
-    String address,
   }) async {
     return await RPHttpCore.instance.postEntity(
-      "/v1/rp/new-bee/$address/open",
+      "/v1/rp/new-bee/${reqEntity.address}/open",
       EntityFactory<dynamic>((json) => json),
       params: reqEntity.toJson(),
       options: RequestOptions(contentType: "application/json"),

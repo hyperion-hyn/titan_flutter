@@ -285,52 +285,55 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                       flex: 1,
                                       child: Form(
                                         key: _formKey,
-                                        child: RoundBorderTextField(
-                                          onChanged: (text) {
-                                            if (text?.isNotEmpty ?? false) {
-                                              _formKey.currentState.validate();
-                                            }
+                                        child: Container(
+                                          color: Colors.white,
+                                          child: RoundBorderTextField(
+                                            onChanged: (text) {
+                                              if (text?.isNotEmpty ?? false) {
+                                                _formKey.currentState.validate();
+                                              }
 
-                                            _inputController.add(text);
-                                          },
-                                          controller: _textEditingController,
-                                          keyboardType:
-                                              TextInputType.numberWithOptions(
-                                                  decimal: true),
-                                          inputFormatters: [
-                                            LengthLimitingTextInputFormatter(
-                                                18),
-                                            FilteringTextInputFormatter.allow(
-                                                RegExp("[0-9.]"))
-                                          ],
-                                          hint: _needTotalMinValueStr,
-                                          validator: (textStr) {
-                                            if (textStr.length == 0 &&
-                                                _needTotalMinValue >
-                                                    Decimal.zero) {
-                                              return S
-                                                  .of(context)
-                                                  .input_num_please;
-                                            }
+                                              _inputController.add(text);
+                                            },
+                                            controller: _textEditingController,
+                                            keyboardType:
+                                                TextInputType.numberWithOptions(
+                                                    decimal: true),
+                                            inputFormatters: [
+                                              LengthLimitingTextInputFormatter(
+                                                  18),
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp("[0-9.]"))
+                                            ],
+                                            hint: _needTotalMinValueStr,
+                                            validator: (textStr) {
+                                              if (textStr.length == 0 &&
+                                                  _needTotalMinValue >
+                                                      Decimal.zero) {
+                                                return S
+                                                    .of(context)
+                                                    .input_num_please;
+                                              }
 
-                                            if (Decimal.tryParse(textStr) ==
-                                                null) {
-                                              return S
-                                                  .of(context)
-                                                  .please_enter_correct_amount;
-                                            }
+                                              if (Decimal.tryParse(textStr) ==
+                                                  null) {
+                                                return S
+                                                    .of(context)
+                                                    .please_enter_correct_amount;
+                                              }
 
-                                            if (_needTotalMinValue >
-                                                _inputValue) {
-                                              return _needTotalMinValueStr;
-                                            }
+                                              if (_needTotalMinValue >
+                                                  _inputValue) {
+                                                return _needTotalMinValueStr;
+                                              }
 
-                                            if (_inputValue > _balanceValue) {
-                                              return S
-                                                  .of(context)
-                                                  .input_count_over_wallet_balance;
-                                            }
-                                          },
+                                              if (_inputValue > _balanceValue) {
+                                                return S
+                                                    .of(context)
+                                                    .input_count_over_wallet_balance;
+                                              }
+                                            },
+                                          ),
                                         ),
                                       ),
                                     ),

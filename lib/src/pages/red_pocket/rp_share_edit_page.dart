@@ -636,7 +636,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
         controller: _rangeController,
         hintText: '填写附近可领取距离',
         title: '可领取范围',
-        unit: '米',
+        unit: '千米',
         validator: (String inputText) {
           if (inputText.isEmpty || inputText == null) {
             return '';
@@ -1007,7 +1007,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
   _confirmAction() async {
     print('[$runtimeType] _confirmDataAction, 1');
 
-    RpShareReqEntity reqEntity = RpShareReqEntity.only('0');
+    RpShareReqEntity reqEntity = RpShareReqEntity.onlyId('0');
 
     // todo
     // showSendAlertView(reqEntity);

@@ -133,9 +133,7 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
 
     if (widget.actionType == -1) {
-      var _address  = activeWallet.wallet.getAtlasAccount().address;
-      var _walletName = activeWallet.wallet.keystore.name;
-      showShareRpOpenDialog(context, id:'9LLQ42', address:_address, walletName: _walletName,);
+      showShareRpOpenDialog(context, id:'9LLQ42');
       return;
     }
 
