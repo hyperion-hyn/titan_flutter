@@ -37,8 +37,6 @@ class _RpShareSendDialogState extends BaseState<RpShareSendDialogPage> {
     var wallet = walletVo.wallet;
     var address = wallet.getAtlasAccount().address;
 
-    var rpShareConfig = RedPocketInheritedModel.of(context).rpShareConfig;
-
     var walletName = wallet.keystore.name;
     var hynAddress = WalletUtil.ethAddressToBech32Address(address);
     var walletAddress = shortBlockChainAddress(hynAddress);
@@ -171,77 +169,7 @@ class _RpShareSendDialogState extends BaseState<RpShareSendDialogPage> {
                   ),
                   ClickOvalButton(
                     S.of(context).send,
-                    () async {
-                      // todo
-                      /*Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RpShareBroadcastPage(),
-                        ),
-                      );
-                      return;*/
-
-                      var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
-                      if (password == null) {
-                        return;
-                      }
-
-                      var toAddress = rpShareConfig?.receiveAddr ?? '';
-                      if (toAddress.isEmpty) {
-                        Fluttertoast.showToast(msg: '网络异常，请稍后重试!');
-                        return;
-                      }
-
-                      if (mounted) {
-                        setState(() {
-                          _isLoading = true;
-                        });
-                      }
-
-                      var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('RP');
-                      print("【$runtimeType】postSendShareRp， 1");
-
-                      try {
-                        RpShareReqEntity result = await _rpApi.postSendShareRp(
-                          password: password,
-                          activeWallet: walletVo,
-                          reqEntity: widget.reqEntity,
-                          toAddress: toAddress,
-                          coinVo: coinVo,
-                        );
-
-                        print("[$runtimeType] postSendShareRp, 2, result:${result.toJson()}");
-
-                        if (result.id.isNotEmpty) {
-                          widget.reqEntity.id = result.id;
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RpShareSendSuccessPage(
-                                reqEntity: widget.reqEntity,
-                              ),
-                            ),
-                          );
-                        } else {
-                          Fluttertoast.showToast(msg: '发送红包失败！');
-                        }
-
-                        if (mounted) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                        }
-                      } catch (e) {
-                        LogUtil.toastException(e);
-
-                        if (mounted) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                        }
-                      }
-                    },
+                    _sendAction,
                     btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
                     fontSize: 16,
                     width: 260,
@@ -328,6 +256,72 @@ class _RpShareSendDialogState extends BaseState<RpShareSendDialogPage> {
       ),
     );
   }
+
+  void _sendAction() async {
+    var walletVo = WalletInheritedModel.of(context).activatedWallet;
+    var wallet = walletVo.wallet;
+    var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
+    if (password == null) {
+      return;
+    }
+
+    var rpShareConfig = RedPocketInheritedModel.of(context).rpShareConfig;
+    var toAddress = rpShareConfig?.receiveAddr ?? '';
+    if (toAddress.isEmpty) {
+      Fluttertoast.showToast(msg: '网络异常，请稍后重试!');
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
+    var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('RP');
+    print("【$runtimeType】postSendShareRp， 1");
+
+    try {
+      RpShareReqEntity result = await _rpApi.postSendShareRp(
+        password: password,
+        activeWallet: walletVo,
+        reqEntity: widget.reqEntity,
+        toAddress: toAddress,
+        coinVo: coinVo,
+      );
+
+      print("[$runtimeType] postSendShareRp, 2, result:${result.toJson()}");
+
+      if (result.id.isNotEmpty) {
+        widget.reqEntity.id = result.id;
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RpShareSendSuccessPage(
+              reqEntity: widget.reqEntity,
+            ),
+          ),
+        );
+      } else {
+        Fluttertoast.showToast(msg: '发送红包失败！');
+      }
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      LogUtil.toastException(e);
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 }
 
 Future<bool> showShareRpSendDialog<T>(
@@ -344,7 +338,7 @@ Future<bool> showShareRpSendDialog<T>(
         );
       });
 
-  return showDialog<bool>(
+/*  return showDialog<bool>(
     barrierDismissible: true,
     context: context,
     builder: (context) {
@@ -352,5 +346,5 @@ Future<bool> showShareRpSendDialog<T>(
         reqEntity: reqEntity,
       );
     },
-  );
+  );*/
 }
