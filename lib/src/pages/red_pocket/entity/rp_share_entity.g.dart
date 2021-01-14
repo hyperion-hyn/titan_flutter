@@ -60,7 +60,7 @@ RpShareSendEntity _$RpShareSendEntityFromJson(Map<String, dynamic> json) {
     json['id'] as String,
     json['isNewBee'] as bool,
     json['owner'] as String,
-    json['range'] as int,
+    (json['range'] as num).toDouble(),
     json['rpType'] as String,
     json['state'] as String,
     json['userIsNewBee'] as bool,

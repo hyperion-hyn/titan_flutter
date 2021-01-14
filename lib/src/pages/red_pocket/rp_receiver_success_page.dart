@@ -104,7 +104,7 @@ class _RpReceiverSuccessPageState extends State<RpReceiverSuccessPage> {
                 ),
               ),
               Text(
-                "恭喜发财，大吉大利",
+                widget?._shareEntity?.info?.greeting ?? "",
                 style: TextStyles.textC999S14,
               ),
               if ((widget?._shareEntity?.info?.rpType ?? "") == RpShareType.location)
@@ -173,7 +173,7 @@ class _RpReceiverSuccessPageState extends State<RpReceiverSuccessPage> {
                       padding: const EdgeInsets.only(
                         top: 2.0,
                       ),
-                      child: Text("红包转入中，请稍后查看钱包记录", style: TextStyles.textC333S12),
+                      child: Text("已领取红包，请稍后查看钱包记录", style: TextStyles.textC333S12),
                     ),
                     Container(
                       margin: const EdgeInsets.only(top: 50.0),

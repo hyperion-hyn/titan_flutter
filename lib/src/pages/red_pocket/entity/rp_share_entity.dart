@@ -103,7 +103,7 @@ class RpShareSendEntity extends Object {
   String owner;
 
   @JsonKey(name: 'range')
-  int range;
+  double range;
 
   @JsonKey(name: 'rpType')
   String rpType;

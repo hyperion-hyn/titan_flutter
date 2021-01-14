@@ -78,7 +78,8 @@ class _WidgetDemoPageState extends State<WidgetDemoPage>
                 _statisticsWidget(),
                 SliverToBoxAdapter(
                   child: FlatButton(onPressed: (){
-                    showShareRpOpenDialog(context,id: "6RYWNG");
+                    // showShareRpOpenDialog(context,id: "CMXVMK");
+                    showShareRpOpenDialog(context,id: "53K7RE");
                   }, child: Text("分享红包"),color: DefaultColors.color999,),
                 ),
                 SliverToBoxAdapter(

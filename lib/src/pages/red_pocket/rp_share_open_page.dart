@@ -60,13 +60,7 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
   }
 
   void _getNewBeeInfo() async {
-    try {
-      RpShareSendEntity shareSendEntity = await _rpApi.getNewBeeInfo(
-        widget.address,
-        id: widget.id,
-      );
-      print("[$runtimeType] shareSendEntity:${shareSendEntity.toJson()}");
-
+    // try {
       _shareEntity = await _rpApi.getNewBeeDetail(
         widget.address,
         id: widget.id,
@@ -75,11 +69,11 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
         _currentState = null;
       });
       print("[$runtimeType] shareEntity:${_shareEntity.info.toJson()}");
-    } catch (error) {
-      setState(() {
-        _currentState = allPage.LoadCustomState();
-      });
-    }
+    // } catch (error) {
+    //   setState(() {
+    //     _currentState = allPage.LoadCustomState();
+    //   });
+    // }
   }
 
   @override
@@ -125,6 +119,11 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
                       return;
                     }
 
+                    if (_shareEntity.info.isNewBee && !_shareEntity.info.userIsNewBee) {
+                      Fluttertoast.showToast(msg: "该红包只有新用户可领取");
+                      return;
+                    }
+
                     String rpSecret;
                     if(_shareEntity.info.hasPWD){
                       rpSecret = await _showStakingAlertView();
@@ -146,6 +145,11 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
                       reqEntity: reqEntity,
                     );
                     print("[$runtimeType] open rp, 2, result:$result");
+
+                    _shareEntity = await _rpApi.getNewBeeDetail(
+                      widget.address,
+                      id: widget.id,
+                    );
 
                     if(mounted){
                       Navigator.pop(context);
