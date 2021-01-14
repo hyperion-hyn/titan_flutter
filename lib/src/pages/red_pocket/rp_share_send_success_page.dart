@@ -15,8 +15,6 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
-import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -24,7 +22,11 @@ import 'package:titan/src/widget/widget_shot.dart';
 
 class RpShareSendSuccessPage extends StatefulWidget {
   final RpShareReqEntity reqEntity;
-  RpShareSendSuccessPage({this.reqEntity});
+  final int actionType;
+  RpShareSendSuccessPage({
+    this.reqEntity,
+    this.actionType = 0,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -71,18 +73,22 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return false;
+        return widget.actionType == 1;
       },
       child: Scaffold(
         appBar: BaseAppBar(
-          baseTitle: '广播成功',
+          baseTitle: widget.actionType == 0 ? '广播成功' : '分享',
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () {
-                  Routes.popUntilCachedEntryRouteName(context, true);
+                  if (widget.actionType == 0) {
+                    Routes.popUntilCachedEntryRouteName(context, true);
+                  } else {
+                    Navigator.of(context).pop();
+                  }
                 },
               );
             },
@@ -96,7 +102,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
   Widget _body(BuildContext context) {
     return Column(
       children: <Widget>[
-        _titleWidget(),
+        if (widget.actionType == 0) _titleWidget(),
         Expanded(
           child: SingleChildScrollView(
             controller: _scrollController,
@@ -117,18 +123,8 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
           height: 20,
         ),
         ClickOvalButton(
-          '分享给新人',
+          (widget.reqEntity.isNewBee) ? '分享给新人' : '分享',
           () async {
-            /*
-            showShareRpOpenDialog(
-              context: context,
-              id: widget.reqEntity.id,
-              address: _address,
-              walletName: _walletName,
-            );
-            return;
-            */
-
             if (mounted) {
               setState(() {
                 _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
@@ -201,7 +197,8 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
     // todo
     // var qrData = "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$_walletName";
     var greeting = (widget.reqEntity?.greeting?.isNotEmpty ?? false) ? widget.reqEntity?.greeting : '恭喜发财，大吉大利!';
-    var qrData = 'http://rp/sendRp?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&greeting=$greeting';
+    var qrData =
+        'http://rp/sendRp?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&greeting=$greeting';
     return WidgetShot(
       controller: _shotController,
       child: RepaintBoundary(

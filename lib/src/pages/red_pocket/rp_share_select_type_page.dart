@@ -8,7 +8,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_edit_info_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_edit_page.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class RpShareSelectTypePage extends StatefulWidget {

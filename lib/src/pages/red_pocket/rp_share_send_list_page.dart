@@ -209,7 +209,8 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                             ),
                           ),
                           Text(
-                            onGoing ? '派发中...' : '已过期',
+                            shareStateToName(model.state),
+                            //onGoing ? '派发中...' : '已过期',
                             style: TextStyle(
                               color: onGoing ? HexColor("#E8AC13") : HexColor("#999999"),
                               fontSize: 12,

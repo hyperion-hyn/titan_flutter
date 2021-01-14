@@ -7,6 +7,8 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_send_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -142,7 +144,40 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                 height: 17,
               ),
             ),
-          )
+          ),
+          if ((_shareEntity?.info?.total??0) > (_shareEntity?.info?.gotCount??0))
+            Positioned(
+              top: 34,
+              right: 16,
+              child: InkWell(
+                onTap: () {
+                  var info = _shareEntity.info;
+                  RpShareReqEntity reqEntity = RpShareReqEntity.onlyId(info.id);
+                  reqEntity.rpType = info.rpType;
+                  reqEntity.greeting = info.greeting;
+                  reqEntity.isNewBee = info.isNewBee;
+                  reqEntity.count = info.total;
+                  reqEntity.range = info.range;
+                  reqEntity.location = info.location;
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RpShareSendSuccessPage(
+                        reqEntity: reqEntity,
+                        actionType: 1,
+                      ),
+                    ),
+                  );
+                },
+                child: Image.asset(
+                  "res/drawable/node_share.png",
+                  width: 17,
+                  height: 17,
+                  color: Colors.white,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -202,7 +237,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                       ),
                       Expanded(
                         child: Text(
-                          "${_shareEntity?.info?.location ?? ""}; ${_shareEntity?.info?.range ?? ""}千米内可领取休息休息",
+                          "${_shareEntity?.info?.location ?? ""}; ${_shareEntity?.info?.range ?? ""}千米内可领取",
                           style: TextStyles.textC999S12,
                         ),
                       )

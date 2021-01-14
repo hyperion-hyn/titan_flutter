@@ -302,6 +302,38 @@ class RpShareState {
   static const String ongoing = 'ongoing';
 }
 
+String shareStateToName(String state) {
+  if (state == null) return '--';
+
+  String name = '';
+  switch (state) {
+    case RpShareState.waitForTX:
+      name = '请求中...';
+      break;
+
+    case RpShareState.pending:
+      name = '确认中...';
+      break;
+
+    case RpShareState.expires:
+      name = '已过期';
+      break;
+
+    case RpShareState.ongoing:
+      name = '派发中...';
+      break;
+
+    case RpShareState.allGot:
+      name = '已领完';
+      break;
+
+    default:
+      name = '--';
+      break;
+  }
+  return name;
+}
+
 class RpShareType {
   static const String normal = 'normal';
   static const String location = 'location';
