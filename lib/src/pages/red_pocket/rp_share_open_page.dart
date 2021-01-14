@@ -15,7 +15,6 @@ import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_receiver_success_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as allPage;

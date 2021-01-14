@@ -10,6 +10,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
+import 'package:titan/src/pages/red_pocket/rp_receiver_success_page.dart';
 import 'package:titan/src/utils/format_util.dart';
 import "package:collection/collection.dart";
 
@@ -127,12 +128,14 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
     var range = '${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取';
     var locationRange = '$location $range';
 
+    var onGoing = model.state == RpShareState.ongoing;
+
     return InkWell(
       onTap: () {
         // Navigator.push(
         //   context,
         //   MaterialPageRoute(
-        //     builder: (context) => RpRecordDetailPage(rpOpenRecordEntity: model),
+        //     builder: (context) => RpReceiverSuccessPage(rpOpenRecordEntity: model),
         //   ),
         // );
       },
@@ -209,9 +212,9 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                             ),
                           ),
                           Text(
-                            model.state,
+                            onGoing?'派发中...':'已过期',
                             style: TextStyle(
-                              color: HexColor("#E8AC13"),
+                              color: onGoing?HexColor("#E8AC13"):HexColor("#999999"),
                               fontSize: 12,
                               fontWeight: FontWeight.normal,
                             ),
