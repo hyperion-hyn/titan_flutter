@@ -650,6 +650,19 @@ class RPApi {
     );
   }
 
+
+  // 过期没领取完的位置红包退款
+  Future<dynamic> postRefundShareRp({
+    RpShareReqEntity reqEntity,
+  }) async {
+    return await RPHttpCore.instance.postEntity(
+      "/v1/rp/new-bee/${reqEntity.address}/refund",
+      EntityFactory<dynamic>((json) => json),
+      params: {'id': reqEntity.id},
+      options: RequestOptions(contentType: "application/json"),
+    );
+  }
+
   // 领取新人/位置红包
   Future<dynamic> postOpenShareRp({
     RpShareReqEntity reqEntity,
