@@ -43,6 +43,15 @@ class RpShareOpenEntity extends Object {
   @JsonKey(name: 'createdAt')
   int createdAt;
 
+  @JsonKey(name: 'location')
+  String location;
+
+  @JsonKey(name: 'getHYNAmount')
+  String getHYNAmount;
+
+  @JsonKey(name: 'getRPAmount')
+  String getRPAmount;
+
   RpShareOpenEntity(
     this.address,
     this.avatar,
@@ -51,6 +60,9 @@ class RpShareOpenEntity extends Object {
     this.rpAmount,
     this.username,
     this.createdAt,
+    this.location,
+    this.getHYNAmount,
+    this.getRPAmount,
   );
 
   factory RpShareOpenEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareOpenEntityFromJson(srcJson);
@@ -105,6 +117,12 @@ class RpShareSendEntity extends Object {
   @JsonKey(name: 'location')
   String location;
 
+  @JsonKey(name: 'total')
+  int total;
+
+  @JsonKey(name: 'gotCount')
+  int gotCount;
+
   RpShareSendEntity(
     this.address,
     this.alreadyGot,
@@ -121,6 +139,8 @@ class RpShareSendEntity extends Object {
     this.state,
     this.userIsNewBee,
     this.location,
+    this.total,
+    this.gotCount,
   );
 
   factory RpShareSendEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareSendEntityFromJson(srcJson);
