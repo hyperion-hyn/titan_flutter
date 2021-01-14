@@ -236,11 +236,11 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> with SingleTick
       return;
       */
 
-      var _address = activeWallet.wallet.getAtlasAccount().address;
-      var _walletName = activeWallet.wallet.keystore.name;
+      // var _address = activeWallet.wallet.getAtlasAccount().address;
+      // var _walletName = activeWallet.wallet.keystore.name;
       showShareRpOpenDialog(
         context,
-        id: '9LLQ42',
+        id: '53K7RE',
       );
       return;
     }

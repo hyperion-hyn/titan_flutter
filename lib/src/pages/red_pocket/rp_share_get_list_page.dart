@@ -11,6 +11,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
+import 'package:titan/src/pages/red_pocket/rp_receiver_success_page.dart';
 import 'package:titan/src/utils/format_util.dart';
 import "package:collection/collection.dart";
 
@@ -117,7 +118,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
 
   Widget _itemBuilder(RpShareOpenEntity model) {
     var isNormal = (model.rpType ?? RpShareType.normal) == RpShareType.normal;
-    print("[$runtimeType] model.rpType:${model.rpType}, isNormal:$isNormal");
+    //print("[$runtimeType] model.rpType:${model.rpType}, isNormal:$isNormal");
 
     RpShareTypeEntity shareTypeEntity = isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
 
@@ -133,7 +134,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
         // Navigator.push(
         //   context,
         //   MaterialPageRoute(
-        //     builder: (context) => RpRecordDetailPage(rpOpenRecordEntity: model),
+        //     builder: (context) => RpReceiverSuccessPage(rpOpenRecordEntity: model),
         //   ),
         // );
       },
@@ -201,7 +202,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                               right: 6,
                             ),
                             child: Text(
-                              'model.owner',
+                              model.username,
                               style: TextStyle(
                                 color: HexColor("#333333"),
                                 fontSize: 14,
@@ -209,17 +210,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                               ),
                             ),
                           ),
-                          Text(
-                            'model.state',
-                            style: TextStyle(
-                              color: HexColor("#E8AC13"),
-                              fontSize: 12,
-                              fontWeight: FontWeight.normal,
-                            ),
-                            maxLines: 2,
-                            textAlign: TextAlign.right,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+
                         ],
                       ),
                       SizedBox(
@@ -263,13 +254,31 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                           SizedBox(
                             height: 6,
                           ),
-                          Text(
-                            createdAtStr,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: HexColor('#999999'),
-                            ),
-                            textAlign: TextAlign.right,
+                          Row(
+                            children: [
+                              Spacer(),
+                              Text(
+                                //'最佳',
+                                model.isBest?'最佳':'',
+                                style: TextStyle(
+                                  color: HexColor("#E8AC13"),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                                maxLines: 2,
+                                textAlign: TextAlign.right,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              SizedBox(width: 10,),
+                              Text(
+                                createdAtStr,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: HexColor('#999999'),
+                                ),
+                                textAlign: TextAlign.right,
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -311,7 +320,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
   void getNetworkData() async {
     _page = 1;
 
-    try {
+    // try {
       var netData = await _rpApi.getShareGetList(
         _address,
         page: _page,
@@ -333,9 +342,9 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
           });
         }
       }
-    } catch (e) {
-      _loadDataBloc.add(LoadFailEvent());
-    }
+    // } catch (e) {
+    //   _loadDataBloc.add(LoadFailEvent());
+    // }
   }
 
   void getMoreNetworkData() async {
