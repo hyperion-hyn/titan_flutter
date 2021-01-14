@@ -726,8 +726,10 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
   }
 
   Widget _buildSwitchCell() {
+    var hynMin = _rpShareConfig?.hynMin ?? '0.01';
+
     return _clipRectWidget(
-        desc: '如果只允许新人领取，你要为每个新人至少要塞 0.001 HYN 作为他之后矿工费所用',
+        desc: '如果只允许新人领取，你要为每个新人至少要塞 $hynMin HYN 作为他之后矿工费所用',
         vertical: 4,
         child: Row(
           children: [
@@ -1052,6 +1054,8 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     }
     reqEntity.rpAmount = rpValue.toDouble();
 
+    var hynMin = _rpShareConfig?.hynMin ?? '0.01';
+
     // hynAmount
     var hynValue = Decimal.tryParse(_hynAmountController?.text ?? '0') ?? Decimal.zero;
     if (hynValue <= Decimal.zero) {
@@ -1059,8 +1063,8 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
       _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
       return;
-    } else if (hynValue > Decimal.zero && hynValue <= Decimal.parse('0.001')) {
-      Fluttertoast.showToast(msg: '你要为每个新人至少要塞 0.001 HYN作为他之后矿工费所用');
+    } else if (hynValue > Decimal.zero && hynValue <= Decimal.parse(hynMin)) {
+      Fluttertoast.showToast(msg: '你要为每个新人至少要塞 $hynMin HYN作为他之后矿工费所用');
       _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
       return;

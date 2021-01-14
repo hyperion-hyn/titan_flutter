@@ -276,28 +276,33 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                 ],
               ),
               if (!isNormal)
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 36,
-                    ),
-                    Image.asset(
-                      "res/drawable/rp_share_location_tag.png",
-                      width: 10,
-                      height: 14,
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      locationRange,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: HexColor('#999999'),
+                Padding(
+                  padding: const EdgeInsets.only(top: 4,),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 36,
                       ),
-                      textAlign: TextAlign.left,
-                    ),
-                  ],
+                      Image.asset(
+                        "res/drawable/rp_share_location_tag.png",
+                        width: 10,
+                        height: 14,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Expanded(
+                        child: Text(
+                          locationRange,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: HexColor('#999999'),
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
             ],
           ),
