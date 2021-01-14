@@ -563,7 +563,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
               ).getCoinVoBySymbol('RP');
               var rpBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
 
-              var minRp = _rpShareConfig?.rpMin ?? '0';
+              var minRp = _rpShareConfig?.rpMin ?? '0.01';
               if (inputValue > Decimal.zero && inputValue < Decimal.parse(minRp)) {
                 errorText = '至少$minRp RP';
               }
@@ -610,7 +610,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
 
               var hynBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
 
-              var minHyn = _rpShareConfig?.hynMin ?? '0';
+              var minHyn = _rpShareConfig?.hynMin ?? '0.01';
               if (inputValue > Decimal.zero && inputValue < Decimal.parse(minHyn)) {
                 errorText = '至少$minHyn HYN';
               }
@@ -1093,7 +1093,6 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
       reqEntity.lat = _selectedPosition?.latitude ?? 0;
       reqEntity.lng = _selectedPosition?.longitude ?? 0;
 
-
       // range
       var rangeValue = Decimal.tryParse(_rangeController?.text ?? '0') ?? Decimal.zero;
       if (rangeValue <= Decimal.zero) {
@@ -1116,7 +1115,7 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
       reqEntity.lat = 0;
       reqEntity.lng = 0;
     }
-    
+
     // isNewBee: 新人可以领
     reqEntity.isNewBee = _isNewBee;
 

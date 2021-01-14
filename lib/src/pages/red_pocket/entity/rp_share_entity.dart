@@ -42,7 +42,10 @@ part 'rp_share_entity.g.dart';
   @JsonKey(name: 'username')
   String username;
 
-  RpShareOpenEntity(this.address,this.avatar,this.hynAmount,this.isBest,this.rpAmount,this.username,);
+  @JsonKey(name: 'createdAt')
+  int createdAt;
+
+  RpShareOpenEntity(this.address,this.avatar,this.hynAmount,this.isBest,this.rpAmount,this.username,this.createdAt,);
 
   factory RpShareOpenEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareOpenEntityFromJson(srcJson);
 

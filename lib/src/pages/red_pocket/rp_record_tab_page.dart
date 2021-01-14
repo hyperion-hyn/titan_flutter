@@ -6,6 +6,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_list_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_record_tab_page.dart';
 
 
 class RpRecordTabPage extends StatefulWidget {
@@ -92,7 +93,7 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
                         ),
                         Tab(
                           child: Text(
-                            S.of(context).share,
+                            '分享红包',
                           ),
                         ),
                       ],
@@ -107,7 +108,7 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
               RpRecordListPage(rpType: RedPocketType.LUCKY,),
               RpRecordListPage(rpType: RedPocketType.LEVEL,),
               RpRecordListPage(rpType: RedPocketType.PROMOTION,),
-              RpRecordListPage(rpType: RedPocketType.SHARE,),
+              RpShareRecordTabPage(),
             ],
           ),
         ),

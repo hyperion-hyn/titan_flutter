@@ -49,7 +49,7 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
       color: Colors.transparent,
       child: SafeArea(
         child: Container(
-          margin: const EdgeInsets.only(top: 60),
+          margin: const EdgeInsets.only(top: 100),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -186,9 +186,9 @@ class _RpShareSendState extends BaseState<RpShareSendPage> {
                         return;
                       }
 
-                      var toAddress = rpShareConfig.receiveAddr;
+                      var toAddress = rpShareConfig?.receiveAddr ?? '';
                       if (toAddress.isEmpty) {
-                        Fluttertoast.showToast(msg: '发送异常，请稍后重试!');
+                        Fluttertoast.showToast(msg: '网络异常，请稍后重试!');
                         return;
                       }
 
@@ -334,6 +334,16 @@ Future<bool> showSendAlertView<T>(
   BuildContext context,
   RpShareReqEntity reqEntity,
 ) {
+  return showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (BuildContext context) {
+        return RpShareSendPage(
+          reqEntity: reqEntity,
+        );
+      });
+
   return showDialog<bool>(
     barrierDismissible: true,
     context: context,

@@ -282,16 +282,6 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
     _countRequest = 0;
 
     try {
-      if (widget.rpType == RedPocketType.SHARE) {
-        var res = await _rpApi.getShareGetList(
-          _address,
-          page: 1,
-          size: 20,
-        );
-        return;
-      }
-
-
       var netData = await _rpApi.getMyRpRecordList(
         _address,
         pagingKey: _currentPageKey,
@@ -330,15 +320,6 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
     }
 
     try {
-      if (widget.rpType == RedPocketType.SHARE) {
-        var res = await _rpApi.getShareGetList(
-          _address,
-          page: 2,
-          size: 20,
-        );
-        return;
-      }
-
       var netData = await _rpApi.getMyRpRecordList(
         _address,
         pagingKey: _currentPageKey,

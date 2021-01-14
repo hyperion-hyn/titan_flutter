@@ -115,7 +115,6 @@ enum RedPocketType {
   LUCKY,
   LEVEL,
   PROMOTION,
-  SHARE,
 }
 
 enum RpLuckState {
@@ -344,4 +343,10 @@ class SupportedShareType {
     fullNameZh: '位置红包',
     fullDesc: '只有在红包投放的位置附近才可以拼手气领取',
   );
+}
+
+
+enum RedPocketShareActionType {
+  SEND,
+  GET,
 }

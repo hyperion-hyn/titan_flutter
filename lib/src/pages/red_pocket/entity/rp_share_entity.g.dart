@@ -33,6 +33,7 @@ RpShareOpenEntity _$RpShareOpenEntityFromJson(Map<String, dynamic> json) {
     json['isBest'] as bool,
     json['rpAmount'] as String,
     json['username'] as String,
+    json['createdAt'] as int,
   );
 }
 
@@ -45,6 +46,7 @@ Map<String, dynamic> _$RpShareOpenEntityToJson(
       'isBest': instance.isBest,
       'rpAmount': instance.rpAmount,
       'username': instance.username,
+      'createdAt': instance.createdAt,
     };
 
 RpShareSendEntity _$RpShareSendEntityFromJson(Map<String, dynamic> json) {

@@ -740,7 +740,7 @@ class RPApi {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/new-bee/$address/get/list',
       EntityFactory<List<RpShareOpenEntity>>((json) {
-        var data = (json as List).map((map) {
+        var data = (json['data'] as List).map((map) {
           return RpShareOpenEntity.fromJson(map);
         }).toList();
 
@@ -765,7 +765,9 @@ class RPApi {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/new-bee/$address/send/list',
       EntityFactory<List<RpShareSendEntity>>((json) {
-        var data = (json as List).map((map) {
+        print("[$runtimeType] json:$json");
+
+        var data = (json['data'] as List).map((map) {
           return RpShareSendEntity.fromJson(map);
         }).toList();
 
