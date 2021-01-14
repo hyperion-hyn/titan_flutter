@@ -164,10 +164,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
       child: Padding(
         padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 12,
-          ),
+          padding: const EdgeInsets.only(top: 12, left: 12, right: 12, bottom: 12),
           decoration: BoxDecoration(
             color: HexColor('#FFFFFF'),
             borderRadius: BorderRadius.all(

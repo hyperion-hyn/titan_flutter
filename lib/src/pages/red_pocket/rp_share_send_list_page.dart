@@ -88,7 +88,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
+                    padding: const EdgeInsets.only(top: 12, left: 24, bottom: 6),
                     child: Text(
                       key,
                       style: TextStyle(
@@ -142,10 +142,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
       child: Padding(
         padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 12,
-          ),
+          padding: const EdgeInsets.only(top: 12, left: 12, right: 12, bottom: 8),
           decoration: BoxDecoration(
             color: HexColor('#FFFFFF'),
             borderRadius: BorderRadius.all(
@@ -212,9 +209,9 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                             ),
                           ),
                           Text(
-                            onGoing?'派发中...':'已过期',
+                            onGoing ? '派发中...' : '已过期',
                             style: TextStyle(
-                              color: onGoing?HexColor("#E8AC13"):HexColor("#999999"),
+                              color: onGoing ? HexColor("#E8AC13") : HexColor("#999999"),
                               fontSize: 12,
                               fontWeight: FontWeight.normal,
                             ),
@@ -280,7 +277,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
               ),
               if (!isNormal)
                 Padding(
-                  padding: const EdgeInsets.only(top: 4,),
+                  padding: const EdgeInsets.only(top: 4, bottom: 4),
                   child: Row(
                     children: [
                       SizedBox(

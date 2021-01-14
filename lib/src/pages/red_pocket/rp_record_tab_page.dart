@@ -53,7 +53,7 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: new Container(
               width: double.infinity,
-              height: 50.0,
+              height: 40.0,
               //color: HexColor('#F8F8F8'),
               color: Colors.white,
               child: Row(

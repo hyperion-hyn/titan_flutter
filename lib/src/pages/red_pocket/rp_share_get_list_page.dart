@@ -141,10 +141,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
       child: Padding(
         padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 12,
-          ),
+          padding: const EdgeInsets.only(top: 12, left: 12, right: 12, bottom: 8),
           decoration: BoxDecoration(
             color: HexColor('#FFFFFF'),
             borderRadius: BorderRadius.all(
@@ -287,28 +284,31 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                 ],
               ),
               if (!isNormal)
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 36,
-                    ),
-                    Image.asset(
-                      "res/drawable/rp_share_location_tag.png",
-                      width: 10,
-                      height: 14,
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      locationRange,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: HexColor('#999999'),
+                Padding(
+                  padding: const EdgeInsets.only(top: 4, bottom: 4),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 36,
                       ),
-                      textAlign: TextAlign.left,
-                    ),
-                  ],
+                      Image.asset(
+                        "res/drawable/rp_share_location_tag.png",
+                        width: 10,
+                        height: 14,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        locationRange,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: HexColor('#999999'),
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ],
+                  ),
                 ),
             ],
           ),
