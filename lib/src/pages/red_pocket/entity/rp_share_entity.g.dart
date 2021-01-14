@@ -32,7 +32,7 @@ RpShareOpenEntity _$RpShareOpenEntityFromJson(Map<String, dynamic> json) {
     json['location'] as String,
     json['getHYNAmount'] as String,
     json['getRPAmount'] as String,
-    (json['range'] as num).toDouble(),
+    double.parse(json['range']?.toString() ?? "0"),
     json['rpType'] as String,
     json['greeting'] as String,
   );

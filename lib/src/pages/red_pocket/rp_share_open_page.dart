@@ -60,7 +60,7 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
   }
 
   void _getNewBeeInfo() async {
-    // try {
+    try {
       _shareEntity = await _rpApi.getNewBeeDetail(
         widget.address,
         id: widget.id,
@@ -69,11 +69,11 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
         _currentState = null;
       });
       print("[$runtimeType] shareEntity:${_shareEntity.info.toJson()}");
-    // } catch (error) {
-    //   setState(() {
-    //     _currentState = allPage.LoadCustomState();
-    //   });
-    // }
+    } catch (error) {
+      setState(() {
+        _currentState = allPage.LoadCustomState();
+      });
+    }
   }
 
   @override
@@ -119,6 +119,10 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
                       return;
                     }
 
+                    if (_shareEntity.info.alreadyGot) {
+                      return;
+                    }
+
                     if (_shareEntity.info.isNewBee && !_shareEntity.info.userIsNewBee) {
                       Fluttertoast.showToast(msg: "该红包只有新用户可领取");
                       return;
@@ -155,7 +159,7 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
                       Navigator.pop(context);
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (BuildContext context) => RpReceiverSuccessPage(
-                            _shareEntity
+                            _shareEntity.info.id
                         ),
                       ));
                     }
@@ -249,7 +253,7 @@ class _RpShareSendState extends BaseState<RpShareOpenPage> {
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (BuildContext context) => RpReceiverSuccessPage(
-                                  _shareEntity
+                                  _shareEntity.info.id
                                 ),
                               ));
                             },
