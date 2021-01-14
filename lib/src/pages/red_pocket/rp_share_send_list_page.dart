@@ -116,14 +116,17 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
 
   Widget _itemBuilder(RpShareSendEntity model) {
     var isNormal = (model.rpType ?? RpShareType.normal) == RpShareType.normal;
-    print("[$runtimeType] model.rpType:${model.rpType}, isNormal:$isNormal");
+    //print("[$runtimeType] model.rpType:${model.rpType}, isNormal:$isNormal");
 
     RpShareTypeEntity shareTypeEntity = isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
 
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
 
-    // rp_share_location_tag
+    var location = (model?.location ?? '').isNotEmpty ? '${model.location};' : '';
+    var range = '${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取';
+    var locationRange = '$location $range';
+
     return InkWell(
       onTap: () {
         // Navigator.push(
@@ -245,8 +248,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            // todo
-                            '总10个，已领取4个',
+                            '总${model.total}个，已领取${model.gotCount}个',
                             style: TextStyle(
                               color: HexColor("#333333"),
                               fontSize: 12,
@@ -288,8 +290,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                       width: 8,
                     ),
                     Text(
-                      // todo
-                      '${model?.location??''}；${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取',
+                      locationRange,
                       style: TextStyle(
                         fontSize: 12,
                         color: HexColor('#999999'),
