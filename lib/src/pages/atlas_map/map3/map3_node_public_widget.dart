@@ -636,7 +636,7 @@ Widget getHoldInNum(
                           focusNode: focusNode,
                           controller: textEditingController,
                           keyboardType: TextInputType.number,
-                          hint: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
+                          hintText: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
                           validator: (textStr) {
                             if (textStr.length == 0) {
                               return S.of(context).please_input_hyn_count;

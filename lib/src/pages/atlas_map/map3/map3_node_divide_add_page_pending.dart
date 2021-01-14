@@ -396,7 +396,7 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
                       keyboardType: TextInputType.number,
                       suffixText: "最佳",
                       suffixStyle: TextStyle(color: HexColor("#1F81FF"), fontSize: 14),
-                      hint: "最低买入200,000",
+                      hintText: "最低买入200,000",
                       validator: (textStr) {
                         if (textStr.length == 0) {
                           return S.of(context).please_input_hyn_count;

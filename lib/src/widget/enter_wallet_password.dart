@@ -14,6 +14,7 @@ import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/validator_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/widget/round_border_textfield.dart';
 
 import 'keyboard/wallet_password_dialog.dart';
 
@@ -64,7 +65,10 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
         ? SizedBox()
         : Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
               color: Colors.white,
             ),
             child: Stack(
@@ -92,7 +96,7 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                                   style: TextStyle(color: HexColor("#093956"), fontWeight: FontWeight.w500),
                                 ),
                               ),
-                              TextFormField(
+                              RoundBorderTextField(
                                 inputFormatters: [
 //                                if (widget.useDigits)
 //                                  LengthLimitingTextInputFormatter(6),
@@ -105,50 +109,9 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                                   }
                                 },
                                 controller: passwordEditingController,
-//                              keyboardType: widget.useDigits
-//                                  ? TextInputType.number
-//                                  : TextInputType.emailAddress,
                                 keyboardType: TextInputType.emailAddress,
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                                  filled: true,
-                                  fillColor: HexColor('#FFF2F2F2'),
-                                  hintText: S.of(context).please_input_wallet_password_hint,
-                                  errorText: walletEditErrorMsg != null ? walletEditErrorMsg : null,
-                                  hintStyle: TextStyle(
-                                    color: HexColor('#FF999999'),
-                                    fontSize: 14,
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
-                                      color: HexColor('#FFF2F2F2'),
-                                      width: 0.5,
-                                    ),
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
-                                      color: HexColor('#FFF2F2F2'),
-                                      width: 0.5,
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
-                                      color: HexColor('#FFF2F2F2'),
-                                      width: 0.5,
-                                    ),
-                                  ),
-                                  errorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
-                                      color: Colors.red,
-                                      width: 0.5,
-                                    ),
-                                  ),
-                                ),
+                                hintText: S.of(context).please_input_wallet_password_hint,
+                                errorText: walletEditErrorMsg != null ? walletEditErrorMsg : null,
                               ),
                               Row(
                                 children: <Widget>[

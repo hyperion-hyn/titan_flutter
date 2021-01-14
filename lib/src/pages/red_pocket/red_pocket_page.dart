@@ -55,6 +55,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   RPStatistics _rpStatistics;
   RpAirdropRoundInfo _latestRoundInfo;
   RpLevelAirdropInfo _rpLevelAirdropInfo;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -63,6 +64,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   @override
   void onCreated() {
+
+    _isLoading = true;
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
@@ -139,8 +142,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 )),
           ),
 
-          if (_latestRoundInfo != null) RpFloatingWidget(),
-          if (_latestRoundInfo != null) RpFloatingWidget(actionType: -1,),
+          if (!_isLoading) RpFloatingWidget(),
+          if (!_isLoading) RpFloatingWidget(actionType: -1,),
         ],
       ),
 
@@ -949,10 +952,18 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
       if (mounted) {
         _loadDataBloc.add(RefreshSuccessEvent());
-        setState(() {});
+        setState(() {
+          _isLoading = false;
+        });
       }
     } catch (e) {
-      _loadDataBloc.add(RefreshFailEvent());
+
+      if (mounted) {
+        _loadDataBloc.add(RefreshFailEvent());
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 }
