@@ -30,6 +30,7 @@ import 'package:titan/src/pages/home/bloc/bloc.dart';
 import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_open_page.dart';
 import 'package:titan/src/pages/wallet/wallet_tabs_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -199,6 +200,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
       var inviterAddress = content["from"];
       var walletName = content["name"];
       showInviteDialog(context,inviterAddress,walletName);
+    } else if (type == "rp" && subType == "sendRp") {
+      var rpId = content["rpId"];
+      showShareRpOpenDialog(context,id: rpId);
     } else if (type == "richinvite" && subType == "detail") {
       var inviterAddress = content["from"];
       var walletName = content["name"];
