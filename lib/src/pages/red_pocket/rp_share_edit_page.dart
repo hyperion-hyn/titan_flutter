@@ -564,11 +564,11 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
               var rpBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
 
               var minRp = _rpShareConfig?.rpMin ?? '0.01';
-              if (inputValue > Decimal.zero && inputValue < Decimal.parse(minRp)) {
-                errorText = '至少$minRp RP';
+              var count = int?.tryParse(_countController.text??'1')??1;
+              var multiMinRp = Decimal.parse(minRp) * Decimal.fromInt(count);
+              if (inputValue > Decimal.zero && inputValue < multiMinRp) {
+                errorText = '至少$multiMinRp RP';
               }
-
-              //print("inputValue:$inputValue, rpBalance:$rpBalance");
 
               if (rpBalance >= Decimal.zero && inputValue > rpBalance) {
                 errorText = 'RP余额不足';
@@ -611,8 +611,10 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
               var hynBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
 
               var minHyn = _rpShareConfig?.hynMin ?? '0.01';
-              if (inputValue > Decimal.zero && inputValue < Decimal.parse(minHyn)) {
-                errorText = '至少$minHyn HYN';
+              var count = int?.tryParse(_countController.text??'1')??1;
+              var multiMinHyn = Decimal.parse(minHyn) * Decimal.fromInt(count);
+              if (inputValue > Decimal.zero && inputValue < multiMinHyn) {
+                errorText = '至少$multiMinHyn HYN';
               }
 
               if (hynBalance >= Decimal.zero && inputValue > hynBalance) {
@@ -724,8 +726,10 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
   }
 
   Widget _buildSwitchCell() {
+    var hynMin = _rpShareConfig?.hynMin ?? '0.01';
+
     return _clipRectWidget(
-        desc: '如果只允许新人领取，你要为每个新人至少要塞 0.001 HYN 作为他之后矿工费所用',
+        desc: '如果只允许新人领取，你要为每个新人至少要塞 $hynMin HYN 作为他之后矿工费所用',
         vertical: 4,
         child: Row(
           children: [
@@ -1029,6 +1033,17 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     * 2.检查是否超过余额
     * */
 
+    // amount
+    var count = int.tryParse(_countController.text ?? '0') ?? 0;
+    if (count <= 0) {
+      Fluttertoast.showToast(msg: '请填写红包个数！');
+      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+
+      return;
+    }
+    reqEntity.count = count;
+
+
     // rpAmount
     var rpValue = Decimal.tryParse(_rpAmountController?.text ?? '0') ?? Decimal.zero;
     if (rpValue <= Decimal.zero) {
@@ -1039,6 +1054,8 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
     }
     reqEntity.rpAmount = rpValue.toDouble();
 
+    var hynMin = _rpShareConfig?.hynMin ?? '0.01';
+
     // hynAmount
     var hynValue = Decimal.tryParse(_hynAmountController?.text ?? '0') ?? Decimal.zero;
     if (hynValue <= Decimal.zero) {
@@ -1046,23 +1063,18 @@ class _RpShareEditState extends BaseState<RpShareEditPage> {
       _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
       return;
-    } else if (hynValue > Decimal.zero && hynValue <= Decimal.parse('0.001')) {
-      Fluttertoast.showToast(msg: '你要为每个新人至少要塞 0.001 HYN作为他之后矿工费所用');
+    } else if (hynValue > Decimal.zero && hynValue <= Decimal.parse(hynMin)) {
+      Fluttertoast.showToast(msg: '你要为每个新人至少要塞 $hynMin HYN作为他之后矿工费所用');
       _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
       return;
     }
     reqEntity.hynAmount = hynValue.toDouble();
 
-    // amount
-    var count = int.tryParse(_countController.text ?? '0') ?? 0;
-    if (count <= 0) {
-      Fluttertoast.showToast(msg: '请填写红包个数！');
-      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
-
-      return;
+    if (count > 1 && hynValue > Decimal.zero && rpValue > Decimal.zero) {
+      _focusKey = null;
+      _validController.add('-1');
     }
-    reqEntity.count = count;
 
     // password
     reqEntity.password = _maxLengthLimit(_passwordController);

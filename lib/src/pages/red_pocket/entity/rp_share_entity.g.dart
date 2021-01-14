@@ -32,6 +32,9 @@ RpShareOpenEntity _$RpShareOpenEntityFromJson(Map<String, dynamic> json) {
     json['location'] as String,
     json['getHYNAmount'] as String,
     json['getRPAmount'] as String,
+    (json['range'] as num).toDouble(),
+    json['rpType'] as String,
+    json['greeting'] as String,
   );
 }
 
@@ -46,6 +49,9 @@ Map<String, dynamic> _$RpShareOpenEntityToJson(RpShareOpenEntity instance) => <S
       'location': instance.location,
       'getHYNAmount': instance.getHYNAmount,
       'getRPAmount': instance.getRPAmount,
+      'range': instance.range,
+      'rpType': instance.rpType,
+      'greeting': instance.greeting,
     };
 
 RpShareSendEntity _$RpShareSendEntityFromJson(Map<String, dynamic> json) {

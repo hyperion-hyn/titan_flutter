@@ -91,7 +91,10 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                     padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
                     child: Text(
                       key,
-                      style: TextStyle(color: Color(0xff999999), fontSize: 12,),
+                      style: TextStyle(
+                        color: Color(0xff999999),
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                   ListView.builder(
@@ -112,18 +115,19 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
     );
   }
 
-
   Widget _itemBuilder(RpShareOpenEntity model) {
-    // var isNormal = (model.rpType ?? RpShareType.normal) == RpShareType.normal;
-    // print("[$runtimeType] model.rpType:${model.rpType}, isNormal:$isNormal");
+    var isNormal = (model.rpType ?? RpShareType.normal) == RpShareType.normal;
+    print("[$runtimeType] model.rpType:${model.rpType}, isNormal:$isNormal");
 
-    var isNormal = false;
     RpShareTypeEntity shareTypeEntity = isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
 
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
 
-    // rp_share_location_tag
+    var location = (model?.location ?? '').isNotEmpty ? '${model.location};' : '';
+    var range = '${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取';
+    var locationRange = '$location $range';
+
     return InkWell(
       onTap: () {
         // Navigator.push(
@@ -222,8 +226,8 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                         height: 6,
                       ),
                       Text(
-                        '恭喜发财，新年大吉！',
-                        //((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，新年大吉！',
+                        // '恭喜发财，新年大吉！',
+                        ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，新年大吉！',
                         style: TextStyle(
                           fontSize: 12,
                           color: HexColor('#999999'),
@@ -246,11 +250,10 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            // todo
-                            '总10个，已领取4个',
+                            '+ ${model.getRPAmount} RP，${model.getHYNAmount} HYN',
                             style: TextStyle(
                               color: HexColor("#333333"),
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                             maxLines: 3,
@@ -289,9 +292,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                       width: 8,
                     ),
                     Text(
-                      // todo
-                      '广州市天河区大街；10千米内可领取',
-                      //'广州市天河区大街；${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取',
+                      locationRange,
                       style: TextStyle(
                         fontSize: 12,
                         color: HexColor('#999999'),

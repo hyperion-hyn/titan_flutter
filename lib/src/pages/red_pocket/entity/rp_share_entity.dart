@@ -52,6 +52,15 @@ class RpShareOpenEntity extends Object {
   @JsonKey(name: 'getRPAmount')
   String getRPAmount;
 
+  @JsonKey(name: 'range')
+  double range;
+
+  @JsonKey(name: 'rpType')
+  String rpType;
+
+  @JsonKey(name: 'greeting')
+  String greeting;
+
   RpShareOpenEntity(
     this.address,
     this.avatar,
@@ -63,6 +72,9 @@ class RpShareOpenEntity extends Object {
     this.location,
     this.getHYNAmount,
     this.getRPAmount,
+    this.range,
+    this.rpType,
+    this.greeting,
   );
 
   factory RpShareOpenEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareOpenEntityFromJson(srcJson);
