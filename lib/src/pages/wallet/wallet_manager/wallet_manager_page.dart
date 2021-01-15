@@ -131,7 +131,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
   }
 
   @override
-  Widget build(BuildContext cofntext) {
+  Widget build(BuildContext context) {
     return Scaffold(
         appBar: BaseAppBar(
           backgroundColor: HexColor('#F6F6F6'),

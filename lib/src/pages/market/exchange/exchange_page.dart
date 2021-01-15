@@ -8,6 +8,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
@@ -488,6 +489,10 @@ class _ExchangePageState extends BaseState<ExchangePage>
     var _isExchangeAccountLoggin =
         ExchangeInheritedModel.of(context).exchangeModel?.hasActiveAccount() ??
             false;
+
+    if(AppLockInheritedModel.of(context).isWalletLockOn){
+      return Text('请先解锁钱包');
+    }
     if (_isExchangeAccountLoggin) {
       return Text.rich(
         TextSpan(children: [

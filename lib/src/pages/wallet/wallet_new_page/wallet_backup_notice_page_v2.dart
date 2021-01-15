@@ -105,7 +105,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
                 ClickOvalButton(
                   '下一步',
                   () {
-                    _showScreenshotWarningDailog();
+                    _showScreenshotWarningDialog();
                   },
                   width: 300,
                   height: 46,
@@ -151,7 +151,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
     );
   }
 
-  _showScreenshotWarningDailog() {
+  _showScreenshotWarningDialog() {
     showDialog(
         context: context,
         builder: (BuildContext context) {

@@ -592,7 +592,7 @@ class _AtlasCreateNodePageState extends BaseState<AtlasCreateNodePage> {
           return;
         }
         String text = await Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => AtlasOptionEditPage(
+            builder: (BuildContext context) => OptionEditPage(
                   title: title,
                   content: content,
                   hint: hint,

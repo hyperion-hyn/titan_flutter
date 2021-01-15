@@ -42,6 +42,7 @@ import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/confirm_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_import_account_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_backup_notice_page_v2.dart';
+import 'package:titan/src/pages/wallet/wallet_new_page/wallet_setting_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -140,7 +141,7 @@ var settingWalletHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   Wallet wallet =
       Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
-  return WalletSettingPage(wallet);
+  return WalletSettingPageV2(wallet);
 });
 
 var settingBackupNoticeWalletHandler = Handler(handlerFunc: (context, params) {
