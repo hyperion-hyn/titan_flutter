@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
@@ -35,10 +37,11 @@ class RpShareGetSuccessPage extends StatefulWidget {
 
 class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
   final RPApi _rpApi = RPApi();
-  allPage.AllPageState _currentState = allPage.LoadingState();
   RpShareEntity _shareEntity;
+  RpShareOpenEntity myRpOpenEntity;
   TapGestureRecognizer _rpRecognizer;
   TapGestureRecognizer _hynRecognizer;
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   @override
   void initState() {
@@ -49,19 +52,26 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
   }
 
   void _rpHandlePress() {
-    WalletShowAccountInfoPage.jumpToAccountInfoPage(
-        context, _shareEntity?.info?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+    if ((myRpOpenEntity?.rpHash ?? "") == "") {
+      return;
+    }
+    WalletShowAccountInfoPage.jumpToAccountInfoPage(context,
+        myRpOpenEntity?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
   }
 
   void _hynHandlePress() {
-    WalletShowAccountInfoPage.jumpToAccountInfoPage(
-        context, _shareEntity?.info?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
+    if ((myRpOpenEntity?.hynHash ?? "") == "") {
+      return;
+    }
+    WalletShowAccountInfoPage.jumpToAccountInfoPage(context,
+        myRpOpenEntity?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
   }
 
   @override
   void dispose() {
     _rpRecognizer.dispose();
     _hynRecognizer.dispose();
+    _loadDataBloc.close();
     super.dispose();
   }
 
@@ -80,14 +90,18 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
         _address,
         id: widget.id,
       );
-      setState(() {
-        _currentState = null;
-      });
+      if (_shareEntity?.info?.alreadyGot ?? false) {
+        _shareEntity.details.forEach((element) {
+          if (element.address.toLowerCase() == _address.toLowerCase()) {
+            myRpOpenEntity = element;
+          }
+        });
+      }
+      setState(() {});
+      _loadDataBloc.add(RefreshSuccessEvent());
       print("[$runtimeType] shareEntity:${_shareEntity.info.toJson()}");
     } catch (error) {
-      setState(() {
-        _currentState = allPage.LoadCustomState();
-      });
+      _loadDataBloc.add(LoadFailEvent());
     }
   }
 
@@ -100,97 +114,95 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
   }
 
   Widget _pageWidget(BuildContext context) {
-    return CustomScrollView(
-      slivers: <Widget>[
-        _headBarWidget(),
-        if (_currentState != null || _shareEntity == null) ...[
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 200.0),
-              child: AllPageStateContainer(_currentState, () {
-                setState(() {
-                  _currentState = LoadingState();
-                });
-                _getNewBeeInfo();
-              }),
-            ),
-          ),
-        ] else ...[
-          _headWidget(),
-          _listWidget(),
-        ]
-      ],
-    );
-  }
-
-  _headBarWidget() {
-    return SliverToBoxAdapter(
-      child: Stack(
-        children: [
-          Image.asset(
-            "res/drawable/rp_receiver_detail_top.png",
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(top: 34, left: 16.0, right: 16, bottom: 16),
-              child: Image.asset(
-                "res/drawable/rp_receiver_success_arraw_back.png",
-                width: 17,
-                height: 17,
-              ),
-            ),
-          ),
-          if ((_shareEntity?.info?.total??0) > (_shareEntity?.info?.gotCount??0))
-            Positioned(
-              top: 34,
-              right: 16,
-              child: InkWell(
-                onTap: () {
-                  var info = _shareEntity.info;
-                  RpShareReqEntity reqEntity = RpShareReqEntity.onlyId(info.id);
-                  reqEntity.rpType = info.rpType;
-                  reqEntity.greeting = info.greeting;
-                  reqEntity.isNewBee = info.isNewBee;
-                  reqEntity.count = info.total;
-                  reqEntity.range = info.range;
-                  reqEntity.location = info.location;
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RpShareSendSuccessPage(
-                        reqEntity: reqEntity,
-                        actionType: 1,
-                      ),
-                    ),
-                  );
-                },
-                child: Image.asset(
-                  "res/drawable/node_share.png",
-                  width: 17,
-                  height: 17,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-        ],
+    return Stack(children: [
+      Image.asset(
+        "res/drawable/rp_receiver_detail_top.png",
+        width: double.infinity,
+        fit: BoxFit.cover,
       ),
-    );
+      LoadDataContainer(
+        bloc: _loadDataBloc,
+        onLoadData: () {
+          _getNewBeeInfo();
+        },
+        onRefresh: () {
+          _getNewBeeInfo();
+        },
+        onLoadingMore: () {
+          _getNewBeeInfo();
+        },
+        child: CustomScrollView(
+          slivers: <Widget>[_headWidget(), _listWidget()],
+        ),
+      ),
+      InkWell(
+        onTap: () {
+          Navigator.of(context).pop();
+        },
+        child: Padding(
+          padding:
+              const EdgeInsets.only(top: 34, left: 16.0, right: 16, bottom: 16),
+          child: Image.asset(
+            "res/drawable/rp_receiver_success_arraw_back.png",
+            width: 17,
+            height: 17,
+          ),
+        ),
+      ),
+      if ((_shareEntity?.info?.rpType ?? RpShareType.location) ==
+          RpShareType.normal)
+        Positioned(
+          top: 34,
+          right: 16,
+          child: InkWell(
+            onTap: () {
+              var info = _shareEntity.info;
+              RpShareReqEntity reqEntity = RpShareReqEntity.onlyId(info.id);
+              reqEntity.rpType = info.rpType;
+              reqEntity.greeting = info.greeting;
+              reqEntity.isNewBee = info.isNewBee;
+              reqEntity.count = info.total;
+              reqEntity.range = info.range;
+              reqEntity.location = info.location;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RpShareSendSuccessPage(
+                    reqEntity: reqEntity,
+                    actionType: 1,
+                  ),
+                ),
+              );
+            },
+            child: Image.asset(
+              "res/drawable/node_share.png",
+              width: 17,
+              height: 17,
+              color: Colors.white,
+            ),
+          ),
+        ),
+    ]);
   }
 
   _headWidget() {
+    if (_shareEntity == null) {
+      return SliverToBoxAdapter(
+        child: Container(),
+      );
+    }
+
     return SliverToBoxAdapter(
       child: Column(
         children: [
           Column(
             children: [
+              Container(
+                height: 134,
+                color: Colors.transparent,
+              ),
               Padding(
-                padding: const EdgeInsets.only(top: 28.0, bottom: 6),
+                padding: const EdgeInsets.only(bottom: 6),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -202,13 +214,17 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                           color: Colors.white,
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                            image: AssetImage("res/drawable/ic_rp_invite_friend_head_img_no_border.png"),
+                            image: AssetImage(
+                                "res/drawable/ic_rp_invite_friend_head_img_no_border.png"),
                             fit: BoxFit.cover,
                           )),
                     ),
                     Text(
                       "${_shareEntity?.info?.owner ?? ""}发的${(_shareEntity?.info?.rpType ?? "") == RpShareType.location ? "位置" : "新人"}红包",
-                      style: TextStyle(fontSize: 18, color: HexColor("#333333"), fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: HexColor("#333333"),
+                          fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -247,41 +263,66 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
               SizedBox(
                 height: 26,
               ),
-              if (_shareEntity?.info?.alreadyGot ?? false)
+              if (_shareEntity?.info?.alreadyGot ??
+                  false && myRpOpenEntity != null)
                 Column(
                   children: [
-                    RichText(
-                      text: TextSpan(
-                          text: _shareEntity.info.rpAmount,
-                          style: TextStyle(fontSize: 32, color: HexColor("#D09100"), fontWeight: FontWeight.bold),
-                          recognizer: _rpRecognizer,
-                          children: [
-                            TextSpan(
-                              text: " RP",
-                              style: TextStyle(fontSize: 20, color: HexColor("#D09100"), fontWeight: FontWeight.bold),
-                              recognizer: _rpRecognizer,
-                            ),
-                            TextSpan(
-                              text: "  +  ",
-                              style: TextStyle(fontSize: 30, color: HexColor("#333333"), fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(
-                              text: _shareEntity.info.hynAmount,
-                              style: TextStyle(fontSize: 32, color: HexColor("#D09100"), fontWeight: FontWeight.bold),
-                              recognizer: _hynRecognizer,
-                            ),
-                            TextSpan(
-                              text: " HYN",
-                              style: TextStyle(fontSize: 20, color: HexColor("#D09100"), fontWeight: FontWeight.bold),
-                              recognizer: _hynRecognizer,
-                            ),
-                          ]),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: RichText(
+                              textAlign: TextAlign.end,
+                              text: TextSpan(
+                                  text: myRpOpenEntity.rpAmount,
+                                  style: TextStyle(
+                                      fontSize: 28,
+                                      color: HexColor("#D09100"),
+                                      fontWeight: FontWeight.bold),
+                                  recognizer: _rpRecognizer,
+                                  children: [
+                                    TextSpan(
+                                      text: " RP",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: HexColor("#D09100"),
+                                          fontWeight: FontWeight.bold),
+                                      recognizer: _rpRecognizer,
+                                    ),
+                                  ])),
+                        ),
+                        Text("  +  ",
+                            style: TextStyle(
+                                fontSize: 30,
+                                color: HexColor("#333333"),
+                                fontWeight: FontWeight.bold)),
+                        Expanded(
+                          child: RichText(
+                              text: TextSpan(
+                                  text: myRpOpenEntity.hynAmount,
+                                  style: TextStyle(
+                                      fontSize: 28,
+                                      color: HexColor("#D09100"),
+                                      fontWeight: FontWeight.bold),
+                                  recognizer: _rpRecognizer,
+                                  children: [
+                                TextSpan(
+                                  text: " HYN",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color: HexColor("#D09100"),
+                                      fontWeight: FontWeight.bold),
+                                  recognizer: _rpRecognizer,
+                                ),
+                              ])),
+                        ),
+                      ],
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
                         top: 2.0,
                       ),
-                      child: Text("已领取红包，请稍后查看钱包记录", style: TextStyles.textC333S12),
+                      child: Text("已领取红包，请稍后查看钱包记录",
+                          style: TextStyles.textC333S12),
                     ),
                     Container(
                       margin: const EdgeInsets.only(top: 50.0),
@@ -314,6 +355,11 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
   }
 
   _listWidget() {
+    if (_shareEntity == null) {
+      return SliverToBoxAdapter(
+        child: Container(),
+      );
+    }
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
       var item = _shareEntity.details[index];
@@ -324,14 +370,16 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 21, left: 16, right: 16, bottom: 17),
+              padding: const EdgeInsets.only(
+                  top: 21, left: 16, right: 16, bottom: 17),
               child: Row(
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(
                       right: 10,
                     ),
-                    child: iconWidget("", item.username, item.address, isCircle: true),
+                    child: iconWidget("", item.username, item.address,
+                        isCircle: true),
                   ),
                   Expanded(
                     child: Column(
@@ -349,7 +397,9 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                             GestureDetector(
                               onTap: () {
                                 WalletShowAccountInfoPage.jumpToAccountInfoPage(
-                                    context, item?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+                                    context,
+                                    item?.rpHash ?? '',
+                                    SupportedTokens.HYN_RP_HRC30.symbol);
                               },
                               child: Text(
                                 "${item.rpAmount} RP",
@@ -366,7 +416,9 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                             GestureDetector(
                               onTap: () {
                                 WalletShowAccountInfoPage.jumpToAccountInfoPage(
-                                    context, item?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
+                                    context,
+                                    item?.hynHash ?? '',
+                                    SupportedTokens.HYN_Atlas.symbol);
                               },
                               child: Text(
                                 " ,${item.hynAmount} HYN",
@@ -385,7 +437,9 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                         Row(
                           children: [
                             Text(
-                              shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(item.address)),
+                              shortBlockChainAddress(
+                                  WalletUtil.ethAddressToBech32Address(
+                                      item.address)),
                               style: TextStyle(
                                 fontSize: 14,
                                 color: HexColor('#999999'),
@@ -395,7 +449,8 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                             if (item.isBest)
                               Text(
                                 "最佳",
-                                style: TextStyle(fontSize: 12, color: HexColor('#E8AC13')),
+                                style: TextStyle(
+                                    fontSize: 12, color: HexColor('#E8AC13')),
                                 textAlign: TextAlign.right,
                               ),
                           ],
