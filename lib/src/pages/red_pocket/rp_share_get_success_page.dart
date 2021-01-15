@@ -251,6 +251,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                     ),
                     if (_isShowPwdBtn)
                       IconButton(
+                        tooltip: '点击可获取红包口令',
                         icon: const Icon(
                           Icons.info,
                           size: 16,
