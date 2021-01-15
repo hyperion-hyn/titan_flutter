@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
@@ -35,10 +37,10 @@ class RpShareGetSuccessPage extends StatefulWidget {
 
 class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
   final RPApi _rpApi = RPApi();
-  allPage.AllPageState _currentState = allPage.LoadingState();
   RpShareEntity _shareEntity;
   TapGestureRecognizer _rpRecognizer;
   TapGestureRecognizer _hynRecognizer;
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   @override
   void initState() {
@@ -49,11 +51,17 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
   }
 
   void _rpHandlePress() {
+    if((_shareEntity?.info?.rpHash ?? "") == ""){
+      return;
+    }
     WalletShowAccountInfoPage.jumpToAccountInfoPage(
         context, _shareEntity?.info?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
   }
 
   void _hynHandlePress() {
+    if((_shareEntity?.info?.hynHash ?? "") == ""){
+      return;
+    }
     WalletShowAccountInfoPage.jumpToAccountInfoPage(
         context, _shareEntity?.info?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
   }
@@ -62,6 +70,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
   void dispose() {
     _rpRecognizer.dispose();
     _hynRecognizer.dispose();
+    _loadDataBloc.close();
     super.dispose();
   }
 
@@ -81,13 +90,11 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
         id: widget.id,
       );
       setState(() {
-        _currentState = null;
       });
+      _loadDataBloc.add(RefreshSuccessEvent());
       print("[$runtimeType] shareEntity:${_shareEntity.info.toJson()}");
     } catch (error) {
-      setState(() {
-        _currentState = allPage.LoadCustomState();
-      });
+      _loadDataBloc.add(LoadFailEvent());
     }
   }
 
@@ -100,97 +107,97 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
   }
 
   Widget _pageWidget(BuildContext context) {
-    return CustomScrollView(
-      slivers: <Widget>[
-        _headBarWidget(),
-        if (_currentState != null || _shareEntity == null) ...[
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 200.0),
-              child: AllPageStateContainer(_currentState, () {
-                setState(() {
-                  _currentState = LoadingState();
-                });
-                _getNewBeeInfo();
-              }),
+    return Stack(
+      children: [
+        Image.asset(
+          "res/drawable/rp_receiver_detail_top.png",
+          width: double.infinity,
+          fit: BoxFit.cover,
+        ),
+        LoadDataContainer(
+          bloc: _loadDataBloc,
+          onLoadData: () {
+            _getNewBeeInfo();
+          },
+          onRefresh: () {
+            _getNewBeeInfo();
+          },
+          onLoadingMore: () {
+            _getNewBeeInfo();
+          },
+          child: CustomScrollView(
+            slivers: <Widget>[
+              _headWidget(),
+              _listWidget()
+            ],
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(top: 34, left: 16.0, right: 16, bottom: 16),
+            child: Image.asset(
+              "res/drawable/rp_receiver_success_arraw_back.png",
+              width: 17,
+              height: 17,
             ),
           ),
-        ] else ...[
-          _headWidget(),
-          _listWidget(),
-        ]
-      ],
-    );
-  }
-
-  _headBarWidget() {
-    return SliverToBoxAdapter(
-      child: Stack(
-        children: [
-          Image.asset(
-            "res/drawable/rp_receiver_detail_top.png",
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(top: 34, left: 16.0, right: 16, bottom: 16),
+        ),
+        if ((_shareEntity?.info?.rpType ?? RpShareType.location) == RpShareType.normal)
+          Positioned(
+            top: 34,
+            right: 16,
+            child: InkWell(
+              onTap: () {
+                var info = _shareEntity.info;
+                RpShareReqEntity reqEntity = RpShareReqEntity.onlyId(info.id);
+                reqEntity.rpType = info.rpType;
+                reqEntity.greeting = info.greeting;
+                reqEntity.isNewBee = info.isNewBee;
+                reqEntity.count = info.total;
+                reqEntity.range = info.range;
+                reqEntity.location = info.location;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RpShareSendSuccessPage(
+                      reqEntity: reqEntity,
+                      actionType: 1,
+                    ),
+                  ),
+                );
+              },
               child: Image.asset(
-                "res/drawable/rp_receiver_success_arraw_back.png",
+                "res/drawable/node_share.png",
                 width: 17,
                 height: 17,
+                color: Colors.white,
               ),
             ),
           ),
-          if ((_shareEntity?.info?.total??0) > (_shareEntity?.info?.gotCount??0))
-            Positioned(
-              top: 34,
-              right: 16,
-              child: InkWell(
-                onTap: () {
-                  var info = _shareEntity.info;
-                  RpShareReqEntity reqEntity = RpShareReqEntity.onlyId(info.id);
-                  reqEntity.rpType = info.rpType;
-                  reqEntity.greeting = info.greeting;
-                  reqEntity.isNewBee = info.isNewBee;
-                  reqEntity.count = info.total;
-                  reqEntity.range = info.range;
-                  reqEntity.location = info.location;
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RpShareSendSuccessPage(
-                        reqEntity: reqEntity,
-                        actionType: 1,
-                      ),
-                    ),
-                  );
-                },
-                child: Image.asset(
-                  "res/drawable/node_share.png",
-                  width: 17,
-                  height: 17,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-        ],
-      ),
+      ]
     );
   }
 
   _headWidget() {
+    if(_shareEntity == null){
+      return SliverToBoxAdapter(
+          child: Container(),
+      );
+    }
     return SliverToBoxAdapter(
       child: Column(
         children: [
           Column(
             children: [
+              Container(
+                height: 134,
+                color: Colors.transparent,
+              ),
               Padding(
-                padding: const EdgeInsets.only(top: 28.0, bottom: 6),
+                padding: const EdgeInsets.only(bottom: 6),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -314,6 +321,11 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
   }
 
   _listWidget() {
+    if(_shareEntity == null){
+      return SliverToBoxAdapter(
+        child: Container(),
+      );
+    }
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
       var item = _shareEntity.details[index];
