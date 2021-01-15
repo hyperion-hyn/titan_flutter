@@ -366,7 +366,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     List symbolMarkerFeatures =
     await mapboxMapController?.queryRenderedFeaturesInRect(rect, [symbolMarkerLayerId], null);
     if (symbolMarkerFeatures != null && symbolMarkerFeatures.isNotEmpty) {
-      print("symbolMarkerFeatures：" + symbolMarkerFeatures[0]);
+      print("symbolMarkerFeatures11：" + symbolMarkerFeatures[0]);
 
       var symbolMarkerFeature = json.decode(symbolMarkerFeatures[0]);
 

@@ -903,6 +903,10 @@ class HomePanelState extends State<HomePanel> {
         }
       }
     } else if(scanStr.contains(RpShareGetDialogPage.shareDomain)){
+      /*RegExp regExpStr = new RegExp(r"(?<=rpId=).+(?<=&from)");
+      String rpId = regExpStr.firstMatch(scanStr).group(0);
+      print("!!!!3322 $rpId");*/
+
       var rpIdArrAfter = scanStr.split("?rpId=");
       if(rpIdArrAfter.length > 0){
         var rpIdBefore = rpIdArrAfter[1].split("&");
