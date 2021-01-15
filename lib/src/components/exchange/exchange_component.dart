@@ -16,8 +16,7 @@ import 'bloc/bloc.dart';
 import 'package:nested/nested.dart';
 
 class ExchangeComponent extends SingleChildStatelessWidget {
-
-  ExchangeComponent({Key key, Widget child}): super(key: key, child: child);
+  ExchangeComponent({Key key, Widget child}) : super(key: key, child: child);
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
@@ -128,8 +127,8 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
               }
             }
           }
-          setState(() {});
-        }
+        } else if (state is UpdateCoinListState) {}
+        if (mounted) setState(() {});
       },
       child: BlocBuilder<ExchangeCmpBloc, ExchangeCmpState>(
         builder: (context, state) {

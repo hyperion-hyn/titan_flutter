@@ -9,6 +9,7 @@ import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
+import 'package:titan/src/pages/market/entity/exchange_coin_list.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utils.dart';
@@ -16,8 +17,7 @@ import 'package:web_socket_channel/io.dart';
 import 'package:nested/nested.dart';
 
 class SocketComponent extends SingleChildStatelessWidget {
-
-  SocketComponent({Key key, Widget child}): super(key: key, child: child);
+  SocketComponent({Key key, Widget child}) : super(key: key, child: child);
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
@@ -46,6 +46,8 @@ class _SocketState extends State<_SocketManager> {
 
   // 24小时候成交数据
   List<MarketItemEntity> _marketItemList = List();
+
+  ExchangeCoinList _exchangeCoinList;
 
   // List<List<String>> _tradeDetailList;
   Timer _timer;
@@ -132,14 +134,26 @@ class _SocketState extends State<_SocketManager> {
     // 24hour
     _bloc.add(SubChannelEvent(channel: SocketConfig.channelKLine24Hour));
 
+    await _getCacheCoinList();
     await _getCacheMarketSymbolList();
 
     // Market
     _bloc.add(MarketSymbolEvent());
+    _bloc.add(UpdateExchangeCoinListEvent());
 
     // trade
 //    _bloc.add(SubChannelEvent(channel: hynusdtTradeChannel));
 //    _bloc.add(SubChannelEvent(channel: hynethTradeChannel));
+  }
+
+  _getCacheCoinList() async {
+    var sharePref = await SharedPreferences.getInstance();
+    try {
+      var json = jsonDecode(sharePref.getString(
+        PrefsKey.CACHE_EXCHANGE_COIN_LIST,
+      ));
+      _exchangeCoinList = ExchangeCoinList.fromJson(json);
+    } catch (e) {}
   }
 
   _getCacheMarketSymbolList() async {
@@ -192,17 +206,32 @@ class _SocketState extends State<_SocketManager> {
           _channelList.add(state.channel);
         } else if (state is UnSubChannelState) {
           _channelList.remove(state.channel);
+        } else if (state is UpdateExchangeCoinListState) {
+          _exchangeCoinList = state.exchangeCoinList;
+          cacheDebounceLater.debounceInterval(() {
+            _cacheExchangeCoinList(_exchangeCoinList);
+          }, t: 1000, runImmediately: true);
         }
       },
       child: BlocBuilder<SocketBloc, SocketState>(
         builder: (context, state) {
           return MarketInheritedModel(
             marketItemList: _marketItemList,
+            exchangeCoinList: _exchangeCoinList,
             // tradeDetailList: _tradeDetailList,
             child: widget.child,
           );
         },
       ),
+    );
+  }
+
+  Future<void> _cacheExchangeCoinList(ExchangeCoinList exchangeCoinList) async {
+    var sharePref = await SharedPreferences.getInstance();
+
+    await sharePref.setString(
+      PrefsKey.CACHE_EXCHANGE_COIN_LIST,
+      jsonEncode(exchangeCoinList.toJson()),
     );
   }
 
@@ -286,12 +315,15 @@ enum SocketAspect { marketItemList }
 
 class MarketInheritedModel extends InheritedModel<SocketAspect> {
   final List<MarketItemEntity> marketItemList;
+  final ExchangeCoinList exchangeCoinList;
 
   // final List<List<String>> tradeDetailList;
 
   const MarketInheritedModel({
     Key key,
     @required this.marketItemList,
+    @required this.exchangeCoinList,
+
     // @required this.tradeDetailList,
     @required Widget child,
   }) : super(key: key, child: child);
@@ -308,6 +340,27 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
       }
     });
     return marketItemEntity;
+  }
+
+  List<MarketItemEntity> getFilterMarketItemList() {
+    if (exchangeCoinList == null) {
+      return marketItemList;
+    }
+
+    try {
+      List<MarketItemEntity> filteredList = List();
+      exchangeCoinList.activeExchangeMap?.forEach((key, value) {
+        marketItemList.forEach((marketItem) {
+          if (marketItem.base == key &&
+              (value as List).contains(marketItem?.quote)) {
+            filteredList.add(marketItem);
+          }
+        });
+      });
+      return filteredList;
+    } catch (e) {
+      return marketItemList;
+    }
   }
 
   String getRealTimePrice(String symbol) {
