@@ -85,11 +85,25 @@ class Const {
   static const kNcovMapStyleCn = 'https://cn.tile.map3.network/ncov.json';
 
   //white
-  static const kWhiteMapStyleCn =
-      'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+  // static const kWhiteMapStyleCn =
+  //     'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+  static String get kWhiteMapStyleCn {
+    if (env.buildType == BuildType.DEV) {
+      return 'https://cn.tile.map3.network/see-it-all-rp-test.json';
+    } else {
+      return 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+    }
+  }
 
-  static const kWhiteMapStyle =
-      'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
+  // static const kWhiteMapStyle =
+  //     'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
+  static String get kWhiteMapStyle {
+    if (env.buildType == BuildType.DEV) {
+      return 'https://static.hyn.space/maptiles/see-it-all-rp-test.json';
+    } else {
+      return 'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
+    }
+  }
 
 //white-without
   static const kWhiteWithoutMapStyleCn =

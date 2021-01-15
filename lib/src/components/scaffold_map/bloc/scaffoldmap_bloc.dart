@@ -13,7 +13,6 @@ import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/data/entity/poi/mapbox_poi.dart';
 import 'package:titan/src/data/entity/poi/poi_interface.dart';
-import 'package:titan/src/data/entity/poi/user_rp_share_poi.dart';
 import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
 import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
 import 'package:rxdart/rxdart.dart';
@@ -68,8 +67,6 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
           yield FocusingPoiState(
               status: Status.failed, poi: poi, message: e.message);
         }
-      } else if (poi is UserRpSharePoi) {
-          yield FocusingPoiState(status: Status.success, poi: poi);
       } else if (poi.address == null) {
         //this should be mapbox poi, we need to fill more info about it.
         yield FocusingPoiState(status: Status.loading, poi: poi);

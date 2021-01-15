@@ -18,7 +18,7 @@ import 'package:titan/src/data/entity/poi/mapbox_poi.dart';
 import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/data/entity/poi/user_contribution_poi.dart' as position_model;
-import 'package:titan/src/data/entity/poi/user_rp_share_poi.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
 import 'bloc/bloc.dart';
@@ -193,6 +193,10 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       updateMyLocationTrackingMode(MyLocationTrackingMode.None);
       return;
     }
+    if (await _clickOnRpLayer(rect)) {
+      updateMyLocationTrackingMode(MyLocationTrackingMode.None);
+      return;
+    }
     if (await _clickOnCommonSymbolLayer(rect)) {
       updateMyLocationTrackingMode(MyLocationTrackingMode.None);
       return;
@@ -355,6 +359,34 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     return false;
   }
 
+  /// 查找搜索结果的layer
+  Future<bool> _clickOnRpLayer(Rect rect) async {
+    String symbolMarkerLayerId = "rp";
+
+    List symbolMarkerFeatures =
+    await mapboxMapController?.queryRenderedFeaturesInRect(rect, [symbolMarkerLayerId], null);
+    if (symbolMarkerFeatures != null && symbolMarkerFeatures.isNotEmpty) {
+      print("symbolMarkerFeatures：" + symbolMarkerFeatures[0]);
+
+      var symbolMarkerFeature = json.decode(symbolMarkerFeatures[0]);
+
+      var markerId = symbolMarkerFeature["properties"]["rpID"];
+      var coordinatesArray = symbolMarkerFeature["geometry"]["coordinates"];
+      var coordinates = LatLng(coordinatesArray[1], coordinatesArray[0]);
+
+      print("markerID:$markerId");
+
+      if (markerId != null) {
+        showShareRpOpenDialog(context,id: markerId);
+
+        // UserRpSharePoi userRpSharePoi = UserRpSharePoi(markerId, coordinates);
+        // BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: userRpSharePoi));
+        return true;
+      }
+    }
+    return false;
+  }
+
   Future<bool> _clickOnHeavenLayer(Rect rect) async {
     // search heaven map layer
     print("heavenMapLayers:$heavenMapLayers");
@@ -419,14 +451,10 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       }
 
       var pid = firstFeature["properties"]["pid"];
-      var rpId = firstFeature["properties"]["rpId"];
       if (pid != null) {
         var l = position_model.Location.fromJson(firstFeature['geometry']);
         position_model.UserContributionPoi confirmPoiItem = position_model.UserContributionPoi.setPid(pid, l);
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: confirmPoiItem));
-      } else if (rpId != null) {
-        UserRpSharePoi userRpSharePoi = UserRpSharePoi(rpId, coordinates);
-        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: userRpSharePoi));
       } else {
         var poi = MapBoxPoi(name: name, latLng: coordinates);
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
