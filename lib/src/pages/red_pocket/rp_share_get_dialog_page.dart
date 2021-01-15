@@ -423,7 +423,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: HexColor("#333333"),
-                decoration: TextDecoration.none)),
+                decoration: TextDecoration.none,)),
           ),
           Padding(
             padding: const EdgeInsets.only(left:24,right:24.0,bottom: 20),

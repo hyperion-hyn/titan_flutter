@@ -138,6 +138,14 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> with SingleTick
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
 
     if (widget.actionType == -1) {
+
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => RpShareSendSuccessLocationPage(),
+      //   ),
+      // );
+      // return;
       /*
       final curvedValue = Curves.easeInOutQuad.transform(Tween<double>(begin: 0, end: 1).animate(controller).value);
 
@@ -240,7 +248,7 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> with SingleTick
       // var _walletName = activeWallet.wallet.keystore.name;
       showShareRpOpenDialog(
         context,
-        id: '53K7RE',
+        id: 'AEVK8X',
       );
       return;
     }

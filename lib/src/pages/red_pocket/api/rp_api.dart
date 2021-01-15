@@ -814,4 +814,23 @@ class RPApi {
       ),
     );
   }
+
+  // 获取新人/位置红包密码
+  Future<dynamic> getRpPwdInfo(
+      String address, {
+        String id = '',
+      }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/new-bee/$address/get-pwd',
+      EntityFactory<dynamic>((json) {
+        return json;
+      }),
+      params: {
+        'id': id,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
 }
