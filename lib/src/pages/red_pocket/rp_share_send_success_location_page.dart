@@ -41,10 +41,11 @@ class _RpShareSendSuccessLocationState extends State<RpShareSendSuccessLocationP
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(4.0),
                     child: Image.asset(
-                      "res/drawable/check_outline.png",
+                      "res/drawable/rp_share_send_success_location_tag.png",
                       fit: BoxFit.contain,
-                      width: 72,
-                      color: HexColor("#FF4D4D"),
+                      width: 80,
+                      height: 82,
+                      // color: HexColor("#FF4D4D"),
                     ),
                   ),
                 ),
@@ -58,22 +59,29 @@ class _RpShareSendSuccessLocationState extends State<RpShareSendSuccessLocationP
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Text(
                   action,
-                  style: TextStyle(fontSize: 14),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: HexColor('#333333'),
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
-              SizedBox(
-                height: 60,
-              ),
-              ClickOvalButton(
-                '已完成',
-                () {
-                  _pop(context);
-                },
-                btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
-                fontSize: 16,
-                width: 260,
-                height: 42,
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 125),
+                child: ClickOvalButton(
+                  S.of(context).finish,
+                  () {
+                    _pop(context);
+                  },
+                  btnColor: [
+                    HexColor("#FF0527"),
+                    HexColor("#FF4D4D"),
+                  ],
+                  fontSize: 16,
+                  width: 260,
+                  height: 42,
+                ),
               ),
             ],
           ),
