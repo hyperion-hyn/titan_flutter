@@ -9,16 +9,14 @@ import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import '../coin_market_api.dart';
-import '../vo/symbol_quote_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/utils/future_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 
@@ -27,7 +25,6 @@ import '../../../global.dart';
 import '../wallet_repository.dart';
 import '../vo/wallet_vo.dart';
 import '../vo/coin_vo.dart';
-import 'dart:math';
 
 class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   static const DEFAULT_SYMBOLS = ['ETH', 'HYN', 'USDT', 'BTC'];
@@ -148,14 +145,13 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
         if (_activatedWalletVo != null) {
           //faster show quote
-          yield UpdateWalletPageState(1,
-              sign: quotesSign, quoteModel: currentQuotesModel);
+          yield UpdateWalletPageState(1, sign: quotesSign, quoteModel: currentQuotesModel);
           await walletRepository.updateWalletVoBalance(_activatedWalletVo);
           _saveWalletVoBalanceToDisk(_activatedWalletVo); //save balance data to disk;
           yield UpdateWalletPageState(0,
               sign: quotesSign, quoteModel: currentQuotesModel, walletVo: _activatedWalletVo.copyWith());
         } else {
-          yield UpdateWalletPageState(0,sign: quotesSign, quoteModel: currentQuotesModel);
+          yield UpdateWalletPageState(0, sign: quotesSign, quoteModel: currentQuotesModel);
         }
 
         if (event.updateGasPrice) {
@@ -190,17 +186,12 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       yield UpdatedQuotesSignState(sign: event.sign);
     } else if (event is UpdateGasPriceEvent) {
       yield GasPriceState(status: Status.loading);
-      bool isGasSuccess = false;
+      bool isEthGasSuccess = false;
       bool isBTCGasSuccess = false;
       try {
         var response = await futureRetry(3, requestGasPrice);
-        var gasPriceRecommend = GasPriceRecommend(
-            parseGasPriceToBigIntWei(response['fastest']),
-            0.5,
-            parseGasPriceToBigIntWei(response['fast']),
-            4,
-            parseGasPriceToBigIntWei(response['average']),
-            15);
+        var gasPriceRecommend = GasPriceRecommend(parseGasPriceToBigIntWei(response['fastest']), 0.5,
+            parseGasPriceToBigIntWei(response['fast']), 4, parseGasPriceToBigIntWei(response['average']), 15);
         /*var gasPriceRecommend = GasPriceRecommend(
             parseGasPriceToBigIntWei(response['fastest']),
             response['fastestWait'],
@@ -210,13 +201,13 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
             response['avgWait']);*/
 
         await AppCache.saveValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY, json.encode(gasPriceRecommend.toJson()));
-        yield GasPriceState(status: Status.success, gasPriceRecommend: gasPriceRecommend);
-        isGasSuccess = true;
+        yield GasPriceState(status: Status.success, ethGasPriceRecommend: gasPriceRecommend);
+        isEthGasSuccess = true;
 
         var btcResponse = await BitcoinApi.requestBtcFeeRecommend();
         if (btcResponse["code"] == 0) {
           var btcResponseData = btcResponse["data"];
-          var btcGasPriceRecommend = BTCGasPriceRecommend(
+          var btcGasPriceRecommend = GasPriceRecommend(
               Decimal.fromInt(btcResponseData['fastest']),
               double.parse(btcResponseData['fastestWait'].toString()),
               Decimal.fromInt(btcResponseData['fast']),
@@ -229,10 +220,10 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         }
       } catch (e) {
         logger.e(e);
-        if (!isGasSuccess) {
+        if (!isEthGasSuccess) {
           var gasPriceEntityStr = await AppCache.getValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY);
           if (gasPriceEntityStr != null) {
-            yield GasPriceState(status: Status.success, gasPriceRecommend: json.decode(gasPriceEntityStr));
+            yield GasPriceState(status: Status.success, ethGasPriceRecommend: json.decode(gasPriceEntityStr));
           } else {
             yield GasPriceState(status: Status.failed);
           }
@@ -310,17 +301,14 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
   Future requestGasPrice() async {
     var responseFromEtherScan = await EtherscanApi().getGasFromEtherScan();
-
     var responseFromEtherScanDict = responseFromEtherScan.data as Map;
 
     // fastest
     var fastGasPrice = double.parse(responseFromEtherScanDict["FastGasPrice"]);
     responseFromEtherScanDict["fastest"] = fastGasPrice;
-
     // fast
     var proposeGasPrice = double.parse(responseFromEtherScanDict["ProposeGasPrice"]);
     responseFromEtherScanDict["fast"] = proposeGasPrice;
-
     // average
     var safeGasPrice = double.parse(responseFromEtherScanDict["SafeGasPrice"]);
     responseFromEtherScanDict["average"] = safeGasPrice;
@@ -366,6 +354,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
   Decimal parseGasPriceToBigIntWei(double num) {
     // return Decimal.parse(num.toString()) / Decimal.fromInt(10) * Decimal.fromInt(TokenUnit.G_WEI);
-    return Decimal.parse(num.toString()) * Decimal.fromInt(TokenUnit.G_WEI);
+    return Decimal.parse(num.toString()) * Decimal.fromInt(EthereumUnitValue.G_WEI);
   }
 }

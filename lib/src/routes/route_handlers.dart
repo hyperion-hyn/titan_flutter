@@ -31,7 +31,6 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_share_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_history_page.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/market/exchange_assets_page.dart';
-import 'package:titan/src/pages/market/transfer/exchange_deposit_confirm_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_qrcode_deposit_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_success_page.dart';

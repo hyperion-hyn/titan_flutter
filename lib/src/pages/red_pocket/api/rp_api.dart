@@ -23,9 +23,10 @@ import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as WalletClass;
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart';
@@ -312,10 +313,10 @@ class RPApi {
   }
 
   Future<RpMyRpRecordEntity> getMyRpRecordStatistics(
-      String address, {
-        int size = 200,
-        pagingKey = '',
-      }) async {
+    String address, {
+    int size = 200,
+    pagingKey = '',
+  }) async {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/redpocket/list/$address',
       EntityFactory<RpMyRpRecordEntity>((json) {
@@ -502,7 +503,7 @@ class RPApi {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
     var amount = depositAmount + burningAmount;
-    final client = WalletUtil.getWeb3Client(true);
+    final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
     var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
     var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount, nonce: nonce);
     if (approveHex?.isEmpty ?? true) {
@@ -575,14 +576,14 @@ class RPApi {
     var address = wallet?.getEthAccount()?.address ?? "";
 
     var gasLimit = 100000;
-    var gasPrice = BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt());
+    var gasPrice = BigInt.from(WalletInheritedModel.of(context).ethGasPriceRecommend.fast.toInt());
     print('[rp_api] postRpApprove, address:$address, amount:$amount, gasPrice:$gasPrice, gasLimit:$gasLimit');
 
     var ret = await wallet.getAllowance(
-      WalletConfig.hynRPHrc30Address,
+      HyperionConfig.hynRPHrc30Address,
       address,
-      WalletConfig.rpHoldingContractAddress,
-      true,
+      HyperionConfig.rpHoldingContractAddress,
+      CoinType.HYN_ATLAS,
     );
 
     print('[rp_api] postRpApprove, getAllowance, res:$ret');
@@ -591,15 +592,15 @@ class RPApi {
       return '200';
     }
     var approveHex = await wallet.sendApproveErc20Token(
-      contractAddress: WalletConfig.hynRPHrc30Address,
-      approveToAddress: WalletConfig.rpHoldingContractAddress,
+      contractAddress: HyperionConfig.hynRPHrc30Address,
+      approveToAddress: HyperionConfig.rpHoldingContractAddress,
       amount: amount,
       password: password,
       gasPrice: gasPrice,
       gasLimit: gasLimit,
       //gasLimit: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20ApproveGasLimit,
       nonce: nonce,
-      isAtlas: true,
+      coinType: CoinType.HYN_ATLAS,
     );
     print('[rp_api] postRpApprove, amount:$amount, approveHex: $approveHex');
 

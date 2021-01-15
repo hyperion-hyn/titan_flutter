@@ -2,7 +2,6 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -18,20 +17,16 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/transfer/exchange_asset_history_page.dart';
-import 'package:titan/src/pages/market/model/asset_list.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
-import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:titan/src/widget/popup/bubble_widget.dart';
 import 'package:titan/src/widget/popup/pop_route.dart';
 import 'package:titan/src/widget/popup/pop_widget.dart';
 
@@ -233,7 +228,6 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   }
 
   _refreshAssets() async {
-    print('xxxx _refreshAssets');
     if (_exchangeModel.hasActiveAccount()) {
       BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
       await _updateTypeToCurrency();
@@ -249,9 +243,9 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
     var lastPendingState = hasPendingDepositTx;
     var ethAddress = WalletInheritedModel.of(context).activatedWallet?.wallet?.getEthAccount()?.address;
     await transactionInteractor.removeLocalPendingConfirmedTxsOfAddress(
-        ethAddress, LocalTransferType.LOCAL_TRANSFER_ERC20, WalletConfig.getUsdtErc20Address());
+        ethAddress, LocalTransferType.LOCAL_TRANSFER_ERC20, EthereumConfig.getUsdtErc20Address());
     var localPendingTxs = await transactionInteractor.getLocalPendingTransactions(
-        ethAddress, LocalTransferType.LOCAL_TRANSFER_ERC20, WalletConfig.getUsdtErc20Address());
+        ethAddress, LocalTransferType.LOCAL_TRANSFER_ERC20, EthereumConfig.getUsdtErc20Address());
     var hasPending = false;
     for (var tx in localPendingTxs) {
       if (tx.toAddress == usdtExchangeAddress) {

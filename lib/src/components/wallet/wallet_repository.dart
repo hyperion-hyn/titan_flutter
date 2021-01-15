@@ -26,8 +26,9 @@ class WalletRepository {
     } else {
       try {
         balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
-      } catch (exception) {
-        LogUtil.uploadException(exception, 'update Coin Balance!');
+      } catch (e, stack) {
+        print(stack);
+        LogUtil.uploadException(e, 'update Coin Balance!');
       }
     }
     coin.balance = balance;

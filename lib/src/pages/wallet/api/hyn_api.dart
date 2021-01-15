@@ -8,118 +8,124 @@ import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/plugins/wallet/config/hyperion.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as localWallet;
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:web3dart/web3dart.dart';
 
 class HYNApi {
-  static Future<String> signTransferHYN(String password, localWallet.Wallet wallet,
-      {String toAddress,
-      BigInt amount,
-      IMessage message,
-      bool isAtlasTrans = true,
-      String gasPrice,
-      int nonce,
-      int gasLimit}) async {
-    if (gasPrice == null) {
-      gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
-    }
-    if (gasLimit == null) {
-      final client = WalletUtil.getWeb3Client(isAtlasTrans);
-      var walletAddress =
-          WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
-      if (message == null || message?.type == MessageType.typeNormal) {
-        gasLimit = 21000;
-      } else {
-        /*var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
-            data: message?.toRlp(),
-            txType: message?.type ?? MessageType.typeNormal);
-        gasLimit = gasLimitBitInt.toInt();*/
-        gasLimit = 100000;
-      }
-    }
-    final txHash = await wallet.signEthTransaction(
-      password: password,
-      toAddress: toAddress,
-      gasPrice: BigInt.parse(gasPrice),
-      value: message == null ? amount : null,
-      type: message?.type ?? MessageType.typeNormal,
-      message: message,
-      isAtlasTrans: isAtlasTrans,
-      gasLimit: gasLimit,
-      nonce: nonce,
-    );
+  // static Future<String> signTransferHYN(
+  //   String password,
+  //   localWallet.Wallet wallet, {
+  //   String toAddress,
+  //   BigInt amount,
+  //   IMessage message,
+  //   String gasPrice,
+  //   int nonce,
+  //   int gasLimit,
+  // }) async {
+  //   // full fill gasPrice
+  //   if (gasPrice == null) {
+  //     gasPrice = HyperionGasPrice.getRecommend().average.toString();
+  //   }
+  //   // full fill gasLimit
+  //   if (gasLimit == null) {
+  //     if (message == null || message?.type == MessageType.typeNormal) {
+  //       gasLimit = HyperionGasLimit.TRANSFER;
+  //     } else {
+  //       gasLimit = HyperionGasLimit.NODE_OPT;
+  //     }
+  //   }
+  //   final txHash = await wallet.signTransaction(
+  //     CoinType.HYN_ATLAS,
+  //     password: password,
+  //     toAddress: toAddress,
+  //     gasPrice: BigInt.parse(gasPrice),
+  //     value: message == null ? amount : null,
+  //     type: message?.type ?? MessageType.typeNormal,
+  //     message: message,
+  //     gasLimit: gasLimit,
+  //     nonce: nonce,
+  //   );
+  //
+  //   logger.i('HYN transaction committed，txHash $txHash');
+  //   return txHash;
+  // }
 
-    logger.i('HYN transaction committed，txHash $txHash');
-    return txHash;
-  }
+  // static Future<String> sendTransferHYN(
+  //   String password,
+  //   localWallet.Wallet wallet, {
+  //   String toAddress,
+  //   BigInt amount,
+  //   IMessage message,
+  //   bool isAtlasTrans = true,
+  //   String gasPrice,
+  //   int nonce,
+  //   int gasLimit,
+  // }) async {
+  //   // full fill gasPrice
+  //   if (gasPrice == null) {
+  //     gasPrice = HyperionGasPrice.getRecommend().average.toString();
+  //   }
+  //   // full fill gasLimit
+  //   if (gasLimit == null) {
+  //     if (message == null || message?.type == MessageType.typeNormal) {
+  //       gasLimit = HyperionGasLimit.TRANSFER;
+  //     } else {
+  //       gasLimit = HyperionGasLimit.NODE_OPT;
+  //     }
+  //   }
+  //   final txHash = await wallet.sendTransaction(
+  //     CoinType.HYN_ATLAS,
+  //     password: password,
+  //     toAddress: toAddress,
+  //     gasPrice: BigInt.parse(gasPrice),
+  //     value: message == null ? amount : null,
+  //     type: message?.type ?? MessageType.typeNormal,
+  //     message: message,
+  //     gasLimit: gasLimit,
+  //     nonce: nonce,
+  //   );
+  //
+  //   logger.i('HYN transaction committed，txHash $txHash');
+  //   return txHash;
+  // }
 
-  static Future<String> sendTransferHYN(String password, localWallet.Wallet wallet,
-      {String toAddress,
-      BigInt amount,
-      IMessage message,
-      bool isAtlasTrans = true,
-      String gasPrice,
-      int nonce,
-      int gasLimit}) async {
-    if (gasPrice == null) {
-      gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
-    }
-    if (gasLimit == null) {
-      // final client = WalletUtil.getWeb3Client(isAtlasTrans);
-      // var walletAddress =
-      //     WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
-      if (message == null || message?.type == MessageType.typeNormal) {
-        gasLimit = 21000;
-      } else {
-        /*var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
-            data: message?.toRlp(),
-            txType: message?.type ?? MessageType.typeNormal);
-        gasLimit = gasLimitBitInt.toInt();*/
-        gasLimit = 100000;
-      }
-    }
-    final txHash = await wallet.sendEthTransaction(
-      password: password,
-      toAddress: toAddress,
-      gasPrice: BigInt.parse(gasPrice),
-      value: message == null ? amount : null,
-      type: message?.type ?? MessageType.typeNormal,
-      message: message,
-      isAtlasTrans: isAtlasTrans,
-      gasLimit: gasLimit,
-      nonce: nonce,
-    );
-
-    logger.i('HYN transaction committed，txHash $txHash');
-    return txHash;
-  }
-
-  static Future<String> sendTransferHYNHrc30(
-      String password, BigInt amount, String toAddress, localWallet.Wallet wallet, String contractAddress,
-      {String gasPrice, int gasLimit}) async {
-    if (gasPrice == null) {
-      gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
-    }
-    if (gasLimit == null) {
-      gasLimit = 100000;
-    }
-    final txHash = await wallet.sendHYNHrc30Transaction(
-      contractAddress: contractAddress,
-      password: password,
-      gasPrice: BigInt.parse(gasPrice),
-      value: amount,
-      toAddress: toAddress,
-      gasLimit: gasLimit,
-    );
-
-    logger.i('HYN transaction committed，value(==amount):$amount, txHash $txHash ');
-    return txHash;
-  }
+  // static Future<String> sendTransferHYNHrc30(
+  //   String password,
+  //   BigInt amount,
+  //   String toAddress,
+  //   localWallet.Wallet wallet,
+  //   String contractAddress, {
+  //   String gasPrice,
+  //   int gasLimit,
+  //   int nonce,
+  // }) async {
+  //   // full fill gasPrice
+  //   if (gasPrice == null) {
+  //     gasPrice = HyperionGasPrice.getRecommend().average.toString();
+  //   }
+  //   if (gasLimit == null) {
+  //     gasLimit = HyperionGasLimit.HRC30_TRANSFER;
+  //   }
+  //   final txHash = await wallet.sendErc20Transaction(
+  //     CoinType.HYN_ATLAS,
+  //     contractAddress: contractAddress,
+  //     password: password,
+  //     gasPrice: BigInt.parse(gasPrice),
+  //     value: amount,
+  //     toAddress: toAddress,
+  //     gasLimit: gasLimit,
+  //     nonce: nonce,
+  //   );
+  //
+  //   logger.i('HYN transaction committed，value(==amount):$amount, txHash $txHash ');
+  //   return txHash;
+  // }
 
   static Future<String> transCreateAtlasNode(
     CreateAtlasEntity createAtlasEntity,
@@ -144,7 +150,8 @@ class HYNApi {
     );
     print(message);
 
-    var rawTx = await signTransferHYN(password, wallet, message: message);
+    var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
+        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
     return rawTx;
   }
 
@@ -172,7 +179,8 @@ class HYNApi {
     );
     print(message);
 
-    var rawTx = await signTransferHYN(password, wallet, message: message);
+    var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
+        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
     return rawTx;
   }
 
@@ -185,7 +193,8 @@ class HYNApi {
     var message = CollectAtlasRewardMessage(delegatorAddress: map3Address, validatorAddress: atlasAddress);
     print(message);
 
-    var rawTx = await signTransferHYN(password, wallet, message: message);
+    var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
+        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
     return rawTx;
   }
 
@@ -201,7 +210,8 @@ class HYNApi {
     );
     print(message);
 
-    var rawTx = await signTransferHYN(password, wallet, message: message);
+    var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
+        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
     return rawTx;
   }
 
@@ -214,7 +224,8 @@ class HYNApi {
     var message = ReDelegateAtlasMessage(delegatorAddress: map3Address, validatorAddress: atlasAddress);
     print(message);
 
-    var rawTx = await signTransferHYN(password, wallet, message: message);
+    var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
+        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
     return rawTx;
   }
 
@@ -227,7 +238,8 @@ class HYNApi {
     var message = UnReDelegateAtlasMessage(delegatorAddress: map3Address, validatorAddress: atlasAddress);
     print(message);
 
-    var rawTx = await signTransferHYN(password, wallet, message: message);
+    var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
+        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
     return rawTx;
   }
 
@@ -258,7 +270,8 @@ class HYNApi {
     );
     print(message);
 
-    return signTransferHYN(password, wallet, toAddress: entity.to, message: message, gasPrice: entity.price);
+    return await wallet.signTransaction(CoinType.HYN_ATLAS,
+        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
   }
 
   static Future transEditMap3Node(
@@ -287,14 +300,11 @@ class HYNApi {
     );
     print("[hyn_api] --> payload:${payload.toJson()}");
 
-    return signTransferHYN(
-      password,
-      wallet,
-      toAddress: entity.to,
-      message: message,
-      gasPrice: entity.price,
-      nonce: entity.nonce,
-    );
+    return await wallet.signTransaction(CoinType.HYN_ATLAS,
+        password: password,
+        message: message,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+        nonce: entity.nonce);
   }
 
   static Future transTerminateMap3Node(
@@ -308,7 +318,8 @@ class HYNApi {
     );
     print(message);
 
-    return signTransferHYN(password, wallet, message: message);
+    return await wallet.signTransaction(CoinType.HYN_ATLAS,
+        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
   }
 
   static Future transMicroMap3Node(
@@ -325,7 +336,8 @@ class HYNApi {
     );
     print(message);
 
-    return signTransferHYN(password, wallet, message: message);
+    return await wallet.signTransaction(CoinType.HYN_ATLAS,
+        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
   }
 
   static Future transUnMicroMap3Node(
@@ -342,7 +354,8 @@ class HYNApi {
     );
     print(message);
 
-    return signTransferHYN(password, wallet, message: message);
+    return await wallet.signTransaction(CoinType.HYN_ATLAS,
+        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
   }
 
   static Future transCollectMap3Node(
@@ -354,7 +367,8 @@ class HYNApi {
     );
     print(message);
 
-    return signTransferHYN(password, wallet, message: message);
+    return await wallet.signTransaction(CoinType.HYN_ATLAS,
+        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
   }
 
   static Future transPreEditMap3Node(
@@ -380,7 +394,13 @@ class HYNApi {
     );
     print(message);
 
-    return sendTransferHYN(password, wallet, message: message, nonce: nonce);
+    return wallet.sendTransaction(
+      CoinType.HYN_ATLAS,
+      password: password,
+      gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+      message: message,
+      nonce: nonce,
+    );
   }
 
   static String getValueByHynType(
@@ -590,54 +610,49 @@ class HYNApi {
   }
 
   static bool isContractTokenAddress(String contractAddress) {
-    if (SupportedTokens.allContractTokens(WalletConfig.netType)
-        .map((token) => token.contractAddress.toLowerCase())
-        .toList()
-        .contains(contractAddress.toLowerCase())) {
-      return true;
-    }
-    return false;
+    return Tokens.getTokenByContractAddress(contractAddress) != null;
   }
 
   static bool isHynHrc30ContractAddress(String contractAddress) {
-    contractAddress = contractAddress?.toLowerCase()??'';
-    if (contractAddress == WalletConfig.hynRPHrc30Address.toLowerCase() ||
-        contractAddress == WalletConfig.hynStakingContractAddress.toLowerCase() ||
+    contractAddress = contractAddress?.toLowerCase() ?? '';
+    if (contractAddress == HyperionConfig.hynRPHrc30Address.toLowerCase() ||
+        contractAddress == HyperionConfig.hynStakingContractAddress.toLowerCase() ||
         contractAddress == "0x0000000000000000000000000000000000000000") {
       return true;
     }
     return false;
   }
 
-  static bool isGasFeeEnough(BigInt gasPrice, int gasLimit,{BigInt stakingAmount}) {
-    var hynCoin = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol(SupportedTokens.HYN_Atlas.symbol);
+  static bool isGasFeeEnough(BigInt gasPrice, int gasLimit, {BigInt stakingAmount}) {
+    var hynCoin =
+        WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol(SupportedTokens.HYN_Atlas.symbol);
     var gasFees = gasPrice * BigInt.from(gasLimit);
-    if(stakingAmount == null){
+    if (stakingAmount == null) {
       stakingAmount = BigInt.from(0);
     }
-    if((hynCoin.balance - stakingAmount) < gasFees){
-      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).insufficient_gas_fee,gravity: ToastGravity.CENTER);
+    if ((hynCoin.balance - stakingAmount) < gasFees) {
+      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).insufficient_gas_fee, gravity: ToastGravity.CENTER);
       return false;
     }
     return true;
   }
 
   static String getHynSymbol(String contractAddress) {
-    contractAddress = contractAddress?.toLowerCase()??'';
-    if(contractAddress == WalletConfig.hynRPHrc30Address.toLowerCase()){
+    contractAddress = contractAddress?.toLowerCase() ?? '';
+    if (contractAddress == HyperionConfig.hynRPHrc30Address.toLowerCase()) {
       return SupportedTokens.HYN_RP_HRC30.symbol;
-    }else{
+    } else {
       return SupportedTokens.HYN_Atlas.symbol;
     }
   }
 
-  static AssetToken getContractToken(String contractAddress) {
-    AssetToken assetToken;
-    SupportedTokens.allContractTokens(WalletConfig.netType).forEach((element) {
-      if (element.contractAddress.toLowerCase() == contractAddress.toLowerCase()) {
-        assetToken = element;
-      }
-    });
-    return assetToken;
-  }
+// static AssetToken getContractToken(String contractAddress) {
+//   AssetToken assetToken;
+//   SupportedTokens.allContractTokens(WalletConfig.chainType).forEach((element) {
+//     if (element.contractAddress.toLowerCase() == contractAddress.toLowerCase()) {
+//       assetToken = element;
+//     }
+//   });
+//   return assetToken;
+// }
 }

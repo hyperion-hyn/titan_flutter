@@ -27,8 +27,10 @@ import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/bitcoin.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -444,7 +446,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
         // 代币
         title = S.of(context).contract_call;
         iconPath = "res/drawable/ic_hyn_wallet_contract.png";
-      } else if (WalletConfig.map3ContractAddress.toLowerCase() == transactionDetail.toAddress.toLowerCase()) {
+      } else if (EthereumConfig.map3EthereumContractAddress.toLowerCase() ==
+          transactionDetail.toAddress.toLowerCase()) {
         // map3抵押
         title = S.of(context).map_contract_execution;
       }
@@ -486,12 +489,11 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                       context,
                       MaterialPageRoute(
                           builder: (context) => InAppWebViewContainer(
-                                initUrl: WalletConfig.BITCOIN_TRANSATION_DETAIL + transactionDetail.hash,
+                                initUrl: BitcoinExplore.BITCOIN_TRANSATION_DETAIL + transactionDetail.hash,
                                 title: '',
                               )));
                 } else {
-                  var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland ?? true == true;
-                  var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
+                  var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash);
                   if (url != null) {
                     Navigator.push(
                         context,
@@ -716,7 +718,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     try {
       transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
       if (page == getStartPage()) {
-        if(!mounted){
+        if (!mounted) {
           return retList;
         }
 
@@ -737,7 +739,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
               var localTransferType = widget.coinVo.symbol == 'ETH'
                   ? LocalTransferType.LOCAL_TRANSFER_ETH
                   : LocalTransferType.LOCAL_TRANSFER_ERC20;
-              final client = WalletUtil.getWeb3Client(false);
+              final client = WalletUtil.getWeb3Client(CoinType.ETHEREUM);
               txCount = await client.getTransactionCount(EthereumAddress.fromHex(ethAddress));
               //test
               // txCount = 11;

@@ -18,7 +18,6 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
@@ -27,21 +26,16 @@ import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/pages/wallet/wallet_receive_page.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:web3dart/web3dart.dart';
 
 import '../../pages/wallet/model/transtion_detail_vo.dart';
 import 'api/etherscan_api.dart';
@@ -387,9 +381,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
         // 代币
         title = S.of(context).contract_call;
         iconPath = "res/drawable/ic_hyn_wallet_contract.png";
-      } else if (WalletConfig.map3ContractAddress.toLowerCase() == transactionDetail.toAddress.toLowerCase()) {
-        // map3抵押
-        title = S.of(context).map_contract_execution;
       }
     } else if ((widget.coinVo.coinType == CoinType.ETHEREUM && transactionDetail.state == -1)) {
       title = S.of(context).wallet_fail_title;
@@ -409,27 +400,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
             color: Colors.white,
             child: InkWell(
               onTap: () {
-                if (widget.coinVo.coinType == CoinType.BITCOIN) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => InAppWebViewContainer(
-                                initUrl: WalletConfig.BITCOIN_TRANSATION_DETAIL + transactionDetail.hash,
-                                title: '',
-                              )));
-                } else {
-                  var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland ?? true == true;
-                  var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
-                  if (url != null) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => InAppWebViewContainer(
-                                  initUrl: url,
-                                  title: '',
-                                )));
-                  }
-                }
+                //TODO
+                UiUtil.toast('TODO');
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 21),

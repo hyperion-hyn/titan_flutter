@@ -11,17 +11,12 @@ import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_page.dart';
-import 'package:titan/src/pages/policy/policy_confirm_page.dart';
-import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'package:titan/src/utils/log_util.dart';
 
 import 'view/wallet_empty_widget.dart';
 import 'view/wallet_show_widget.dart';
@@ -33,8 +28,7 @@ class WalletPage extends StatefulWidget {
   }
 }
 
-class _WalletPageState extends BaseState<WalletPage>
-    with AutomaticKeepAliveClientMixin {
+class _WalletPageState extends BaseState<WalletPage> with AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
 
   final LocalAuthentication auth = LocalAuthentication();
@@ -43,7 +37,7 @@ class _WalletPageState extends BaseState<WalletPage>
 
   bool _isExchangeAccountAbnormal = false;
 
-  bool _isShowConfirmPolicy = false;
+  // bool _isShowConfirmPolicy = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -53,18 +47,18 @@ class _WalletPageState extends BaseState<WalletPage>
     super.didChangeDependencies();
 
     var quoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
-    print("show quote ${quoteSign?.quoteVo?.price ?? "no value"}  ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
+    print(
+        "show quote ${quoteSign?.quoteVo?.price ?? "no value"}  ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
 
-    _checkConfirmWalletPolicy();
+    // _checkConfirmWalletPolicy();
     ///check dex account is abnormal
 //    _checkDexAccount();
-
   }
 
   @override
   void initState() {
     super.initState();
-    _checkConfirmWalletPolicy();
+    // _checkConfirmWalletPolicy();
 //    WidgetsBinding.instance.addPostFrameCallback((callback) {
 //      _showAtlasExchangeAlert();
 //    });
@@ -72,8 +66,7 @@ class _WalletPageState extends BaseState<WalletPage>
 
   @override
   Future<void> onCreated() async {
-    _postWalletBalance();
-
+    // _postWalletBalance();
     // listLoadingData();
   }
 
@@ -109,43 +102,43 @@ class _WalletPageState extends BaseState<WalletPage>
     } catch (e) {}
   }
 
-  Future<void> _postWalletBalance() async {
-    //appType:  0:titan; 1:star
-
-    if (context == null) return;
-
-    var activatedWalletVo =
-        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
-            ?.activatedWallet;
-
-    if (activatedWalletVo == null) return;
-
-    String address = activatedWalletVo.wallet.getEthAccount().address;
-    int appType = 0;
-    String email = "titan";
-    String hynBalance = "0";
-    LogUtil.printMessage(
-        "[API] address:$address, hynBalance:$hynBalance, email:$email");
-
-    // 同步用户钱包信息
-    if (address.isNotEmpty) {
-      var hynCoinVo = WalletInheritedModel.of(context).getCoinVoBySymbol("HYN");
-      LogUtil.printMessage(
-          "object] balance1: ${hynCoinVo.balance}, decimal:${hynCoinVo.decimals}");
-      var balance = FormatUtil.coinBalanceDouble(hynCoinVo);
-      balance = 0;
-      if (balance <= 0) {
-        var balanceValue = await activatedWalletVo.wallet
-            .getErc20Balance(hynCoinVo.contractAddress);
-        balance = ConvertTokenUnit.weiToDecimal(
-                balanceValue ?? 0, hynCoinVo?.decimals ?? 0)
-            .toDouble();
-        LogUtil.printMessage("object] balance2: $balance");
-      }
-      hynBalance = balance.toString();
-      BitcoinApi.postWalletBalance(address, appType, email, hynBalance);
-    }
-  }
+  /// 统计所用
+  // Future<void> _postWalletBalance() async {
+  //   //appType:  0:titan; 1:star
+  //   if (context == null) return;
+  //
+  //   var activatedWalletVo =
+  //       WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
+  //           ?.activatedWallet;
+  //
+  //   if (activatedWalletVo == null) return;
+  //
+  //   String address = activatedWalletVo.wallet.getEthAccount().address;
+  //   int appType = 0;
+  //   String email = "titan";
+  //   String hynBalance = "0";
+  //   LogUtil.printMessage(
+  //       "[API] address:$address, hynBalance:$hynBalance, email:$email");
+  //
+  //   // 同步用户钱包信息
+  //   if (address.isNotEmpty) {
+  //     var hynCoinVo = WalletInheritedModel.of(context).getCoinVoBySymbol("HYN");
+  //     LogUtil.printMessage(
+  //         "object] balance1: ${hynCoinVo.balance}, decimal:${hynCoinVo.decimals}");
+  //     var balance = FormatUtil.coinBalanceDouble(hynCoinVo);
+  //     balance = 0;
+  //     if (balance <= 0) {
+  //       var balanceValue = await activatedWalletVo.wallet
+  //           .getErc20Balance(hynCoinVo.contractAddress);
+  //       balance = ConvertTokenUnit.weiToDecimal(
+  //               balanceValue ?? 0, hynCoinVo?.decimals ?? 0)
+  //           .toDouble();
+  //       LogUtil.printMessage("object] balance2: $balance");
+  //     }
+  //     hynBalance = balance.toString();
+  //     BitcoinApi.postWalletBalance(address, appType, email, hynBalance);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -172,78 +165,77 @@ class _WalletPageState extends BaseState<WalletPage>
     );
   }
 
-  _confirmPolicyView() {
-    return Container(
-      width: double.infinity,
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(
-            height: 32,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Image.asset(
-              'res/drawable/safe_lock.png',
-              width: 100,
-              height: 100,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Container(
-              width: 300,
-              child: Text(
-                S.of(context).please_read_and_agree_wallet_policy,
-                textAlign: TextAlign.center,
-                style: TextStyle(height: 1.8, fontSize: 15),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 32,
-          ),
-          Container(
-            width: 280,
-            child: RaisedButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              disabledColor: Colors.grey[600],
-              color: Theme.of(context).primaryColor,
-              textColor: Colors.white,
-              disabledTextColor: Colors.white,
-              onPressed: () async {
-                var result = await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => PolicyConfirmPage(
-                    PolicyType.WALLET,
-                  ),
-                ));
-                _checkConfirmWalletPolicy();
-              },
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      S.of(context).check,
-                      style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // _confirmPolicyView() {
+  //   return Container(
+  //     width: double.infinity,
+  //     color: Colors.white,
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: <Widget>[
+  //         SizedBox(
+  //           height: 32,
+  //         ),
+  //         Padding(
+  //           padding: const EdgeInsets.all(16.0),
+  //           child: Image.asset(
+  //             'res/drawable/safe_lock.png',
+  //             width: 100,
+  //             height: 100,
+  //           ),
+  //         ),
+  //         Padding(
+  //           padding: const EdgeInsets.symmetric(vertical: 16.0),
+  //           child: Container(
+  //             width: 300,
+  //             child: Text(
+  //               S.of(context).please_read_and_agree_wallet_policy,
+  //               textAlign: TextAlign.center,
+  //               style: TextStyle(height: 1.8, fontSize: 15),
+  //             ),
+  //           ),
+  //         ),
+  //         SizedBox(
+  //           height: 32,
+  //         ),
+  //         Container(
+  //           width: 280,
+  //           child: RaisedButton(
+  //             shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(30),
+  //             ),
+  //             disabledColor: Colors.grey[600],
+  //             color: Theme.of(context).primaryColor,
+  //             textColor: Colors.white,
+  //             disabledTextColor: Colors.white,
+  //             onPressed: () async {
+  //               var result = await Navigator.of(context).push(MaterialPageRoute(
+  //                 builder: (BuildContext context) => PolicyConfirmPage(
+  //                   PolicyType.WALLET,
+  //                 ),
+  //               ));
+  //               _checkConfirmWalletPolicy();
+  //             },
+  //             child: Padding(
+  //               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.center,
+  //                 children: <Widget>[
+  //                   Text(
+  //                     S.of(context).check,
+  //                     style: TextStyle(
+  //                       fontWeight: FontWeight.normal,
+  //                       fontSize: 14,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   _walletView() {
     return Column(
@@ -262,14 +254,14 @@ class _WalletPageState extends BaseState<WalletPage>
     );
   }
 
-  _checkConfirmWalletPolicy() async {
-    var isConfirmWalletPolicy = await AppCache.getValue(
-      PrefsKey.IS_CONFIRM_WALLET_POLICY,
-    );
-    _isShowConfirmPolicy =
-        isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
-    setState(() {});
-  }
+  // _checkConfirmWalletPolicy() async {
+  //   var isConfirmWalletPolicy = await AppCache.getValue(
+  //     PrefsKey.IS_CONFIRM_WALLET_POLICY,
+  //   );
+  //   setState(() {
+  //     _isShowConfirmPolicy = isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
+  //   });
+  // }
 
   _abnormalAccountBanner() {
     return InkWell(
@@ -329,43 +321,41 @@ class _WalletPageState extends BaseState<WalletPage>
     if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) {
       navigateToFixPage();
     } else {
-      await Navigator.push(
-          context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+      await Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
 
       ///if authorized, jump to fix error page
-      if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount())
-        navigateToFixPage();
+      if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) navigateToFixPage();
     }
   }
 
   Widget _buildWalletView(BuildContext context) {
-    var activatedWalletVo =
-        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
-            .activatedWallet;
+    var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
     if (activatedWalletVo != null) {
-      if (_isShowConfirmPolicy) {
-        return _confirmPolicyView();
-      } else {
-        return LoadDataContainer(
-          bloc: loadDataBloc,
-          enablePullUp: false,
-          showLoadingWidget: false,
-          onLoadData: () {
-            //print('WalletPage LoadDataContainer onLoadData ======');
-            listLoadingData();
-          },
-          onRefresh: () async {
-            //print('WalletPage LoadDataContainer onRefresh ======');
-            listLoadingData();
-          },
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: ShowWalletView(activatedWalletVo, loadDataBloc),
-          ),
-        );
-      }
-    }else{
-      return EmptyWalletView(loadDataBloc: loadDataBloc,);
+      // if (_isShowConfirmPolicy) {
+      //   return _confirmPolicyView();
+      // } else {
+      return LoadDataContainer(
+        bloc: loadDataBloc,
+        enablePullUp: false,
+        showLoadingWidget: false,
+        onLoadData: () {
+          //print('WalletPage LoadDataContainer onLoadData ======');
+          listLoadingData();
+        },
+        onRefresh: () async {
+          //print('WalletPage LoadDataContainer onRefresh ======');
+          listLoadingData();
+        },
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: ShowWalletView(activatedWalletVo, loadDataBloc),
+        ),
+      );
+      // }
+    } else {
+      return EmptyWalletView(
+        loadDataBloc: loadDataBloc,
+      );
     }
 
     /*return BlocListener<WalletCmpBloc, WalletCmpState>(
@@ -409,8 +399,7 @@ class _WalletPageState extends BaseState<WalletPage>
 
   Widget hynQuotesView() {
     //hyn quote
-    ActiveQuoteVoAndSign hynQuoteSign =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
+    ActiveQuoteVoAndSign hynQuoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
     return Container(
       padding: EdgeInsets.all(8),
       color: Color(0xFFF5F5F5),
@@ -439,10 +428,7 @@ class _WalletPageState extends BaseState<WalletPage>
                 //quote
                 Text(
                   '${hynQuoteSign != null ? '${FormatUtil.formatPrice(hynQuoteSign.quoteVo.price)} ${hynQuoteSign.sign.quote}' : '--'}',
-                  style: TextStyle(
-                      color: HexColor('#333333'),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
+                  style: TextStyle(color: HexColor('#333333'), fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ],
             ),
@@ -453,45 +439,45 @@ class _WalletPageState extends BaseState<WalletPage>
     );
   }
 
-  Widget _authorizedView() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: <Widget>[
-          Spacer(),
-          Image.asset(
-            'res/drawable/logo_manwu.png',
-            width: 23,
-            height: 23,
-            color: Colors.grey[500],
-          ),
-          SizedBox(
-            width: 4.0,
-          ),
-          Text(
-            S.of(context).safety_certification_by_organizations,
-            style: TextStyle(
-              color: Colors.grey[500],
-              fontSize: 12.0,
-            ),
-          ),
-          Spacer()
-        ],
-      ),
-    );
-  }
+  // Widget _authorizedView() {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(16.0),
+  //     child: Row(
+  //       children: <Widget>[
+  //         Spacer(),
+  //         Image.asset(
+  //           'res/drawable/logo_manwu.png',
+  //           width: 23,
+  //           height: 23,
+  //           color: Colors.grey[500],
+  //         ),
+  //         SizedBox(
+  //           width: 4.0,
+  //         ),
+  //         Text(
+  //           S.of(context).safety_certification_by_organizations,
+  //           style: TextStyle(
+  //             color: Colors.grey[500],
+  //             fontSize: 12.0,
+  //           ),
+  //         ),
+  //         Spacer()
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget loadingView(context) {
-    return Center(
-      child: SizedBox(
-        height: 40,
-        width: 40,
-        child: CircularProgressIndicator(
-          strokeWidth: 1.5,
-        ),
-      ),
-    );
-  }
+  // Widget loadingView(context) {
+  //   return Center(
+  //     child: SizedBox(
+  //       height: 40,
+  //       width: 40,
+  //       child: CircularProgressIndicator(
+  //         strokeWidth: 1.5,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   void dispose() {

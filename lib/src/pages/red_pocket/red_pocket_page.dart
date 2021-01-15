@@ -24,6 +24,7 @@ import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_level_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -177,7 +178,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
     var rpBalanceStr = '--';
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-      SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
+      SupportedTokens.HYN_RP_HRC30.symbol,
     );
     try {
       rpBalanceStr = FormatUtil.coinBalanceHumanReadFormat(
@@ -323,8 +324,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                                 left: 12,
                               ),
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 4.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
@@ -644,10 +644,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         String webTitle = FluroConvertUtils.fluroCnParamsEncode(
                           S.of(context).detailed_introduction,
                         );
-                        Application.router.navigateTo(
-                            context,
-                            Routes.toolspage_webview_page +
-                                '?initUrl=$webUrl&title=$webTitle');
+                        Application.router
+                            .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                       },
                       child: Text(
                         S.of(context).detailed_introduction,
@@ -810,8 +808,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   )
                 ],
                 text: title,
-                style: TextStyle(
-                    height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
               ),
             ),
           )),
@@ -943,8 +940,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       }
 
       if (context != null) {
-        BlocProvider.of<WalletCmpBloc>(context)
-            .add(UpdateActivatedWalletBalanceEvent());
+        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
       }
 
       _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(_address);

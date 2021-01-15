@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/plugins/wallet/contract_const.dart';
 
 import '../../env.dart';
 
@@ -210,9 +209,4 @@ class RouteProfile {
   static final String driving = 'driving';
   static final String walking = 'walking';
   static final String cycling = 'cycling';
-}
-
-class PlatformErrorCode {
-  static const String PASSWORD_WRONG = '1';
-  static const String PARAMETERS_WRONG = '2';
 }

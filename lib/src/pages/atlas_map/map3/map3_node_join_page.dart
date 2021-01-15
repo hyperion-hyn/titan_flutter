@@ -16,6 +16,7 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -62,7 +63,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   List<String> _suggestList = [];
   String originInputStr = "";
 
-  final client = WalletUtil.getWeb3Client(true);
+  final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
   Map3NodeInformationEntity _map3nodeInformationEntity;
   Map3IntroduceEntity _map3introduceEntity;
 

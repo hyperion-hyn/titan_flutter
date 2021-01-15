@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/error/error_code.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_show_resume_word_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/screenshot_warning_dialog.dart';
@@ -246,7 +246,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
     } catch (_) {
       _ as PlatformException;
       logger.e(_);
-      if (_.code == WalletError.PASSWORD_WRONG) {
+      if (_.code == ErrorCode.PASSWORD_WRONG) {
         Fluttertoast.showToast(msg: S.of(context).wallet_password_error);
       } else {
         Fluttertoast.showToast(msg: S.of(context).extract_mnemonic_fail);

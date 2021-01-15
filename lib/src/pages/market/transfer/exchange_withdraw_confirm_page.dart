@@ -17,8 +17,8 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
@@ -45,8 +45,7 @@ class ExchangeWithdrawConfirmPage extends StatefulWidget {
   }
 }
 
-class _ExchangeWithdrawConfirmPageState
-    extends BaseState<ExchangeWithdrawConfirmPage> {
+class _ExchangeWithdrawConfirmPageState extends BaseState<ExchangeWithdrawConfirmPage> {
   var isTransferring = false;
   var isLoadingGasFee = false;
 
@@ -60,20 +59,15 @@ class _ExchangeWithdrawConfirmPageState
 
   @override
   void onCreated() async {
-    activatedQuoteSign =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign(
+    activatedQuoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign(
       widget.coinVo.symbol,
     );
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
-      gasPriceRecommend =
-          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
-              .btcGasPriceRecommend;
+      gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).btcGasPriceRecommend;
     } else {
-      gasPriceRecommend =
-          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
-              .gasPriceRecommend;
+      gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).ethGasPriceRecommend;
     }
   }
 
@@ -85,7 +79,7 @@ class _ExchangeWithdrawConfirmPageState
 
   Decimal get gasPrice {
     if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      return Decimal.fromInt(1 * TokenUnit.G_WEI);
+      return Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
     }
     switch (selectedPriceLevel) {
       case 0:
@@ -105,8 +99,7 @@ class _ExchangeWithdrawConfirmPageState
     var _quoteSign = activatedQuoteSign?.sign?.sign;
 
     var _amountString = '- ${widget.amount} ${widget.coinVo.symbol}';
-    var _amountQuotePriceString =
-        "≈ $_quoteSign ${FormatUtil.formatPrice(double.parse(widget.amount) * _quotePrice)}";
+    var _amountQuotePriceString = "≈ $_quoteSign ${FormatUtil.formatPrice(double.parse(widget.amount) * _quotePrice)}";
 
     var _gasPriceEstimateStr;
 
@@ -114,57 +107,34 @@ class _ExchangeWithdrawConfirmPageState
 
     try {
       if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-        var hynQuotePrice = WalletInheritedModel.of(context)
-                .activatedQuoteVoAndSign('HYN')
-                ?.quoteVo
-                ?.price ??
-            0;
+        var hynQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN')?.quoteVo?.price ?? 0;
 
         ///Contract tokens
         var gasLimit = widget.coinVo.contractAddress != null
-            ? SettingInheritedModel.ofConfig(context)
-                .systemConfigEntity
-                .erc20TransferGasLimit
-            : SettingInheritedModel.ofConfig(context)
-                .systemConfigEntity
-                .ethTransferGasLimit;
+            ? SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit
+            : SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
 
         var gasPriceEstimate = ConvertTokenUnit.weiToEther(
-            weiBigInt: BigInt.parse(
-                (gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+            weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
 
-        var gasFeeQuotePrice = gasPriceEstimate *
-            Decimal.parse(hynQuotePrice.toString()) *
-            Decimal.parse(widget.withdrawFeeByGas);
+        var gasFeeQuotePrice =
+            gasPriceEstimate * Decimal.parse(hynQuotePrice.toString()) * Decimal.parse(widget.withdrawFeeByGas);
 
-        _gasFeeByToken = (Decimal.parse('$gasFeeQuotePrice') /
-            Decimal.parse('$_quotePrice'));
+        _gasFeeByToken = (Decimal.parse('$gasFeeQuotePrice') / Decimal.parse('$_quotePrice'));
 
         _gasPriceEstimateStr =
-            " ${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GDUST ($gasPriceEstimate HYN)";
+            " ${(gasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI)).toStringAsFixed(1)} GDUST ($gasPriceEstimate HYN)";
       } else {
-        var ethQuotePrice = WalletInheritedModel.of(context)
-                .activatedQuoteVoAndSign('ETH')
-                ?.quoteVo
-                ?.price ??
-            0;
-        gasPriceRecommend =
-            WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
-                .gasPriceRecommend;
+        var ethQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0;
+        gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).ethGasPriceRecommend;
         var gasLimit = widget.coinVo.symbol == "ETH"
-            ? SettingInheritedModel.ofConfig(context)
-                .systemConfigEntity
-                .ethTransferGasLimit
-            : SettingInheritedModel.ofConfig(context)
-                .systemConfigEntity
-                .erc20TransferGasLimit;
+            ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
+            : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
         var gasEstimate = ConvertTokenUnit.weiToEther(
-            weiBigInt: BigInt.parse(
-                (gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+            weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
 
-        var gasFeeQuotePrice = gasEstimate *
-            Decimal.parse(ethQuotePrice.toString()) *
-            Decimal.parse(widget.withdrawFeeByGas);
+        var gasFeeQuotePrice =
+            gasEstimate * Decimal.parse(ethQuotePrice.toString()) * Decimal.parse(widget.withdrawFeeByGas);
 
         _gasFeeByToken = Decimal.parse(FormatUtil.truncateDecimalNum(
           Decimal.parse('$gasFeeQuotePrice') / Decimal.parse('$_quotePrice'),
@@ -172,12 +142,11 @@ class _ExchangeWithdrawConfirmPageState
         ));
 
         _gasPriceEstimateStr =
-            "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI ($gasEstimate ETH) ";
+            "${(gasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI)).toStringAsFixed(1)} GWEI ($gasEstimate ETH) ";
       }
     } catch (e) {}
 
-    var _actualAmount =
-        Decimal.parse(widget.amount) - Decimal.parse(_gasFeeByToken.toString());
+    var _actualAmount = Decimal.parse(widget.amount) - Decimal.parse(_gasFeeByToken.toString());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -209,20 +178,15 @@ class _ExchangeWithdrawConfirmPageState
                           size: 48,
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                           child: Text(
                             _amountString,
-                            style: TextStyle(
-                                color: Color(0xFF252525),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20),
+                            style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
                           ),
                         ),
                         Text(
                           _amountQuotePriceString,
-                          style:
-                              TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                          style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                         )
                       ],
                     ),
@@ -299,10 +263,7 @@ class _ExchangeWithdrawConfirmPageState
                             children: <Widget>[
                               Text(
                                 "${activatedWallet.wallet.keystore.name}",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFF333333),
-                                    fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 14, color: Color(0xFF333333), fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: true,
                               ),
@@ -311,10 +272,7 @@ class _ExchangeWithdrawConfirmPageState
                                   widget.coinVo,
                                   widget.coinVo.address,
                                 ))})",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFF999999),
-                                    fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 14, color: Color(0xFF999999), fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: true,
                               )
@@ -388,7 +346,8 @@ class _ExchangeWithdrawConfirmPageState
                                 )
                               : SizedBox(),
                         ),
-                        Text( S.of(context).fee_deducted_offset_by_symbol(widget.coinVo.symbol),
+                        Text(
+                          S.of(context).fee_deducted_offset_by_symbol(widget.coinVo.symbol),
                           style: TextStyle(
                             color: DefaultColors.color999,
                             fontSize: 12,
@@ -452,8 +411,7 @@ class _ExchangeWithdrawConfirmPageState
               margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
               constraints: BoxConstraints.expand(height: 48),
               child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 disabledColor: Colors.grey[600],
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
@@ -472,9 +430,7 @@ class _ExchangeWithdrawConfirmPageState
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        isTransferring
-                            ? S.of(context).please_waiting
-                            : S.of(context).send,
+                        isTransferring ? S.of(context).please_waiting : S.of(context).send,
                         style: TextStyle(
                           fontWeight: FontWeight.normal,
                           fontSize: 16,
@@ -531,8 +487,7 @@ class _ExchangeWithdrawConfirmPageState
         msg = S.of(context).transfer_broadcase_success_description;
       }
       msg = FluroConvertUtils.fluroCnParamsEncode(msg);
-      Application.router
-          .navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
+      Application.router.navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
 
       setState(() {
         isTransferring = true;
