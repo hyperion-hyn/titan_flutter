@@ -18,6 +18,7 @@ import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
@@ -52,7 +53,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
       WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
   bool get _isShowPwdBtn {
-    return true;
+    // return true;
 
     var rpOwnerAddress = _shareEntity?.info?.address ?? '';
 
@@ -74,8 +75,6 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
     if ((myRpOpenEntity?.rpHash ?? "") == "") {
       return;
     }
-    print("rp----1");
-
     WalletShowAccountInfoPage.jumpToAccountInfoPage(
         context, myRpOpenEntity?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
   }
@@ -84,7 +83,6 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
     if ((myRpOpenEntity?.hynHash ?? "") == "") {
       return;
     }
-    print("hyn----2");
     WalletShowAccountInfoPage.jumpToAccountInfoPage(
         context, myRpOpenEntity?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
   }
@@ -130,7 +128,6 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-   
       body: _pageWidget(context),
     );
   }
@@ -258,21 +255,28 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                           size: 16,
                         ),
                         onPressed: () async {
+                          try {
+                            var walletVo = WalletInheritedModel.of(context).activatedWallet;
+                            var wallet = walletVo.wallet;
+                            var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
+                            if (password == null) {
+                              return;
+                            }
 
-                          _showPwdDialog(password: '333');
-                          return;
+                            var result = await _rpApi.getRpPwdInfo(
+                              address: _walletAddress,
+                              id: widget.id,
+                              wallet: wallet,
+                              password: password,
+                            );
+                            print("[$runtimeType] getRpPwdInfo, result:$result");
 
-                          var result = await _rpApi.getRpPwdInfo(_walletAddress, id: widget.id);
-                          print("[$runtimeType] getRpPwdInfo, result:$result");
-
-
+                            _showPwdDialog(password: result);
+                          } catch (e) {
+                            LogUtil.toastException(e);
+                          }
                         },
                       ),
-                    /*Image.asset(
-                      "res/drawable/rp_receiver_success_arraw_back.png",
-                      width: 17,
-                      height: 17,
-                    )*/
                   ],
                 ),
               ),
@@ -395,7 +399,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
       actions: [
         ClickOvalButton(
           S.of(context).confirm,
-              () {
+          () {
             Navigator.pop(context);
           },
           width: 100,

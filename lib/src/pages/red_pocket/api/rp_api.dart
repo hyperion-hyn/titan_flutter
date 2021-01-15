@@ -1,14 +1,17 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
+import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_http.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_airdrop_round_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_detail_entity.dart';
@@ -816,18 +819,40 @@ class RPApi {
   }
 
   // 获取新人/位置红包密码
-  Future<dynamic> getRpPwdInfo(
-      String address, {
-        String id = '',
-      }) async {
+  Future<dynamic> getRpPwdInfo({
+    String address,
+    WalletClass.Wallet wallet,
+    String password,
+    String id,
+  }) async {
+    Map<String, dynamic> params = {};
+    params['address'] = address;
+    // params['seed'] = Random().nextInt(0xfffffffe).toString();
+    params['ts'] = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
+    params['id'] = id;
+
+    var path = '/v1/rp/new-bee/$address/get-pwd';
+
+    var signed = await Signer.signApiWithWallet(
+      wallet,
+      password,
+      'GET',
+      // ExchangeConst.EXCHANGE_DOMAIN.split('//')[1],
+      Const.RP_DOMAIN.split('//')[1],
+      path,
+      params,
+    );
+    params['sign'] = signed;
+
+
+
+    print("[$runtimeType] getRpPwdInfo, params:$params ");
     return await RPHttpCore.instance.getEntity(
-      '/v1/rp/new-bee/$address/get-pwd',
+      path,
       EntityFactory<dynamic>((json) {
         return json;
       }),
-      params: {
-        'id': id,
-      },
+      params: params,
       options: RequestOptions(
         contentType: "application/json",
       ),
