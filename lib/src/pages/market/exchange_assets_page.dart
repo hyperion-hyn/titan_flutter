@@ -12,6 +12,7 @@ import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/exchange/model.dart';
 import 'package:titan/src/components/inject/injector.dart';
+import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -257,7 +258,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
     }
     var lastPendingState = hasPendingDepositTx;
     var ethAddress = WalletInheritedModel.of(context)
-        .activatedWallet
+        ?.activatedWallet
         ?.wallet
         ?.getEthAccount()
         ?.address;
@@ -479,36 +480,48 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
     var _isShowBalances =
         ExchangeInheritedModel.of(context)?.exchangeModel?.isShowBalances ??
             true;
+    var activeAssets = MarketInheritedModel.of(
+          context,
+          aspect: SocketAspect.marketItemList,
+        ).exchangeCoinList?.assets ??
+        ['HYN', 'USDT', 'RP'];
+
+    List<Widget> assetItemList = [Container()];
+
+    if (activeAssets.contains("HYN")) {
+      assetItemList.add(
+        AssetItem(
+          'HYN',
+          _assetList?.HYN,
+          _usdtToCurrency,
+          _isShowBalances,
+        ),
+      );
+    }
+    if (activeAssets.contains('USDT')) {
+      assetItemList.add(
+        AssetItem(
+          'USDT',
+          _assetList?.USDT,
+          _usdtToCurrency,
+          _isShowBalances,
+        ),
+      );
+    }
+    if (activeAssets.contains('RP')) {
+      assetItemList.add(AssetItem(
+        'RP',
+        _assetList?.RP,
+        _usdtToCurrency,
+        _isShowBalances,
+      ));
+    }
+
     if (_assetList != null) {
       return Container(
         color: Colors.white,
         child: Column(
-          children: <Widget>[
-            AssetItem(
-              'HYN',
-              _assetList?.HYN,
-              _usdtToCurrency,
-              _isShowBalances,
-            ),
-            AssetItem(
-              'USDT',
-              _assetList?.USDT,
-              _usdtToCurrency,
-              _isShowBalances,
-            ),
-//            AssetItem(
-//              'ETH',
-//              _assetList.ETH,
-//              ethToCurrency,
-//              _isShowBalances,
-//            ),
-            AssetItem(
-              'RP',
-              _assetList?.RP,
-              _usdtToCurrency,
-              _isShowBalances,
-            ),
-          ],
+          children: assetItemList,
         ),
       );
     } else {

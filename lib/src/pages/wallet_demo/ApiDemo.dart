@@ -102,6 +102,13 @@ class _ApiDemoState extends State {
           ),
           RaisedButton(
             onPressed: () async {
+              var ret = await _exchangeApi.getCoinList();
+              print(ret);
+            },
+            child: Text('coinList'),
+          ),
+          RaisedButton(
+            onPressed: () async {
               var ret = await _exchangeApi.testRecharge('HYN', 10000);
               print(ret);
               BlocProvider.of<ExchangeCmpBloc>(context)

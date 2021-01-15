@@ -173,6 +173,8 @@ class PrefsKey {
   static const String KLINE_SECONDARY_STATE = 'secondaryState';
 
   static const String CACHE_MARKET_ITEM_LIST = 'cache_market_item_list_v2';
+  static const String CACHE_EXCHANGE_COIN_LIST = 'cache_exchange_coin_list';
+  
 
   static const String SHARED_PREF_LOGIN_USER_API_KEY_LIST = "shared_pref_login_user_api_key_list";
   static const String SHARED_PREF_LOGIN_USER_API_SECRET_LIST = "shared_pref_login_user_api_secret_list";
@@ -187,6 +189,7 @@ class PrefsKey {
 
   static const String EXCHANGE_ACCOUNT_ABNORMAL = 'exchange_account_abnormal_';
 
+  
   ///Policy
   static const String IS_CONFIRM_WALLET_POLICY = 'wallet_policy_confirmed';
   static const String IS_CONFIRM_DEX_POLICY = 'dex_policy_confirmed';
