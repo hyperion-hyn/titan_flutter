@@ -903,8 +903,8 @@ class HomePanelState extends State<HomePanel> {
         }
       }
     } else if(scanStr.contains(RpShareGetDialogPage.shareDomain)){
-      var rpIdArrAfter = scanStr.split(RpShareGetDialogPage.shareDomain + "?")[1];
-      if(rpIdArrAfter[1].length > 0){
+      var rpIdArrAfter = scanStr.split("?rpId=");
+      if(rpIdArrAfter.length > 0){
         var rpIdBefore = rpIdArrAfter[1].split("&");
         showShareRpOpenDialog(context,id: rpIdBefore[0]);
       }

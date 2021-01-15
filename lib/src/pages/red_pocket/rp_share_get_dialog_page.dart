@@ -23,7 +23,7 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
 
 class RpShareGetDialogPage extends StatefulWidget {
-  static String shareDomain = "https://h.hyn.space/rpShare";
+  static String shareDomain = "http://10.10.1.138:8090/newUsersRedPocket";
   final String walletName;
   final String address;
   final String id;

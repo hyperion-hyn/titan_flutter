@@ -15,6 +15,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -194,11 +195,10 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
 
   Widget _contentWidget() {
     String walletAddress = WalletUtil.ethAddressToBech32Address(_address);
-    // todo
     // var qrData = "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$_walletName";
     var greeting = (widget.reqEntity?.greeting?.isNotEmpty ?? false) ? widget.reqEntity?.greeting : '恭喜发财，大吉大利!';
     var qrData =
-        'http://rp/sendRp?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&greeting=$greeting';
+        RpShareGetDialogPage.shareDomain + '?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&greeting=$greeting';
     return WidgetShot(
       controller: _shotController,
       child: RepaintBoundary(
