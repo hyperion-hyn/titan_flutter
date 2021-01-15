@@ -223,7 +223,7 @@ class UiUtil {
                           right: 10,
                           top: 10,
                           child: GestureDetector(
-                            onTap: () => Navigator.pop(_, false),
+                            onTap: () => Navigator.pop(_),
                             child: Image.asset(
                               "res/drawable/map3_node_close.png",
                               width: 18,
