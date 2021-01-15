@@ -78,24 +78,48 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    var greeting = (_shareEntity?.info?.greeting?.isNotEmpty ?? false) ? _shareEntity.info.greeting : '恭喜发财，大吉大利!';
-
-    var isNormal =
-        (_shareEntity?.info?.rpType ?? 'normal') == RpShareType.location;
-
+    var greeting;
     var language = SettingInheritedModel.of(context).languageCode;
     var suffix = language == 'zh' ? 'zh' : 'en';
-    var typeName = isNormal ? RpShareType.normal : RpShareType.location;
-    typeName = RpShareType.location;
-    suffix = 'zh';
-    var state = ((_shareEntity?.info?.state ?? RpShareState.allGot) ==
-            RpShareState.ongoing)
-        ? RpShareState.ongoing
-        : RpShareState.allGot;
-    state = (_shareEntity?.info?.alreadyGot ?? true)
-        ? RpShareState.allGot
-        : state;
+    var typeName;
+    var getRemindHint;
+    var state;
+    var isNormal = true;
+    if(_shareEntity == null){
+      typeName = RpShareType.location;
+      state = RpShareState.allGot;
+      greeting = "";
+      getRemindHint = "";
+    }else{
+      isNormal = _shareEntity.info.rpType == RpShareType.normal;
+
+      greeting = _shareEntity?.info?.greeting ?? '';
+      if(_shareEntity != null && greeting.isEmpty){
+        greeting = "恭喜发财，大吉大利";
+      }
+      if(((_shareEntity?.info?.state ?? RpShareState.expires) == RpShareState.allGot)){
+        greeting = "手慢了，红包派完了";
+      }
+      if(_shareEntity?.info?.alreadyGot ?? false){
+        greeting = "你已领取过了";
+      }
+
+      if((_shareEntity.info.rpType == RpShareType.location && (_shareEntity?.info?.isNewBee ?? false)) || ((_shareEntity?.info?.rpType ?? RpShareType.normal) != RpShareType.location)){
+        typeName = RpShareType.normal;
+        getRemindHint = "新人均分领取，并成为好友";
+      }else{
+        typeName = RpShareType.location;
+        getRemindHint = "拼手气领取";
+      }
+
+      state = ((_shareEntity?.info?.state ?? RpShareState.allGot) ==
+          RpShareState.ongoing)
+          ? RpShareState.ongoing
+          : RpShareState.allGot;
+      state = (_shareEntity?.info?.alreadyGot ?? true)
+          ? RpShareState.allGot
+          : state;
+    }
     var imageName = 'rp_share_${typeName}_${state}_${suffix}';
 
     return Material(
@@ -178,17 +202,40 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                     children: <Widget>[
                       Align(
                         alignment: Alignment.topCenter,
-                        child: Container(
-                          width: 260,
-                          height: 360,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(
-                                'res/drawable/$imageName.png',
+                        child: Stack(
+                          children: [
+                            Container(
+                              width: 260,
+                              height: 360,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                    'res/drawable/$imageName.png',
+                                  ),
+                                  fit: BoxFit.fill,
+                                ),
                               ),
-                              fit: BoxFit.fill,
                             ),
-                          ),
+                            if(!isNormal)
+                              Positioned(
+                                left: 16,
+                                top: 11,
+                                child: Row(
+                                  children: [
+                                    Image.asset("res/drawable/rp_share_location_image.png",width: 12,height: 16,),
+                                    SizedBox(width: 6,),
+                                    Text(
+                                      "${_shareEntity?.info?.range ?? ""}千米",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                          ],
                         ),
                       ),
                       Align(
@@ -218,7 +265,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                               Padding(
                                 padding: EdgeInsets.only(
                                   top: 16,
-                                  bottom: 16,
+                                  bottom: 6,
                                 ),
                                 child: RichText(
                                   text: TextSpan(
@@ -232,11 +279,21 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                                 ),
                               ),
                               Text(
-                                greeting,
+                                getRemindHint,
                                 style: TextStyle(
-                                  fontSize: greeting.length > 12 ? 12 : 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: HexColor('#FFFFFF'),
+                                  fontSize: 14,
+                                  color: HexColor('#333333'),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top:25.0),
+                                child: Text(
+                                  greeting,
+                                  style: TextStyle(
+                                    fontSize: greeting.length > 12 ? 12 : 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: HexColor('#FFFFFF'),
+                                  ),
                                 ),
                               ),
                               SizedBox(

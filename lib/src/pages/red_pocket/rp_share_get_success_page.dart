@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -302,7 +303,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                       SizedBox(
                         width: 6,
                       ),
-                      Expanded(
+                      Flexible(
                         child: Text(
                           "${_shareEntity?.info?.location ?? ""}; ${_shareEntity?.info?.range ?? ""}千米内可领取",
                           style: TextStyles.textC999S12,
@@ -323,9 +324,11 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                           child: RichText(
                               textAlign: TextAlign.end,
                               text: TextSpan(
-                                  text: myRpOpenEntity.rpAmount,
-                                  style:
-                                      TextStyle(fontSize: 28, color: HexColor("#D09100"), fontWeight: FontWeight.bold),
+                                  text: getCoinAmount(myRpOpenEntity.rpAmount),
+                                  style: TextStyle(
+                                      fontSize: 28,
+                                      color: HexColor("#D09100"),
+                                      fontWeight: FontWeight.bold),
                                   recognizer: _rpRecognizer,
                                   children: [
                                     TextSpan(
@@ -341,10 +344,12 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                         Expanded(
                           child: RichText(
                               text: TextSpan(
-                                  text: myRpOpenEntity.hynAmount,
-                                  style:
-                                      TextStyle(fontSize: 28, color: HexColor("#D09100"), fontWeight: FontWeight.bold),
-                                  recognizer: _hynRecognizer,
+                                  text: getCoinAmount(myRpOpenEntity.hynAmount),
+                                  style: TextStyle(
+                                      fontSize: 28,
+                                      color: HexColor("#D09100"),
+                                      fontWeight: FontWeight.bold),
+                                  recognizer: _rpRecognizer,
                                   children: [
                                 TextSpan(
                                   text: " HYN",
@@ -457,7 +462,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                                     context, item?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
                               },
                               child: Text(
-                                "${item.rpAmount} RP",
+                                "${getCoinAmount(item.rpAmount)} RP",
                                 style: TextStyle(
                                   color: HexColor("#333333"),
                                   fontSize: 14,
@@ -474,7 +479,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                                     context, item?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
                               },
                               child: Text(
-                                " ,${item.hynAmount} HYN",
+                                " ,${getCoinAmount(item.hynAmount)} HYN",
                                 style: TextStyle(
                                   color: HexColor("#333333"),
                                   fontSize: 14,
@@ -521,5 +526,12 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
         ),
       );
     }, childCount: _shareEntity?.details?.length ?? 0));
+  }
+
+  String getCoinAmount(String coinAmount){
+    if(coinAmount == null || coinAmount.isEmpty){
+      return "";
+    }
+    return FormatUtil.truncateDecimalNum(Decimal.parse(coinAmount), 6);
   }
 }
