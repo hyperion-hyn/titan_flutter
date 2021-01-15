@@ -6,6 +6,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_select_type_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_send_success_location_page.dart';
 
 class RpFloatingWidget extends StatefulWidget {
   final int actionType;
@@ -137,7 +138,6 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> with SingleTick
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
 
     if (widget.actionType == -1) {
-
       /*
       final curvedValue = Curves.easeInOutQuad.transform(Tween<double>(begin: 0, end: 1).animate(controller).value);
 

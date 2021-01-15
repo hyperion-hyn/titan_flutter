@@ -9,6 +9,8 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_send_success_location_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_send_success_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -293,16 +295,25 @@ class _RpShareSendDialogState extends BaseState<RpShareSendDialogPage> {
       print("[$runtimeType] postSendShareRp, 2, result:${result.toJson()}");
 
       if (result.id.isNotEmpty) {
-        widget.reqEntity.id = result.id;
+        if (widget.reqEntity.rpType == RpShareType.normal) {
+          widget.reqEntity.id = result.id;
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RpShareSendSuccessPage(
-              reqEntity: widget.reqEntity,
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RpShareSendSuccessPage(
+                reqEntity: widget.reqEntity,
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RpShareSendSuccessLocationPage(),
+            ),
+          );
+        }
       } else {
         Fluttertoast.showToast(msg: '发送红包失败！');
       }

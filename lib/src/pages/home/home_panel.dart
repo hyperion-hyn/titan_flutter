@@ -59,12 +59,6 @@ class HomePanelState extends State<HomePanel> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
         color: Colors.white,
-        /*boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 20.0,
-          ),
-        ],*/
       ),
       child: CustomScrollView(
         controller: widget.scrollController,
