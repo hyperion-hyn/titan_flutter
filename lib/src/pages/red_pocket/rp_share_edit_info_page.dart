@@ -184,6 +184,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
           var city = _openCageData["city"];
           var road = _openCageData["road"];
           var building = _openCageData["building"];
+          var county = _openCageData["county"];
 
           String countryCode = _openCageData["country_code"] ?? "CN";
           _saveCountryCode(countryCode: countryCode.toUpperCase());
@@ -211,9 +212,9 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
             //_addressText = county + "，" + city + "，" + provinces + "，" + country;
             //_addressText = "中国 广东省 广州市 天河区 中山大道 环球都会广场 2601楼";
             if (country == '中国') {
-              _addressText = country + provinces + city + road + building;
-            } else {
               _addressText = provinces + city + road + building;
+            } else {
+              _addressText = county + "," + city + "," + provinces + "," + country;
             }
           });
         }

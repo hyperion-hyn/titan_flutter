@@ -89,7 +89,11 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
+                    padding: const EdgeInsets.only(
+                      top: 12,
+                      left: 24,
+                      bottom: 4,
+                    ),
                     child: Text(
                       key,
                       style: TextStyle(

@@ -650,7 +650,7 @@ class RPApi {
     );
   }
 
-
+  /*
   // 过期没领取完的位置红包退款
   Future<dynamic> postRefundShareRp({
     RpShareReqEntity reqEntity,
@@ -662,6 +662,7 @@ class RPApi {
       options: RequestOptions(contentType: "application/json"),
     );
   }
+  */
 
   // 领取新人/位置红包
   Future<dynamic> postOpenShareRp({
@@ -789,6 +790,25 @@ class RPApi {
         'page': page,
         'pageSize': size,
       },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  // 最新的的新人/位置红包列表
+  Future<List<RpShareSendEntity>> getShareLatestList(String address) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/new-bee/$address/latest',
+      EntityFactory<List<RpShareSendEntity>>((json) {
+        //print("[$runtimeType] json:$json");
+
+        var data = (json as List).map((map) {
+          return RpShareSendEntity.fromJson(map);
+        }).toList();
+
+        return data;
+      }),
       options: RequestOptions(
         contentType: "application/json",
       ),

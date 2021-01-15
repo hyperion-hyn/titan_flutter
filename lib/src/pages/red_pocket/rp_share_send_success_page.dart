@@ -109,7 +109,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
             child: Center(
               child: Column(
                 children: [
-                  _createSelectedWidget(),
+                  _contentWidget(),
                 ],
               ),
             ),
@@ -192,7 +192,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
     );
   }
 
-  Widget _createSelectedWidget() {
+  Widget _contentWidget() {
     String walletAddress = WalletUtil.ethAddressToBech32Address(_address);
     // todo
     // var qrData = "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$_walletName";
