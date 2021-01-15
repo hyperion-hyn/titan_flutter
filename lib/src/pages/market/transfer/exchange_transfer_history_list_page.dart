@@ -201,10 +201,10 @@ class ExchangeTransferHistoryListPageState
                   children: <Widget>[
                     Expanded(
                       flex: 1,
-                      child: Container(
-                        child: Row(
-                          children: <Widget>[
-                            Column(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
@@ -226,9 +226,11 @@ class ExchangeTransferHistoryListPageState
                                 ),
                               ],
                             ),
-                            Spacer()
-                          ],
-                        ),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          )
+                        ],
                       ),
                     ),
                     Expanded(
