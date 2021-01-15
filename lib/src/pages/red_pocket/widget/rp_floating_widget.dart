@@ -240,7 +240,7 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> with SingleTick
       // var _walletName = activeWallet.wallet.keystore.name;
       showShareRpOpenDialog(
         context,
-        id: '53K7RE',
+        id: 'AEVK8X',
       );
       return;
     }

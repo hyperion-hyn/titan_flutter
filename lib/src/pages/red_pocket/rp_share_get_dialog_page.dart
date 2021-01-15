@@ -78,7 +78,9 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
 
   @override
   Widget build(BuildContext context) {
-    var greeting = _shareEntity?.info?.greeting ?? '';
+
+    var greeting = (_shareEntity?.info?.greeting?.isNotEmpty ?? false) ? _shareEntity.info.greeting : '恭喜发财，大吉大利!';
+
     var isNormal =
         (_shareEntity?.info?.rpType ?? 'normal') == RpShareType.location;
 
@@ -364,7 +366,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: HexColor("#333333"),
-                decoration: TextDecoration.none)),
+                decoration: TextDecoration.none,)),
           ),
           Padding(
             padding: const EdgeInsets.only(left:24,right:24.0,bottom: 20),
