@@ -88,7 +88,11 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 0, left: 24, bottom: 6),
+                    padding: const EdgeInsets.only(
+                      top: 12,
+                      left: 24,
+                      bottom: 4,
+                    ),
                     child: Text(
                       key,
                       style: TextStyle(

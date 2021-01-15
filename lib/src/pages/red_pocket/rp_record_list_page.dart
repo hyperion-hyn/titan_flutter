@@ -93,10 +93,14 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
+                    padding: const EdgeInsets.only(
+                      top: 12,
+                      left: 24,
+                      bottom: 4,
+                    ),
                     child: Text(
                       key,
-                      style: TextStyle(color: Color(0xff999999)),
+                      style: TextStyle(color: Color(0xff999999), fontSize: 12,),
                     ),
                   ),
                   ListView.builder(
