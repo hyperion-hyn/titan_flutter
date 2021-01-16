@@ -414,12 +414,12 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
               children: [
                 Padding(
                   padding: const EdgeInsets.only(
-                    right: 8,
+                    right: 10,
                   ),
                   child: Image.asset(
                     'res/drawable/rp_share_broadcast.png',
-                    width: 9,
-                    height: 10,
+                    width: 14,
+                    height: 16,
                   ),
                 ),
                 Expanded(
@@ -432,6 +432,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                           var location = model?.location ?? '';
                           var isLocation = (model.rpType == RpShareType.location) && (location.isNotEmpty);
 
+                          isLocation = false;
                           return Row(
                             children: [
                               Flexible(
@@ -439,7 +440,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                        right: 8,
+                                        right: 10,
                                       ),
                                       child: Container(
                                         width: 22,

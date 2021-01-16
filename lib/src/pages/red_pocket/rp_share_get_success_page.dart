@@ -130,6 +130,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // backgroundColor: HexColor('#FF0527'),
       body: _pageWidget(context),
     );
   }
@@ -143,10 +144,12 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
           Image.asset(
             "res/drawable/rp_receiver_detail_top.png",
             width: double.infinity,
-            fit: BoxFit.cover,
+            fit: BoxFit.fitHeight,
+            height: 124,
           ),
           LoadDataContainer(
             bloc: _loadDataBloc,
+            enablePullUp: false,
             onLoadData: () {
               _getNewBeeInfo();
             },
@@ -168,7 +171,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
               Navigator.of(context).pop();
             },
             child: Padding(
-              padding: const EdgeInsets.only(top: 40, left: 16.0, right: 16, bottom: 16),
+              padding: const EdgeInsets.only(top: 64, left: 16.0, right: 16, bottom: 16),
               child: Image.asset(
                 "res/drawable/rp_receiver_success_arraw_back.png",
                 width: 17,
@@ -208,6 +211,18 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                 ),
               ),
             ),
+          if ((_shareEntity?.info?.rpType ?? "") == RpShareType.location)
+            Positioned(
+              top: 64,
+              right: 16,
+              child: Text(
+                "${_shareEntity?.info?.range ?? ""}千米内可领取",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.black.withOpacity(0.5),
+                ),
+              ),
+            )
         ]),
       ),
     );
@@ -307,7 +322,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                       ),
                       Flexible(
                         child: Text(
-                          "${_shareEntity?.info?.location ?? ""}; ${_shareEntity?.info?.range ?? ""}千米内可领取",
+                          "${_shareEntity?.info?.location ?? ""}",
                           style: TextStyles.textC999S12,
                         ),
                       )
@@ -336,13 +351,13 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                                     TextSpan(
                                       text: " RP",
                                       style: TextStyle(
-                                          fontSize: 20, color: HexColor("#D09100"), fontWeight: FontWeight.bold),
+                                          fontSize: 16, color: HexColor("#D09100"), fontWeight: FontWeight.normal),
                                       recognizer: _rpRecognizer,
                                     ),
                                   ])),
                         ),
                         Text("  +  ",
-                            style: TextStyle(fontSize: 30, color: HexColor("#333333"), fontWeight: FontWeight.bold)),
+                            style: TextStyle(fontSize: 30, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
                         Expanded(
                           child: RichText(
                               text: TextSpan(
@@ -351,12 +366,12 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                                       fontSize: 28,
                                       color: HexColor("#D09100"),
                                       fontWeight: FontWeight.bold),
-                                  recognizer: _rpRecognizer,
+                                  recognizer: _hynRecognizer,
                                   children: [
                                 TextSpan(
                                   text: " HYN",
                                   style:
-                                      TextStyle(fontSize: 20, color: HexColor("#D09100"), fontWeight: FontWeight.bold),
+                                      TextStyle(fontSize: 16, color: HexColor("#D09100"), fontWeight: FontWeight.normal),
                                   recognizer: _hynRecognizer,
                                 ),
                               ])),
@@ -540,6 +555,6 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
     if(coinAmount == null || coinAmount.isEmpty){
       return "";
     }
-    return FormatUtil.truncateDecimalNum(Decimal.parse(coinAmount), 6);
+    return FormatUtil.truncateDecimalNum(Decimal.parse(coinAmount), 4);
   }
 }

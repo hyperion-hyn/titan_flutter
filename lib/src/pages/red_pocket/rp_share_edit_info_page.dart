@@ -384,58 +384,65 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                     Flexible(
                       child: Form(
                         key: key,
-                        child: TextFormField(
-                          controller: controller,
-                          textAlign: TextAlign.end,
+                        child: Container(
+                          // color: Colors.red,
+                          child: TextFormField(
+                            controller: controller,
+                            textAlign: TextAlign.end,
 
-                          onChanged: (String inputValue) {
-                            _focusKey = key;
-                            _validController.add(inputValue);
-                          },
-                          onFieldSubmitted: (String inputText) {
-                            FocusScope.of(context).requestFocus(FocusNode());
-                          },
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: textColor,
-                          ),
-                          cursorColor: Theme.of(context).primaryColor,
-                          //光标圆角
-                          cursorRadius: Radius.circular(5),
-                          //光标宽度
-                          cursorWidth: 1.8,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: hintText,
-                            errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
-                            hintStyle: TextStyle(
-                              fontSize: 12,
-                              color: HexColor('#999999'),
+                            onChanged: (String inputValue) {
+                              _focusKey = key;
+                              _validController.add(inputValue);
+                            },
+                            onFieldSubmitted: (String inputText) {
+                              FocusScope.of(context).requestFocus(FocusNode());
+                            },
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: textColor,
                             ),
+                            cursorColor: Theme.of(context).primaryColor,
+                            //光标圆角
+                            cursorRadius: Radius.circular(5),
+                            //光标宽度
+                            cursorWidth: 1.8,
+                            decoration: InputDecoration(
+
+                              contentPadding:  EdgeInsets.only(top: unit.isNotEmpty?18:0,),
+                              border: InputBorder.none,
+                              hintText: hintText,
+                              errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
+                              hintStyle: TextStyle(
+                                fontSize: 12,
+                                color: HexColor('#999999'),
+                              ),
+                              suffixIcon: (unit.isNotEmpty)
+                                  ? Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 16,
+                                        top: 16,
+                                      ),
+                                      child: Text(
+                                        unit,
+                                        textAlign: TextAlign.end,
+                                        style: TextStyle(
+                                          color: HexColor('#333333'),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            keyboardType: keyboardType ?? TextInputType.numberWithOptions(decimal: false),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(maxLength),
+                            ],
                           ),
-                          keyboardType: keyboardType ?? TextInputType.numberWithOptions(decimal: false),
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(maxLength),
-                          ],
                         ),
                       ),
                     ),
-                    if (unit.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          top: 16,
-                        ),
-                        child: Text(
-                          unit,
-                          style: TextStyle(
-                            color: HexColor('#333333'),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ),
