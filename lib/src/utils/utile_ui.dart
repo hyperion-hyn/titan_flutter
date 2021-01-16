@@ -728,9 +728,8 @@ class UiUtil {
                     Navigator.pop(dialogContext, true);
                   });
 
-                  var result = await BarcodeScanner.scan();
-                  String barcode = result.rawContent;
-                  callback(barcode);
+                  String mnemonicWords = await BarcodeScanner.scan();
+                  callback(mnemonicWords);
                 },
               ),
               ListTile(

@@ -364,9 +364,7 @@ class ShareDialogState extends State<ShareDialog> {
   Future onScan() async {
 //    print('TODO scan');
     try {
-      var result = await BarcodeScanner.scan();
-      String barcode = result.rawContent;
-
+      String barcode = await BarcodeScanner.scan();
 //      if (barcode.length != 130) {
 //        Fluttertoast.showToast(
 //            msg: S.of(context).public_key_scan_fail_rescan,
@@ -376,7 +374,7 @@ class ShareDialogState extends State<ShareDialog> {
         setState(() => {});
 //      }
     } catch (e) {
-      if (e.code == BarcodeScanner.cameraAccessDenied) {
+      if (e.code == BarcodeScanner.CameraAccessDenied) {
         Fluttertoast.showToast(
             msg: S.of(context).open_camera, toastLength: Toast.LENGTH_SHORT);
       } else {
