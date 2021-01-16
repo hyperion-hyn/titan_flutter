@@ -94,14 +94,16 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
       whoSendRpText = "";
     }else{
       isNormal = _shareEntity.info.rpType == RpShareType.normal;
-
       whoSendRpText = "${_shareEntity?.info?.owner ?? '--'} 发的${isNormal ? '新人' : '位置'}红包";
 
       greeting = _shareEntity?.info?.greeting ?? '';
       if(_shareEntity != null && greeting.isEmpty){
         greeting = "恭喜发财，大吉大利";
       }
-      if(((_shareEntity?.info?.state ?? RpShareState.expires) == RpShareState.allGot)){
+      if(((_shareEntity?.info?.state ?? "") == RpShareState.waitForTX || ((_shareEntity?.info?.state ?? "") == RpShareState.pending))){
+        greeting = "红包正在准备中";
+      }
+      if(((_shareEntity?.info?.state ?? "") == RpShareState.allGot)){
         greeting = "手慢了，红包派完了";
       }
       if(_shareEntity?.info?.alreadyGot ?? false){

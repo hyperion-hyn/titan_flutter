@@ -175,6 +175,10 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
     -40009,
     "红包已领取过了",
   ),
+  HttpResponseCodeNotSuccess(
+    -40012,
+    "不能领取自己的新人红包",
+  ),
   ERROR_FUND_PASSWORD
 ];
 
