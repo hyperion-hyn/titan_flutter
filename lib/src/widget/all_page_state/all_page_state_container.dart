@@ -9,8 +9,9 @@ class AllPageStateContainer extends StatefulWidget {
   final AllPageState allPageState;
   final VoidCallback onLoadData;
   final Widget child;
+  final String loadingColor;
 
-  AllPageStateContainer(this.allPageState, this.onLoadData,{this.child});
+  AllPageStateContainer(this.allPageState, this.onLoadData,{this.child,this.loadingColor});
 
   @override
   State<StatefulWidget> createState() {
@@ -42,7 +43,7 @@ class AllPageStateContainerState extends State<AllPageStateContainer> {
   }
 
   Widget buildLoading(context) {
-    return LoadingView();
+    return LoadingView(widget.loadingColor);
   }
 
   Widget buildFail(context, String message) {

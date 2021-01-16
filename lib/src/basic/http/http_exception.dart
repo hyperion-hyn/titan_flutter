@@ -139,6 +139,42 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
     -30012,
     S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh,
   ),
+  HttpResponseCodeNotSuccess(
+    -40001,
+    "红包还没准备好",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40002,
+    "红包已过期",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40003,
+    "红包领完了",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40004,
+    "你不是新人",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40005,
+    "距离红包位置太远了",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40006,
+    "口令不正确",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40007,
+    "RP数量低于最小值",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40008,
+    "HYN数量低于最小值",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40009,
+    "红包已领取过了",
+  ),
   ERROR_FUND_PASSWORD
 ];
 

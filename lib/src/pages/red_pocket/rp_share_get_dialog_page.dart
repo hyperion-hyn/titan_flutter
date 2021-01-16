@@ -349,6 +349,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                             child: AllPageStateContainer(
                               _currentState,
                               () {},
+                              loadingColor: "#ffffff",
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
