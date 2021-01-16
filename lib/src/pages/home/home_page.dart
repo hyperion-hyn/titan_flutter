@@ -96,7 +96,7 @@ class HomePageState extends BaseState<HomePage> {
                       items: _shareLatestList.map(
                         (model) {
                           var name = '${model?.owner ?? '--'}：';
-                          var greeting = ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，新年大吉！';
+                          var greeting = ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，大吉大利！';
 
                           var location = model?.location ?? '';
                           var isLocation = (model.rpType == RpShareType.location) && (location.isNotEmpty);

@@ -132,6 +132,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
       BlocProvider.of<RedPocketBloc>(context).add(UpdateShareConfigEvent());
     }
 
+    _isNewBee = !_isLocation;
+
     super.onCreated();
   }
 

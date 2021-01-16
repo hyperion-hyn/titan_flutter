@@ -134,6 +134,11 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
     //var range = '${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取';
     var locationRange = '$location';
 
+    var total = '+ ';
+    var hyn = FormatUtil.truncateDecimalNum(Decimal.parse(model.getHYNAmount), 4);
+    var rp = FormatUtil.truncateDecimalNum(Decimal.parse(model.getRPAmount), 4);
+    var amount = total + amountValueToString(hyn:hyn, rp:rp);
+
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -222,7 +227,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                       ),
                       Text(
                         // '恭喜发财，新年大吉！',
-                        ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，新年大吉！',
+                        ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，大吉大利！',
                         style: TextStyle(
                           fontSize: 12,
                           color: HexColor('#999999'),
@@ -286,7 +291,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                           ),
                           */
                           Text(
-                            '+ ${FormatUtil.truncateDecimalNum(Decimal.parse(model.getRPAmount), 4)} RP, ${FormatUtil.truncateDecimalNum(Decimal.parse(model.getHYNAmount), 4)} HYN',
+                            amount,
                             style: TextStyle(
                               color: HexColor("#333333"),
                               fontSize: 14,
