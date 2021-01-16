@@ -85,13 +85,17 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
     var getRemindHint;
     var state;
     var isNormal = true;
+    var whoSendRpText;
     if(_shareEntity == null){
       typeName = RpShareType.location;
       state = RpShareState.allGot;
       greeting = "";
       getRemindHint = "";
+      whoSendRpText = "";
     }else{
       isNormal = _shareEntity.info.rpType == RpShareType.normal;
+
+      whoSendRpText = "${_shareEntity?.info?.owner ?? '--'} 发的${isNormal ? '新人' : '位置'}红包";
 
       greeting = _shareEntity?.info?.greeting ?? '';
       if(_shareEntity != null && greeting.isEmpty){
@@ -269,8 +273,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                                 ),
                                 child: RichText(
                                   text: TextSpan(
-                                    text:
-                                        "${_shareEntity?.info?.owner ?? '--'} 发的${isNormal ? '新人' : '位置'}红包",
+                                    text: whoSendRpText,
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: HexColor('#FFFFFF'),
@@ -384,7 +387,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Image.asset(
-                    "res/drawable/ic_dialog_close.png",
+                    "res/drawable/ic_dialog_close_white.png",
                     width: 40,
                     height: 40,
                     color: Colors.white,
