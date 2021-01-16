@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/news/model/news_detail.dart';
@@ -43,7 +44,7 @@ class AnnouncementDialog extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0, bottom: 15),
                       child: Text(
-                        this.announcement?.title ?? "公告",
+                        this.announcement?.title ?? S.of(context).announcement,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,

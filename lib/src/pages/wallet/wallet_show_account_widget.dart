@@ -463,10 +463,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 
       if (transactionDetail.lastOptType == OptType.SPEED_UP) {
         // speed up
-        title = '加速x${transactionDetail.speedUpTimes}...';
+        title = S.of(context).speed_up_times(transactionDetail.speedUpTimes);
       } else if (transactionDetail.lastOptType == OptType.CANCEL) {
         //cancel
-        title = '取消x${transactionDetail.cancelTimes}...';
+        title = S.of(context).cancel_times(transactionDetail.cancelTimes);
       }
     }
 

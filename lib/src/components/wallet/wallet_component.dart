@@ -20,8 +20,7 @@ import 'wallet_repository.dart';
 import 'package:nested/nested.dart';
 
 class WalletComponent extends SingleChildStatelessWidget {
-
-  WalletComponent({Key key, Widget child}): super(key: key, child: child);
+  WalletComponent({Key key, Widget child}) : super(key: key, child: child);
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
@@ -249,6 +248,17 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
       }
     }
     return null;
+  }
+
+  String getCoinIconPathBySymbol(String symbol) {
+    if (this.activatedWallet != null) {
+      for (var coin in this.activatedWallet.coins) {
+        if (coin.symbol == symbol) {
+          return coin.logo;
+        }
+      }
+    }
+    return '';
   }
 
   CoinVo getCoinVoOfHyn() {

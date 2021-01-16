@@ -40,7 +40,6 @@ class _WidgetDemoPageState extends State<WidgetDemoPage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

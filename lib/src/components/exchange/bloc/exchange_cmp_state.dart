@@ -37,3 +37,5 @@ class UpdateExchangeAccountState extends ExchangeCmpState {
 class ClearExchangeAccountState extends ExchangeCmpState {}
 
 class UpdateAssetsState extends ExchangeCmpState {}
+
+class UpdateCoinListState extends ExchangeCmpState {}
