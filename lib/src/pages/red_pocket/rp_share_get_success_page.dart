@@ -364,7 +364,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                               text: TextSpan(
                                   text: getCoinAmount(myRpOpenEntity.rpAmount),
                                   style:
-                                      TextStyle(fontSize: 28, color: HexColor("#D09100"), fontWeight: FontWeight.bold),
+                                      TextStyle(fontSize: 28, color: HexColor("#D09100"), fontWeight: FontWeight.w500),
                                   recognizer: _rpRecognizer,
                                   children: [
                                     TextSpan(
@@ -382,7 +382,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                               text: TextSpan(
                                   text: getCoinAmount(myRpOpenEntity.hynAmount),
                                   style:
-                                      TextStyle(fontSize: 28, color: HexColor("#D09100"), fontWeight: FontWeight.bold),
+                                      TextStyle(fontSize: 28, color: HexColor("#D09100"), fontWeight: FontWeight.w500),
                                   recognizer: _hynRecognizer,
                                   children: [
                                 TextSpan(
@@ -511,7 +511,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                                   style: TextStyle(
                                     color: HexColor("#333333"),
                                     fontSize: 14,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                   maxLines: 3,
                                   textAlign: TextAlign.right,
@@ -524,11 +524,11 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                                       context, item?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
                                 },
                                 child: Text(
-                                  " ,${getCoinAmount(item.hynAmount)} HYN",
+                                  ", ${getCoinAmount(item.hynAmount)} HYN",
                                   style: TextStyle(
                                     color: HexColor("#333333"),
                                     fontSize: 14,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                   maxLines: 3,
                                   textAlign: TextAlign.right,
@@ -537,23 +537,26 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                               ),
                             ],
                           ),
-                          Row(
-                            children: [
-                              Text(
-                                shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(item.address)),
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: HexColor('#999999'),
-                                ),
-                              ),
-                              Spacer(),
-                              if (item.isBest)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4,),
+                            child: Row(
+                              children: [
                                 Text(
-                                  "最佳",
-                                  style: TextStyle(fontSize: 12, color: HexColor('#E8AC13')),
-                                  textAlign: TextAlign.right,
+                                  shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(item.address)),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: HexColor('#999999'),
+                                  ),
                                 ),
-                            ],
+                                Spacer(),
+                                if (item.isBest)
+                                  Text(
+                                    "最佳",
+                                    style: TextStyle(fontSize: 12, color: HexColor('#E8AC13')),
+                                    textAlign: TextAlign.right,
+                                  ),
+                              ],
+                            ),
                           )
                         ],
                       ),
