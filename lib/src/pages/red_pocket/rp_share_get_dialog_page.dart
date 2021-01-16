@@ -155,6 +155,11 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                       return;
                     }
 
+                    if (_shareEntity.info.rpType == RpShareType.location && latlng == null) {
+                      Fluttertoast.showToast(msg: "获取位置失败，请先定位当前位置");
+                      return;
+                    }
+
                     if (_shareEntity.info.isNewBee && !_shareEntity.info.userIsNewBee) {
                       Fluttertoast.showToast(msg: "该红包只有新用户可领取");
                       return;
@@ -173,7 +178,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                     });
 
                     var id = _shareEntity?.info?.id ?? widget.id;
-                    RpShareReqEntity reqEntity = RpShareReqEntity.only(id,widget.address,latlng.latitude,latlng.longitude,rpSecret);
+                    RpShareReqEntity reqEntity = RpShareReqEntity.only(id,widget.address,latlng?.latitude,latlng?.longitude,rpSecret);
                     print(
                         "[$runtimeType] open rp, 1, reqEntity:${reqEntity.toJson()}");
 
