@@ -170,7 +170,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
                 color: HexColor('#333333'),
               ),
             ),
-            SizedBox(width: 4),
+           /* SizedBox(width: 4),
             Tooltip(
               verticalOffset: 16,
               margin: EdgeInsets.symmetric(horizontal: 32.0),
@@ -182,15 +182,18 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
                 height: 10,
                 color: HexColor('#1F81FF'),
               ),
-            ),
+            ),*/
           ],
         ),
-        Text(
-          entity.desc,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.normal,
-            color: HexColor('#999999'),
+        Padding(
+          padding: const EdgeInsets.only(top: 4,),
+          child: Text(
+            entity.desc,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.normal,
+              color: HexColor('#999999'),
+            ),
           ),
         ),
       ],
