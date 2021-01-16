@@ -117,7 +117,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
           textColor: "#333333",
           textSize: 16,
           geometry: latLng,
-          iconImage: "rp_marker",
+          // iconImage: "rp_marker",
+          iconImage: "hyn_marker_big",
           iconAnchor: "bottom",
           //iconOffset: Offset(0.0, 3.0),
         ),
@@ -273,11 +274,11 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
           ),
           _buildRpCountCell(),
           _buildBlessingCell(),
-          _buildSwitchCell(),
-          SizedBox(
-            height: 20,
-          ),
           _buildPasswordCell(),
+          _buildSwitchCell(),
+          // SizedBox(
+          //   height: 20,
+          // ),
           _buildTipsView(),
           _confirmButtonWidget(),
         ],
@@ -577,7 +578,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
               var count = int?.tryParse(_countController.text ?? '1') ?? 1;
               var multiMinRp = Decimal.parse(minRp) * Decimal.fromInt(count);
               if (inputValue > Decimal.zero && inputValue < multiMinRp) {
-                errorText = '至少$multiMinRp RP';
+                errorText = '至少$multiMinRp RP（人均$minRp）';
               }
 
               if (rpBalance >= Decimal.zero && inputValue > rpBalance) {
@@ -624,7 +625,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
               var count = int?.tryParse(_countController.text ?? '1') ?? 1;
               var multiMinHyn = Decimal.parse(minHyn) * Decimal.fromInt(count);
               if (inputValue > Decimal.zero && inputValue < multiMinHyn) {
-                errorText = '至少$multiMinHyn HYN';
+                errorText = '至少$multiMinHyn HYN（人均$minHyn）';
               }
 
               if (hynBalance >= Decimal.zero && inputValue > hynBalance) {
@@ -649,7 +650,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
         key: _rangeKey,
         controller: _rangeController,
         hintText: '填写附近可领取距离',
-        title: '可领取范围',
+        title: '领取范围',
         unit: '千米',
         validator: (String inputText) {
           if (inputText.isEmpty || inputText == null) {
@@ -678,7 +679,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
       child: _rowInputWidget(
         key: _countKey,
         controller: _countController,
-        hintText: '填写个数，平均领取',
+        hintText: '填写个数',
         defaultErrorText: '请填写红包个数',
         keyboardType: TextInputType.numberWithOptions(decimal: true),
         title: '红包个数',
@@ -714,9 +715,9 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
         child: _rowInputWidget(
           key: _greetingKey,
           controller: _greetingController,
-          hintText: '填写祝福语，例如：恭喜发财（可选）',
+          hintText: '恭喜发财，大吉大利',
           defaultErrorText: '请填写祝福语',
-          title: '祝福',
+          title: '祝福语',
           unit: '',
           keyboardType: TextInputType.text,
           isOptional: true,
@@ -726,11 +727,11 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
   Widget _buildPasswordCell() {
     return _clipRectWidget(
         vertical: 4,
-        desc: '新人正确输入口令才能拆解红包 (可选)',
+        // desc: '新人正确输入口令才能拆解红包 (可选)',
         child: _rowInputWidget(
           key: _passwordKey,
           controller: _passwordController,
-          hintText: '填写红包口令，例如：888，发发发',
+          hintText: '选填',
           defaultErrorText: '请填写红包口令',
           title: '口令',
           unit: '',
@@ -743,7 +744,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
     var hynMin = _rpShareConfig?.hynMin ?? '0.01';
 
     return _clipRectWidget(
-        desc: '如果只允许新人领取，你要为每个新人至少要塞 $hynMin HYN 作为他之后矿工费所用',
+        // desc: '如果只允许新人领取，你要为每个新人至少要塞 $hynMin HYN 作为他之后矿工费所用',
         vertical: 4,
         child: Row(
           children: [
@@ -947,7 +948,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
 
     return Padding(
       padding: const EdgeInsets.only(
-        top: 60,
+        top: 10,
         left: 16,
         right: 16,
         bottom: 46,
@@ -966,9 +967,9 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                   fontSize: 16,
                 )),
           ),
-          rowTipsItem('只有新人才能领取，', subTitleBold: '领取后他将成为你的好友；'),
-          rowTipsItem('你要为每个新人至少要塞 $minHyn HYN作为他之后矿工费所用；'),
-          rowTipsItem('24小时候后，如果还剩红包没领取，将自动退回你的钱包；'),
+          rowTipsItem('如果开启新人才能领取，领取后他将成为你的好友；\n但你要为每个新人至少要塞 $minHyn HYN作为他之后矿工费所用；'),
+          // rowTipsItem('你要为每个新人至少要塞 $minHyn HYN作为他之后矿工费所用；'),
+          // rowTipsItem('24小时候后，如果还剩红包没领取，将自动退回你的钱包；'),
         ],
       ),
     );
