@@ -432,7 +432,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
         _receiverAddressController.text = barcode;
       }
     } catch (e) {
-      if (e.code == BarcodeScanner.CameraAccessDenied) {
+      if (e.code == BarcodeScanner.cameraAccessDenied) {
         Fluttertoast.showToast(msg: S.of(context).open_camera, toastLength: Toast.LENGTH_SHORT);
       } else {
         logger.e(e);

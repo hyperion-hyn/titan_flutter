@@ -307,17 +307,17 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                           Row(
                             children: [
                               Spacer(),
-                              Text(
-                                model.isBest?'最佳':'',
-                                style: TextStyle(
-                                  color: HexColor("#E8AC13"),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                                maxLines: 2,
-                                textAlign: TextAlign.right,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                              // Text(
+                              //   model.isBest?'最佳':'',
+                              //   style: TextStyle(
+                              //     color: HexColor("#E8AC13"),
+                              //     fontSize: 12,
+                              //     fontWeight: FontWeight.normal,
+                              //   ),
+                              //   maxLines: 2,
+                              //   textAlign: TextAlign.right,
+                              //   overflow: TextOverflow.ellipsis,
+                              // ),
                               SizedBox(width: 10,),
                               Text(
                                 createdAtStr,
