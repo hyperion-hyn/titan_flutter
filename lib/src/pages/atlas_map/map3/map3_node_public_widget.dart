@@ -1046,12 +1046,13 @@ Future editIconSheet(BuildContext context, EditIconCallback callback) async {
   );
 }
 
-Widget emptyListWidget({String title = "", bool isAdapter = true}) {
+Widget emptyListWidget({String title = "", bool isAdapter = true, double paddingTop = 0}) {
   var containerWidget = Container(
     padding: const EdgeInsets.symmetric(vertical: 24),
     color: Colors.white,
     child: Column(
       children: <Widget>[
+        SizedBox(height: paddingTop,),
         Image.asset(
           'res/drawable/ic_empty_contract.png',
           width: 80,

@@ -24,6 +24,7 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
+import 'package:titan/src/widget/common_page_view/empty_view.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'api/rp_api.dart';
 import 'entity/rp_share_entity.dart';
@@ -380,7 +381,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                 child: Row(
                   children: [
                     Text(
-                      "总共${_shareEntity?.info?.gotCount ?? ""}个红包；共 ${_shareEntity?.info?.rpAmount ?? ""} RP， ${_shareEntity?.info?.hynAmount ?? ""} HYN",
+                      "总共${_shareEntity?.info?.total ?? ""}个红包；共 ${_shareEntity?.info?.rpAmount ?? ""} RP，${_shareEntity?.info?.hynAmount ?? ""} HYN",
                       style: TextStyles.textC999S12,
                     ),
                     Spacer(),
@@ -425,6 +426,12 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
         child: Container(),
       );
     }
+
+    var childCount = _shareEntity?.details?.length ?? 0;
+    if (childCount == 0) {
+      return emptyListWidget(title: '暂无人认领', paddingTop: 100,);
+    }
+
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
       var item = _shareEntity.details[index];
@@ -526,7 +533,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
           ],
         ),
       );
-    }, childCount: _shareEntity?.details?.length ?? 0));
+    }, childCount: childCount,));
   }
 
   String getCoinAmount(String coinAmount){
