@@ -156,10 +156,12 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
           child: Column(
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(
                       right: 10,
+                      top: 10,
                     ),
                     child: Image.asset(
                       "res/drawable/rp_share_send_tag.png",
