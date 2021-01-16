@@ -860,9 +860,12 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                           height: 125,
                           color: Colors.black.withOpacity(0.30),
                           child: Center(
-                            child: Text(
-                              _isLoadingOpenCage ? "" : '点击编辑投放位置',
-                              style: TextStyle(color: Colors.white, fontSize: 14),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 60, left: 20),
+                              child: Text(
+                                _isLoadingOpenCage ? "" : '点击编辑投放位置',
+                                style: TextStyle(color: Colors.white, fontSize: 14),
+                              ),
                             ),
                           ),
                         ),
