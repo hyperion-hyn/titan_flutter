@@ -683,8 +683,12 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
 
           var errorText = '';
 
-          if (inputValue > 0 && inputValue > 100) {
-            errorText = '一次最多发100个红包';
+          // if (inputValue > 0 && inputValue > 100) {
+          //   errorText = '一次最多发100个红包';
+          // }
+
+          if (inputValue < 0) {
+            errorText = '至少1个红包';
           }
 
           _isInvalidCount = errorText.isNotEmpty;
@@ -927,6 +931,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
   }
 
   Widget _buildTipsView() {
+    var minHyn = _rpShareConfig?.hynMin ?? '0.01';
+
     return Padding(
       padding: const EdgeInsets.only(
         top: 60,
@@ -949,7 +955,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                 )),
           ),
           rowTipsItem('只有新人才能领取，', subTitleBold: '领取后他将成为你的好友；'),
-          rowTipsItem('你要为每个新人至少要塞 0.001 HYN作为他之后矿工费所用；'),
+          rowTipsItem('你要为每个新人至少要塞 $minHyn HYN作为他之后矿工费所用；'),
           rowTipsItem('24小时候后，如果还剩红包没领取，将自动退回你的钱包；'),
         ],
       ),

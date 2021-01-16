@@ -1,4 +1,3 @@
-import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/components/account/account_component.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -20,7 +18,6 @@ import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/global_data/global_data.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
-import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
@@ -656,7 +653,8 @@ class HomePanelState extends State<HomePanel> {
           )
         ],
       ),
-      /*Column(
+      /*
+      Column(
                 children: <Widget>[
                   poiRow1(context),
                   Padding(
@@ -664,7 +662,8 @@ class HomePanelState extends State<HomePanel> {
                     child: poiRow2(context),
                   ),
                 ],
-              ),*/
+              ),
+      */
     );
   }
 

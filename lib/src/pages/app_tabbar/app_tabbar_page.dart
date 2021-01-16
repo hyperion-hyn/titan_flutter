@@ -393,7 +393,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.symmetric(
-          vertical: 16.0,
+          vertical: 10.0,
           horizontal: 16.0,
         ),
         child: Container(
@@ -409,7 +409,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4,),
             child: Row(
               children: [
                 Padding(
@@ -418,8 +418,8 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                   ),
                   child: Image.asset(
                     'res/drawable/rp_share_broadcast.png',
-                    width: 18,
-                    height: 20,
+                    width: 9,
+                    height: 10,
                   ),
                 ),
                 Expanded(
@@ -478,7 +478,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                               if (isLocation)
                                 Flexible(
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
@@ -508,7 +508,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                         },
                       ).toList(),
                       options: CarouselOptions(
-                        aspectRatio: 10,
+                        aspectRatio: 8,
                         initialPage: 0,
                         viewportFraction: 1,
                         enlargeCenterPage: false,

@@ -167,80 +167,83 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                       height: 28,
                     ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Container(
-                            margin: const EdgeInsets.only(
-                              right: 8,
-                              // top: 16,
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  HexColor('#FF0527'),
-                                  HexColor('#FF4D4D'),
-                                ],
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              margin: const EdgeInsets.only(
+                                right: 8,
+                                // top: 16,
                               ),
-                              borderRadius: BorderRadius.all(Radius.circular(2)),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    HexColor('#FF0527'),
+                                    HexColor('#FF4D4D'),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.all(Radius.circular(2)),
+                              ),
+                              child: Text(
+                                shareTypeEntity.nameZh,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                              ),
                             ),
-                            child: Text(
-                              shareTypeEntity.nameZh,
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                right: 6,
+                              ),
+                              child: Text(
+                                model.owner,
+                                style: TextStyle(
+                                  color: HexColor("#333333"),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              shareStateToName(model.state),
+                              //onGoing ? '派发中...' : '已过期',
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
+                                color: onGoing ? HexColor("#E8AC13") : HexColor("#999999"),
+                                fontSize: 12,
+                                fontWeight: FontWeight.normal,
                               ),
+                              maxLines: 2,
+                              textAlign: TextAlign.right,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              right: 6,
-                            ),
-                            child: Text(
-                              model.owner,
-                              style: TextStyle(
-                                color: HexColor("#333333"),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            shareStateToName(model.state),
-                            //onGoing ? '派发中...' : '已过期',
-                            style: TextStyle(
-                              color: onGoing ? HexColor("#E8AC13") : HexColor("#999999"),
-                              fontSize: 12,
-                              fontWeight: FontWeight.normal,
-                            ),
-                            maxLines: 2,
-                            textAlign: TextAlign.right,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 6,
-                      ),
-                      Text(
-                        ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，新年大吉！',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: HexColor('#999999'),
+                          ],
                         ),
-                        textAlign: TextAlign.left,
-                      ),
-                      SizedBox(
-                        height: 6,
-                      ),
-                    ],
+                        SizedBox(
+                          height: 6,
+                        ),
+                        Text(
+                          ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，新年大吉！',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: HexColor('#999999'),
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                        SizedBox(
+                          height: 6,
+                        ),
+                      ],
+                    ),
                   ),
                   // Spacer(),
                   Expanded(
