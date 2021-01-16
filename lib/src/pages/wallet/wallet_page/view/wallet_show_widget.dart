@@ -82,6 +82,7 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
   int _lastRequestCoinTime = 0;
   bool _isShowBalances = true;
   bool _isRefreshBalances = false;
+  bool _isRefreshFail = false;
 
   @override
   void initState() {
@@ -98,12 +99,20 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
   void onCreated() {
     BlocProvider.of<WalletCmpBloc>(context).listen((state) {
       if (state is UpdateWalletPageState && state.updateStatus == 0) {
-        _isRefreshBalances = false;
+        setState(() {
+          _isRefreshBalances = false;
+          _isRefreshFail = false;
+        });
       }else if(state is UpdateWalletPageState && (state.updateStatus == -1)){
-        Fluttertoast.showToast(msg: S.of(context).failed_request_balance);
-        _isRefreshBalances = false;
+        setState(() {
+          _isRefreshBalances = false;
+          _isRefreshFail = true;
+        });
       }else if(state is UpdateWalletPageState && (state.updateStatus == 1)){
-        _isRefreshBalances = true;
+        setState(() {
+          _isRefreshFail = false;
+          _isRefreshBalances = true;
+        });
       }
     });
     // BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
@@ -139,6 +148,7 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
                               onTap: () async {
                                 WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (wallet){
                                   setState(() {
+                                    _isRefreshFail = false;
                                     _isRefreshBalances = true;
                                   });
                                 },noWalletUpdate: (){
@@ -246,7 +256,12 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
                                 valueColor: new AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
                                 strokeWidth: 1,
                               ),
-                            )
+                            ),
+                          if(_isRefreshFail)
+                            Text("刷新失败", style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ))
                         ],
                       ),
                     ],
