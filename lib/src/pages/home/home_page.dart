@@ -107,6 +107,7 @@ class HomePageState extends BaseState<HomePage> {
                               Flexible(
                                 child: Row(
                                   children: [
+                                    /*
                                     Padding(
                                       padding: const EdgeInsets.only(
                                         right: 10,
@@ -125,6 +126,7 @@ class HomePageState extends BaseState<HomePage> {
                                             )),
                                       ),
                                     ),
+                                    */
                                     Text(
                                       name,
                                       style: TextStyle(

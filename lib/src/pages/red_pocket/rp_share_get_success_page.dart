@@ -204,11 +204,15 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                     ),
                   );
                 },
-                child: Image.asset(
-                  "res/drawable/node_share.png",
-                  width: 17,
-                  height: 17,
-                  color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Image.asset(
+                    "res/drawable/node_share.png",
+                    width: 17,
+                    height: 17,
+                    // fit: BoxFit.cover,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -468,6 +472,8 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
         var hynValue = double?.tryParse(item?.hynAmount ?? "0") ?? 0;
         var rpValue = double?.tryParse(item?.rpAmount ?? "0") ?? 0;
 
+        print("hynValue:$hynValue, rpValue:$rpValue");
+
         return InkWell(
           onTap: () {
             AtlasApi.goToHynScanPage(context, item.address);
@@ -537,7 +543,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                                         context, item?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
                                   },
                                   child: Text(
-                                    ", ${getCoinAmount(item.hynAmount)} HYN",
+                                    "${getCoinAmount(item.hynAmount)} HYN",
                                     style: TextStyle(
                                       color: HexColor("#333333"),
                                       fontSize: 14,
