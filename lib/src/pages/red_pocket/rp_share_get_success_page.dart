@@ -33,8 +33,9 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart' as allPage;
 
 class RpShareGetSuccessPage extends StatefulWidget {
   final String id;
+  final bool isOpenRpJump;
 
-  RpShareGetSuccessPage(this.id);
+  RpShareGetSuccessPage(this.id,{this.isOpenRpJump = false});
 
   @override
   State<StatefulWidget> createState() {
@@ -179,9 +180,9 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
               ),
             ),
           ),
-          if ((_shareEntity?.info?.rpType ?? RpShareType.location) == RpShareType.normal)
+          if ((_shareEntity?.info?.rpType ?? "") == RpShareType.normal)
             Positioned(
-              top: 34,
+              top: 64,
               right: 16,
               child: InkWell(
                 onTap: () {
@@ -332,7 +333,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
               SizedBox(
                 height: 26,
               ),
-              if (_shareEntity?.info?.alreadyGot ?? false && myRpOpenEntity != null)
+              if ((_shareEntity?.info?.alreadyGot ?? false) && myRpOpenEntity != null)
                 Column(
                   children: [
                     Row(
@@ -378,12 +379,13 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 2.0,
+                    if(widget.isOpenRpJump)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 2.0,
+                        ),
+                        child: Text("已领取红包，请稍后查看钱包记录", style: TextStyles.textC333S12),
                       ),
-                      child: Text("已领取红包，请稍后查看钱包记录", style: TextStyles.textC333S12),
-                    ),
                     Container(
                       margin: const EdgeInsets.only(top: 50.0),
                       height: 10,

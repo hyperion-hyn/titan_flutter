@@ -99,20 +99,26 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
   void onCreated() {
     BlocProvider.of<WalletCmpBloc>(context).listen((state) {
       if (state is UpdateWalletPageState && state.updateStatus == 0) {
-        setState(() {
-          _isRefreshBalances = false;
-          _isRefreshFail = false;
-        });
+        if(mounted){
+          setState(() {
+            _isRefreshBalances = false;
+            _isRefreshFail = false;
+          });
+        }
       }else if(state is UpdateWalletPageState && (state.updateStatus == -1)){
-        setState(() {
-          _isRefreshBalances = false;
-          _isRefreshFail = true;
-        });
+        if(mounted){
+          setState(() {
+            _isRefreshBalances = false;
+            _isRefreshFail = true;
+          });
+        }
       }else if(state is UpdateWalletPageState && (state.updateStatus == 1)){
-        setState(() {
-          _isRefreshFail = false;
-          _isRefreshBalances = true;
-        });
+        if(mounted){
+          setState(() {
+            _isRefreshFail = false;
+            _isRefreshBalances = true;
+          });
+        }
       }
     });
     // BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());

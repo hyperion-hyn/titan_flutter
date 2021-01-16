@@ -91,7 +91,7 @@ class Const {
     if (env.buildType == BuildType.DEV) {
       return 'https://cn.tile.map3.network/see-it-all-rp-test.json';
     } else {
-      return 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+      return 'https://cn.tile.map3.network/see-it-all-rp.json';
     }
   }
 
@@ -101,7 +101,7 @@ class Const {
     if (env.buildType == BuildType.DEV) {
       return 'https://static.hyn.space/maptiles/see-it-all-rp-test.json';
     } else {
-      return 'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
+      return 'https://static.hyn.space/maptiles/see-it-all-rp.json';
     }
   }
 
