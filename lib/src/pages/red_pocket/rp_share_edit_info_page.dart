@@ -565,7 +565,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
               var rpBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
 
               var minRp = _rpShareConfig?.rpMin ?? '0.01';
-              var count = int?.tryParse(_countController.text??'1')??1;
+              var count = int?.tryParse(_countController.text ?? '1') ?? 1;
               var multiMinRp = Decimal.parse(minRp) * Decimal.fromInt(count);
               if (inputValue > Decimal.zero && inputValue < multiMinRp) {
                 errorText = '至少$multiMinRp RP';
@@ -612,7 +612,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
               var hynBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
 
               var minHyn = _rpShareConfig?.hynMin ?? '0.01';
-              var count = int?.tryParse(_countController.text??'1')??1;
+              var count = int?.tryParse(_countController.text ?? '1') ?? 1;
               var multiMinHyn = Decimal.parse(minHyn) * Decimal.fromInt(count);
               if (inputValue > Decimal.zero && inputValue < multiMinHyn) {
                 errorText = '至少$multiMinHyn HYN';
@@ -1043,17 +1043,6 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
     * 2.检查是否超过余额
     * */
 
-    // amount
-    var count = int.tryParse(_countController.text ?? '0') ?? 0;
-    if (count <= 0) {
-      Fluttertoast.showToast(msg: '请填写红包个数！');
-      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
-
-      return;
-    }
-    reqEntity.count = count;
-
-
     // rpAmount
     var rpValue = Decimal.tryParse(_rpAmountController?.text ?? '0') ?? Decimal.zero;
     if (rpValue <= Decimal.zero) {
@@ -1081,6 +1070,16 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
     }
     reqEntity.hynAmount = hynValue.toDouble();
 
+    // amount
+    var count = int.tryParse(_countController.text ?? '0') ?? 0;
+    if (count <= 0) {
+      Fluttertoast.showToast(msg: '请填写红包个数！');
+      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+
+      return;
+    }
+    reqEntity.count = count;
+
     if (count > 1 && hynValue > Decimal.zero && rpValue > Decimal.zero) {
       _focusKey = null;
       _validController.add('-1');
@@ -1103,7 +1102,6 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
 
     // only location rp
     if (_isLocation) {
-
       // location
       if (_openCageData == null) {
         _positionBloc.add(GetOpenCageEvent(_selectedPosition, _language));
@@ -1111,7 +1109,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
         _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
         return;
       }
-      reqEntity.location = _addressText??'';
+      reqEntity.location = _addressText ?? '';
 
       // coordinates
       //var coordinates = [_selectedPosition.latitude, _selectedPosition.longitude];
