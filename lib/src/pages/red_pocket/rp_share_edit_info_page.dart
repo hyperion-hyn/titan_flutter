@@ -408,8 +408,9 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                             //光标宽度
                             cursorWidth: 1.8,
                             decoration: InputDecoration(
-
-                              contentPadding:  EdgeInsets.only(top: unit.isNotEmpty?18:0,),
+                              contentPadding: EdgeInsets.only(
+                                top: unit.isNotEmpty ? 18 : 0,
+                              ),
                               border: InputBorder.none,
                               hintText: hintText,
                               errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
@@ -419,9 +420,9 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                               ),
                               suffixIcon: (unit.isNotEmpty)
                                   ? Padding(
-                                      padding: const EdgeInsets.only(
+                                      padding: EdgeInsets.only(
                                         left: 16,
-                                        top: 16,
+                                        top: (key == _hynAmountKey || key == _rpAmountKey) ? 18 : 16,
                                       ),
                                       child: Text(
                                         unit,
@@ -1041,7 +1042,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
     _focusKey = null;
     _validController.add('-1');
 
-    if (_isInvalidHynAmount || _isInvalidRpAmount || _isInvalidCount || (_isInvalidRange && _isLocation)) {
+    if ((_isInvalidHynAmount && _isInvalidRpAmount) || _isInvalidCount || (_isInvalidRange && _isLocation)) {
       _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
       return;
@@ -1053,30 +1054,51 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
 
     // rpAmount
     var rpValue = Decimal.tryParse(_rpAmountController?.text ?? '0') ?? Decimal.zero;
-    if (rpValue <= Decimal.zero) {
-      Fluttertoast.showToast(msg: '请输入RP金额！');
-      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
-
-      return;
-    }
-    reqEntity.rpAmount = rpValue.toDouble();
-
-    var hynMin = _rpShareConfig?.hynMin ?? '0.01';
 
     // hynAmount
     var hynValue = Decimal.tryParse(_hynAmountController?.text ?? '0') ?? Decimal.zero;
-    if (hynValue <= Decimal.zero) {
-      Fluttertoast.showToast(msg: '请输入HYN金额！');
-      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
-      return;
-    } else if (hynValue > Decimal.zero && hynValue <= Decimal.parse(hynMin)) {
-      Fluttertoast.showToast(msg: '你要为每个新人至少要塞 $hynMin HYN作为他之后矿工费所用');
-      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+    if (_isNewBee) {
+      if (rpValue <= Decimal.zero) {
+        Fluttertoast.showToast(msg: '请输入RP金额！');
+        _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
-      return;
+        return;
+      }
+      reqEntity.rpAmount = rpValue.toDouble();
+
+      var hynMin = _rpShareConfig?.hynMin ?? '0.01';
+      if (hynValue <= Decimal.zero) {
+        Fluttertoast.showToast(msg: '请输入HYN金额！');
+        _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+
+        return;
+      } else if (hynValue > Decimal.zero && hynValue <= Decimal.parse(hynMin)) {
+        Fluttertoast.showToast(msg: '你要为每个新人至少要塞 $hynMin HYN作为他之后矿工费所用');
+        _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+
+        return;
+      }
+      reqEntity.hynAmount = hynValue.toDouble();
+    } else {
+
+      if (rpValue <= Decimal.zero && hynValue <= Decimal.zero) {
+        Fluttertoast.showToast(msg: '请输入RP金额 或 输入HYN金额！');
+        _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+        return;
+      }
+
+      if ((_rpAmountController?.text??'').isEmpty && hynValue > Decimal.zero) {
+        _rpAmountController?.text = '0';
+      }
+
+      if ((_hynAmountController?.text??'').isEmpty && rpValue > Decimal.zero) {
+        _hynAmountController?.text = '0';
+      }
+
+      reqEntity.rpAmount = rpValue.toDouble();
+      reqEntity.hynAmount = hynValue.toDouble();
     }
-    reqEntity.hynAmount = hynValue.toDouble();
 
     // amount
     var count = int.tryParse(_countController.text ?? '0') ?? 0;

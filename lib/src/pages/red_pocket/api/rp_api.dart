@@ -690,40 +690,77 @@ class RPApi {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
     final client = WalletUtil.getWeb3Client(true);
-    var rpNonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
 
     // rp
-    var rpSignedTX = await HYNApi.signTransferHYNHrc30(
-      password,
-      ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
-      toAddress,
-      activeWallet.wallet,
-      coinVo.contractAddress,
-      nonce: rpNonce,
-    );
-    print('[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
-
-    if (rpSignedTX == null) {
-      throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
-    }
-    reqEntity.rpSignedTX = rpSignedTX;
+    String rpSignedTX = '';
+    var rpNonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
 
     // hyn
-    var hynNonce = rpNonce + 1;
-    var hynSignedTX = await HYNApi.signTransferHYN(
-      password,
-      activeWallet.wallet,
-      toAddress: toAddress,
-      amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
-      nonce: hynNonce,
-      message: null,
-    );
+    String hynSignedTX = '';
+    var hynNonce = rpNonce;
 
-    print('[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
+    if (reqEntity.rpAmount > 0 && reqEntity.hynAmount > 0) {
+      rpSignedTX = await HYNApi.signTransferHYNHrc30(
+        password,
+        ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
+        toAddress,
+        activeWallet.wallet,
+        coinVo.contractAddress,
+        nonce: rpNonce,
+      );
+      if (rpSignedTX == null) {
+        throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
+      }
+      print('[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
 
-    if (hynSignedTX?.isEmpty ?? true) {
-      throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
+      hynNonce = rpNonce + 1;
+      hynSignedTX = await HYNApi.signTransferHYN(
+        password,
+        activeWallet.wallet,
+        toAddress: toAddress,
+        amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
+        nonce: hynNonce,
+        message: null,
+      );
+      if (hynSignedTX?.isEmpty ?? true) {
+        throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
+      }
+      print('[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
+    } else {
+      if (reqEntity.rpAmount > 0) {
+        rpSignedTX = await HYNApi.signTransferHYNHrc30(
+          password,
+          ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
+          toAddress,
+          activeWallet.wallet,
+          coinVo.contractAddress,
+          nonce: rpNonce,
+        );
+        print('[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
+
+        if (rpSignedTX == null) {
+          throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
+        }
+      }
+
+      if (reqEntity.hynAmount > 0) {
+        hynSignedTX = await HYNApi.signTransferHYN(
+          password,
+          activeWallet.wallet,
+          toAddress: toAddress,
+          amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
+          nonce: hynNonce,
+          message: null,
+        );
+        print('[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
+
+        if (hynSignedTX?.isEmpty ?? true) {
+          throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
+        }
+      }
     }
+
+    reqEntity.rpSignedTX = rpSignedTX;
     reqEntity.hynSignedTX = hynSignedTX;
 
     return await RPHttpCore.instance.postEntity(
@@ -843,8 +880,6 @@ class RPApi {
       params,
     );
     params['sign'] = signed;
-
-
 
     print("[$runtimeType] getRpPwdInfo, params:$params ");
     return await RPHttpCore.instance.getEntity(

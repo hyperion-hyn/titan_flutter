@@ -45,6 +45,43 @@ class _RpShareSendDialogState extends BaseState<RpShareSendDialogPage> {
     var rpFee = '0.0001';
     var hynFee = '0.0001';
 
+    Widget widget1 = Container();
+    Widget widget2 = Container();
+
+    if ((widget.reqEntity?.hynAmount ?? 0) > 0 && (widget.reqEntity?.rpAmount ?? 0) > 0) {
+      widget1 = _rowText(
+        title: S.of(context).transfer_gas_fee,
+        content: '$rpFee HYN',
+        subContent: 'RP 产生',
+        showLine: false,
+      );
+
+      widget2 = _rowText(
+        title: '',
+        content: '$hynFee HYN',
+        subContent: 'HYN 产生',
+        showLine: false,
+      );
+    } else {
+      if ((widget.reqEntity?.rpAmount ?? 0) > 0) {
+        widget1 = _rowText(
+          title: S.of(context).transfer_gas_fee,
+          content: '$rpFee HYN',
+          subContent: 'RP 产生',
+          showLine: false,
+        );
+      }
+
+      if ((widget.reqEntity?.hynAmount ?? 0) > 0) {
+        widget2 = _rowText(
+          title: S.of(context).transfer_gas_fee,
+          content: '$hynFee HYN',
+          subContent: 'HYN 产生',
+          showLine: false,
+        );
+      }
+    }
+
     return Material(
       color: Colors.transparent,
       child: SafeArea(
@@ -101,42 +138,44 @@ class _RpShareSendDialogState extends BaseState<RpShareSendDialogPage> {
                               ),
                             ],
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 16,
-                                ),
-                                child: Text(
-                                  '${widget.reqEntity?.rpAmount ?? '0'} RP',
-                                  style: TextStyle(
-                                    color: HexColor('#333333'),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 18,
+                          if ((widget.reqEntity?.rpAmount ?? 0) > 0)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 16,
+                                  ),
+                                  child: Text(
+                                    '${widget.reqEntity?.rpAmount ?? '0'} RP',
+                                    style: TextStyle(
+                                      color: HexColor('#333333'),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 4,
-                                ),
-                                child: Text(
-                                  '${widget.reqEntity?.hynAmount ?? '0'} HYN',
-                                  style: TextStyle(
-                                    color: HexColor('#333333'),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 18,
+                              ],
+                            ),
+                          if ((widget.reqEntity?.hynAmount ?? 0) > 0)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 16,
+                                  ),
+                                  child: Text(
+                                    '${widget.reqEntity?.hynAmount ?? '0'} HYN',
+                                    style: TextStyle(
+                                      color: HexColor('#333333'),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
                           SizedBox(
                             height: 40,
                           ),
@@ -153,18 +192,8 @@ class _RpShareSendDialogState extends BaseState<RpShareSendDialogPage> {
                             title: S.of(context).exchange_to,
                             content: S.of(context).rp_red_pocket,
                           ),
-                          _rowText(
-                            title: S.of(context).transfer_gas_fee,
-                            content: '$rpFee HYN',
-                            subContent: 'RP 产生',
-                            showLine: false,
-                          ),
-                          _rowText(
-                            title: '',
-                            content: '$hynFee HYN',
-                            subContent: 'HYN 产生',
-                            showLine: false,
-                          ),
+                          widget1,
+                          widget2,
                         ],
                       ),
                     ),
