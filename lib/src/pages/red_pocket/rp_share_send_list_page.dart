@@ -129,7 +129,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
 
     var location = (model?.location ?? '').isNotEmpty ? '${model.location}' : '';
-    var range = '${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取';
+    //var range = '${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取';
     var locationRange = '$location';
 
     var onGoing = model.state == RpShareState.ongoing;
@@ -236,7 +236,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                           height: 6,
                         ),
                         Text(
-                          ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，新年大吉！',
+                          ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，大吉大利！',
                           style: TextStyle(
                             fontSize: 12,
                             color: HexColor('#999999'),

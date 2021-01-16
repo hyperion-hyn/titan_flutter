@@ -35,7 +35,7 @@ class RpShareGetSuccessPage extends StatefulWidget {
   final String id;
   final bool isOpenRpJump;
 
-  RpShareGetSuccessPage(this.id,{this.isOpenRpJump = false});
+  RpShareGetSuccessPage(this.id, {this.isOpenRpJump = false});
 
   @override
   State<StatefulWidget> createState() {
@@ -237,24 +237,10 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
     }
 
     var total = '总${_shareEntity?.info?.total ?? ""}个红包； ';
-    var hynAmount = '${_shareEntity?.info?.hynAmount ?? ""} HYN';
-    var hynValue = double?.tryParse(_shareEntity?.info?.hynAmount ?? "0") ?? 0;
+    var amount = total + amountValueToString(hyn: _shareEntity?.info?.hynAmount, rp: _shareEntity?.info?.rpAmount);
 
-    var rpAmount = '${_shareEntity?.info?.rpAmount ?? ""} RP';
-    var rpValue = double?.tryParse(_shareEntity?.info?.rpAmount ?? "0") ?? 0;
-
-    var amount = total;
-    if (rpValue > 0 && hynValue > 0) {
-      amount = total + hynAmount + ', ' + rpAmount;
-    } else {
-      if (hynValue > 0) {
-        amount = total + hynAmount;
-      }
-
-      if (rpValue > 0) {
-        amount = total + rpAmount;
-      }
-    }
+    var hynValueMy = double?.tryParse(myRpOpenEntity?.hynAmount ?? "0") ?? 0;
+    var rpValueMy = double?.tryParse(myRpOpenEntity?.rpAmount ?? "0") ?? 0;
 
     return SliverToBoxAdapter(
       child: Column(
@@ -320,7 +306,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                 ),
               ),
               Text(
-                ((_shareEntity?.info?.greeting ?? '')?.isNotEmpty ?? false) ? _shareEntity.info.greeting : '恭喜发财，新年大吉！',
+                ((_shareEntity?.info?.greeting ?? '')?.isNotEmpty ?? false) ? _shareEntity.info.greeting : '恭喜发财，大吉大利！',
                 style: TextStyles.textC999S14,
               ),
               if ((_shareEntity?.info?.rpType ?? "") == RpShareType.location)
@@ -355,47 +341,53 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
               ),
               if ((_shareEntity?.info?.alreadyGot ?? false) && myRpOpenEntity != null)
                 Column(
+                  // crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
-                          child: RichText(
-                              textAlign: TextAlign.end,
-                              text: TextSpan(
-                                  text: getCoinAmount(myRpOpenEntity.rpAmount),
-                                  style:
-                                      TextStyle(fontSize: 28, color: HexColor("#D09100"), fontWeight: FontWeight.w500),
-                                  recognizer: _rpRecognizer,
-                                  children: [
-                                    TextSpan(
-                                      text: " RP",
-                                      style: TextStyle(
-                                          fontSize: 16, color: HexColor("#D09100"), fontWeight: FontWeight.normal),
-                                      recognizer: _rpRecognizer,
-                                    ),
-                                  ])),
-                        ),
-                        Text("  +  ",
-                            style: TextStyle(fontSize: 30, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
-                        Expanded(
-                          child: RichText(
-                              text: TextSpan(
-                                  text: getCoinAmount(myRpOpenEntity.hynAmount),
-                                  style:
-                                      TextStyle(fontSize: 28, color: HexColor("#D09100"), fontWeight: FontWeight.w500),
-                                  recognizer: _hynRecognizer,
-                                  children: [
-                                TextSpan(
-                                  text: " HYN",
-                                  style: TextStyle(
-                                      fontSize: 16, color: HexColor("#D09100"), fontWeight: FontWeight.normal),
-                                  recognizer: _hynRecognizer,
-                                ),
-                              ])),
-                        ),
+                        if (rpValueMy > 0)
+                          Flexible(
+                            child: RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                    text: getCoinAmount(myRpOpenEntity.rpAmount),
+                                    style: TextStyle(
+                                        fontSize: 28, color: HexColor("#D09100"), fontWeight: FontWeight.w500),
+                                    recognizer: _rpRecognizer,
+                                    children: [
+                                      TextSpan(
+                                        text: " RP",
+                                        style: TextStyle(
+                                            fontSize: 16, color: HexColor("#D09100"), fontWeight: FontWeight.normal),
+                                        recognizer: _rpRecognizer,
+                                      ),
+                                    ])),
+                          ),
+                        if (rpValueMy > 0 && hynValueMy > 0)
+                          Text(" + ",
+                              style:
+                                  TextStyle(fontSize: 30, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
+                        if (hynValueMy > 0)
+                          Flexible(
+                            child: RichText(
+                                text: TextSpan(
+                                    text: getCoinAmount(myRpOpenEntity.hynAmount),
+                                    style: TextStyle(
+                                        fontSize: 28, color: HexColor("#D09100"), fontWeight: FontWeight.w500),
+                                    recognizer: _hynRecognizer,
+                                    children: [
+                                  TextSpan(
+                                    text: " HYN",
+                                    style: TextStyle(
+                                        fontSize: 16, color: HexColor("#D09100"), fontWeight: FontWeight.normal),
+                                    recognizer: _hynRecognizer,
+                                  ),
+                                ])),
+                          ),
                       ],
                     ),
-                    if(widget.isOpenRpJump)
+                    if (widget.isOpenRpJump)
                       Padding(
                         padding: const EdgeInsets.only(
                           top: 2.0,
@@ -472,6 +464,10 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
         delegate: SliverChildBuilderDelegate(
       (context, index) {
         var item = _shareEntity.details[index];
+
+        var hynValue = double?.tryParse(item?.hynAmount ?? "0") ?? 0;
+        var rpValue = double?.tryParse(item?.rpAmount ?? "0") ?? 0;
+
         return InkWell(
           onTap: () {
             AtlasApi.goToHynScanPage(context, item.address);
@@ -501,13 +497,29 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                                 ),
                               ),
                               Spacer(),
-                              GestureDetector(
-                                onTap: () {
-                                  WalletShowAccountInfoPage.jumpToAccountInfoPage(
-                                      context, item?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
-                                },
-                                child: Text(
-                                  "${getCoinAmount(item.rpAmount)} RP",
+                              //todo
+                              if (rpValue > 0)
+                                GestureDetector(
+                                  onTap: () {
+                                    WalletShowAccountInfoPage.jumpToAccountInfoPage(
+                                        context, item?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+                                  },
+                                  child: Text(
+                                    "${getCoinAmount(item.rpAmount)} RP",
+                                    style: TextStyle(
+                                      color: HexColor("#333333"),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    maxLines: 3,
+                                    textAlign: TextAlign.right,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+
+                              if (rpValue > 0 && hynValue > 0)
+                                Text(
+                                  ", ",
                                   style: TextStyle(
                                     color: HexColor("#333333"),
                                     fontSize: 14,
@@ -517,28 +529,31 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                                   textAlign: TextAlign.right,
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  WalletShowAccountInfoPage.jumpToAccountInfoPage(
-                                      context, item?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
-                                },
-                                child: Text(
-                                  ", ${getCoinAmount(item.hynAmount)} HYN",
-                                  style: TextStyle(
-                                    color: HexColor("#333333"),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
+
+                              if (hynValue > 0)
+                                GestureDetector(
+                                  onTap: () {
+                                    WalletShowAccountInfoPage.jumpToAccountInfoPage(
+                                        context, item?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
+                                  },
+                                  child: Text(
+                                    ", ${getCoinAmount(item.hynAmount)} HYN",
+                                    style: TextStyle(
+                                      color: HexColor("#333333"),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    maxLines: 3,
+                                    textAlign: TextAlign.right,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  maxLines: 3,
-                                  textAlign: TextAlign.right,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
                             ],
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 4,),
+                            padding: const EdgeInsets.only(
+                              top: 4,
+                            ),
                             child: Row(
                               children: [
                                 Text(
@@ -584,4 +599,26 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
     }
     return FormatUtil.truncateDecimalNum(Decimal.parse(coinAmount), 4);
   }
+}
+
+String amountValueToString({String hyn, String rp}) {
+  var hynAmount = '${hyn ?? ""} HYN';
+  var hynValue = double?.tryParse(hyn ?? "0") ?? 0;
+
+  var rpAmount = '${rp ?? ""} RP';
+  var rpValue = double?.tryParse(rp ?? "0") ?? 0;
+
+  var amount = '';
+  if (rpValue > 0 && hynValue > 0) {
+    amount = hynAmount + ', ' + rpAmount;
+  } else {
+    if (hynValue > 0) {
+      amount = hynAmount;
+    }
+
+    if (rpValue > 0) {
+      amount = rpAmount;
+    }
+  }
+  return amount;
 }
