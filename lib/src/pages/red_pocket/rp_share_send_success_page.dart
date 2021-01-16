@@ -198,7 +198,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
     // var qrData = "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$_walletName";
     var greeting = (widget.reqEntity?.greeting?.isNotEmpty ?? false) ? widget.reqEntity?.greeting : '恭喜发财，大吉大利!';
     var qrData =
-        RpShareGetDialogPage.shareDomain + '?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&greeting=$greeting';
+        RpShareGetDialogPage.shareDomain + '?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&msg=$greeting';
     return WidgetShot(
       controller: _shotController,
       child: RepaintBoundary(
