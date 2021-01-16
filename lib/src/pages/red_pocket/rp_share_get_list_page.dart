@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -129,9 +130,9 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
 
-    var location = (model?.location ?? '').isNotEmpty ? '${model.location};' : '';
-    var range = '${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取';
-    var locationRange = '$location $range';
+    var location = (model?.location ?? '').isNotEmpty ? '${model.location}' : '';
+    //var range = '${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取';
+    var locationRange = '$location';
 
     return InkWell(
       onTap: () {
@@ -172,6 +173,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                     children: <Widget>[
                       Row(
                         children: <Widget>[
+                          /*
                           Container(
                             margin: const EdgeInsets.only(
                               right: 8,
@@ -198,6 +200,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                               ),
                             ),
                           ),
+                          */
                           Padding(
                             padding: const EdgeInsets.only(
                               right: 6,
@@ -283,7 +286,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                           ),
                           */
                           Text(
-                            '+ ${model.getRPAmount} RP，${model.getHYNAmount} HYN',
+                            '+ ${FormatUtil.truncateDecimalNum(Decimal.parse(model.getRPAmount), 4)} RP, ${FormatUtil.truncateDecimalNum(Decimal.parse(model.getHYNAmount), 4)} HYN',
                             style: TextStyle(
                               color: HexColor("#333333"),
                               fontSize: 14,
