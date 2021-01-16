@@ -128,9 +128,9 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
 
-    var location = (model?.location ?? '').isNotEmpty ? '${model.location};' : '';
+    var location = (model?.location ?? '').isNotEmpty ? '${model.location}' : '';
     var range = '${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取';
-    var locationRange = '$location $range';
+    var locationRange = '$location';
 
     var onGoing = model.state == RpShareState.ongoing;
 
@@ -164,7 +164,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                       top: 10,
                     ),
                     child: Image.asset(
-                      "res/drawable/rp_share_send_tag.png",
+                      "res/drawable/rp_share_record_${model.rpType}.png",
                       width: 28,
                       height: 28,
                     ),
@@ -177,6 +177,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                       children: <Widget>[
                         Row(
                           children: <Widget>[
+                            /*
                             Container(
                               margin: const EdgeInsets.only(
                                 right: 8,
@@ -203,6 +204,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                                 ),
                               ),
                             ),
+                            */
                             Padding(
                               padding: const EdgeInsets.only(
                                 right: 6,

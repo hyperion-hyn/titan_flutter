@@ -236,6 +236,26 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
       );
     }
 
+    var total = '总${_shareEntity?.info?.total ?? ""}个红包； ';
+    var hynAmount = '${_shareEntity?.info?.hynAmount ?? ""} HYN';
+    var hynValue = double?.tryParse(_shareEntity?.info?.hynAmount ?? "0") ?? 0;
+
+    var rpAmount = '${_shareEntity?.info?.rpAmount ?? ""} RP';
+    var rpValue = double?.tryParse(_shareEntity?.info?.rpAmount ?? "0") ?? 0;
+
+    var amount = total;
+    if (rpValue > 0 && hynValue > 0) {
+      amount = total + hynAmount + ', ' + rpAmount;
+    } else {
+      if (hynValue > 0) {
+        amount = total + hynAmount;
+      }
+
+      if (rpValue > 0) {
+        amount = total + rpAmount;
+      }
+    }
+
     return SliverToBoxAdapter(
       child: Column(
         children: [
@@ -300,7 +320,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                 ),
               ),
               Text(
-                _shareEntity?.info?.greeting ?? "",
+                ((_shareEntity?.info?.greeting ?? '')?.isNotEmpty ?? false) ? _shareEntity.info.greeting : '恭喜发财，新年大吉！',
                 style: TextStyles.textC999S14,
               ),
               if ((_shareEntity?.info?.rpType ?? "") == RpShareType.location)
@@ -343,10 +363,8 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                               textAlign: TextAlign.end,
                               text: TextSpan(
                                   text: getCoinAmount(myRpOpenEntity.rpAmount),
-                                  style: TextStyle(
-                                      fontSize: 28,
-                                      color: HexColor("#D09100"),
-                                      fontWeight: FontWeight.bold),
+                                  style:
+                                      TextStyle(fontSize: 28, color: HexColor("#D09100"), fontWeight: FontWeight.w500),
                                   recognizer: _rpRecognizer,
                                   children: [
                                     TextSpan(
@@ -363,16 +381,14 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                           child: RichText(
                               text: TextSpan(
                                   text: getCoinAmount(myRpOpenEntity.hynAmount),
-                                  style: TextStyle(
-                                      fontSize: 28,
-                                      color: HexColor("#D09100"),
-                                      fontWeight: FontWeight.bold),
+                                  style:
+                                      TextStyle(fontSize: 28, color: HexColor("#D09100"), fontWeight: FontWeight.w500),
                                   recognizer: _hynRecognizer,
                                   children: [
                                 TextSpan(
                                   text: " HYN",
-                                  style:
-                                      TextStyle(fontSize: 16, color: HexColor("#D09100"), fontWeight: FontWeight.normal),
+                                  style: TextStyle(
+                                      fontSize: 16, color: HexColor("#D09100"), fontWeight: FontWeight.normal),
                                   recognizer: _hynRecognizer,
                                 ),
                               ])),
@@ -398,7 +414,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                 child: Row(
                   children: [
                     Text(
-                      "总共${_shareEntity?.info?.total ?? ""}个红包；共 ${_shareEntity?.info?.rpAmount ?? ""} RP，${_shareEntity?.info?.hynAmount ?? ""} HYN",
+                      amount,
                       style: TextStyles.textC999S12,
                     ),
                     Spacer(),
@@ -446,115 +462,124 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
 
     var childCount = _shareEntity?.details?.length ?? 0;
     if (childCount == 0) {
-      return emptyListWidget(title: '暂无人认领', paddingTop: 100,);
+      return emptyListWidget(
+        title: '暂无人认领',
+        paddingTop: 100,
+      );
     }
 
     return SliverList(
-        delegate: SliverChildBuilderDelegate((context, index) {
-      var item = _shareEntity.details[index];
-      return InkWell(
-        onTap: () {
-          AtlasApi.goToHynScanPage(context, item.address);
-        },
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 21, left: 16, right: 16, bottom: 17),
-              child: Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      right: 10,
+        delegate: SliverChildBuilderDelegate(
+      (context, index) {
+        var item = _shareEntity.details[index];
+        return InkWell(
+          onTap: () {
+            AtlasApi.goToHynScanPage(context, item.address);
+          },
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 21, left: 16, right: 16, bottom: 17),
+                child: Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 10,
+                      ),
+                      child: iconWidget("", item.username, item.address, isCircle: true),
                     ),
-                    child: iconWidget("", item.username, item.address, isCircle: true),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Row(
-                          children: [
-                            Text(
-                              item.username,
-                              style: TextStyle(
-                                color: HexColor("#333333"),
-                                fontSize: 16,
-                              ),
-                            ),
-                            Spacer(),
-                            GestureDetector(
-                              onTap: () {
-                                WalletShowAccountInfoPage.jumpToAccountInfoPage(
-                                    context, item?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
-                              },
-                              child: Text(
-                                "${getCoinAmount(item.rpAmount)} RP",
-                                style: TextStyle(
-                                  color: HexColor("#333333"),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                maxLines: 3,
-                                textAlign: TextAlign.right,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                WalletShowAccountInfoPage.jumpToAccountInfoPage(
-                                    context, item?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
-                              },
-                              child: Text(
-                                " ,${getCoinAmount(item.hynAmount)} HYN",
-                                style: TextStyle(
-                                  color: HexColor("#333333"),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                maxLines: 3,
-                                textAlign: TextAlign.right,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(item.address)),
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: HexColor('#999999'),
-                              ),
-                            ),
-                            Spacer(),
-                            if (item.isBest)
+                    Expanded(
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: [
                               Text(
-                                "最佳",
-                                style: TextStyle(fontSize: 12, color: HexColor('#E8AC13')),
-                                textAlign: TextAlign.right,
+                                item.username,
+                                style: TextStyle(
+                                  color: HexColor("#333333"),
+                                  fontSize: 16,
+                                ),
                               ),
-                          ],
-                        )
-                      ],
+                              Spacer(),
+                              GestureDetector(
+                                onTap: () {
+                                  WalletShowAccountInfoPage.jumpToAccountInfoPage(
+                                      context, item?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+                                },
+                                child: Text(
+                                  "${getCoinAmount(item.rpAmount)} RP",
+                                  style: TextStyle(
+                                    color: HexColor("#333333"),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  maxLines: 3,
+                                  textAlign: TextAlign.right,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  WalletShowAccountInfoPage.jumpToAccountInfoPage(
+                                      context, item?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
+                                },
+                                child: Text(
+                                  ", ${getCoinAmount(item.hynAmount)} HYN",
+                                  style: TextStyle(
+                                    color: HexColor("#333333"),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  maxLines: 3,
+                                  textAlign: TextAlign.right,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4,),
+                            child: Row(
+                              children: [
+                                Text(
+                                  shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(item.address)),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: HexColor('#999999'),
+                                  ),
+                                ),
+                                Spacer(),
+                                if (item.isBest)
+                                  Text(
+                                    "最佳",
+                                    style: TextStyle(fontSize: 12, color: HexColor('#E8AC13')),
+                                    textAlign: TextAlign.right,
+                                  ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Divider(
-              height: 0.5,
-              color: HexColor("#F2F2F2"),
-              indent: 16,
-              endIndent: 16,
-            )
-          ],
-        ),
-      );
-    }, childCount: childCount,));
+              Divider(
+                height: 0.5,
+                color: HexColor("#F2F2F2"),
+                indent: 16,
+                endIndent: 16,
+              )
+            ],
+          ),
+        );
+      },
+      childCount: childCount,
+    ));
   }
 
-  String getCoinAmount(String coinAmount){
-    if(coinAmount == null || coinAmount.isEmpty){
+  String getCoinAmount(String coinAmount) {
+    if (coinAmount == null || coinAmount.isEmpty) {
       return "";
     }
     return FormatUtil.truncateDecimalNum(Decimal.parse(coinAmount), 4);

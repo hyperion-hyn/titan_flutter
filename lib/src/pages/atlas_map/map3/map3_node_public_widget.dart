@@ -1052,6 +1052,10 @@ Widget emptyListWidget({String title = "", bool isAdapter = true, double padding
     color: Colors.white,
     child: Column(
       children: <Widget>[
+        // if (paddingTop > 0)Container(
+        //   height: 4,
+        //   color: HexColor('F2F2F2'),
+        // ),
         SizedBox(height: paddingTop,),
         Image.asset(
           'res/drawable/ic_empty_contract.png',

@@ -162,7 +162,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                       right: 10,
                     ),
                     child: Image.asset(
-                      "res/drawable/rp_share_send_tag.png",
+                      "res/drawable/rp_share_record_${model.rpType}.png",
                       width: 28,
                       height: 28,
                     ),

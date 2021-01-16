@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -31,9 +29,6 @@ import 'package:titan/src/pages/home/bloc/bloc.dart';
 import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
-import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/wallet/wallet_tabs_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
@@ -76,12 +71,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
   ScaffoldMapState _mapState;
   var _isShowAnnounceDialog = false;
   var homePageFirst = true;
-
-  List<RpShareSendEntity> _shareLatestList = [];
-  final RPApi _rpApi = RPApi();
-
-  String get _walletAddress =>
-      WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   bool get _isDefaultState => _mapState is DefaultScaffoldMapState || _mapState == null;
 
   @override
@@ -154,7 +143,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    getShareLatestList();
   }
 
   @override
@@ -351,7 +339,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                 return Stack(
                   children: <Widget>[
                     ScaffoldMap(key: Keys.scaffoldMap),
-                    _rpShareBroadcastView(),
                     userLocationBar(),
                     Padding(
                       padding:
@@ -375,159 +362,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     );
   }
 
-  void getShareLatestList() async {
-    if (_walletAddress.isEmpty) {
-      return;
-    }
-    _shareLatestList = await _rpApi.getShareLatestList(_walletAddress);
-    if (mounted && _shareLatestList.isNotEmpty) {
-      setState(() {});
-    }
-  }
-
-  _rpShareBroadcastView() {
-    if (_shareLatestList.isEmpty) {
-      return Container();
-    }
-
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: 10.0,
-          horizontal: 16.0,
-        ),
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: HexColor('#FFFFFFFF'),
-            borderRadius: BorderRadius.circular(8.0),
-            boxShadow: [
-              BoxShadow(
-                color: HexColor('#000000').withOpacity(0.16),
-                blurRadius: 8.0,
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4,),
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    right: 10,
-                  ),
-                  child: Image.asset(
-                    'res/drawable/rp_share_broadcast.png',
-                    width: 14,
-                    height: 16,
-                  ),
-                ),
-                Expanded(
-                  child: CarouselSlider(
-                      items: _shareLatestList.map(
-                        (model) {
-                          var name = '${model?.owner ?? '--'}：';
-                          var greeting = ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，新年大吉！';
-
-                          var location = model?.location ?? '';
-                          var isLocation = (model.rpType == RpShareType.location) && (location.isNotEmpty);
-
-                          isLocation = false;
-                          return Row(
-                            children: [
-                              Flexible(
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 10,
-                                      ),
-                                      child: Container(
-                                        width: 22,
-                                        height: 22,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
-                                            border: Border.all(width: 2, color: Colors.transparent),
-                                            image: DecorationImage(
-                                              //rp_share_broadcast_icon
-                                              image: AssetImage("res/drawable/app_invite_default_icon.png"),
-                                              fit: BoxFit.cover,
-                                            )),
-                                      ),
-                                    ),
-                                    Text(
-                                      name,
-                                      style: TextStyle(
-                                        color: HexColor('#333333'),
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        greeting,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: HexColor('#E8B000'),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (isLocation)
-                                Flexible(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                        ),
-                                        child: Image.asset(
-                                          "res/drawable/rp_share_location_tag.png",
-                                          width: 10,
-                                          height: 14,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          location,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: HexColor('#999999'),
-                                          ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                            ],
-                          );
-                        },
-                      ).toList(),
-                      options: CarouselOptions(
-                        aspectRatio: 8,
-                        initialPage: 0,
-                        viewportFraction: 1,
-                        enlargeCenterPage: false,
-                        enableInfiniteScroll: true,
-                        autoPlay: true,
-                        autoPlayInterval: Duration(seconds: 5),
-                        autoPlayAnimationDuration: Duration(milliseconds: 800),
-                        autoPlayCurve: Curves.fastOutSlowIn,
-                        scrollDirection: Axis.vertical,
-                      )),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget userLocationBar() {
     return LayoutBuilder(
