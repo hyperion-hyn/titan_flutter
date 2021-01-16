@@ -82,7 +82,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
   Map<String, dynamic> _openCageData;
 
   bool _isLoadingOpenCage = false;
-  bool _isNewBee = true;
+  bool _isNewBee = false;
 
   int _requestOpenCageDataCount = 0;
   String _language;
@@ -387,6 +387,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                         child: TextFormField(
                           controller: controller,
                           textAlign: TextAlign.end,
+
                           onChanged: (String inputValue) {
                             _focusKey = key;
                             _validController.add(inputValue);
@@ -857,7 +858,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                             )),
                         Container(
                           width: double.infinity,
-                          height: 125,
+                          height: 150,
                           color: Colors.black.withOpacity(0.30),
                           child: Center(
                             child: Padding(
@@ -873,7 +874,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                           visible: _isLoadingOpenCage,
                           child: Container(
                             width: double.infinity,
-                            height: 125,
+                            height: 150,
                             child: SizedBox(
                               height: 25,
                               width: 25,
