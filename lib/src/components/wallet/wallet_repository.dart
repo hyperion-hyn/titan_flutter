@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:decimal/decimal.dart';
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -22,11 +23,7 @@ class WalletRepository {
   Future updateCoinBalance(Wallet wallet, CoinVo coin) async {
     var balance = BigInt.from(0);
     if (coin.coinType == CoinType.ETHEREUM || coin.coinType == CoinType.HYN_ATLAS) {
-      try {
-        balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
-      } catch (exception) {
-        LogUtil.uploadException(exception, 'update Coin Balance!');
-      }
+      balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
     } else if (coin.coinType == CoinType.BITCOIN) {
       balance = await wallet.getBitcoinBalance(wallet.getBitcoinZPub());
     }

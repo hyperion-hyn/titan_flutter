@@ -122,6 +122,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       }
     } else if (event is UpdateWalletPageEvent) {
       try {
+        yield UpdateWalletPageState(1,);
         var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
         QuotesSign quotesSign = quoteSignStr != null
             ? QuotesSign.fromJson(json.decode(quoteSignStr))
@@ -161,7 +162,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           BlocProvider.of<WalletCmpBloc>(Keys.rootKey.currentContext).add(UpdateGasPriceEvent());
         }
       } catch (e) {
-        LogUtil.toastException(e);
         yield UpdateWalletPageState(-1);
       }
     } else if (event is UpdateQuotesEvent) {

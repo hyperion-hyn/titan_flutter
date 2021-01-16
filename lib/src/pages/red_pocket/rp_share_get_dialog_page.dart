@@ -185,7 +185,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                       Navigator.pop(context);
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (BuildContext context) => RpShareGetSuccessPage(
-                            _shareEntity.info.id
+                            _shareEntity.info.id,isOpenRpJump: true,
                         ),
                       ));
                     }

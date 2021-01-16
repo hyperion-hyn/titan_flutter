@@ -289,7 +289,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
                             child: QrImage(
                               padding: const EdgeInsets.all(9),
                               data: qrData,
-                              size: 84,
+                              size: 200,
                             ),
                           ),
                         ),
