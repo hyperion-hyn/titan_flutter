@@ -589,6 +589,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
 
               _isInvalidRpAmount = errorText.isNotEmpty;
 
+              //print("[TextField], errorText:$errorText, rp:$inputText, _isInvalidRpAmount:$_isInvalidRpAmount");
+
               return errorText;
             },
           ),
@@ -1037,11 +1039,6 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
 
     RpShareReqEntity reqEntity = RpShareReqEntity.onlyId('0');
 
-    // todo
-    // showSendAlertView(reqEntity);
-    //
-    // return;
-
     _focusKey = null;
     _validController.add('-1');
 
@@ -1084,19 +1081,32 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
       }
       reqEntity.hynAmount = hynValue.toDouble();
     } else {
-
       if (rpValue <= Decimal.zero && hynValue <= Decimal.zero) {
         Fluttertoast.showToast(msg: '请输入RP金额 或 输入HYN金额！');
         _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
         return;
       }
 
-      if ((_rpAmountController?.text??'').isEmpty && hynValue > Decimal.zero) {
-        _rpAmountController?.text = '0';
+      if (rpValue <= Decimal.zero && hynValue > Decimal.zero) {
+        if ((_rpAmountController?.text ?? '').isEmpty) {
+          _rpAmountController?.text = '0';
+        }
+
+        if (_isInvalidHynAmount) {
+          _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+          return;
+        }
       }
 
-      if ((_hynAmountController?.text??'').isEmpty && rpValue > Decimal.zero) {
-        _hynAmountController?.text = '0';
+      if (rpValue > Decimal.zero && hynValue <= Decimal.zero) {
+        if ((_hynAmountController?.text ?? '').isEmpty) {
+          _hynAmountController?.text = '0';
+        }
+
+        if (_isInvalidRpAmount) {
+          _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+          return;
+        }
       }
 
       reqEntity.rpAmount = rpValue.toDouble();
