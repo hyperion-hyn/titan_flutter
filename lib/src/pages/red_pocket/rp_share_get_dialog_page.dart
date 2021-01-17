@@ -54,7 +54,9 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
   @override
   void onCreated() async {
     super.onCreated();
-    latlng = await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
+    latlng = await (Keys.mapContainerKey.currentState as MapContainerState)
+        ?.mapboxMapController
+        ?.lastKnownLocation();
 
     _getNewBeeInfo();
   }
@@ -86,40 +88,45 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
     var state;
     var isNormal = true;
     var whoSendRpText;
-    if(_shareEntity == null){
+    if (_shareEntity == null) {
       typeName = RpShareType.location;
       state = RpShareState.allGot;
       greeting = "";
       getRemindHint = "";
       whoSendRpText = "";
-    }else{
+    } else {
       isNormal = _shareEntity.info.rpType == RpShareType.normal;
-      whoSendRpText = "${_shareEntity?.info?.owner ?? '--'} 发的${isNormal ? '新人' : '位置'}红包";
+      whoSendRpText =
+          "${_shareEntity?.info?.owner ?? '--'} 发的${isNormal ? '新人' : '位置'}红包";
 
       greeting = _shareEntity?.info?.greeting ?? '';
-      if(_shareEntity != null && greeting.isEmpty){
+      if (_shareEntity != null && greeting.isEmpty) {
         greeting = "恭喜发财，大吉大利";
       }
-      if(((_shareEntity?.info?.state ?? "") == RpShareState.waitForTX || ((_shareEntity?.info?.state ?? "") == RpShareState.pending))){
+      if (((_shareEntity?.info?.state ?? "") == RpShareState.waitForTX ||
+          ((_shareEntity?.info?.state ?? "") == RpShareState.pending))) {
         greeting = "红包正在准备中";
       }
-      if(((_shareEntity?.info?.state ?? "") == RpShareState.allGot)){
+      if (((_shareEntity?.info?.state ?? "") == RpShareState.allGot)) {
         greeting = "手慢了，红包派完了";
       }
-      if(_shareEntity?.info?.alreadyGot ?? false){
+      if (_shareEntity?.info?.alreadyGot ?? false) {
         greeting = "你已领取过了";
       }
 
-      if((_shareEntity.info.rpType == RpShareType.location && (_shareEntity?.info?.isNewBee ?? false)) || ((_shareEntity?.info?.rpType ?? RpShareType.normal) != RpShareType.location)){
+      if ((_shareEntity.info.rpType == RpShareType.location &&
+              (_shareEntity?.info?.isNewBee ?? false)) ||
+          ((_shareEntity?.info?.rpType ?? RpShareType.normal) !=
+              RpShareType.location)) {
         typeName = RpShareType.normal;
         getRemindHint = "新人均分领取，并成为好友";
-      }else{
+      } else {
         typeName = RpShareType.location;
         getRemindHint = "拼手气领取";
       }
 
       state = ((_shareEntity?.info?.state ?? RpShareState.allGot) ==
-          RpShareState.ongoing)
+              RpShareState.ongoing)
           ? RpShareState.ongoing
           : RpShareState.allGot;
       state = (_shareEntity?.info?.alreadyGot ?? true)
@@ -136,196 +143,225 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              GestureDetector(
-                onTap: () async {
-                  try {
-                    if (_currentState != null) {
-                      return;
-                    }
-
-                    if(_shareEntity == null){
-                      return;
-                    }
-
-                    if (_shareEntity.info.state != RpShareState.ongoing) {
-                      return;
-                    }
-
-                    if (_shareEntity.info.alreadyGot) {
-                      return;
-                    }
-
-                    if (_shareEntity.info.rpType == RpShareType.location && latlng == null) {
-                      Fluttertoast.showToast(msg: "获取位置失败，请先定位当前位置");
-                      return;
-                    }
-
-                    if (_shareEntity.info.isNewBee && !_shareEntity.info.userIsNewBee) {
-                      Fluttertoast.showToast(msg: "该红包只有新用户可领取");
-                      return;
-                    }
-
-                    String rpSecret;
-                    if(_shareEntity.info.hasPWD){
-                      rpSecret = await _showStakingAlertView();
-                      if(rpSecret == null || rpSecret.isEmpty){
-                        return;
-                      }
-                    }
-
-                    setState(() {
-                      _currentState = allPage.LoadingState();
-                    });
-
-                    var id = _shareEntity?.info?.id ?? widget.id;
-                    RpShareReqEntity reqEntity = RpShareReqEntity.only(id,widget.address,latlng?.latitude,latlng?.longitude,rpSecret);
-                    print(
-                        "[$runtimeType] open rp, 1, reqEntity:${reqEntity.toJson()}");
-
-                    var result = await _rpApi.postOpenShareRp(
-                      reqEntity: reqEntity,
-                    );
-                    print("[$runtimeType] open rp, 2, result:$result");
-
-                    _shareEntity = await _rpApi.getNewBeeDetail(
-                      widget.address,
-                      id: widget.id,
-                    );
-
-                    if(mounted){
-                      Navigator.pop(context);
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => RpShareGetSuccessPage(
-                            _shareEntity.info.id,isOpenRpJump: true,
-                        ),
-                      ));
-                    }
-
-                  } catch (e) {
-                    LogUtil.toastException(e);
-                    setState(() {
-                      _currentState = null;
-                    });
-                  }
-                },
-                child: Container(
-                  child: Stack(
-                    children: <Widget>[
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: Stack(
-                          children: [
-                            Container(
-                              width: 260,
-                              height: 360,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage(
-                                    'res/drawable/$imageName.png',
-                                  ),
-                                  fit: BoxFit.fill,
+              Container(
+                child: Stack(
+                  children: <Widget>[
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 260,
+                            height: 360,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(
+                                  'res/drawable/$imageName.png',
                                 ),
+                                fit: BoxFit.fill,
                               ),
                             ),
-                            if(!isNormal)
-                              Positioned(
-                                left: 16,
-                                top: 11,
-                                child: Row(
-                                  children: [
-                                    Image.asset("res/drawable/rp_share_location_image.png",width: 12,height: 16,),
-                                    SizedBox(width: 6,),
-                                    Text(
-                                      "${_shareEntity?.info?.range ?? ""}千米",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                          ],
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: Container(
-                          width: double.infinity,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              SizedBox(
-                                height: 36,
-                              ),
-                              Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        width: 2, color: Colors.transparent),
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          "res/drawable/app_invite_default_icon.png"),
-                                      fit: BoxFit.cover,
-                                    )),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  top: 16,
-                                  bottom: 6,
-                                ),
-                                child: RichText(
-                                  text: TextSpan(
-                                    text: whoSendRpText,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: HexColor('#FFFFFF'),
-                                    ),
+                          ),
+                          if (!isNormal)
+                            Positioned(
+                              left: 16,
+                              top: 11,
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "res/drawable/rp_share_location_image.png",
+                                    width: 12,
+                                    height: 16,
                                   ),
-                                ),
+                                  SizedBox(
+                                    width: 6,
+                                  ),
+                                  Text(
+                                    "${_shareEntity?.info?.range ?? ""}千米",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                ],
                               ),
-                              Text(
-                                getRemindHint,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: HexColor('#333333'),
-                                ),
+                            )
+                        ],
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Container(
+                        width: double.infinity,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            SizedBox(
+                              height: 36,
+                            ),
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      width: 2, color: Colors.transparent),
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                        "res/drawable/app_invite_default_icon.png"),
+                                    fit: BoxFit.cover,
+                                  )),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: 16,
+                                bottom: 6,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(top:25.0),
-                                child: Text(
-                                  greeting,
+                              child: RichText(
+                                text: TextSpan(
+                                  text: whoSendRpText,
                                   style: TextStyle(
-                                    fontSize: greeting.length > 12 ? 12 : 18,
-                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
                                     color: HexColor('#FFFFFF'),
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                height: 16,
+                            ),
+                            Text(
+                              getRemindHint,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: HexColor('#333333'),
                               ),
-                            ],
-                          ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 25.0),
+                              child: Text(
+                                greeting,
+                                style: TextStyle(
+                                  fontSize: greeting.length > 12 ? 12 : 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: HexColor('#FFFFFF'),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 16,
+                            ),
+                          ],
                         ),
                       ),
-                      if (_currentState == null && _shareEntity != null)
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: 20,
-                          child: InkWell(
-                            onTap: () {
+                    ),
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 48,
+                      child: GestureDetector(
+                        onTap: () async {
+                          try {
+                            if (_currentState != null) {
+                              return;
+                            }
+
+                            if (_shareEntity == null) {
+                              return;
+                            }
+
+                            if (_shareEntity.info.state !=
+                                RpShareState.ongoing) {
+                              return;
+                            }
+
+                            if (_shareEntity.info.alreadyGot) {
+                              return;
+                            }
+
+                            if (_shareEntity.info.rpType ==
+                                    RpShareType.location &&
+                                latlng == null) {
+                              Fluttertoast.showToast(msg: "获取位置失败，请先定位当前位置");
+                              return;
+                            }
+
+                            if (_shareEntity.info.isNewBee &&
+                                !_shareEntity.info.userIsNewBee) {
+                              Fluttertoast.showToast(msg: "该红包只有新用户可领取");
+                              return;
+                            }
+
+                            String rpSecret;
+                            if (_shareEntity.info.hasPWD) {
+                              rpSecret = await _showStakingAlertView();
+                              if (rpSecret == null || rpSecret.isEmpty) {
+                                return;
+                              }
+                            }
+
+                            setState(() {
+                              _currentState = allPage.LoadingState();
+                            });
+
+                            var id = _shareEntity?.info?.id ?? widget.id;
+                            RpShareReqEntity reqEntity = RpShareReqEntity.only(
+                                id,
+                                widget.address,
+                                latlng?.latitude,
+                                latlng?.longitude,
+                                rpSecret);
+                            print(
+                                "[$runtimeType] open rp, 1, reqEntity:${reqEntity.toJson()}");
+
+                            var result = await _rpApi.postOpenShareRp(
+                              reqEntity: reqEntity,
+                            );
+                            print("[$runtimeType] open rp, 2, result:$result");
+
+                            _shareEntity = await _rpApi.getNewBeeDetail(
+                              widget.address,
+                              id: widget.id,
+                            );
+
+                            if (mounted) {
+                              Navigator.pop(context);
                               Navigator.of(context).push(MaterialPageRoute(
-                                builder: (BuildContext context) => RpShareGetSuccessPage(
-                                  _shareEntity.info.id
+                                builder: (BuildContext context) =>
+                                    RpShareGetSuccessPage(
+                                  _shareEntity.info.id,
+                                  isOpenRpJump: true,
                                 ),
                               ));
-                            },
+                            }
+                          } catch (e) {
+                            LogUtil.toastException(e);
+                            setState(() {
+                              _currentState = null;
+                            });
+                          }
+                        },
+                        child: Container(
+                          height: 80,
+                          width: 260,
+                          color: Colors.transparent,
+                        ),
+                      ),
+                    ),
+                    if (_currentState == null && _shareEntity != null)
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 10,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  RpShareGetSuccessPage(_shareEntity.info.id),
+                            ));
+                          },
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.only(top: 5.0, bottom: 15),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -351,37 +387,37 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                             ),
                           ),
                         ),
-                      if (_currentState != null)
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Container(
-                            height: 360,
-                            child: AllPageStateContainer(
-                              _currentState,
-                              () {},
-                              loadingColor: "#ffffff",
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _currentState = allPage.LoadingState();
-                                  });
-                                  _getNewBeeInfo();
-                                },
-                                child: Center(
-                                    child: Text(
-                                  "点击重试",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.blue,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                )),
-                              ),
+                      ),
+                    if (_currentState != null)
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          height: 360,
+                          child: AllPageStateContainer(
+                            _currentState,
+                            () {},
+                            loadingColor: "#ffffff",
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _currentState = allPage.LoadingState();
+                                });
+                                _getNewBeeInfo();
+                              },
+                              child: Center(
+                                  child: Text(
+                                "点击重试",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.blue,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              )),
                             ),
                           ),
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
               ),
               InkWell(
@@ -416,8 +452,8 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
       actions: [
         ClickOvalButton(
           S.of(context).confirm,
-              (){
-            Navigator.pop(context,_textEditController.text);
+          () {
+            Navigator.pop(context, _textEditController.text);
           },
           width: 200,
           height: 38,
@@ -429,15 +465,17 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
       contentWidget: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top:19,bottom:32.0),
-            child: Text("输入红包口令",style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: HexColor("#333333"),
-                decoration: TextDecoration.none,)),
+            padding: const EdgeInsets.only(top: 19, bottom: 32.0),
+            child: Text("输入红包口令",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: HexColor("#333333"),
+                  decoration: TextDecoration.none,
+                )),
           ),
           Padding(
-            padding: const EdgeInsets.only(left:24,right:24.0,bottom: 20),
+            padding: const EdgeInsets.only(left: 24, right: 24.0, bottom: 20),
             child: Material(
               child: Form(
                 key: _formKey,
@@ -445,8 +483,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                   controller: _textEditController,
                   keyboardType: TextInputType.text,
                   inputFormatters: [
-                    LengthLimitingTextInputFormatter(
-                        20),
+                    LengthLimitingTextInputFormatter(20),
                   ],
                   hintText: "请输入口令",
                 ),
@@ -464,10 +501,10 @@ Future<bool> showShareRpOpenDialog(
   String id,
 }) {
   var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
-  if(activeWallet == null){
+  if (activeWallet == null) {
     Fluttertoast.showToast(msg: "请先导入钱包");
   }
-  var _address  = activeWallet.wallet.getAtlasAccount().address;
+  var _address = activeWallet.wallet.getAtlasAccount().address;
   var _walletName = activeWallet.wallet.keystore.name;
 
   return showDialog<bool>(
