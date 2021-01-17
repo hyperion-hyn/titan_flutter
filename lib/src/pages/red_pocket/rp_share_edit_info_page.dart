@@ -151,7 +151,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
   void _setupData() {
     _rpShareConfig = RedPocketInheritedModel.of(context).rpShareConfig;
 
-    print("[$runtimeType] _setupData, _rpShareConfig:${_rpShareConfig?.toJson()}");
+    //print("[$runtimeType] _setupData, _rpShareConfig:${_rpShareConfig?.toJson()}");
   }
 
   @override
