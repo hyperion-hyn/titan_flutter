@@ -257,6 +257,9 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                             if (Decimal.parse(value) > Decimal.parse(FormatUtil.coinBalanceHumanRead(widget.coinVo))) {
                               return S.of(context).input_count_over_balance;
                             }
+                            if (value.contains(".") && value.split(".")[1].length > widget.coinVo.decimals) {
+                              return "超过${widget.coinVo.decimals}位最大小数位";
+                            }
                             return null;
                           },
                           controller: _amountController,

@@ -675,7 +675,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
             activatedWalletVo.getBitcoinZPub(),
             widget.receiverAddress,
             _gasPrice.toInt(),
-            ConvertTokenUnit.decimalToWei(Decimal.parse(widget.transferAmount), 8).toInt());
+            ConvertTokenUnit.strToBigInt(widget.transferAmount, 8).toInt());
         if (transResult["code"] != 0) {
           LogUtil.uploadException(transResult, "bitcoin upload");
           Fluttertoast.showToast(msg: "${transResult.toString()}", toastLength: Toast.LENGTH_LONG);
