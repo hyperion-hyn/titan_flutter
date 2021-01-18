@@ -127,6 +127,36 @@ class HYNApi {
   //   return txHash;
   // }
 
+  static Future<String> signTransferHYNHrc30(
+    String password,
+    BigInt amount,
+    String toAddress,
+    localWallet.Wallet wallet,
+    String contractAddress, {
+    String gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    if (gasPrice == null) {
+      gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
+    }
+    if (gasLimit == null) {
+      gasLimit = 100000;
+    }
+    final rawTx = await wallet.signHYNHrc30Transaction(
+      contractAddress: contractAddress,
+      password: password,
+      gasPrice: BigInt.parse(gasPrice),
+      value: amount,
+      toAddress: toAddress,
+      gasLimit: gasLimit,
+      nonce: nonce,
+    );
+
+    logger.i('HYN transaction committed，value(==amount):$amount, rawTx $rawTx ');
+    return rawTx;
+  }
+
   static Future<String> transCreateAtlasNode(
     CreateAtlasEntity createAtlasEntity,
     String password,

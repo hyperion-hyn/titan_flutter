@@ -255,7 +255,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                                           LengthLimitingTextInputFormatter(18),
                                           FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
                                         ],
-                                        hint: S.of(context).input_add_amount,
+                                        hintText: S.of(context).input_add_amount,
                                         validator: (textStr) {
                                           if (textStr.length == 0) {
                                             return S.of(context).input_add_amount;

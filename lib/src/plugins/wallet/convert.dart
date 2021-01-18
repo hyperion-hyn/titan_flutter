@@ -7,6 +7,7 @@ class ConvertTokenUnit {
     return BigInt.parse(dstr);
   }
 
+  @deprecated
   static BigInt decimalToWei(Decimal num, [int decimals = 18]) {
     var dstr = (num * Decimal.fromInt(10).pow(decimals)).toString();
     return BigInt.parse(dstr);

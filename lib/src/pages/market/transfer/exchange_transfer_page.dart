@@ -7,6 +7,7 @@ import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -362,6 +363,18 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _showCoinSelectDialog() {
+    var activeAssets = MarketInheritedModel.of(
+          context,
+          aspect: SocketAspect.marketItemList,
+        ).exchangeCoinList?.assets ??
+        ['HYN', 'USDT', 'RP'];
+
+    List<Widget> activeCoinItemList = [Container()];
+
+    activeAssets.forEach((token) {
+      activeCoinItemList.add(_coinItem(token));
+    });
+
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
@@ -372,14 +385,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         builder: (BuildContext context) {
           return Container(
-            height: 210,
-            child: Column(
+            child: Wrap(
               children: <Widget>[
-                _coinItem('HYN'),
-                // _coinItem('ETH'),
-                _coinItem('USDT'),
-                _coinItem('RP'),
-
+                Column(
+                  children: activeCoinItemList,
+                ),
                 InkWell(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -404,15 +414,22 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   _confirm() {
     return Padding(
-      padding: const EdgeInsets.only(left:48.0,right: 48,bottom: 32),
-      child: ClickOvalButton(_fromExchangeToWallet
-          ? S.of(context).exchange_withdraw
-          : S.of(context).exchange_deposit, () async {
-        FocusScope.of(context).requestFocus(FocusNode());
-        if (_formKey.currentState.validate()) {
-          await _transfer();
-        }
-      },height: 51,width: double.infinity,fontSize: 14,btnColor: [Theme.of(context).primaryColor],),
+      padding: const EdgeInsets.only(left: 48.0, right: 48, bottom: 32),
+      child: ClickOvalButton(
+        _fromExchangeToWallet
+            ? S.of(context).exchange_withdraw
+            : S.of(context).exchange_deposit,
+        () async {
+          FocusScope.of(context).requestFocus(FocusNode());
+          if (_formKey.currentState.validate()) {
+            await _transfer();
+          }
+        },
+        height: 51,
+        width: double.infinity,
+        fontSize: 14,
+        btnColor: [Theme.of(context).primaryColor],
+      ),
     );
   }
 
@@ -531,7 +548,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                   controller: _amountController,
                   validator: (value) {
                     value = value.trim();
-                    if (value == '0') {
+                    if (Decimal.parse(value) <= Decimal.zero) {
                       return S.of(context).input_corrent_count_hint;
                     }
                     if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {

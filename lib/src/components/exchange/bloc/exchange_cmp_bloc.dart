@@ -14,7 +14,6 @@ class ExchangeCmpBloc extends Bloc<ExchangeCmpEvent, ExchangeCmpState> {
   Stream<ExchangeCmpState> mapEventToState(
     ExchangeCmpEvent event,
   ) async* {
-    // TODO: Add Logic
     if (event is CheckAccountEvent) {
       yield CheckAccountState();
     }
@@ -32,6 +31,8 @@ class ExchangeCmpBloc extends Bloc<ExchangeCmpEvent, ExchangeCmpState> {
       yield ClearExchangeAccountState();
     } else if (event is UpdateAssetsEvent) {
       yield UpdateAssetsState();
+    } else if (event is UpdateCoinListEvnet) {
+      yield UpdateCoinListState();
     }
   }
 }

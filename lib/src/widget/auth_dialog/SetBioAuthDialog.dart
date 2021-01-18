@@ -29,18 +29,15 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
   void initState() {
     super.initState();
 
-    // TODO: implement initState
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
   }
 

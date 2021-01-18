@@ -13,6 +13,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
@@ -40,7 +41,8 @@ class ExchangeQrcodeDepositPageState
     extends BaseState<ExchangeQrcodeDepositPage> {
   String _selectedCoinSymbol = SupportedTokens.HYN_Atlas.symbol;
   Map symbolToChain = {
-    SupportedTokens.HYN_Atlas.symbol: S.of(Keys.rootKey.currentContext).atlas_main_chain,
+    SupportedTokens.HYN_Atlas.symbol:
+        S.of(Keys.rootKey.currentContext).atlas_main_chain,
     SupportedTokens.USDT_ERC20.symbol: "ERC20",
     SupportedTokens.HYN_RP_HRC30.symbol: "HRC30"
   };
@@ -315,11 +317,37 @@ class ExchangeQrcodeDepositPageState
       result = false;
     }
     Fluttertoast.showToast(
-      msg: result ? S.of(context).successfully_saved_album : S.of(context).save_fail,
+      msg: result
+          ? S.of(context).successfully_saved_album
+          : S.of(context).save_fail,
     );
   }
 
   _showCoinSelectDialog() {
+    var activeAssets = MarketInheritedModel.of(
+          context,
+          aspect: SocketAspect.marketItemList,
+        ).exchangeCoinList?.assets ??
+        ['HYN', 'USDT', 'RP'];
+
+    List<Widget> activeCoinItemList = [Container()];
+
+    if (activeAssets.contains("HYN")) {
+      activeCoinItemList.add(
+        _coinItem(SupportedTokens.HYN_Atlas.symbol),
+      );
+    }
+    if (activeAssets.contains('USDT')) {
+      activeCoinItemList.add(
+        _coinItem(SupportedTokens.USDT_ERC20.symbol),
+      );
+    }
+    if (activeAssets.contains('RP')) {
+      activeCoinItemList.add(
+        _coinItem(SupportedTokens.HYN_RP_HRC30.symbol),
+      );
+    }
+
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
@@ -330,14 +358,11 @@ class ExchangeQrcodeDepositPageState
         ),
         builder: (BuildContext context) {
           return Container(
-            height: 210,
-            child: Column(
+            child: Wrap(
               children: <Widget>[
-                _coinItem(SupportedTokens.HYN_Atlas.symbol),
-                // _coinItem('ETH'),
-                _coinItem(SupportedTokens.USDT_ERC20.symbol),
-                _coinItem(SupportedTokens.HYN_RP_HRC30.symbol),
-
+                Column(
+                  children: activeCoinItemList,
+                ),
                 InkWell(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
