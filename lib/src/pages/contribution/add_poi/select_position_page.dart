@@ -3,6 +3,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -23,7 +24,7 @@ class SelectPositionPage extends StatefulWidget {
   }
 }
 
-class _SelectPositionState extends State<SelectPositionPage> {
+class _SelectPositionState extends BaseState<SelectPositionPage> {
   MapboxMapController mapController;
   LatLng userPosition;
   double defaultZoom = 16;
@@ -37,8 +38,12 @@ class _SelectPositionState extends State<SelectPositionPage> {
 
   @override
   void initState() {
-    userPosition = widget.initLocation ?? Application.recentlyLocation;
     super.initState();
+  }
+
+  @override
+  void onCreated() async {
+    userPosition = widget.initLocation ?? Application.recentlyLocation;
   }
 
   void _mapMoveListener() {

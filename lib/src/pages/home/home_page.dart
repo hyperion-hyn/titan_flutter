@@ -104,9 +104,8 @@ class HomePageState extends BaseState<HomePage> {
                           var location = model?.location ?? '';
                           var isLocation = (model.rpType == RpShareType.location) && (location.isNotEmpty);
 
-                          // isLocation = false;
                           return InkWell(
-                            onTap: () async{
+                            onTap: () async {
                               var mapSceneState = Keys.mapContainerKey.currentState as MapContainerState;
                               MapboxMapController mapboxMapController = mapSceneState.mapboxMapController;
                               LatLng latLng = LatLng(model.lat, model.lng);
@@ -231,7 +230,7 @@ class HomePageState extends BaseState<HomePage> {
           return LayoutBuilder(builder: (context, constraints) {
             return Stack(
               children: <Widget>[
-                _rpShareBroadcastView(),
+                if (state is DefaultScaffoldMapState) _rpShareBroadcastView(),
                 buildMainSheetPanel(context, constraints),
               ],
             );

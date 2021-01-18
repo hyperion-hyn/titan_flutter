@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_edit_info_page.dart';
@@ -77,15 +80,31 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
         ),
         ClickOvalButton(
           S.of(context).next_step,
-          () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => RpShareEditInfoPage(
-                  shareTypeEntity: _selectedEntity,
+          () async{
+
+            if (_selectedEntity.index == 0) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RpShareEditInfoPage(
+                    shareTypeEntity: _selectedEntity,
+                  ),
                 ),
-              ),
-            );
+              );
+            }
+            else {
+              var latlng = await getLatlng();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RpShareEditInfoPage(
+                    shareTypeEntity: _selectedEntity,
+                    userPosition: latlng,
+                  ),
+                ),
+              );
+            }
+
           },
           btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
           fontSize: 16,
@@ -97,6 +116,13 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
         ),
       ],
     );
+  }
+
+
+  Future<LatLng> getLatlng() async {
+    var latlng =
+    await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
+    return latlng;
   }
 
   Widget _bottomImageList() {
