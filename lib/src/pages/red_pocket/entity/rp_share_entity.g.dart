@@ -82,6 +82,8 @@ RpShareSendEntity _$RpShareSendEntityFromJson(Map<String, dynamic> json) {
     json['rpAmount'] as String,
     json['rpHash'] as String,
     json['hynHash'] as String,
+    (json['lat'] as num)?.toDouble(),
+    (json['lng'] as num)?.toDouble(),
   );
 }
 
@@ -107,4 +109,6 @@ Map<String, dynamic> _$RpShareSendEntityToJson(RpShareSendEntity instance) => <S
       'rpAmount': instance.rpAmount,
       'rpHash': instance.rpHash,
       'hynHash': instance.hynHash,
+      'lat': instance.lat,
+      'lng': instance.lng,
     };

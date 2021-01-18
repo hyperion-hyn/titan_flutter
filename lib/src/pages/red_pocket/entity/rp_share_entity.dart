@@ -159,6 +159,12 @@ class RpShareSendEntity extends Object {
   @JsonKey(name: 'hynHash')
   String hynHash;
 
+  @JsonKey(name: 'lat')
+  double lat;
+
+  @JsonKey(name: 'lng')
+  double lng;
+
   RpShareSendEntity(
     this.address,
     this.alreadyGot,
@@ -181,6 +187,8 @@ class RpShareSendEntity extends Object {
     this.rpAmount,
     this.rpHash,
     this.hynHash,
+    this.lat,
+    this.lng,
   );
 
   factory RpShareSendEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareSendEntityFromJson(srcJson);

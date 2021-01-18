@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/updater/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/home/home_panel.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
@@ -101,81 +104,93 @@ class HomePageState extends BaseState<HomePage> {
                           var location = model?.location ?? '';
                           var isLocation = (model.rpType == RpShareType.location) && (location.isNotEmpty);
 
-                          isLocation = false;
-                          return Row(
-                            children: [
-                              Flexible(
-                                child: Row(
-                                  children: [
-                                    /*
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 10,
-                                      ),
-                                      child: Container(
-                                        width: 22,
-                                        height: 22,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
-                                            border: Border.all(width: 2, color: Colors.transparent),
-                                            image: DecorationImage(
-                                              //rp_share_broadcast_icon
-                                              image: AssetImage("res/drawable/app_invite_default_icon.png"),
-                                              fit: BoxFit.cover,
-                                            )),
-                                      ),
-                                    ),
-                                    */
-                                    Text(
-                                      name,
-                                      style: TextStyle(
-                                        color: HexColor('#333333'),
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        greeting,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: HexColor('#E8B000'),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (isLocation)
+                          // isLocation = false;
+                          return InkWell(
+                            onTap: () async{
+                              var mapSceneState = Keys.mapContainerKey.currentState as MapContainerState;
+                              MapboxMapController mapboxMapController = mapSceneState.mapboxMapController;
+                              LatLng latLng = LatLng(model.lat, model.lng);
+                              mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLng(latLng), 700);
+
+                              // await Future.delayed(Duration(milliseconds: 1600));
+                              // showShareRpOpenDialog(context,id: model.id);
+                            },
+                            child: Row(
+                              children: [
                                 Flexible(
+                                  flex: 2,
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
+                                      /*
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
+                                        padding: const EdgeInsets.only(
+                                          right: 10,
                                         ),
-                                        child: Image.asset(
-                                          "res/drawable/rp_share_location_tag.png",
-                                          width: 10,
-                                          height: 14,
+                                        child: Container(
+                                          width: 22,
+                                          height: 22,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle,
+                                              border: Border.all(width: 2, color: Colors.transparent),
+                                              image: DecorationImage(
+                                                //rp_share_broadcast_icon
+                                                image: AssetImage("res/drawable/app_invite_default_icon.png"),
+                                                fit: BoxFit.cover,
+                                              )),
+                                        ),
+                                      ),
+                                      */
+                                      Text(
+                                        name,
+                                        style: TextStyle(
+                                          color: HexColor('#333333'),
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12,
                                         ),
                                       ),
                                       Expanded(
                                         child: Text(
-                                          location,
+                                          greeting,
                                           style: TextStyle(
                                             fontSize: 12,
-                                            color: HexColor('#999999'),
+                                            color: HexColor('#E8B000'),
                                           ),
-                                          textAlign: TextAlign.left,
                                         ),
                                       ),
                                     ],
                                   ),
-                                )
-                            ],
+                                ),
+                                if (isLocation)
+                                  Flexible(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                          ),
+                                          child: Image.asset(
+                                            "res/drawable/rp_share_location_tag.png",
+                                            width: 10,
+                                            height: 14,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            location,
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: HexColor('#999999'),
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                              ],
+                            ),
                           );
                         },
                       ).toList(),
