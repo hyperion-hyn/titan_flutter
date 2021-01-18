@@ -244,7 +244,7 @@ class Wallet {
   Future<String> signTransaction(
     int coinType, {
     @required String password,
-    @required BigInt gasPrice,
+    BigInt gasPrice,
     BigInt value,
     String toAddress,
     int nonce,
@@ -252,7 +252,10 @@ class Wallet {
     web3.IMessage message,
   }) async {
     assert(password != null, '密码不能为空');
-    assert(gasPrice != null, '矿工价格不可为空');
+
+    if (gasPrice == null) {
+      gasPrice = await WalletUtil.ethGasPrice(coinType);
+    }
 
     // 检查基础币是否足够
     if (gasLimit == null || gasLimit < 21000) {
@@ -364,7 +367,7 @@ class Wallet {
     @required String password,
     @required String toAddress,
     @required BigInt value,
-    @required BigInt gasPrice,
+    BigInt gasPrice,
     int nonce,
     int gasLimit,
   }) async {
@@ -372,7 +375,10 @@ class Wallet {
     assert(password != null, '密码不能为空');
     assert(toAddress != null, '接收人不能为空');
     assert(value != null, '转账数量不能为空');
-    assert(gasPrice != null, '矿工价格不能为空');
+
+    if (gasPrice == null) {
+      gasPrice = await WalletUtil.ethGasPrice(coinType);
+    }
 
     // 检查基础币是否足够
     if (gasLimit == null || gasLimit < 21000) {

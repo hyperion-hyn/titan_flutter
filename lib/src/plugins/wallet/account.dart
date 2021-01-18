@@ -13,8 +13,8 @@ class Account {
   final int coinType;
   final String extendedPublicKey;
 
-  final AssetToken token;
-  final List<AssetToken> contractAssetTokens;
+  final AssetToken token; //主链资产
+  final List<AssetToken> contractAssetTokens; //合约资产
 
   Account({
     this.address,
