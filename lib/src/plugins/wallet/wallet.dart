@@ -412,7 +412,7 @@ class Wallet {
     return bytesToHex(rawTx, include0x: true, padToEvenLength: true);
   }
 
-  Future<String> signHYNHrc30Transaction({
+  /*Future<String> signHYNHrc30Transaction({
     String contractAddress,
     String password,
     String toAddress,
@@ -450,7 +450,7 @@ class Wallet {
       Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).broadcast_exception);
     }
     return bytesToHex(rawTx, include0x: true, padToEvenLength: true);
-  }
+  }*/
 
   Future<dynamic> sendBitcoinTransaction(String password, String pubString, String toAddr, int fee, int amount) async {
     var transResult =

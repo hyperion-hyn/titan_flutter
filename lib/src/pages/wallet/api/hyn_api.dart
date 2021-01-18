@@ -127,7 +127,7 @@ class HYNApi {
   //   return txHash;
   // }
 
-  static Future<String> signTransferHYNHrc30(
+  /*static Future<String> signTransferHYNHrc30(
     String password,
     BigInt amount,
     String toAddress,
@@ -155,7 +155,7 @@ class HYNApi {
 
     logger.i('HYN transaction committed，value(==amount):$amount, rawTx $rawTx ');
     return rawTx;
-  }
+  }*/
 
   static Future<String> transCreateAtlasNode(
     CreateAtlasEntity createAtlasEntity,

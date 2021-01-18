@@ -691,7 +691,7 @@ class RPApi {
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
-    final client = WalletUtil.getWeb3Client(true);
+    final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
 
     // rp
     String rpSignedTX = '';
@@ -702,42 +702,65 @@ class RPApi {
     var hynNonce = rpNonce;
 
     if (reqEntity.rpAmount > 0 && reqEntity.hynAmount > 0) {
-      rpSignedTX = await HYNApi.signTransferHYNHrc30(
+      /*rpSignedTX = await HYNApi.signTransferHYNHrc30(
         password,
         ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
         toAddress,
         activeWallet.wallet,
         coinVo.contractAddress,
         nonce: rpNonce,
-      );
+      );*/
+      rpSignedTX = await activeWallet.wallet.signErc20Transaction(
+        CoinType.HYN_ATLAS,
+        contractAddress: coinVo.contractAddress,
+        password: password,
+        toAddress: toAddress,
+        value: ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+        nonce: rpNonce,);
       if (rpSignedTX == null) {
         throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
       }
       print('[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
 
       hynNonce = rpNonce + 1;
-      hynSignedTX = await HYNApi.signTransferHYN(
+      /*hynSignedTX = await HYNApi.signTransferHYN(
         password,
         activeWallet.wallet,
         toAddress: toAddress,
         amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
         nonce: hynNonce,
         message: null,
-      );
+      );*/
+      hynSignedTX = await activeWallet.wallet.signTransaction(
+        CoinType.HYN_ATLAS,
+        password: password,
+        toAddress: toAddress,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+        value: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
+        nonce: hynNonce,);
       if (hynSignedTX?.isEmpty ?? true) {
         throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
       }
       print('[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
     } else {
       if (reqEntity.rpAmount > 0) {
-        rpSignedTX = await HYNApi.signTransferHYNHrc30(
+        /*rpSignedTX = await HYNApi.signTransferHYNHrc30(
           password,
           ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
           toAddress,
           activeWallet.wallet,
           coinVo.contractAddress,
           nonce: rpNonce,
-        );
+        );*/
+        rpSignedTX = await activeWallet.wallet.signErc20Transaction(
+          CoinType.HYN_ATLAS,
+          contractAddress: coinVo.contractAddress,
+          password: password,
+          toAddress: toAddress,
+          value: ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
+          gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+          nonce: rpNonce,);
         print('[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
 
         if (rpSignedTX == null) {
@@ -746,14 +769,21 @@ class RPApi {
       }
 
       if (reqEntity.hynAmount > 0) {
-        hynSignedTX = await HYNApi.signTransferHYN(
+        /*hynSignedTX = await HYNApi.signTransferHYN(
           password,
           activeWallet.wallet,
           toAddress: toAddress,
           amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
           nonce: hynNonce,
           message: null,
-        );
+        );*/
+        hynSignedTX = await activeWallet.wallet.signTransaction(
+          CoinType.HYN_ATLAS,
+          password: password,
+          toAddress: toAddress,
+          gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+          value: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
+          nonce: hynNonce,);
         print('[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
 
         if (hynSignedTX?.isEmpty ?? true) {
