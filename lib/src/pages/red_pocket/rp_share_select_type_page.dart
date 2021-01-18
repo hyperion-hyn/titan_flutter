@@ -82,6 +82,18 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
           S.of(context).next_step,
           () async{
 
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RpShareEditInfoPage(
+                  shareTypeEntity: _selectedEntity,
+                ),
+              ),
+            );
+            
+            /*
+            return;
+
             if (_selectedEntity.index == 0) {
               Navigator.push(
                 context,
@@ -104,7 +116,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
                 ),
               );
             }
-
+            */
           },
           btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
           fontSize: 16,

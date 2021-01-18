@@ -194,7 +194,6 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
                     Spacer(),
                     FloatingActionButton(
                       onPressed: () {
-                        print("dddd---222");
 
                         Application.eventBus.fire(ToMyLocationEvent());
                         //BlocProvider.of<MapBloc>(context).add(MyLocationEvent());

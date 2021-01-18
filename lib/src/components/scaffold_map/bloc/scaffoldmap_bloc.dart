@@ -53,7 +53,6 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
     /*search one poi*/
     else if (event is SearchPoiEvent) {
       IPoi poi = event.poi;
-      print("dddd---333");
 
       if (poi is UserContributionPoi) {
         yield FocusingPoiState(status: Status.loading, poi: poi);

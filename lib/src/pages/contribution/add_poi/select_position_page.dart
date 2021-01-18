@@ -30,7 +30,7 @@ class _SelectPositionState extends BaseState<SelectPositionPage> {
   double defaultZoom = 16;
 
   var trackingMode = MyLocationTrackingMode.Tracking;
-  var enableLocation = false;
+  bool get enableLocation => widget.initLocation == null;
 
   bool _isLoadedFinish = false;
 
