@@ -12,6 +12,7 @@ import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/market/entity/exchange_banner.dart';
+import 'package:titan/src/pages/market/entity/exchange_coin_list.dart';
 import 'package:titan/src/pages/market/entity/market_info_entity.dart';
 import 'package:titan/src/pages/market/model/asset_history.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
@@ -222,6 +223,15 @@ class ExchangeApi {
     return await exchangeHttp.postEntity(
       ExchangeConst.PATH_ACCOUNT_ASSETS,
       null,
+      params: {},
+    );
+  }
+
+  Future<ExchangeCoinList> getCoinList() async {
+    return await exchangeHttp.postEntity<ExchangeCoinList>(
+      ExchangeConst.PATH_COIN_LIST,
+      EntityFactory<ExchangeCoinList>(
+          (coinList) => ExchangeCoinList.fromJson(coinList)),
       params: {},
     );
   }

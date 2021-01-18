@@ -56,8 +56,7 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
 
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: S.of(context).invite_friends
-        ,
+        baseTitle: S.of(context).invite_friends,
       ),
       body: _body(context),
     );

@@ -19,7 +19,6 @@ class AuthConfigModel extends Equatable {
   });
 
   @override
-  // TODO: implement props
   List<Object> get props => [lastBioAuthTime];
 
   factory AuthConfigModel.fromJson(Map<String, dynamic> json) {

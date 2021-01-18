@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -30,6 +29,7 @@ import 'package:titan/src/pages/home/bloc/bloc.dart';
 import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/wallet/wallet_tabs_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -71,6 +71,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
   ScaffoldMapState _mapState;
   var _isShowAnnounceDialog = false;
   var homePageFirst = true;
+  bool get _isDefaultState => _mapState is DefaultScaffoldMapState || _mapState == null;
 
   @override
   void initState() {
@@ -136,19 +137,12 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     TitanPlugin.urlLauncherCallBack = (Map values) {
       _urlLauncherAction(values);
     };
-
   }
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-  }
 
-  @override
-  void didUpdateWidget(AppTabBarPage oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -198,7 +192,10 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     } else if (type == "rp" && subType == "detail") {
       var inviterAddress = content["from"];
       var walletName = content["name"];
-      showInviteDialog(context,inviterAddress,walletName);
+      showInviteDialog(context, inviterAddress, walletName);
+    } else if (type == "rp" && subType == "sendRp") {
+      var rpId = content["rpId"];
+      showShareRpOpenDialog(context, id: rpId);
     } else if (type == "richinvite" && subType == "detail") {
       var inviterAddress = content["from"];
       var walletName = content["name"];
@@ -365,9 +362,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     );
   }
 
-  bool get _isDefaultState {
-    return _mapState is DefaultScaffoldMapState || _mapState == null;
-  }
 
   Widget userLocationBar() {
     return LayoutBuilder(

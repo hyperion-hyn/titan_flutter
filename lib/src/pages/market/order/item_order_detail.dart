@@ -29,7 +29,6 @@ class OrderDetailItemState extends State<OrderDetailItem> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _isBuy = widget._orderDetail.side == '1';
     if (widget._orderDetail.market.split('/').length == 2) {

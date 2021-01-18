@@ -370,7 +370,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                     controller: _textEditingController,
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                    hint: S.of(context).please_enter_withdraw_amount,
+                                    hintText: S.of(context).please_enter_withdraw_amount,
                                     validator: (textStr) {
                                       if (textStr.length == 0) {
                                         return S.of(context).please_input_hyn_count;

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:decimal/decimal.dart';
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -24,12 +25,7 @@ class WalletRepository {
     if (coin.coinType == CoinType.BITCOIN) {
       balance = await wallet.getBitcoinBalance(wallet.getBitcoinZPub());
     } else {
-      try {
-        balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
-      } catch (e, stack) {
-        print(stack);
-        LogUtil.uploadException(e, 'update Coin Balance!');
-      }
+      balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
     }
     coin.balance = balance;
 //    coin.balance = (Decimal.parse(balance.toString()) / Decimal.parse(pow(10, coin.decimals).toString())).toDouble();

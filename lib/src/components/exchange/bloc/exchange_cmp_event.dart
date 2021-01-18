@@ -34,3 +34,5 @@ class UpdateExchangeAccountEvent extends ExchangeCmpEvent {
 class ClearExchangeAccountEvent extends ExchangeCmpEvent {}
 
 class UpdateAssetsEvent extends ExchangeCmpEvent {}
+
+class UpdateCoinListEvnet extends ExchangeCmpEvent {}

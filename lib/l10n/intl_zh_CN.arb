@@ -2502,7 +2502,7 @@
   "@public_key_need_password": {},
   "public_key_scan_fail_rescan": "公钥有误，请重新扫描",
   "@public_key_scan_fail_rescan": {},
-  "punch_card_completed_came_tomorrow": "今天打卡任务已完成，请明日再来",
+  "punch_card_completed_came_tomorrow": "已经获取过红包了！",
   "@punch_card_completed_came_tomorrow": {},
   "qrcode": "二维码",
   "@qrcode": {},

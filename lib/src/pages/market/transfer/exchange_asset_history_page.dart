@@ -52,14 +52,12 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loadDataBloc.add(LoadingEvent());
   }
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
     symbolQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
     _updateTypeToCurrency();
@@ -67,9 +65,8 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     _loadDataBloc.close();
+    super.dispose();
   }
 
   _updateTypeToCurrency() async {

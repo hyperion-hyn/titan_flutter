@@ -38,7 +38,6 @@ class _AtlasMapWidgetState extends State<AtlasMapWidget> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     if (_timer != null) {
       if (_timer.isActive) {
         _timer.cancel();

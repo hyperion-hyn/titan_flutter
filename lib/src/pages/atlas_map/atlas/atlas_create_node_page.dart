@@ -60,7 +60,6 @@ class _AtlasCreateNodePageState extends BaseState<AtlasCreateNodePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

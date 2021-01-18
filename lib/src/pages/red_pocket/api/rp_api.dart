@@ -1,13 +1,17 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
+import 'package:titan/src/basic/http/signer.dart';
+import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_http.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_airdrop_round_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_detail_entity.dart';
@@ -18,6 +22,9 @@ import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_config_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
@@ -25,6 +32,9 @@ import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/hyperion.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
+import 'package:titan/src/pages/wallet/api/hyn_api.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as WalletClass;
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -605,5 +615,314 @@ class RPApi {
     print('[rp_api] postRpApprove, amount:$amount, approveHex: $approveHex');
 
     return approveHex;
+  }
+
+  // 新人/位置红包领取列表+信息
+  Future<RpShareEntity> getNewBeeDetail(
+    String address, {
+    String id = '',
+  }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/new-bee/$address/detail',
+      EntityFactory<RpShareEntity>((json) {
+        return RpShareEntity.fromJson(json);
+      }),
+      params: {
+        'id': id,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  // 新人/位置红包信息
+  Future<RpShareSendEntity> getNewBeeInfo(
+    String address, {
+    String id = '',
+  }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/new-bee/$address/info',
+      EntityFactory<RpShareSendEntity>((json) {
+        return RpShareSendEntity.fromJson(json);
+      }),
+      params: {
+        'id': id,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  /*
+  // 过期没领取完的位置红包退款
+  Future<dynamic> postRefundShareRp({
+    RpShareReqEntity reqEntity,
+  }) async {
+    return await RPHttpCore.instance.postEntity(
+      "/v1/rp/new-bee/${reqEntity.address}/refund",
+      EntityFactory<dynamic>((json) => json),
+      params: {'id': reqEntity.id},
+      options: RequestOptions(contentType: "application/json"),
+    );
+  }
+  */
+
+  // 领取新人/位置红包
+  Future<dynamic> postOpenShareRp({
+    RpShareReqEntity reqEntity,
+  }) async {
+    return await RPHttpCore.instance.postEntity(
+      "/v1/rp/new-bee/${reqEntity.address}/open",
+      EntityFactory<dynamic>((json) => json),
+      params: reqEntity.toJson(),
+      options: RequestOptions(contentType: "application/json"),
+    );
+  }
+
+  // 发新人/位置红包
+  Future<RpShareReqEntity> postSendShareRp({
+    RpShareReqEntity reqEntity,
+    WalletVo activeWallet,
+    String password = '',
+    String toAddress,
+    CoinVo coinVo,
+  }) async {
+    var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
+
+    final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
+
+    // rp
+    String rpSignedTX = '';
+    var rpNonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
+
+    // hyn
+    String hynSignedTX = '';
+    var hynNonce = rpNonce;
+
+    if (reqEntity.rpAmount > 0 && reqEntity.hynAmount > 0) {
+      /*rpSignedTX = await HYNApi.signTransferHYNHrc30(
+        password,
+        ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
+        toAddress,
+        activeWallet.wallet,
+        coinVo.contractAddress,
+        nonce: rpNonce,
+      );*/
+      rpSignedTX = await activeWallet.wallet.signErc20Transaction(
+        CoinType.HYN_ATLAS,
+        contractAddress: coinVo.contractAddress,
+        password: password,
+        toAddress: toAddress,
+        value: ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+        nonce: rpNonce,);
+      if (rpSignedTX == null) {
+        throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
+      }
+      print('[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
+
+      hynNonce = rpNonce + 1;
+      /*hynSignedTX = await HYNApi.signTransferHYN(
+        password,
+        activeWallet.wallet,
+        toAddress: toAddress,
+        amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
+        nonce: hynNonce,
+        message: null,
+      );*/
+      hynSignedTX = await activeWallet.wallet.signTransaction(
+        CoinType.HYN_ATLAS,
+        password: password,
+        toAddress: toAddress,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+        value: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
+        nonce: hynNonce,);
+      if (hynSignedTX?.isEmpty ?? true) {
+        throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
+      }
+      print('[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
+    } else {
+      if (reqEntity.rpAmount > 0) {
+        /*rpSignedTX = await HYNApi.signTransferHYNHrc30(
+          password,
+          ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
+          toAddress,
+          activeWallet.wallet,
+          coinVo.contractAddress,
+          nonce: rpNonce,
+        );*/
+        rpSignedTX = await activeWallet.wallet.signErc20Transaction(
+          CoinType.HYN_ATLAS,
+          contractAddress: coinVo.contractAddress,
+          password: password,
+          toAddress: toAddress,
+          value: ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
+          gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+          nonce: rpNonce,);
+        print('[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
+
+        if (rpSignedTX == null) {
+          throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
+        }
+      }
+
+      if (reqEntity.hynAmount > 0) {
+        /*hynSignedTX = await HYNApi.signTransferHYN(
+          password,
+          activeWallet.wallet,
+          toAddress: toAddress,
+          amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
+          nonce: hynNonce,
+          message: null,
+        );*/
+        hynSignedTX = await activeWallet.wallet.signTransaction(
+          CoinType.HYN_ATLAS,
+          password: password,
+          toAddress: toAddress,
+          gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+          value: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
+          nonce: hynNonce,);
+        print('[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
+
+        if (hynSignedTX?.isEmpty ?? true) {
+          throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
+        }
+      }
+    }
+
+    reqEntity.rpSignedTX = rpSignedTX;
+    reqEntity.hynSignedTX = hynSignedTX;
+
+    return await RPHttpCore.instance.postEntity(
+      "/v1/rp/new-bee/$address/send",
+      EntityFactory<RpShareReqEntity>((json) => RpShareReqEntity.fromJson(json)),
+      params: reqEntity.toJson(),
+      options: RequestOptions(contentType: "application/json"),
+    );
+  }
+
+  // 新人/位置红包配置
+  Future<RpShareConfigEntity> getNewBeeConfig(String address) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/new-bee/$address/config',
+      EntityFactory<RpShareConfigEntity>((json) {
+        return RpShareConfigEntity.fromJson(json);
+      }),
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  // 我领取的新人/位置红包配置
+  Future<List<RpShareOpenEntity>> getShareGetList(
+    String address, {
+    int page = 1,
+    int size = 20,
+  }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/new-bee/$address/get/list',
+      EntityFactory<List<RpShareOpenEntity>>((json) {
+        var data = (json['data'] as List).map((map) {
+          return RpShareOpenEntity.fromJson(map);
+        }).toList();
+
+        return data;
+      }),
+      params: {
+        'page': page,
+        'pageSize': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  // 我发送的新人/位置红包配置
+  Future<List<RpShareSendEntity>> getShareSendList(
+    String address, {
+    int page = 1,
+    int size = 20,
+  }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/new-bee/$address/send/list',
+      EntityFactory<List<RpShareSendEntity>>((json) {
+        print("[$runtimeType] json:$json");
+
+        var data = (json['data'] as List).map((map) {
+          return RpShareSendEntity.fromJson(map);
+        }).toList();
+
+        return data;
+      }),
+      params: {
+        'page': page,
+        'pageSize': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  // 最新的的新人/位置红包列表
+  Future<List<RpShareSendEntity>> getShareLatestList(String address) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/new-bee/$address/latest',
+      EntityFactory<List<RpShareSendEntity>>((json) {
+        //print("[$runtimeType] json:$json");
+
+        var data = (json as List).map((map) {
+          return RpShareSendEntity.fromJson(map);
+        }).toList();
+
+        return data;
+      }),
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  // 获取新人/位置红包密码
+  Future<dynamic> getRpPwdInfo({
+    String address,
+    WalletClass.Wallet wallet,
+    String password,
+    String id,
+  }) async {
+    Map<String, dynamic> params = {};
+    params['address'] = address;
+    // params['seed'] = Random().nextInt(0xfffffffe).toString();
+    params['ts'] = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
+    params['id'] = id;
+
+    var path = '/v1/rp/new-bee/$address/get-pwd';
+
+    var signed = await Signer.signApiWithWallet(
+      wallet,
+      password,
+      'GET',
+      // ExchangeConst.EXCHANGE_DOMAIN.split('//')[1],
+      Const.RP_DOMAIN.split('//')[1],
+      path,
+      params,
+    );
+    params['sign'] = signed;
+
+    print("[$runtimeType] getRpPwdInfo, params:$params ");
+    return await RPHttpCore.instance.getEntity(
+      path,
+      EntityFactory<dynamic>((json) {
+        return json;
+      }),
+      params: params,
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
   }
 }
