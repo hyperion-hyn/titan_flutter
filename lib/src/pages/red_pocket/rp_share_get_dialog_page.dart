@@ -425,8 +425,8 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                   padding: const EdgeInsets.all(16.0),
                   child: Image.asset(
                     "res/drawable/ic_dialog_close_white.png",
-                    width: 40,
-                    height: 40,
+                    width: 28,
+                    height: 28,
                     color: Colors.white,
                   ),
                 ),
