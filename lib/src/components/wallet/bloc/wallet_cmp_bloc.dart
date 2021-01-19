@@ -129,7 +129,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         var symbols = DEFAULT_SYMBOLS;
         final symbolString = symbols.reduce((value, element) => value + ',' + element);
 
-        var quotes = await _coinMarketApi.quotes(0);
+        var quotes = await _coinMarketApi.quotesLatest([],['CNY','USD']);
         /*var addQuotes = List<SymbolQuoteVo>();
         for (var quote in quotes) {
           if (quote.symbol == SupportedTokens.HYN_Atlas.symbol) {
@@ -158,7 +158,8 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         if (event.updateGasPrice) {
           BlocProvider.of<WalletCmpBloc>(Keys.rootKey.currentContext).add(UpdateGasPriceEvent());
         }
-      } catch (e) {
+      } catch (e,stack) {
+        print("!!!!3333 $e $stack");
         yield UpdateWalletPageState(-1);
       }
     } else if (event is UpdateQuotesEvent) {
@@ -167,7 +168,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       var symbols = DEFAULT_SYMBOLS;
       final symbolString = symbols.reduce((value, element) => value + ',' + element);
 
-      var quotes = await _coinMarketApi.quotes(0);
+      var quotes = await _coinMarketApi.quotesLatest([],['CNY','USD']);
       /*List<SymbolQuoteVo> addQuotes = [];
       for (var quote in quotes) {
         if (quote.symbol == SupportedTokens.HYN_Atlas.symbol) {
