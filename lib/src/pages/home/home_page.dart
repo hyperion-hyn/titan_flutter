@@ -106,10 +106,12 @@ class HomePageState extends BaseState<HomePage> {
 
                           return InkWell(
                             onTap: () async {
-                              var mapSceneState = Keys.mapContainerKey.currentState as MapContainerState;
-                              MapboxMapController mapboxMapController = mapSceneState.mapboxMapController;
-                              LatLng latLng = LatLng(model.lat, model.lng);
-                              mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLng(latLng), 700);
+                              if (isLocation) {
+                                var mapSceneState = Keys.mapContainerKey.currentState as MapContainerState;
+                                MapboxMapController mapboxMapController = mapSceneState.mapboxMapController;
+                                LatLng latLng = LatLng(model.lat, model.lng);
+                                mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLng(latLng), 700);
+                              }
 
                               // await Future.delayed(Duration(milliseconds: 1600));
                               // showShareRpOpenDialog(context,id: model.id);

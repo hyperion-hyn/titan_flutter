@@ -973,7 +973,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
           ),
           rowTipsItem('如果开启新人才能领取，领取后他将成为你的好友；\n但你要为每个新人至少要塞 $minHyn HYN作为他之后矿工费所用；'),
           // rowTipsItem('你要为每个新人至少要塞 $minHyn HYN作为他之后矿工费所用；'),
-          // rowTipsItem('24小时候后，如果还剩红包没领取，将自动退回你的钱包；'),
+          rowTipsItem('24小时候后，如果还剩红包没领取，将自动退回你的钱包；'),
         ],
       ),
     );

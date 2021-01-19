@@ -668,7 +668,7 @@ class RPApi {
   */
 
   // 领取新人/位置红包
-  Future<dynamic> postOpenShareRp({
+  Future<dynamic> postOpenShareRpOld({
     RpShareReqEntity reqEntity,
   }) async {
     return await RPHttpCore.instance.postEntity(
@@ -677,6 +677,36 @@ class RPApi {
       params: reqEntity.toJson(),
       options: RequestOptions(contentType: "application/json"),
     );
+  }
+
+  Future<dynamic> postOpenShareRp({
+    RpShareReqEntity reqEntity,
+  }) async {
+    var responseEntity = await RPHttpCore.instance.postResponseEntity(
+      "/v1/rp/new-bee/${reqEntity.address}/open",
+      EntityFactory<dynamic>((json) => json),
+      params: reqEntity.toJson(),
+      options: RequestOptions(contentType: "application/json"),
+    );
+
+    /*
+    * 1.成功
+    * 2.-40013
+    * */
+    if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
+      throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg, subMsg: responseEntity.subMsg);
+    }
+
+    if (responseEntity.code == -40013) {
+      return -40013;
+    }
+    else if (responseEntity.code == ResponseCode.SUCCESS || responseEntity.code == 200) {
+      return responseEntity.data;
+    } else {
+      throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg, subMsg: responseEntity.subMsg,);
+    }
+
+    // return -40013;
   }
 
   // 发新人/位置红包
