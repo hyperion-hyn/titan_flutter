@@ -28,6 +28,7 @@ import 'package:titan/src/pages/red_pocket/widget/rp_floating_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_level_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -192,7 +193,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
     var rpBalanceStr = '--';
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-      SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
+      SupportedTokens.HYN_RP_HRC30.symbol,
     );
     try {
       rpBalanceStr = FormatUtil.coinBalanceHumanReadFormat(

@@ -14,7 +14,8 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
+import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -943,7 +944,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
   _navToDetailAction() {
     if (_txHashIsEmpty) return;
 
-    WalletShowAccountInfoPage.jumpToAccountInfoPage(
+    WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
       context,
       _detailEntity?.txHash,
       SupportedTokens.HYN_RP_HRC30.symbol,

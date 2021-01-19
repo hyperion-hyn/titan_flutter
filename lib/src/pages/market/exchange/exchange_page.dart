@@ -31,6 +31,7 @@ import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -641,7 +642,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
         value: 'RP',
         child: _coinItem(
           'RP',
-          SupportedTokens.HYN_RP_HRC30_ROPSTEN.logo,
+          SupportedTokens.HYN_RP_HRC30.logo,
           false,
         ),
       ),

@@ -1,56 +1,21 @@
-import 'package:flutter/widgets.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
-import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/wallet/model/erc20_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/eth_transfer_history.dart';
-import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 
 class EtherscanApi {
-  String get apiHost {
-    switch (WalletConfig.netType) {
-      case EthereumNetType.main:
-        return Config.ETHERSCAN_API_URL;
-      case EthereumNetType.ropsten:
-        return Config.ETHERSCAN_API_URL_ROPSTEN;
-      case EthereumNetType.rinkeby:
-        return Config.ETHERSCAN_API_URL_RINKEBY;
-
-//      case EthereumNetType.local:
-//        return Config.ETHERSCAN_API_URL;
-      default:
-        return Config.ETHERSCAN_API_URL;
-    }
+  static String getTxDetailUrl(String txHash) {
+    return '${EthereumExplore.etherScanWeb}/tx/$txHash';
   }
 
-  static String getWebHost(bool isChinaMainland) {
-    if (WalletConfig.netType == EthereumNetType.main) {
-      if (isChinaMainland) {
-        return 'https://cn.etherscan.com';
-      } else {
-        return "https://etherscan.io";
-      }
-    } else if (WalletConfig.netType == EthereumNetType.ropsten) {
-      return "https://ropsten.etherscan.io";
-    } else if (WalletConfig.netType == EthereumNetType.rinkeby) {
-      return "https://rinkeby.etherscan.io";
-    }
-    return '';
+  static String getAddressDetailUrl(String address) {
+    return '${EthereumExplore.etherScanWeb}/address/$address';
   }
 
-  static String getTxDetailUrl(String txHash, bool isChinaMainland) {
-    return '${getWebHost(isChinaMainland)}/tx/$txHash';
-  }
-
-  static String getAddressDetailUrl(String address, bool isChinaMainland) {
-    return '${getWebHost(isChinaMainland)}/address/$address';
-  }
-
-  Future<List<EthTransferHistory>> queryEthHistory(
-      String address, int page) async {
-    Map result = await HttpCore.instance.get("$apiHost/api", params: {
+  Future<List<EthTransferHistory>> queryEthHistory(String address, int page) async {
+    Map result = await HttpCore.instance.get("${EthereumExplore.etherScanApi}/api", params: {
       "module": "account",
       "action": "txlist",
       "address": address,
@@ -64,17 +29,14 @@ class EtherscanApi {
 
     if (result["status"] == "1" || result["status"] == "0") {
       List resultList = result["result"] as List;
-      return resultList
-          .map((json) => EthTransferHistory.fromJson(json))
-          .toList();
+      return resultList.map((json) => EthTransferHistory.fromJson(json)).toList();
     } else {
       throw new Exception();
     }
   }
 
-  Future<List<Erc20TransferHistory>> queryErc20History(
-      String contractAddress, String address, int page) async {
-    Map result = await HttpCore.instance.get("$apiHost/api", params: {
+  Future<List<Erc20TransferHistory>> queryErc20History(String contractAddress, String address, int page) async {
+    Map result = await HttpCore.instance.get("${EthereumExplore.etherScanApi}/api", params: {
       "module": "account",
       "action": "tokentx",
       "contractaddress": contractAddress,
@@ -86,16 +48,14 @@ class EtherscanApi {
     });
     if (result["status"] == "1") {
       List resultList = result["result"] as List;
-      return resultList
-          .map((json) => Erc20TransferHistory.fromJson(json))
-          .toList();
+      return resultList.map((json) => Erc20TransferHistory.fromJson(json)).toList();
     } else {
       return [];
     }
   }
 
   Future<ResponseEntity> getGasFromEtherScan() async {
-    Map json = await HttpCore.instance.get("$apiHost/api", params: {
+    Map json = await HttpCore.instance.get("${EthereumExplore.etherScanApi}/api", params: {
       "module": "gastracker",
       "action": "gasoracle",
       "apikey": Config.ETHERSCAN_APIKEY,
@@ -104,7 +64,7 @@ class EtherscanApi {
     if (json["status"] == "1") {
       return ResponseEntity.fromJson(json);
     } else {
-      throw new Exception();
+      throw Exception();
     }
   }
 

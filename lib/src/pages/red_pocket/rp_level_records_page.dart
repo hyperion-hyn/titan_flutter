@@ -21,7 +21,8 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_rules_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_withdraw_page.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
+import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -849,7 +850,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
     if (txHash == null || txHash.isEmpty) {
       return;
     }
-    WalletShowAccountInfoPage.jumpToAccountInfoPage(
+    WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
       context,
       txHash,
       SupportedTokens.HYN_RP_HRC30.symbol,

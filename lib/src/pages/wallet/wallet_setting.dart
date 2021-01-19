@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/error/error_code.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -22,7 +23,6 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -461,7 +461,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
         });
       } catch (_) {
         logger.e(_);
-        if (_.code == WalletError.PASSWORD_WRONG) {
+        if (_.code == ErrorCode.PASSWORD_WRONG) {
           UiUtil.toast(S.of(context).wallet_password_error);
         } else {
           UiUtil.toast(S.of(context).update_error);
@@ -525,7 +525,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
       }
     } catch (_) {
       logger.e(_);
-      if (_.code == WalletError.PASSWORD_WRONG) {
+      if (_.code == ErrorCode.PASSWORD_WRONG) {
         Fluttertoast.showToast(msg: S.of(context).wallet_password_error);
       } else {
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);

@@ -18,6 +18,7 @@ import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -43,7 +44,7 @@ class Map3NodeRewardListPage extends StatefulWidget {
 
 class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
   AtlasApi _atlasApi = AtlasApi();
-  final _client = WalletUtil.getWeb3Client(true);
+  final _client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
 
   List<Map3InfoEntity> _joinNodeList = List();
   List<Map3InfoEntity> _createdNodeList = List();

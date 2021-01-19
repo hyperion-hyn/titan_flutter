@@ -1,0 +1,202 @@
+import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/plugins/wallet/config/heco.dart';
+import 'package:titan/src/plugins/wallet/config/hyperion.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
+
+class Tokens {
+  static AssetToken getTokenByContractAddress(String contractAddress) {
+    List<AssetToken> tokens = allTokens();
+    for (var token in tokens) {
+      if (token.contractAddress != null && token.contractAddress.toLowerCase() == contractAddress?.toLowerCase()) {
+        return token;
+      }
+    }
+    return null;
+  }
+
+  static List<AssetToken> contractTokensByCoinType(int coinType) {
+    List<AssetToken> tokens = [];
+    if (coinType == CoinType.HYN_ATLAS) {
+      switch (HyperionConfig.chainType) {
+        case HyperionChainType.mainnet:
+          tokens.add(SupportedTokens.HYN_RP_HRC30);
+          break;
+        case HyperionChainType.test:
+          tokens.add(SupportedTokens.HYN_RP_HRC30_TEST);
+          break;
+        case HyperionChainType.local:
+          tokens.add(SupportedTokens.HYN_RP_HRC30_LOCAL);
+          break;
+      }
+    } else if (coinType == CoinType.ETHEREUM) {
+      switch (EthereumConfig.chainType) {
+        case EthereumChainType.mainnet:
+          tokens.add(SupportedTokens.USDT_ERC20);
+          break;
+        case EthereumChainType.ropsten:
+          tokens.add(SupportedTokens.USDT_ERC20_ROPSTEN);
+          break;
+        case EthereumChainType.rinkeby:
+          break;
+        case EthereumChainType.local:
+          break;
+      }
+    } else if (coinType == CoinType.HB_HT) {
+      switch (HecoConfig.chainType) {
+        case HecoChainType.mainnet:
+          tokens.add(SupportedTokens.HUSD);
+          break;
+        case HecoChainType.test:
+          tokens.add(SupportedTokens.HUSD_TEST);
+          break;
+      }
+    }
+    return tokens;
+  }
+
+  static List<AssetToken> allTokens() {
+    List<AssetToken> tokens = [];
+    // hyperion
+    tokens.add(SupportedTokens.HYN_Atlas);
+    tokens.addAll(contractTokensByCoinType(CoinType.HYN_ATLAS));
+
+    // ethereum
+    tokens.add(SupportedTokens.ETHEREUM);
+    tokens.addAll(contractTokensByCoinType(CoinType.ETHEREUM));
+
+    // bitcoin
+    tokens.add(SupportedTokens.BTC);
+
+    // huobi heco
+    tokens.add(SupportedTokens.HT);
+    tokens.addAll(contractTokensByCoinType(CoinType.HB_HT));
+
+    return tokens;
+  }
+}
+
+///available tokens
+class SupportedTokens {
+  /// bitcoin
+  static const BTC = const AssetToken(
+    name: 'BITCOIN',
+    decimals: 8,
+    logo: 'res/drawable/ic_btc_logo_large.png',
+    symbol: 'BTC',
+  );
+
+  /// hyperion
+  static const HYN_Atlas = const AssetToken(
+    name: "Hyperion",
+    decimals: 18,
+    contractAddress: null,
+    logo: "res/drawable/ic_hyn_logo_new.png",
+    symbol: 'HYN',
+  );
+
+  static const HYN_RP_HRC30 = const AssetToken(
+    name: "Red Pocket",
+    decimals: 18,
+    contractAddress: '0x88880126bC73107118f18000309d10dB9f1d6a14',
+    logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
+    symbol: 'RP',
+  );
+
+  static const HYN_RP_HRC30_TEST = const AssetToken(
+    name: "Red Pocket",
+    decimals: 18,
+    contractAddress: '0x562D6AFA2A0aD94c8B2946e23C96E27F3cD023e8',
+    // old
+    // contractAddress: '0x6175228cBAbFEC03B3E67953501180B35ae55494',
+    logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
+    symbol: 'RP',
+  );
+
+  static const HYN_RP_HRC30_LOCAL = const AssetToken(
+    name: "Red Pocket",
+    decimals: 18,
+    contractAddress: '0xdB86E8bD3d8d7cE0a757DAD02Cbb6fb704383df0',
+    logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
+    symbol: 'RP',
+  );
+
+  /// ethereum
+  static const ETHEREUM = const AssetToken(
+    name: 'Ethereum',
+    decimals: 18,
+    contractAddress: null,
+    logo: 'res/drawable/ic_eth.png',
+    symbol: 'ETH',
+  );
+
+  static const HYN_ERC20 = const AssetToken(
+    name: 'Hyperion',
+    decimals: 18,
+    contractAddress: '0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07',
+    logo: "res/drawable/ic_hyn_logo_empty.png",
+    symbol: 'HYN ERC20',
+  );
+
+  static const USDT_ERC20 = const AssetToken(
+    name: 'Tether USD',
+    decimals: 6,
+    logo: 'res/drawable/usdt_logo.png',
+    contractAddress: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    symbol: 'USDT',
+  );
+
+  static const USDT_ERC20_ROPSTEN = const AssetToken(
+    name: 'Tether USD',
+    decimals: 6,
+    logo: 'res/drawable/usdt_logo.png',
+    contractAddress: '0xE82B8Eb1ce4684475eFc1655928dD012fb5Fa0Bb',
+    symbol: 'USDT',
+  );
+
+  static const HYN_ROPSTEN = const AssetToken(
+      name: 'Hyperion ROPSTEN',
+      decimals: 18,
+      contractAddress: '0xE2Ba724b516Bacca8646Ad72796d23Af39C610A6',
+      logo: "res/drawable/ic_hyn_logo_empty.png",
+      symbol: 'HYN ERC20');
+
+  static const HYN_RINKEBY = const AssetToken(
+      name: 'Hyperion RINKEBY',
+      decimals: 18,
+      contractAddress: '0x97B9e0EfeF243720FB024C823a39cBD73C25D601',
+      logo: "res/drawable/ic_hyn_logo_new.png",
+      symbol: 'HYN ERC20');
+
+  static final HYN_LOCAL = AssetToken(
+      name: 'Hyperion LOCAL',
+      decimals: 18,
+      contractAddress: '0x97B9e0EfeF243720FB024C823a39cBD73C25D601',
+      logo: "res/drawable/ic_hyn_logo_new.png",
+      symbol: 'HYN ERC20');
+
+  /// huobi heco
+  static const HT = const AssetToken(
+    name: "Huobi HT",
+    decimals: 18,
+    contractAddress: null,
+    logo: "res/drawable/ic_hb_logo_ht.png",
+    symbol: 'HT',
+  );
+
+  static final HUSD = AssetToken(
+    name: 'Huobi HUSD',
+    decimals: 8,
+    contractAddress: '0x0298c2b32eae4da002a15f36fdf7615bea3da047',
+    logo: "res/drawable/ic_hb_logo_husd.png",
+    symbol: 'HUSD',
+  );
+
+  static final HUSD_TEST = AssetToken(
+    name: 'Huobi HUSD',
+    decimals: 18,
+    contractAddress: '0x8dd66eefef4b503eb556b1f50880cc04416b916b',
+    logo: "res/drawable/ic_hb_logo_husd.png",
+    symbol: 'HUSD',
+  );
+}

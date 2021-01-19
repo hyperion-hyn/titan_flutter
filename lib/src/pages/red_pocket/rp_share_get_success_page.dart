@@ -14,7 +14,8 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_send_success_page.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
+import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -78,7 +79,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
     if ((myRpOpenEntity?.rpHash ?? "") == "") {
       return;
     }
-    WalletShowAccountInfoPage.jumpToAccountInfoPage(
+    WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
         context, myRpOpenEntity?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
   }
 
@@ -86,7 +87,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
     if ((myRpOpenEntity?.hynHash ?? "") == "") {
       return;
     }
-    WalletShowAccountInfoPage.jumpToAccountInfoPage(
+    WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
         context, myRpOpenEntity?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
   }
 
@@ -507,7 +508,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                               if (rpValue > 0)
                                 GestureDetector(
                                   onTap: () {
-                                    WalletShowAccountInfoPage.jumpToAccountInfoPage(
+                                    WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
                                         context, item?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
                                   },
                                   child: Text(
@@ -539,7 +540,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                               if (hynValue > 0)
                                 GestureDetector(
                                   onTap: () {
-                                    WalletShowAccountInfoPage.jumpToAccountInfoPage(
+                                    WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
                                         context, item?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
                                   },
                                   child: Text(

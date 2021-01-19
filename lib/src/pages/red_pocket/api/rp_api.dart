@@ -29,12 +29,14 @@ import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
+import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as WalletClass;
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart';
@@ -511,7 +513,7 @@ class RPApi {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
     var amount = depositAmount + burningAmount;
-    final client = WalletUtil.getWeb3Client(true);
+    final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
     var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
     var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount, nonce: nonce);
     if (approveHex?.isEmpty ?? true) {
@@ -584,14 +586,14 @@ class RPApi {
     var address = wallet?.getEthAccount()?.address ?? "";
 
     var gasLimit = 100000;
-    var gasPrice = BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt());
+    var gasPrice = BigInt.from(WalletInheritedModel.of(context).ethGasPriceRecommend.fast.toInt());
     print('[rp_api] postRpApprove, address:$address, amount:$amount, gasPrice:$gasPrice, gasLimit:$gasLimit');
 
     var ret = await wallet.getAllowance(
-      WalletConfig.hynRPHrc30Address,
+      HyperionConfig.hynRPHrc30Address,
       address,
-      WalletConfig.rpHoldingContractAddress,
-      true,
+      HyperionConfig.rpHoldingContractAddress,
+      CoinType.HYN_ATLAS,
     );
 
     print('[rp_api] postRpApprove, getAllowance, res:$ret');
@@ -600,15 +602,15 @@ class RPApi {
       return '200';
     }
     var approveHex = await wallet.sendApproveErc20Token(
-      contractAddress: WalletConfig.hynRPHrc30Address,
-      approveToAddress: WalletConfig.rpHoldingContractAddress,
+      contractAddress: HyperionConfig.hynRPHrc30Address,
+      approveToAddress: HyperionConfig.rpHoldingContractAddress,
       amount: amount,
       password: password,
       gasPrice: gasPrice,
       gasLimit: gasLimit,
       //gasLimit: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20ApproveGasLimit,
       nonce: nonce,
-      isAtlas: true,
+      coinType: CoinType.HYN_ATLAS,
     );
     print('[rp_api] postRpApprove, amount:$amount, approveHex: $approveHex');
 
@@ -689,7 +691,7 @@ class RPApi {
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
-    final client = WalletUtil.getWeb3Client(true);
+    final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
 
     // rp
     String rpSignedTX = '';
@@ -700,42 +702,65 @@ class RPApi {
     var hynNonce = rpNonce;
 
     if (reqEntity.rpAmount > 0 && reqEntity.hynAmount > 0) {
-      rpSignedTX = await HYNApi.signTransferHYNHrc30(
+      /*rpSignedTX = await HYNApi.signTransferHYNHrc30(
         password,
         ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
         toAddress,
         activeWallet.wallet,
         coinVo.contractAddress,
         nonce: rpNonce,
-      );
+      );*/
+      rpSignedTX = await activeWallet.wallet.signErc20Transaction(
+        CoinType.HYN_ATLAS,
+        contractAddress: coinVo.contractAddress,
+        password: password,
+        toAddress: toAddress,
+        value: ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+        nonce: rpNonce,);
       if (rpSignedTX == null) {
         throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
       }
       print('[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
 
       hynNonce = rpNonce + 1;
-      hynSignedTX = await HYNApi.signTransferHYN(
+      /*hynSignedTX = await HYNApi.signTransferHYN(
         password,
         activeWallet.wallet,
         toAddress: toAddress,
         amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
         nonce: hynNonce,
         message: null,
-      );
+      );*/
+      hynSignedTX = await activeWallet.wallet.signTransaction(
+        CoinType.HYN_ATLAS,
+        password: password,
+        toAddress: toAddress,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+        value: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
+        nonce: hynNonce,);
       if (hynSignedTX?.isEmpty ?? true) {
         throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
       }
       print('[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
     } else {
       if (reqEntity.rpAmount > 0) {
-        rpSignedTX = await HYNApi.signTransferHYNHrc30(
+        /*rpSignedTX = await HYNApi.signTransferHYNHrc30(
           password,
           ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
           toAddress,
           activeWallet.wallet,
           coinVo.contractAddress,
           nonce: rpNonce,
-        );
+        );*/
+        rpSignedTX = await activeWallet.wallet.signErc20Transaction(
+          CoinType.HYN_ATLAS,
+          contractAddress: coinVo.contractAddress,
+          password: password,
+          toAddress: toAddress,
+          value: ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
+          gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+          nonce: rpNonce,);
         print('[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
 
         if (rpSignedTX == null) {
@@ -744,14 +769,21 @@ class RPApi {
       }
 
       if (reqEntity.hynAmount > 0) {
-        hynSignedTX = await HYNApi.signTransferHYN(
+        /*hynSignedTX = await HYNApi.signTransferHYN(
           password,
           activeWallet.wallet,
           toAddress: toAddress,
           amount: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
           nonce: hynNonce,
           message: null,
-        );
+        );*/
+        hynSignedTX = await activeWallet.wallet.signTransaction(
+          CoinType.HYN_ATLAS,
+          password: password,
+          toAddress: toAddress,
+          gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+          value: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
+          nonce: hynNonce,);
         print('[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
 
         if (hynSignedTX?.isEmpty ?? true) {
