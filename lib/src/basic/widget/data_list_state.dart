@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 import './load_data_container/bloc/bloc.dart';
 
@@ -21,7 +22,7 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
   Future<List<dynamic>> onLoadData(int page);
 
   Future onWidgetLoadDataCallback() async {
-//    try {
+   try {
       currentPage = getStartPage();
       var list = await onLoadData(currentPage);
       _updateDataListOnReceive(list, currentPage);
@@ -35,10 +36,11 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
           loadDataBloc.add(RefreshSuccessEvent());
         }
       }
-//    } catch (e) {
-//      logger.e(e);
-//      loadDataBloc.add(LoadFailEvent());
-//    }
+   } catch (e) {
+     // logger.e(e);
+     LogUtil.toastException(e);
+     loadDataBloc.add(LoadFailEvent());
+   }
   }
 
   Future onWidgetRefreshCallback() async {
@@ -90,14 +92,16 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
   }
 
   void _updateDataListOnReceive(List<dynamic> list, int page) {
-    setState(() {
-      if (page == getStartPage()) {
-        dataList.clear();
-        dataList.addAll(list);
-      } else {
-        dataList.addAll(list);
-      }
-    });
+    if(mounted) {
+      setState(() {
+        if (page == getStartPage()) {
+          dataList.clear();
+          dataList.addAll(list);
+        } else {
+          dataList.addAll(list);
+        }
+      });
+    }
   }
 
   @override

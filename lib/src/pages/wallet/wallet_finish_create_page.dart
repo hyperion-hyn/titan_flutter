@@ -130,8 +130,8 @@ class FinishCreatePage extends StatelessWidget {
           .add(ClearExchangeAccountEvent());
 
       await Future.delayed(Duration(milliseconds: 300));
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateActivatedWalletBalanceEvent());
+      // BlocProvider.of<WalletCmpBloc>(context)
+      //     .add(UpdateActivatedWalletBalanceEvent());
     }
 
     try {
@@ -139,7 +139,7 @@ class FinishCreatePage extends StatelessWidget {
         RPApi _rpApi = RPApi();
         String inviteResult = await _rpApi.postRpInviter(MemoryCache.rpInviteKey, wallet);
         if(inviteResult != null) {
-          Fluttertoast.showToast(msg: "邀请成功");
+          Fluttertoast.showToast(msg: S.of(context).invitation_success);
           MemoryCache.rpInviteKey = null;
         }
       }

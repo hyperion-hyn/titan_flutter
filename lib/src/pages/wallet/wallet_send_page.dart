@@ -15,9 +15,9 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -100,18 +100,8 @@ class _WalletSendState extends BaseState<WalletSendPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
-        title: Text(
-          S.of(context).send_symbol(widget.coinVo.symbol),
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).send_symbol(widget.coinVo.symbol),
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 32),
@@ -148,7 +138,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                           ),
                           InkWell(
                             onTap: () async{
-                              UiUtil.showImagePickerSheet(context, callback: (String text) {
+                              UiUtil.showScanImagePickerSheet(context, callback: (String text) {
                                 _parseText(quotePrice, text);
                               });
                             },
@@ -178,7 +168,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                               } else if (((activatedWallet?.wallet?.getAtlasAccount()?.address ?? null) != null)
                                   && ((WalletUtil.ethAddressToBech32Address(activatedWallet.wallet.getAtlasAccount().address) == value)
                                       ||(activatedWallet.wallet.getAtlasAccount().address == value))) {
-                                return "不能转给自己";
+                                return S.of(context).cant_transfer_myself;
                               }
                               return null;
                             },
@@ -266,6 +256,9 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                             }
                             if (Decimal.parse(value) > Decimal.parse(FormatUtil.coinBalanceHumanRead(widget.coinVo))) {
                               return S.of(context).input_count_over_balance;
+                            }
+                            if (value.contains(".") && value.split(".")[1].length > widget.coinVo.decimals) {
+                              return "超过${widget.coinVo.decimals}位最大小数位";
                             }
                             return null;
                           },
@@ -387,7 +380,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
 
         var estimateGas = ConvertTokenUnit.weiToEther(
             weiBigInt: BigInt.parse(
-          (1 * TokenUnit.G_WEI * 21000).toString(),
+          (1 * EthereumUnitValue.G_WEI * 21000).toString(),
         ));
 
         if (balance - estimateGas < Decimal.parse(amountTrim)) {

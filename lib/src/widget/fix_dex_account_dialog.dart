@@ -109,17 +109,17 @@ class FixDexAccountDialogState extends State<FixDexAccountDialog> {
           SizedBox(
             height: 14.0,
           ),
-          if (Decimal.parse(widget.abnormalTransferHistory.hyn) >
+          if (Decimal.parse(widget.abnormalTransferHistory?.hyn ?? '0') >
               Decimal.fromInt(0))
             Text(
-                'HYN ${S.of(context).not_less_than} ${widget.abnormalTransferHistory.hyn}'),
+                'HYN ${S.of(context).not_less_than} ${widget.abnormalTransferHistory?.hyn ?? '0'}'),
           SizedBox(
             height: 8.0,
           ),
-          if (Decimal.parse(widget.abnormalTransferHistory.usdt) >
+          if (Decimal.parse(widget.abnormalTransferHistory?.usdt ?? '0') >
               Decimal.fromInt(0))
             Text(
-                'USDT ${S.of(context).not_less_than} ${widget.abnormalTransferHistory.usdt}'),
+                'USDT ${S.of(context).not_less_than} ${widget.abnormalTransferHistory?.usdt ?? '0'}'),
           SizedBox(
             height: 16,
           ),
@@ -207,7 +207,7 @@ class FixDexAccountDialogState extends State<FixDexAccountDialog> {
                 height: 40,
                 width: 40,
                 child: CircularProgressIndicator(
-                  strokeWidth: 3,
+                  strokeWidth: 1.5,
                 ),
               ),
               SizedBox(
@@ -265,17 +265,17 @@ class FixDexAccountDialogState extends State<FixDexAccountDialog> {
                         SizedBox(
                           height: 8,
                         ),
-                        if (Decimal.parse(widget.abnormalTransferHistory.hyn) >
+                        if (Decimal.parse(widget.abnormalTransferHistory?.hyn ?? '0') >
                             Decimal.fromInt(0))
                           Text(
-                              'HYN ${S.of(context).not_less_than} ${widget.abnormalTransferHistory.hyn}'),
+                              'HYN ${S.of(context).not_less_than} ${widget.abnormalTransferHistory?.hyn ?? '0'}'),
                         SizedBox(
                           height: 8.0,
                         ),
-                        if (Decimal.parse(widget.abnormalTransferHistory.usdt) >
+                        if (Decimal.parse(widget.abnormalTransferHistory?.usdt ?? '0') >
                             Decimal.fromInt(0))
                           Text(
-                              'USDT ${S.of(context).not_less_than} ${widget.abnormalTransferHistory.usdt}'),
+                              'USDT ${S.of(context).not_less_than} ${widget.abnormalTransferHistory?.usdt ?? '0'}'),
                       ],
                     ),
             ),

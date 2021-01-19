@@ -13,14 +13,22 @@ import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
-import 'package:titan/src/pages/red_pocket/rp_my_level_record_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_my_friends_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
+import 'package:titan/src/pages/red_pocket/rp_level_records_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_friend_list_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_record_tab_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_select_type_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
+import 'package:titan/src/pages/red_pocket/widget/rp_floating_widget.dart';
+import 'package:titan/src/pages/red_pocket/widget/rp_level_widget.dart';
+import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -32,7 +40,6 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'entity/rp_airdrop_round_info.dart';
 import 'entity/rp_statistics.dart';
-import 'rp_record_tab_page.dart';
 
 class RedPocketPage extends StatefulWidget {
   RedPocketPage();
@@ -47,8 +54,9 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   RPApi _rpApi = RPApi();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   RPStatistics _rpStatistics;
-  RpMyLevelInfo _myLevelInfo;
   RpAirdropRoundInfo _latestRoundInfo;
+  RpLevelAirdropInfo _rpLevelAirdropInfo;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -57,15 +65,22 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   @override
   void onCreated() {
+
+    _isLoading = true;
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
+
+    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
+    if (activeWallet == null) {
+      if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(ClearMyLevelInfoEvent());
+      }
+    }
     super.onCreated();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
     _rpStatistics = RedPocketInheritedModel.of(context).rpStatistics;
   }
 
@@ -92,7 +107,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           FlatButton(
             onPressed: _navToMyRpRecords,
             child: Text(
-              '我的红包',
+              S.of(context).my_redpocket,
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
@@ -102,25 +117,37 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           ),
         ],
       ),
-      body: LoadDataContainer(
-          bloc: _loadDataBloc,
-          enablePullUp: false,
-          onLoadData: () async {
-            _requestData();
-          },
-          onRefresh: () async {
-            _requestData();
-          },
-          child: CustomScrollView(
-            physics: BouncingScrollPhysics(),
-            slivers: <Widget>[
-              _myRPInfo(),
-              _airdropWidget(),
-              _levelWidget(),
-              _rpPool(),
-              _projectIntro(),
-            ],
-          )),
+      body: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: LoadDataContainer(
+                bloc: _loadDataBloc,
+                enablePullUp: false,
+                onLoadData: () async {
+                  _requestData();
+                },
+                onRefresh: () async {
+                  _requestData();
+                },
+                child: CustomScrollView(
+                  physics: BouncingScrollPhysics(),
+                  slivers: <Widget>[
+                    _myRPInfo(),
+                    _rpPool(),
+                    _airdropWidget(),
+                    _statisticsWidget(),
+                    _projectIntro(),
+                  ],
+                )),
+          ),
+
+          if (!_isLoading) RpFloatingWidget(),
+          // if (!_isLoading) RpFloatingWidget(actionType: -1,),
+        ],
+      ),
+
     );
   }
 
@@ -166,7 +193,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
     var rpBalanceStr = '--';
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-      SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
+      SupportedTokens.HYN_RP_HRC30.symbol,
     );
     try {
       rpBalanceStr = FormatUtil.coinBalanceHumanReadFormat(
@@ -220,23 +247,22 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      '钱包余额',
+                      S.of(context).wallet_balance,
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 12,
                         color: DefaultColors.color999,
                       ),
                       textAlign: TextAlign.end,
                     ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      '$rpBalance',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.black,
+                    SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        '$rpBalance',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
                       ),
-                      textAlign: TextAlign.end,
                     ),
                   ],
                 )
@@ -252,11 +278,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             ),
             onTap: _navToManageWallet,
           );
-
-    int currentLevel = _myLevelInfo?.currentLevel ?? 0;
-    int highestLevel = _myLevelInfo?.highestLevel ?? 0;
-
-    var isShowDowngrade = highestLevel > currentLevel;
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -289,9 +310,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     Expanded(
                       child: accountInfoWidget,
                     ),
-                    SizedBox(
-                      width: 16,
-                    ),
                   ],
                 ),
                 Padding(
@@ -306,6 +324,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     color: HexColor('#F2F2F2'),
                   ),
                 ),
+                RPLevelWidget(),
                 if (activeWallet != null)
                   Row(
                     children: <Widget>[
@@ -355,7 +374,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                               'res/drawable/rp_add_friends_arrow.png',
                               width: 15,
                               height: 15,
-                              color: HexColor('#FF5959'),
+                              color: HexColor('#FF1F81FF'),
                             ),
                           ],
                         ),
@@ -366,26 +385,40 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           onTap: _navToRPInviteFriends,
                           child: Row(
                             children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 12,
-                                  right: 8,
-                                ),
-                                child: Text(
-                                  S.of(context).rp_invite_to_collect,
-                                  style: TextStyle(
-                                    color: HexColor('#333333'),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 12,
+                                    right: 8,
                                   ),
-                                  maxLines: 2,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        S.of(context).rp_invite_to_collect,
+                                        style: TextStyle(
+                                          color: HexColor('#333333'),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        maxLines: 2,
+                                      ),
+                                      Text(
+                                        S.of(context).more_friends_more_chances,
+                                        style: TextStyle(
+                                          color: DefaultColors.color999,
+                                          fontSize: 11,
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                               Image.asset(
                                 'res/drawable/rp_add_friends.png',
                                 width: 17,
                                 height: 17,
-                                color: HexColor('#FF5959'),
+                                color: HexColor('#FF1F81FF'),
                               ),
                             ],
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -394,232 +427,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       ),
                     ],
                   ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  _levelWidget() {
-    var totalBurningStr = FormatUtil.stringFormatCoinNum(
-      _rpStatistics?.rpHoldingContractInfo?.totalBurningStr ?? '0',
-      decimal: 4,
-    );
-    var totalBurning = '$totalBurningStr RP';
-
-    var totalHoldingStr = FormatUtil.stringFormatCoinNum(
-      _rpStatistics?.rpHoldingContractInfo?.totalHoldingStr ?? '0',
-      decimal: 4,
-    );
-    var totalHolding = '$totalHoldingStr RP';
-
-    var totalSupplyStr = FormatUtil.stringFormatCoinNum(
-      _rpStatistics?.rpHoldingContractInfo?.totalSupplyStr ?? '0',
-      decimal: 4,
-    );
-    var totalSupply = '$totalSupplyStr RP';
-
-    int currentLevel = _myLevelInfo?.currentLevel ?? 0;
-    int highestLevel = _myLevelInfo?.highestLevel ?? 0;
-
-    var isShowDowngrade = highestLevel > currentLevel;
-
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: _cardPadding(),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(16.0)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                InkWell(
-                  onTap: _navToLevel,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            '量级',
-                            style: TextStyle(
-                              color: HexColor('#333333'),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 8,
-                            ),
-                            child: Text(
-                              '当前持币 ${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
-                              style: TextStyle(
-                                color: HexColor('#999999'),
-                                fontSize: 10,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: SizedBox(),
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: Image.asset(
-                              "res/drawable/ic_rp_level_$currentLevel.png",
-                              height: 100,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: isShowDowngrade
-                                ? Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: 32,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Image.asset(
-                                          'res/drawable/ic_rp_level_down.png',
-                                          width: 15,
-                                        ),
-                                        SizedBox(
-                                          width: 6,
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            '等级下降了',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 6,
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : SizedBox(),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
-                      Text(
-                        currentLevel < 5 ? '去提升' : '去查看',
-                        style: TextStyle(
-                          color: Colors.blue,
-                        ),
-                      ),
-                      if (currentLevel == 0)
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 20,
-                            left: 50,
-                            right: 50,
-                            bottom: 8,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 4,
-                                ),
-                                child: Image.asset(
-                                  'res/drawable/error_rounded.png',
-                                  width: 15,
-                                  height: 15,
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 4,
-                                  ),
-                                  child: Text(
-                                    '当前量级为0级，不能获得红包，请尽快升级',
-                                    style: TextStyle(
-                                      color: HexColor('#333333'),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      height: 1.5,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      else
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16, bottom: 8),
-                          child: Container(
-                            child: Text(
-                              '你正在参与红包空投',
-                              style: TextStyle(color: Colors.white, fontSize: 12),
-                            ),
-                            decoration: BoxDecoration(
-                                color: Colors.orange[500], borderRadius: BorderRadius.all(Radius.circular(4))),
-                            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-                          ),
-                        ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: _toolTipColumn(
-                            totalSupply,
-                            '全网已发行量',
-                            null,
-                          ),
-                        ),
-                        Expanded(
-                          child: _toolTipColumn(
-                            totalHolding,
-                            '全网量级持币',
-                            '参与量级持币的总量',
-                          ),
-                        ),
-                        Expanded(
-                          child: _toolTipColumn(
-                            totalBurning,
-                            '全网燃烧',
-                            null,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -642,6 +449,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
             child: RPAirdropWidget(
               rpStatistics: _rpStatistics,
               rpAirdropRoundInfo: _latestRoundInfo,
+              rpLevelAirdropInfo: _rpLevelAirdropInfo,
             ),
           ),
         ),
@@ -652,8 +460,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   _rpPool() {
     var rpYesterday = '--';
     var myHYNStaking = '--';
-    var globalHYNStaking = '--';
-    var globalTransmit = '--';
     var poolPercent = _rpStatistics?.rpContractInfo?.poolPercent ?? '--';
 
     try {
@@ -663,17 +469,15 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       myHYNStaking = FormatUtil.stringFormatCoinNum(
         _rpStatistics?.self?.totalStakingHynStr,
       );
-      globalHYNStaking = FormatUtil.stringFormatCoinNum(
-        _rpStatistics?.global?.totalStakingHynStr,
-      );
-      globalTransmit = FormatUtil.stringFormatCoinNum(
-        _rpStatistics?.global?.transmitStr,
-      );
     } catch (e) {}
 
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+        padding: const EdgeInsets.only(
+          left: 16.0,
+          right: 16.0,
+          top: 16.0,
+        ),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -703,95 +507,119 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         ),
                       ),
                     ),
+                    //Spacer(),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 4,
+                        ),
+                        child: Text(
+                          S.of(context).sooner_get_more_rp,
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(
                   height: 16,
                 ),
-                Row(
-                  children: [
-                    _inkwellColumn(
-                      '$myHYNStaking HYN',
-                      S.of(context).rp_my_hyn_staking,
-                      onTap: _navToRPPool,
-                    ),
-                    Spacer(),
-                    Row(
-                      children: [
-                        Container(
-                          constraints: BoxConstraints(
-                            maxWidth: 100,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                '$rpYesterday RP',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: HexColor("#FF001B"),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 4.0,
-                              ),
-                              Text(
-                                S.of(context).rp_transmit_yesterday,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: DefaultColors.color999,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          width: 16,
-                        )
-                      ],
-                    ),
-                  ],
+                Text(
+                  '$myHYNStaking',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                  ),
-                  child: Container(
-                    height: 0.5,
-                    color: HexColor('#F2F2F2'),
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text(
+                    '${S.of(context).rp_my_hyn_staking} (HYN)',
+                    style: TextStyle(
+                      color: DefaultColors.color999,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 2.0,
+                      horizontal: 8.0,
+                    ),
+                    color: DefaultColors.colorf2f2f2,
+                    child: RichText(
+                        text: TextSpan(children: [
+                      TextSpan(
+                          text: '${S.of(context).rp_transmit_yesterday}',
+                          style: TextStyle(
+                            color: DefaultColors.color999,
+                            fontSize: 13,
+                          )),
+                      TextSpan(
+                          text: '  $rpYesterday RP',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 13,
+                          ))
+                    ])),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: ClickOvalButton(
+                    S.of(context).rp_transmit_now,
+                    _navToRPPool,
+                    width: 140,
+                    height: 32,
+                    fontSize: 13,
+                    btnColor: [
+                      HexColor('#FFFF4D4D'),
+                      HexColor('#FFFF0829'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  _statisticsWidget() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: _cardPadding(),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(16.0)),
+          ),
+          child: Padding(
+            padding: _cardPadding(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Row(
                   children: [
-                    Expanded(
-                      child: _poolInfoColumn(
-                        '$globalHYNStaking HYN',
-                        S.of(context).rp_global_hyn_staking,
+                    Text(
+                      S.of(context).statistics,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Expanded(
-                      child: _poolInfoColumn(
-                        '$globalTransmit RP',
-                        S.of(context).rp_global_transmit,
-                      ),
-                    ),
+                    Spacer(),
                   ],
                 ),
+                RPStatisticsWidget(),
                 SizedBox(
-                  height: 24,
-                )
-                /*Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24.0),
-                  child: ClickOvalButton(
-                    S.of(context).check,
-                    _navToRPPool,
-                    width: 160,
-                    height: 32,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),*/
+                  height: 16,
+                ),
               ],
             ),
           ),
@@ -866,6 +694,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   ///widgets
+  /*
   Widget _poolInfoColumn(
     String content,
     String subContent,
@@ -893,7 +722,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         ),
       ],
     );
-  }
+  }*/
 
   Widget _toolTipColumn(
     String content,
@@ -958,60 +787,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
   }
 
-  Widget _inkwellColumn(
-    String content,
-    String subContent, {
-    GestureTapCallback onTap,
-    double contentFontSize = 14,
-    double subContentFontSize = 10,
-    CrossAxisAlignment columnCrossAxisAlignment = CrossAxisAlignment.start,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Row(
-        children: [
-          Container(
-            constraints: BoxConstraints(
-              maxWidth: 100,
-            ),
-            child: Column(
-              crossAxisAlignment: columnCrossAxisAlignment,
-              children: <Widget>[
-                Text(
-                  content,
-                  style: TextStyle(
-                    fontSize: contentFontSize,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(
-                  height: 4.0,
-                ),
-                Text(
-                  subContent,
-                  style: TextStyle(
-                    fontSize: subContentFontSize,
-                    color: DefaultColors.color999,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Image.asset(
-            'res/drawable/rp_add_friends_arrow.png',
-            width: 15,
-            height: 15,
-            color: HexColor('#FF5959'),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _tipRow(
     String title, {
     double top = 8,
@@ -1057,24 +832,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
   }
 
-  Widget _verticalLine({
-    bool havePadding = false,
-  }) {
-    return Center(
-      child: Container(
-        height: 20,
-        width: 0.5,
-        color: HexColor('#000000').withOpacity(0.2),
-        margin: havePadding
-            ? const EdgeInsets.only(
-                right: 4.0,
-                left: 4.0,
-              )
-            : null,
-      ),
-    );
-  }
-
   ///Actions
   _navToRPPool() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
@@ -1090,27 +847,13 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     }
   }
 
-  _navToRPReleaseRecord() {
-    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
-    if (activeWallet != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RpTransmitRecordsPage(),
-        ),
-      );
-    } else {
-      Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
-    }
-  }
-
   _navToLevel() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
     if (activeWallet != null) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpMyLevelRecordsPage(),
+          builder: (context) => RpLevelRecordsPage(),
         ),
       );
     } else {
@@ -1119,16 +862,11 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _navToManageWallet() {
-    Application.router
-        .navigateTo(
-          context,
-          Routes.wallet_manager,
-        )
-        .then((value) => () {
-              if (mounted) {
-                setState(() {});
-              }
-            });
+    WalletManagerPage.jumpWalletManager(context, hasWalletUpdate: (wallet) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   _navToMyFriends() {
@@ -1137,7 +875,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpMyFriendsPage(),
+          builder: (context) => RpFriendListPage(),
         ),
       );
     } else {
@@ -1152,7 +890,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         context,
         MaterialPageRoute(
           builder: (context) => RpRecordTabPage(),
-          // builder: (context) => RpMyRpRecordsPage(),
         ),
       );
     } else {
@@ -1166,7 +903,22 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RpInviteFriendPage(),
+          builder: (context) => RpFriendInvitePage(),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
+    }
+  }
+
+  _navToShareRp() {
+    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+    if (activeWallet != null) {
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RpShareSelectTypePage(),
         ),
       );
     } else {
@@ -1188,18 +940,31 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       }
 
       if (context != null) {
+        BlocProvider.of<RedPocketBloc>(context).add(UpdatePromotionRuleEvent());
+      }
+
+      if (context != null) {
         BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
       }
 
-      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
-        _address,
-      );
+      _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(_address);
+
+      _rpLevelAirdropInfo = await _rpApi.getLatestLevelAirdropInfo(_address);
+
       if (mounted) {
         _loadDataBloc.add(RefreshSuccessEvent());
-        setState(() {});
+        setState(() {
+          _isLoading = false;
+        });
       }
     } catch (e) {
-      _loadDataBloc.add(RefreshFailEvent());
+
+      if (mounted) {
+        _loadDataBloc.add(RefreshFailEvent());
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 }

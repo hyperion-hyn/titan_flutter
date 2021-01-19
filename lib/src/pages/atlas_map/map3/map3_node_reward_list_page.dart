@@ -8,6 +8,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
@@ -17,8 +18,11 @@ import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -26,6 +30,8 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart';
+
+import '../../../../env.dart';
 
 class Map3NodeRewardListPage extends StatefulWidget {
   Map3NodeRewardListPage();
@@ -38,7 +44,7 @@ class Map3NodeRewardListPage extends StatefulWidget {
 
 class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
   AtlasApi _atlasApi = AtlasApi();
-  final _client = WalletUtil.getWeb3Client(true);
+  final _client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
 
   List<Map3InfoEntity> _joinNodeList = List();
   List<Map3InfoEntity> _createdNodeList = List();
@@ -64,12 +70,12 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
     switch (_lastPendingTx.status) {
       case TransactionStatus.pending:
       case TransactionStatus.pending_for_receipt:
-        notification = '提取Map3奖励请求处理中...';
+        notification = S.of(context).extracting_reward_request_processing;
 
         break;
 
       case TransactionStatus.success:
-        notification = '提取成功，Map3奖励已发送您的钱包';
+        notification = S.of(context).successful_withdrawal_rewards_sent_your_wallet;
         break;
     }
     return notification;
@@ -278,7 +284,7 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
                 vertical: 4.0,
               ),
               child: Text(
-                '当前可提',
+                S.of(context).currently_available,
                 style: TextStyle(
                   fontSize: 13,
                 ),
@@ -287,9 +293,11 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24.0),
               child: ClickOvalButton(
-                '提取奖励',
+                S.of(context).action_atals_receive_award,
                 _collect,
-                fontSize: 16,
+                fontSize: 14,
+                width: 160,
+                height: 36,
                 fontWeight: FontWeight.normal,
               ),
             ),
@@ -386,7 +394,7 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
       );
 
       if (lastTxIsPending) {
-        Fluttertoast.showToast(msg: '请先等待上一笔交易处理完成');
+        Fluttertoast.showToast(msg: S.of(context).wait_for_completion_previous_transaction);
         return;
       }
 
@@ -424,9 +432,9 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
                   ),
                 ));
           },
-          width: 200,
+          width: 160,
           height: 38,
-          fontSize: 16,
+          fontSize: 14,
         ),
       ],
       content: S.of(context).confirm_collect_reward_to_wallet(
@@ -501,86 +509,97 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
             ? _rewardMap[map3infoEntity.address?.toLowerCase()]
             : '0';
     var bigIntValue = BigInt.tryParse(valueInRewardMap) ?? BigInt.from(0);
-    var _collectable = ConvertTokenUnit.weiToEther(
+    var _collectible = ConvertTokenUnit.weiToEther(
       weiBigInt: bigIntValue,
     );
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              iconMap3Widget(map3infoEntity),
-              SizedBox(
-                width: 8,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return InkWell(
+      onTap: () {
+        if (!showLog) {
+          return;
+        }
+        Application.router.navigateTo(
+          context,
+          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}',
+        );
+      },
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                iconMap3Widget(map3infoEntity),
+                SizedBox(
+                  width: 8,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text.rich(TextSpan(children: [
+                        TextSpan(
+                            text: nodeName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            )),
+                        TextSpan(text: "", style: TextStyles.textC333S14bold),
+                      ])),
+                      Container(
+                        height: 4,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            '${S.of(context).node_addrees}: ${nodeAddress}',
+                            style: TextStyle(
+                                color: DefaultColors.color999, fontSize: 11),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Text.rich(TextSpan(children: [
-                      TextSpan(
-                          text: nodeName,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
-                          )),
-                      TextSpan(text: "", style: TextStyles.textC333S14bold),
-                    ])),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Text(
+                        '${FormatUtil.stringFormatCoinNum(_collectible.toString())}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
                     Container(
                       height: 4,
                     ),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          '${S.of(context).node_addrees}: ${nodeAddress}',
-                          style: TextStyle(
-                              color: DefaultColors.color999, fontSize: 11),
-                        )
-                      ],
+                    Text(
+                      S.of(context).map3_current_reward,
+                      style: TextStyle(
+                        color: DefaultColors.color999,
+                        fontSize: 12,
+                      ),
                     )
                   ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                    child: Text(
-                      '${FormatUtil.stringFormatCoinNum(_collectable.toString())}',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 4,
-                  ),
-                  Text(
-                    '可提奖励',
-                    style: TextStyle(
-                      color: DefaultColors.color999,
-                      fontSize: 12,
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
-        ),
-        if (isShowDivider)
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16.0,
+                )
+              ],
             ),
-            child: Divider(height: 0, color: HexColor('#FFF2F2F2')),
-          )
-      ],
+          ),
+          if (isShowDivider)
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 16.0,
+              ),
+              child: Divider(height: 0, color: HexColor('#FFF2F2F2')),
+            )
+        ],
+      ),
     );
   }
 }

@@ -18,6 +18,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -276,7 +277,9 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage>
             height: 32,
           ),
           ClickOvalButton(S.of(context).go_setting, () {
-            Application.router.navigateTo(context, Routes.wallet_manager);
+            WalletManagerPage.jumpWalletManager(context);
+
+            // Application.router.navigateTo(context, Routes.wallet_manager);
           })
         ],
       ),

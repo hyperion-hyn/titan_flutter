@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/contribution/add_poi/add_ncov_page.dart';
-
 
 class SelectPositionPage extends StatefulWidget {
   final LatLng initLocation;
@@ -22,13 +24,13 @@ class SelectPositionPage extends StatefulWidget {
   }
 }
 
-class _SelectPositionState extends State<SelectPositionPage> {
+class _SelectPositionState extends BaseState<SelectPositionPage> {
   MapboxMapController mapController;
   LatLng userPosition;
   double defaultZoom = 16;
 
   var trackingMode = MyLocationTrackingMode.Tracking;
-  var enableLocation = false;
+  bool get enableLocation => widget.initLocation == null;
 
   bool _isLoadedFinish = false;
 
@@ -36,8 +38,12 @@ class _SelectPositionState extends State<SelectPositionPage> {
 
   @override
   void initState() {
-    userPosition = widget.initLocation ?? Application.recentlyLocation;
     super.initState();
+  }
+
+  @override
+  void onCreated() async {
+    userPosition = widget.initLocation ?? Application.recentlyLocation;
   }
 
   void _mapMoveListener() {
@@ -67,16 +73,11 @@ class _SelectPositionState extends State<SelectPositionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _globalKey,
-      appBar: AppBar(
-        elevation: 0,
-        title: Text(
-          widget.type == SelectPositionPage.SELECT_PAGE_TYPE_NCOV
-              ? S.of(context).selecte_confirmed_position
-              : S.of(context).select_position,
-          style: TextStyle(color: Colors.white),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-        centerTitle: true,
+      appBar: BaseAppBar(
+        baseTitle: widget.type == SelectPositionPage.SELECT_PAGE_TYPE_NCOV
+            ? S.of(context).selecte_confirmed_position
+            : S.of(context).select_position,
+        backgroundColor: Colors.white,
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -88,8 +89,8 @@ class _SelectPositionState extends State<SelectPositionPage> {
           },
         ),
         actions: <Widget>[
-          InkWell(
-            onTap: () {
+          FlatButton(
+            onPressed: () {
               var latLng = mapController?.cameraPosition?.target;
               print('[add] --> 确认中...,latLng: $latLng');
               if (latLng == null) {
@@ -113,26 +114,18 @@ class _SelectPositionState extends State<SelectPositionPage> {
                   );
                 } else {
                   Navigator.pop(context, latLng);
-                  /*
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddPositionPage(latLng),
-                    ),
-                  );
-                  */
                 }
               }
             },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              alignment: Alignment.centerRight,
-              child: Text(
-                S.of(context).confirm,
-                style: TextStyle(fontSize: 16, color: Colors.white),
+            child: Text(
+              S.of(context).confirm,
+              style: TextStyle(
+                color: HexColor("#1F81FF"),
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
               ),
             ),
-          )
+          ),
         ],
       ),
       body: _mapView(),
@@ -144,7 +137,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
     if (widget.type == SelectPositionPage.SELECT_PAGE_TYPE_NCOV) {
       style = Const.kNCovMapStyle;
     } else {
-      if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true) {
+      if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland ?? true) {
         style = Const.kWhiteMapStyleCn;
       } else {
         style = Const.kWhiteMapStyle;
@@ -168,7 +161,6 @@ class _SelectPositionState extends State<SelectPositionPage> {
           },
           onMapCreated: (mapboxController) {
             Future.delayed(Duration(milliseconds: 500)).then((value) {
-
               mapController = mapboxController;
 
               _showSnackBar();
@@ -208,9 +200,11 @@ class _SelectPositionState extends State<SelectPositionPage> {
       _isLoadedFinish = true;
       if (_globalKey.currentState is ScaffoldState) {
         var _scaffoldState = _globalKey.currentState as ScaffoldState;
-        _scaffoldState.showSnackBar(SnackBar(content: Text(S.of(context).verify_location_hint), duration: Duration(seconds: 10),));
+        _scaffoldState.showSnackBar(SnackBar(
+          content: Text(S.of(context).verify_location_hint),
+          duration: Duration(seconds: 10),
+        ));
       }
     }
   }
-
 }

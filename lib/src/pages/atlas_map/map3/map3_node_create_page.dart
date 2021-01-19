@@ -510,11 +510,11 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
       var haveExist = await _atlasApi.checkNodeIdExist(nodeId);
       if (haveExist) {
-        Fluttertoast.showToast(msg: '节点号已存在，请输入其他节点号');
+        Fluttertoast.showToast(msg: S.of(context).node_number_exists_enter_another);
         return;
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: '未知错误，请稍后重试！');
+      Fluttertoast.showToast(msg: S.of(context).unknown_error_again_later);
       return;
     }
 
@@ -550,7 +550,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     var total = Decimal.parse('0.000021') + stakingValue;
 
     if (total >= balance) {
-      Fluttertoast.showToast(msg: "请预留少量HYN（如：0.00005）作为矿工费");
+      Fluttertoast.showToast(msg: S.of(context).small_amount_hyn_as_fee);
       return;
     }
 

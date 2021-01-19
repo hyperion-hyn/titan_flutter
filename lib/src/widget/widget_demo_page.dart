@@ -1,8 +1,22 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_success_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
+import 'package:titan/src/pages/red_pocket/widget/fl_pie_chart.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
+import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
+import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/round_border_textfield.dart';
 
 import 'atlas_map_widget.dart';
 import 'clip_tab_bar.dart';
+import 'loading_button/click_oval_button.dart';
 
 class WidgetDemoPage extends StatefulWidget {
   WidgetDemoPage();
@@ -20,9 +34,12 @@ class _WidgetDemoPageState extends State<WidgetDemoPage>
   String content = '';
   bool isShow = false;
 
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
+  final TextEditingController _textEditController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -41,239 +58,136 @@ class _WidgetDemoPageState extends State<WidgetDemoPage>
         ),
       ),
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              _tabsView(),
-              Container(
-                color: Colors.black.withOpacity(0.5),
-                child: _tab(),
-              ),
-              ClipTabBar(
-                children: [
-                  Text('0'),
-                  Text('1'),
-                ],
-                onTabChanged: (index) {
-                  setState(() {
-                    content = index.toString();
-                  });
-                },
-              ),
-              Text(content),
-              Container(
-                child: Visibility(
-                  visible: isShow,
-                  child: Image.asset(
-                    'res/drawable/rp_airdrop_anim.gif',
-                  ),
+          width: double.infinity,
+          height: double.infinity,
+          child: LoadDataContainer(
+            bloc: _loadDataBloc,
+            enablePullUp: false,
+            onLoadData: () async {
+              _loadDataBloc.add(RefreshSuccessEvent());
+              setState(() {});
+            },
+            onRefresh: () async {
+              _loadDataBloc.add(RefreshSuccessEvent());
+              setState(() {});
+            },
+            child: CustomScrollView(
+              physics: BouncingScrollPhysics(),
+              slivers: <Widget>[
+                _statisticsWidget(),
+                SliverToBoxAdapter(
+                  child: FlatButton(onPressed: (){
+                    showShareRpOpenDialog(context,id: "WBY657");
+                    // showShareRpOpenDialog(context,id: "53K7RE");
+                  }, child: Text("分享红包"),color: DefaultColors.color999,),
                 ),
-              ),
-              RaisedButton(
-                onPressed: () {
-                  setState(() {
-                    isShow = !isShow;
-                  });
-                },
-                child: Text('Anim'),
-              ),
-              RPAirdropWidget()
-            ],
-          ),
-        ),
-      ),
+                SliverToBoxAdapter(
+                  child: FlatButton(onPressed: (){
+                    _showStakingAlertView();
+                  }, child: Text("口令弹窗"),color: DefaultColors.color999,),
+                ),
+                SliverToBoxAdapter(
+                  child: FlatButton(onPressed: (){
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => RpShareGetSuccessPage(
+                          null
+                      ),
+                    ));
+                  }, child: Text("红包详情"),color: DefaultColors.color999,),
+                ),
+              ],
+            ),
+          )),
     );
   }
 
-  _tabsView() {
-    return ClipRRect(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(16.0),
-      ),
-      child: Column(
+  Future<String> _showStakingAlertView() async {
+    _textEditController.text = "";
+
+    String rpSecret = await UiUtil.showAlertViewNew<String>(
+      context,
+      actions: [
+        ClickOvalButton(
+          S.of(context).confirm,
+          (){
+            Navigator.pop(context,_textEditController.text);
+          },
+          width: 200,
+          height: 38,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      ],
+      contentWidget: Column(
         children: [
-          Container(
-            height: 50,
-            color: Colors.black.withOpacity(0.5),
-            child: Stack(
-              children: [
-                Container(
-                  height: 50,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(16.0),
-                              bottomRight: Radius.circular(16.0),
-                            ),
-                            child: Container(
-                              color: Colors.transparent,
-                              child: Center(
-                                child: Text(
-                                  'Map3',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(16.0),
-                            ),
-                            child: Container(
-                              color: Colors.white,
-                              child: Center(
-                                child: Text(
-                                  'Atlas',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
+          Padding(
+            padding: const EdgeInsets.only(top:19,bottom:32.0),
+            child: Text("输入红包口令",style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: HexColor("#333333"),
+                decoration: TextDecoration.none)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left:24,right:24.0,bottom: 20),
+            child: Material(
+              child: Form(
+                key: _formKey,
+                child: RoundBorderTextField(
+                  controller: _textEditController,
+                  keyboardType: TextInputType.text,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(
+                        20),
+                  ],
+                  hintText: "请输入口令",
+                ),
+              ),
             ),
           ),
-          Container(
-            height: 20,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    color: Colors.black.withOpacity(0.5),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    color: Colors.white,
-                  ),
-                )
-              ],
-            ),
-          )
         ],
       ),
     );
   }
 
-  var isLeft = true;
-
-  _tab() {
-    return Stack(
-      children: [
-        ClipPath(
-          child: Container(
-            width: double.infinity,
-            height: 50,
+  _statisticsWidget() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: _cardPadding(),
+        child: Container(
+          decoration: BoxDecoration(
             color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(16.0)),
           ),
-          clipper: isLeft ? LeftTabClipPath() : RightTabClipPath(),
+          child: Padding(
+            padding: _cardPadding(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      '统计',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Spacer(),
+                  ],
+                ),
+                RPStatisticsWidget(),
+                SizedBox(
+                  height: 16,
+                ),
+              ],
+            ),
+          ),
         ),
-        Container(
-          width: double.infinity,
-          height: 50,
-          child: Row(
-            children: [
-              Expanded(
-                child: InkWell(
-                  child: Container(
-                    child: Center(child: Text('Map3')),
-                  ),
-                  onTap: () {
-                    setState(() {
-                      isLeft = true;
-                    });
-                  },
-                ),
-              ),
-              Expanded(
-                child: InkWell(
-                  child: Container(
-                    child: Center(child: Text('Atlas')),
-                  ),
-                  onTap: () {
-                    setState(() {
-                      isLeft = false;
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-        )
-      ],
+      ),
     );
   }
-}
 
-class LeftTabClipPath extends CustomClipper<Path> {
-  var radius = 16.0;
-
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.lineTo(size.width / 2 - 15, 0);
-    path.arcToPoint(
-      Offset(size.width / 2, 15),
-      clockwise: true,
-      radius: Radius.circular(radius),
-    );
-    path.lineTo(size.width / 2, size.height - 15);
-    path.arcToPoint(
-      Offset(size.width / 2 + 15, size.height),
-      clockwise: false,
-      radius: Radius.circular(radius),
-    );
-    path.lineTo(0, size.height);
-    return path;
+  _cardPadding() {
+    return const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0);
   }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}
-
-class RightTabClipPath extends CustomClipper<Path> {
-  var radius = 16.0;
-
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.moveTo(size.width, 0);
-    path.lineTo(size.width / 2 + 15, 0);
-    path.arcToPoint(
-      Offset(size.width / 2, 15),
-      clockwise: false,
-      radius: Radius.circular(radius),
-    );
-    path.lineTo(size.width / 2, size.height - 15);
-    path.arcToPoint(
-      Offset(size.width / 2 - 15, size.height),
-      clockwise: true,
-      radius: Radius.circular(radius),
-    );
-    path.lineTo(size.width, size.height);
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

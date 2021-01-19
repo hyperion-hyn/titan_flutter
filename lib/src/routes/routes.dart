@@ -28,9 +28,13 @@ class Routes {
   static const String wallet_confirm_resume_word = '/wallet/create/confirm_resume_word';
   static const String confirm_success_papge = '/wallet/transfer/success_page';
 
+  ///RP
+  static const String red_pocket_page = '/rp/red_pocket_page';
+
   ///Exchange
   static const String exchange_assets_page = '/exchange/assets';
   static const String exchange_transfer_page = '/exchange/transfer';
+  static const String exchange_qrcode_deposit_page = '/exchange/qrcode_deposit';
   static const String exchange_deposit_confirm_page = '/exchange/deposit_confirm';
   static const String exchange_withdraw_confirm_page = '/exchange/withdraw_confirm';
   static const String exchange_transfer_success_page = '/exchange/transfer_success';
@@ -60,7 +64,11 @@ class Routes {
   static const String map3node_contract_detail_page = '/map3node/contract_detail_page';
 
   static const String map3node_share_page = '/map3node/share_page';
+
   static const String map3node_introduction_page = '/map3node/pre_create_contract_page';
+
+  static const String map3node_burn_history_page = '/map3node/map3node_burn_history_page';
+
   static const String map3node_my_page = '/map3node/my_page';
 
   static const String map3node_my_page_reward = '/map3node/my_page_reward';
@@ -76,8 +84,6 @@ class Routes {
   //atlas
   static const String atlas_create_node_page = '/atlas/atlas_create_node';
   static const String atlas_create_node_info_page = '/atlas/atlas_create_node_info';
-  static const String atlas_create_node_confirm_page = '/atlas/atlas_create_node_confirm';
-  static const String atlas_broadcast_success_page = '/atlas/atlas_broadcast_success';
   static const String atlas_detail_page = '/atlas/atlas_detail';
   static const String atlas_my_node_page = '/atlas/atlas_my_node';
 
@@ -146,6 +152,11 @@ class Routes {
     router.define(
       exchange_transfer_page,
       handler: exchangeTransferHandler,
+      transitionType: pushNewPageTransitionType,
+    );
+    router.define(
+      exchange_qrcode_deposit_page,
+      handler: exchangeQrcodeDepositHandler,
       transitionType: pushNewPageTransitionType,
     );
     router.define(exchange_deposit_confirm_page,
@@ -228,6 +239,12 @@ class Routes {
     );
 
     router.define(
+      map3node_burn_history_page,
+      handler: map3NodeBurnHistoryHandler,
+      transitionType: pushNewPageTransitionType,
+    );
+
+    router.define(
       map3node_my_page_reward,
       handler: map3NodeMyHandlerReward,
       transitionType: pushNewPageTransitionType,
@@ -293,18 +310,15 @@ class Routes {
       transitionType: pushNewPageTransitionType,
     );
     router.define(
-      atlas_create_node_confirm_page,
-      handler: atlasCreateNodeConfirmHandler,
-      transitionType: pushNewPageTransitionType,
-    );
-    router.define(
-      atlas_broadcast_success_page,
-      handler: atlasBroadcastSuccessHandler,
-      transitionType: pushNewPageTransitionType,
-    );
-    router.define(
       atlas_detail_page,
       handler: atlasDetailHandler,
+      transitionType: pushNewPageTransitionType,
+    );
+
+    /// rp
+    router.define(
+      red_pocket_page,
+      handler: redPocketHandler,
       transitionType: pushNewPageTransitionType,
     );
   }
@@ -338,14 +352,11 @@ class MyRouter extends FluroRouter {
     } else if (routeSettings.arguments == null) {
       settingsToUse = routeSettings.copyWith(arguments: Map());
     }
-    return super.matchRoute(
-      buildContext,
-      path,
-      routeSettings: settingsToUse,
-      transitionType: transitionType,
-      transitionDuration: transitionDuration,
-      transitionsBuilder: transitionsBuilder,
-      maintainState: maintainState
-    );
+    return super.matchRoute(buildContext, path,
+        routeSettings: settingsToUse,
+        transitionType: transitionType,
+        transitionDuration: transitionDuration,
+        transitionsBuilder: transitionsBuilder,
+        maintainState: maintainState);
   }
 }

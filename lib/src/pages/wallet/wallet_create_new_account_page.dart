@@ -27,18 +27,8 @@ class _CreateAccountState extends State<CreateAccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.black),
-          title: Text(
-            S.of(context).create_wallet,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-            ),
-          ),
+        appBar: BaseAppBar(
+          baseTitle: S.of(context).create_wallet,
         ),
         body: SingleChildScrollView(
           child: BaseGestureDetector(

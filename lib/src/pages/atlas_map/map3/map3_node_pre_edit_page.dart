@@ -14,6 +14,7 @@ import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -91,12 +92,12 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     var notification = '';
     switch (_status) {
       case TransactionStatus.pending:
-        notification = '续约请求正处理中...';
+        notification = S.of(context).renewal_request_being_processed;
 
         break;
 
       case TransactionStatus.success:
-        notification = '续约请求已完成';
+        notification = S.of(context).renewal_request_completed;
         break;
     }
     return notification;
@@ -170,7 +171,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     var map3NodeAddress = widget?.map3infoEntity?.address ?? "";
     _editMessage = ConfirmEditMap3NodeMessage(entity: createMap3Entity, map3NodeAddress: map3NodeAddress);
 
-    final client = WalletUtil.getWeb3Client(true);
+    final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
 
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
     var _wallet = activatedWallet?.wallet;
@@ -459,7 +460,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       child: Row(
         children: <Widget>[
           Text(
-            _isJoiner ? "期满跟随续约" : "期满自动续约",
+            _isJoiner ? S.of(context).renew_after_expiry : S.of(context).automatic_renewal_after_expiry,
             style: TextStyle(
               color: HexColor("#333333"),
               fontSize: 16,
@@ -489,8 +490,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     //var tip1 = S.of(context).map3_manage_fee_rule(amount, 20);
 
     var tip2 = _isJoiner
-        ? "期满跟随续约每个节点周期只能修改一次，修改完之后直到下个节点周期才能再次修改，请谨慎操作！"
-        : "期满自动续约和管理费每个节点周期只能修改一次，修改完之后直到下个节点周期才能再次修改，请谨慎操作！";
+        ? S.of(context).one_modified_after_expiration_renewal_next_cycle_modified_again
+        : S.of(context).automatic_renewal_management_modified_once;
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 24),
@@ -548,7 +549,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
         var walletAddress = EthereumAddress.fromHex(wallet?.getEthAccount()?.address ?? "");
 
-        var microDelegations = await WalletUtil.getWeb3Client(true).getMap3NodeDelegation(
+        var microDelegations = await WalletUtil.getWeb3Client(CoinType.HYN_ATLAS).getMap3NodeDelegation(
           map3Address,
           walletAddress,
         );
@@ -562,7 +563,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
           }
 
           Fluttertoast.showToast(
-            msg: '你的下期续约设置已完成！',
+            msg: S.of(context).next_renewal_setting_completed,
             gravity: ToastGravity.CENTER,
           );
           return;
@@ -598,11 +599,9 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       }
     } else {
       if (!_isJoiner) {
-        //content = S.of(context).confirm_open_auto_renew(feeRate);
-        content = '你将开启自动续约，修改后不能撤回，确定修改吗？';
+        content = S.of(context).automatic_renewal_cannot_withdraw_sure;
       } else {
-        //content = S.of(context).confirm_follow_renew;
-        content = '你将跟随续约，修改后不能撤回，确定修改吗？';
+        content = S.of(context).follow_renewal_cannot_withdraw_sure;
       }
     }
 

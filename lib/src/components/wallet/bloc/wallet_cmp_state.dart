@@ -38,7 +38,8 @@ class UpdateWalletPageState extends WalletVoAwareCmpState {
   final QuotesSign sign;
   final QuotesModel quoteModel;
   final WalletVo walletVo;
-  UpdateWalletPageState({this.sign,this.quoteModel,this.walletVo}): super(walletVo: walletVo);
+  final int updateStatus;//-1、fail 0、complete 1、loading
+  UpdateWalletPageState(this.updateStatus, {this.sign,this.quoteModel,this.walletVo}): super(walletVo: walletVo);
 }
 
 class UpdatingQuotesState extends WalletCmpState {}
@@ -57,11 +58,11 @@ class UpdatedQuotesSignState extends WalletCmpState {
 
 class GasPriceState extends WalletCmpState with EquatableMixin {
   final Status status;
-  final GasPriceRecommend gasPriceRecommend;
-  final BTCGasPriceRecommend btcGasPriceRecommend;
+  final GasPriceRecommend ethGasPriceRecommend;
+  final GasPriceRecommend btcGasPriceRecommend;
 
-  GasPriceState({this.status, this.gasPriceRecommend, this.btcGasPriceRecommend});
+  GasPriceState({this.status, this.ethGasPriceRecommend, this.btcGasPriceRecommend});
 
   @override
-  List<Object> get props => [status, gasPriceRecommend, btcGasPriceRecommend];
+  List<Object> get props => [status, ethGasPriceRecommend, btcGasPriceRecommend];
 }

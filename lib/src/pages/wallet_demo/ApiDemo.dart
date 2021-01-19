@@ -1,26 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
-import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
-import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/token_burn_info_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
-import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/wallet_demo/recaptcha_test_page.dart';
-import 'package:titan/src/plugins/wallet/contract_const.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:web3dart/web3dart.dart';
 
 class ApiDemo extends StatefulWidget {
   @override
@@ -98,6 +89,13 @@ class _ApiDemoState extends State {
               print(ret);
             },
             child: Text('查看用户资产'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var ret = await _exchangeApi.getCoinList();
+              print(ret);
+            },
+            child: Text('coinList'),
           ),
           RaisedButton(
             onPressed: () async {
@@ -318,6 +316,17 @@ class _ApiDemoState extends State {
               NodeApi _nodeApi = NodeApi();
               List list = await _nodeApi.getNodeProviderList();
               print(' Map3 providers ${list.length}');
+            },
+          ),
+          RaisedButton(
+            child: Text('检查更新'),
+            onPressed: () async {
+              AtlasApi atlasApi = AtlasApi();
+              try {
+                var appUpdateInfo = await atlasApi.checkUpdate();
+              } catch (e) {
+                print(e);
+              }
             },
           )
         ],

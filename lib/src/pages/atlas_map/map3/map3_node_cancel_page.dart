@@ -17,6 +17,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -79,7 +80,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     return 0;
   }
 
-  final _client = WalletUtil.getWeb3Client(true);
+  final _client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
 
   _minRemain() {
     if (_map3infoEntity?.isCreator() ?? false) {
@@ -213,7 +214,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     TransactionDetailVo transactionDetail = TransactionDetailVo.fromHynTransferHistory(_lastPendingTx, 0, "HYN");
     var amount = FormatUtil.stringFormatCoinNum(transactionDetail.getDecodedAmount());
 
-    return '部分撤销${amount}HYN请求正处理中...';
+    return S.of(Keys.rootKey.currentContext).cancellation_hyn_being_processed(amount);
   }
 
   @override
@@ -369,7 +370,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                     controller: _textEditingController,
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                    hint: S.of(context).please_enter_withdraw_amount,
+                                    hintText: S.of(context).please_enter_withdraw_amount,
                                     validator: (textStr) {
                                       if (textStr.length == 0) {
                                         return S.of(context).please_input_hyn_count;

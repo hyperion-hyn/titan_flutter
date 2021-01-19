@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:bitcoin_flutter/bitcoin_flutter.dart' as bitcoin;
 import 'package:decimal/decimal.dart';
 import 'package:ethereum_address/ethereum_address.dart';
@@ -16,10 +14,11 @@ import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/plugins/wallet/config/hyperion.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -513,7 +512,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                 if (tokenType == TokenType.ETH) {
                                   //需要转ETH
                                   try {
-                                    final client = WalletUtil.getWeb3Client();
+                                    final client = WalletUtil.getWeb3Client(CoinType.ETHEREUM);
                                     final credentials =
                                         await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
                                     txhash = await client.sendTransaction(
@@ -521,7 +520,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                       web3.Transaction(
                                         to: web3.EthereumAddress.fromHex(_toAddress),
                                         gasPrice: web3.EtherAmount.inWei(BigInt.from(
-                                            WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
+                                            WalletInheritedModel.of(context).ethGasPriceRecommend.fast.toInt())),
                                         maxGas: 21000,
                                         value: web3.EtherAmount.inWei(ConvertTokenUnit.decimalToWei(_amount)),
                                       ),
@@ -536,7 +535,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                   }
                                 } else if (tokenType == TokenType.HYN_MAIN) {
                                   try {
-                                    final client = WalletUtil.getWeb3Client(true);
+                                    final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
                                     final credentials =
                                         await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
                                     txhash = await client.sendTransaction(
@@ -560,11 +559,11 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                 } else if (tokenType == TokenType.RP_HRC30) {
                                   //转hrc30
                                   try {
-                                    final client = WalletUtil.getWeb3Client(true);
+                                    final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
                                     final credentials =
                                         await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
 
-                                    var contract = WalletUtil.getHynErc20Contract(WalletConfig.hynRPHrc30Address);
+                                    var contract = WalletUtil.getErc20Contract(HyperionConfig.hynRPHrc30Address, 'RP');
                                     var decimals = SupportedTokens.HYN_RP_HRC30.decimals;
 
                                     txhash = await client.sendTransaction(
@@ -592,14 +591,15 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                 } else {
                                   //转ERC 20币
                                   try {
-                                    final client = WalletUtil.getWeb3Client();
+                                    final client = WalletUtil.getWeb3Client(CoinType.ETHEREUM);
                                     final credentials =
                                         await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
 
                                     var contract;
                                     var decimals;
                                     if (tokenType == TokenType.USDT_ERC20) {
-                                      contract = WalletUtil.getHynErc20Contract(WalletConfig.getUsdtErc20Address());
+                                      contract =
+                                          WalletUtil.getErc20Contract(EthereumConfig.getUsdtErc20Address(), 'USDT');
                                       decimals = SupportedTokens.USDT_ERC20.decimals;
                                     }
                                     /*else if (tokenType == TokenType.HYN_ERC20) {
@@ -620,7 +620,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                           ConvertTokenUnit.decimalToWei(_amount, decimals)
                                         ],
                                         gasPrice: web3.EtherAmount.inWei(BigInt.from(
-                                            WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
+                                            WalletInheritedModel.of(context).ethGasPriceRecommend.fast.toInt())),
                                         maxGas: 65000,
                                       ),
                                       fetchChainIdFromNetworkId: true,
@@ -677,8 +677,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
   }
 
   void openAddressWebPage(address) {
-    var url = EtherscanApi.getAddressDetailUrl(
-        address, SettingInheritedModel.of(context, aspect: SettingAspect.area)?.areaModel?.isChinaMainland ?? true);
+    var url = EtherscanApi.getAddressDetailUrl(address);
     if (url != null) {
       Navigator.push(
           context,
@@ -710,7 +709,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
         WalletUtil.getBalanceByCoinTypeAndAddress(CoinType.ETHEREUM, addressData.address),
         Future.value(BigInt.zero),
         WalletUtil.getBalanceByCoinTypeAndAddress(
-            CoinType.ETHEREUM, addressData.address, WalletConfig.getUsdtErc20Address()),
+            CoinType.ETHEREUM, addressData.address, EthereumConfig.getUsdtErc20Address()),
         Future.value(BigInt.zero),
       ]);
     } else if (addressData.index == AddressIndex.M_HYN) {
@@ -723,7 +722,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
         WalletUtil.getBalanceByCoinTypeAndAddress(CoinType.HYN_ATLAS, addressData.address),
         Future.value(BigInt.zero),
         WalletUtil.getBalanceByCoinTypeAndAddress(
-            CoinType.HYN_ATLAS, addressData.address, WalletConfig.hynRPHrc30Address),
+            CoinType.HYN_ATLAS, addressData.address, HyperionConfig.hynRPHrc30Address),
       ]);
     }
 

@@ -125,7 +125,7 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
                 children: <Widget>[
                   Expanded(
                       child:
-                      Text("参与的Map3", style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
+                      Text(S.of(context).participating_map3, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
                   /*Text(
                     "剩余时间：${widget.remainDay}天",
                     style: TextStyles.textC999S14,
@@ -164,7 +164,7 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
                     scrollDirection: Axis.horizontal,
                   )),
             )
-                : Expanded(child: emptyListWidget(title: "参与的Map3为空", isAdapter: false)),
+                : Expanded(child: emptyListWidget(title: S.of(context).participating_map3_empty, isAdapter: false)),
             SizedBox(height: 22,),
             Container(
               height: 10,

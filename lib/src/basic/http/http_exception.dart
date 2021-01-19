@@ -89,11 +89,11 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
   ),
   HttpResponseCodeNotSuccess(
     -2007,
-    "邀请人数已满",
+    S.of(Keys.rootKey.currentContext).invitations_number_full,
   ),
   HttpResponseCodeNotSuccess(
     -3001,
-    "存在处理中的交易，请稍后重试",
+    S.of(Keys.rootKey.currentContext).transaction_progress_try_again,
   ),
   HttpResponseCodeNotSuccess(
     -20001,
@@ -133,11 +133,51 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
   ),
   HttpResponseCodeNotSuccess(
     -30011,
-    'HYN余额不足支付网络费用!',
+    S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas,
   ),
   HttpResponseCodeNotSuccess(
     -30012,
-    'RP余额不足!',
+    S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh,
+  ),
+  HttpResponseCodeNotSuccess(
+    -40001,
+    "红包还没准备好",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40002,
+    "红包已过期",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40003,
+    "红包领完了",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40004,
+    "你不是新人",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40005,
+    "距离红包位置太远了",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40006,
+    "口令不正确",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40007,
+    "RP数量低于最小值",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40008,
+    "HYN数量低于最小值",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40009,
+    "红包已领取过了",
+  ),
+  HttpResponseCodeNotSuccess(
+    -40012,
+    "不能领取自己的新人红包",
   ),
   ERROR_FUND_PASSWORD
 ];

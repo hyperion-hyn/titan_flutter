@@ -57,7 +57,7 @@ class _WalletTabsPageState extends State<WalletTabsPage>
                   ),
                   indicatorSize: TabBarIndicatorSize.label,
                   indicatorColor: Theme.of(context).primaryColor,
-                  indicatorWeight: 3,
+                  indicatorWeight: 2,
                   indicatorPadding: EdgeInsets.only(bottom: 2),
                   unselectedLabelColor: HexColor("#FF333333"),
                   tabs: [

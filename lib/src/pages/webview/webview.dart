@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 
@@ -39,7 +40,7 @@ class WebViewContainerState extends State<WebViewContainer> {
         return true;
       },
       child: Scaffold(
-        appBar: AppBar(
+        appBar: BaseAppBar(
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -53,19 +54,13 @@ class WebViewContainerState extends State<WebViewContainer> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.share),
-              color: Colors.white,
               tooltip: S.of(context).share,
               onPressed: (){
                 _shareQr(context);
               },
             ),
           ],
-          iconTheme: IconThemeData(color: Colors.white),
-          centerTitle: true,
-          title: Text(
-            title ?? widget.title,
-            style: TextStyle(color: Colors.white),
-          ),
+          baseTitle: title ?? widget.title,
         ),
         body: SafeArea(
           child: Column(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/config/consts.dart';
 
 class AddPositionImagePage extends StatefulWidget {
   AddPositionImagePage();
@@ -14,15 +16,15 @@ class AddPositionImagePage extends StatefulWidget {
 class _AddPositionImageState extends State<AddPositionImagePage> with TickerProviderStateMixin {
   int _currentIndex = 0;
   List<String> _titleList = [
-    "拍摄时请保证商铺名称清晰完整，并拍全招牌和门脸",
-    "拍摄时请拍清楚商铺的左右相邻商铺",
-    "照片类型分为室外和室内，室外必填，室内选填，两者都有更容易评为优质POI哦",
-    "请勿拍摄移动摊位等不固定地点，请勿拍摄军事禁区等涉密地点"
+    S.of(Keys.rootKey.currentContext).add_position_image_title_1,
+    S.of(Keys.rootKey.currentContext).add_position_image_title_2,
+    S.of(Keys.rootKey.currentContext).add_position_image_title_3,
+    S.of(Keys.rootKey.currentContext).add_position_image_title_4
   ];
 
   List<String> _subtitleList = [
     "",
-    "（如相邻无商铺，请拍清楚商铺左右环境）",
+    S.of(Keys.rootKey.currentContext).add_position_image_subtitle_2,
     "",
     "",
   ];
@@ -62,14 +64,9 @@ class _AddPositionImageState extends State<AddPositionImagePage> with TickerProv
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: Text(
-          S.of(context).shooting_specifications_title,
-          style: TextStyle(color: Colors.white),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-        centerTitle: true,
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).shooting_specifications_title,
+        backgroundColor: Colors.white,
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(

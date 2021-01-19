@@ -1,6 +1,8 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:charts_common/common.dart';
+import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/entity/reward_history_entity.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 
@@ -38,12 +40,12 @@ class SlidingViewportOnSelection extends StatelessWidget {
             // The top tick label may extend upwards into the top margin region
             // if it is located at the top of the draw area.
             innerPadding: 18),*/
-        new charts.ChartTitle('纪元',
+        new charts.ChartTitle(S.of(context).epoch,
             titleStyleSpec: charts.TextStyleSpec(fontSize: 12),
             behaviorPosition: charts.BehaviorPosition.bottom,
             titleOutsideJustification:
             charts.OutsideJustification.middleDrawArea),
-        new charts.ChartTitle('抵押量',
+        new charts.ChartTitle(S.of(context).staking_amount,
             titleStyleSpec: charts.TextStyleSpec(fontSize: 12),
             behaviorPosition: charts.BehaviorPosition.start,
             titleOutsideJustification:
@@ -98,7 +100,7 @@ class SlidingViewportOnSelection extends StatelessWidget {
 
     return [
       new charts.Series<OrdinalSales, String>(
-        id: '节点总抵押',
+        id: S.of(Keys.rootKey.currentContext).node_total_staking,
         domainFn: (OrdinalSales sales, _) => sales.year,
         measureFn: (OrdinalSales sales, _) => sales.sales,
         data: desktopSalesData,

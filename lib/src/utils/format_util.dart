@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'dart:math' as math;
 
 class FormatUtil {
   static String intFormatNum(int numValue) {
@@ -45,7 +46,7 @@ class FormatUtil {
 
   static String formatTenThousand(String strValue) {
     var doubleValue = double.parse(strValue) / 10000;
-    return NumberFormat("#,###,###,###").format(doubleValue) + "万";
+    return NumberFormat("#,###,###,###").format(doubleValue) + S.of(Keys.rootKey.currentContext).ten_thousand;
   }
 
   static String formatTenThousandNoUnit(String strValue) {
@@ -186,12 +187,17 @@ class FormatUtil {
     );
   }
 
-  static String coinBalanceHumanReadFormat(CoinVo coinVo, [isFloor = true]) {
+  static String coinBalanceHumanReadFormat(CoinVo coinVo, {int decimal = 6, bool isFloor = true}) {
     var value = double.tryParse(coinBalanceHumanRead(coinVo)) ?? 0;
     if (isFloor) {
-      value = (value * 1000000).floor() / 1000000;
+      value = (value * math.pow(10, decimal)).floor() / math.pow(10, decimal);
     }
-    return NumberFormat("#,###,###.######").format(value);
+
+    var format = '#,###,###.';
+    for (int i = 0; i < decimal; i++) {
+      format += '#';
+    }
+    return NumberFormat(format).format(value);
   }
 
   static String formatCoinNum(double coinNum, [isFloor = true]) {

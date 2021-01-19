@@ -18,6 +18,7 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
@@ -49,11 +50,11 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
-  RpPromotionRuleEntity _promotionRuleEntity;
   RpMyLevelInfo _myLevelInfo;
 
   int get _currentLevel => _myLevelInfo?.currentLevel ?? 0;
 
+  RpPromotionRuleEntity _promotionRuleEntity;
   List<LevelRule> get _staticDataList => (_promotionRuleEntity?.static ?? []).toList();
 
   LevelRule get _currentLevelRule {
@@ -73,7 +74,6 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
   CoinVo _coinVo;
   WalletVo _activatedWallet;
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
-  String get _address => _activatedWallet?.wallet?.getAtlasAccount()?.address;
 
   bool _isLoading = false;
 
@@ -90,17 +90,14 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
       Decimal.zero;
 
   int get _toLevel {
-    var holding = Decimal.tryParse(
-          _myLevelInfo?.currentHoldingStr ?? '0',
-        ) ??
-        Decimal.zero;
+    var holding = _currentHoldValue;
 
     var remainHolding = holding - _inputValue;
     var needHolding = Decimal.tryParse(
           _currentLevelRule?.holdingStr ?? '0',
         ) ??
         Decimal.zero;
-    var level = 0;
+    var level = _currentLevel;
 
     // 1.先和当前量级需持币比较
     if ((needHolding > Decimal.zero) && (remainHolding > Decimal.zero) && (remainHolding >= needHolding)) {
@@ -118,14 +115,12 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
           return remainHolding >= holding;
         }, orElse: () => null);
 
-        //print("firstObj:${firstObj?.level??0}");
-
         level = firstObj?.level ?? 0;
       } else {
         level = 0;
       }
     }
-    //print('[_getLevelByHolding] inputValue: $_inputValue， level：$level');
+    print('[_getLevelByHolding] inputValue: $_inputValue， level：$level');
 
     return level;
   }
@@ -141,7 +136,6 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
 
   @override
   void onCreated() {
-    getNetworkData();
 
     super.onCreated();
   }
@@ -151,6 +145,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
     super.didChangeDependencies();
 
     _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
+    _promotionRuleEntity = RedPocketInheritedModel.of(context).rpPromotionRule;
   }
 
   @override
@@ -165,9 +160,13 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    var holdingStr = _currentLevelRule?.holdingStr ?? '0';
+    var holdingStrTips = S.of(context).rp_withdraw_tips_func(holdingStr);
+
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '取回持币',
+        baseTitle: S.of(context).rp_retrive_holding,
       ),
       backgroundColor: Colors.white,
       body: Column(
@@ -177,176 +176,205 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
               bloc: _loadDataBloc,
               enablePullUp: false,
               onRefresh: getNetworkData,
-              isStartLoading: true,
+              onLoadData: getNetworkData,
               child: BaseGestureDetector(
                 context: context,
                 child: SingleChildScrollView(
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Container(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                    ),
-                    color: Colors.white,
-                    child: Column(
-                      children: <Widget>[
-                        rpRowText(
-                          title: '当前量级${levelValueToLevelName(_currentLevel)}需持币',
-                          amount: '${_currentLevelRule?.holdingStr ?? '0'} RP',
-                          width: 110,
-                        ),
-                        rpRowText(
-                          title: '当前持币',
-                          amount: '${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
-                          width: 110,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30),
-                          child: Row(
-                            children: <Widget>[
-                              Text(
-                                '取回持币',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: HexColor('#333333'),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                  '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Container(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                      ),
+                      color: Colors.white,
+                      child: Column(
+                        children: <Widget>[
+                          rpRowText(
+                            title: '${S.of(context).rp_current_level}${levelValueToLevelName(_currentLevel)}${S.of(context).rp_hold_need_amount}',
+                            amount: '${_currentLevelRule?.holdingStr ?? '0'} RP',
+                            width: 110,
+                          ),
+                          rpRowText(
+                            title: S.of(context).rp_current_holding,
+                            amount: '${_myLevelInfo?.currentHoldingStr ?? '0'} RP',
+                            width: 110,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 30),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  S.of(context).rp_retrive_holding,
                                   style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 12,
-                                    color: HexColor('#999999'),
-                                  )),
-                            ],
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: HexColor('#333333'),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                    '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 12,
+                                      color: HexColor('#999999'),
+                                    )),
+                              ],
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 16,
-                            right: 16,
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 16,
+                              right: 16,
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Expanded(
+                                  flex: 1,
+                                  child: Form(
+                                    key: _formKey,
+                                    child: RoundBorderTextField(
+                                      onChanged: (text) {
+                                        _formKey.currentState.validate();
+
+                                        _inputController.add(text);
+                                      },
+                                      controller: _textEditingController,
+                                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(18),
+                                        FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
+                                      ],
+                                      hintText: S.of(context).please_enter_withdraw_amount,
+                                      validator: (textStr) {
+                                        var inputValue = Decimal.tryParse(textStr);
+
+                                        if (inputValue == null) {
+                                          return S.of(context).please_enter_correct_amount;
+                                        }
+
+                                        var holding = _currentHoldValue;
+
+                                        if (textStr.length == 0 || inputValue == Decimal.fromInt(0)) {
+                                          return S.of(context).input_valid_withdraw_amount;
+                                        }
+                                        if (inputValue > holding) {
+                                          return S.of(context).rp_over_current_holding;
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                StreamBuilder<Object>(
+                                    stream: _inputController.stream,
+                                    builder: (context, snapshot) {
+                                      bool isShowDown = (_toLevel < _currentLevel &&
+                                          _currentHoldValue >= _inputValue &&
+                                          _inputValue > Decimal.zero);
+
+                                      return isShowDown
+                                          ? Row(
+                                              // crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.only(
+                                                    left: 16,
+                                                    right: 16,
+                                                  ),
+                                                  child: Image.asset(
+                                                    'res/drawable/ic_rp_level_down.png',
+                                                    width: 15,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(
+                                                    right: 4,
+                                                  ),
+                                                  child: Text(
+                                                    S.of(context).rp_level,
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.normal,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '${levelValueToLevelName(_toLevel)} ',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          : Container(
+                                              width: 60,
+                                            );
+                                    }),
+                              ],
+                            ),
                           ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                                flex: 1,
-                                child: Form(
-                                  key: _formKey,
-                                  child: RoundBorderTextField(
-                                    onChanged: (text) {
-                                      _formKey.currentState.validate();
-
-                                      _inputController.add(text);
-                                    },
-                                    controller: _textEditingController,
-                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(18),
-                                      FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
-                                    ],
-                                    hint: S.of(context).please_enter_withdraw_amount,
-                                    validator: (textStr) {
-                                      var inputValue = Decimal.tryParse(textStr);
-
-                                      if (inputValue == null) {
-                                        return S.of(context).please_enter_correct_amount;
-                                      }
-
-                                      var holding = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? 0;
-
-                                      if (textStr.length == 0 || inputValue == Decimal.fromInt(0)) {
-                                        return '请输入有效提币数量';
-                                      }
-                                      if (inputValue > holding) {
-                                        return '大于当前持币';
-                                      }
-                                    },
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 8,
+                                ),
+                                child: Text(
+                                  '*',
+                                  style: TextStyle(
+                                    color: HexColor('#FF4C3B'),
+                                    fontSize: 24,
                                   ),
                                 ),
                               ),
-                              StreamBuilder<Object>(
-                                  stream: _inputController.stream,
-                                  builder: (context, snapshot) {
-                                    bool isShowDown = (_toLevel < _currentLevel &&
-                                        _currentHoldValue > _inputValue &&
-                                        _inputValue > Decimal.zero);
-                                    return isShowDown
-                                        ? Row(
-                                            // crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  left: 16,
-                                                  right: 16,
-                                                ),
-                                                child: Image.asset(
-                                                  'res/drawable/ic_rp_level_down.png',
-                                                  width: 15,
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  right: 4,
-                                                ),
-                                                child: Text(
-                                                  '量级',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.normal,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ),
-                                              Text(
-                                                '${levelValueToLevelName(_toLevel)} ',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 18,
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        : Container(
-                                            width: 60,
-                                          );
-                                  }),
+                              SizedBox(
+                                width: 6,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  holdingStrTips,
+                                  style: TextStyle(
+                                    color: HexColor('#333333'),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              )
                             ],
                           ),
-                        ),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: 8,
-                              ),
-                              child: Text(
-                                '*',
-                                style: TextStyle(
-                                  color: HexColor('#FF4C3B'),
-                                  fontSize: 24,
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 60,
+                              //left: 16,
+                              right: 16,
+                              bottom: 16,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 16.0,
+                                    bottom: 8,
+                                  ),
+                                  child: Text(S.of(context).precautions,
+                                      style: TextStyle(
+                                        color: HexColor("#333333"),
+                                        fontSize: 16,
+                                      )),
                                 ),
-                              ),
+                                rowTipsItem(S.of(context).rp_re_burn_to_previous_level),
+                              ],
                             ),
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Text(
-                              '为保证当前量级不下降，请保持持币量大于${_currentLevelRule?.holdingStr ?? '0'}RP',
-                              style: TextStyle(
-                                color: HexColor('#333333'),
-                                fontSize: 12,
-                              ),
-                            )
-                          ],
-                        )
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  _confirmButtonWidget(),
-                ])),
+                    _confirmButtonWidget(),
+                  ]),
+                ),
               ),
             ),
           ),
@@ -362,7 +390,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
         padding: const EdgeInsets.only(top: 60),
         child: Center(
           child: ClickOvalButton(
-            '取回持币',
+            S.of(context).rp_retrive_holding,
             _confirmAction,
             height: 42,
             width: MediaQuery.of(context).size.width - 37 * 2,
@@ -395,10 +423,10 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
 
     UiUtil.showAlertView(
       context,
-      title: '重要提醒',
+      title: S.of(context).important_hint,
       actions: [
         ClickOvalButton(
-          '取消',
+          S.of(context).cancel,
           () {
             Navigator.pop(context, true);
           },
@@ -410,7 +438,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
           btnColor: [Colors.transparent],
         ),
         ClickOvalButton(
-          '确认取回',
+          S.of(context).rp_confirm_retrive,
           () {
             _withdrawAction(true);
           },
@@ -422,7 +450,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
         ),
       ],
       content:
-          '您要取回${_inputValue}RP到钱包，当前持币量级${levelValueToLevelName(_currentLevel)}，您的量级将掉到量级${levelValueToLevelName(_toLevel)}，请谨慎操作',
+          S.of(context).rp_retrive_detail(_inputValue, levelValueToLevelName(_currentLevel), levelValueToLevelName(_toLevel)),
       isInputValue: false,
     );
   }
@@ -481,37 +509,21 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
   }
 
   Future getNetworkData() async {
-    try {
-      if (context != null) {
-        BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEvent());
-      }
 
-      if (context != null) {
-        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
-      }
-
-      var netData = await _rpApi.getRPPromotionRule(_address);
-
-      if (netData?.static?.isNotEmpty ?? false) {
-        _promotionRuleEntity = netData;
-        print("[$runtimeType] getNetworkData, count:${_staticDataList.length}");
-
-        if (mounted) {
-          setState(() {
-            _loadDataBloc.add(RefreshSuccessEvent());
-          });
-        }
-      } else {
-        _loadDataBloc.add(LoadEmptyEvent());
-      }
-    } catch (e) {
-      if (mounted) {
-        LogUtil.toastException(e);
-
-        setState(() {
-          _loadDataBloc.add(RefreshFailEvent());
-        });
-      }
+    if (context != null) {
+      BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEvent());
     }
+
+    if (context != null) {
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+    }
+
+    if (context != null) {
+      BlocProvider.of<RedPocketBloc>(context).add(UpdatePromotionRuleEvent());
+    }
+
+    //if (mounted) {
+      _loadDataBloc.add(RefreshSuccessEvent());
+    //}
   }
 }

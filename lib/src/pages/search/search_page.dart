@@ -222,7 +222,7 @@ class _SearchPageState extends State<SearchPage> {
         height: 32,
         width: 32,
         child: CircularProgressIndicator(
-          strokeWidth: 3,
+          strokeWidth: 1.5,
         ),
       ),
     );

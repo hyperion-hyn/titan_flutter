@@ -1,4 +1,6 @@
-import 'package:json_annotation/json_annotation.dart'; 
+import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/config/consts.dart';
   
 part 'node_item.g.dart';
 
@@ -55,7 +57,7 @@ part 'node_item.g.dart';
   Map<String, dynamic> toJson() => _$NodeItemToJson(this);
 
   get name {
-    return "${this.nodeName??"Map3云节点（V1.0）"}";
+    return "${this.nodeName??S.of(Keys.rootKey.currentContext).map3_cloud_node_one}";
   }
 
 }

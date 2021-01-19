@@ -2,12 +2,12 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
-import 'package:titan/src/pages/atlas_map/atlas/atlas_create_confirm_page.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_info_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_node_page.dart';
-import 'package:titan/src/pages/atlas_map/atlas/atlas_broadcast_success_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_page.dart';
+import 'package:titan/src/pages/atlas_map/atlas/burn_history_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -31,12 +31,13 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_share_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_history_page.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/market/exchange_assets_page.dart';
-import 'package:titan/src/pages/market/transfer/exchange_deposit_confirm_page.dart';
+import 'package:titan/src/pages/market/transfer/exchange_qrcode_deposit_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_success_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_withdraw_confirm_page.dart';
 import 'package:titan/src/pages/mine/qr_code_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
 import 'package:titan/src/pages/wallet/confirm_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
@@ -87,8 +88,15 @@ void _cacheEntryRouteName(params) {
 }
 
 var toolsPageWebviewHandler = Handler(handlerFunc: (context, params) {
+  String webUrl = FluroConvertUtils.fluroCnParamsDecode(params['initUrl']?.first);
+  var language = SettingInheritedModel.of(Keys.rootKey.currentContext).netLanguageCode;
+  if(!webUrl.contains("?")){
+    webUrl = webUrl + "?lang=$language";
+  }else{
+    webUrl = webUrl + "&lang=$language";
+  }
   return InAppWebViewContainer(
-      initUrl: FluroConvertUtils.fluroCnParamsDecode(params['initUrl']?.first),
+      initUrl: webUrl,
       title: FluroConvertUtils.fluroCnParamsDecode(params['title']?.first));
 });
 
@@ -158,6 +166,12 @@ var confirmSuccessHandler = Handler(handlerFunc: (context, params) {
   return ConfirmSuccessPage(msg: msg);
 });
 
+// rp
+var redPocketHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return RedPocketPage();
+});
+
 ///Exchange
 var exchangeAssetsHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
@@ -169,8 +183,14 @@ var exchangeTransferHandler = Handler(handlerFunc: (context, params) {
   return ExchangeTransferPage(params['coinType']?.first);
 });
 
+var exchangeQrcodeDepositHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return ExchangeQrcodeDepositPage(params['coinType']?.first);
+});
+
+
 var exchangeDepositConfirmHandler = Handler(handlerFunc: (context, params) {
-  return ExchangeDepositConfirmPage(
+  return WalletSendConfirmPage(
       params['coinVo']?.first, '${params['transferAmount']?.first ?? 0}', params['exchangeAddress']?.first);
 });
 
@@ -300,6 +320,12 @@ var map3NodeIntroductionHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeIntroductionPage();
 });
 
+var map3NodeBurnHistoryHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return BurnHistoryPage();
+});
+
+
 var map3NodeMyHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   return Map3NodeMyPage();
@@ -376,21 +402,6 @@ var atlasCreateNodeInfoHandler = Handler(handlerFunc: (context, params) {
   return AtlasCreateInfoPage(
     _createAtlasPayload,
     _selectedMap3NodeName,
-  );
-});
-
-var atlasCreateNodeConfirmHandler = Handler(handlerFunc: (context, params) {
-  _cacheEntryRouteName(params);
-  CreateAtlasPayload _createAtlasPayload =
-      CreateAtlasPayload.fromJson(FluroConvertUtils.string2map(params['createAtlasPayload']?.first));
-  return AtlasNodeCreateConfirmPage(_createAtlasPayload);
-});
-
-var atlasBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
-  _cacheEntryRouteName(params);
-  var actionEvent = params['actionEvent']?.first;
-  return AtlasBroadcastSuccessPage(
-    actionEvent: atlasActionEventFromString(actionEvent),
   );
 });
 

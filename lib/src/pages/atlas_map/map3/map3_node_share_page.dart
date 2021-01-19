@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -55,23 +56,17 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          S.of(context).share_contract,
-          style: TextStyle(color: Colors.white),
-        ),
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).share_contract,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.share),
-            color: Colors.white,
             tooltip: S.of(context).share,
             onPressed: () {
               _shareQr(context);
             },
           ),
         ],
-        centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: _body(context),
     );
@@ -100,7 +95,8 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
                 Container(
                   height: 264,
                   decoration: BoxDecoration(
-                    color: HexColor("#FFFFFEF8"),
+                    // color: HexColor("#FFFFFEF8"),
+                    color: Colors.white,
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(50),

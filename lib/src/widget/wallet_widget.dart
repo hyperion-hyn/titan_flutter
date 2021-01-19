@@ -10,7 +10,8 @@ Widget walletHeaderWidget(
   bool isShowShape = true,
   String address = "#000000",
   bool isCircle = true,
-      bool isShowImage = false,
+  bool isShowImage = false,
+  String imageSource = '',
 }) {
   if (shortName.isNotEmpty) {
     shortName = shortName.characters.first;
@@ -64,36 +65,75 @@ Widget walletHeaderWidget(
       child: Center(
         child: Text(
           shortName.toUpperCase(),
-          style: TextStyle(
-              fontSize: fontSize,
-              color: HexColor("#FFFFFF"),
-              fontWeight: FontWeight.w500,
-              shadows: [
-                BoxShadow(
-                  color: Colors.black,
-                  blurRadius: 1.0,
-                ),
-              ]),
+          style: TextStyle(fontSize: fontSize, color: HexColor("#FFFFFF"), fontWeight: FontWeight.w500, shadows: [
+            BoxShadow(
+              color: Colors.black,
+              blurRadius: 1.0,
+            ),
+          ]),
         ),
       ),
     ),
   );
 }
 
-/*
-Widget walletHeaderWidgetV8(String shortName,
-    {double size = 40, double fontSize = 15, bool isShowShape = true, String address = "#000000"}) {
+Widget walletHeaderIconWidget(
+    String shortName, {
+      double size = 40,
+      double fontSize = 15,
+      bool isShowShape = true,
+      String address = "#000000",
+      bool isCircle = true,
+      bool isShowImage = false,
+      String imageSource = '',
+    }) {
+
+  if (imageSource.isNotEmpty) {
+    return ClipOval(
+      child: FadeInImage.assetNetwork(
+        image: imageSource,
+        placeholder: 'res/drawable/ic_robot_head.png',
+        width: 60,
+        height: 60,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  if (shortName.isNotEmpty) {
+    shortName = shortName.characters.first;
+  } else {
+    return Image.asset(
+      'res/drawable/ic_robot_head.png',
+      width: 32,
+      height: 32,
+    );
+  }
+
   String hexColor = address;
-  if (address.length > 6) {
+  if (address.length > 6 && !address.contains('@')) {
     hexColor = "#" + address.substring(address.length - 6);
+  } else {
+    hexColor = "#BFBFBF";
   }
   HexColor color = HexColor(hexColor);
-  return Container(
-    width: size,
-    height: size,
-    decoration: BoxDecoration(
+  var decoration = BoxDecoration(
+    color: color,
+    shape: BoxShape.circle,
+    boxShadow: isShowShape
+        ? [
+      BoxShadow(
+        color: Colors.grey[300],
+        blurRadius: 8.0,
+      ),
+    ]
+        : null,
+  );
+
+  if (!isCircle) {
+    decoration = BoxDecoration(
       color: color,
-      shape: BoxShape.circle,
+      borderRadius: BorderRadius.circular(6),
       boxShadow: isShowShape
           ? [
         BoxShadow(
@@ -102,7 +142,12 @@ Widget walletHeaderWidgetV8(String shortName,
         ),
       ]
           : null,
-    ),
+    );
+  }
+  return Container(
+    width: size,
+    height: size,
+    decoration: decoration,
     child: Padding(
       padding: const EdgeInsets.all(8.0),
       child: Center(
@@ -119,4 +164,4 @@ Widget walletHeaderWidgetV8(String shortName,
     ),
   );
 }
-*/
+

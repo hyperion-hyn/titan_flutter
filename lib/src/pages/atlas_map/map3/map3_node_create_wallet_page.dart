@@ -44,7 +44,7 @@ class Map3NodeCreateWalletPage extends StatelessWidget {
                         ? S.of(context).create_map_node_must_have_block_account
                         : type == CREATE_WALLET_PAGE_TYPE_JOIN
                         ? S.of(context).join_map_node_must_have_block_account
-                        : "你必须先拥有一个区块链钱包账户。",
+                        : S.of(context).must_have_blockchain_wallet,
                     style: TextStyle(fontSize: 14),
                   ),
                 ),

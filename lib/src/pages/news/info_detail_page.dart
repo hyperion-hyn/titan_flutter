@@ -2,6 +2,7 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import './api/news_api.dart';
 import './model/news_detail.dart';
@@ -54,20 +55,15 @@ class _InfoDetailState extends State<InfoDetailPage> {
     }
 
     return Scaffold(
-        appBar: AppBar(
-//          backgroundColor: Colors.white,
-            iconTheme: IconThemeData(color: Colors.white),
-            centerTitle: true,
-            title: Text(
-              widget.title,
-              style: TextStyle(color: Colors.white),
-            ),
+        appBar: BaseAppBar(
+            backgroundColor: Colors.white,
+            baseTitle: widget.title,
             actions: isLoadingContent
                 ? null
                 : <Widget>[
                     IconButton(
                       icon: Icon(Icons.share),
-                      color: Colors.white,
+                      //color: Colors.white,
                       tooltip: S.of(context).share,
                       onPressed: () {
                         _shareQr(context);

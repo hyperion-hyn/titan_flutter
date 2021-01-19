@@ -1,4 +1,3 @@
-import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/generated/l10n.dart';
@@ -14,6 +13,7 @@ import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -53,7 +53,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   var _walletName = "";
   var _walletAddress = "";
   Microdelegations _microDelegationsJoiner;
-  final _client = WalletUtil.getWeb3Client(true);
+  final _client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
   List<Map3UserEntity> _map3UserList = [];
 
 
@@ -84,12 +84,12 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
     var notification = '';
     switch (_status) {
       case TransactionStatus.pending:
-        notification = '终止请求处理中...';
+        notification = S.of(context).map3_exit_doing;
 
         break;
 
       case TransactionStatus.success:
-        notification = '节点已终止，抵押金额已返回您的钱包';
+        notification = S.of(context).map3_exit_done;
 
         //notification = '终止请求已完成, 请前往【钱包】查看退款情况!';
         break;

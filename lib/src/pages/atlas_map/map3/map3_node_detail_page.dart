@@ -28,6 +28,7 @@ import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -59,7 +60,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   final AtlasApi _atlasApi = AtlasApi();
-  final _web3Client = WalletUtil.getWeb3Client(true, true);
+  final _web3Client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS, true);
 
   // 0映射中;1 创建提交中；2创建失败; 3募资中,没在撤销节点;4募资中，撤销节点提交中，如果撤销失败将回到3状态；5撤销节点成功；6合约已启动；7合约期满终止；
   get _map3Status => Map3InfoStatus.values[_map3infoEntity?.status ?? 1];
@@ -806,36 +807,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
                   _detailTabWidget(),
                   _detailWidget(),
-
-                  /*
-                  // 4.参与人员列表信息
-                  SliverToBoxAdapter(
-                    child: Material(
-                      color: Colors.white,
-                      child: NodeJoinMemberWidget(
-                        nodeId: _nodeId,
-                        isShowInviteItem: false,
-                        loadDataBloc: _loadDataBloc,
-                      ),
-                    ),
-                  ),
-                  _spacer(),
-
-
-                  // 5.合约流水信息
-                  SliverToBoxAdapter(child: _delegateRecordHeaderWidget()),
-
-                  (_delegateRecordList?.isNotEmpty ?? false)
-                      ? SliverList(
-                          delegate: SliverChildBuilderDelegate((context, index) {
-                          return delegateRecordItemWidget(
-                            _delegateRecordList[index],
-                            map3CreatorAddress: _nodeCreatorAddress,
-                          );
-                        }, childCount: _delegateRecordList.length))
-                      : emptyListWidget(title: "节点记录为空"),
-
-                   */
                 ],
               )),
         ),
@@ -2296,43 +2267,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       );
     }
 
-    return Column(
-      children: <Widget>[
-        /*
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 12,
-                ),
-                color: Colors.white,
-                child: Text('共 ${_txLogList?.length ?? 0}个',
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 16,
-                      color: HexColor('#999999'),
-                    )),
-              ),
-            ),
-          ],
-        ),
-        */
-        ListView.builder(
-          shrinkWrap: true,
-          physics: BouncingScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          itemBuilder: (context, index) {
-            return delegateRecordItemWidget(
-              _txLogList[index],
-              map3CreatorAddress: _nodeCreatorAddress,
-            );
-          },
-          itemCount: _txLogList.length,
-        ),
-      ],
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: BouncingScrollPhysics(),
+      scrollDirection: Axis.vertical,
+      itemBuilder: (context, index) {
+        return delegateRecordItemWidget(
+          _txLogList[index],
+          map3CreatorAddress: _nodeCreatorAddress,
+        );
+      },
+      itemCount: _txLogList.length,
     );
   }
 

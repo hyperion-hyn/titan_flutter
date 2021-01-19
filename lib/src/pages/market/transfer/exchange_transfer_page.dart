@@ -7,6 +7,7 @@ import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -14,6 +15,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_history_list_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -24,6 +26,8 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/widget/loading_button/click_loading_button.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class ExchangeTransferPage extends StatefulWidget {
   final String coinSymbol;
@@ -46,14 +50,12 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _selectedCoinSymbol = widget.coinSymbol ?? 'HYN';
   }
@@ -361,6 +363,18 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _showCoinSelectDialog() {
+    var activeAssets = MarketInheritedModel.of(
+          context,
+          aspect: SocketAspect.marketItemList,
+        ).exchangeCoinList?.assets ??
+        ['HYN', 'USDT', 'RP'];
+
+    List<Widget> activeCoinItemList = [Container()];
+
+    activeAssets.forEach((token) {
+      activeCoinItemList.add(_coinItem(token));
+    });
+
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
@@ -371,14 +385,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         builder: (BuildContext context) {
           return Container(
-            height: 210,
-            child: Column(
+            child: Wrap(
               children: <Widget>[
-                _coinItem('HYN'),
-                // _coinItem('ETH'),
-                _coinItem('USDT'),
-                _coinItem('RP'),
-
+                Column(
+                  children: activeCoinItemList,
+                ),
                 InkWell(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -402,34 +413,23 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _confirm() {
-    return Container(
-      width: double.infinity,
-      height: 50,
-      child: RaisedButton(
-          textColor: Colors.white,
-          color: Theme.of(context).primaryColor,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(
-                color: Theme.of(context).primaryColor,
-              ),
-              borderRadius: BorderRadius.circular(4.0)),
-          child: Text(
-            _fromExchangeToWallet
-                ? S.of(context).exchange_withdraw
-                : S.of(context).exchange_deposit,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-            ),
-          ),
-          onPressed: () async {
-            debounce(() {
-              FocusScope.of(context).requestFocus(FocusNode());
-              if (_formKey.currentState.validate()) {
-                _transfer();
-              }
-            }, 200)();
-          }),
+    return Padding(
+      padding: const EdgeInsets.only(left: 48.0, right: 48, bottom: 32),
+      child: ClickOvalButton(
+        _fromExchangeToWallet
+            ? S.of(context).exchange_withdraw
+            : S.of(context).exchange_deposit,
+        () async {
+          FocusScope.of(context).requestFocus(FocusNode());
+          if (_formKey.currentState.validate()) {
+            await _transfer();
+          }
+        },
+        height: 51,
+        width: double.infinity,
+        fontSize: 14,
+        btnColor: [Theme.of(context).primaryColor],
+      ),
     );
   }
 
@@ -548,7 +548,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                   controller: _amountController,
                   validator: (value) {
                     value = value.trim();
-                    if (value == '0') {
+                    if (Decimal.parse(value) <= Decimal.zero) {
                       return S.of(context).input_corrent_count_hint;
                     }
                     if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
@@ -707,7 +707,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     }
   }
 
-  _transfer() async {
+  Future _transfer() async {
     try {
       if (_fromExchangeToWallet) {
         _withdraw();

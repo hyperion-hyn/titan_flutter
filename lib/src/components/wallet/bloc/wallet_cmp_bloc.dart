@@ -9,16 +9,14 @@ import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import '../coin_market_api.dart';
-import '../vo/symbol_quote_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/utils/future_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 
@@ -27,7 +25,6 @@ import '../../../global.dart';
 import '../wallet_repository.dart';
 import '../vo/wallet_vo.dart';
 import '../vo/coin_vo.dart';
-import 'dart:math';
 
 class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   static const DEFAULT_SYMBOLS = ['ETH', 'HYN', 'USDT', 'BTC'];
@@ -63,6 +60,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         if (_activatedWalletVo?.wallet?.getEthAccount()?.address == event.wallet.getEthAccount().address) {
           isSameWallet = true;
         }
+        //币的顺序
         _activatedWalletVo = walletToWalletCoinsVo(event.wallet);
       }
 
@@ -108,8 +106,8 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         }
       }
     } else if (event is LoadLocalDiskWalletAndActiveEvent) {
-//      yield LoadingWalletState();
       try {
+        // yield LoadingWalletState();
         var wallet = await walletRepository.getActivatedWalletFormLocalDisk();
         //now active loaded wallet_vo. tips: maybe null
         add(ActiveWalletEvent(wallet: wallet));
@@ -122,6 +120,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       }
     } else if (event is UpdateWalletPageEvent) {
       try {
+        yield UpdateWalletPageState(1,);
         var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
         QuotesSign quotesSign = quoteSignStr != null
             ? QuotesSign.fromJson(json.decode(quoteSignStr))
@@ -130,8 +129,8 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         var symbols = DEFAULT_SYMBOLS;
         final symbolString = symbols.reduce((value, element) => value + ',' + element);
 
-        var quotes = await _coinMarketApi.quotes(0);
-        var addQuotes = List<SymbolQuoteVo>();
+        var quotes = await _coinMarketApi.quotesLatest([],['CNY','USD']);
+        /*var addQuotes = List<SymbolQuoteVo>();
         for (var quote in quotes) {
           if (quote.symbol == SupportedTokens.HYN_Atlas.symbol) {
 //            var q = symbolQuoteEntity.SymbolQuoteVo.clone(quote);
@@ -140,28 +139,28 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
             addQuotes.add(q);
           }
         }
-        quotes.addAll(addQuotes);
+        quotes.addAll(addQuotes);*/
 
         var currentQuotesModel =
             QuotesModel(quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
 
         if (_activatedWalletVo != null) {
           //faster show quote
-          yield UpdateWalletPageState(
-              sign: quotesSign, quoteModel: currentQuotesModel, walletVo: _activatedWalletVo.copyWith());
+          yield UpdateWalletPageState(1, sign: quotesSign, quoteModel: currentQuotesModel);
           await walletRepository.updateWalletVoBalance(_activatedWalletVo);
           _saveWalletVoBalanceToDisk(_activatedWalletVo); //save balance data to disk;
-          yield UpdateWalletPageState(
+          yield UpdateWalletPageState(0,
               sign: quotesSign, quoteModel: currentQuotesModel, walletVo: _activatedWalletVo.copyWith());
         } else {
-          yield UpdateWalletPageState(sign: quotesSign, quoteModel: currentQuotesModel);
+          yield UpdateWalletPageState(0, sign: quotesSign, quoteModel: currentQuotesModel);
         }
 
         if (event.updateGasPrice) {
           BlocProvider.of<WalletCmpBloc>(Keys.rootKey.currentContext).add(UpdateGasPriceEvent());
         }
-      } catch (e) {
-        LogUtil.toastException(e);
+      } catch (e,stack) {
+        print("!!!!3333 $e $stack");
+        yield UpdateWalletPageState(-1);
       }
     } else if (event is UpdateQuotesEvent) {
       yield UpdatingQuotesState();
@@ -169,8 +168,8 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       var symbols = DEFAULT_SYMBOLS;
       final symbolString = symbols.reduce((value, element) => value + ',' + element);
 
-      var quotes = await _coinMarketApi.quotes(0);
-      List<SymbolQuoteVo> addQuotes = [];
+      var quotes = await _coinMarketApi.quotesLatest([],['CNY','USD']);
+      /*List<SymbolQuoteVo> addQuotes = [];
       for (var quote in quotes) {
         if (quote.symbol == SupportedTokens.HYN_Atlas.symbol) {
           var q = SymbolQuoteVo.clone(quote);
@@ -178,7 +177,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           addQuotes.add(q);
         }
       }
-      quotes.addAll(addQuotes);
+      quotes.addAll(addQuotes);*/
 
       var currentQuotesModel =
           QuotesModel(quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
@@ -188,26 +187,28 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       yield UpdatedQuotesSignState(sign: event.sign);
     } else if (event is UpdateGasPriceEvent) {
       yield GasPriceState(status: Status.loading);
-      bool isGasSuccess = false;
+      bool isEthGasSuccess = false;
       bool isBTCGasSuccess = false;
       try {
         var response = await futureRetry(3, requestGasPrice);
-        var gasPriceRecommend = GasPriceRecommend(
+        var gasPriceRecommend = GasPriceRecommend(parseGasPriceToBigIntWei(response['fastest']), 0.5,
+            parseGasPriceToBigIntWei(response['fast']), 4, parseGasPriceToBigIntWei(response['average']), 15);
+        /*var gasPriceRecommend = GasPriceRecommend(
             parseGasPriceToBigIntWei(response['fastest']),
             response['fastestWait'],
             parseGasPriceToBigIntWei(response['fast']),
             response['fastWait'],
             parseGasPriceToBigIntWei(response['average']),
-            response['avgWait']);
+            response['avgWait']);*/
 
         await AppCache.saveValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY, json.encode(gasPriceRecommend.toJson()));
-        yield GasPriceState(status: Status.success, gasPriceRecommend: gasPriceRecommend);
-        isGasSuccess = true;
+        yield GasPriceState(status: Status.success, ethGasPriceRecommend: gasPriceRecommend);
+        isEthGasSuccess = true;
 
         var btcResponse = await BitcoinApi.requestBtcFeeRecommend();
         if (btcResponse["code"] == 0) {
           var btcResponseData = btcResponse["data"];
-          var btcGasPriceRecommend = BTCGasPriceRecommend(
+          var btcGasPriceRecommend = GasPriceRecommend(
               Decimal.fromInt(btcResponseData['fastest']),
               double.parse(btcResponseData['fastestWait'].toString()),
               Decimal.fromInt(btcResponseData['fast']),
@@ -220,10 +221,10 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         }
       } catch (e) {
         logger.e(e);
-        if (!isGasSuccess) {
+        if (!isEthGasSuccess) {
           var gasPriceEntityStr = await AppCache.getValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY);
           if (gasPriceEntityStr != null) {
-            yield GasPriceState(status: Status.success, gasPriceRecommend: json.decode(gasPriceEntityStr));
+            yield GasPriceState(status: Status.success, ethGasPriceRecommend: json.decode(gasPriceEntityStr));
           } else {
             yield GasPriceState(status: Status.failed);
           }
@@ -243,8 +244,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   /// flat wallet accounts
   WalletVo walletToWalletCoinsVo(Wallet wallet) {
     List<CoinVo> coins = [];
-    var hynContractCoin;
-    var hynRPContractCoin;
     for (var account in wallet.accounts) {
       // add public chain coin
       CoinVo coin = CoinVo(
@@ -272,20 +271,8 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           logo: asset.logo,
           balance: BigInt.from(0),
         );
-        if (contractCoin.symbol == SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol) {
-          hynRPContractCoin = contractCoin;
-        } else if (contractCoin.symbol == SupportedTokens.HYN_ERC20.symbol) {
-          hynContractCoin = contractCoin;
-        } else {
-          coins.add(contractCoin);
-        }
+        coins.add(contractCoin);
       }
-    }
-    if (hynContractCoin != null) {
-      coins.add(hynContractCoin);
-    }
-    if (hynRPContractCoin != null) {
-      coins.add(hynRPContractCoin);
     }
     return WalletVo(wallet: wallet, coins: coins);
   }
@@ -315,6 +302,23 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
   Future requestGasPrice() async {
     var responseFromEtherScan = await EtherscanApi().getGasFromEtherScan();
+    var responseFromEtherScanDict = responseFromEtherScan.data as Map;
+
+    // fastest
+    var fastGasPrice = double.parse(responseFromEtherScanDict["FastGasPrice"]);
+    responseFromEtherScanDict["fastest"] = fastGasPrice;
+    // fast
+    var proposeGasPrice = double.parse(responseFromEtherScanDict["ProposeGasPrice"]);
+    responseFromEtherScanDict["fast"] = proposeGasPrice;
+    // average
+    var safeGasPrice = double.parse(responseFromEtherScanDict["SafeGasPrice"]);
+    responseFromEtherScanDict["average"] = safeGasPrice;
+
+    return responseFromEtherScanDict;
+  }
+
+  Future requestGasPriceOld() async {
+    var responseFromEtherScan = await EtherscanApi().getGasFromEtherScan();
     var responseFromEthGasStation = await requestGasFromEthGasStation();
     //print("[object] requestGasPrice，1, responseFromEtherScan:$responseFromEtherScan, responseFromEthGasStation:$responseFromEthGasStation");
 
@@ -324,17 +328,20 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
     // fastest
     var fastGasPrice = double.parse(responseFromEtherScanDict["FastGasPrice"]) * 10.0;
     var fastest = double.parse(responseFromEthGasStationDict["fastest"].toString());
-    responseFromEthGasStationDict["fastest"] = min(fastGasPrice, fastest);
+    // responseFromEthGasStationDict["fastest"] = max(fastGasPrice, fastest);
+    responseFromEthGasStationDict["fastest"] = (fastGasPrice + fastest) / 2;
 
     // fast
     var proposeGasPrice = double.parse(responseFromEtherScanDict["ProposeGasPrice"]) * 10.0;
     var fast = double.parse(responseFromEthGasStationDict["fast"].toString());
-    responseFromEthGasStationDict["fast"] = min(proposeGasPrice, fast);
+    // responseFromEthGasStationDict["fast"] = max(proposeGasPrice, fast);
+    responseFromEthGasStationDict["fast"] = (proposeGasPrice + fast) / 2;
 
     // average
     var safeGasPrice = double.parse(responseFromEtherScanDict["SafeGasPrice"]) * 10.0;
     var average = double.parse(responseFromEthGasStationDict["average"].toString());
-    responseFromEthGasStationDict["average"] = min(safeGasPrice, average);
+    // responseFromEthGasStationDict["average"] = max(safeGasPrice, average);
+    responseFromEthGasStationDict["average"] = (safeGasPrice + average) / 2;
 
     //print("[object] requestGasPrice，2, responseFromEtherScanDict:$responseFromEtherScanDict, responseFromEthGasStationDict:$responseFromEthGasStationDict");
 
@@ -347,6 +354,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   }
 
   Decimal parseGasPriceToBigIntWei(double num) {
-    return Decimal.parse(num.toString()) / Decimal.fromInt(10) * Decimal.fromInt(TokenUnit.G_WEI);
+    // return Decimal.parse(num.toString()) / Decimal.fromInt(10) * Decimal.fromInt(TokenUnit.G_WEI);
+    return Decimal.parse(num.toString()) * Decimal.fromInt(EthereumUnitValue.G_WEI);
   }
 }
