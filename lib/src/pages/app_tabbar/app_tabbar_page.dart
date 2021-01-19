@@ -292,6 +292,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
         ],
         child: Scaffold(
           resizeToAvoidBottomPadding: false,
+          // todo: drawer
           drawer: isDebug ? DrawerComponent() : null,
           body: NotificationListener<myWidget.DraggableScrollableNotification>(
             onNotification: (notification) {
