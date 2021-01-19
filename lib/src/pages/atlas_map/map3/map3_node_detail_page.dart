@@ -30,7 +30,6 @@ import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -2702,8 +2701,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     if (_nodeAddress.isEmpty) {
       return;
     }
-
-    print("[$runtimeType]  WalletConfig.netType:${WalletConfig.netType}");
 
     var map3Address = EthereumAddress.fromHex(_nodeAddress);
     _map3nodeInformationEntity = await _web3Client.getMap3NodeInformation(map3Address);
