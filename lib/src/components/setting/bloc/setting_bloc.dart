@@ -6,6 +6,7 @@ import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/mine/me_theme_page.dart';
 import '../system_config_entity.dart';
 import './bloc.dart';
 
@@ -27,13 +28,19 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       if (event.areaModel != null) {
         _saveAreaModel(event.areaModel);
       }
+      if (event.themeModel != null) {
+        _saveThemeModel(event.themeModel);
+      }
       yield UpdatedSettingState(
-          languageModel: event.languageModel, areaModel: event.areaModel);
+        languageModel: event.languageModel,
+        areaModel: event.areaModel,
+        themeModel: event.themeModel,
+      );
     } else if (event is SystemConfigEvent) {
       var systemConfigStr = await AppCache.getValue<String>(PrefsKey.SETTING_SYSTEM_CONFIG);
 
       SystemConfigEntity netSystemConfigEntity = await api.getSystemConfigData();
-      if(systemConfigStr != json.encode(netSystemConfigEntity.toJson())){
+      if (systemConfigStr != json.encode(netSystemConfigEntity.toJson())) {
         _saveSystemConfig(netSystemConfigEntity);
         yield SystemConfigState(netSystemConfigEntity);
       }
@@ -50,10 +57,13 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     return AppCache.saveValue(PrefsKey.SETTING_AREA, modelStr);
   }
 
-
-
   Future<bool> _saveSystemConfig(SystemConfigEntity systemConfigEntity) {
     var modelStr = json.encode(systemConfigEntity.toJson());
     return AppCache.saveValue(PrefsKey.SETTING_SYSTEM_CONFIG, modelStr);
+  }
+
+  Future<bool> _saveThemeModel(ThemeModel themeModel) {
+    var name = json.encode(themeModel.name);
+    return AppCache.saveValue(PrefsKey.SETTING_SYSTEM_THEME, name);
   }
 }

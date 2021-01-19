@@ -5,7 +5,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/components/account/account_component.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
@@ -74,7 +73,7 @@ class _AppState extends State<App> {
                   debugShowCheckedModeBanner: false,
                   locale: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel?.locale,
                   title: 'titan',
-                  theme: appTheme,
+                  theme: SettingInheritedModel.of(context, aspect: SettingAspect.theme).themeModel?.theme,
                   localizationsDelegates: [
                     S.delegate,
                     GlobalMaterialLocalizations.delegate,

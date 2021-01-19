@@ -152,6 +152,7 @@ class PrefsKey {
   static const String SETTING_AREA = 'setting_area';
   static const String SETTING_QUOTE_SIGN = 'setting_quete_sign';
   static const String SETTING_SYSTEM_CONFIG = 'setting_system_config';
+  static const String SETTING_SYSTEM_THEME = 'setting_system_theme';
 
   //wallet
   static const String ACTIVATED_WALLET_FILE_NAME = 'default_wallet_file_name';
