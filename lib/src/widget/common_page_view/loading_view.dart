@@ -13,9 +13,11 @@ class LoadingView extends StatelessWidget {
         width: 40,
         child: CircularProgressIndicator(
           strokeWidth: 1.5,
-          valueColor: AlwaysStoppedAnimation<Color>(
-            HexColor(loadingColor),
-          ),
+          valueColor: (loadingColor?.isEmpty??true)
+              ? null
+              : AlwaysStoppedAnimation<Color>(
+                  HexColor(loadingColor),
+                ),
         ),
       ),
     );
