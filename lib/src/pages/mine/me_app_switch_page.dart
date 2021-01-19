@@ -84,10 +84,8 @@ class _MeAppSwitchState extends State<MeAppSwitchPage> {
         RPHttpCore.clearInstance();
         ExchangeApi().init();
 
-
         Keys.componentKey = GlobalKey(debugLabel: '__component__');
         Keys.materialAppKey = GlobalKey(debugLabel: '__app__');
-
 
         Navigator.pop(context);
 
