@@ -642,7 +642,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
           'res/drawable/k_line_eye_${isOpen ? "open" : "close"}.png',
           width: 16,
           height: 11,
-          color: isOpen ? HexColor("#228BA1") : HexColor("#999999"),
+          color: isOpen ? Theme.of(context).primaryColor : HexColor("#999999"),
         ),
       ),
       onPressed: () async {
@@ -703,7 +703,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
         child: Text(
           title,
           style: TextStyle(
-              color: isSelected ? HexColor("#228BA1") : HexColor("#999999"),
+              color: isSelected ? Theme.of(context).primaryColor : HexColor("#999999"),
               fontSize: 12),
         ),
       ),
@@ -745,7 +745,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
           item.name,
           style: TextStyle(
               color: item.name == equalValue.name
-                  ? HexColor("#228BA1")
+                  ? Theme.of(context).primaryColor
                   : HexColor("#999999"),
               fontSize: 12),
         ),
@@ -778,7 +778,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                   color: _isShowMore ||
                           (_morePeriodList.contains(_periodParameter) &&
                               _periodCurrentIndex == 4)
-                      ? HexColor("#228BA1")
+                      ? Theme.of(context).primaryColor
                       : HexColor("#999999")),
             ),
             Image.asset(
@@ -788,7 +788,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
               color: _isShowMore ||
                       (_morePeriodList.contains(_periodParameter) &&
                           _periodCurrentIndex == 3)
-                  ? HexColor("#228BA1")
+                  ? Theme.of(context).primaryColor
                   : HexColor("#999999"),
             ),
           ],
@@ -807,7 +807,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
             'res/drawable/k_line_setting.png',
             width: 15,
             height: 13,
-            color: _isShowSetting ? HexColor("#228BA1") : HexColor("#333333"),
+            color: _isShowSetting ? Theme.of(context).primaryColor : HexColor("#333333"),
           ),
           onPressed: _clickSettingAction,
         ),
@@ -819,14 +819,14 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
       child: TabBar(
         controller: _periodTabController,
         isScrollable: true,
-        labelColor: HexColor('#228BA1'),
+        labelColor: Theme.of(context).primaryColor,
         labelStyle: TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 12,
         ),
         indicatorSize: TabBarIndicatorSize.label,
         labelPadding: EdgeInsets.only(left: 16),
-        indicatorColor: HexColor('#228BA1'),
+        indicatorColor: Theme.of(context).primaryColor,
         indicatorPadding: EdgeInsets.only(bottom: 8, left: 20, right: 4),
         unselectedLabelColor: HexColor("#999999"),
         onTap: (int index) {
@@ -874,18 +874,19 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
     setState(() {});
   }
 
+  
   Widget _detailTabWidget() {
     return SliverToBoxAdapter(
       child: TabBar(
         controller: _detailTabController,
         isScrollable: true,
-        labelColor: HexColor('#228BA1'),
+        labelColor: Theme.of(context).primaryColor,
         labelStyle: TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 14,
         ),
         indicatorSize: TabBarIndicatorSize.label,
-        indicatorColor: HexColor('#228BA1'),
+        indicatorColor: Theme.of(context).primaryColor,
         indicatorWeight: 2,
         indicatorPadding: EdgeInsets.only(bottom: 2),
         unselectedLabelColor: HexColor("#999999"),

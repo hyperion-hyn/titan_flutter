@@ -50,13 +50,13 @@ class _AtlasMyNodePageState extends State<AtlasMyNodePage> {
                   Expanded(
                     flex: 10,
                     child: TabBar(
-                      labelColor: HexColor('#FF228BA1'),
+                      labelColor: Theme.of(context).primaryColor,
                       labelStyle: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
                       indicatorSize: TabBarIndicatorSize.label,
-                      indicatorColor: HexColor('#FF228BA1'),
+                      indicatorColor: Theme.of(context).primaryColor,
                       indicatorWeight: 2,
                       indicatorPadding: EdgeInsets.only(
                         bottom: 2,
