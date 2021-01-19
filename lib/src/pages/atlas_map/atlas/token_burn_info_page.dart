@@ -1,18 +1,13 @@
-import 'dart:convert';
-
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/coin_market_api.dart';
 import 'package:titan/src/components/wallet/vo/symbol_quote_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/atlas/token_burn_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
-import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_detail_page.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 
@@ -56,17 +51,13 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
 
   _content() {
     var quotesSign = WalletInheritedModel.of(context).activeQuotesSign;
-    var _burnRate = Decimal.parse(widget._burnHistory.burnRate ?? '0') *
-        Decimal.fromInt(100);
+    var _burnRate = Decimal.parse(widget._burnHistory.burnRate ?? '0') * Decimal.fromInt(100);
 
-    var _burnTokenAmountStr =
-        FormatUtil.stringFormatCoinNum(widget._burnHistory.getTotalAmount());
-    var _burnTokenPriceValue = Decimal.parse('${hynQuote?.price ?? 0}') *
-        Decimal.parse(widget._burnHistory.getTotalAmount());
-    var _burnTokenPriceStr =
-        FormatUtil.stringFormatCoinNum(_burnTokenPriceValue.toString());
-    var _hynSupplyAmountStr =
-        FormatUtil.stringFormatCoinNum(widget._burnHistory.getHynSupply());
+    var _burnTokenAmountStr = FormatUtil.stringFormatCoinNum(widget._burnHistory.getTotalAmount());
+    var _burnTokenPriceValue =
+        Decimal.parse('${hynQuote?.price ?? 0}') * Decimal.parse(widget._burnHistory.getTotalAmount());
+    var _burnTokenPriceStr = FormatUtil.stringFormatCoinNum(_burnTokenPriceValue.toString());
+    var _hynSupplyAmountStr = FormatUtil.stringFormatCoinNum(widget._burnHistory.getHynSupply());
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 32.0,
@@ -192,8 +183,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
     var quotes = await _coinMarketApi.quotes(widget._burnHistory.timestamp);
     var quotesSign = WalletInheritedModel.of(context).activeQuotesSign;
     for (var quoteItem in quotes) {
-      if (quoteItem.symbol == SupportedTokens.HYN_Atlas.symbol &&
-          quoteItem.quote == quotesSign?.quote) {
+      if (quoteItem.symbol == SupportedTokens.HYN_Atlas.symbol && quoteItem.quote == quotesSign?.quote) {
         hynQuote = quoteItem;
       }
     }

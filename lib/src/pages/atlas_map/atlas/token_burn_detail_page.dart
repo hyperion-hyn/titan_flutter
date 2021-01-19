@@ -7,7 +7,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_detail_page.dart';
+import 'package:titan/src/pages/wallet/wallet_show_transaction_detail_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';

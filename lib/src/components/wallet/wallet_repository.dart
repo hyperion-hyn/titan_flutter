@@ -22,10 +22,10 @@ class WalletRepository {
 
   Future updateCoinBalance(Wallet wallet, CoinVo coin) async {
     var balance = BigInt.from(0);
-    if (coin.coinType == CoinType.ETHEREUM || coin.coinType == CoinType.HYN_ATLAS) {
-      balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
-    } else if (coin.coinType == CoinType.BITCOIN) {
+    if (coin.coinType == CoinType.BITCOIN) {
       balance = await wallet.getBitcoinBalance(wallet.getBitcoinZPub());
+    } else {
+      balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
     }
     coin.balance = balance;
 //    coin.balance = (Decimal.parse(balance.toString()) / Decimal.parse(pow(10, coin.decimals).toString())).toDouble();

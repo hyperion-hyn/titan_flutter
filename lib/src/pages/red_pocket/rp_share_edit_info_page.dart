@@ -25,6 +25,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_share_config_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_send_dialog_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
@@ -530,7 +531,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
     var hynBalanceStr = '--';
 
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-      SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
+      SupportedTokens.HYN_RP_HRC30.symbol,
     );
     var hynToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
       SupportedTokens.HYN_Atlas.symbol,

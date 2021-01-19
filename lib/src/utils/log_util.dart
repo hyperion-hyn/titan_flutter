@@ -6,11 +6,11 @@ import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/error/base_error.dart';
+import 'package:titan/src/basic/error/error_code.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:web3dart/json_rpc.dart';
 
 import '../../env.dart';
@@ -88,9 +88,9 @@ class LogUtil {
       }
     } else if (error is PlatformException) {
       uploadExceptionStr(error.toString(), "PlatformException $walletAddr");
-      if (error.code == WalletError.PASSWORD_WRONG) {
+      if (error.code == ErrorCode.PASSWORD_WRONG) {
         Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).password_incorrect);
-      } else if (error.code == WalletError.PARAMETERS_WRONG) {
+      } else if (error.code == ErrorCode.PARAMETERS_WRONG) {
         Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).param_error);
       } else {
         Fluttertoast.showToast(

@@ -12,7 +12,7 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 import 'bloc/bloc.dart';
@@ -27,8 +27,7 @@ class WalletComponent extends SingleChildStatelessWidget {
     return RepositoryProvider(
       create: (ctx) => WalletRepository(),
       child: BlocProvider<WalletCmpBloc>(
-        create: (ctx) => WalletCmpBloc(
-            walletRepository: RepositoryProvider.of<WalletRepository>(ctx)),
+        create: (ctx) => WalletCmpBloc(walletRepository: RepositoryProvider.of<WalletRepository>(ctx)),
         child: _WalletManager(child: child),
       ),
     );
@@ -51,8 +50,8 @@ class _WalletManagerState extends State<_WalletManager> {
 
   QuotesModel _quotesModel;
   QuotesSign _quotesSign;
-  GasPriceRecommend _gasPriceRecommend;
-  BTCGasPriceRecommend _btcGasPriceRecommend;
+  GasPriceRecommend _ethGasPriceRecommend;
+  GasPriceRecommend _btcGasPriceRecommend;
 
   @override
   void initState() {
@@ -61,22 +60,18 @@ class _WalletManagerState extends State<_WalletManager> {
   }
 
   void initData() async {
-    var gasPriceEntityStr =
-        await AppCache.getValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY);
+    var gasPriceEntityStr = await AppCache.getValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY);
     if (gasPriceEntityStr != null) {
-      _gasPriceRecommend =
-          GasPriceRecommend.fromJson(json.decode(gasPriceEntityStr));
+      _ethGasPriceRecommend = GasPriceRecommend.fromJson(json.decode(gasPriceEntityStr));
     } else {
-      _gasPriceRecommend = GasPriceRecommend.defaultValue();
+      _ethGasPriceRecommend = GasPriceRecommend.ethDefaultValue();
     }
 
-    var btcGasPriceEntityStr =
-        await AppCache.getValue(PrefsKey.SHARED_PREF_BTC_GAS_PRICE_KEY);
+    var btcGasPriceEntityStr = await AppCache.getValue(PrefsKey.SHARED_PREF_BTC_GAS_PRICE_KEY);
     if (btcGasPriceEntityStr != null) {
-      _btcGasPriceRecommend =
-          BTCGasPriceRecommend.fromJson(json.decode(btcGasPriceEntityStr));
+      _btcGasPriceRecommend = GasPriceRecommend.fromJson(json.decode(btcGasPriceEntityStr));
     } else {
-      _btcGasPriceRecommend = BTCGasPriceRecommend.defaultValue();
+      _btcGasPriceRecommend = GasPriceRecommend.btcDefaultValue();
     }
 
     //load default wallet
@@ -92,15 +87,11 @@ class _WalletManagerState extends State<_WalletManager> {
             _activatedWallet = state.walletVo;
             var balance = _calculateTotalBalance(_activatedWallet);
             if (_activatedWallet.wallet != null) {
-              var ethAddress =
-                  _activatedWallet?.wallet?.getEthAccount()?.address ?? '';
-              var address =
-                  _activatedWallet?.wallet?.getAtlasAccount()?.address ??
-                      ethAddress;
+              var ethAddress = _activatedWallet?.wallet?.getEthAccount()?.address ?? '';
+              var address = _activatedWallet?.wallet?.getAtlasAccount()?.address ?? ethAddress;
               FlutterBugly.setUserId(address);
             }
-            this._activatedWallet =
-                this._activatedWallet.copyWith(WalletVo(balance: balance));
+            this._activatedWallet = this._activatedWallet.copyWith(WalletVo(balance: balance));
 
             ///Refresh bio-auth config
             BlocProvider.of<AuthBloc>(context).add(RefreshBioAuthConfigEvent(
@@ -121,12 +112,10 @@ class _WalletManagerState extends State<_WalletManager> {
           //基本不用,一般使用UpdateWalletPageState
           _quotesSign = state.sign;
         } else if (state is GasPriceState) {
-          if (state.status == Status.success &&
-              state.gasPriceRecommend != null) {
-            _gasPriceRecommend = state.gasPriceRecommend;
+          if (state.status == Status.success && state.ethGasPriceRecommend != null) {
+            _ethGasPriceRecommend = state.ethGasPriceRecommend;
           }
-          if (state.status == Status.success &&
-              state.btcGasPriceRecommend != null) {
+          if (state.status == Status.success && state.btcGasPriceRecommend != null) {
             _btcGasPriceRecommend = state.btcGasPriceRecommend;
           }
         } else if (state is UpdatedWalletBalanceState) {
@@ -138,16 +127,12 @@ class _WalletManagerState extends State<_WalletManager> {
           if (_activatedWallet != null) {
             var balance = _calculateTotalBalance(_activatedWallet);
             if (_activatedWallet.wallet != null) {
-              var ethAddress =
-                  _activatedWallet?.wallet?.getEthAccount()?.address ?? '';
-              var address =
-                  _activatedWallet?.wallet?.getAtlasAccount()?.address ??
-                      ethAddress;
+              var ethAddress = _activatedWallet?.wallet?.getEthAccount()?.address ?? '';
+              var address = _activatedWallet?.wallet?.getAtlasAccount()?.address ?? ethAddress;
               FlutterBugly.setUserId(address);
             }
 
-            this._activatedWallet =
-                this._activatedWallet.copyWith(WalletVo(balance: balance));
+            this._activatedWallet = this._activatedWallet.copyWith(WalletVo(balance: balance));
           }
         } else if (state is LoadingWalletState) {
           _activatedWallet = null;
@@ -159,7 +144,7 @@ class _WalletManagerState extends State<_WalletManager> {
             activatedWallet: _activatedWallet,
             quotesModel: _quotesModel,
             activeQuotesSign: _quotesSign,
-            gasPriceRecommend: _gasPriceRecommend,
+            ethGasPriceRecommend: _ethGasPriceRecommend,
             btcGasPriceRecommend: _btcGasPriceRecommend,
             child: widget.child,
           );
@@ -182,8 +167,7 @@ class _WalletManagerState extends State<_WalletManager> {
     return 0;
   }
 
-  SymbolQuoteVo _getQuoteVoPriceBySign(
-      CoinVo coinVo, QuotesModel quotesModel, QuotesSign quotesSign) {
+  SymbolQuoteVo _getQuoteVoPriceBySign(CoinVo coinVo, QuotesModel quotesModel, QuotesSign quotesSign) {
     for (var vo in quotesModel.quotes) {
       if (vo.quote == quotesSign.quote && vo.symbol == coinVo.symbol) {
         return vo;
@@ -199,22 +183,21 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
   final WalletVo activatedWallet;
   final QuotesModel quotesModel;
   final QuotesSign activeQuotesSign;
-  final GasPriceRecommend gasPriceRecommend;
-  final BTCGasPriceRecommend btcGasPriceRecommend;
+  final GasPriceRecommend ethGasPriceRecommend;
+  final GasPriceRecommend btcGasPriceRecommend;
 
   WalletInheritedModel({
     this.activatedWallet,
     this.quotesModel,
     this.activeQuotesSign,
-    this.gasPriceRecommend,
+    this.ethGasPriceRecommend,
     this.btcGasPriceRecommend,
     Key key,
     @required Widget child,
   }) : super(key: key, child: child);
 
   static WalletInheritedModel of(BuildContext context, {WalletAspect aspect}) {
-    return InheritedModel.inheritFrom<WalletInheritedModel>(context,
-        aspect: aspect);
+    return InheritedModel.inheritFrom<WalletInheritedModel>(context, aspect: aspect);
   }
 
   ActiveQuoteVoAndSign activatedQuoteVoAndSign(String symbol) {
@@ -222,6 +205,18 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
       for (var quote in quotesModel.quotes) {
         if (quote.symbol == symbol && quote.quote == activeQuotesSign.quote) {
           return ActiveQuoteVoAndSign(quoteVo: quote, sign: activeQuotesSign);
+        }
+      }
+    }
+    return null;
+  }
+
+  /// 获取主链基础币
+  CoinVo getBaseCoinVo(int coinType) {
+    if (this.activatedWallet != null) {
+      for (var coin in this.activatedWallet.coins) {
+        if (coin.coinType == coinType && coin.contractAddress == null) {
+          return coin;
         }
       }
     }
@@ -277,23 +272,17 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
     return activatedWallet != oldWidget.activatedWallet ||
         quotesModel != oldWidget.quotesModel ||
         activeQuotesSign != oldWidget.activeQuotesSign ||
-        gasPriceRecommend != oldWidget.gasPriceRecommend ||
+        ethGasPriceRecommend != oldWidget.ethGasPriceRecommend ||
         btcGasPriceRecommend != oldWidget.btcGasPriceRecommend;
   }
 
   @override
-  bool updateShouldNotifyDependent(
-      WalletInheritedModel oldWidget, Set<WalletAspect> dependencies) {
-    return ((activatedWallet != oldWidget.activatedWallet &&
-            dependencies.contains(WalletAspect.activatedWallet)) ||
-        (quotesModel != oldWidget.quotesModel &&
-            dependencies.contains(WalletAspect.quote)) ||
-        (activeQuotesSign != oldWidget.activeQuotesSign &&
-            dependencies.contains(WalletAspect.sign)) ||
-        gasPriceRecommend != oldWidget.gasPriceRecommend &&
-            dependencies.contains(WalletAspect.gasPrice) ||
-        btcGasPriceRecommend != oldWidget.btcGasPriceRecommend &&
-            dependencies.contains(WalletAspect.gasPrice));
+  bool updateShouldNotifyDependent(WalletInheritedModel oldWidget, Set<WalletAspect> dependencies) {
+    return ((activatedWallet != oldWidget.activatedWallet && dependencies.contains(WalletAspect.activatedWallet)) ||
+        (quotesModel != oldWidget.quotesModel && dependencies.contains(WalletAspect.quote)) ||
+        (activeQuotesSign != oldWidget.activeQuotesSign && dependencies.contains(WalletAspect.sign)) ||
+        ethGasPriceRecommend != oldWidget.ethGasPriceRecommend && dependencies.contains(WalletAspect.gasPrice) ||
+        btcGasPriceRecommend != oldWidget.btcGasPriceRecommend && dependencies.contains(WalletAspect.gasPrice));
   }
 
   static Future<bool> saveQuoteSign(QuotesSign quotesSign) {

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
-import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';

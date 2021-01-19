@@ -20,8 +20,8 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
@@ -91,13 +91,13 @@ class _ExchangeWithdrawConfirmPageState
       return WalletInheritedModel.of(
         context,
         aspect: WalletAspect.gasPrice,
-      ).gasPriceRecommend;
+      ).ethGasPriceRecommend;
     }
   }
 
   Decimal get gasPrice {
     if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      return Decimal.fromInt(1 * TokenUnit.G_WEI);
+      return Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
     }
     switch (selectedPriceLevel) {
       case 0:
@@ -129,34 +129,24 @@ class _ExchangeWithdrawConfirmPageState
   initData() {
     try {
       if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-        var hynQuotePrice = WalletInheritedModel.of(context)
-                .activatedQuoteVoAndSign('HYN')
-                ?.quoteVo
-                ?.price ??
-            0;
+        var hynQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN')?.quoteVo?.price ?? 0;
 
         ///Contract tokens
         var gasLimit = widget.coinVo.contractAddress != null
-            ? SettingInheritedModel.ofConfig(context)
-                .systemConfigEntity
-                .erc20TransferGasLimit
-            : SettingInheritedModel.ofConfig(context)
-                .systemConfigEntity
-                .ethTransferGasLimit;
+            ? SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit
+            : SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
 
         var gasPriceEstimate = ConvertTokenUnit.weiToEther(
-            weiBigInt: BigInt.parse(
-                (gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+            weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
 
-        var gasFeeQuotePrice = gasPriceEstimate *
-            Decimal.parse(hynQuotePrice.toString()) *
-            Decimal.parse(widget.withdrawFeeByGas);
+        var gasFeeQuotePrice =
+            gasPriceEstimate * Decimal.parse(hynQuotePrice.toString()) * Decimal.parse(widget.withdrawFeeByGas);
 
         _gasFeeByToken =
             (Decimal.parse('$gasFeeQuotePrice') / Decimal.parse('$quotePrice'));
 
         _gasPriceEstimateStr =
-            " ${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GDUST ($gasPriceEstimate HYN)";
+            " ${(gasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI)).toStringAsFixed(1)} GDUST ($gasPriceEstimate HYN)";
       } else {
         var ethQuotePrice = WalletInheritedModel.of(context)
                 .activatedQuoteVoAndSign('ETH')
@@ -164,19 +154,13 @@ class _ExchangeWithdrawConfirmPageState
                 ?.price ??
             0;
         var gasLimit = widget.coinVo.symbol == "ETH"
-            ? SettingInheritedModel.ofConfig(context)
-                .systemConfigEntity
-                .ethTransferGasLimit
-            : SettingInheritedModel.ofConfig(context)
-                .systemConfigEntity
-                .erc20TransferGasLimit;
+            ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
+            : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
         var gasEstimate = ConvertTokenUnit.weiToEther(
-            weiBigInt: BigInt.parse(
-                (gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+            weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
 
-        var gasFeeQuotePrice = gasEstimate *
-            Decimal.parse(ethQuotePrice.toString()) *
-            Decimal.parse(widget.withdrawFeeByGas);
+        var gasFeeQuotePrice =
+            gasEstimate * Decimal.parse(ethQuotePrice.toString()) * Decimal.parse(widget.withdrawFeeByGas);
 
         _gasFeeByToken = Decimal.parse(FormatUtil.truncateDecimalNum(
           Decimal.parse('$gasFeeQuotePrice') / Decimal.parse('$quotePrice'),
@@ -184,7 +168,7 @@ class _ExchangeWithdrawConfirmPageState
         ));
 
         _gasPriceEstimateStr =
-            "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI ($gasEstimate ETH) ";
+            "${(gasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI)).toStringAsFixed(1)} GWEI ($gasEstimate ETH) ";
       }
     } catch (e) {}
 
@@ -627,8 +611,7 @@ class _ExchangeWithdrawConfirmPageState
         msg = S.of(context).transfer_broadcase_success_description;
       }
       msg = FluroConvertUtils.fluroCnParamsEncode(msg);
-      Application.router
-          .navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
+      Application.router.navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
 
       setState(() {
         isTransferring = true;

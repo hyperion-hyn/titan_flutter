@@ -9,7 +9,7 @@ import 'package:titan/src/pages/atlas_map/atlas/token_burn_info_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
+import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 

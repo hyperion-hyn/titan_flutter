@@ -7,6 +7,7 @@ import 'package:titan/src/data/repository/repository.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -97,7 +98,7 @@ class TransactionInteractor {
       String fromAddress, int localTransferType, String erc20Address) async {
     var _ethAddress = fromAddress;
     if (_ethAddress != null) {
-      final client = WalletUtil.getWeb3Client(false);
+      final client = WalletUtil.getWeb3Client(CoinType.ETHEREUM);
       var nextNonce = await client.getTransactionCount(EthereumAddress.fromHex(_ethAddress));
       if (nextNonce > 0) {
         return _confirmTransactionOfNonce(_ethAddress, localTransferType, erc20Address, nextNonce - 1);
@@ -138,8 +139,9 @@ class TransactionInteractor {
     return _replaceTransaction(context, vo, password, OptType.SPEED_UP);
   }
 
-  Future<String> _replaceTransaction(BuildContext context, TransactionDetailVo transactionDetailVo, String password, int optType) async {
-    var gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).gasPriceRecommend;
+  Future<String> _replaceTransaction(
+      BuildContext context, TransactionDetailVo transactionDetailVo, String password, int optType) async {
+    var gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).ethGasPriceRecommend;
     var walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
 
     Decimal maxGasPrice = gasPriceRecommend.fast;
@@ -153,7 +155,7 @@ class TransactionInteractor {
 
     double amount = optType == OptType.SPEED_UP ? transactionDetailVo.amount : 0;
     if (transactionDetailVo.localTransferType == LocalTransferType.LOCAL_TRANSFER_ETH) {
-      var txHash = await walletVo.wallet.sendEthTransaction(
+      var txHash = await walletVo.wallet.sendTransaction(CoinType.ETHEREUM,
           optType: optType,
           password: password,
           value: ConvertTokenUnit.etherToWei(etherDouble: amount),
@@ -169,7 +171,7 @@ class TransactionInteractor {
           decimal = element.decimals;
         }
       });
-      var txHash = await walletVo.wallet.sendErc20Transaction(
+      var txHash = await walletVo.wallet.sendErc20Transaction(CoinType.ETHEREUM,
           optType: optType,
           contractAddress: transactionDetailVo.contractAddress,
           password: password,

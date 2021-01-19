@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
 import 'package:web3dart/crypto.dart';
@@ -22,10 +23,9 @@ class Signer {
     );
     print('[Signer.signApiWithWallet]: msg: $msg');
 
-    final credentials = await wallet.getCredentials(password);
+    final credentials = await wallet.getCredentials(CoinType.ETHEREUM, password);
     var msgHash = keccakUtf8(msg);
-    var personalSign =
-        await credentials.signPersonalMessage(utf8.encode(bytesToHex(msgHash)));
+    var personalSign = await credentials.signPersonalMessage(utf8.encode(bytesToHex(msgHash)));
     return bytesToHex(personalSign);
   }
 
