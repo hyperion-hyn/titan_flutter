@@ -13,7 +13,6 @@ class HbApi{
   }
 
   Future<List<HtTransferHistory>> queryHtHistory(String address, int page) async {
-    address = "0xFC20F6a8A1A65a91F838247b4F460437a5a68bCA";
     Map result = await HttpCore.instance.get("${HecoExplore.hecoScanApi}/v1/account/coin-tx-list", params: {
       "address": address,
       "startBlock": "0",
@@ -32,8 +31,6 @@ class HbApi{
   }
 
   Future<List<HbErc20TransferHistory>> queryHtErc20History(String contractAddress, String address, int page) async {
-    contractAddress = "0xeF3CEBD77E0C52cb6f60875d9306397B5Caca375";
-    address = "0xF5b1C2613211171eC6dD9d5B8F2F13a9AC287A98";
     Map result = await HttpCore.instance.get("${HecoExplore.hecoScanApi}/v1/account/token-tx-list", params: {
       "contractAddress": contractAddress,
       "address": address,
