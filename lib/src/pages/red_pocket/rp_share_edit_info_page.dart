@@ -1074,7 +1074,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
         _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
         return;
-      } else if (hynValue > Decimal.zero && hynValue <= Decimal.parse(hynMin)) {
+      } else if (hynValue > Decimal.zero && hynValue < Decimal.parse(hynMin)) {
         Fluttertoast.showToast(msg: '你要为每个新人至少要塞 $hynMin HYN作为他之后矿工费所用');
         _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
