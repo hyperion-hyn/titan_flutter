@@ -31,6 +31,7 @@ class _MeSettingState extends State<MeSettingPage> {
     var area = SettingInheritedModel.of(context, aspect: SettingAspect.area)
         .areaModel
         ?.name(context)??'';
+    var selectedAppArea = env.buildType == BuildType.DEV ? '测试环境' : '正式环境';
 
     Widget _lineWidget({double height = 5}) {
       return Container(
@@ -71,10 +72,16 @@ class _MeSettingState extends State<MeSettingPage> {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => MeAreaPage()));
             }),
+            _lineWidget(height: 10),
+            _buildMenuBar('切换环境', selectedAppArea, () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MeAppSwitchPage()));
+            }),
            ],
         ));
   }
 }
+
 
 Widget _buildMenuBar(String title, String subTitle, Function onTap) {
   return Material(
