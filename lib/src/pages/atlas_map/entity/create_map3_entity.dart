@@ -133,14 +133,14 @@ class CreateMap3Payload extends Object {
 
   @JsonKey(name: 'provider')
   String provider;
-
-  @JsonKey(name: 'provider')
+  
+  @JsonKey(name: 'providerName')
   String providerName;
 
   @JsonKey(name: 'region')
   String region;
 
-  @JsonKey(name: 'region')
+  @JsonKey(name: 'regionName')
   String regionName;
 
   @JsonKey(name: 'staking')

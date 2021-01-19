@@ -54,9 +54,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
   @override
   void onCreated() async {
     super.onCreated();
-    latlng = await (Keys.mapContainerKey.currentState as MapContainerState)
-        ?.mapboxMapController
-        ?.lastKnownLocation();
+    latlng = await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
 
     _getNewBeeInfo();
   }
@@ -96,8 +94,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
       whoSendRpText = "";
     } else {
       isNormal = _shareEntity.info.rpType == RpShareType.normal;
-      whoSendRpText =
-          "${_shareEntity?.info?.owner ?? '--'} 发的${isNormal ? '新人' : '位置'}红包";
+      whoSendRpText = "${_shareEntity?.info?.owner ?? '--'} 发的${isNormal ? '新人' : '位置'}红包";
 
       greeting = _shareEntity?.info?.greeting ?? '';
       if (_shareEntity != null && greeting.isEmpty) {
@@ -114,10 +111,8 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
         greeting = "你已领取过了";
       }
 
-      if ((_shareEntity.info.rpType == RpShareType.location &&
-              (_shareEntity?.info?.isNewBee ?? false)) ||
-          ((_shareEntity?.info?.rpType ?? RpShareType.normal) !=
-              RpShareType.location)) {
+      if ((_shareEntity.info.rpType == RpShareType.location && (_shareEntity?.info?.isNewBee ?? false)) ||
+          ((_shareEntity?.info?.rpType ?? RpShareType.normal) != RpShareType.location)) {
         typeName = RpShareType.normal;
         getRemindHint = "新人均分领取，并成为好友";
       } else {
@@ -125,13 +120,10 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
         getRemindHint = "拼手气领取";
       }
 
-      state = ((_shareEntity?.info?.state ?? RpShareState.allGot) ==
-              RpShareState.ongoing)
+      state = ((_shareEntity?.info?.state ?? RpShareState.allGot) == RpShareState.ongoing)
           ? RpShareState.ongoing
           : RpShareState.allGot;
-      state = (_shareEntity?.info?.alreadyGot ?? true)
-          ? RpShareState.allGot
-          : state;
+      state = (_shareEntity?.info?.alreadyGot ?? true) ? RpShareState.allGot : state;
     }
     var imageName = 'rp_share_${typeName}_${state}_${suffix}';
 
@@ -206,11 +198,9 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   shape: BoxShape.circle,
-                                  border: Border.all(
-                                      width: 2, color: Colors.transparent),
+                                  border: Border.all(width: 2, color: Colors.transparent),
                                   image: DecorationImage(
-                                    image: AssetImage(
-                                        "res/drawable/app_invite_default_icon.png"),
+                                    image: AssetImage("res/drawable/app_invite_default_icon.png"),
                                     fit: BoxFit.cover,
                                   )),
                             ),
@@ -269,8 +259,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                               return;
                             }
 
-                            if (_shareEntity.info.state !=
-                                RpShareState.ongoing) {
+                            if (_shareEntity.info.state != RpShareState.ongoing) {
                               return;
                             }
 
@@ -278,15 +267,15 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                               return;
                             }
 
-                            if (_shareEntity.info.rpType ==
-                                    RpShareType.location &&
-                                latlng == null) {
+                            //latlng = LatLng(26.4407743201789, 111.61888177114565);
+                            //lat: 26.4407743201789, lng: 111.61888177114565
+
+                            if (_shareEntity.info.rpType == RpShareType.location && latlng == null) {
                               Fluttertoast.showToast(msg: "获取位置失败，请先定位当前位置");
                               return;
                             }
 
-                            if (_shareEntity.info.isNewBee &&
-                                !_shareEntity.info.userIsNewBee) {
+                            if (_shareEntity.info.isNewBee && !_shareEntity.info.userIsNewBee) {
                               Fluttertoast.showToast(msg: "该红包只有新用户可领取");
                               return;
                             }
@@ -305,33 +294,40 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
 
                             var id = _shareEntity?.info?.id ?? widget.id;
                             RpShareReqEntity reqEntity = RpShareReqEntity.only(
-                                id,
-                                widget.address,
-                                latlng?.latitude,
-                                latlng?.longitude,
-                                rpSecret);
-                            print(
-                                "[$runtimeType] open rp, 1, reqEntity:${reqEntity.toJson()}");
+                                id, widget.address, latlng?.latitude, latlng?.longitude, rpSecret);
+                            print("[$runtimeType] open rp, 1, reqEntity:${reqEntity.toJson()}");
 
                             var result = await _rpApi.postOpenShareRp(
                               reqEntity: reqEntity,
                             );
-                            print("[$runtimeType] open rp, 2, result:$result");
 
-                            _shareEntity = await _rpApi.getNewBeeDetail(
-                              widget.address,
-                              id: widget.id,
-                            );
+                            setState(() {
+                              _currentState = null;
+                            });
 
-                            if (mounted) {
-                              Navigator.pop(context);
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    RpShareGetSuccessPage(
-                                  _shareEntity.info.id,
-                                  isOpenRpJump: true,
-                                ),
-                              ));
+                            //print("[$runtimeType] open rp, 2, result:$result");
+
+                            if (result == null) {
+                              //print("[$runtimeType] open rp, 3, result:$result");
+
+                              _shareEntity = await _rpApi.getNewBeeDetail(
+                                widget.address,
+                                id: widget.id,
+                              );
+
+                              if (mounted) {
+                                Navigator.pop(context);
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) => RpShareGetSuccessPage(
+                                    _shareEntity.info.id,
+                                    isOpenRpJump: true,
+                                  ),
+                                ));
+                              }
+                            } else if (result == -40013) {
+                              _showWarningDialog();
+                            } else {
+                              print("[$runtimeType] result:$result");
                             }
                           } catch (e) {
                             LogUtil.toastException(e);
@@ -355,13 +351,11 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                         child: GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  RpShareGetSuccessPage(_shareEntity.info.id),
+                              builder: (BuildContext context) => RpShareGetSuccessPage(_shareEntity.info.id),
                             ));
                           },
                           child: Padding(
-                            padding:
-                                const EdgeInsets.only(top: 5.0, bottom: 15),
+                            padding: const EdgeInsets.only(top: 5.0, bottom: 15),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -492,6 +486,28 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
           ),
         ],
       ),
+    );
+  }
+
+  // todo:-40013
+  _showWarningDialog() {
+    UiUtil.showAlertView(
+      context,
+      title: '警告',
+      actions: [
+        ClickOvalButton(
+          S.of(context).confirm,
+          () {
+            Navigator.pop(context);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      ],
+      content: '检测到你位置异常，存在作恶行为，系统会自动记录不诚信用户，如果再次作恶，后续将无法领取任何RP红包',
+      // contentColor: HexColor("#FF0527"),
     );
   }
 }

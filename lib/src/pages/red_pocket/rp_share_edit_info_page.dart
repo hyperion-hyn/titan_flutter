@@ -974,7 +974,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
           ),
           rowTipsItem('如果开启新人才能领取，领取后他将成为你的好友；\n但你要为每个新人至少要塞 $minHyn HYN作为他之后矿工费所用；'),
           // rowTipsItem('你要为每个新人至少要塞 $minHyn HYN作为他之后矿工费所用；'),
-          // rowTipsItem('24小时候后，如果还剩红包没领取，将自动退回你的钱包；'),
+          rowTipsItem('24小时候后，如果还剩红包没领取，将自动退回你的钱包；'),
         ],
       ),
     );
@@ -1074,7 +1074,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
         _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
         return;
-      } else if (hynValue > Decimal.zero && hynValue <= Decimal.parse(hynMin)) {
+      } else if (hynValue > Decimal.zero && hynValue < Decimal.parse(hynMin)) {
         Fluttertoast.showToast(msg: '你要为每个新人至少要塞 $hynMin HYN作为他之后矿工费所用');
         _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 

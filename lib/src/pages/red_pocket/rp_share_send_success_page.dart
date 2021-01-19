@@ -38,7 +38,7 @@ class RpShareSendSuccessPage extends StatefulWidget {
 class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
   final ScrollController _scrollController = ScrollController();
   final ShotController _shotController = new ShotController();
-  GlobalKey _qrImageBoundaryKey = GlobalKey();
+  // GlobalKey _qrImageBoundaryKey = GlobalKey();
 
   WalletVo _walletVo;
 
@@ -197,110 +197,133 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
     String walletAddress = WalletUtil.ethAddressToBech32Address(_address);
     // var qrData = "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$_walletName";
     var greeting = (widget.reqEntity?.greeting?.isNotEmpty ?? false) ? widget.reqEntity?.greeting : '恭喜发财，大吉大利!';
-    var qrData =
-        RpShareGetDialogPage.shareDomain + '?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&msg=$greeting';
+    var qrData = RpShareGetDialogPage.shareDomain +
+        '?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&msg=$greeting';
     return WidgetShot(
       controller: _shotController,
-      child: RepaintBoundary(
-        key: _qrImageBoundaryKey,
-        child: Container(
-          // color: Theme.of(context).scaffoldBackgroundColor,
-          // padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30,),
-          child: Stack(
-            alignment: Alignment.center,
-            children: <Widget>[
-              Container(
-                width: 315,
-                height: 452,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                      'res/drawable/rp_share_bg_big.png',
+      child: Container(
+        // color: Theme.of(context).scaffoldBackgroundColor,
+        // padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30,),
+        child: Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                Container(
+                  width: 315,
+                  height: 452,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(
+                        'res/drawable/rp_share_bg_big.png',
+                      ),
+                      fit: BoxFit.fill,
                     ),
-                    fit: BoxFit.fill,
                   ),
                 ),
-              ),
-              Container(
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 34,
-                    ),
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(width: 2, color: Colors.transparent),
-                          image: DecorationImage(
-                            image: AssetImage("res/drawable/app_invite_default_icon.png"),
-                            fit: BoxFit.cover,
-                          )),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: 16,
-                        bottom: 16,
+                Container(
+                  padding: const EdgeInsets.only(left: 42, top: 12),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'res/drawable/rp_share_logo.png',
+                        height: 26,
+                        width: 25,
                       ),
-                      child: RichText(
-                        text: TextSpan(
-                          text: "${_walletVo.wallet.keystore.name} 发的${_shareTypeEntity.fullNameZh}",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: HexColor('#333333'),
-                          ),
+                      SizedBox(width: 12,),
+                      Text(
+                        S.of(context).app_name,
+                        style: TextStyle(
+                          color: HexColor('#333333'),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+            Container(
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 34,
+                  ),
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(width: 2, color: Colors.transparent),
+                        image: DecorationImage(
+                          image: AssetImage("res/drawable/app_invite_default_icon.png"),
+                          fit: BoxFit.cover,
+                        )),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: 16,
+                      bottom: 16,
+                    ),
+                    child: RichText(
+                      text: TextSpan(
+                        text: "${_walletVo.wallet.keystore.name} 发的${_shareTypeEntity.fullNameZh}",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: HexColor('#333333'),
                         ),
                       ),
                     ),
+                  ),
 
-                    Text(
-                      greeting,
-                      style: TextStyle(
-                        fontSize: greeting.length > 12 ? 14 : 22,
-                        fontWeight: FontWeight.w600,
-                        color: HexColor('#333333'),
+                  Text(
+                    greeting,
+                    style: TextStyle(
+                      fontSize: greeting.length > 12 ? 14 : 22,
+                      fontWeight: FontWeight.w600,
+                      color: HexColor('#333333'),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        child: Image.asset(
+                          "res/drawable/ic_rp_invite_friend_red_package.png",
+                          width: 180,
+                          height: 250,
+                          //fit: BoxFit.fill,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          child: Image.asset(
-                            "res/drawable/ic_rp_invite_friend_red_package.png",
-                            width: 180,
-                            height: 250,
-                            //fit: BoxFit.fill,
+                      Positioned(
+                        top: 140,
+                        child: Container(
+                          decoration:
+                              BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
+                          width: 84,
+                          height: 84,
+                          child: QrImage(
+                            padding: const EdgeInsets.all(9),
+                            data: qrData,
+                            size: 200,
                           ),
                         ),
-                        Positioned(
-                          top: 140,
-                          child: Container(
-                            decoration:
-                                BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
-                            width: 84,
-                            height: 84,
-                            child: QrImage(
-                              padding: const EdgeInsets.all(9),
-                              data: qrData,
-                              size: 200,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    // Spacer(),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                  // Spacer(),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -311,10 +334,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
     bool result = false;
 
     try {
-      RenderRepaintBoundary boundary = _qrImageBoundaryKey.currentContext.findRenderObject();
-      var image = await boundary.toImage();
-      ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
-      Uint8List pngBytes = byteData.buffer.asUint8List();
+      Uint8List pngBytes = await _shotController.makeImageUint8List();
       result = await ImageSave.saveImage(pngBytes, "png", albumName: 'rp_address_$address');
     } catch (e) {
       result = false;
