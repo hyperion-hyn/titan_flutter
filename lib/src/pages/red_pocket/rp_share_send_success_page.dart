@@ -197,8 +197,8 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
     String walletAddress = WalletUtil.ethAddressToBech32Address(_address);
     // var qrData = "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$_walletName";
     var greeting = (widget.reqEntity?.greeting?.isNotEmpty ?? false) ? widget.reqEntity?.greeting : '恭喜发财，大吉大利!';
-    var qrData =
-        RpShareGetDialogPage.shareDomain + '?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&msg=$greeting';
+    var qrData = RpShareGetDialogPage.shareDomain +
+        '?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&msg=$greeting';
     return WidgetShot(
       controller: _shotController,
       child: RepaintBoundary(
@@ -209,17 +209,43 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
-              Container(
-                width: 315,
-                height: 452,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                      'res/drawable/rp_share_bg_big.png',
+              Stack(
+                alignment: Alignment.topCenter,
+                children: [
+                  Container(
+                    width: 315,
+                    height: 452,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(
+                          'res/drawable/rp_share_bg_big.png',
+                        ),
+                        fit: BoxFit.fill,
+                      ),
                     ),
-                    fit: BoxFit.fill,
                   ),
-                ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 42, top: 12),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'res/drawable/rp_share_logo.png',
+                          height: 26,
+                          width: 25,
+                        ),
+                        SizedBox(width: 12,),
+                        Text(
+                          S.of(context).app_name,
+                          style: TextStyle(
+                            color: HexColor('#333333'),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
               ),
               Container(
                 width: double.infinity,
