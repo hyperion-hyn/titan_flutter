@@ -36,7 +36,7 @@ class HecoRpcProvider {
       case HecoChainType.test:
         return TEST_API;
     }
-    return '';
+    return MAIN_API;
   }
 
   /// chainId
@@ -48,5 +48,32 @@ class HecoRpcProvider {
         return 256;
     }
     return 128;
+  }
+}
+
+class HecoExplore {
+  static String MAIN_SCAN_API = 'https://scan.hecochain.com';
+  static String TEST_SCAN_API = 'http://10.10.1.109:3001';
+  static String MAIN_SCAN_WEB = 'https://scan.hecochain.com';
+  static String TEST_SCAN_WEB = 'https://http-testnet.hecochain.com';
+
+  static String get hecoScanApi {
+    switch (HecoConfig.chainType) {
+      case HecoChainType.mainnet:
+        return MAIN_SCAN_API;
+      case HecoChainType.test:
+        return TEST_SCAN_API;
+      default:
+        return MAIN_SCAN_API;
+    }
+  }
+
+  static String get hecoScanWeb {
+    if (HecoConfig.chainType == HecoChainType.mainnet) {
+      return MAIN_SCAN_WEB;
+    } else if (HecoConfig.chainType == HecoChainType.test) {
+      return TEST_SCAN_WEB;
+    }
+    return MAIN_SCAN_WEB;
   }
 }

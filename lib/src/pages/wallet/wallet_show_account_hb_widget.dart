@@ -24,6 +24,7 @@ import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
+import 'package:titan/src/pages/wallet/api/hb_api.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
@@ -41,20 +42,18 @@ import '../../pages/wallet/model/transtion_detail_vo.dart';
 import 'api/etherscan_api.dart';
 import 'api/hyn_api.dart';
 
-class ShowAccountPage extends StatefulWidget {
+class ShowAccountHbPage extends StatefulWidget {
   CoinVo coinVo;
 
-  ShowAccountPage(this.coinVo);
+  ShowAccountHbPage(this.coinVo);
 
   @override
   State<StatefulWidget> createState() {
-    return _ShowAccountPageState();
+    return _ShowAccountHbPageState();
   }
 }
 
-class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAware {
-  TransactionInteractor transactionInteractor;
-
+class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with RouteAware {
   DateFormat _dateFormat = new DateFormat("HH:mm MM/dd");
 
   AccountTransferService _accountTransferService = AccountTransferService();
@@ -62,7 +61,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 
   @override
   int getStartPage() {
-    return 0;
+    return 1;
   }
 
   @override
@@ -72,7 +71,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 
   @override
   void onCreated() {
-    transactionInteractor = Injector.of(context).transactionInteractor;
   }
 
   @override
@@ -367,22 +365,17 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 
     if ((transactionDetail.state == null) ||
         (transactionDetail.state != null &&
-            transactionDetail.state >= 0 &&
-            transactionDetail.state < 6 &&
-            widget.coinVo.coinType == CoinType.BITCOIN) ||
-        (transactionDetail.state != null &&
             transactionDetail.state == 0 &&
-            widget.coinVo.coinType == CoinType.ETHEREUM)) {
+            widget.coinVo.coinType == CoinType.HB_HT)) {
       title = S.of(context).pending;
-    } else if (((widget.coinVo.coinType == CoinType.ETHEREUM) && transactionDetail.state == 1) ||
-        (widget.coinVo.coinType == CoinType.BITCOIN && transactionDetail.state >= 6)) {
+    } else if ((widget.coinVo.coinType == CoinType.HB_HT) && transactionDetail.state == 1) {
       title = S.of(context).completed;
       if (HYNApi.isContractTokenAddress(transactionDetail.toAddress)) {
         // 代币
         title = S.of(context).contract_call;
         iconPath = "res/drawable/ic_hyn_wallet_contract.png";
       }
-    } else if ((widget.coinVo.coinType == CoinType.ETHEREUM && transactionDetail.state == -1)) {
+    } else if ((widget.coinVo.coinType == CoinType.HB_HT && transactionDetail.state == -1)) {
       title = S.of(context).wallet_fail_title;
       titleColor = DefaultColors.colorf23524;
     }
@@ -400,8 +393,16 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
             color: Colors.white,
             child: InkWell(
               onTap: () {
-                //TODO
-                UiUtil.toast('TODO');
+                var url = HbApi.getTxDetailUrl(transactionDetail.hash);
+                if (url != null) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InAppWebViewContainer(
+                            initUrl: url,
+                            title: '',
+                          )));
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 21),
@@ -530,17 +531,4 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     return retList;
   }
 
-}
-
-Future<List<TransactionDetailVo>> getEthTransferList(AccountTransferService _accountTransferService) async {
-  List<TransactionDetailVo> transferList = [];
-  try {
-    WalletVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    String fromAddress = walletVo.wallet.getEthAccount().address;
-    var coinVo = CoinVo(symbol: "ETH", address: fromAddress);
-    transferList = await _accountTransferService.getTransferList(coinVo, 0);
-  } catch (e) {
-    logger.e(e);
-  }
-  return transferList;
 }
