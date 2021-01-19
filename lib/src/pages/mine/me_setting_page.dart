@@ -69,6 +69,11 @@ class _MeSettingState extends State<MeSettingPage> {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => MeAreaPage()));
             }),
+            _lineWidget(height: 10),
+            _buildMenuBar('主题', '绿色', () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MeAreaPage()));
+            }),
           ],
         ));
   }
