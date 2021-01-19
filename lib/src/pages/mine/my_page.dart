@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:detect_testflight/detect_testflight.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info/package_info.dart';
@@ -31,7 +32,6 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import '../../global.dart';
-import 'map3_contract_control.dart';
 import 'package:characters/characters.dart';
 
 class MyPage extends StatefulWidget {
@@ -44,6 +44,8 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends BaseState<MyPage> {
   Wallet _wallet;
   String _version = "";
+  String _channel = "";
+
   bool _haveNewVersion = false;
   UpdateEntity _updateEntity;
 
@@ -67,22 +69,35 @@ class _MyPageState extends BaseState<MyPage> {
         platform = "android";
       } else if (Platform.isIOS) {
         platform = "ios";
+
+        bool isTestFlight = await DetectTestflight.isTestflight;
+        if (isTestFlight) {
+          _channel = 'TestFlight';
+        } else {
+          _channel = 'AppStore';
+        }
       }
       var lang = Localizations.localeOf(context).languageCode;
       var versionModel = await injector.repository.checkNewVersion(channel, lang, platform);
 
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
       var newBuildNumber = versionModel?.build ?? 0;
       if (int.parse(packageInfo.buildNumber) < newBuildNumber) {
-        _version = '${versionModel.versionName}.${versionModel.build}';
-        _haveNewVersion = true;
-        _updateEntity = versionModel;
+        if (mounted) {
+          setState(() {
+            _version = '${versionModel.versionName}.${versionModel.build}';
+            _haveNewVersion = true;
+            _updateEntity = versionModel;
+          });
+        }
       } else {
+
+        _setupVersion();
+
         print('[updater] 已经是最新版本');
       }
-      if (mounted) {
-        setState(() {});
-      }
+
     } catch (err) {
       logger.e(err);
     }
@@ -94,12 +109,20 @@ class _MyPageState extends BaseState<MyPage> {
 
     _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
 
+    _setupVersion();
+  }
+
+  _setupVersion() {
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       if (mounted) {
         setState(() {
           _version = packageInfo.version;
           if (env.buildType != BuildType.PROD) {
             _version += '(Test1.3)';
+          }
+
+          if (_channel.isNotEmpty) {
+            _version = '$_channel：$_version';
           }
         });
       }
@@ -212,48 +235,37 @@ class _MyPageState extends BaseState<MyPage> {
               child: Column(
                 children: <Widget>[
                   _lineWidget(),
-                  _buildMenuBar('钱包管理', Icons.account_balance_wallet,
-                      () {
-                        WalletManagerPage.jumpWalletManager(context);
+                  _buildMenuBar(
+                    S.of(context).wallet_manage,
+                    Icons.account_balance_wallet,
+                    () {
+                      WalletManagerPage.jumpWalletManager(context);
 
-                        // Application.router.navigateTo(context, Routes.wallet_manager);
-                      },
-                    imageName:"ic_me_page_manage_wallet",
+                      // Application.router.navigateTo(context, Routes.wallet_manager);
+                    },
+                    imageName: "ic_me_page_manage_wallet",
                     color: Colors.cyan[300],
                   ),
                   _lineWidget(),
-                  _buildMenuBar('使用设置', Icons.settings,
-                      () => Navigator.push(context, MaterialPageRoute(builder: (context) => MeSettingPage())),
-                    imageName:"ic_me_page_setting",
+                  _buildMenuBar(
+                    S.of(context).preferences,
+                    Icons.settings,
+                    () => Navigator.push(context, MaterialPageRoute(builder: (context) => MeSettingPage())),
+                    imageName: "ic_me_page_setting",
                     color: Colors.cyan[400],
                   ),
-
                   _lineWidget(),
-                  _buildMenuBar(S.of(context).user_policy, Icons.assignment, () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PolicySelectPage(),
-                        ));
-                  },
-                    imageName:"ic_me_page_user_protocol",
-                    color: Colors.cyan[300],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 56.0),
-                    child: Divider(height: 0),
-                  ),
-                  _buildMenuBar(S.of(context).help, Icons.help, () => AtlasApi.goToAtlasMap3HelpPage(context),
-                    imageName:"ic_me_page_use_guide",
-                    color: Colors.cyan[400],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 56.0),
-                    child: Divider(height: 0),
-                  ),
-                  _buildMenuBar(S.of(context).about_us, Icons.info,
-                      () => Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage())),
-                    imageName:"ic_me_page_about_us",
+                  _buildMenuBar(
+                    S.of(context).user_policy,
+                    Icons.assignment,
+                    () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PolicySelectPage(),
+                          ));
+                    },
+                    imageName: "ic_me_page_user_protocol",
                     color: Colors.cyan[300],
                   ),
                   Padding(
@@ -261,7 +273,29 @@ class _MyPageState extends BaseState<MyPage> {
                     child: Divider(height: 0),
                   ),
                   _buildMenuBar(
-                    '版本更新',
+                    S.of(context).help,
+                    Icons.help,
+                    () => AtlasApi.goToAtlasMap3HelpPage(context),
+                    imageName: "ic_me_page_use_guide",
+                    color: Colors.cyan[400],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 56.0),
+                    child: Divider(height: 0),
+                  ),
+                  _buildMenuBar(
+                    S.of(context).about_us,
+                    Icons.info,
+                    () => Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage())),
+                    imageName: "ic_me_page_about_us",
+                    color: Colors.cyan[300],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 56.0),
+                    child: Divider(height: 0),
+                  ),
+                  _buildMenuBar(
+                    S.of(context).version_update,
                     Icons.batch_prediction,
                     () {
                       if (_haveNewVersion) {
@@ -273,19 +307,19 @@ class _MyPageState extends BaseState<MyPage> {
                     },
                     subText: _version,
                     haveCircle: _haveNewVersion,
-                    imageName:"ic_me_page_version_update",
+                    imageName: "ic_me_page_version_update",
                     color: Colors.cyan[400],
                   ),
-                  if ([
-                    '0x74Fa941242af2F76af1E5293Add5919f6881753a'.toLowerCase(),
-                    '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82'.toLowerCase(),
-                    '0x5AD1e746E6610401f598486d8747d9907Cf114b2'.toLowerCase(),
-                  ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
-                    _buildMenuBar(
-                        S.of(context).map_smart_contract_management,
-                        Icons.book,
-                        () => Navigator.push(
-                            context, MaterialPageRoute(builder: (context) => Map3ContractControlPage()))),
+                  // if ([
+                  //   '0x74Fa941242af2F76af1E5293Add5919f6881753a'.toLowerCase(),
+                  //   '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82'.toLowerCase(),
+                  //   '0x5AD1e746E6610401f598486d8747d9907Cf114b2'.toLowerCase(),
+                  // ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
+                  //   _buildMenuBar(
+                  //       S.of(context).map_smart_contract_management,
+                  //       Icons.book,
+                  //       () => Navigator.push(
+                  //           context, MaterialPageRoute(builder: (context) => Map3ContractControlPage()))),
                   Divider(
                     height: 0,
                   ),
@@ -325,7 +359,7 @@ class _MyPageState extends BaseState<MyPage> {
     if (imageName.length <= 0) {
       iconWidget = Icon(
         iconData,
-        color: color??Color(0xffb4b4b4),
+        color: color ?? Color(0xffb4b4b4),
       );
     } else {
       iconWidget = Image.asset(
@@ -370,7 +404,9 @@ class _MyPageState extends BaseState<MyPage> {
                   ),
                 ),
               Padding(
-                padding: const EdgeInsets.only(left: 12,),
+                padding: const EdgeInsets.only(
+                  left: 12,
+                ),
                 child: Image.asset(
                   'res/drawable/me_account_bind_arrow.png',
                   width: 7,
@@ -525,10 +561,7 @@ class _MyPageState extends BaseState<MyPage> {
   }
 
   void shareApp() async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => PromoteQrCodePage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => PromoteQrCodePage()));
     /*
     return;
 
@@ -608,7 +641,7 @@ class _MyPageState extends BaseState<MyPage> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 26.0),
                                 child: ClickOvalButton(
-                                  "立即体验",
+                                  S.of(context).experience_now,
                                   () {
                                     _launch(updateEntity);
                                   },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/src/config/consts.dart';
 
 class BaseAppBar extends AppBar {
   final String baseTitle;
@@ -7,12 +8,13 @@ class BaseAppBar extends AppBar {
   final List<Widget> actions;
   final Widget leading;
   final Color backgroundColor;
-
+  final bool showBottom;
   BaseAppBar({
     this.baseTitle,
     this.actions,
     this.leading,
     this.backgroundColor = Colors.white,
+    this.showBottom = false,
   }) : super(
           title: Text(
             baseTitle,
@@ -28,6 +30,20 @@ class BaseAppBar extends AppBar {
           iconTheme: IconThemeData(color: Colors.black),
           actions: actions,
           leading: leading,
+          bottom: showBottom
+              ? PreferredSize(
+                  child: Container(
+                    color: Theme.of(Keys.rootKey.currentContext).scaffoldBackgroundColor,
+                    height: 5,
+                  ),
+                  preferredSize: Size.fromHeight(5))
+              : null,
+          /*bottom: showBottom?PreferredSize(
+              child: Container(
+                color: Theme.of(Keys.rootKey.currentContext).scaffoldBackgroundColor,
+                height: 1,
+              ),
+              preferredSize: Size.fromHeight(1)):null,*/
         );
 }
 

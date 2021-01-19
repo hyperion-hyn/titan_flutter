@@ -48,6 +48,7 @@ class ExchangeDetailPage extends StatefulWidget {
   var exchangeType = ExchangeType.SELL;
   var quote = '';
   var base = '';
+  static final int depthLength = 8;
 
   ExchangeDetailPage({
     this.exchangeType,
@@ -488,7 +489,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                   ],
                 ),
                 delegationListView(context, _buyChartList, _sailChartList,
-                    limitNum: 5, clickPrice: (depthPrice) {
+                    limitNum: ExchangeDetailPage.depthLength, clickPrice: (depthPrice) {
                   if (depthPrice == "null") return;
 
                   currentPrice = Decimal.parse(depthPrice);
@@ -1159,7 +1160,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                     padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                     child: Text(
                       !exchangeModel.isActiveAccountAndHasAssets()
-                          ? "授权后查看余额"
+                          ? S.of(context).check_balance_after_authorization
                           : "${S.of(context).available}  ${getValidNum()}  ${isBuy ? widget.base : widget.quote}",
                       style: TextStyle(
                           color: DefaultColors.color999, fontSize: 10),

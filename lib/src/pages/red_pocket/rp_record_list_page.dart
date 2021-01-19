@@ -10,12 +10,14 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/utils/format_util.dart';
+import "package:collection/collection.dart";
 
 class RpRecordListPage extends StatefulWidget {
-  final RedPocketType state; // 1: 已经打开，2：未打开
-  RpRecordListPage({this.state = RedPocketType.LUCKY});
+  final RedPocketType rpType; // 1: 已经打开，2：未打开
+  RpRecordListPage({this.rpType = RedPocketType.LUCKY});
 
   @override
   State<StatefulWidget> createState() {
@@ -32,10 +34,8 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
 
   var _address = "";
   List<RpOpenRecordEntity> _dataList = [];
-  List<RpOpenRecordEntity> get _filterDataList =>
-      _dataList?.where((element) => element.type == widget.state.index)?.toList() ?? [];
-
-  int lastDay;
+  Map<String, List<RpOpenRecordEntity>> get _filterDataMap =>
+      groupBy(_dataList, (model) => FormatUtil.humanReadableDay(model.createdAt));
 
   @override
   bool get wantKeepAlive => true;
@@ -86,47 +86,42 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
           SliverList(
               delegate: SliverChildBuilderDelegate(
             (context, index) {
-              var model = _filterDataList[index];
-
-              var currentDate = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
-
-              bool isNewDay = false;
-              if (index == 0) {
-                isNewDay = true;
-              } else {
-                if (currentDate.day != lastDay) {
-                  isNewDay = true;
-                }
-              }
-              lastDay = currentDate.day;
-
-              //print("[$runtimeType] model.createdAt:${model.createdAt},length:${model.createdAt.toString().length}");
+              var key = _filterDataMap.keys.toList()[index];
+              var value = _filterDataMap[key];
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (isNewDay)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
-                      child: Text(
-                        FormatUtil.humanReadableDay(model.createdAt),
-                        style: TextStyle(color: Color(0xff999999)),
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 12,
+                      left: 24,
+                      bottom: 4,
                     ),
-                  _itemBuilder(index),
+                    child: Text(
+                      key,
+                      style: TextStyle(color: Color(0xff999999), fontSize: 12,),
+                    ),
+                  ),
+                  ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return _itemBuilder(value[index]);
+                    },
+                    itemCount: value.length,
+                  ),
                 ],
               );
             },
-            childCount: _filterDataList?.length ?? 0,
+            childCount: _filterDataMap?.length ?? 0,
           ))
         ],
       ),
     );
   }
 
-  Widget _itemBuilder(int index) {
-    var model = _filterDataList[index];
-
+  Widget _itemBuilder(RpOpenRecordEntity model) {
     var luckState = RpLuckState.values[(model?.luck ?? 0)];
     var rpInfoModel = getRpLuckStateInfo(model);
     var desc = rpInfoModel.desc;
@@ -136,15 +131,15 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
     RedPocketType rpType = RedPocketType.values[model.type];
     switch (rpType) {
       case RedPocketType.LUCKY:
-        title = '幸运红包';
+        title = S.of(context).lucky_rp;
         break;
 
       case RedPocketType.LEVEL:
-        title = '量级红包';
+        title = S.of(context).level_rp;
         break;
 
       case RedPocketType.PROMOTION:
-        title = '晋升红包';
+        title = S.of(context).promotion_rp;
         break;
 
       default:
@@ -173,10 +168,7 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
       child: Padding(
         padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 12,
-          ),
+          padding: const EdgeInsets.only(top: 12, left: 12, right: 12, bottom: 12),
           decoration: BoxDecoration(
             color: HexColor('#FFFFFF'),
             borderRadius: BorderRadius.all(
@@ -291,35 +283,25 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
     _countRequest = 0;
 
     try {
-      var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
+      var netData = await _rpApi.getMyRpRecordList(
+        _address,
+        pagingKey: _currentPageKey,
+        rpType: widget.rpType,
+      );
 
       if (netData?.data?.isNotEmpty ?? false) {
         _currentPageKey = netData.pagingKey;
         _dataList = filterRpOpenDataList(netData.data);
-      }
 
-      if ((_filterDataList?.length ?? 0) < 15) {
-        if (_isNotEmptyKey) {
-          getMoreNetworkData();
-        } else {
-          if (_filterDataList.isNotEmpty) {
-            if (mounted) {
-              setState(() {
-                _loadDataBloc.add(RefreshSuccessEvent());
-              });
-            }
-          } else {
-            if (mounted) {
-              setState(() {
-                _loadDataBloc.add(LoadEmptyEvent());
-              });
-            }
-          }
+        if (mounted) {
+          setState(() {
+            _loadDataBloc.add(RefreshSuccessEvent());
+          });
         }
       } else {
         if (mounted) {
           setState(() {
-            _loadDataBloc.add(RefreshSuccessEvent());
+            _loadDataBloc.add(LoadEmptyEvent());
           });
         }
       }
@@ -339,44 +321,27 @@ class _RpRecordListState extends BaseState<RpRecordListPage> with AutomaticKeepA
     }
 
     try {
-      var netData = await _rpApi.getMyRpRecordList(_address, pagingKey: _currentPageKey);
+      var netData = await _rpApi.getMyRpRecordList(
+        _address,
+        pagingKey: _currentPageKey,
+        rpType: widget.rpType,
+      );
 
       var isNotEmpty = netData?.data?.isNotEmpty ?? false;
       if (isNotEmpty) {
         _currentPageKey = netData.pagingKey;
         _dataList.addAll(filterRpOpenDataList(netData.data));
-      }
 
-      if (!_isNotEmptyKey) {
-        if (_filterDataList?.isEmpty ?? true) {
-          if (mounted) {
-            setState(() {
-              _loadDataBloc.add(LoadEmptyEvent());
-            });
-          }
-        } else {
-
-          if (mounted) {
-            setState(() {
-              _loadDataBloc.add(LoadMoreEmptyEvent());
-            });
-          }
-
-          if (mounted) {
-            setState(() {
-              _loadDataBloc.add(RefreshSuccessEvent());
-            });
-          }
+        if (mounted) {
+          setState(() {
+            _loadDataBloc.add(LoadMoreEmptyEvent());
+          });
         }
       } else {
-        if ((_filterDataList?.length ?? 0) < 15) {
-          getMoreNetworkData();
-        } else {
-          if (mounted) {
-            setState(() {
-              _loadDataBloc.add(LoadingMoreSuccessEvent());
-            });
-          }
+        if (mounted) {
+          setState(() {
+            _loadDataBloc.add(LoadingMoreSuccessEvent());
+          });
         }
       }
     } catch (e) {

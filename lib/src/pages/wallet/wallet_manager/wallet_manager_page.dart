@@ -136,6 +136,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
         appBar: BaseAppBar(
           backgroundColor: HexColor('#F6F6F6'),
           baseTitle: S.of(context).wallet_manage,
+          showBottom: true,
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -357,7 +358,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
           width: 8,
         ),
         ClickOvalButton(
-          "切换钱包",
+          S.of(context).switch_wallet,
           () async {
             Navigator.pop(context);
 

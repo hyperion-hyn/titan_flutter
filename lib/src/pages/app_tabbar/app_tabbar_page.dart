@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -23,7 +22,6 @@ import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/app_tabbar/bottom_fabs_widget.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_node_tabs_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_tabs_page_deprecated.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
@@ -31,15 +29,13 @@ import 'package:titan/src/pages/home/bloc/bloc.dart';
 import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/wallet/wallet_tabs_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
-import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/encryption.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
 import '../../../env.dart';
@@ -75,6 +71,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
   ScaffoldMapState _mapState;
   var _isShowAnnounceDialog = false;
   var homePageFirst = true;
+  bool get _isDefaultState => _mapState is DefaultScaffoldMapState || _mapState == null;
 
   @override
   void initState() {
@@ -140,19 +137,12 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     TitanPlugin.urlLauncherCallBack = (Map values) {
       _urlLauncherAction(values);
     };
-
   }
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-  }
 
-  @override
-  void didUpdateWidget(AppTabBarPage oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -202,7 +192,10 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     } else if (type == "rp" && subType == "detail") {
       var inviterAddress = content["from"];
       var walletName = content["name"];
-      showInviteDialog(context,inviterAddress,walletName);
+      showInviteDialog(context, inviterAddress, walletName);
+    } else if (type == "rp" && subType == "sendRp") {
+      var rpId = content["rpId"];
+      showShareRpOpenDialog(context, id: rpId);
     } else if (type == "richinvite" && subType == "detail") {
       var inviterAddress = content["from"];
       var walletName = content["name"];
@@ -339,7 +332,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
               },
               child: BlocBuilder<AppTabBarBloc, AppTabBarState>(builder: (context, state) {
                 if (state is CheckNewAnnouncementState && state.announcement != null) {
-                  _isShowAnnounceDialog = false;
+                  _isShowAnnounceDialog = true;
                   Application.isUpdateAnnounce = true;
                 }
 
@@ -369,9 +362,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     );
   }
 
-  bool get _isDefaultState {
-    return _mapState is DefaultScaffoldMapState || _mapState == null;
-  }
 
   Widget userLocationBar() {
     return LayoutBuilder(

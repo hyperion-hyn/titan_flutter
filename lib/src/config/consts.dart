@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/plugins/wallet/contract_const.dart';
 
 import '../../env.dart';
 
@@ -84,11 +83,25 @@ class Const {
   static const kNcovMapStyleCn = 'https://cn.tile.map3.network/ncov.json';
 
   //white
-  static const kWhiteMapStyleCn =
-      'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+  // static const kWhiteMapStyleCn =
+  //     'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+  static String get kWhiteMapStyleCn {
+    if (env.buildType == BuildType.DEV) {
+      return 'https://cn.tile.map3.network/see-it-all-rp-test.json';
+    } else {
+      return 'https://cn.tile.map3.network/see-it-all-rp.json';
+    }
+  }
 
-  static const kWhiteMapStyle =
-      'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
+  // static const kWhiteMapStyle =
+  //     'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
+  static String get kWhiteMapStyle {
+    if (env.buildType == BuildType.DEV) {
+      return 'https://static.hyn.space/maptiles/see-it-all-rp-test.json';
+    } else {
+      return 'https://static.hyn.space/maptiles/see-it-all-rp.json';
+    }
+  }
 
 //white-without
   static const kWhiteWithoutMapStyleCn =
@@ -178,14 +191,17 @@ class PrefsKey {
   static const String KLINE_SECONDARY_STATE = 'secondaryState';
 
   static const String CACHE_MARKET_ITEM_LIST = 'cache_market_item_list_v2';
-
+  static const String CACHE_EXCHANGE_COIN_LIST = 'cache_exchange_coin_list';
+  
   static const String EXCHANGE_ACCOUNT = 'exchange_account';
   static const String EXCHANGE_ACCOUNT_LAST_AUTH_TIME =
       'exchange_account_last_auth_time';
-  static const String PENDING_TRANSFER_KEY_PREFIX = 'pending_transfer_key_';
+  // static const String PENDING_TRANSFER_KEY_PREFIX = 'pending_transfer_key_';
+  static const String PENDING_TRANSACTIONS_KEY_PREFIX = 'pending_transactions_key_';
 
   static const String EXCHANGE_ACCOUNT_ABNORMAL = 'exchange_account_abnormal_';
 
+  
   ///Policy
   static const String IS_CONFIRM_WALLET_POLICY = 'wallet_policy_confirmed';
   static const String IS_CONFIRM_DEX_POLICY = 'dex_policy_confirmed';
@@ -212,9 +228,4 @@ class RouteProfile {
   static final String driving = 'driving';
   static final String walking = 'walking';
   static final String cycling = 'cycling';
-}
-
-class PlatformErrorCode {
-  static const String PASSWORD_WRONG = '1';
-  static const String PARAMETERS_WRONG = '2';
 }

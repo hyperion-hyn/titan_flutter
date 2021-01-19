@@ -2,7 +2,6 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -22,9 +21,8 @@ import 'package:titan/src/pages/market/model/asset_type.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
+import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -43,8 +41,7 @@ class ExchangeAssetHistoryPage extends StatefulWidget {
   }
 }
 
-class _ExchangeAssetHistoryPageState
-    extends BaseState<ExchangeAssetHistoryPage> {
+class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage> {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   ActiveQuoteVoAndSign symbolQuote;
   List<AssetHistory> _assetHistoryList = List();
@@ -55,25 +52,21 @@ class _ExchangeAssetHistoryPageState
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loadDataBloc.add(LoadingEvent());
   }
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
-    symbolQuote =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
+    symbolQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
     _updateTypeToCurrency();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     _loadDataBloc.close();
+    super.dispose();
   }
 
   _updateTypeToCurrency() async {
@@ -117,8 +110,7 @@ class _ExchangeAssetHistoryPageState
                   await _loadMore();
                 },
                 onRefresh: () async {
-                  BlocProvider.of<ExchangeCmpBloc>(context)
-                      .add(UpdateAssetsEvent());
+                  BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
                   await _refresh();
                 },
                 child: CustomScrollView(
@@ -152,9 +144,7 @@ class _ExchangeAssetHistoryPageState
                         textColor: Colors.white,
                         disabledTextColor: Colors.white,
                         onPressed: () {
-                          if (ExchangeInheritedModel.of(context)
-                              .exchangeModel
-                              .isActiveAccountAndHasAssets()) {
+                          if (ExchangeInheritedModel.of(context).exchangeModel.isActiveAccountAndHasAssets()) {
                             Application.router.navigateTo(
                               context,
                               '${Routes.exchange_transfer_page}?coinType=${widget._symbol}',
@@ -276,38 +266,22 @@ class _ExchangeAssetHistoryPageState
   _assetItem() {
     if (widget._symbol == 'HYN') {
       return AssetItem(
-        ExchangeInheritedModel.of(context)
-            ?.exchangeModel
-            ?.activeAccount
-            ?.assetList
-            ?.HYN,
+        ExchangeInheritedModel.of(context)?.exchangeModel?.activeAccount?.assetList?.HYN,
         _usdtToCurrency,
       );
     } else if (widget._symbol == 'USDT') {
       return AssetItem(
-        ExchangeInheritedModel.of(context)
-            ?.exchangeModel
-            ?.activeAccount
-            ?.assetList
-            ?.USDT,
+        ExchangeInheritedModel.of(context)?.exchangeModel?.activeAccount?.assetList?.USDT,
         _usdtToCurrency,
       );
     } else if (widget._symbol == 'ETH') {
       return AssetItem(
-        ExchangeInheritedModel.of(context)
-            ?.exchangeModel
-            ?.activeAccount
-            ?.assetList
-            ?.ETH,
+        ExchangeInheritedModel.of(context)?.exchangeModel?.activeAccount?.assetList?.ETH,
         _usdtToCurrency,
       );
     } else if (widget._symbol == 'RP') {
       return AssetItem(
-        ExchangeInheritedModel.of(context)
-            ?.exchangeModel
-            ?.activeAccount
-            ?.assetList
-            ?.RP,
+        ExchangeInheritedModel.of(context)?.exchangeModel?.activeAccount?.assetList?.RP,
         _usdtToCurrency,
       );
     } else {
@@ -337,16 +311,9 @@ class _ExchangeAssetHistoryPageState
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      WalletShowAccountInfoPage(transactionDetailVo.hash,transactionDetailVo.symbol)));
+                      WalletShowTransactionSimpleInfoPage(transactionDetailVo.hash, transactionDetailVo.symbol)));
         } else {
-          var isChinaMainland =
-              (SettingInheritedModel.of(context).areaModel?.isChinaMainland ??
-                      true) ==
-                  true;
-          var url = EtherscanApi.getTxDetailUrl(
-            assetHistory.txId,
-            isChinaMainland,
-          );
+          var url = EtherscanApi.getTxDetailUrl(assetHistory.txId);
           if (url != null) {
             Navigator.push(
                 context,
@@ -398,10 +365,8 @@ class _ExchangeAssetHistoryPageState
                             ),
                             Text(
                               "${Decimal.parse(assetHistory.balance)}",
-                              style: TextStyle(
-                                  color: DefaultColors.color333,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12),
+                              style:
+                                  TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w500, fontSize: 12),
                             ),
                           ],
                         ),
@@ -593,8 +558,7 @@ class AssetItemState extends State<AssetItem> {
                     Text(
                       balanceByCurrency,
                       maxLines: 2,
-                      style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
                     ),
                   ],
                 ),

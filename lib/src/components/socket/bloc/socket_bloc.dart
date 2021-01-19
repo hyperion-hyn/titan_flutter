@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/entity/exchange_coin_list.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/entity/market_symbol_list.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -68,12 +69,9 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
               if (channel != null && channel is String) {
                 String channelValue = channel;
 
-
                 //LogUtil.printMessage("[SocketBloc] mapEventToState, channelValue:$channelValue");
 
-
                 if (channelValue == SocketConfig.channelKLine24Hour) {
-
                   var responseMap = response as Map;
                   var symbol = responseMap['symbol'];
                   var data = responseMap['data'];
@@ -96,15 +94,21 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                     }
                   }*/
 
-
                   yield ChannelKLine24HourState(symbol: symbol, response: data);
                 } else if (channelValue.contains("depth")) {
-                  yield ChannelExchangeDepthState(channel: channelValue ,response: response,);
+                  yield ChannelExchangeDepthState(
+                    channel: channelValue,
+                    response: response,
+                  );
                 } else if (channelValue.contains("trade.detail")) {
-                  yield ChannelTradeDetailState(channel: channelValue ,response: response,);
+                  yield ChannelTradeDetailState(
+                    channel: channelValue,
+                    response: response,
+                  );
                 } else if (channelValue.startsWith("user") &&
                     channelValue.contains("tick")) {
-                  yield ChannelUserTickState(channel: channelValue,response: response);
+                  yield ChannelUserTickState(
+                      channel: channelValue, response: response);
                 } else {
                   yield ChannelKLinePeriodState(
                       channel: channelValue, response: response);
@@ -148,6 +152,15 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
           MarketSymbolList.fromJsonToMarketItemList(response);
 
       yield MarketSymbolState(_marketItemList);
+    } else if (event is UpdateExchangeCoinListEvent) {
+      try {
+        var exchangeCoinList = await _exchangeApi.getCoinList();
+
+        //var json =jsonDecode('{"assets":["USDT","HYN","RP"],"activeExchangeMap":{"USDT":["HYN","RP"],"HYN":["RP"]}}');
+        //var exchangeCoinList = ExchangeCoinList.fromJson(json);
+
+        yield UpdateExchangeCoinListState(exchangeCoinList);
+      } catch (e) {}
     }
   }
 

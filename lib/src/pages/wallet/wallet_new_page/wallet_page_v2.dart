@@ -78,9 +78,6 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
 
   @override
   Future<void> onCreated() async {
-    _postWalletBalance();
-
-    // listLoadingData();
   }
 
   _checkDexAccount() async {
@@ -112,44 +109,6 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
 
       setState(() {});
     } catch (e) {}
-  }
-
-  Future<void> _postWalletBalance() async {
-    //appType:  0:titan; 1:star
-
-    if (context == null) return;
-
-    var activatedWalletVo =
-        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
-            ?.activatedWallet;
-
-    if (activatedWalletVo == null) return;
-
-    String address = activatedWalletVo.wallet.getEthAccount().address;
-    int appType = 0;
-    String email = "titan";
-    String hynBalance = "0";
-    LogUtil.printMessage(
-        "[API] address:$address, hynBalance:$hynBalance, email:$email");
-
-    // 同步用户钱包信息
-    if (address.isNotEmpty) {
-      var hynCoinVo = WalletInheritedModel.of(context).getCoinVoBySymbol("HYN");
-      LogUtil.printMessage(
-          "object] balance1: ${hynCoinVo.balance}, decimal:${hynCoinVo.decimals}");
-      var balance = FormatUtil.coinBalanceDouble(hynCoinVo);
-      balance = 0;
-      if (balance <= 0) {
-        var balanceValue = await activatedWalletVo.wallet
-            .getErc20Balance(hynCoinVo.contractAddress);
-        balance = ConvertTokenUnit.weiToDecimal(
-                balanceValue ?? 0, hynCoinVo?.decimals ?? 0)
-            .toDouble();
-        LogUtil.printMessage("object] balance2: $balance");
-      }
-      hynBalance = balance.toString();
-      BitcoinApi.postWalletBalance(address, appType, email, hynBalance);
-    }
   }
 
   _showBackupDialog() async {

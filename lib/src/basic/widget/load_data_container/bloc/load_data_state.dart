@@ -12,7 +12,7 @@ class LoadEmptyState extends LoadDataState {}
 class LoadFailState extends LoadDataState {
   final String message;
 
-  LoadFailState({this.message = '加载失败'});
+  LoadFailState(this.message);
 }
 
 class RefreshingState extends LoadDataState {}
@@ -24,7 +24,7 @@ class RefreshSuccessState extends LoadDataState {}
 class RefreshFailState extends LoadDataState {
   final String message;
 
-  RefreshFailState({this.message = '刷新失败'});
+  RefreshFailState(this.message);
 }
 
 class LoadingMoreState extends LoadDataState {}

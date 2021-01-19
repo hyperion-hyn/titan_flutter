@@ -33,8 +33,6 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
   void initState() {
     initMnemonic();
     super.initState();
-
-    print('xxx walletName is ${widget.walletName}');
   }
 
   void initMnemonic() {

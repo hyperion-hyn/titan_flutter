@@ -15,6 +15,7 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -51,7 +52,7 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> with Automa
   Microdelegations _microDelegations;
   bool _isShowBorderHint = false;
 
-  final _client = WalletUtil.getWeb3Client(true);
+  final _client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
 
   @override
   bool get wantKeepAlive => true;
@@ -292,27 +293,27 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> with Automa
 
     ///creator edit hint
     if (_isNodeCreator && _currentEpoch < _creatorCanEditEpoch) {
-      _content = '距离可以设置下期续约还有${_creatorCanEditEpoch - _currentEpoch}纪元';
+      _content = S.of(context).num_era_before_next_renewal_set(_creatorCanEditEpoch - _currentEpoch);
     }
 
     if (!_hasRenew && _isNodeCreator && _creatorCanEdit) {
       _isShowBorderHint = true;
-      _content = '节点即将结束，请尽快设置下期续约';
+      _content = S.of(context).node_end_set_renewal_possible;
     }
 
     ///Joiner edit hin
     if (_isJoiner && _currentEpoch < _joinerCanEditEpoch) {
-      _content = '距离可以设置下期续约还有${_joinerCanEditEpoch - _currentEpoch}纪元';
+      _content = S.of(context).num_era_before_next_renewal_set(_joinerCanEditEpoch - _currentEpoch);
     }
 
     if (!_hasRenew && _isJoiner && _joinerCanEdit) {
       _isShowBorderHint = true;
-      _content = '节点即将结束，请尽快设置下期是否跟随续约';
+      _content = S.of(context).node_end_set_renewal_possible;
     }
 
     if (!_hasReDelegation) {
       _isShowBorderHint = true;
-      _content = _isNodeCreator ? '尚未复投Atlas节点' : '请节点主尽快复抵押至atlas节点以享受出块奖励';
+      _content = _isNodeCreator ? S.of(context).atlas_node_not_reinvested : S.of(context).map3_notification_redelegate;
     }
 
     if (_content.isNotEmpty) {

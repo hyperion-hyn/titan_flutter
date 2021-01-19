@@ -131,7 +131,7 @@ class _RpFriendListState extends BaseState<RpFriendListPage> {
                 ),
               ),
               Text(
-                '暂无记录',
+                S.of(context).no_data,
                 style: TextStyle(
                   fontSize: 13,
                   color: DefaultColors.color999,
@@ -248,7 +248,7 @@ class _RpFriendListState extends BaseState<RpFriendListPage> {
                           : SizedBox(),
                     ),
                     Text(
-                      ' $inviterLevel 级',
+                      ' $inviterLevel ${S.of(context).level}',
                       style: TextStyle(
                         color: HexColor("#999999"),
                         fontSize: 12,
@@ -286,7 +286,7 @@ class _RpFriendListState extends BaseState<RpFriendListPage> {
         ),
       );
     } else {
-      return Text('暂无',
+      return Text(S.of(context).no_data,
           style: TextStyle(
             fontSize: 11,
             color: DefaultColors.color999,
@@ -366,7 +366,7 @@ class _RpFriendListState extends BaseState<RpFriendListPage> {
                             : SizedBox(),
                       ),
                       Text(
-                        ' $level 级',
+                        ' $level ${S.of(context).level}',
                         style: TextStyle(
                           color: HexColor("#999999"),
                           fontSize: 12,

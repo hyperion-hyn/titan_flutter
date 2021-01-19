@@ -180,7 +180,7 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
         yield FailPostPoiNcovDataState(event.code);
       }
     } catch (code, message) {
-      yield LoadFailState(message: S.of(Keys.rootKey.currentContext).net_error_hint);
+      yield LoadFailState(messageStr: S.of(Keys.rootKey.currentContext).net_error_hint);
     }
   }
 

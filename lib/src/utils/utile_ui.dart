@@ -259,7 +259,7 @@ class UiUtil {
   }
 
   // alertView
-  static Future<bool> showAlertViewNew<T>(
+  static Future<T> showAlertViewNew<T>(
     BuildContext context, {
     List<Widget> actions,
     Widget contentWidget,
@@ -268,7 +268,7 @@ class UiUtil {
     bool isShowBottom = false,
     Color barrierColor,
   }) {
-    return showDialog<bool>(
+    return showDialog<T>(
       barrierDismissible: barrierDismissible,
       barrierColor: barrierColor,
       // 传入 context
@@ -304,7 +304,7 @@ class UiUtil {
                           right: 0,
                           top: 0,
                           child: GestureDetector(
-                            onTap: () => Navigator.pop(context, false),
+                            onTap: () => Navigator.pop(context),
                             child: Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: Image.asset(
@@ -958,7 +958,7 @@ class UiUtil {
           return Wrap(
             children: <Widget>[
               ListTile(
-                title: Text('拍照', textAlign: TextAlign.center),
+                title: Text(S.of(context).take_picture, textAlign: TextAlign.center),
                 onTap: () async {
                   Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext, true);

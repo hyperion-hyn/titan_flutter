@@ -9,12 +9,16 @@ class Repository {
   SearchHistoryDao searchHistoryDao;
   TransferHistoryDao transferHistoryDao;
 
-  Repository({@required Api api, @required SearchHistoryDao searchHistoryDao, @required TransferHistoryDao transferHistoryDao})
+  Repository(
+      {@required Api api,
+      @required SearchHistoryDao searchHistoryDao,
+      @required TransferHistoryDao transferHistoryDao})
       : api = api,
         searchHistoryDao = searchHistoryDao,
         transferHistoryDao = transferHistoryDao;
 
-  Future<UpdateEntity> checkNewVersion(String channel, String lang, String platform) {
+  Future<UpdateEntity> checkNewVersion(
+      String channel, String lang, String platform) {
     return api.update(channel, lang, platform);
   }
 }

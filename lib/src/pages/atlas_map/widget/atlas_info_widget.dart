@@ -71,15 +71,13 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                       width: 4,
                     ),
                     Text(
-                      'HYN燃烧',
+                      S.of(context).hyn_burning,
                       style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
                     )
                   ],
                 ),
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) => BurnHistoryPage(),
-                  ));
+                  Application.router.navigateTo(context, Routes.map3node_burn_history_page);
                 },
               ),
               Spacer(),
@@ -128,7 +126,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                     Padding(
                       padding: EdgeInsets.only(left: 4.0),
                       child: Text(
-                        '我的奖励',
+                        S.of(context).my_reward,
                         style: TextStyle(
                           color: HexColor('#FFE4D17E'),
                           fontSize: 11,

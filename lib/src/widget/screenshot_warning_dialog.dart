@@ -25,18 +25,15 @@ class ScreenshotWarningDialog extends StatefulWidget {
 class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
   void initState() {
     super.initState();
-    // TODO: implement initState
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
   }
 
@@ -98,7 +95,7 @@ class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
                       Padding(
                         padding: const EdgeInsets.only(top: 16.0, bottom: 24.0),
                         child: ClickOvalButton(
-                          S.of(context).no_screenshot_dialog_confirm,
+                          S.of(context).cancel,
                           () {
                             Navigator.of(context).pop();
                             widget.onConfirm();

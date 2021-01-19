@@ -321,7 +321,7 @@ class _MeCheckInHistoryDetailState extends BaseState<MeCheckInHistoryDetail> {
                     style: TextStyle(color: HexColor('#333333'), fontSize: 12, fontWeight: FontWeight.w600),
                     children: [
                       TextSpan(
-                        text: "以上图片${model.answer ? " ${S.of(context).isolation_yes} " : " ${S.of(context).isolation_no} "}"+ S.of(context).poi_real_picture,
+                        text: "${S.of(context).photos_beyond}${model.answer ? " ${S.of(context).isolation_yes} " : " ${S.of(context).isolation_no} "}"+ S.of(context).poi_real_picture,
                         style: TextStyle(color: HexColor('#333333'), fontSize: 12, fontWeight: FontWeight.normal),
                       ),
                       TextSpan(

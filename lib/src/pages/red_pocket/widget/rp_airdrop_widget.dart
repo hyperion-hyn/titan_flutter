@@ -23,10 +23,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
-
 import '../rp_level_records_page.dart';
-import '../rp_record_list_page.dart';
-
 
 enum AirdropState {
   Waiting,
@@ -51,8 +48,7 @@ class RPAirdropWidget extends StatefulWidget {
   }
 }
 
-class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
-    with SingleTickerProviderStateMixin {
+class _RPAirdropWidgetState extends BaseState<RPAirdropWidget> with SingleTickerProviderStateMixin {
   Timer _airdropInfoTimer;
   Timer _countDownTimer;
   Timer _animTimer;
@@ -63,14 +59,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
   // AirdropState _currentAirdropState = AirdropState.Waiting;
 
-  StreamController<AirdropState> rpMachineStreamController =
-      StreamController.broadcast();
-  StreamController<int> nextRoundStreamController =
-      StreamController.broadcast();
-  StreamController<int> currentRoundStreamController =
-      StreamController.broadcast();
-  StreamController<bool> machineLightOnController =
-      StreamController.broadcast();
+  StreamController<AirdropState> rpMachineStreamController = StreamController.broadcast();
+  StreamController<int> nextRoundStreamController = StreamController.broadcast();
+  StreamController<int> currentRoundStreamController = StreamController.broadcast();
+  StreamController<bool> machineLightOnController = StreamController.broadcast();
 
   int _nextRoundRemainTime = 0; // 下一轮剩余时间
   int _currentRoundRemainTime = 0;
@@ -186,18 +178,26 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
     if (currentRoundStartTime - now > 0) {
       _nextRoundRemainTime = currentRoundStartTime - now;
-      nextRoundStreamController.add(_nextRoundRemainTime);
+
+      if (!nextRoundStreamController.isClosed) {
+        nextRoundStreamController.add(_nextRoundRemainTime);
+      }
     }
 
     if (currentRoundEndTime > now) {
       _currentRoundRemainTime = currentRoundEndTime - now;
-      currentRoundStreamController.add(_currentRoundRemainTime);
+
+      if (!currentRoundStreamController.isClosed) {
+        currentRoundStreamController.add(_currentRoundRemainTime);
+      }
     }
 
     ///已过当前轮，使用下一轮的startTime
     if (now > currentRoundEndTime && now < nextRoundStartTime) {
       _nextRoundRemainTime = nextRoundStartTime - now;
-      nextRoundStreamController.add(_nextRoundRemainTime);
+      if (!nextRoundStreamController.isClosed) {
+        nextRoundStreamController.add(_nextRoundRemainTime);
+      }
     }
 
     if (mounted) setState(() {});
@@ -280,15 +280,14 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     var airDropPercent = _rpStatistics?.rpContractInfo?.dropOnPercent ?? '--';
     var alreadyAirdrop = '--';
 
-    var currentLevel =
-        RedPocketInheritedModel.of(context).rpMyLevelInfo?.currentLevel ?? 0;
+    var currentLevel = RedPocketInheritedModel.of(context).rpMyLevelInfo?.currentLevel ?? 0;
     var hint = '';
     if (currentLevel == 0) {
-      hint = '提升量级可参与';
+      hint = S.of(context).level_up_to_join_airdrop;
     } else if (currentLevel == 5) {
-      hint = '你正在参与空投';
+      hint = S.of(context).already_join_airdrop;
     } else {
-      hint = '提升量级可获得更多红包';
+      hint = S.of(context).level_up_to_get_more_rp;
     }
 
     try {
@@ -425,11 +424,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     var _nextRoundStartTimeMillieSecond = 0;
 
     if (now > (_latestLuckyRoundInfo?.endTime ?? 0)) {
-      _nextRoundStartTimeMillieSecond =
-          (_latestLuckyRoundInfo?.nextRoundStartTime ?? 0) * 1000;
+      _nextRoundStartTimeMillieSecond = (_latestLuckyRoundInfo?.nextRoundStartTime ?? 0) * 1000;
     } else {
-      _nextRoundStartTimeMillieSecond =
-          (_latestLuckyRoundInfo?.startTime ?? 0) * 1000;
+      _nextRoundStartTimeMillieSecond = (_latestLuckyRoundInfo?.startTime ?? 0) * 1000;
     }
 
     var _nextRoundTimeText = _nextRoundStartTimeMillieSecond != 0
@@ -486,8 +483,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
                 } else {
-                  var nextRoundText =
-                      '${S.of(context).rp_next_round_estimate} ${FormatUtil.formatTimer(
+                  var nextRoundText = '${S.of(context).rp_next_round_estimate} ${FormatUtil.formatTimer(
                     _nextRoundRemainTime,
                   )}';
                   return Text(nextRoundText);
@@ -553,12 +549,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
                 } else {
-                  var currentRoundText =
-                      '${S.of(context).rp_current_round_remain_time} ${FormatUtil.formatMinuteTimer(
+                  var currentRoundText = '${S.of(context).rp_current_round_remain_time} ${FormatUtil.formatMinuteTimer(
                     _currentRoundRemainTime,
                   )}';
-                  return Text(currentRoundText,
-                      style: TextStyle(color: Colors.black45, fontSize: 12));
+                  return Text(currentRoundText, style: TextStyle(color: Colors.black45, fontSize: 12));
                 }
               }),
         ],
@@ -608,12 +602,10 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 if (snapshot?.data == null || snapshot?.data == 0) {
                   return SizedBox();
                 } else {
-                  var currentRoundText =
-                      '${S.of(context).rp_current_round_remain_time} ${FormatUtil.formatMinuteTimer(
+                  var currentRoundText = '${S.of(context).rp_current_round_remain_time} ${FormatUtil.formatMinuteTimer(
                     _currentRoundRemainTime,
                   )}';
-                  return Text(currentRoundText,
-                      style: TextStyle(color: Colors.black45, fontSize: 12));
+                  return Text(currentRoundText, style: TextStyle(color: Colors.black45, fontSize: 12));
                 }
               }),
         ],
@@ -647,10 +639,9 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
     var _currentRoundStartTime = _latestLuckyRoundInfo?.startTime ?? 0;
     var _currentRoundEndTime = _latestLuckyRoundInfo?.endTime ?? 0;
 
-    var luckyAirdropRoundText =
-        _currentRoundStartTime < now && now < _currentRoundEndTime
-            ? S.of(context).rp_current_round_airdropped
-            : S.of(context).rp_latest_round;
+    var luckyAirdropRoundText = _currentRoundStartTime < now && now < _currentRoundEndTime
+        ? S.of(context).rp_current_round_airdropped
+        : S.of(context).rp_latest_round;
     var levelAirdropRoundText = S.of(context).rp_latest_round;
 
     return Padding(
@@ -660,9 +651,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       ),
       child: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
-            color: HexColor('#FFFFF5F5'),
-            borderRadius: BorderRadius.circular(4.0)),
+        decoration: BoxDecoration(color: HexColor('#FFFFF5F5'), borderRadius: BorderRadius.circular(4.0)),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 8.0,
@@ -673,7 +662,6 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                 onTap: () {
                   //_mockReqTime();
                   // debounceLater.debounceInterval(() {
-                  //   print('xxx 1');
                   //   AssetsAudioPlayer.playAndForget(rewardAudio);
                   // }, t: 1000, runImmediately: false);
                 },
@@ -698,17 +686,23 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                         children: [
                           Text.rich(TextSpan(children: [
                             TextSpan(
-                              text: '量级红包',
+                              text: S.of(context).level_rp,
                               style: TextStyle(
                                 color: Colors.red,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             TextSpan(
-                              text:
-                                  ' $levelAirdropRoundText ( $levelTotalAmount RP)',
+                              text: ' $levelAirdropRoundText',
                               style: TextStyle(fontSize: 13),
-                            )
+                            ),
+                            TextSpan(
+                              text: ' ( $levelTotalAmount RP)',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ])),
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
@@ -737,10 +731,16 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                                 ),
                               ),
                               TextSpan(
-                                text:
-                                    ' $luckyAirdropRoundText ( $luckyTotalAmount RP)',
+                                text: ' $luckyAirdropRoundText',
                                 style: TextStyle(fontSize: 13),
-                              )
+                              ),
+                              TextSpan(
+                                text: ' ( $luckyTotalAmount RP)',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ])),
                           ),
                           activeWallet != null
@@ -751,10 +751,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                                   ),
                                   TextSpan(
                                     text: ' $myLuckyRpCount ',
-                                    style: TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold),
+                                    style: TextStyle(fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
                                   ),
                                   TextSpan(
                                     text: S.of(context).rp_my_airdrop_detail_2,
@@ -762,10 +759,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                                   ),
                                   TextSpan(
                                     text: ' $myLuckyRpAmount ',
-                                    style: TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold),
+                                    style: TextStyle(fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
                                   ),
                                   TextSpan(
                                     text: 'RP',
@@ -776,7 +770,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        WalletManagerPage.jumpWalletManager(context,hasWalletUpdate: (wallet){
+                                        WalletManagerPage.jumpWalletManager(context, hasWalletUpdate: (wallet) {
                                           if (mounted) {
                                             setState(() {});
                                           }
@@ -793,9 +787,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
                                                 });*/
                                       },
                                       child: Text(
-                                        S
-                                            .of(context)
-                                            .create_import_wallet_account,
+                                        S.of(context).create_import_wallet_account,
                                         style: TextStyle(
                                           fontSize: 13,
                                           color: Colors.blue,
@@ -840,7 +832,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       child: RichText(
           text: TextSpan(children: [
         TextSpan(
-          text: '$levelName级',
+          text: '$levelName${S.of(context).level}',
           style: TextStyle(
             fontSize: 13,
             color: Colors.black,
@@ -922,14 +914,11 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
       _lastTimeCelebrateBegin = _now;
     }
 
-    var _isAirdropping =
-        _now >= _currentRoundStartTime && _now < _currentRoundEndTime;
+    var _isAirdropping = _now >= _currentRoundStartTime && _now < _currentRoundEndTime;
 
-    var _showReceivedAnim =
-        (_now - _lastTimeCelebrateBegin) < _rpCelebrateDuration;
+    var _showReceivedAnim = (_now - _lastTimeCelebrateBegin) < _rpCelebrateDuration;
 
-    var _passNextRound =
-        _nextRoundStartTime != null && _now > _nextRoundStartTime;
+    var _passNextRound = _nextRoundStartTime != null && _now > _nextRoundStartTime;
 
     ///
     if (_isAirdropping) {
@@ -961,11 +950,7 @@ class _RPAirdropWidgetState extends BaseState<RPAirdropWidget>
 
   _requestData() async {
     try {
-      var _address = WalletInheritedModel.of(context)
-          .activatedWallet
-          ?.wallet
-          ?.getAtlasAccount()
-          ?.address;
+      var _address = WalletInheritedModel.of(context).activatedWallet?.wallet?.getAtlasAccount()?.address;
 
       _latestLuckyRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(
         _address,
@@ -1121,16 +1106,14 @@ class SpinVertexAnim extends StatefulWidget {
   _SpinVertexAnimState createState() => _SpinVertexAnimState();
 }
 
-class _SpinVertexAnimState extends State<SpinVertexAnim>
-    with TickerProviderStateMixin {
+class _SpinVertexAnimState extends State<SpinVertexAnim> with TickerProviderStateMixin {
   AnimationController controller;
   Animation animation;
 
   @override
   void initState() {
     super.initState();
-    controller =
-        AnimationController(duration: const Duration(seconds: 3), vsync: this);
+    controller = AnimationController(duration: const Duration(seconds: 3), vsync: this);
     animation = Tween(begin: 0.0, end: 0.25).animate(controller);
     controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {

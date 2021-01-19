@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 
 class ClickOvalButton extends StatefulWidget {
@@ -12,7 +14,7 @@ class ClickOvalButton extends StatefulWidget {
   List<Color> btnColor;
   Color fontColor;
   double radius;
-  String loadingText;
+  String loadingText = S.of(Keys.rootKey.currentContext).submitting_request;
   FontWeight fontWeight = FontWeight.w500;
   bool isDisable;
 
@@ -26,10 +28,14 @@ class ClickOvalButton extends StatefulWidget {
     this.btnColor,
     this.radius,
     this.isLoading = false,
-    this.loadingText = '提交请求中...',
+    String loadingTextStr,
     this.fontWeight,
     this.isDisable = false,
-  });
+  }){
+    if(loadingTextStr != null) {
+      this.loadingText = loadingTextStr;
+    }
+  }
 
   @override
   State<StatefulWidget> createState() {

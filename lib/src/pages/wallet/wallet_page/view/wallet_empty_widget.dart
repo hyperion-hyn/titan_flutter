@@ -16,7 +16,7 @@ class EmptyWalletView extends StatelessWidget {
   final String tips;
   final LoadDataBloc loadDataBloc;
 
-  EmptyWalletView({this.loadDataBloc,this.tips});
+  EmptyWalletView({this.loadDataBloc, this.tips});
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +44,7 @@ class EmptyWalletView extends StatelessWidget {
             child: Text(
               tips ?? S.of(context).private_wallet_tips,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  fontSize: 12,
-                  color: Colors.grey[600]),
+              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: Colors.grey[600]),
             ),
           ),
           Padding(
@@ -57,22 +54,21 @@ class EmptyWalletView extends StatelessWidget {
               children: <Widget>[
                 FlatButton(
                   shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Theme.of(context).primaryColor),
-                      borderRadius: BorderRadius.circular(36)),
+                      side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
                   onPressed: () async {
-                    if (await _checkConfirmWalletPolicy()) {
-                      Navigator.of(context).push(MaterialPageRoute(
+                    bool isNotAgreePolicy = await _checkConfirmWalletPolicy();
+                    if (isNotAgreePolicy) {
+                      isNotAgreePolicy = await Navigator.of(context).push(MaterialPageRoute(
                         builder: (BuildContext context) => PolicyConfirmPage(
                           PolicyType.WALLET,
                         ),
                       ));
-                    } else {
-                      var currentRouteName =
-                          RouteUtil.encodeRouteNameWithoutParams(context);
+                    }
+                    if (!isNotAgreePolicy) {
+                      var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
                       await Application.router.navigateTo(
                         context,
-                        Routes.wallet_create +
-                            '?entryRouteName=$currentRouteName&isCreate=1',
+                        Routes.wallet_create + '?entryRouteName=$currentRouteName',
                       );
                       backAndupdatePage(context);
                     }
@@ -83,10 +79,8 @@ class EmptyWalletView extends StatelessWidget {
                     child: Text(
                       S.of(context).create_wallet,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.w500),
+                      style:
+                          TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
                     ),
                   ),
                   color: Colors.white,
@@ -105,12 +99,10 @@ class EmptyWalletView extends StatelessWidget {
                           ),
                         ));
                       } else {
-                        var currentRouteName =
-                            RouteUtil.encodeRouteNameWithoutParams(context);
+                        var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
                         Application.router.navigateTo(
                           context,
-                          Routes.wallet_create +
-                              '?entryRouteName=$currentRouteName',
+                          Routes.wallet_import + '?entryRouteName=$currentRouteName',
                         );
                         backAndupdatePage(context);
                       }
@@ -121,10 +113,8 @@ class EmptyWalletView extends StatelessWidget {
                       child: Text(
                         S.of(context).import_wallet,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w500),
+                        style:
+                            TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
                       ),
                     ),
                     color: Colors.white,
@@ -138,11 +128,9 @@ class EmptyWalletView extends StatelessWidget {
     );
   }
 
-  backAndupdatePage(BuildContext context){
-    var activatedWalletVo =
-        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
-            ?.activatedWallet;
-    if(activatedWalletVo != null && loadDataBloc != null) {
+  backAndupdatePage(BuildContext context) {
+    var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)?.activatedWallet;
+    if (activatedWalletVo != null && loadDataBloc != null) {
       loadDataBloc.add(LoadingEvent());
     }
   }

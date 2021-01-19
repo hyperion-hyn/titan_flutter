@@ -363,7 +363,7 @@ class _ContributionState extends State<ScanSignalContributionPage> {
     var isFinish = await _uploadCollectData();
 
     if (isFinish) {
-      _finishCheckIn(S.of(context).thank_you_for_contribute_data);
+      // _finishCheckIn(S.of(context).thank_you_for_contribute_data);
 
       Application.router.navigateTo(context, Routes.contribute_done, replace: true);
     } else {
@@ -374,6 +374,7 @@ class _ContributionState extends State<ScanSignalContributionPage> {
     }
   }
 
+  /*
   Future _finishCheckIn(String successTip) async {
     var address =
         WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
@@ -389,7 +390,8 @@ class _ContributionState extends State<ScanSignalContributionPage> {
       print('$runtimeType --> e:$e');
       LogUtil.process(e);
     }
-  }
+  }*/
+
 
   Widget _confirmView() {
     if (_isFinishScan) {

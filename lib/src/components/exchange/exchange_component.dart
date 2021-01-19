@@ -16,8 +16,7 @@ import 'bloc/bloc.dart';
 import 'package:nested/nested.dart';
 
 class ExchangeComponent extends SingleChildStatelessWidget {
-
-  ExchangeComponent({Key key, Widget child}): super(key: key, child: child);
+  ExchangeComponent({Key key, Widget child}) : super(key: key, child: child);
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
@@ -45,7 +44,6 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
   }
 
@@ -80,8 +78,6 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
                 password: state.password,
                 address: state.address);
             var account = ExchangeAccount.fromJson(ret);
-
-            print('使用钱包授权登录: account: $account');
 
             if (account != null) {
               exchangeModel.activeAccount = account;
@@ -132,8 +128,8 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
               }
             }
           }
-          setState(() {});
-        }
+        } else if (state is UpdateCoinListState) {}
+        if (mounted) setState(() {});
       },
       child: BlocBuilder<ExchangeCmpBloc, ExchangeCmpState>(
         builder: (context, state) {

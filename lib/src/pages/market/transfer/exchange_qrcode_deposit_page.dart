@@ -13,7 +13,10 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/components/socket/socket_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -38,7 +41,8 @@ class ExchangeQrcodeDepositPageState
     extends BaseState<ExchangeQrcodeDepositPage> {
   String _selectedCoinSymbol = SupportedTokens.HYN_Atlas.symbol;
   Map symbolToChain = {
-    SupportedTokens.HYN_Atlas.symbol: "Atlas主链",
+    SupportedTokens.HYN_Atlas.symbol:
+        S.of(Keys.rootKey.currentContext).atlas_main_chain,
     SupportedTokens.USDT_ERC20.symbol: "ERC20",
     SupportedTokens.HYN_RP_HRC30.symbol: "HRC30"
   };
@@ -77,7 +81,7 @@ class ExchangeQrcodeDepositPageState
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: BaseAppBar(
-        baseTitle: "充币",
+        baseTitle: S.of(context).recharge_coin,
         actions: [
           InkWell(
             onTap: () {
@@ -151,7 +155,7 @@ class ExchangeQrcodeDepositPageState
                       ),
                       Spacer(),
                       Text(
-                        "选择币种",
+                        S.of(context).choose_currency,
                         style: TextStyle(
                             color: HexColor(
                               '#777777',
@@ -172,7 +176,7 @@ class ExchangeQrcodeDepositPageState
           ),
           SliverToBoxAdapter(
             child: Text(
-              "链名称",
+              S.of(context).chain_name,
               style: TextStyle(
                   color: HexColor(
                     '#777777',
@@ -248,7 +252,7 @@ class ExchangeQrcodeDepositPageState
                   Padding(
                     padding: const EdgeInsets.only(top: 18, bottom: 10),
                     child: Text(
-                      "充币地址",
+                      S.of(context).deposit_address,
                       style: TextStyle(
                           color: HexColor(
                             '#999999',
@@ -279,7 +283,7 @@ class ExchangeQrcodeDepositPageState
                         borderRadius: BorderRadius.all(Radius.circular(2)),
                       ),
                       child: Text(
-                        "复制地址",
+                        S.of(context).copy_address,
                         style: TextStyle(
                           color: Theme.of(context).primaryColor,
                           fontSize: 10,
@@ -313,11 +317,37 @@ class ExchangeQrcodeDepositPageState
       result = false;
     }
     Fluttertoast.showToast(
-      msg: result ? "已成功保存到相册" : S.of(context).save_fail,
+      msg: result
+          ? S.of(context).successfully_saved_album
+          : S.of(context).save_fail,
     );
   }
 
   _showCoinSelectDialog() {
+    var activeAssets = MarketInheritedModel.of(
+          context,
+          aspect: SocketAspect.marketItemList,
+        ).exchangeCoinList?.assets ??
+        ['HYN', 'USDT', 'RP'];
+
+    List<Widget> activeCoinItemList = [Container()];
+
+    if (activeAssets.contains("HYN")) {
+      activeCoinItemList.add(
+        _coinItem(SupportedTokens.HYN_Atlas.symbol),
+      );
+    }
+    if (activeAssets.contains('USDT')) {
+      activeCoinItemList.add(
+        _coinItem(SupportedTokens.USDT_ERC20.symbol),
+      );
+    }
+    if (activeAssets.contains('RP')) {
+      activeCoinItemList.add(
+        _coinItem(SupportedTokens.HYN_RP_HRC30.symbol),
+      );
+    }
+
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
@@ -328,14 +358,11 @@ class ExchangeQrcodeDepositPageState
         ),
         builder: (BuildContext context) {
           return Container(
-            height: 210,
-            child: Column(
+            child: Wrap(
               children: <Widget>[
-                _coinItem(SupportedTokens.HYN_Atlas.symbol),
-                // _coinItem('ETH'),
-                _coinItem(SupportedTokens.USDT_ERC20.symbol),
-                _coinItem(SupportedTokens.HYN_RP_HRC30.symbol),
-
+                Column(
+                  children: activeCoinItemList,
+                ),
                 InkWell(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -410,7 +437,7 @@ class ExchangeQrcodeDepositPageState
         text: TextSpan(
           children: [
             TextSpan(
-                text: '请勿向上述地址充值任何非',
+                text: S.of(context).do_not_recharge_not,
                 style: TextStyle(
                   fontSize: 10,
                   color: DefaultColors.color777,
@@ -423,7 +450,7 @@ class ExchangeQrcodeDepositPageState
                   fontWeight: FontWeight.bold),
             ),
             TextSpan(
-                text: '资产，否则资产将不可找回。\n\n您充值至上述地址后，需要整个网站节点的确认。\n\n最小充币金额：',
+                text: S.of(context).assets_otherwise_not_recovered_wait_confirm,
                 style: TextStyle(
                   fontSize: 10,
                   color: DefaultColors.color777,
@@ -436,7 +463,7 @@ class ExchangeQrcodeDepositPageState
                   fontWeight: FontWeight.bold),
             ),
             TextSpan(
-                text: 'HYN，小于最小金额的充值将不会上账且无法退回！',
+                text: S.of(context).hyn_deposits_minimum_amount_not_to_account,
                 style: TextStyle(
                   fontSize: 10,
                   color: DefaultColors.color777,
@@ -449,7 +476,7 @@ class ExchangeQrcodeDepositPageState
         text: TextSpan(
           children: [
             TextSpan(
-                text: '请勿向上述地址充值任何非',
+                text: S.of(context).do_not_recharge_not,
                 style: TextStyle(
                   fontSize: 10,
                   color: DefaultColors.color777,
@@ -462,7 +489,7 @@ class ExchangeQrcodeDepositPageState
                   fontWeight: FontWeight.bold),
             ),
             TextSpan(
-                text: '资产，否则资产将不可找回。\n\n您充值至上述地址后，需要整个网站节点的确认。\n\n最小充币金额：',
+                text: S.of(context).assets_otherwise_not_recovered_wait_confirm,
                 style: TextStyle(
                   fontSize: 10,
                   color: DefaultColors.color777,
@@ -476,8 +503,7 @@ class ExchangeQrcodeDepositPageState
               ),
             ),
             TextSpan(
-                text:
-                    'USDT，小于最小金额的充值将不会上账且无法退回！\n\n使用USDT地址充值需要网络确认才能到账，到账时间容易受到网络堵塞情况的影响，请合理安排资金。',
+                text: S.of(context).usdt_minimum_not_to_account,
                 style: TextStyle(
                   fontSize: 10,
                   color: DefaultColors.color777,
@@ -490,7 +516,7 @@ class ExchangeQrcodeDepositPageState
         text: TextSpan(
           children: [
             TextSpan(
-                text: '请勿向上述地址充值任何非',
+                text: S.of(context).do_not_recharge_not,
                 style: TextStyle(
                   fontSize: 10,
                   color: DefaultColors.color777,
@@ -503,7 +529,7 @@ class ExchangeQrcodeDepositPageState
                   fontWeight: FontWeight.bold),
             ),
             TextSpan(
-                text: '资产，否则资产将不可找回。\n\n您充值至上述地址后，需要整个网站节点的确认。\n\n最小充币金额：',
+                text: S.of(context).assets_otherwise_not_recovered_wait_confirm,
                 style: TextStyle(
                   fontSize: 10,
                   color: DefaultColors.color777,
@@ -516,7 +542,7 @@ class ExchangeQrcodeDepositPageState
                   fontWeight: FontWeight.bold),
             ),
             TextSpan(
-                text: 'RP，小于最小金额的充值将不会上账且无法退回！',
+                text: S.of(context).rp_deposits_minimum_amount_not_to_account,
                 style: TextStyle(
                   fontSize: 10,
                   color: DefaultColors.color777,

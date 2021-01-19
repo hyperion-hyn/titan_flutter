@@ -28,6 +28,7 @@ import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -58,7 +59,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   final AtlasApi _atlasApi = AtlasApi();
-  final _web3Client = WalletUtil.getWeb3Client(true, true);
+  final _web3Client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS, true);
 
   // 0映射中;1 创建提交中；2创建失败; 3募资中,没在撤销节点;4募资中，撤销节点提交中，如果撤销失败将回到3状态；5撤销节点成功；6合约已启动；7合约期满终止；
   get _map3Status => Map3InfoStatus.values[_map3infoEntity?.status ?? 1];

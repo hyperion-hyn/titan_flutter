@@ -1,4 +1,3 @@
-import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/components/account/account_component.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -20,8 +18,8 @@ import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/global_data/global_data.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
-import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -58,12 +56,6 @@ class HomePanelState extends State<HomePanel> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
         color: Colors.white,
-        /*boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 20.0,
-          ),
-        ],*/
       ),
       child: CustomScrollView(
         controller: widget.scrollController,
@@ -98,7 +90,7 @@ class HomePanelState extends State<HomePanel> {
   }
 
   Widget _focusArea(context) {
-    var userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo)?.userInfoModel;
+    //var userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo)?.userInfoModel;
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -289,6 +281,7 @@ class HomePanelState extends State<HomePanel> {
                           height: 32,
                           color: Colors.white,
                         )),
+                    /*
                     if ((userInfo?.effectiveAcceleration ?? 0) > 0)
                       Positioned(
                           top: 16,
@@ -299,6 +292,7 @@ class HomePanelState extends State<HomePanel> {
                             height: 20,
                             color: Colors.white,
                           )),
+                    */
                   ],
                 ),
               ),
@@ -355,7 +349,7 @@ class HomePanelState extends State<HomePanel> {
             ),
           ),
           Text(
-            '应用类',
+            S.of(context).application_class,
             style: TextStyle(
               color: Colors.grey,
             ),
@@ -365,10 +359,12 @@ class HomePanelState extends State<HomePanel> {
           ),
           InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => RedPocketPage()),
-              );
+              var entryRouteName = Uri.encodeComponent(Routes.red_pocket_page);
+
+              Application.router.navigateTo(
+                 context,
+                 Routes.red_pocket_page +
+                     "?entryRouteName=$entryRouteName");
             },
             child: Container(
               decoration: BoxDecoration(
@@ -394,7 +390,7 @@ class HomePanelState extends State<HomePanel> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'RP 红包',
+                          S.of(context).red_pocket,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
@@ -403,7 +399,7 @@ class HomePanelState extends State<HomePanel> {
                           height: 4,
                         ),
                         Text(
-                          '全球首个基于海伯利安地图底层公链的HRC30交易结构范例',
+                          S.of(context).world_first_hrc30_structure_example,
                           style: TextStyle(
                             fontSize: 13,
                             color: DefaultColors.color999,
@@ -657,7 +653,8 @@ class HomePanelState extends State<HomePanel> {
           )
         ],
       ),
-      /*Column(
+      /*
+      Column(
                 children: <Widget>[
                   poiRow1(context),
                   Padding(
@@ -665,7 +662,8 @@ class HomePanelState extends State<HomePanel> {
                     child: poiRow2(context),
                   ),
                 ],
-              ),*/
+              ),
+      */
     );
   }
 
@@ -902,6 +900,16 @@ class HomePanelState extends State<HomePanel> {
         if (fromArr[0].length > 0 && fromArr[1].length > 0) {
           showInviteDialog(context, fromArr[0], fromArr[1]);
         }
+      }
+    } else if(scanStr.contains(RpShareGetDialogPage.shareDomain)){
+      /*RegExp regExpStr = new RegExp(r"(?<=rpId=).+(?<=&from)");
+      String rpId = regExpStr.firstMatch(scanStr).group(0);
+      print("!!!!3322 $rpId");*/
+
+      var rpIdArrAfter = scanStr.split("?rpId=");
+      if(rpIdArrAfter.length > 0){
+        var rpIdBefore = rpIdArrAfter[1].split("&");
+        showShareRpOpenDialog(context,id: rpIdBefore[0]);
       }
     } else if (scanStr.contains(PromoteQrCodePage.downloadDomain)) {
       var fromArr = scanStr.split("from=");

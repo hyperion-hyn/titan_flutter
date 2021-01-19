@@ -34,7 +34,7 @@ class _MeCheckInHistoryState extends DataListState<MeCheckInHistory> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: BaseAppBar(
-        baseTitle: '贡献记录',
+        baseTitle: S.of(context).contribution_record,
         backgroundColor: Colors.white,
         actions: <Widget>[
           FlatButton(
@@ -42,7 +42,7 @@ class _MeCheckInHistoryState extends DataListState<MeCheckInHistory> {
               Navigator.push(context, MaterialPageRoute(builder: (context) => MeAccountBindPage()));
             },
             child: Text(
-              '关联贡献',
+              S.of(context).linked_contribution,
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
@@ -128,7 +128,7 @@ class _MeCheckInHistoryState extends DataListState<MeCheckInHistory> {
     }
 
     // title
-    title = isFinish ? '任务已完成' : S.of(context).task_failed;
+    title = isFinish ? S.of(context).mission_completed : S.of(context).task_failed;
 
     var isNotFinish = scanCount < 1 || addPoiCount < 1 || confirmPoiCount < 2;
 
@@ -170,7 +170,7 @@ class _MeCheckInHistoryState extends DataListState<MeCheckInHistory> {
     var isToday = today == model.day;
     //print("[v2] isToday:$isToday, today:$today, day:${model.day}, total:${model.total}");
     if (isToday && !isFinish && isNotFinish) {
-      title = '进行中...';
+      title = '${S.of(context).ongoing}...';
       detail = S.of(context).you_still_have_unfinished_tasks_detail_toast;
     }
 

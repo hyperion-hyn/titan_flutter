@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +21,8 @@ import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/entity/exchange_coin_list.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
@@ -28,6 +32,7 @@ import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -48,15 +53,22 @@ class ExchangePage extends StatefulWidget {
 
 class _ExchangePageState extends BaseState<ExchangePage>
     with AutomaticKeepAliveClientMixin {
-  var _selectedCoin = 'USDT';
+  var _selectedBase = '';
+  var _selectedQuote = '';
   var _exchangeType = ExchangeType.BUY;
 
   ExchangeBloc _exchangeBloc = ExchangeBloc();
+  ExchangeApi _exchangeApi = ExchangeApi();
   List<MarketItemEntity> _marketItemList = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   RefreshController _refreshController = RefreshController(
     initialRefresh: true,
   );
+
+  ExchangeCoinList _exchangeCoinList;
+
+  List<DropdownMenuItem> baseCoinItemLIst = List();
+  List<DropdownMenuItem> quoteCoinItemLIst = List();
 
   @override
   bool get wantKeepAlive => true;
@@ -76,6 +88,8 @@ class _ExchangePageState extends BaseState<ExchangePage>
     BlocProvider.of<ExchangeCmpBloc>(context).add(CheckAccountEvent());
 
     _updateQuotes();
+
+    _setUpExchangeCoinList();
 
     ///
     _setupMarketItemList();
@@ -115,11 +129,25 @@ class _ExchangePageState extends BaseState<ExchangePage>
   }
 
   _setupMarketItemList() {
-    var mlist =
-        MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
-            .marketItemList;
-    if (mlist != null) {
-      _marketItemList = mlist;
+    var list = MarketInheritedModel.of(
+      context,
+      aspect: SocketAspect.marketItemList,
+    ).getFilterMarketItemList();
+
+    if (list != null) {
+      _marketItemList = list;
+    }
+  }
+
+  _setUpExchangeCoinList() async {
+    var list = MarketInheritedModel.of(
+      context,
+      aspect: SocketAspect.marketItemList,
+    ).exchangeCoinList;
+
+    if (list != null) {
+      _exchangeCoinList = list;
+      await _resetCoinList(true);
     }
   }
 
@@ -137,10 +165,14 @@ class _ExchangePageState extends BaseState<ExchangePage>
           listener: (context, state) {},
         ),
         BlocListener<SocketBloc, SocketState>(
-          listener: (context, state) {
-            setState(() {
+          listener: (context, state) async {
+            if (state is MarketSymbolState) {
               _setupMarketItemList();
-            });
+              if (mounted) setState(() {});
+            } else if (state is UpdateExchangeCoinListState) {
+              await _setUpExchangeCoinList();
+              if (mounted) setState(() {});
+            }
           },
         ),
       ],
@@ -167,6 +199,9 @@ class _ExchangePageState extends BaseState<ExchangePage>
 
                 ///update symbol list
                 BlocProvider.of<SocketBloc>(context).add(MarketSymbolEvent());
+
+                BlocProvider.of<SocketBloc>(context)
+                    .add(UpdateExchangeCoinListEvent());
 
                 _loadDataBloc.add(RefreshSuccessEvent());
                 _refreshController.refreshCompleted();
@@ -206,22 +241,44 @@ class _ExchangePageState extends BaseState<ExchangePage>
   }
 
   _exchange() {
-    var _selectedCoinToHYN = '--';
-    var _hynToSelectedCoin = '--';
-    var _vol24H = '--';
+    var switchButton = Expanded(
+      flex: 1,
+      child: IconButton(
+        icon: Image.asset(
+          'res/drawable/market_exchange_btn_icon.png',
+          width: 20,
+          height: 18,
+        ),
+        onPressed: () {
+          setState(() {
+            _exchangeType = (_exchangeType == ExchangeType.BUY
+                ? ExchangeType.SELL
+                : ExchangeType.BUY);
+          });
+        },
+      ),
+    );
+    var baseDropDown = Expanded(
+      flex: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: _baseDropDownList(),
+      ),
+    );
 
-    try {
-      _hynToSelectedCoin = FormatUtil.truncateDoubleNum(
-              _getMarketItem(_selectedCoin)?.kLineEntity?.close, 4) ??
-          '--';
-      _selectedCoinToHYN = FormatUtil.truncateDecimalNum(
-              (Decimal.fromInt(1) / Decimal.parse(_hynToSelectedCoin)), 4) ??
-          '--';
-      _vol24H = FormatUtil.truncateDoubleNum(
-              _getMarketItem(_selectedCoin)?.kLineEntity?.vol, 2) ??
-          '--';
-    } catch (e) {}
-
+    var quoteDropDown = Expanded(
+      flex: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: _quoteDropDownList(),
+      ),
+    );
+    List<Widget> widgetList = [];
+    if (_exchangeType == ExchangeType.BUY) {
+      widgetList = [baseDropDown, switchButton, quoteDropDown];
+    } else {
+      widgetList = [quoteDropDown, switchButton, baseDropDown];
+    }
     return Column(
       children: <Widget>[
         Padding(
@@ -237,27 +294,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                 vertical: 8.0,
               ),
               child: Row(
-                children: <Widget>[
-                  _exchangeItem(_exchangeType == ExchangeType.BUY),
-                  Expanded(
-                    flex: 1,
-                    child: IconButton(
-                      icon: Image.asset(
-                        'res/drawable/market_exchange_btn_icon.png',
-                        width: 20,
-                        height: 18,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _exchangeType = (_exchangeType == ExchangeType.BUY
-                              ? ExchangeType.SELL
-                              : ExchangeType.BUY);
-                        });
-                      },
-                    ),
-                  ),
-                  _exchangeItem(_exchangeType == ExchangeType.SELL),
-                ],
+                children: widgetList.isNotEmpty ? widgetList : [SizedBox()],
               ),
             ),
           ),
@@ -277,22 +314,13 @@ class _ExchangePageState extends BaseState<ExchangePage>
                   if (await _checkShowConfirmPolicy()) {
                     _showConfirmDexPolicy();
                   } else {
-                    var base = '';
-                    var quote = '';
-                    if (_selectedCoin == 'USDT') {
-                      base = 'USDT';
-                      quote = 'HYN';
-                    } else if (_selectedCoin == 'RP') {
-                      base = 'HYN';
-                      quote = 'RP';
-                    }
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => ExchangeDetailPage(
                                   exchangeType: _exchangeType,
-                                  base: base,
-                                  quote: quote,
+                                  base: _selectedBase,
+                                  quote: _selectedQuote,
                                 )));
                   }
                 },
@@ -315,50 +343,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
             ],
           ),
         ),
-        // Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        //   child: Container(
-        //     width: double.infinity,
-        //     decoration: BoxDecoration(
-        //       color: HexColor('#FFF2F2F2'),
-        //       borderRadius: BorderRadius.circular(3.0),
-        //     ),
-        //     child: Padding(
-        //       padding: const EdgeInsets.symmetric(
-        //         vertical: 8.0,
-        //         horizontal: 16.0,
-        //       ),
-        //       child: Row(
-        //         crossAxisAlignment: CrossAxisAlignment.start,
-        //         children: <Widget>[
-        //           Expanded(
-        //             flex: 1,
-        //             child: Text(
-        //               '${S.of(context).exchange_24h_amount} ${_amount24H}',
-        //               style: TextStyle(
-        //                 color: HexColor('#FF999999'),
-        //                 fontSize: 12,
-        //               ),
-        //             ),
-        //           ),
-        //           Expanded(
-        //             flex: 2,
-        //             child: Align(
-        //               alignment: Alignment.centerRight,
-        //               child: Text(
-        //                 '${S.of(context).exchange_latest_quote} ${_exchangeType == ExchangeType.BUY ? '1HYN = $_hynToSelectedCoin $_selectedCoin' : '1$_selectedCoin = $_selectedCoinToHYN HYN'}',
-        //                 style: TextStyle(
-        //                   color: HexColor('#FF999999'),
-        //                   fontSize: 12,
-        //                 ),
-        //               ),
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        // ),
         SizedBox(
           height: 16,
         )
@@ -521,34 +505,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
     }
   }
 
-  _exchangeItem(bool isHynCoin) {
-    return isHynCoin
-        ? Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: <Widget>[
-                  if (_exchangeType == ExchangeType.SELL) Spacer(),
-                  _coinItem(
-                    'HYN',
-                    SupportedTokens.HYN_Atlas.logo,
-                    false,
-                  ),
-                  if (_exchangeType == ExchangeType.SELL) Spacer(),
-                ],
-              ),
-            ),
-          )
-        : Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: _coinListDropdownBtn(),
-            ),
-          );
-  }
-
   _coinItem(
     String name,
     String logoPath,
@@ -586,8 +542,92 @@ class _ExchangePageState extends BaseState<ExchangePage>
     );
   }
 
-  _coinListDropdownBtn() {
+  _resetCoinList(bool isApiRefresh) {
+    baseCoinItemLIst.clear();
+    quoteCoinItemLIst.clear();
+    _exchangeCoinList?.activeExchangeMap?.forEach((key, value) {
+      baseCoinItemLIst.add(DropdownMenuItem(
+        value: key,
+        child: _coinItem(
+          key,
+          WalletInheritedModel.of(context).getCoinIconPathBySymbol(key),
+          false,
+        ),
+      ));
+    });
+
+    if (baseCoinItemLIst.first != null && isApiRefresh) {
+      _selectedBase = baseCoinItemLIst.first.value;
+    }
+
+    _exchangeCoinList?.activeExchangeMap?.forEach((key, value) {
+      if (key == _selectedBase) {
+        value?.forEach((coin) {
+          quoteCoinItemLIst.add(DropdownMenuItem(
+            value: coin,
+            child: _coinItem(
+              coin,
+              WalletInheritedModel.of(context).getCoinIconPathBySymbol(coin),
+              false,
+            ),
+          ));
+        });
+      }
+    });
+
+    if (quoteCoinItemLIst.first != null) {
+      _selectedQuote = quoteCoinItemLIst.first.value;
+    }
+  }
+
+  _baseDropDownList() {
+    return Row(
+      children: [
+        DropdownButtonHideUnderline(
+          child: DropdownButton(
+            onChanged: (value) async {
+              _selectedBase = value;
+              await _resetCoinList(false);
+              setState(() {});
+            },
+            value: _selectedBase,
+            items: baseCoinItemLIst,
+          ),
+        ),
+      ],
+    );
+  }
+
+  _quoteDropDownList() {
+    return Row(
+      children: [
+        DropdownButtonHideUnderline(
+          child: DropdownButton(
+            onChanged: (value) async {
+              _selectedQuote = value;
+              setState(() {});
+            },
+            value: _selectedQuote,
+            items: quoteCoinItemLIst,
+          ),
+        )
+      ],
+    );
+  }
+
+  _coinListDropdownBtn(bool isBase) {
     List<DropdownMenuItem> availableCoinItemList = List();
+
+    availableCoinItemList.add(
+      DropdownMenuItem(
+        value: 'HYN',
+        child: _coinItem(
+          'HYN',
+          SupportedTokens.HYN_Atlas.logo,
+          false,
+        ),
+      ),
+    );
     availableCoinItemList.add(
       DropdownMenuItem(
         value: 'USDT',
@@ -603,49 +643,30 @@ class _ExchangePageState extends BaseState<ExchangePage>
         value: 'RP',
         child: _coinItem(
           'RP',
-          SupportedTokens.HYN_RP_HRC30_ROPSTEN.logo,
+          SupportedTokens.HYN_RP_HRC30.logo,
           false,
         ),
       ),
     );
-//    availableCoinItemList.add(
-//      DropdownMenuItem(
-//        value: 'ETH',
-//        child: _coinItem(
-//          'ETH',
-//          SupportedTokens.ETHEREUM.logo,
-//          false,
-//        ),
-//      ),
-//    );
 
     return Row(
       children: [
-        if (_exchangeType == ExchangeType.BUY) Spacer(),
+        Spacer(),
         DropdownButtonHideUnderline(
           child: DropdownButton(
             onChanged: (value) {
               setState(() {
-                _selectedCoin = value;
+                if (isBase) {
+                  _selectedBase = value;
+                } else {
+                  _selectedQuote = value;
+                }
               });
             },
-            value: _selectedCoin,
+            value: isBase ? _selectedBase : _selectedQuote,
             items: availableCoinItemList,
           ),
         ),
-      ],
-    );
-
-    return Row(
-      children: <Widget>[
-        if (_exchangeType == ExchangeType.BUY) Spacer(),
-        _coinItem(
-          'USDT',
-          SupportedTokens.USDT_ERC20.logo,
-          false,
-        ),
-        //if (_exchangeType == ExchangeType.SELL) Spacer(),
-        Spacer()
       ],
     );
   }
@@ -712,12 +733,17 @@ class _ExchangePageState extends BaseState<ExchangePage>
     var base = marketItemEntity?.base;
     var quote = marketItemEntity?.quote;
 
+    var _vol24H = '--';
+    try {
+      _vol24H = FormatUtil.truncateDoubleNum(
+            marketItemEntity.kLineEntity?.vol,
+            2,
+          ) ??
+          '--';
+    } catch (e) {}
+
     // 24hour
-    var _vol24H =
-        '${S.of(context).exchange_24h_vol} ${FormatUtil.truncateDoubleNum(
-      marketItemEntity.kLineEntity?.vol,
-      2,
-    )}';
+    var _vol24HText = '${S.of(context).exchange_24h_vol} $_vol24H';
 
     // price
     var _latestPrice = '--';
@@ -820,7 +846,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                               height: 4,
                             ),
                             Text(
-                              _vol24H ?? '-',
+                              _vol24HText ?? '-',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 12,
@@ -896,16 +922,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
         )
       ],
     );
-  }
-
-  MarketItemEntity _getMarketItem(String token) {
-    var result;
-    _marketItemList.forEach((element) {
-      if (element.quote == token) {
-        result = element;
-      }
-    });
-    return result;
   }
 
   _divider() {

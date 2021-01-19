@@ -81,7 +81,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
           SocketComponent(),
           AtlasComponent(),
           RedPocketComponent(),
-          AccountComponent(),
+          //AccountComponent(),
           AppLockComponent(),
         ],
         child: MultiBlocProvider(

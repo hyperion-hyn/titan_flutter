@@ -12,12 +12,7 @@ class RedPocketBloc extends Bloc<RedPocketEvent, RedPocketState> {
   final RPApi _rpApi = RPApi();
 
   String get _addressStr =>
-      WalletInheritedModel.of(Keys.rootKey.currentContext)
-          ?.activatedWallet
-          ?.wallet
-          ?.getEthAccount()
-          ?.address ??
-      "";
+      WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
   @override
   Stream<RedPocketState> mapEventToState(
@@ -38,6 +33,7 @@ class RedPocketBloc extends Bloc<RedPocketEvent, RedPocketState> {
           _address = _addressStr;
         }
         var _statistics = await _rpApi.getRPStatistics(_address);
+
         yield UpdateStatisticsState(_statistics);
       } else if (event is UpdatePromotionRuleEvent) {
         var _address = event.address;
@@ -45,7 +41,16 @@ class RedPocketBloc extends Bloc<RedPocketEvent, RedPocketState> {
           _address = _addressStr;
         }
         var _promotionRule = await _rpApi.getRPPromotionRule(_address);
+
         yield UpdatePromotionRuleState(_promotionRule);
+      } else if (event is UpdateShareConfigEvent) {
+        var _address = event.address;
+        if (_address?.isEmpty ?? true) {
+          _address = _addressStr;
+        }
+        var _shareConfig = await _rpApi.getNewBeeConfig(_address);
+
+        yield UpdateShareConfigState(_shareConfig);
       } else if (event is ClearMyLevelInfoEvent) {
         yield ClearMyLevelInfoState();
       }

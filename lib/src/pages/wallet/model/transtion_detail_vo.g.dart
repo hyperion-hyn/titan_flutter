@@ -8,7 +8,6 @@ part of 'transtion_detail_vo.dart';
 
 TransactionDetailVo _$TransactionDetailVoFromJson(Map<String, dynamic> json) {
   return TransactionDetailVo(
-    id: json['id'] as int,
     contractAddress: json['contractAddress'] as String,
     localTransferType: json['localTransferType'] as int,
     type: json['type'] as int,
@@ -31,13 +30,15 @@ TransactionDetailVo _$TransactionDetailVoFromJson(Map<String, dynamic> json) {
     epoch: json['epoch'] as int,
     transactionIndex: json['transactionIndex'] as int,
     hynType: json['hynType'] as int,
+    speedUpTimes: json['speedUpTimes'] as int,
+    cancelTimes: json['cancelTimes'] as int,
+    lastOptType: json['lastOptType'] as int,
   );
 }
 
 Map<String, dynamic> _$TransactionDetailVoToJson(
         TransactionDetailVo instance) =>
     <String, dynamic>{
-      'id': instance.id,
       'contractAddress': instance.contractAddress,
       'localTransferType': instance.localTransferType,
       'type': instance.type,
@@ -60,4 +61,7 @@ Map<String, dynamic> _$TransactionDetailVoToJson(
       'epoch': instance.epoch,
       'transactionIndex': instance.transactionIndex,
       'hynType': instance.hynType,
+      'speedUpTimes': instance.speedUpTimes,
+      'cancelTimes': instance.cancelTimes,
+      'lastOptType': instance.lastOptType,
     };

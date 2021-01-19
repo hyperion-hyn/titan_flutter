@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -11,9 +12,6 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_level_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_deposit_page.dart';
@@ -34,9 +32,7 @@ class RpLevelRulesPage extends StatefulWidget {
 
 class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
-  final RPApi _rpApi = RPApi();
 
-  var _address = "";
   RpPromotionRuleEntity _promotionRuleEntity;
 
   List<LevelRule> get _dynamicDataList => (_promotionRuleEntity?.dynamicList ?? []).reversed.toList();
@@ -87,9 +83,6 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
   @override
   void initState() {
     super.initState();
-
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
-    _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   }
 
   @override
@@ -102,6 +95,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     super.didChangeDependencies();
 
     _myLevelInfo = RedPocketInheritedModel.of(context).rpMyLevelInfo;
+    _promotionRuleEntity = RedPocketInheritedModel.of(context).rpPromotionRule;
   }
 
   @override
@@ -115,7 +109,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     return Scaffold(
       backgroundColor: HexColor('#FFFFFF'),
       appBar: BaseAppBar(
-        baseTitle: '量级',
+        baseTitle: S.of(context).rp_level,
         backgroundColor: HexColor('#FFFFFF'),
       ),
       body: _pageView(),
@@ -205,7 +199,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
             ),
             Expanded(
               child: Text(
-                '当前已发行 $totalSupplyStr RP，百分比Y = $promotionSupplyRatioPercent（$stepPercent为1梯度）',
+                S.of(context).rp_level_total_supply_func(totalSupplyStr, promotionSupplyRatioPercent, stepPercent),
                 style: TextStyle(
                   color: HexColor('#333333'),
                   fontSize: 12,
@@ -262,7 +256,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     bool isCurrent = _currentLevel == model.level;
     String leftTagTitle = '';
     if (isCurrent) {
-      leftTagTitle = '当前量级';
+      leftTagTitle = S.of(context).rp_current_level;
     }
 
     return Stack(
@@ -299,34 +293,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     LevelRule dynamicModel =
     _oldModelList.firstWhere((element) => element.level == staticModel.level, orElse: () => null);
 
-    /*
-    LevelRule oldModelMax =
-        _oldModelList.firstWhere((element) => element.level > dynamicModel.level, orElse: () => null);
-
-    bool isNotMax = (oldModelMax != null);
-
-    if (!isNotMax) {
-      leftTagTitle = '可恢复最高量级';
-    } else {
-      leftTagTitle = '可恢复量级';
-    }
-
-    var zeroValue = Decimal.zero;
-
-    // 燃烧
-    var burningValue = Decimal.tryParse(dynamicModel?.burnStr ?? '0') ?? zeroValue;
-    var currentBurnValue = Decimal.tryParse(_myLevelInfo?.currBurningStr ?? '0') ?? zeroValue;
-    var _needBurnValue = burningValue - currentBurnValue;
-    _needBurnValue = _needBurnValue > zeroValue ? _needBurnValue : zeroValue;
-
-    // 持币
-    var holdValue = Decimal.tryParse(dynamicModel?.holdingStr ?? '0') ?? zeroValue;
-    var currentHoldValue = Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? zeroValue;
-    var _needHoldMinValue = holdValue - currentHoldValue;
-    _needHoldMinValue = _needHoldMinValue > zeroValue ? _needHoldMinValue : zeroValue;
-    */
-
-    String oldLevelDesc = '提升至该量级需燃烧 ${dynamicModel?.burnStr ?? '0'}RP, 增持${dynamicModel?.holdingStr ?? '0'}RP';
+    String oldLevelDesc = S.of(context).rp_level_upgrade_func(dynamicModel?.burnStr ?? '0', dynamicModel?.holdingStr ?? '0');
 
     return Stack(
       children: [
@@ -434,7 +401,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
             padding: const EdgeInsets.fromLTRB(8, 3, 8, 3),
             child: Center(
               child: Text(
-                '推荐',
+                S.of(context).recommend,
                 style: TextStyle(fontSize: 8, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
               ),
             ),
@@ -449,14 +416,14 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     bool isSelected = ((_currentSelectedLevelRule?.level ?? 0) == model.level);
 
     var level = model.level ?? 0;
-    var levelName = '量级 ${levelValueToLevelName(level)}';
+    var levelName = '${S.of(context).rp_level} ${levelValueToLevelName(level)}';
 
-    var burnTitle = '需燃烧量';
+    var burnTitle = S.of(context).rp_need_burn_amount_abc;
     var burnRpValue = '${model.burnStr} RP';
 
     var formula = model.holdingFormula;
 
-    var stakingTitle = '最低持币';
+    var stakingTitle = S.of(context).rp_min_holding_abc;
     var stakingValue = '${model.holdingStr} RP';
 
     return Container(
@@ -485,7 +452,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
               top: 8,
             ),
             child: Text(
-              '计算公式: $formula',
+              '${S.of(context).rp_level_formula}: $formula',
               style: TextStyle(
                 color: HexColor('#999999'),
                 fontSize: 10,
@@ -529,7 +496,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ClickOvalButton(
-                '增加持币',
+                S.of(context).rp_add_holding,
                 _navToLevelAddStakingAction,
                 height: 34,
                 width: 120,
@@ -540,7 +507,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
                 width: 20,
               ),
               ClickOvalButton(
-                '提升量级',
+                S.of(context).rp_level_up,
                 _navToLevelUpgradeAction,
                 height: 34,
                 width: 120,
@@ -559,13 +526,13 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
     if (_currentLevel > model.level && _currentLevel > 0) {
       if (_currentLevel == 5) {
         Fluttertoast.showToast(
-          msg: '当前量级已经是最高量级！',
+          msg: S.of(context).rp_already_highest_level,
           gravity: ToastGravity.CENTER,
         );
         return;
       }
       Fluttertoast.showToast(
-        msg: '升级的量级不能小于当前量级, 请重新选择！',
+        msg: S.of(context).rp_upgrade_level_less_then_current,
         gravity: ToastGravity.CENTER,
       );
       return;
@@ -579,7 +546,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
   _navToLevelAddStakingAction() {
     if (_currentLevel == 0) {
       Fluttertoast.showToast(
-        msg: '当前量级为0, 请先提升量级！',
+        msg: S.of(context).rp_level_zero_toast,
         gravity: ToastGravity.CENTER,
       );
       return;
@@ -596,7 +563,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
   _navToLevelUpgradeAction() {
     if (_currentLevel == 5) {
       Fluttertoast.showToast(
-        msg: '当前量级已经是最高量级！',
+        msg: S.of(context).rp_already_highest_level,
         gravity: ToastGravity.CENTER,
       );
       return;
@@ -604,7 +571,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
 
     if (_currentSelectedLevelRule == null) {
       Fluttertoast.showToast(
-        msg: '请先选择想要升级的量级！',
+        msg: S.of(context).rp_select_upgrade_level,
         gravity: ToastGravity.CENTER,
       );
       return;
@@ -612,7 +579,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
 
     if (_currentLevel == (_currentSelectedLevelRule?.level ?? 0) && _currentLevel > 0) {
       Fluttertoast.showToast(
-        msg: '选择的量级与当前量级相同, 请重新选择！',
+        msg: S.of(context).rp_select_same_level,
         gravity: ToastGravity.CENTER,
       );
       return;
@@ -630,24 +597,12 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
   }
 
   void getNetworkData() async {
-    try {
-      var netData = await _rpApi.getRPPromotionRule(_address);
+    if (context != null) {
+      BlocProvider.of<RedPocketBloc>(context).add(UpdatePromotionRuleEvent());
+    }
 
-      if (netData?.static?.isNotEmpty ?? false) {
-        _promotionRuleEntity = netData;
-
-        print("[$runtimeType] getNetworkData, count:${_staticDataList.length}, old.length:${_oldModelList.length}");
-
-        if (mounted) {
-          setState(() {
-            _loadDataBloc.add(RefreshSuccessEvent());
-          });
-        }
-      } else {
-        _loadDataBloc.add(LoadEmptyEvent());
-      }
-    } catch (e) {
-      _loadDataBloc.add(LoadFailEvent());
+    if (mounted) {
+      _loadDataBloc.add(RefreshSuccessEvent());
     }
   }
 }
