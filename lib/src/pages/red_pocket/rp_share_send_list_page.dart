@@ -238,21 +238,16 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                             if (refunded)
                               InkWell(
                                 onTap: () {
-                                  // todo:
-                                  // return;
-
                                   if ((model?.hynRefundHash ?? '').isEmpty) return;
 
-                                  WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
-                                      context,
-                                      model?.hynRefundHash ?? '',
-                                      SupportedTokens.HYN_Atlas.symbol);
+                                  WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(context,
+                                      model?.hynRefundHash ?? '', SupportedTokens.HYN_Atlas.symbol);
                                 },
                                 child: Text(
                                   ',稍后查看钱包余额',
                                   style: TextStyle(
-                                    // color: HexColor("#1F81FF"),
-                                    color: HexColor("#999999"),
+                                    color: HexColor("#1F81FF"),
+                                    // color: HexColor("#999999"),
                                     fontSize: 12,
                                     fontWeight: FontWeight.normal,
                                   ),
