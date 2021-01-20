@@ -9,8 +9,8 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
 typedef GasInputChangedCallback = void Function(Decimal gasPrice, int gasPriceLimit);
@@ -50,9 +50,6 @@ class _GasInputWidgetState extends BaseState<GasInputWidget> {
 
   @override
   void onCreated() {
-
-    super.onCreated();
-
     var ethQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0;
 
     var gasLimit = widget.coinVo.symbol == "ETH"
@@ -64,22 +61,16 @@ class _GasInputWidgetState extends BaseState<GasInputWidget> {
 
     _ethPrice = gasPriceEstimate.toDouble() ?? widget.currentEthPrice ?? _ethDefaultPrice;
 
-    var gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).gasPriceRecommend;
-    _gasPrice = (gasPriceRecommend.average / Decimal.fromInt(TokenUnit.G_WEI))??_minGasPrice;
-    _maxGasPrice = (gasPriceRecommend.fast / Decimal.fromInt(TokenUnit.G_WEI));
+    var gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).ethGasPriceRecommend;
+    _gasPrice = (gasPriceRecommend.average / Decimal.fromInt(EthereumUnitValue.G_WEI)) ?? _minGasPrice;
+    _maxGasPrice = (gasPriceRecommend.fast / Decimal.fromInt(EthereumUnitValue.G_WEI));
 
     _gasPriceLimit = gasLimit ?? _defaultGasPriceLimit;
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-
-    var _gasPriceValue = (_gasPrice * Decimal.fromInt(_gasPriceLimit)) / Decimal.fromInt(TokenUnit.G_WEI);
+    var _gasPriceValue = (_gasPrice * Decimal.fromInt(_gasPriceLimit)) / Decimal.fromInt(EthereumUnitValue.G_WEI);
     var _gasPriceString = _gasPriceValue.toStringAsPrecision(4);
 
     var _rmbPrice = _gasPriceValue * Decimal.parse(_ethPrice.toString());
@@ -282,7 +273,6 @@ class _GasInputWidgetState extends BaseState<GasInputWidget> {
 
     setState(() {});
   }
-
 }
 
 Widget textField(TextEditingController controller, String hintText, String suffixText) {
@@ -342,7 +332,7 @@ Widget textField(TextEditingController controller, String hintText, String suffi
               //输入框启用时，下划线的样式
               enabledBorder: UnderlineInputBorder(
                   borderSide:
-                  BorderSide(width: 0.5, color: Colors.grey[300], style: BorderStyle.solid)), //输入框启用时，下划线的样式
+                      BorderSide(width: 0.5, color: Colors.grey[300], style: BorderStyle.solid)), //输入框启用时，下划线的样式
             ),
             keyboardType: TextInputType.number,
           ),

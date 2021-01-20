@@ -15,6 +15,7 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -51,7 +52,7 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> with Automa
   Microdelegations _microDelegations;
   bool _isShowBorderHint = false;
 
-  final _client = WalletUtil.getWeb3Client(true);
+  final _client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
 
   @override
   bool get wantKeepAlive => true;

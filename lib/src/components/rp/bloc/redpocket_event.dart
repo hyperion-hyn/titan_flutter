@@ -21,4 +21,10 @@ class UpdatePromotionRuleEvent extends RedPocketEvent {
   UpdatePromotionRuleEvent({this.address});
 }
 
+class UpdateShareConfigEvent extends RedPocketEvent {
+  final String address;
+
+  UpdateShareConfigEvent({this.address});
+}
+
 class ClearMyLevelInfoEvent extends RedPocketEvent {}

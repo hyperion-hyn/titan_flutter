@@ -32,7 +32,6 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import '../../global.dart';
-import 'map3_contract_control.dart';
 import 'package:characters/characters.dart';
 
 class MyPage extends StatefulWidget {
@@ -311,16 +310,16 @@ class _MyPageState extends BaseState<MyPage> {
                     imageName: "ic_me_page_version_update",
                     color: Colors.cyan[400],
                   ),
-                  if ([
-                    '0x74Fa941242af2F76af1E5293Add5919f6881753a'.toLowerCase(),
-                    '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82'.toLowerCase(),
-                    '0x5AD1e746E6610401f598486d8747d9907Cf114b2'.toLowerCase(),
-                  ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
-                    _buildMenuBar(
-                        S.of(context).map_smart_contract_management,
-                        Icons.book,
-                        () => Navigator.push(
-                            context, MaterialPageRoute(builder: (context) => Map3ContractControlPage()))),
+                  // if ([
+                  //   '0x74Fa941242af2F76af1E5293Add5919f6881753a'.toLowerCase(),
+                  //   '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82'.toLowerCase(),
+                  //   '0x5AD1e746E6610401f598486d8747d9907Cf114b2'.toLowerCase(),
+                  // ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
+                  //   _buildMenuBar(
+                  //       S.of(context).map_smart_contract_management,
+                  //       Icons.book,
+                  //       () => Navigator.push(
+                  //           context, MaterialPageRoute(builder: (context) => Map3ContractControlPage()))),
                   Divider(
                     height: 0,
                   ),

@@ -18,7 +18,8 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:titan/src/plugins/wallet/config/bitcoin.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -72,8 +73,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Decimal get _gasPrice {
-    if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      return Decimal.fromInt(1 * TokenUnit.G_WEI);
+    if (widget.coinVo.coinType == CoinType.HYN_ATLAS
+      || widget.coinVo.coinType == CoinType.HB_HT) {
+      return Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
     }
 
     switch (selectedPriceLevel) {
@@ -85,7 +87,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
         return gasPriceRecommend.fast;
       case 3:
         var inputValue = int.tryParse(_gasPriceController?.text ?? '0') ?? 0;
-        return Decimal.fromInt(inputValue * TokenUnit.G_WEI);
+        return Decimal.fromInt(inputValue * EthereumUnitValue.G_WEI);
 
       default:
         return gasPriceRecommend.average;
@@ -100,7 +102,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     // BTC
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
       var fees = ConvertTokenUnit.weiToDecimal(
-          BigInt.parse((_gasPrice * Decimal.fromInt(BitcoinConst.BTC_RAWTX_SIZE)).toString()), 8);
+          BigInt.parse((_gasPrice * Decimal.fromInt(BitcoinGasPrice.BTC_RAWTX_SIZE)).toString()), 8);
       var gasPriceEstimate = fees * Decimal.parse(quotePrice.toString());
       gasPriceEstimateStr = "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
     }
@@ -114,18 +116,27 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
       var gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
       gasPriceEstimateStr =
-          "${(_gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ ${quoteSign ?? ""}${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
+          "${(_gasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI)).toStringAsFixed(1)} GWEI (≈ ${quoteSign ?? ""}${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
     }
     // 3.ATLAS
     else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      // var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
       var hynQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN')?.quoteVo?.price ?? 0;
       var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
       var gasEstimate = ConvertTokenUnit.weiToEther(
           weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
       var gasPriceEstimate = gasEstimate * Decimal.parse(hynQuotePrice.toString());
       gasPriceEstimateStr =
-          '${(_gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} G_DUST (≈ ${quoteSign ?? ""}${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())})';
+          '${(_gasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI)).toStringAsFixed(1)} G_DUST (≈ ${quoteSign ?? ""}${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())})';
+    }
+    // 3.HB
+    else if (widget.coinVo.coinType == CoinType.HB_HT) {
+      var htQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('HT')?.quoteVo?.price ?? 0;
+      var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+      var gasEstimate = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+      var gasPriceEstimate = gasEstimate * Decimal.parse(htQuotePrice.toString());
+      gasPriceEstimateStr =
+      '${(_gasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI)).toStringAsFixed(1)} GWEI (≈ ${quoteSign ?? ""}${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())})';
     }
 
     return gasPriceEstimateStr;
@@ -156,7 +167,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
       gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).btcGasPriceRecommend;
     } else {
-      gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).gasPriceRecommend;
+      gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).ethGasPriceRecommend;
     }
 
     _speedOnTap(1);
@@ -506,11 +517,13 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _textField(_gasPriceController, S.of(context).please_input_gas_price, "GWEI", _gasPriceFormKey, 'Gas Price'),
+                _textField(
+                    _gasPriceController, S.of(context).please_input_gas_price, "GWEI", _gasPriceFormKey, 'Gas Price'),
                 SizedBox(
                   height: 8,
                 ),
-                _textField(_nonceController, S.of(context).please_enter_nonce_optional, "", _nonceFormKey, S.of(context).nonce_value),
+                _textField(_nonceController, S.of(context).please_enter_nonce_optional, "", _nonceFormKey,
+                    S.of(context).nonce_value),
               ],
             ),
         ],
@@ -631,11 +644,11 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       return;
     }
 
+    //输入密码
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
       activatedWallet.wallet,
     );
-
     if (walletPassword == null) {
       return;
     }
@@ -645,10 +658,26 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
         isTransferring = true;
       });
 
-      // 1.BTC
-      if (widget.coinVo.coinType == CoinType.ETHEREUM) {
+      // 1.Bitcoin
+      if (widget.coinVo.coinType == CoinType.BITCOIN) {
+        var activatedWalletVo = activatedWallet.wallet;
+        var transResult = await activatedWalletVo.sendBitcoinTransaction(
+            walletPassword,
+            activatedWalletVo.getBitcoinZPub(),
+            widget.receiverAddress,
+            _gasPrice.toInt(),
+            ConvertTokenUnit.strToBigInt(widget.transferAmount, 8).toInt());
+        if (transResult["code"] != 0) {
+          LogUtil.uploadException(transResult, "bitcoin upload");
+          Fluttertoast.showToast(msg: "${transResult.toString()}", toastLength: Toast.LENGTH_LONG);
+          return;
+        }
+      } else {
+        // 2. Hyperion, Ethereum, Heco
         if (widget.coinVo.contractAddress != null) {
+          // erc20 token
           var txHash = await _transferErc20(
+              widget.coinVo.coinType,
               walletPassword,
               ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
               widget.receiverAddress,
@@ -661,67 +690,11 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           }
         } else {
           await _transferEth(
+              widget.coinVo.coinType,
               walletPassword,
               ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
               widget.receiverAddress,
               activatedWallet.wallet);
-        }
-      }
-      // 2.ETH
-      else if (widget.coinVo.coinType == CoinType.BITCOIN) {
-        var activatedWalletVo = activatedWallet.wallet;
-        var transResult = await activatedWalletVo.sendBitcoinTransaction(
-            walletPassword,
-            activatedWalletVo.getBitcoinZPub(),
-            widget.receiverAddress,
-            _gasPrice.toInt(),
-            ConvertTokenUnit.decimalToWei(Decimal.parse(widget.transferAmount), 8).toInt());
-        if (transResult["code"] != 0) {
-          LogUtil.uploadException(transResult, "bitcoin upload");
-          Fluttertoast.showToast(msg: "${transResult.toString()}", toastLength: Toast.LENGTH_LONG);
-          return;
-        }
-      }
-      // 3.ATLAS
-      else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-        if (widget.coinVo.contractAddress != null) {
-          var txHash = await HYNApi.sendTransferHYNHrc30(
-              walletPassword,
-              ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
-              widget.receiverAddress,
-              activatedWallet.wallet,
-              widget.coinVo.contractAddress);
-          if (txHash == null) {
-            setState(() {
-              isTransferring = false;
-            });
-            return;
-          }
-        } else {
-          await HYNApi.sendTransferHYN(
-            walletPassword,
-            activatedWallet.wallet,
-            toAddress: widget.receiverAddress,
-            amount: ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
-          );
-        }
-      }
-      // 3.ERC20
-      else {
-        var txHash = await _transferErc20(
-          walletPassword,
-          ConvertTokenUnit.strToBigInt(
-            widget.transferAmount,
-            widget.coinVo.decimals,
-          ),
-          widget.receiverAddress,
-          activatedWallet.wallet,
-        );
-        if (txHash == null) {
-          setState(() {
-            isTransferring = false;
-          });
-          return;
         }
       }
 
@@ -742,6 +715,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Future _transferEth(
+    int coinType,
     String password,
     BigInt amount,
     String toAddress,
@@ -749,7 +723,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   ) async {
     print('[HYN] _transferErc20，_gasPrice $_gasPrice,  _nonce:$_nonce');
 
-    final txHash = await wallet.sendEthTransaction(
+    final txHash = await wallet.sendTransaction(
+      coinType,
       password: password,
       gasPrice: BigInt.parse(_gasPrice.toStringAsFixed(0)),
       value: amount,
@@ -761,6 +736,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Future<String> _transferErc20(
+    int coinType,
     String password,
     BigInt amount,
     String toAddress,
@@ -770,6 +746,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     print('[HYN] _transferErc20，_gasPrice $_gasPrice,  _nonce:$_nonce');
 
     final txHash = await wallet.sendErc20Transaction(
+      coinType,
       contractAddress: contractAddress,
       password: password,
       gasPrice: BigInt.parse(_gasPrice.toStringAsFixed(0)),

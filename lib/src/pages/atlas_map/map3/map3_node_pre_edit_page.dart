@@ -14,6 +14,7 @@ import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -170,7 +171,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     var map3NodeAddress = widget?.map3infoEntity?.address ?? "";
     _editMessage = ConfirmEditMap3NodeMessage(entity: createMap3Entity, map3NodeAddress: map3NodeAddress);
 
-    final client = WalletUtil.getWeb3Client(true);
+    final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
 
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
     var _wallet = activatedWallet?.wallet;
@@ -548,7 +549,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
         var walletAddress = EthereumAddress.fromHex(wallet?.getEthAccount()?.address ?? "");
 
-        var microDelegations = await WalletUtil.getWeb3Client(true).getMap3NodeDelegation(
+        var microDelegations = await WalletUtil.getWeb3Client(CoinType.HYN_ATLAS).getMap3NodeDelegation(
           map3Address,
           walletAddress,
         );

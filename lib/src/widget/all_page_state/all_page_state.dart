@@ -9,6 +9,8 @@ class LoadingState extends AllPageState {}
 
 class LoadEmptyState extends AllPageState {}
 
+class LoadCustomState extends AllPageState {}
+
 class LoadFailState extends AllPageState {
   String message = S.of(Keys.rootKey.currentContext).failed_to_load;
 

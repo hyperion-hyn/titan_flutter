@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/plugins/wallet/contract_const.dart';
 
 import '../../env.dart';
 
@@ -85,11 +84,25 @@ class Const {
   static const kNcovMapStyleCn = 'https://cn.tile.map3.network/ncov.json';
 
   //white
-  static const kWhiteMapStyleCn =
-      'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+  // static const kWhiteMapStyleCn =
+  //     'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+  static String get kWhiteMapStyleCn {
+    if (env.buildType == BuildType.DEV) {
+      return 'https://cn.tile.map3.network/see-it-all-rp-test.json';
+    } else {
+      return 'https://cn.tile.map3.network/see-it-all-rp.json';
+    }
+  }
 
-  static const kWhiteMapStyle =
-      'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
+  // static const kWhiteMapStyle =
+  //     'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
+  static String get kWhiteMapStyle {
+    if (env.buildType == BuildType.DEV) {
+      return 'https://static.hyn.space/maptiles/see-it-all-rp-test.json';
+    } else {
+      return 'https://static.hyn.space/maptiles/see-it-all-rp.json';
+    }
+  }
 
 //white-without
   static const kWhiteWithoutMapStyleCn =
@@ -212,9 +225,4 @@ class RouteProfile {
   static final String driving = 'driving';
   static final String walking = 'walking';
   static final String cycling = 'cycling';
-}
-
-class PlatformErrorCode {
-  static const String PASSWORD_WRONG = '1';
-  static const String PARAMETERS_WRONG = '2';
 }

@@ -12,10 +12,12 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -104,12 +106,7 @@ class _RpFriendInvitePageState extends BaseState<RpFriendInvitePage> {
                                           border: Border.all(width: 2, color: Colors.transparent)),
                                       child: walletHeaderWidget(walletName,
                                           address: ethWalletAddress, isShowShape: false)),
-//                              iconWidget("",walletName,walletAddress,isCircle: true,iconWidth: 60),
-                                  /*Image.asset(
-                                    "res/drawable/ic_rp_invite_friend_head_img.png",
-                                    width: 60,
-                                    height: 60,
-                                  ),*/
+
                                   Padding(
                                     padding: const EdgeInsets.only(
                                       top: 2,
@@ -369,10 +366,13 @@ void showInviteDialog(BuildContext context, String inviterAddress, String wallet
               String inviteResult = await _rpApi.postRpInviter(inviterAddress, walletVo.wallet);
               if (inviteResult != null) {
                 Fluttertoast.showToast(msg: S.of(context).invitation_success);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RedPocketPage()),
-                );
+
+                var entryRouteName = Uri.encodeComponent(Routes.red_pocket_page);
+
+                Application.router.navigateTo(
+                    context,
+                    Routes.red_pocket_page +
+                        "?entryRouteName=$entryRouteName");
               }
             } catch (error) {
               LogUtil.toastException(error);

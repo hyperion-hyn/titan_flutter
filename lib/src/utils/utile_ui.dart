@@ -193,14 +193,14 @@ class UiUtil {
   }
 
   // alertView
-  static Future<bool> showAlertViewNew<T>(
+  static Future<T> showAlertViewNew<T>(
     BuildContext context, {
     List<Widget> actions,
     Widget contentWidget,
     bool barrierDismissible = true,
     bool isShowCloseIcon = true,
   }) {
-    return showDialog<bool>(
+    return showDialog<T>(
       barrierDismissible: barrierDismissible,
       // 传入 context
       context: context,
@@ -223,7 +223,7 @@ class UiUtil {
                           right: 10,
                           top: 10,
                           child: GestureDetector(
-                            onTap: () => Navigator.pop(_, false),
+                            onTap: () => Navigator.pop(_),
                             child: Image.asset(
                               "res/drawable/map3_node_close.png",
                               width: 18,

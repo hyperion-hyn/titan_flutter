@@ -4,9 +4,10 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_list_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_record_statistics_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_record_tab_page.dart';
+
 
 class RpRecordTabPage extends StatefulWidget {
   @override
@@ -19,7 +20,7 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: BaseAppBar(
           baseTitle: S.of(context).my_redpocket,
@@ -52,18 +53,17 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: new Container(
               width: double.infinity,
-              height: 50.0,
+              height: 40.0,
               //color: HexColor('#F8F8F8'),
               color: Colors.white,
               child: Row(
                 children: <Widget>[
                   Expanded(
-                    flex: 10,
                     child: TabBar(
                       labelColor: HexColor('#FF001B'),
                       labelStyle: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                        fontSize: 14,
                       ),
                       indicatorSize: TabBarIndicatorSize.label,
                       indicatorColor: HexColor('#FF001B'),
@@ -91,13 +91,14 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
                             S.of(context).promotion_rp,
                           ),
                         ),
+                        Tab(
+                          child: Text(
+                            '分享红包',
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: Container(),
-                  )
                 ],
               ),
             ),
@@ -107,6 +108,7 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
               RpRecordListPage(rpType: RedPocketType.LUCKY,),
               RpRecordListPage(rpType: RedPocketType.LEVEL,),
               RpRecordListPage(rpType: RedPocketType.PROMOTION,),
+              RpShareRecordTabPage(),
             ],
           ),
         ),

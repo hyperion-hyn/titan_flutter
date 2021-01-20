@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 import '../../../env.dart';
 import '../../global.dart';
@@ -41,7 +42,8 @@ class AppBlocDelegate extends BlocDelegate {
   void onError(Bloc bloc, Object error, StackTrace stacktrace) {
     super.onError(bloc, error, stacktrace);
     if (env.buildType == BuildType.PROD) {
-      FlutterBugly.uploadException(message: error.toString(), detail: stacktrace?.toString() ?? error.toString());
+      LogUtil.uploadExceptionStr("${error?.toString() ?? ""} ${stacktrace?.toString() ?? ""}","bloc delegate error");
+      // FlutterBugly.uploadException(message: error.toString(), detail: stacktrace?.toString() ?? error.toString());
     }
     logger.e(error);
   }

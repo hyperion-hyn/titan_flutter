@@ -14,7 +14,8 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_my_rp_record_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
+import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -943,7 +944,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
   _navToDetailAction() {
     if (_txHashIsEmpty) return;
 
-    WalletShowAccountInfoPage.jumpToAccountInfoPage(
+    WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
       context,
       _detailEntity?.txHash,
       SupportedTokens.HYN_RP_HRC30.symbol,
@@ -1014,102 +1015,4 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
       _loadDataBloc.add(LoadMoreFailEvent());
     }
   }
-}
-
-List<RpOpenRecordEntity> filterRpOpenDataList(List<RpOpenRecordEntity> dataList) {
-  List<RpOpenRecordEntity> tempList = dataList?.where((element) {
-        var amountValue = Decimal.tryParse(element?.amountStr ?? '0') ?? Decimal.zero;
-        var luckState = RpLuckState.values[(element?.luck ?? 0)];
-        return !(luckState == RpLuckState.MISS && amountValue <= Decimal.zero);
-      })?.toList() ??
-      [];
-
-  return tempList;
-}
-
-class RpStateInfoModel extends Object {
-  final String desc;
-  final String amount;
-
-  RpStateInfoModel({this.desc, this.amount});
-}
-
-RpStateInfoModel getRpLuckStateInfo(RpOpenRecordEntity entity) {
-  if (entity == null) return RpStateInfoModel(desc: '', amount: '');
-
-  RedPocketType rpType = RedPocketType.values[entity.type];
-
-  var desc = '';
-
-  var amount = '--';
-  String amountStr = FormatUtil.stringFormatCoinNum(entity?.amountStr ?? '0', decimal: 4,) ?? '--';
-  amountStr += ' RP';
-
-  var luckState = RpLuckState.values[(entity?.luck ?? 0)];
-  switch (luckState) {
-    case RpLuckState.MISS:
-      desc = '${S.of(Keys.rootKey.currentContext).rp_missed} $amountStr';
-      amount = '0 RP';
-      break;
-
-    case RpLuckState.BEST:
-      desc = S.of(Keys.rootKey.currentContext).rp_best;
-      amount = amountStr;
-      break;
-
-    case RpLuckState.LUCKY:
-      if (rpType == RedPocketType.LUCKY) {
-        desc = S.of(Keys.rootKey.currentContext).rp_hit;
-      } else {
-        desc = '';
-      }
-      amount = amountStr;
-      break;
-
-    case RpLuckState.LUCKY_BEST:
-      desc = S.of(Keys.rootKey.currentContext).rp_hit_and_best;
-      amount = amountStr;
-      break;
-
-    case RpLuckState.LUCKY_MISS_QUOTA:
-      desc = S.of(Keys.rootKey.currentContext).rp_run_out_open_times;
-      amount = amountStr;
-      break;
-
-    case RpLuckState.GET:
-      desc = '';
-      amount = amountStr;
-      break;
-
-    default:
-      desc = '';
-      amount = '';
-      break;
-  }
-  return RpStateInfoModel(desc: desc, amount: amount);
-}
-
-// 1、燃烧 2、管理费 3、正常
-enum RpAddressRoleType {
-  ZERO,
-  BURN,
-  MANAGE_FEE,
-  NORMAL,
-}
-
-// 0:Lucky 1:Level 2:Promotion
-enum RedPocketType {
-  LUCKY,
-  LEVEL,
-  PROMOTION,
-}
-
-
-enum RpLuckState {
-  MISS,             // 错过：0
-  GET,              // 获取：1
-  BEST,             // 最佳：2
-  LUCKY,            // 砸中：3
-  LUCKY_BEST,       // 砸中且最佳：4
-  LUCKY_MISS_QUOTA, // 可拆次数用尽：5
 }

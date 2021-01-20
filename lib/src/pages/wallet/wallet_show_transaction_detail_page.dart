@@ -10,13 +10,11 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/coin_market_api.dart';
-import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/wallet/vo/symbol_quote_vo.dart';
-import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
+import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -30,20 +28,20 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/utils/log_util.dart';
 
-class WalletShowAccountDetailPage extends StatefulWidget {
+class WalletShowTransactionDetailPage extends StatefulWidget {
   final TransactionDetailVo transactionDetail;
   final bool isContain;
 
-  WalletShowAccountDetailPage(this.transactionDetail, {this.isContain = false});
+  WalletShowTransactionDetailPage(this.transactionDetail, {this.isContain = false});
 
   @override
   State<StatefulWidget> createState() {
-    return WalletShowAccountDetailPageState();
+    return WalletShowTransactionDetailPageState();
   }
 }
 
-class WalletShowAccountDetailPageState
-    extends BaseState<WalletShowAccountDetailPage> {
+class WalletShowTransactionDetailPageState
+    extends BaseState<WalletShowTransactionDetailPage> {
   AllPageState _currentState = LoadingState();
   List<String> _dataTitleList = [];
   List<String> _dataInfoList = [];
