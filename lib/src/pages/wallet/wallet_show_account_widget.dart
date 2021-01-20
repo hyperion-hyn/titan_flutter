@@ -713,15 +713,13 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
   @override
   Future<List<dynamic>> onLoadData(int page) async {
     var retList = [];
-    List<TransactionDetailVo> transferList = [];
 
     try {
-      transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
+      List<TransactionDetailVo> transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
       if (page == getStartPage()) {
         if (!mounted) {
           return retList;
         }
-
         retList.add('header');
 
         //update balance
@@ -763,41 +761,11 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 
       retList.addAll(transferList);
     } catch (e, stacktrace) {
+      retList.add('header');
       print(stacktrace);
       logger.e(e);
     }
     return retList;
   }
 
-// Future<TransactionDetailVo> getLocalTransfer(bool isAllLocal) async {
-//   TransactionDetailVo localTransfer;
-//   if (isAllLocal) {
-//     localTransfer =
-//         await transactionInteractor.getShareTransaction(LocalTransferType.LOCAL_TRANSFER_ETH, isAllLocal);
-//   } else {
-//     if (widget.coinVo.symbol == "ETH") {
-//       localTransfer =
-//           await transactionInteractor.getShareTransaction(LocalTransferType.LOCAL_TRANSFER_ETH, isAllLocal);
-//     } else {
-//       localTransfer = await widget.transactionInteractor.getShareTransaction(
-//           LocalTransferType.LOCAL_TRANSFER_ERC20, isAllLocal,
-//           contractAddress: widget.coinVo.contractAddress);
-//     }
-//   }
-//
-//   return localTransfer;
-// }
-}
-
-Future<List<TransactionDetailVo>> getEthTransferList(AccountTransferService _accountTransferService) async {
-  List<TransactionDetailVo> transferList = [];
-  try {
-    WalletViewVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    String fromAddress = walletVo.wallet.getEthAccount().address;
-    var coinVo = CoinViewVo(symbol: "ETH", address: fromAddress);
-    transferList = await _accountTransferService.getTransferList(coinVo, 0);
-  } catch (e) {
-    logger.e(e);
-  }
-  return transferList;
 }

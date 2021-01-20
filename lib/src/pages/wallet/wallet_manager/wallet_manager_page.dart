@@ -48,14 +48,12 @@ class WalletManagerPage extends StatefulWidget {
       if (hasWalletUpdate != null) {
         hasWalletUpdate(wallet);
       }
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(ActiveWalletEvent(wallet: wallet));
+      BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
       await Future.delayed(Duration(milliseconds: 300));
       // BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
 
       ///Clear exchange account when switch wallet
-      BlocProvider.of<ExchangeCmpBloc>(context)
-          .add(ClearExchangeAccountEvent());
+      BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
     } else {
       if (noWalletUpdate != null) {
         noWalletUpdate();
@@ -87,8 +85,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
 
   @override
   void didPush() {
-    beforeActiveWallet =
-        WalletInheritedModel.of(context).activatedWallet?.wallet;
+    beforeActiveWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
     _walletManagerBloc = BlocProvider.of<WalletManagerBloc>(context);
     _walletManagerBloc.add(ScanWalletEvent());
 
@@ -99,10 +96,8 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
   void didPopNext() async {
     _walletManagerBloc.add(ScanWalletEvent());
 
-    var currentActiveWallet =
-        WalletInheritedModel.of(context).activatedWallet?.wallet;
-    if (currentActiveWallet?.keystore?.fileName !=
-        beforeActiveWallet?.keystore?.fileName) {
+    var currentActiveWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+    if (currentActiveWallet?.keystore?.fileName != beforeActiveWallet?.keystore?.fileName) {
       //激活钱包发生变化，切换激活钱包
       beforeActiveWallet = currentActiveWallet;
       //将变化钱包作为选中钱包
@@ -128,7 +123,6 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
         appBar: BaseAppBar(
           backgroundColor: HexColor('#F6F6F6'),
           baseTitle: S.of(context).wallet_manage,
-          showBottom: true,
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -204,9 +198,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
     } else {
       var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
       Application.router.navigateTo(
-          context,
-          Routes.wallet_create +
-              '?entryRouteName=$currentRouteName&isCreate=1');
+          context, Routes.wallet_create + '?entryRouteName=$currentRouteName&isCreate=1');
     }
   }
 
@@ -219,8 +211,8 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
       ));
     } else {
       var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
-      Application.router.navigateTo(
-          context, Routes.wallet_create + '?entryRouteName=$currentRouteName');
+      Application.router
+          .navigateTo(context, Routes.wallet_create + '?entryRouteName=$currentRouteName');
     }
   }
 
@@ -384,9 +376,8 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
     Wallet wallet, {
     int index = 0,
   }) {
-    var walletFileName = selectWallet?.keystore?.fileName ??
-        beforeActiveWallet.keystore.fileName ??
-        "";
+    var walletFileName =
+        selectWallet?.keystore?.fileName ?? beforeActiveWallet.keystore.fileName ?? "";
     bool isSelected = (wallet.keystore.fileName == walletFileName);
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
@@ -446,9 +437,8 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                                   alignment: Alignment.topRight,
                                   child: Container(
                                     padding: EdgeInsets.all(0),
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white),
+                                    decoration:
+                                        BoxDecoration(shape: BoxShape.circle, color: Colors.white),
                                     child: Image.asset(
                                       'res/drawable/ic_check_selected.png',
                                       width: 15,
@@ -487,8 +477,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                                   ),
                                   limitCharsLength: 6,
                                 ),
-                                style: TextStyle(
-                                    fontSize: 11, color: Color(0xFF9B9B9B)),
+                                style: TextStyle(fontSize: 11, color: Color(0xFF9B9B9B)),
                               ),
                             ),
                           ],
@@ -500,8 +489,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                           future: WalletUtil.checkIsBackUpMnemonic(
                             ethAccount.address,
                           ),
-                          builder:
-                              (BuildContext context, AsyncSnapshot snapshot) {
+                          builder: (BuildContext context, AsyncSnapshot snapshot) {
                             if (snapshot.hasData) {
                               bool result = snapshot.data;
                               return result
@@ -535,10 +523,8 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
               ),
               InkWell(
                 onTap: () {
-                  var walletStr =
-                      FluroConvertUtils.object2string(wallet.toJson());
-                  var currentRouteName =
-                      RouteUtil.encodeRouteNameWithoutParams(context);
+                  var walletStr = FluroConvertUtils.object2string(wallet.toJson());
+                  var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
 
                   Application.router.navigateTo(
                       context,

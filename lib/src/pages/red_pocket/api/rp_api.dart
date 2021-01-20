@@ -691,13 +691,15 @@ class RPApi {
       options: RequestOptions(contentType: "application/json"),
     );
 
+    print("[$runtimeType] responseEntity.toJson:${responseEntity.code}");
+
     /*
     * 1.成功
     * 2.-40013
     * */
-    if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
-      throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg, subMsg: responseEntity.subMsg);
-    }
+    // if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
+    //   throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg, subMsg: responseEntity.subMsg);
+    // }
 
     if (responseEntity.code == -40013) {
       return -40013;

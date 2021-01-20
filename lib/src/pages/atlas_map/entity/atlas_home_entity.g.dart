@@ -8,16 +8,15 @@ part of 'atlas_home_entity.dart';
 
 AtlasHomeEntity _$AtlasHomeEntityFromJson(Map<String, dynamic> json) {
   return AtlasHomeEntity(
-    json['info'] == null
-        ? null
-        : CommitteeInfoEntity.fromJson(json['info'] as Map<String, dynamic>),
+    json['info'] == null ? null : CommitteeInfoEntity.fromJson(json['info'] as Map<String, dynamic>),
     (json['my_nodes'] as List)
-        ?.map((e) => e == null
-            ? null
-            : AtlasHomeNode.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null ? null : AtlasHomeNode.fromJson(e as Map<String, dynamic>))
         ?.toList(),
     json['points'] as String,
     json['map3_num'] as int,
+    json['map3_num_active'] as int,
+    json['map3_num_dead'] as int,
+    json['map3_num_idle'] as int,
   );
 }
 
@@ -27,6 +26,9 @@ Map<String, dynamic> _$AtlasHomeEntityToJson(AtlasHomeEntity instance) =>
       'my_nodes': instance.atlasHomeNodeList,
       'points': instance.points,
       'map3_num': instance.map3Count,
+      'map3_num_active': instance.map3CountActive,
+      'map3_num_dead': instance.map3CountDead,
+      'map3_num_idle': instance.map3CountIdle,
     };
 
 AtlasHomeNode _$AtlasHomeNodeFromJson(Map<String, dynamic> json) {
@@ -59,8 +61,7 @@ AtlasHomeNode _$AtlasHomeNodeFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$AtlasHomeNodeToJson(AtlasHomeNode instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$AtlasHomeNodeToJson(AtlasHomeNode instance) => <String, dynamic>{
       'address': instance.address,
       'block_num': instance.blockNum,
       'bls_key': instance.blsKey,

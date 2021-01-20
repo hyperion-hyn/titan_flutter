@@ -1166,7 +1166,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
         Fluttertoast.showToast(msg: '请填写可领取的距离！');
 
         return;
-      } else if (hynValue > Decimal.zero && hynValue > Decimal.parse('100')) {
+      } else if (rangeValue > Decimal.zero && rangeValue > Decimal.parse('100')) {
         Fluttertoast.showToast(msg: '最大距离不能超过100千米');
         return;
       }

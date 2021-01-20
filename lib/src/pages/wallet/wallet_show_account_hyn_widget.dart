@@ -17,6 +17,7 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
@@ -307,13 +308,11 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                                         return InkWell(
                                           onTap: () {
                                             if ((widget.coinVo.symbol ==
-                                                SupportedTokens
-                                                    .HYN_Atlas.symbol) ||
+                                                    SupportedTokens
+                                                        .HYN_Atlas.symbol) ||
                                                 (widget.coinVo.symbol ==
                                                     SupportedTokens
-                                                        .HYN_RP_HRC30.symbol)
-                                            ) {
-
+                                                        .HYN_RP_HRC30.symbol)) {
                                               var base = 'USDT';
                                               var quote = 'HYN';
                                               if (widget.coinVo.symbol ==
@@ -379,21 +378,34 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                           ],
                         ),
                       ),
-                      if (dataList.length > 1)
-                        ListView.builder(
-                          primary: false,
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context, int index) {
-                            if (index == 0) {
-                              return SizedBox.shrink();
-                            } else {
-                              var currentTransactionDetail = dataList[index];
-                              return _buildTransactionItem(
-                                  context, currentTransactionDetail);
-                            }
-                          },
-                          itemCount: max<int>(0, dataList.length),
-                        )
+                      dataList.length > 1
+                          ? ListView.builder(
+                              primary: false,
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, int index) {
+                                if (index == 0) {
+                                  return SizedBox.shrink();
+                                } else {
+                                  var currentTransactionDetail =
+                                      dataList[index];
+                                  return _buildTransactionItem(
+                                      context, currentTransactionDetail);
+                                }
+                              },
+                              itemCount: max<int>(0, dataList.length),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(
+                                top: 20,
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                child: emptyListWidget(
+                                  title: S.of(context).no_data,
+                                  isAdapter: false,
+                                ),
+                              ),
+                            )
                     ]),
               ),
             ),
@@ -498,11 +510,12 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => WalletShowTransactionSimpleInfoPage(
-                          transactionDetail.hash,
-                          transactionDetail.symbol,
-                          isContain: _isContain(transactionDetail),
-                        )));
+                        builder: (context) =>
+                            WalletShowTransactionSimpleInfoPage(
+                              transactionDetail.hash,
+                              transactionDetail.symbol,
+                              isContain: _isContain(transactionDetail),
+                            )));
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 21),
@@ -605,20 +618,24 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
   @override
   Future<List<dynamic>> onLoadData(int page) async {
     var retList = [];
-    if (page == getStartPage()) {
+    try {
+      List<TransactionDetailVo> transferList =
+          await _accountTransferService.getTransferList(widget.coinVo, page);
+      if (page == getStartPage()) {
+        retList.add('header');
+
+        //update balance
+        BlocProvider.of<WalletCmpBloc>(context)
+            .add(UpdateActivatedWalletBalanceEvent(
+          symbol: widget.coinVo.symbol,
+          // contractAddress: widget.coinVo.contractAddress,
+        ));
+      }
+      retList.addAll(transferList);
+    } catch (e, stacktrace) {
       retList.add('header');
-
-      //update balance
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateActivatedWalletBalanceEvent(
-        symbol: widget.coinVo.symbol,
-        // contractAddress: widget.coinVo.contractAddress,
-      ));
+      print(stacktrace);
     }
-
-    List<TransactionDetailVo> transferList =
-        await _accountTransferService.getTransferList(widget.coinVo, page);
-    retList.addAll(transferList);
     return retList;
   }
 }

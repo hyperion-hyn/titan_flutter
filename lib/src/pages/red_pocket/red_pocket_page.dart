@@ -144,7 +144,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           ),
 
           if (!_isLoading) RpFloatingWidget(),
-          // if (!_isLoading) RpFloatingWidget(actionType: -1,),
+          // todo: test
+          //if (!_isLoading) RpFloatingWidget(actionType: -1,),
         ],
       ),
 

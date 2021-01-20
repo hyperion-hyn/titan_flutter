@@ -43,6 +43,8 @@ import 'package:titan/src/pages/wallet/wallet_new_page/wallet_create_import_acco
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_backup_notice_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_setting_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
+import 'package:titan/src/pages/wallet/wallet_show_account_hb_widget.dart';
+import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -111,7 +113,9 @@ var walletAccountDetailHandler = Handler(handlerFunc: (context, params) {
       CoinViewVo.fromJson(FluroConvertUtils.string2map(params['coinVo']?.first));
   if (coinVo.coinType == CoinType.HYN_ATLAS) {
     return ShowAccountHynPage(coinVo);
-  } else {
+  }else if(coinVo.coinType == CoinType.HB_HT){
+    return ShowAccountHbPage(coinVo);
+  }else{
     return ShowAccountPage(coinVo);
   }
 });

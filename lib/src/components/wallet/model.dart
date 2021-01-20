@@ -126,18 +126,18 @@ class GasPriceRecommend extends Object {
   }
 
   GasPriceRecommend.hecoDefaultValue() {
-    this.fast = Decimal.fromInt(HecoGasPrice.LOW_SPEED);
+    this.fast = Decimal.fromInt(HecoGasPrice.SUPER_FAST_SPEED);
     this.average = Decimal.fromInt(HecoGasPrice.FAST_SPEED);
-    this.safeLow = Decimal.fromInt(HecoGasPrice.SUPER_FAST_SPEED);
+    this.safeLow = Decimal.fromInt(HecoGasPrice.LOW_SPEED);
     this.fastWait = 0.1;
     this.avgWait = 0.2;
     this.safeLowWait = 1;
   }
 
   GasPriceRecommend.hyperionDefaultValue() {
-    this.fast = Decimal.fromInt(HyperionGasPrice.LOW_SPEED);
+    this.fast = Decimal.fromInt(HyperionGasPrice.SUPER_FAST_SPEED);
     this.average = Decimal.fromInt(HyperionGasPrice.FAST_SPEED);
-    this.safeLow = Decimal.fromInt(HyperionGasPrice.SUPER_FAST_SPEED);
+    this.safeLow = Decimal.fromInt(HyperionGasPrice.LOW_SPEED);
     this.fastWait = 0.1;
     this.avgWait = 0.2;
     this.safeLowWait = 1;

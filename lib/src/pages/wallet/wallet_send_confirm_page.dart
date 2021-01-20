@@ -72,7 +72,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Decimal get _gasPrice {
-    if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+    if (widget.coinVo.coinType == CoinType.HYN_ATLAS
+      || widget.coinVo.coinType == CoinType.HB_HT) {
       return Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
     }
 
@@ -118,7 +119,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     }
     // 3.ATLAS
     else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      // var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
       var hynQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('HYN')?.price ?? 0;
       var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
       var gasEstimate = ConvertTokenUnit.weiToEther(
@@ -126,6 +126,16 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       var gasPriceEstimate = gasEstimate * Decimal.parse(hynQuotePrice.toString());
       gasPriceEstimateStr =
           '${(_gasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI)).toStringAsFixed(1)} G_DUST (≈ ${quoteSign ?? ""}${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())})';
+    }
+    // 3.HB
+    else if (widget.coinVo.coinType == CoinType.HB_HT) {
+      var htQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('HT')?.price ?? 0;
+      var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+      var gasEstimate = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+      var gasPriceEstimate = gasEstimate * Decimal.parse(htQuotePrice.toString());
+      gasPriceEstimateStr =
+      '${(_gasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI)).toStringAsFixed(1)} GWEI (≈ ${quoteSign ?? ""}${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())})';
     }
 
     return gasPriceEstimateStr;

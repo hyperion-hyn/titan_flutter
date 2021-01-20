@@ -48,229 +48,316 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        SizedBox(
-          height: 32,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              InkWell(
-                child: Row(
-                  children: [
-                    Image.asset(
-                      'res/drawable/ic_burn.png',
-                      width: 15,
-                      height: 15,
-                      color: HexColor('#FFFF5151'),
-                    ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      S.of(context).hyn_burning,
-                      style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
-                    )
-                  ],
-                ),
-                onTap: () {
-                  Application.router.navigateTo(context, Routes.map3node_burn_history_page);
-                },
-              ),
-              Spacer(),
-              InkWell(
-                onTap: () {
-                  var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
-                  var _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
-                  if (_address.isEmpty) {
-                    Application.router.navigateTo(
-                        context,
-                        Routes.map3node_create_wallet +
-                            "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
-                    return;
-                  }
 
-                  Application.router.navigateTo(context, Routes.map3node_my_page_reward_new);
-                },
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Stack(
+
+    var atlasHomeEntity = AtlasInheritedModel.of(context).atlasHomeEntity;
+    var map3Count = atlasHomeEntity?.map3Count?.toString() ?? '---';
+    var map3CountActive = atlasHomeEntity?.map3CountActive?.toString() ?? '---';
+    var map3CountDead = atlasHomeEntity?.map3CountDead?.toString() ?? '---';
+    var map3CountIdle = atlasHomeEntity?.map3CountIdle?.toString() ?? '---';
+
+    List<DropdownMenuItem> serverList = List();
+    for (int i = 0; i < 3; i++) {
+      var title = '---';
+      var count = '---';
+
+      switch (i) {
+        case 0:
+          title = '运行中: ';
+          count = '$map3CountActive';
+          break;
+        case 1:
+          title = '待启动: ';
+          count = '$map3CountIdle';
+          break;
+        case 2:
+          title = '终止: ';
+          count = '$map3CountDead';
+          break;
+      }
+      DropdownMenuItem item = DropdownMenuItem(
+        value: i,
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                color: HexColor('#999999'),
+                fontWeight: FontWeight.normal,
+                fontSize: 12,
+              ),
+            ),
+            Text(
+              count,
+              style: TextStyle(
+                color: HexColor('#333333'),
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
+              ),
+            )
+          ],
+        ),
+      );
+      serverList.add(item);
+    }
+
+    return SafeArea(
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              height: 8,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  InkWell(
+                    child: Row(
                       children: [
-                        Center(
-                          child: Image.asset(
-                            'res/drawable/ic_hyn_coin.png',
-                            width: 17,
-                            height: 17,
-                          ),
+                        Image.asset(
+                          'res/drawable/ic_burn.png',
+                          width: 15,
+                          height: 15,
+                          color: HexColor('#FFFF5151'),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4.0, top: 4),
-                          child: Container(
-                            width: 10,
-                            height: 10,
-                            child: Glitters(
-                              duration: Duration(
-                                milliseconds: 600,
-                              ),
-                              maxOpacity: 0.5,
-                              color: HexColor('#FFE4D17E'),
-                            ),
-                          ),
+                        SizedBox(
+                          width: 4,
                         ),
+                        Text(
+                          S.of(context).hyn_burning,
+                          style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+                        )
                       ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 4.0),
-                      child: Text(
-                        S.of(context).my_reward,
-                        style: TextStyle(
-                          color: HexColor('#FFE4D17E'),
-                          fontSize: 11,
+                    onTap: () {
+                      Application.router.navigateTo(context, Routes.map3node_burn_history_page);
+                    },
+                  ),
+                  Spacer(),
+                  InkWell(
+                    onTap: () {
+                      var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+                      var _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+                      if (_address.isEmpty) {
+                        Application.router.navigateTo(
+                            context,
+                            Routes.map3node_create_wallet +
+                                "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+                        return;
+                      }
+
+                      Application.router.navigateTo(context, Routes.map3node_my_page_reward_new);
+                    },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Stack(
+                          children: [
+                            Center(
+                              child: Image.asset(
+                                'res/drawable/ic_hyn_coin.png',
+                                width: 17,
+                                height: 17,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 4.0, top: 4),
+                              child: Container(
+                                width: 10,
+                                height: 10,
+                                child: Glitters(
+                                  duration: Duration(
+                                    milliseconds: 600,
+                                  ),
+                                  maxOpacity: 0.5,
+                                  color: HexColor('#FFE4D17E'),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).atlas_node,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 4.0),
+                          child: Text(
+                            S.of(context).my_reward,
+                            style: TextStyle(
+                              color: HexColor('#FFE4D17E'),
+                              fontSize: 11,
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Text(
-                      '${AtlasInheritedModel.of(context).committeeInfo?.candidate?.toString() ?? '---'}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
+                  )
+                ],
               ),
-              Container(
-                height: 20,
-                width: 1,
-                color: DefaultColors.color999,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
               ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).map3_node,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Text(
-                      '${AtlasInheritedModel.of(context).atlasHomeEntity?.map3Count?.toString() ?? '---'}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                height: 20,
-                width: 1,
-                color: DefaultColors.color999,
-              ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).block_height,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    InkWell(
-                      child: Shimmer.fromColors(
-                        period: Duration(milliseconds: 3000),
-                        baseColor: Colors.white,
-                        highlightColor: HexColor('#3D444A'),
-                        child: Text(
-                          '${AtlasInheritedModel.of(context).committeeInfo?.blockNum?.toString() ?? '---'}',
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          S.of(context).atlas_node,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        Text(
+                          '${AtlasInheritedModel.of(context).committeeInfo?.candidate?.toString() ?? '---'}',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
-                            //color: Colors.blue,
-                            //decoration: TextDecoration.underline,
                           ),
                         ),
-                      ),
-                      onTap: () {},
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  Container(
+                    height: 20,
+                    width: 1,
+                    color: DefaultColors.color999,
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          S.of(context).map3_node,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        Stack(
+                          alignment: Alignment.topCenter,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 4,),
+                              child: Text(
+                                map3Count,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            DropdownButtonHideUnderline(
+                              child: Container(
+                                height: 16,
+                                child: DropdownButton(
+                                  // value: 0,
+                                  icon: Icon(
+                                    Icons.arrow_drop_down_sharp,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                  items: serverList,
+                                  onChanged: (value) {
+                                    // setState(() {
+                                    //   selectNodeProvider(
+                                    //     value,
+                                    //     0,
+                                    //   );
+                                    // });
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 20,
+                    width: 1,
+                    color: DefaultColors.color999,
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          S.of(context).block_height,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        InkWell(
+                          child: Shimmer.fromColors(
+                            period: Duration(milliseconds: 3000),
+                            baseColor: Colors.white,
+                            highlightColor: HexColor('#3D444A'),
+                            child: Text(
+                              '${AtlasInheritedModel.of(context).committeeInfo?.blockNum?.toString() ?? '---'}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                //color: Colors.blue,
+                                //decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 20,
+                    width: 1,
+                    color: DefaultColors.color999,
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          S.of(context).atlas_current_age,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        Text(
+                          '${AtlasInheritedModel.of(context).committeeInfo?.epoch?.toString() ?? '---'}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              Container(
-                height: 20,
-                width: 1,
-                color: DefaultColors.color999,
-              ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).atlas_current_age,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Text(
-                      '${AtlasInheritedModel.of(context).committeeInfo?.epoch?.toString() ?? '---'}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        )
-      ],
+            )
+          ],
+        ),
+      ),
     );
   }
 }
