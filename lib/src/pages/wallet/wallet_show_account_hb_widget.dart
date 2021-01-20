@@ -505,15 +505,12 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
   @override
   Future<List<dynamic>> onLoadData(int page) async {
     var retList = [];
-    List<TransactionDetailVo> transferList = [];
-
     try {
-      transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
+      List<TransactionDetailVo> transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
       if (page == getStartPage()) {
         if(!mounted){
           return retList;
         }
-
         retList.add('header');
 
         //update balance
@@ -525,6 +522,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
 
       retList.addAll(transferList);
     } catch (e, stacktrace) {
+      retList.add('header');
       print(stacktrace);
       logger.e(e);
     }
