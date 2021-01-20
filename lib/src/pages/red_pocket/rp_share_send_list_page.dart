@@ -11,6 +11,8 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_success_page.dart';
+import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/utils/format_util.dart';
 import "package:collection/collection.dart";
 
@@ -21,7 +23,8 @@ class RpShareSendListPage extends StatefulWidget {
   }
 }
 
-class _RpShareSendListState extends BaseState<RpShareSendListPage> with AutomaticKeepAliveClientMixin {
+class _RpShareSendListState extends BaseState<RpShareSendListPage>
+    with AutomaticKeepAliveClientMixin {
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final RPApi _rpApi = RPApi();
 
@@ -123,7 +126,8 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
     var isNormal = (model.rpType ?? RpShareType.normal) == RpShareType.normal;
     //print("[$runtimeType] model.rpType:${model.rpType}, isNormal:$isNormal");
 
-    RpShareTypeEntity shareTypeEntity = isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
+    RpShareTypeEntity shareTypeEntity =
+        isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
 
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
@@ -133,6 +137,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
     var locationRange = '$location';
 
     var onGoing = model.state == RpShareState.ongoing;
+    var refunded = model.state == RpShareState.refunded;
 
     return InkWell(
       onTap: () {
@@ -230,13 +235,41 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                               textAlign: TextAlign.right,
                               overflow: TextOverflow.ellipsis,
                             ),
+                            if (refunded)
+                              InkWell(
+                                onTap: () {
+                                  // todo:
+                                  // return;
+
+                                  if ((model?.hynRefundHash ?? '').isEmpty) return;
+
+                                  WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
+                                      context,
+                                      model?.hynRefundHash ?? '',
+                                      SupportedTokens.HYN_Atlas.symbol);
+                                },
+                                child: Text(
+                                  ',稍后查看钱包余额',
+                                  style: TextStyle(
+                                    // color: HexColor("#1F81FF"),
+                                    color: HexColor("#999999"),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                  maxLines: 2,
+                                  textAlign: TextAlign.right,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                           ],
                         ),
                         SizedBox(
                           height: 6,
                         ),
                         Text(
-                          ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，大吉大利！',
+                          ((model?.greeting ?? '')?.isNotEmpty ?? false)
+                              ? model.greeting
+                              : '恭喜发财，大吉大利！',
                           style: TextStyle(
                             fontSize: 12,
                             color: HexColor('#999999'),
@@ -250,39 +283,37 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage> with Automati
                     ),
                   ),
                   // Spacer(),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        left: 12,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            '总${model.total}个，已领取${model.gotCount}个',
-                            style: TextStyle(
-                              color: HexColor("#333333"),
-                              fontSize: 12,
-                              fontWeight: FontWeight.normal,
-                            ),
-                            maxLines: 3,
-                            textAlign: TextAlign.right,
-                            overflow: TextOverflow.ellipsis,
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 12,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          '总${model.total}个，已领取${model.gotCount}个',
+                          style: TextStyle(
+                            color: HexColor("#333333"),
+                            fontSize: 12,
+                            fontWeight: FontWeight.normal,
                           ),
-                          SizedBox(
-                            height: 6,
+                          maxLines: 3,
+                          textAlign: TextAlign.right,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(
+                          height: 6,
+                        ),
+                        Text(
+                          createdAtStr,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: HexColor('#999999'),
                           ),
-                          Text(
-                            createdAtStr,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: HexColor('#999999'),
-                            ),
-                            textAlign: TextAlign.right,
-                          ),
-                        ],
-                      ),
+                          textAlign: TextAlign.right,
+                        ),
+                      ],
                     ),
                   ),
                 ],
