@@ -17,15 +17,26 @@ class AtlasHomeEntity extends Object {
   @JsonKey(name: 'map3_num')
   int map3Count;
 
+  @JsonKey(name: 'map3_num_active')
+  int map3CountActive; // 启动
+
+  @JsonKey(name: 'map3_num_dead')
+  int map3CountDead; // 到期 or 已撤销
+
+  @JsonKey(name: 'map3_num_idle')
+  int map3CountIdle; // 待启动
+
   AtlasHomeEntity(
     this.info,
     this.atlasHomeNodeList,
     this.points,
     this.map3Count,
+    this.map3CountActive,
+    this.map3CountDead,
+    this.map3CountIdle,
   );
 
-  factory AtlasHomeEntity.fromJson(Map<String, dynamic> srcJson) =>
-      _$AtlasHomeEntityFromJson(srcJson);
+  factory AtlasHomeEntity.fromJson(Map<String, dynamic> srcJson) => _$AtlasHomeEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$AtlasHomeEntityToJson(this);
 }
@@ -135,8 +146,7 @@ class AtlasHomeNode extends Object {
     this.updatedAt,
   );
 
-  factory AtlasHomeNode.fromJson(Map<String, dynamic> srcJson) =>
-      _$AtlasHomeNodeFromJson(srcJson);
+  factory AtlasHomeNode.fromJson(Map<String, dynamic> srcJson) => _$AtlasHomeNodeFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$AtlasHomeNodeToJson(this);
 }
