@@ -1,9 +1,16 @@
+import 'dart:convert';
 import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/style/theme.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/mine/me_theme_page.dart';
 
 part 'model.g.dart';
 
@@ -122,4 +129,76 @@ class SupportedLanguage {
     LanguageModel(name: 'English', locale: Locale('en')),
     LanguageModel(name: '한국어', locale: Locale("ko")),
   ];
+}
+
+class SupportedTheme {
+
+  static List<ThemeModel> all = themeList;
+
+  static List<Color> defaultBtnColors(BuildContext context) {
+    return SettingInheritedModel.of(context, aspect: SettingAspect.theme).themeModel?.btnColors ??
+        <Color>[Color(0xff15B2D2), Color(0xff1097B4)];
+  }
+
+  static Future<ThemeModel> defaultModel() async {
+    var name = await AppCache.getValue(PrefsKey.SETTING_SYSTEM_THEME);
+    if (name != null) {
+      var jsonName = json.decode(name);
+      for (var item in themeList) {
+        if (item.name == jsonName) {
+          return item;
+        }
+      }
+    } else {
+      return themeList[0];
+    }
+    return themeList[0];
+  }
+
+  static List<ThemeModel> get themeList {
+    List<ThemeModel> themes = [];
+    var themeName = '默认';
+    ThemeData themeData;
+    Color color;
+    List<Color> btnColors;
+    for (int i = 0; i < 4; i++) {
+      switch (i) {
+        case 0:
+          themeName = '默认';
+          themeData = appThemeDefault;
+          color = Colors.blue;
+          btnColors = <Color>[Color(0xff96CBFF), Color(0xff3B8BFF)];
+          break;
+
+        case 1:
+          themeName = '深蓝';
+          themeData = appThemeDeepBlue;
+          color = Color(0xff1097B4);
+          btnColors = <Color>[Color(0xff15B2D2), Color(0xff1097B4)];
+          break;
+
+        case 2:
+          themeName = '深红';
+          themeData = appThemeDeepRed;
+          color = Colors.redAccent;
+          btnColors = <Color>[Colors.redAccent[100], Colors.redAccent[400]];
+          break;
+
+        case 3:
+          themeName = '黄色';
+          themeData = appThemeDeepYellow;
+          color = Colors.yellow;
+          btnColors = <Color>[Color(0xffedc313), Color(0xfff7d33d)];
+          break;
+      }
+      var model = ThemeModel(
+        name: themeName,
+        color: color,
+        theme: themeData,
+        btnColors: btnColors,
+      );
+      themes.add(model);
+    }
+    return themes;
+  }
 }

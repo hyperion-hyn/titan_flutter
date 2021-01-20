@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/pages/node/model/node_share_entity.dart';
@@ -73,19 +73,15 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
   }
 
   Widget _body(BuildContext context) {
-//    var userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo).userInfo;
-
     print("[map3]  shareData:$shareData");
+    var colors = SupportedTheme.defaultBtnColors(context);
 
     var wallet = WalletInheritedModel.of(context).activatedWallet;
     return WidgetShot(
       controller: _shotController,
       child: Container(
         decoration: BoxDecoration(
-          gradient: new LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [
-            HexColor("#1095b0"),
-            HexColor("#137291"),
-          ]),
+          gradient: new LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: colors),
         ),
         child: Column(
           children: <Widget>[

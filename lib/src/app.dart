@@ -73,7 +73,7 @@ class _AppState extends State<App> {
                   debugShowCheckedModeBanner: false,
                   locale: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel?.locale,
                   title: 'titan',
-                  theme: SettingInheritedModel.of(context, aspect: SettingAspect.theme).themeModel?.theme,
+                  theme: SettingInheritedModel.of(context, aspect: SettingAspect.theme).themeModel?.theme??appThemeDefault,
                   localizationsDelegates: [
                     S.delegate,
                     GlobalMaterialLocalizations.delegate,

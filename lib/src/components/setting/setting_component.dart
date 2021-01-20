@@ -48,6 +48,9 @@ class _SettingManagerState extends BaseState<_SettingManager> {
     if (systemConfigStr != null) {
       systemConfigEntity = SystemConfigEntity.fromJson(json.decode(systemConfigStr));
     }
+
+    themeModel = await SupportedTheme.defaultModel();
+
     super.onCreated();
   }
 

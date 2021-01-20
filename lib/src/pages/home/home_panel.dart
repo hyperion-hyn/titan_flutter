@@ -8,6 +8,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/map.dart';
+import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -90,7 +91,8 @@ class HomePanelState extends State<HomePanel> {
   }
 
   Widget _focusArea(context) {
-    //var userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo)?.userInfoModel;
+
+    var colors = SupportedTheme.defaultBtnColors(context);
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -114,7 +116,7 @@ class HomePanelState extends State<HomePanel> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
                         gradient: LinearGradient(
-                          colors: [HexColor("#1C9DB7"), HexColor("#3AC2DD")],
+                          colors: colors,
                           begin: Alignment.topRight,
                           end: Alignment.bottomLeft,
                         ),
@@ -174,7 +176,7 @@ class HomePanelState extends State<HomePanel> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
                         gradient: LinearGradient(
-                          colors: [HexColor("#46CBE6"), HexColor("#00A4C5")],
+                          colors: colors,
                           begin: Alignment.topRight,
                           end: Alignment.bottomLeft,
                         ),
@@ -245,7 +247,7 @@ class HomePanelState extends State<HomePanel> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(8.0)),
                   gradient: LinearGradient(
-                    colors: [HexColor("#46CBE6"), HexColor("#00A4C5")],
+                    colors: colors,
                     begin: Alignment.topRight,
                     end: Alignment.bottomLeft,
                   ),

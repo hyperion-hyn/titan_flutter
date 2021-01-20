@@ -2146,13 +2146,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                 child: TabBar(
                   controller: _detailTabController,
                   isScrollable: true,
-                  labelColor: HexColor('#228BA1'),
+                  labelColor: Theme.of(context).primaryColor,
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
                   ),
                   indicatorSize: TabBarIndicatorSize.label,
-                  indicatorColor: HexColor('#228BA1'),
+                  indicatorColor: Theme.of(context).primaryColor,
                   indicatorWeight: 2,
                   indicatorPadding: EdgeInsets.only(bottom: 2),
                   unselectedLabelColor: HexColor("#333333"),

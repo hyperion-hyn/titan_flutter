@@ -9,6 +9,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/setting/bloc/setting_event.dart';
+import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/style/theme.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
@@ -23,60 +24,14 @@ class MeThemePage extends StatefulWidget {
 class _MeThemeState extends BaseState<MeThemePage> {
   ThemeModel selectedModel;
 
-  List<ThemeModel> get themeList {
-    List<ThemeModel> themes = [];
-    var themeName = '默认';
-    ThemeData themeData;
-    Color color;
-    for (int i = 0; i < 2; i++) {
-      int value = 0;
-      switch (i) {
-        case 0:
-          themeName = '默认';
-          themeData = appThemeDefault;
-          color = Theme.of(context).primaryColor;
-          break;
-
-        case 1:
-          themeName = '深红';
-          themeData = appThemeDeepRed;
-          color = Colors.redAccent;
-          break;
-
-        case 2:
-          value = 400;
-          break;
-
-        case 3:
-          value = 700;
-          break;
-      }
-      var model = ThemeModel(name: themeName, color: color, theme: themeData);
-      themes.add(model);
-    }
-    return themes;
-  }
-
   @override
   void onCreated() {
     _setupData();
   }
 
   _setupData() async {
-    var name = await AppCache.getValue(PrefsKey.SETTING_SYSTEM_THEME);
-    if (name != null) {
-      var jsonName = json.decode(name);
-      for (var item in themeList) {
-        if (item.name == jsonName) {
-          setState(() {
-            selectedModel = item;
-          });
-          break;
-        }
-      }
-    } else {
-      selectedModel = themeList[0];
-    }
+    selectedModel = await SupportedTheme.defaultModel();
+    setState(() {});
   }
 
   @override
@@ -116,7 +71,7 @@ class _MeThemeState extends BaseState<MeThemePage> {
         ],
       ),
       body: Column(
-        children: themeList.map((model) {
+        children: SupportedTheme.all.map((model) {
           return Container(
             child: Column(
               children: [
@@ -187,10 +142,12 @@ class ThemeModel {
   final String name;
   final Color color;
   final ThemeData theme;
+  final List<Color> btnColors;
 
   ThemeModel({
     this.name,
     this.color,
     this.theme,
+    this.btnColors,
   });
 }

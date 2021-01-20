@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/components/setting/model.dart';
 
 class CustomClickOvalButton extends StatefulWidget {
   Widget child;
@@ -61,7 +60,7 @@ class _CustomClickOvalButtonState extends State<CustomClickOvalButton> {
       );
     } else {
       return LinearGradient(
-        colors: <Color>[Color(0xff15B2D2), Color(0xff1097B4)],
+        colors: SupportedTheme.defaultBtnColors(context),
       );
     }
   }

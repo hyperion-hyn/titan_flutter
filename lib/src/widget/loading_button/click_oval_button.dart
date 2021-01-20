@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 
@@ -31,8 +31,8 @@ class ClickOvalButton extends StatefulWidget {
     String loadingTextStr,
     this.fontWeight,
     this.isDisable = false,
-  }){
-    if(loadingTextStr != null) {
+  }) {
+    if (loadingTextStr != null) {
       this.loadingText = loadingTextStr;
     }
   }
@@ -149,7 +149,7 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
         );
       } else {
         return LinearGradient(
-          colors: <Color>[Color(0xff15B2D2), Color(0xff1097B4)],
+          colors: SupportedTheme.defaultBtnColors(context),
         );
       }
     }
