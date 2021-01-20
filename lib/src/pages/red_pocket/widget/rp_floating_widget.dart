@@ -6,7 +6,6 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_select_type_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_send_success_location_page.dart';
 
 class RpFloatingWidget extends StatefulWidget {
   final int actionType;
@@ -248,7 +247,7 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> with SingleTick
       // var _walletName = activeWallet.wallet.keystore.name;
       showShareRpOpenDialog(
         context,
-        id: 'AEVK8X',
+        id: 'JHA3EC',
       );
       return;
     }

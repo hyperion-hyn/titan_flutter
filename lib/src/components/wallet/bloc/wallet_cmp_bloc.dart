@@ -188,7 +188,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
               .add(UpdateGasPriceEvent());
         }
       } catch (e,stack) {
-        print("!!!!3333 $e $stack");
+        LogUtil.uploadExceptionStr("${e.toString()} ${stack.toString()}","UpdateWalletPageEvent");
         yield UpdateWalletPageState(-1);
       }
     } else if (event is UpdateQuotesEvent) {

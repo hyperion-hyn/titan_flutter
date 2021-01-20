@@ -6,6 +6,7 @@ import 'package:titan/src/app.dart';
 import 'package:titan/src/data/db/transfer_history_dao.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 import 'env.dart';
 import 'src/basic/bloc/app_bloc_delegate.dart';
@@ -53,6 +54,9 @@ void main() {
     )),
     debugUpload: env.buildType == BuildType.PROD,
     handler: (FlutterErrorDetails detail) {
+      if (env.buildType == BuildType.PROD) {
+        LogUtil.uploadExceptionStr("${detail?.exception?.toString() ?? ""} ${detail.stack?.toString() ?? ""}","main error");
+      }
       print(detail.toString());
       //logger.e(detail.exception?.message, detail.exception, detail.stack);
     }

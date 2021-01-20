@@ -615,62 +615,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
     );
   }
 
-  _coinListDropdownBtn(bool isBase) {
-    List<DropdownMenuItem> availableCoinItemList = List();
-
-    availableCoinItemList.add(
-      DropdownMenuItem(
-        value: 'HYN',
-        child: _coinItem(
-          'HYN',
-          SupportedTokens.HYN_Atlas.logo,
-          false,
-        ),
-      ),
-    );
-    availableCoinItemList.add(
-      DropdownMenuItem(
-        value: 'USDT',
-        child: _coinItem(
-          'USDT',
-          SupportedTokens.USDT_ERC20.logo,
-          false,
-        ),
-      ),
-    );
-    availableCoinItemList.add(
-      DropdownMenuItem(
-        value: 'RP',
-        child: _coinItem(
-          'RP',
-          SupportedTokens.HYN_RP_HRC30.logo,
-          false,
-        ),
-      ),
-    );
-
-    return Row(
-      children: [
-        Spacer(),
-        DropdownButtonHideUnderline(
-          child: DropdownButton(
-            onChanged: (value) {
-              setState(() {
-                if (isBase) {
-                  _selectedBase = value;
-                } else {
-                  _selectedQuote = value;
-                }
-              });
-            },
-            value: isBase ? _selectedBase : _selectedQuote,
-            items: availableCoinItemList,
-          ),
-        ),
-      ],
-    );
-  }
-
   _quotesTabs() {
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -733,53 +677,64 @@ class _ExchangePageState extends BaseState<ExchangePage>
     var base = marketItemEntity?.base;
     var quote = marketItemEntity?.quote;
 
-    var _vol24H = '--';
+    var _vol24h = '--';
+
     try {
-      _vol24H = FormatUtil.truncateDoubleNum(
-            marketItemEntity.kLineEntity?.vol,
-            2,
-          ) ??
-          '--';
+      var _latestVol = Decimal.tryParse('${marketItemEntity.kLineEntity?.vol}');
+      if (_latestVol != null) {
+        _vol24h = FormatUtil.truncateDecimalNum(_latestVol, 2) ?? '--';
+      }
     } catch (e) {}
 
     // 24hour
-    var _vol24HText = '${S.of(context).exchange_24h_vol} $_vol24H';
+    var _volStr = '${S.of(context).exchange_24h_vol} $_vol24h';
 
     // price
     var _latestPrice = '--';
-    var _latestQuotePriceString = '--';
-    var _latestPercentString = '--';
+    var _latestQuotePriceStr = '--';
+    var _latestPercentStr = '--';
     var _latestPercentBgColor = HexColor('#FF53AE86');
 
     try {
-      _latestPrice = FormatUtil.truncateDecimalNum(
-        Decimal.parse(marketItemEntity.kLineEntity?.close?.toString() ?? '0'),
-        4,
-      );
+      var _latestClose =
+          Decimal.tryParse('${marketItemEntity.kLineEntity?.close}');
 
-      double _latestPercent =
-          MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
-              .getRealTimePricePercent(
+      if (_latestClose != null) {
+        _latestPrice = FormatUtil.truncateDecimalNum(_latestClose, 4);
+      }
+
+      var _latestPercent = MarketInheritedModel.of(
+        context,
+        aspect: SocketAspect.marketItemList,
+      ).getRealTimePricePercent(
         marketItemEntity.symbol,
       );
 
-      _latestPercentBgColor =
-          _latestPercent < 0 ? HexColor('#FFCC5858') : HexColor('#FF53AE86');
+      if (_latestPercent.isNaN || _latestPercent.isInfinite) {
+        _latestPercentStr = '--%';
+      } else {
+        _latestPercentBgColor =
+            _latestPercent < 0 ? HexColor('#FFCC5858') : HexColor('#FF53AE86');
 
-      _latestPercentString =
-          '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(_latestPercent * 100.0, 2)}%';
+        _latestPercentStr =
+            '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(_latestPercent * 100.0, 2)}%';
+      }
 
-      var _selectedQuote =
-          WalletInheritedModel.of(context).activatedQuoteVoAndSign(
+      var _quote = WalletInheritedModel.of(context).activatedQuoteVoAndSign(
         marketItemEntity?.base,
       );
-      var _latestQuotePrice = FormatUtil.truncateDoubleNum(
-        double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
-        4,
-      );
+      var _latestQuotePrice;
+      var _quotePrice = Decimal.tryParse('${_quote?.quoteVo?.price}');
 
-      _latestQuotePriceString =
-          '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
+      if (_latestClose != null && _quotePrice != null) {
+        _latestQuotePrice = FormatUtil.truncateDecimalNum(
+          _latestClose * _quotePrice,
+          4,
+        );
+      }
+
+      _latestQuotePriceStr =
+          '${_quote?.sign?.sign ?? ''} ${_latestQuotePrice ?? '--'}';
     } catch (e) {}
 
     return Column(
@@ -846,7 +801,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                               height: 4,
                             ),
                             Text(
-                              _vol24HText ?? '-',
+                              _volStr ?? '-',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 12,
@@ -873,7 +828,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                                   height: 4,
                                 ),
                                 Text(
-                                  _latestQuotePriceString,
+                                  _latestQuotePriceStr,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w400,
                                     color: Colors.grey,
@@ -898,7 +853,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                               ),
                               child: Center(
                                 child: Text(
-                                  _latestPercentString,
+                                  _latestPercentStr,
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500,
