@@ -233,6 +233,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                                             "res/drawable/ic_wallet_account_list_send.png",
                                             width: 20,
                                             height: 20,
+                                            color: Theme.of(context).primaryColor,
                                           ),
                                           /*Icon(
                                             ExtendsIconFont.send,
@@ -279,6 +280,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                                             "res/drawable/ic_wallet_account_list_receiver.png",
                                             width: 20,
                                             height: 20,
+                                            color: Theme.of(context).primaryColor,
                                           ),
                                           /*Icon(
                                             ExtendsIconFont.receiver,
@@ -351,6 +353,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                                                 "res/drawable/ic_wallet_account_list_exchange.png",
                                                 width: 20,
                                                 height: 20,
+                                                color: Theme.of(context).primaryColor,
                                               ),
                                               /*Icon(
                                                 ExtendsIconFont.copy_content,
@@ -513,6 +516,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                       iconPath,
                       width: 20,
                       height: 20,
+                      // color: Theme.of(context).primaryColor,
                     ),
                     SizedBox(
                       width: 13,
@@ -583,6 +587,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                     Image.asset(
                       "res/drawable/add_position_image_next.png",
                       height: 13,
+                      // color: Theme.of(context).primaryColor,
                     )
                   ],
                 ),

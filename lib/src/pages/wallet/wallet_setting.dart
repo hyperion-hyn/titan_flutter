@@ -310,6 +310,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                           'res/drawable/ic_copy.png',
                           height: 18,
                           width: 18,
+                          color: Theme.of(context).primaryColor,
                         ),
                       ],
                     ),

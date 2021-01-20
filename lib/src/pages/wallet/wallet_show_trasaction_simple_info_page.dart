@@ -246,6 +246,7 @@ class WalletShowTransactionSimpleInfoPageState extends BaseState<WalletShowTrans
                               "res/drawable/ic_copy.png",
                               width: 18,
                               height: 17,
+                              color: Theme.of(context).primaryColor,
                             ),
                           ),
                         ),

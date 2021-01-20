@@ -281,7 +281,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
 }
 
 Widget stakeHeaderInfo(
-    BuildContext buildContext, AtlasInfoEntity atlasInfoEntity) {
+    BuildContext context, AtlasInfoEntity atlasInfoEntity) {
   return Row(
     children: <Widget>[
       Padding(
@@ -307,7 +307,7 @@ Widget stakeHeaderInfo(
                 Padding(
                   padding: const EdgeInsets.only(bottom: 2.0),
                   child: Text(
-                    "${S.of(buildContext).node_num}：${atlasInfoEntity.nodeId}",
+                    "${S.of(context).node_num}：${atlasInfoEntity.nodeId}",
                     style: TextStyles.textC333S12,
                   ),
                 ),
@@ -326,7 +326,7 @@ Widget stakeHeaderInfo(
                         text: WalletUtil.ethAddressToBech32Address(
                       atlasInfoEntity.address,
                     )));
-                    UiUtil.toast(S.of(buildContext).copyed);
+                    UiUtil.toast(S.of(context).copyed);
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(
@@ -335,6 +335,7 @@ Widget stakeHeaderInfo(
                       "res/drawable/ic_copy.png",
                       width: 16,
                       height: 16,
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
                 ),

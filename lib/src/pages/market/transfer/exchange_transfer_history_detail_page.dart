@@ -162,6 +162,7 @@ class _ExchangeTransferHistoryDetailPageState
                             'res/drawable/ic_copy.png',
                             height: 20,
                             width: 20,
+                            color: Theme.of(context).primaryColor,
                           ),
                           SizedBox(
                             width: 8.0,

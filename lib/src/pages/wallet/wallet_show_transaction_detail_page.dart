@@ -604,6 +604,7 @@ class WalletShowTransactionDetailPageState
                               "res/drawable/ic_copy.png",
                               width: 18,
                               height: 17,
+                              color: Theme.of(context).primaryColor,
                             ),
                           ),
                         ),

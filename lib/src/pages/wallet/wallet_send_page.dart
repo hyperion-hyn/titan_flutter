@@ -133,6 +133,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                                 'res/drawable/ic_copy.png',
                                 height: 23,
                                 width: 23,
+                                color: Theme.of(context).primaryColor,
                               ),
                             ),
                           ),

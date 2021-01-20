@@ -133,6 +133,7 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
                             'res/drawable/ic_copy.png',
                             height: 23,
                             width: 23,
+                            color: Theme.of(context).primaryColor,
                           ),
                           SizedBox(
                             width: 8.0,

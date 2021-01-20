@@ -31,7 +31,6 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'api/hyn_api.dart';
 
 class WalletSendConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
