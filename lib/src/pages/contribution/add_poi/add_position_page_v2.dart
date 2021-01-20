@@ -97,7 +97,6 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
 
   ScrollController _scrollController = ScrollController();
 
-
   @override
   void onCreated() {
     _initSelectedPosition = widget.userPosition;
@@ -179,7 +178,7 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
 
   Future _finishCheckIn(String successTip) async {
     var address =
-    WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
     if (address?.isEmpty ?? true) return;
 
@@ -207,7 +206,6 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
                 Routes.contribute_position_finish +
                     '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_ADD}');
           }
-
         } else if (state is PostPoiDataV2ResultFailState) {
           setState(() {
             _isUploading = false;
@@ -1084,12 +1082,18 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
       children: <Widget>[
         Padding(
           padding: isFirstRow ? const EdgeInsets.fromLTRB(15, 0, 10, 10) : const EdgeInsets.fromLTRB(15, 18, 10, 11),
-          child: Image.asset(
-            'res/drawable/add_position_$imageName.png',
-            width: size.width,
-            height: size.height,
-            color: imageName == "detail" ? null : _themeColor,
-          ),
+          child: imageName == "detail"
+              ? Icon(
+                  Icons.info,
+                  size: size.width,
+                  color: _themeColor,
+                )
+              : Image.asset(
+                  'res/drawable/add_position_$imageName.png',
+                  width: size.width,
+                  height: size.height,
+                  color: _themeColor,
+                ),
         ),
         Padding(
             padding:

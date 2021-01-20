@@ -44,7 +44,6 @@ class _AddPositionImageState extends State<AddPositionImagePage> with TickerProv
 
   @override
   void didChangeDependencies() {
-
     _titleList = [
       S.of(context).add_position_image_title_1,
       S.of(context).add_position_image_title_2,
@@ -60,7 +59,7 @@ class _AddPositionImageState extends State<AddPositionImagePage> with TickerProv
     ];
     super.didChangeDependencies();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -166,7 +165,8 @@ class _AddPositionImageState extends State<AddPositionImagePage> with TickerProv
               text: TextSpan(
                   text: "${index + 1}",
                   style: TextStyle(
-                    color: HexColor("#CD941E"),
+                    // color: HexColor("#CD941E"),
+                    color: Theme.of(context).primaryColor,
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                   ),

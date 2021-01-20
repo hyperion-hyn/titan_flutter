@@ -180,8 +180,8 @@ class SupportedTheme {
         case 2:
           themeName = '深红';
           themeData = appThemeDeepRed;
-          color = Colors.redAccent;
-          btnColors = <Color>[Colors.redAccent[100], Colors.redAccent[400]];
+          color = Color(0xffcc5858);
+          btnColors = <Color>[Color(0xffEB8686), Color(0xffcc5858)];
           break;
 
         case 3:
