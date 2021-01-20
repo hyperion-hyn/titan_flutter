@@ -7,6 +7,7 @@ import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -14,6 +15,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_history_list_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -361,6 +363,18 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _showCoinSelectDialog() {
+    var activeAssets = MarketInheritedModel.of(
+          context,
+          aspect: SocketAspect.marketItemList,
+        ).exchangeCoinList?.assets ??
+        ['HYN', 'USDT', 'RP'];
+
+    List<Widget> activeCoinItemList = [Container()];
+
+    activeAssets.forEach((token) {
+      activeCoinItemList.add(_coinItem(token));
+    });
+
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
@@ -371,14 +385,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         builder: (BuildContext context) {
           return Container(
-            height: 210,
-            child: Column(
+            child: Wrap(
               children: <Widget>[
-                _coinItem('HYN'),
-                // _coinItem('ETH'),
-                _coinItem('USDT'),
-                _coinItem('RP'),
-
+                Column(
+                  children: activeCoinItemList,
+                ),
                 InkWell(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),

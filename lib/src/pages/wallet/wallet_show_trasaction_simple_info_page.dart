@@ -11,9 +11,9 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_detail_page.dart';
+import 'package:titan/src/pages/wallet/wallet_show_transaction_detail_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -24,23 +24,23 @@ import 'model/hyn_transfer_history.dart';
 import 'model/transtion_detail_vo.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 
-class WalletShowAccountInfoPage extends StatefulWidget {
+class WalletShowTransactionSimpleInfoPage extends StatefulWidget {
   String hashTx;
   String symbol;
   final bool isContain;
 
-  WalletShowAccountInfoPage(this.hashTx, this.symbol, {this.isContain = false});
+  WalletShowTransactionSimpleInfoPage(this.hashTx, this.symbol, {this.isContain = false});
 
   @override
   State<StatefulWidget> createState() {
-    return WalletShowAccountInfoPageState();
+    return WalletShowTransactionSimpleInfoPageState();
   }
 
   static void jumpToAccountInfoPage(BuildContext context, String hashTx, String symbol) {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => WalletShowAccountInfoPage(
+            builder: (context) => WalletShowTransactionSimpleInfoPage(
                   hashTx,
                   symbol,
                   isContain: false,
@@ -48,7 +48,7 @@ class WalletShowAccountInfoPage extends StatefulWidget {
   }
 }
 
-class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage> {
+class WalletShowTransactionSimpleInfoPageState extends BaseState<WalletShowTransactionSimpleInfoPage> {
   var atlasApi = AtlasApi();
   List<String> _dataTitleList = [];
   List<String> _dataInfoList = List();
@@ -362,32 +362,40 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => WalletShowAccountDetailPage(
+                builder: (context) => WalletShowTransactionDetailPage(
                   transactionDetail,
                   isContain: widget.isContain,
                 )));
       },
-      child: Container(
-        color: Colors.white,
-        child: Row(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 16, bottom: 16.0, left: 15),
-              child: Text(
-                accountInfoItemView.leftStr,
-                style: TextStyles.textC333S13,
-              ),
+      child: Column(
+        children: [
+          Container(
+            color: Colors.white,
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 16, bottom: 16.0, left: 15),
+                  child: Text(
+                    accountInfoItemView.leftStr,
+                    style: TextStyles.textC333S13,
+                  ),
+                ),
+                Spacer(),
+                Image.asset(
+                  "res/drawable/add_position_image_next.png",
+                  height: 13,
+                ),
+                SizedBox(
+                  width: 15,
+                )
+              ],
             ),
-            Spacer(),
-            Image.asset(
-              "res/drawable/add_position_image_next.png",
-              height: 13,
-            ),
-            SizedBox(
-              width: 15,
-            )
-          ],
-        ),
+          ),
+          Container(
+            height: 11,
+            color: DefaultColors.colorf2f2f2,
+          )
+        ],
       ),
     );
   }

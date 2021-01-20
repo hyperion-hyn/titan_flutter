@@ -51,6 +51,7 @@ class ExchangeConst {
 
   ///资金操作
   static const PATH_ACCOUNT_ASSETS = "/api/account/assetsList"; // 资产列表
+  static const PATH_COIN_LIST = '/api/account/coins';
   static const PATH_TO_EXCHANGE = "/api/account/toExchange"; // 资金账户划转到交易账户
   static const PATH_TO_ACCOUNT = "/api/exchange/toAccount"; // 交易账户划转到资金账户
   static const PATH_GET_ADDRESS = "/api/account/getAddress"; // 获取充币地址

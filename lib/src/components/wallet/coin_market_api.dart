@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:dio/dio.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/basic/http/entity.dart';
@@ -47,4 +48,29 @@ class CoinMarketApi {
 
     return list;
   }
+
+  Future<List<SymbolQuoteVo>> quotesLatest(List<String> symbols, List<String> quoteConverts) async {
+    var response = await HttpCore.instance.get('api/v1/market/prices/latest',
+        options: RequestOptions(
+            headers: {"X-CMC_PRO_API_KEY": Config.COINMARKETCAP_PRVKEY, "Accept": "application/json"})) as Map;
+
+    var status = response['state'];
+    if (status['error_code'] == 0) {
+      List<SymbolQuoteVo> list = [];
+      var datas = response["data"] as Map;
+      var keys = datas.keys;
+      for (var key in keys) {
+        for (var convert in quoteConverts) {
+          var price = datas[key]["quote"][convert]["price"];
+          var percentChange24h = datas[key]["quote"][convert]["percent_change_24h"];
+          var vo = SymbolQuoteVo(symbol: key, quote: convert, price: price, percentChange24h: Decimal.tryParse(percentChange24h.toString()).toDouble());
+          list.add(vo);
+        }
+      }
+      return list;
+    }
+
+    throw HttpResponseCodeNotSuccess(status['error_code'], status['error_message']);
+  }
+
 }

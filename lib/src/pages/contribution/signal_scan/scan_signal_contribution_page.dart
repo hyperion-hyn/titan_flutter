@@ -374,6 +374,7 @@ class _ContributionState extends State<ScanSignalContributionPage> {
     }
   }
 
+  /*
   Future _finishCheckIn(String successTip) async {
     var address =
         WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
@@ -389,7 +390,8 @@ class _ContributionState extends State<ScanSignalContributionPage> {
       print('$runtimeType --> e:$e');
       LogUtil.process(e);
     }
-  }
+  }*/
+
 
   Widget _confirmView() {
     if (_isFinishScan) {

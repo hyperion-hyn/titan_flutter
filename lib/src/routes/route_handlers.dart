@@ -31,18 +31,19 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_share_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_history_page.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/market/exchange_assets_page.dart';
-import 'package:titan/src/pages/market/transfer/exchange_deposit_confirm_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_qrcode_deposit_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_success_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_withdraw_confirm_page.dart';
 import 'package:titan/src/pages/mine/qr_code_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
 import 'package:titan/src/pages/wallet/confirm_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
+import 'package:titan/src/pages/wallet/wallet_show_account_hb_widget.dart';
 import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -108,6 +109,8 @@ var walletAccountDetailHandler = Handler(handlerFunc: (context, params) {
   var coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(params['coinVo']?.first));
   if(coinVo.coinType == CoinType.HYN_ATLAS){
     return ShowAccountHynPage(coinVo);
+  }else if(coinVo.coinType == CoinType.HB_HT){
+    return ShowAccountHbPage(coinVo);
   }else{
     return ShowAccountPage(coinVo);
   }
@@ -164,6 +167,12 @@ var confirmResumeWordForCreation = Handler(handlerFunc: (context, params) {
 var confirmSuccessHandler = Handler(handlerFunc: (context, params) {
   var msg = params['msg']?.first != null ? FluroConvertUtils.fluroCnParamsDecode(params['msg']?.first) : null;
   return ConfirmSuccessPage(msg: msg);
+});
+
+// rp
+var redPocketHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return RedPocketPage();
 });
 
 ///Exchange

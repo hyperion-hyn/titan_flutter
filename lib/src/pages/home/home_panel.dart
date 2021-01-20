@@ -1,4 +1,3 @@
-import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/components/account/account_component.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -20,8 +18,8 @@ import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/global_data/global_data.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
-import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -58,12 +56,6 @@ class HomePanelState extends State<HomePanel> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
         color: Colors.white,
-        /*boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 20.0,
-          ),
-        ],*/
       ),
       child: CustomScrollView(
         controller: widget.scrollController,
@@ -367,10 +359,12 @@ class HomePanelState extends State<HomePanel> {
           ),
           InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => RedPocketPage()),
-              );
+              var entryRouteName = Uri.encodeComponent(Routes.red_pocket_page);
+
+              Application.router.navigateTo(
+                 context,
+                 Routes.red_pocket_page +
+                     "?entryRouteName=$entryRouteName");
             },
             child: Container(
               decoration: BoxDecoration(
@@ -659,7 +653,8 @@ class HomePanelState extends State<HomePanel> {
           )
         ],
       ),
-      /*Column(
+      /*
+      Column(
                 children: <Widget>[
                   poiRow1(context),
                   Padding(
@@ -667,7 +662,8 @@ class HomePanelState extends State<HomePanel> {
                     child: poiRow2(context),
                   ),
                 ],
-              ),*/
+              ),
+      */
     );
   }
 
@@ -904,6 +900,16 @@ class HomePanelState extends State<HomePanel> {
         if (fromArr[0].length > 0 && fromArr[1].length > 0) {
           showInviteDialog(context, fromArr[0], fromArr[1]);
         }
+      }
+    } else if(scanStr.contains(RpShareGetDialogPage.shareDomain)){
+      /*RegExp regExpStr = new RegExp(r"(?<=rpId=).+(?<=&from)");
+      String rpId = regExpStr.firstMatch(scanStr).group(0);
+      print("!!!!3322 $rpId");*/
+
+      var rpIdArrAfter = scanStr.split("?rpId=");
+      if(rpIdArrAfter.length > 0){
+        var rpIdBefore = rpIdArrAfter[1].split("&");
+        showShareRpOpenDialog(context,id: rpIdBefore[0]);
       }
     } else if (scanStr.contains(PromoteQrCodePage.downloadDomain)) {
       var fromArr = scanStr.split("from=");

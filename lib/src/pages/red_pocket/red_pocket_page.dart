@@ -13,17 +13,22 @@ import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_list_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_tab_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_select_type_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
+import 'package:titan/src/pages/red_pocket/widget/rp_floating_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_level_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -51,6 +56,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   RPStatistics _rpStatistics;
   RpAirdropRoundInfo _latestRoundInfo;
   RpLevelAirdropInfo _rpLevelAirdropInfo;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -59,6 +65,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   @override
   void onCreated() {
+
+    _isLoading = true;
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
@@ -109,29 +117,37 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           ),
         ],
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: LoadDataContainer(
-            bloc: _loadDataBloc,
-            enablePullUp: false,
-            onLoadData: () async {
-              _requestData();
-            },
-            onRefresh: () async {
-              _requestData();
-            },
-            child: CustomScrollView(
-              physics: BouncingScrollPhysics(),
-              slivers: <Widget>[
-                _myRPInfo(),
-                _rpPool(),
-                _airdropWidget(),
-                _statisticsWidget(),
-                _projectIntro(),
-              ],
-            )),
+      body: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: LoadDataContainer(
+                bloc: _loadDataBloc,
+                enablePullUp: false,
+                onLoadData: () async {
+                  _requestData();
+                },
+                onRefresh: () async {
+                  _requestData();
+                },
+                child: CustomScrollView(
+                  physics: BouncingScrollPhysics(),
+                  slivers: <Widget>[
+                    _myRPInfo(),
+                    _rpPool(),
+                    _airdropWidget(),
+                    _statisticsWidget(),
+                    _projectIntro(),
+                  ],
+                )),
+          ),
+
+          if (!_isLoading) RpFloatingWidget(),
+          // if (!_isLoading) RpFloatingWidget(actionType: -1,),
+        ],
       ),
+
     );
   }
 
@@ -177,7 +193,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
     var rpBalanceStr = '--';
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-      SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
+      SupportedTokens.HYN_RP_HRC30.symbol,
     );
     try {
       rpBalanceStr = FormatUtil.coinBalanceHumanReadFormat(
@@ -323,8 +339,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                                 left: 12,
                               ),
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 4.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
@@ -644,10 +659,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         String webTitle = FluroConvertUtils.fluroCnParamsEncode(
                           S.of(context).detailed_introduction,
                         );
-                        Application.router.navigateTo(
-                            context,
-                            Routes.toolspage_webview_page +
-                                '?initUrl=$webUrl&title=$webTitle');
+                        Application.router
+                            .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                       },
                       child: Text(
                         S.of(context).detailed_introduction,
@@ -810,8 +823,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   )
                 ],
                 text: title,
-                style: TextStyle(
-                    height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
               ),
             ),
           )),
@@ -835,21 +847,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     }
   }
 
-  /*
-  _navToRPReleaseRecord() {
-    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
-    if (activeWallet != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RpTransmitRecordsPage(),
-        ),
-      );
-    } else {
-      Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
-    }
-  }*/
-
   _navToLevel() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
     if (activeWallet != null) {
@@ -870,17 +867,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         setState(() {});
       }
     });
-
-    /*Application.router
-        .navigateTo(
-          context,
-          Routes.wallet_manager,
-        )
-        .then((value) => () {
-              if (mounted) {
-                setState(() {});
-              }
-            });*/
   }
 
   _navToMyFriends() {
@@ -925,6 +911,21 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     }
   }
 
+  _navToShareRp() {
+    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+    if (activeWallet != null) {
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RpShareSelectTypePage(),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
+    }
+  }
+
   _requestData() async {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
     var _address = activeWallet?.wallet?.getAtlasAccount()?.address;
@@ -943,8 +944,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       }
 
       if (context != null) {
-        BlocProvider.of<WalletCmpBloc>(context)
-            .add(UpdateActivatedWalletBalanceEvent());
+        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
       }
 
       _latestRoundInfo = await _rpApi.getLatestRpAirdropRoundInfo(_address);
@@ -953,10 +953,18 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
       if (mounted) {
         _loadDataBloc.add(RefreshSuccessEvent());
-        setState(() {});
+        setState(() {
+          _isLoading = false;
+        });
       }
     } catch (e) {
-      _loadDataBloc.add(RefreshFailEvent());
+
+      if (mounted) {
+        _loadDataBloc.add(RefreshFailEvent());
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 }

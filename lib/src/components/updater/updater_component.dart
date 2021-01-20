@@ -55,6 +55,7 @@ class _UpdaterComponentStateOld extends State<UpdaterComponent> {
           var newBuildNumber = state?.appData?.updateEntity?.build ?? 0;
           if (state.appData.updateEntity != null) {
             PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
             if (int.parse(packageInfo.buildNumber) < newBuildNumber) {
               if (_lastCancelBuildNumber != newBuildNumber && !_lastHaveVisible) {
                 _showUpdateDialog(state.appData.updateEntity);
@@ -92,7 +93,7 @@ class _UpdaterComponentStateOld extends State<UpdaterComponent> {
             },
             child: Container(
               child: Padding(
-                padding: const EdgeInsets.only(top: 159.0),
+                padding: const EdgeInsets.only(top: 100.0),
                 child: Stack(
                   alignment: Alignment.topCenter,
                   children: <Widget>[

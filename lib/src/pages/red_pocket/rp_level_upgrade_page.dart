@@ -50,16 +50,14 @@ class RpLevelUpgradePage extends StatefulWidget {
 }
 
 class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
-  final TextEditingController _textEditingController =
-      new TextEditingController();
+  final TextEditingController _textEditingController = new TextEditingController();
   final TextEditingController _addressEditController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   final _addressKey = GlobalKey<FormState>();
 
   final RPApi _rpApi = RPApi();
-  final StreamController<String> _inputController =
-      StreamController.broadcast();
+  final StreamController<String> _inputController = StreamController.broadcast();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   RpMyLevelInfo _myLevelInfo;
@@ -69,24 +67,19 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   CoinVo _coinVo;
   WalletVo _activatedWallet;
 
-  String get _address =>
-      _activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+  String get _address => _activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
 
   Decimal get _inputValue {
-    var inputValue =
-        Decimal.tryParse(_textEditingController?.text ?? '0') ?? Decimal.zero;
+    var inputValue = Decimal.tryParse(_textEditingController?.text ?? '0') ?? Decimal.zero;
     return inputValue > Decimal.zero ? inputValue : Decimal.zero;
   }
 
-  Decimal get _balanceValue =>
-      Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ??
-      Decimal.zero;
+  Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
 
   //Decimal get _currentHoldValue => Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? Decimal.zero;
-  Decimal get _holdingValue =>
-      Decimal.tryParse(widget?.levelRule?.holdingStr ?? '0') ?? Decimal.zero;
+  Decimal get _holdingValue => Decimal.tryParse(widget?.levelRule?.holdingStr ?? '0') ?? Decimal.zero;
 
   Decimal get _needHoldMinValue {
     var zeroValue = Decimal.zero;
@@ -97,8 +90,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   }
 
   //Decimal get _currentBurnValue => Decimal.tryParse(_myLevelInfo?.currBurningStr ?? '0') ?? Decimal.zero;
-  Decimal get _burningValue =>
-      Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.zero;
+  Decimal get _burningValue => Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.zero;
 
   Decimal get _needBurnValue {
     var zeroValue = Decimal.zero;
@@ -116,9 +108,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   }
 
   String get _needTotalMinValueStr =>
-      S.of(context).at_least +
-      FormatUtil.stringFormatCoinNum(_needTotalMinValue.toString()) +
-      ' RP';
+      S.of(context).at_least + FormatUtil.stringFormatCoinNum(_needTotalMinValue.toString()) + ' RP';
 
   bool _isLoading = false;
   bool _haveFinishRequest = false;
@@ -163,7 +153,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   @override
   Widget build(BuildContext context) {
-
     var levelName = levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4);
     var tips = S.of(context).rp_upgrade_tips_func(levelName);
 
@@ -187,337 +176,301 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
               child: BaseGestureDetector(
                 context: context,
                 child: SingleChildScrollView(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                          ),
-                          color: Colors.white,
-                          child: Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(top: 18),
-                                child: Row(
-                                  children: <Widget>[
-                                    SizedBox(
-                                      width: 100,
-                                      child: Text(S.of(context).rp_level_up,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 12,
-                                            color: HexColor('#999999'),
-                                          )),
-                                    ),
-                                    Text(
-                                      '${levelValueToLevelName(_myLevelInfo?.currentLevel)}',
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                      ),
+                      color: Colors.white,
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(top: 18),
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: 100,
+                                  child: Text(S.of(context).rp_level_up,
                                       style: TextStyle(
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.normal,
                                         fontSize: 12,
                                         color: HexColor('#999999'),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 12,
-                                        right: 20,
-                                      ),
-                                      child: Text(
-                                        '->',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 12,
-                                          color: HexColor('#999999'),
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                        '${levelValueToLevelName(widget?.levelRule?.level)} ',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18,
-                                        )),
-                                  ],
+                                      )),
                                 ),
-                              ),
-                              rpRowText(
-                                title: S.of(context).rp_need_burn_amount,
-                                amount: '$_needBurnValue RP',
-                              ),
-                              rpRowText(
-                                title: S.of(context).rp_need_add_amount,
-                                amount: '$_needHoldMinValue RP',
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 30),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: <Widget>[
-                                    Text(S.of(context).input_balance,
-                                        style: _textStyle),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                        '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 12,
-                                          color: HexColor('#999999'),
-                                        )),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                  ],
+                                Text(
+                                  '${levelValueToLevelName(_myLevelInfo?.currentLevel)}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12,
+                                    color: HexColor('#999999'),
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 16,
-                                  right: 50,
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Flexible(
-                                      flex: 1,
-                                      child: Form(
-                                        key: _formKey,
-                                        child: RoundBorderTextField(
-                                          onChanged: (text) {
-                                            if (text?.isNotEmpty ?? false) {
-                                              _formKey.currentState.validate();
-                                            }
-
-                                            _inputController.add(text);
-                                          },
-                                          controller: _textEditingController,
-                                          keyboardType:
-                                              TextInputType.numberWithOptions(
-                                                  decimal: true),
-                                          inputFormatters: [
-                                            LengthLimitingTextInputFormatter(
-                                                18),
-                                            FilteringTextInputFormatter.allow(
-                                                RegExp("[0-9.]"))
-                                          ],
-                                          hint: _needTotalMinValueStr,
-                                          validator: (textStr) {
-                                            if (textStr.length == 0 &&
-                                                _needTotalMinValue >
-                                                    Decimal.zero) {
-                                              return S
-                                                  .of(context)
-                                                  .input_num_please;
-                                            }
-
-                                            if (Decimal.tryParse(textStr) ==
-                                                null) {
-                                              return S
-                                                  .of(context)
-                                                  .please_enter_correct_amount;
-                                            }
-
-                                            if (_needTotalMinValue >
-                                                _inputValue) {
-                                              return _needTotalMinValueStr;
-                                            }
-
-                                            if (_inputValue > _balanceValue) {
-                                              return S
-                                                  .of(context)
-                                                  .input_count_over_wallet_balance;
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 8,
-                                        left: 16,
-                                      ),
-                                      child: Text(
-                                          currentHoldingBurning,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 12,
-                                            color: HexColor('#999999'),
-                                          )),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 12,
+                                    right: 20,
+                                  ),
+                                  child: Text(
+                                    '->',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 12,
+                                      color: HexColor('#999999'),
                                     ),
                                   ),
-                                ],
+                                ),
+                                Text('${levelValueToLevelName(widget?.levelRule?.level)} ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18,
+                                    )),
+                              ],
+                            ),
+                          ),
+                          rpRowText(
+                            title: S.of(context).rp_need_burn_amount,
+                            amount: '$_needBurnValue RP',
+                          ),
+                          rpRowText(
+                            title: S.of(context).rp_need_add_amount,
+                            amount: '$_needHoldMinValue RP',
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 30),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Text(S.of(context).input_balance, style: _textStyle),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                    '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 12,
+                                      color: HexColor('#999999'),
+                                    )),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 16,
+                              right: 50,
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Flexible(
+                                  flex: 1,
+                                  child: Form(
+                                    key: _formKey,
+                                    child: RoundBorderTextField(
+                                      onChanged: (text) {
+                                        if (text?.isNotEmpty ?? false) {
+                                          _formKey.currentState.validate();
+                                        }
+
+                                        _inputController.add(text);
+                                      },
+                                      controller: _textEditingController,
+                                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(18),
+                                        FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
+                                      ],
+                                      hintText: _needTotalMinValueStr,
+                                      validator: (textStr) {
+                                        if (textStr.length == 0 && _needTotalMinValue > Decimal.zero) {
+                                          return S.of(context).input_num_please;
+                                        }
+
+                                        if (Decimal.tryParse(textStr) == null) {
+                                          return S.of(context).please_enter_correct_amount;
+                                        }
+
+                                        if (_needTotalMinValue > _inputValue) {
+                                          return _needTotalMinValueStr;
+                                        }
+
+                                        if (_inputValue > _balanceValue) {
+                                          return S.of(context).input_count_over_wallet_balance;
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 8,
+                                    left: 16,
+                                  ),
+                                  child: Text(currentHoldingBurning,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 12,
+                                        color: HexColor('#999999'),
+                                      )),
+                                ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 4,),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 8,
-                                      ),
-                                      child: Text(
-                                        '*',
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 4,
+                            ),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 8,
+                                  ),
+                                  child: Text(
+                                    '*',
+                                    style: TextStyle(
+                                      color: HexColor('#FF4C3B'),
+                                      fontSize: 24,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 6,
+                                ),
+                                Expanded(
+                                  child: Text.rich(
+                                    TextSpan(
+                                        text: S.of(context).rp_add_holding_prevent_level_drop_1,
                                         style: TextStyle(
-                                          color: HexColor('#FF4C3B'),
-                                          fontSize: 24,
+                                          color: HexColor('#333333'),
+                                          fontSize: 12,
                                         ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 6,
-                                    ),
-                                    Expanded(
-                                      child: Text.rich(
-                                        TextSpan(
-                                            text: S
-                                                .of(context)
-                                                .rp_add_holding_prevent_level_drop_1,
+                                        children: [
+                                          TextSpan(
+                                            text: ' Y ',
+                                            style: TextStyle(
+                                              color: HexColor('#333333'),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: S.of(context).rp_add_holding_prevent_level_drop_2,
                                             style: TextStyle(
                                               color: HexColor('#333333'),
                                               fontSize: 12,
                                             ),
-                                            children: [
-                                              TextSpan(
-                                                text: ' Y ',
-                                                style: TextStyle(
-                                                  color: HexColor('#333333'),
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text: S
-                                                    .of(context)
-                                                    .rp_add_holding_prevent_level_drop_2,
-                                                style: TextStyle(
-                                                  color: HexColor('#333333'),
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ]),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              StreamBuilder<Object>(
-                                  stream: _inputController.stream,
-                                  builder: (context, snapshot) {
-                                    var isOver = _inputValue > _balanceValue;
-
-                                    var content = '';
-                                    Color textColor;
-
-                                    if (isOver) {
-                                      content =
-                                          '（${S.of(context).insufficient_balance}）';
-                                      textColor = HexColor('#FF4C3B');
-                                    } else {
-                                      content = '';
-                                      textColor =
-                                          Theme.of(context).primaryColor;
-                                    }
-
-                                    return Padding(
-                                      padding: const EdgeInsets.only(top: 30),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Text('${S.of(context).total}：',
-                                              style: _textStyle),
-                                          SizedBox(
-                                            width: 16,
                                           ),
-                                          Text('$_inputValue RP',
-                                              style: _textStyle),
-                                          SizedBox(
-                                            width: 16,
-                                          ),
-                                          Text(
-                                            content,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12,
-                                              color: textColor,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }),
-                              StreamBuilder<Object>(
-                                  stream: _inputController.stream,
-                                  builder: (context, snapshot) {
-                                    var isFullBurn =
-                                        _inputValue >= _needBurnValue;
-                                    var preBurnStr = isFullBurn
-                                        ? widget?.levelRule?.burnStr
-                                        : '0';
-
-                                    var inputHoldValue =
-                                        (_inputValue - _needBurnValue);
-                                    var isFullHold =
-                                        inputHoldValue > Decimal.zero;
-                                    var preHoldingStr = isFullHold
-                                        ? inputHoldValue.toString()
-                                        : '0';
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 2, left: 50, right: 12),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Text(
-                                              S.of(context).rp_upgrade_detail_func(preBurnStr, preHoldingStr),
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.normal,
-                                                  fontSize: 12,
-                                                  color: HexColor('#999999')),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }),
-                            ],
+                                        ]),
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 60,
-                            left: 16,
-                            right: 16,
-                            bottom: 16,
+                          StreamBuilder<Object>(
+                              stream: _inputController.stream,
+                              builder: (context, snapshot) {
+                                var isOver = _inputValue > _balanceValue;
+
+                                var content = '';
+                                Color textColor;
+
+                                if (isOver) {
+                                  content = '（${S.of(context).insufficient_balance}）';
+                                  textColor = HexColor('#FF4C3B');
+                                } else {
+                                  content = '';
+                                  textColor = Theme.of(context).primaryColor;
+                                }
+
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 30),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text('${S.of(context).total}：', style: _textStyle),
+                                      SizedBox(
+                                        width: 16,
+                                      ),
+                                      Text('$_inputValue RP', style: _textStyle),
+                                      SizedBox(
+                                        width: 16,
+                                      ),
+                                      Text(
+                                        content,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                          color: textColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                          StreamBuilder<Object>(
+                              stream: _inputController.stream,
+                              builder: (context, snapshot) {
+                                var isFullBurn = _inputValue >= _needBurnValue;
+                                var preBurnStr = isFullBurn ? widget?.levelRule?.burnStr : '0';
+
+                                var inputHoldValue = (_inputValue - _needBurnValue);
+                                var isFullHold = inputHoldValue > Decimal.zero;
+                                var preHoldingStr = isFullHold ? inputHoldValue.toString() : '0';
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 2, left: 50, right: 12),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Text(
+                                          S.of(context).rp_upgrade_detail_func(preBurnStr, preHoldingStr),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.normal, fontSize: 12, color: HexColor('#999999')),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 60,
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 16.0,
+                              bottom: 8,
+                            ),
+                            child: Text(S.of(context).precautions,
+                                style: TextStyle(
+                                  color: HexColor("#333333"),
+                                  fontSize: 16,
+                                )),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 16.0,
-                                  bottom: 8,
-                                ),
-                                child: Text(S.of(context).precautions,
-                                    style: TextStyle(
-                                      color: HexColor("#333333"),
-                                      fontSize: 16,
-                                    )),
-                              ),
-                              rowTipsItem(
-                                  tips),
-                            ],
-                          ),
-                        ),
-                        _confirmButtonWidget(),
-                      ]),
+                          rowTipsItem(tips),
+                        ],
+                      ),
+                    ),
+                    _confirmButtonWidget(),
+                  ]),
                 ),
               ),
             ),
@@ -556,8 +509,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     }
 
     if (context != null) {
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateActivatedWalletBalanceEvent());
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
     }
 
     if (mounted) {
@@ -592,8 +544,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
     FocusScope.of(context).requestFocus(FocusNode());
 
-    if ((_needTotalMinValue > Decimal.zero) &&
-        (!_formKey.currentState.validate())) {
+    if ((_needTotalMinValue > Decimal.zero) && (!_formKey.currentState.validate())) {
       return;
     }
 
@@ -629,14 +580,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   }
 
   _showInviteAlertView() {
-    var border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(30),
-      borderSide: BorderSide(
-        color: HexColor('#FFF2F2F2'),
-        width: 0.5,
-      ),
-    );
-
     _addressEditController.text = "";
 
     var _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
@@ -678,8 +621,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
             try {
               var inviteAddress = _addressEditController?.text ?? '';
 
-              String inviteResult = await _rpApi.postRpInviter(
-                  inviteAddress, _activatedWallet?.wallet);
+              String inviteResult = await _rpApi.postRpInviter(inviteAddress, _activatedWallet?.wallet);
               if (inviteResult?.isNotEmpty ?? false) {
                 Fluttertoast.showToast(msg: S.of(context).rp_upgrade_continue_toast);
 
@@ -712,10 +654,10 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
             ),
             child: Column(
               children: <Widget>[
-                TextFormField(
-                  autofocus: true,
+                RoundBorderTextField(
                   controller: _addressEditController,
                   keyboardType: TextInputType.text,
+                  hintText: addressHint,
                   validator: (value) {
                     var ethAddress = WalletUtil.bech32ToEthAddress(value);
                     if (ethAddress?.isEmpty ?? true) {
@@ -727,49 +669,20 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                     }
                     return null;
                   },
-                  decoration: InputDecoration(
-                    isDense: true,
-                    filled: true,
-                    fillColor: HexColor('#FFF2F2F2'),
-                    hintText: addressHint,
-                    hintStyle: TextStyle(
-                      color: HexColor('#FF999999'),
-                      fontSize: 13,
-                    ),
-                    focusedBorder: border,
-                    focusedErrorBorder: border,
-                    enabledBorder: border,
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: Colors.red,
-                        width: 0.5,
+                  suffixIcon: InkWell(
+                    onTap: () async {
+                      UiUtil.showScanImagePickerSheet(context, callback: (String text) async {
+                        _addressEditController.text = await _parseText(text);
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Icon(
+                        ExtendsIconFont.qrcode_scan,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
-                    suffixIcon: InkWell(
-                      onTap: () async {
-                        UiUtil.showScanImagePickerSheet(context,
-                            callback: (String text) async {
-                          _addressEditController.text = await _parseText(text);
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Icon(
-                          ExtendsIconFont.qrcode_scan,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                    ),
-                    //contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   ),
-                  style: TextStyle(fontSize: 13),
-                  onSaved: (value) {
-                    // print("[$runtimeType] onSaved, inputValue:$value");
-                  },
-                  onChanged: (String value) {
-                    // print("[$runtimeType] onChanged, inputValue:$value");
-                  },
                 ),
               ],
             ),
@@ -782,8 +695,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   Future<String> _parseText(String scanStr) async {
     if (scanStr == null) {
       return '';
-    } else if (scanStr.contains(PromoteQrCodePage.downloadDomain) ||
-        scanStr.contains(RpFriendInvitePage.shareDomain)) {
+    } else if (scanStr.contains(PromoteQrCodePage.downloadDomain) || scanStr.contains(RpFriendInvitePage.shareDomain)) {
       var fromArr = scanStr.split("from=");
       if (fromArr[1].length > 0) {
         fromArr = fromArr[1].split("&");
@@ -836,8 +748,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   }
 
   _upgradeAction() async {
-    var password = await UiUtil.showWalletPasswordDialogV2(
-        context, _activatedWallet.wallet);
+    var password = await UiUtil.showWalletPasswordDialogV2(context, _activatedWallet.wallet);
     if (password == null) {
       return;
     }
@@ -845,10 +756,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     var burningAmount = ConvertTokenUnit.strToBigInt(widget.levelRule.burnStr);
 
     var inputHoldValue = (_inputValue - _needBurnValue);
-    inputHoldValue =
-        inputHoldValue > Decimal.zero ? inputHoldValue : Decimal.zero;
-    var holdingAmount =
-        ConvertTokenUnit.strToBigInt(inputHoldValue?.toString() ?? '0');
+    inputHoldValue = inputHoldValue > Decimal.zero ? inputHoldValue : Decimal.zero;
+    var holdingAmount = ConvertTokenUnit.strToBigInt(inputHoldValue?.toString() ?? '0');
 
     if (mounted) {
       setState(() {
