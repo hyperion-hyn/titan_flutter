@@ -6,10 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 
+/// 价格显示 法币选择
 class MePricePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -17,32 +19,28 @@ class MePricePage extends StatefulWidget {
   }
 }
 
-class _MePriceState extends State<MePricePage> {
+class _MePriceState extends BaseState<MePricePage> {
+  LegalSign activeLegal;
+
   @override
-  void initState() {
-    super.initState();
+  void onCreated() {
+    activeLegal = WalletInheritedModel.of(context, aspect: WalletAspect.legal).activeLegal;
   }
 
-  var activeQuotesSign;
+  Widget _dividerWidget() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 16,
+      ),
+      child: Container(
+        height: 0.8,
+        color: HexColor('#F8F8F8'),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (activeQuotesSign == null) {
-      activeQuotesSign = WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeQuotesSign;
-    }
-
-    Widget _dividerWidget() {
-      return Padding(
-        padding: const EdgeInsets.only(left: 16,),
-        child: Container(
-          height: 0.8,
-          color: HexColor('#F8F8F8'),
-        ),
-      );
-    }
-
-    var quotesSigns = SupportedQuoteSigns.all;
-
     return Scaffold(
       appBar: BaseAppBar(
         baseTitle: S.of(context).price_show,
@@ -51,10 +49,11 @@ class _MePriceState extends State<MePricePage> {
         actions: <Widget>[
           FlatButton(
             onPressed: () {
-              if (activeQuotesSign != null) {
-                WalletInheritedModel.saveQuoteSign(activeQuotesSign);
-                BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesSignEvent(sign: activeQuotesSign));
-                BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+              if (activeLegal != null) {
+                // WalletInheritedModel.saveQuoteSign(activeLegal);
+                // BlocProvider.of<WalletCmpBloc>(context).add(UpdateLegalSignEvent(sign: activeLegal));
+                // BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+                BlocProvider.of<WalletCmpBloc>(context).add(UpdateLegalSignEvent(legal: activeLegal));
               }
 
               Navigator.pop(context);
@@ -70,21 +69,22 @@ class _MePriceState extends State<MePricePage> {
           ),
         ],
       ),
-        body: Column(
-          children: <Widget>[
-            _buildInfoContainer(quotesSigns[0]),
-            _dividerWidget(),
-            _buildInfoContainer(quotesSigns[1]),
+      body: Column(
+        children: <Widget>[
+          for (var i = 0; i < SupportedLegal.all.length; i++) ...[
+            _buildInfoContainer(SupportedLegal.all[i]),
+            i < SupportedLegal.all.length - 1 ? _dividerWidget() : SizedBox.shrink()
           ],
-        ),
+        ],
+      ),
     );
   }
 
-  Widget _buildInfoContainer(QuotesSign quotesSign) {
+  Widget _buildInfoContainer(LegalSign legal) {
     return InkWell(
       onTap: () {
         setState(() {
-          activeQuotesSign = quotesSign;
+          activeLegal = legal;
         });
       },
       child: Column(
@@ -98,13 +98,13 @@ class _MePriceState extends State<MePricePage> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
                   child: Text(
-                    quotesSign.quote,
+                    legal.legal,
                     style: TextStyle(color: HexColor("#333333"), fontSize: 14),
                   ),
                 ),
                 Spacer(),
                 Visibility(
-                  visible: quotesSign.quote == activeQuotesSign?.quote ?? '',
+                  visible: legal.legal == activeLegal?.legal ?? '',
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
                     child: Icon(

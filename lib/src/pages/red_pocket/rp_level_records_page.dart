@@ -12,7 +12,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -46,7 +46,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
   final RPApi _rpApi = RPApi();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
 
-  WalletVo _activeWallet;
+  WalletViewVo _activeWallet;
 
   String get _address => _activeWallet?.wallet?.getEthAccount()?.address ?? '';
 

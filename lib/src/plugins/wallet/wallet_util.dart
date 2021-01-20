@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/http/http.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
@@ -466,7 +466,7 @@ class WalletUtil {
     return BigInt.from(0);
   }
 
-  static String formatToHynAddrIfAtlasChain(CoinVo coinVo, String ethAddress) {
+  static String formatToHynAddrIfAtlasChain(CoinViewVo coinVo, String ethAddress) {
     if (coinVo.coinType == CoinType.HYN_ATLAS) {
       return ethAddressToBech32Address(ethAddress);
     } else {

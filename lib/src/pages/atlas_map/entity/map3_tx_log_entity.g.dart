@@ -71,8 +71,6 @@ Map<String, dynamic> _$Map3TxLogEntityToJson(Map3TxLogEntity instance) =>
       'value': instance.value,
     };
 
-
-
 DataDecoded _$DataDecodedFromJson(Map<String, dynamic> json) {
   return DataDecoded(
     json['operatorAddress'] as String,

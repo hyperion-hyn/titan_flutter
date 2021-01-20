@@ -11,7 +11,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
@@ -40,7 +40,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
   final ShotController _shotController = new ShotController();
   // GlobalKey _qrImageBoundaryKey = GlobalKey();
 
-  WalletVo _walletVo;
+  WalletViewVo _walletVo;
 
   bool _isSharing = false;
   String get _address => _walletVo.wallet.getAtlasAccount().address;

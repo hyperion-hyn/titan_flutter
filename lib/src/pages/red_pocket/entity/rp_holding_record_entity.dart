@@ -78,7 +78,7 @@ class RPLevelHistory extends Object {
     this.withdraw,
   );
 
-  factory RPLevelHistory.fromJson(Map<String, dynamic> srcJson) => _$RpHoldingRecordEntityFromJson(srcJson);
+  factory RPLevelHistory.fromJson(Map<String, dynamic> srcJson) => _$RPLevelHistoryFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$RpHoldingRecordEntityToJson(this);
+  Map<String, dynamic> toJson() => _$RPLevelHistoryToJson(this);
 }

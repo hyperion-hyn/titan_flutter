@@ -46,9 +46,10 @@ WalletInfoEntity _$WalletInfoEntityFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$WalletInfoEntityToJson(WalletInfoEntity instance) => <String, dynamic>{
-  'address': instance.address,
-  'name': instance.name,
-  'pic': instance.pic,
-  'status': instance.status,
-};
+Map<String, dynamic> _$WalletInfoEntityToJson(WalletInfoEntity instance) =>
+    <String, dynamic>{
+      'address': instance.address,
+      'name': instance.name,
+      'pic': instance.pic,
+      'status': instance.status,
+    };

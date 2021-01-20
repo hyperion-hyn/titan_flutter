@@ -12,7 +12,7 @@
 //
 //import '../../../components/quotes/coin_market_api.dart';
 //import '../model/wallet_account_vo.dart';
-//import '../../../components/wallet/vo/wallet_vo.dart';
+//import '../../../components/wallet/vo/wallet_view_vo.dart';
 //
 //class WalletService {
 //  static const String _DEFAULT_WALLET_FILE_NAME = "default_wallet_file_name";

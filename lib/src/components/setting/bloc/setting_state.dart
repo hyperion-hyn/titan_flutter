@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:titan/src/components/wallet/model.dart';
 
 import '../model.dart';
 import '../system_config_entity.dart';
@@ -17,18 +16,23 @@ class InitialSettingState extends SettingState {}
 class UpdatedSettingState extends SettingState with EquatableMixin {
   final LanguageModel languageModel;
   final AreaModel areaModel;
-  final QuotesSign quotesSign;
+  final SystemConfigEntity systemConfig;
 
-  UpdatedSettingState({this.languageModel, this.areaModel, this.quotesSign});
+  UpdatedSettingState({
+    this.languageModel,
+    this.areaModel,
+    this.systemConfig,
+  });
 
   @override
-  List<Object> get props => [languageModel, areaModel, quotesSign];
+  List<Object> get props => [languageModel, areaModel, systemConfig];
 
   @override
   bool get stringify => true;
 }
 
-class SystemConfigState extends SettingState {
-  final SystemConfigEntity systemConfigEntity;
-  SystemConfigState(this.systemConfigEntity);
-}
+// class RemoteConfigSyncedState extends SettingState {
+//   final SystemConfigEntity systemConfigEntity;
+//
+//   RemoteConfigSyncedState(this.systemConfigEntity);
+// }

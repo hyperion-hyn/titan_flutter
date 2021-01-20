@@ -13,8 +13,8 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
@@ -64,8 +64,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   RpMinerInfo _inviter;
 
-  CoinVo _coinVo;
-  WalletVo _activatedWallet;
+  CoinViewVo _coinVo;
+  WalletViewVo _activatedWallet;
 
   String get _address => _activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 

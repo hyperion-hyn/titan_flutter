@@ -20,23 +20,40 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
   @override
   Stream<SettingState> mapEventToState(SettingEvent event) async* {
-    if (event is UpdateSettingEvent) {
+    //恢复dist数据
+    if (event is RestoreSettingEvent) {
+      var languageStr = await AppCache.getValue<String>(PrefsKey.SETTING_LANGUAGE);
+      LanguageModel languageModel = languageStr != null
+          ? LanguageModel.fromJson(json.decode(languageStr))
+          : SupportedLanguage.defaultModel(context);
+
+      var areaModelStr = await AppCache.getValue<String>(PrefsKey.SETTING_AREA);
+      AreaModel areaModel =
+          areaModelStr != null ? AreaModel.fromJson(json.decode(areaModelStr)) : SupportedArea.defaultModel();
+
+      var systemConfigEntity = await _restoreSystemConfig();
+
+      yield UpdatedSettingState(
+        languageModel: languageModel,
+        areaModel: areaModel,
+        systemConfig: systemConfigEntity,
+      );
+    } else if (event is UpdateSettingEvent) {
       if (event.languageModel != null) {
         _saveLanguage(event.languageModel);
       }
       if (event.areaModel != null) {
         _saveAreaModel(event.areaModel);
       }
-      yield UpdatedSettingState(
-          languageModel: event.languageModel, areaModel: event.areaModel);
-    } else if (event is SystemConfigEvent) {
-      var systemConfigStr = await AppCache.getValue<String>(PrefsKey.SETTING_SYSTEM_CONFIG);
-
+      yield UpdatedSettingState(languageModel: event.languageModel, areaModel: event.areaModel);
+    } else if (event is SyncRemoteConfigEvent) {
+      // var configStr = await AppCache.getValue<String>(PrefsKey.SETTING_REMOTE_SYSTEM_CONFIG);
       SystemConfigEntity netSystemConfigEntity = await api.getSystemConfigData();
-      if(systemConfigStr != json.encode(netSystemConfigEntity.toJson())){
-        _saveSystemConfig(netSystemConfigEntity);
-        yield SystemConfigState(netSystemConfigEntity);
-      }
+      UpdatedSettingState(systemConfig: netSystemConfigEntity);
+      // if (configStr != json.encode(netSystemConfigEntity.toJson())) {
+      //   _saveSystemConfig(netSystemConfigEntity);
+      //   yield RemoteConfigSyncedState(netSystemConfigEntity);
+      // }
     }
   }
 
@@ -50,10 +67,16 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     return AppCache.saveValue(PrefsKey.SETTING_AREA, modelStr);
   }
 
-
-
   Future<bool> _saveSystemConfig(SystemConfigEntity systemConfigEntity) {
     var modelStr = json.encode(systemConfigEntity.toJson());
-    return AppCache.saveValue(PrefsKey.SETTING_SYSTEM_CONFIG, modelStr);
+    return AppCache.saveValue(PrefsKey.SETTING_REMOTE_SYSTEM_CONFIG, modelStr);
+  }
+
+  Future<SystemConfigEntity> _restoreSystemConfig() async {
+    var configStr = await AppCache.getValue<String>(PrefsKey.SETTING_REMOTE_SYSTEM_CONFIG);
+    if (configStr != null && configStr != ' ') {
+      return SystemConfigEntity.fromJson(json.decode(configStr));
+    }
+    return null;
   }
 }

@@ -6,7 +6,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
@@ -23,7 +23,7 @@ class RpShareSelectTypePage extends StatefulWidget {
 
 class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
   final ScrollController _scrollController = ScrollController();
-  WalletVo _walletVo;
+  WalletViewVo _walletVo;
 
   RpShareTypeEntity _selectedEntity = SupportedShareType.NORMAL;
 

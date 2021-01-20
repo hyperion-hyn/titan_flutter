@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/app.dart';
 
 class ForgotWalletPasswordPage extends StatefulWidget {
   @override

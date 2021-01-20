@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -15,26 +14,22 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/exchange/model.dart';
-import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/global.dart';
-import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/market_info_entity.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/entity/exc_detail_entity.dart';
-import 'package:titan/src/pages/market/order/item_order.dart';
 import 'package:titan/src/pages/market/order/exchange_order_mangement_page.dart';
 import 'package:titan/src/pages/market/k_line/kline_detail_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
-import 'package:titan/src/widget/custom_seekbar/custom_seekbar.dart';
 import 'dart:math' as math;
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/order/exchange_active_order_list_page.dart';
@@ -125,7 +120,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
 
   String _realTimePrice = "--";
   String _realTimeQuotePrice = "--";
-  ActiveQuoteVoAndSign selectQuote;
+  TokenPriceViewVo selectQuote;
   String _realTimePricePercentStr = "--";
   double _realTimePricePercent = 0;
 
@@ -290,9 +285,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
         MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
             .getRealTimePrice(symbol);
     selectQuote =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.base);
+        WalletInheritedModel.of(context).tokenLegalPrice(widget.base);
     _realTimeQuotePrice = FormatUtil.truncateDoubleNum(
-        double.parse(_realTimePrice) * (selectQuote?.quoteVo?.price ?? 0), 2);
+        double.parse(_realTimePrice) * (selectQuote?.price ?? 0), 2);
     _realTimePricePercent =
         MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
             .getRealTimePricePercent(symbol);
@@ -482,7 +477,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                     Padding(
                       padding: const EdgeInsets.only(bottom: 3.0),
                       child: Text(
-                          "≈  ${selectQuote?.sign?.sign ?? ""} $_realTimeQuotePrice",
+                          "≈  ${selectQuote?.legal?.legal ?? ""} $_realTimeQuotePrice",
                           style: TextStyle(
                               fontSize: 10, color: DefaultColors.color777)),
                     ),
@@ -534,12 +529,12 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
   }
 
   String getInputPriceQuote() {
-    if ((selectQuote?.quoteVo?.price ?? 0) == 0 ||
+    if ((selectQuote?.price ?? 0) == 0 ||
         currentPriceStr == "" ||
         Decimal.parse(currentPriceStr) == Decimal.fromInt(0)) {
       return "--";
     }
-    var priceQuote = Decimal.parse(selectQuote.quoteVo.price.toString()) *
+    var priceQuote = Decimal.parse(selectQuote.price.toString()) *
         Decimal.parse(currentPriceStr);
     return FormatUtil.truncateDecimalNum(
         priceQuote, marketInfoEntity.pricePrecision);
@@ -923,7 +918,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 4.0),
                                     child: Text(
-                                      "≈${getInputPriceQuote()} ${selectQuote?.quoteVo?.quote ?? ""}",
+                                      "≈${getInputPriceQuote()} ${selectQuote?.legal?.legal ?? ""}",
                                       style: TextStyle(
                                           fontSize: 10,
                                           color: DefaultColors.color999),

@@ -114,7 +114,7 @@ class LogUtil {
     }
   }
 
-  static uploadException(dynamic exception, [String errorPrefix]) {
+  static uploadException(dynamic exception, [String errorPrefix = 'error']) {
     if (env.buildType == BuildType.PROD) {
       if (exception is Error) {
         FlutterBugly.uploadException(

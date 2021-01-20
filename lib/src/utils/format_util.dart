@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:titan/generated/l10n.dart';
 import 'dart:convert';
 
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'dart:math' as math;
@@ -167,19 +167,19 @@ class FormatUtil {
     return String.fromCharCodes(base64Decode(data));
   }
 
-  static double coinBalanceDouble(CoinVo coinVo) {
+  static double coinBalanceDouble(CoinViewVo coinVo) {
     return ConvertTokenUnit.weiToDecimal(
             coinVo?.balance ?? 0, coinVo?.decimals ?? 0)
         .toDouble();
   }
 
-  static String coinBalanceHumanRead(CoinVo coinVo) {
+  static String coinBalanceHumanRead(CoinViewVo coinVo) {
     return ConvertTokenUnit.weiToDecimal(
             coinVo?.balance ?? BigInt.from(0), coinVo?.decimals ?? 0)
         .toString();
   }
 
-  static String coinBalanceByDecimal(CoinVo coinVo, int decimal) {
+  static String coinBalanceByDecimal(CoinViewVo coinVo, int decimal) {
     return truncateDecimalNum(
       ConvertTokenUnit.weiToDecimal(
           coinVo?.balance ?? 0, coinVo?.decimals ?? 0),
@@ -187,7 +187,7 @@ class FormatUtil {
     );
   }
 
-  static String coinBalanceHumanReadFormat(CoinVo coinVo, {int decimal = 6, bool isFloor = true}) {
+  static String coinBalanceHumanReadFormat(CoinViewVo coinVo, {int decimal = 6, bool isFloor = true}) {
     var value = double.tryParse(coinBalanceHumanRead(coinVo)) ?? 0;
     if (isFloor) {
       value = (value * math.pow(10, decimal)).floor() / math.pow(10, decimal);

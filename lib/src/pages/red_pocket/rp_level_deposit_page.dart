@@ -15,8 +15,8 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
@@ -51,8 +51,8 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   RpMyLevelInfo _myLevelInfo;
-  CoinVo _coinVo;
-  WalletVo _activatedWallet;
+  CoinViewVo _coinVo;
+  WalletViewVo _activatedWallet;
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
 
   Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;

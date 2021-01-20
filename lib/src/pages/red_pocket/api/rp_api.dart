@@ -7,8 +7,8 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/http/signer.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
@@ -45,7 +45,7 @@ class RPApi {
   Future<dynamic> postStakingRp({
     BigInt amount,
     String password = '',
-    WalletVo activeWallet,
+    WalletViewVo activeWallet,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(
@@ -69,7 +69,7 @@ class RPApi {
 
   Future<dynamic> postRetrieveHyn({
     String password = '',
-    WalletVo activeWallet,
+    WalletViewVo activeWallet,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password);
@@ -508,7 +508,7 @@ class RPApi {
     BigInt depositAmount,
     BigInt burningAmount,
     String password = '',
-    WalletVo activeWallet,
+    WalletViewVo activeWallet,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
@@ -548,7 +548,7 @@ class RPApi {
     int to,
     BigInt withdrawAmount,
     String password = '',
-    WalletVo activeWallet,
+    WalletViewVo activeWallet,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
@@ -578,7 +578,7 @@ class RPApi {
   Future<String> postRpApprove({
     String password = '',
     BigInt amount,
-    WalletVo activeWallet,
+    WalletViewVo activeWallet,
     int nonce,
   }) async {
     var wallet = activeWallet?.wallet;
@@ -714,10 +714,10 @@ class RPApi {
   // 发新人/位置红包
   Future<RpShareReqEntity> postSendShareRp({
     RpShareReqEntity reqEntity,
-    WalletVo activeWallet,
+    WalletViewVo activeWallet,
     String password = '',
     String toAddress,
-    CoinVo coinVo,
+    CoinViewVo coinVo,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 

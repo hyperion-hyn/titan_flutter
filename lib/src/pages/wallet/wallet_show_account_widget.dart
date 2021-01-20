@@ -16,8 +16,8 @@ import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -50,7 +50,7 @@ import 'api/etherscan_api.dart';
 import 'api/hyn_api.dart';
 
 class ShowAccountPage extends StatefulWidget {
-  CoinVo coinVo;
+  CoinViewVo coinVo;
 
   ShowAccountPage(this.coinVo);
 
@@ -131,8 +131,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
   @override
   Widget build(BuildContext context) {
     //activated quote sign
-    ActiveQuoteVoAndSign activeQuoteVoAndSign =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+    var activeQuoteVoAndSign =
+        WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
 
     // var coinVo =
     //     WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).getCoinVoBySymbol(widget.coinVo.symbol);
@@ -193,7 +193,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(widget.coinVo) * (activeQuoteVoAndSign?.quoteVo?.price ?? 0))}",
+                                "≈ ${activeQuoteVoAndSign?.legal?.legal ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(widget.coinVo) * (activeQuoteVoAndSign?.price ?? 0))}",
                                 style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
                               ),
                             ),
@@ -727,7 +727,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
         //update balance
         BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent(
           symbol: widget.coinVo.symbol,
-          contractAddress: widget.coinVo.contractAddress,
+          // contractAddress: widget.coinVo.contractAddress,
         ));
 
         //merge local pending txs
@@ -792,9 +792,9 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 Future<List<TransactionDetailVo>> getEthTransferList(AccountTransferService _accountTransferService) async {
   List<TransactionDetailVo> transferList = [];
   try {
-    WalletVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    WalletViewVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
     String fromAddress = walletVo.wallet.getEthAccount().address;
-    var coinVo = CoinVo(symbol: "ETH", address: fromAddress);
+    var coinVo = CoinViewVo(symbol: "ETH", address: fromAddress);
     transferList = await _accountTransferService.getTransferList(coinVo, 0);
   } catch (e) {
     logger.e(e);

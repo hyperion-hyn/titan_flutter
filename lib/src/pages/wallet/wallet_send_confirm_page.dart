@@ -11,11 +11,11 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/bitcoin.dart';
@@ -31,15 +31,14 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'api/hyn_api.dart';
 
 class WalletSendConfirmPage extends StatefulWidget {
-  final CoinVo coinVo;
+  final CoinViewVo coinVo;
   final String transferAmount;
   final String receiverAddress;
 
   WalletSendConfirmPage(String coinVo, this.transferAmount, this.receiverAddress)
-      : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
+      : coinVo = CoinViewVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
   State<StatefulWidget> createState() {
@@ -64,8 +63,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
   int selectedPriceLevel = 1;
 
-  WalletVo activatedWallet;
-  ActiveQuoteVoAndSign activatedQuoteSign;
+  WalletViewVo activatedWallet;
+  TokenPriceViewVo activatedQuoteSign;
   var gasPriceRecommend;
 
   int get _nonce {
@@ -95,8 +94,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
   String get _gasPriceEstimateStr {
     var gasPriceEstimateStr = '';
-    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
-    var quoteSign = activatedQuoteSign?.sign?.sign;
+    var quotePrice = activatedQuoteSign?.price ?? 0;
+    var quoteSign = activatedQuoteSign?.legal?.legal;
 
     // BTC
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
@@ -107,7 +106,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     }
     // 2.ETH
     else if (widget.coinVo.coinType == CoinType.ETHEREUM) {
-      var ethQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0;
+      var ethQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('ETH')?.price ?? 0;
       var gasLimit = widget.coinVo.symbol == "ETH"
           ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
           : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
@@ -120,7 +119,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     // 3.ATLAS
     else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
       // var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
-      var hynQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN')?.quoteVo?.price ?? 0;
+      var hynQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('HYN')?.price ?? 0;
       var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
       var gasEstimate = ConvertTokenUnit.weiToEther(
           weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
@@ -150,7 +149,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
   @override
   void onCreated() {
-    activatedQuoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+    activatedQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
 
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
@@ -188,8 +187,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Widget _totalWidget() {
-    var quoteSign = activatedQuoteSign?.sign?.sign;
-    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
+    var quoteSign = activatedQuoteSign?.legal?.legal;
+    var quotePrice = activatedQuoteSign?.price ?? 0;
 
     return Row(
       children: <Widget>[

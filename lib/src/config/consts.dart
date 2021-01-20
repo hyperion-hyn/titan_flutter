@@ -149,11 +149,11 @@ class PrefsKey {
   //setting
   static const String SETTING_LANGUAGE = 'setting_language';
   static const String SETTING_AREA = 'setting_area';
-  static const String SETTING_QUOTE_SIGN = 'setting_quete_sign';
-  static const String SETTING_SYSTEM_CONFIG = 'setting_system_config';
+  static const String SETTING_REMOTE_SYSTEM_CONFIG = 'setting_system_config';
 
   //wallet
   static const String ACTIVATED_WALLET_FILE_NAME = 'default_wallet_file_name';
+  static const String SETTING_LEGAL_SIGN = 'setting_legal_sign';
   static final walletBalance = 'wallet_balance';
   static final walletBitcoinCreate = 'wallet_bitcoin_create';
 
@@ -179,7 +179,7 @@ class PrefsKey {
   //contribution
   static const String VERIFY_DATE = 'verify_date';
 
-  static const String SHARED_PREF_GAS_PRICE_KEY = "shared_pref_gas_price_key";
+  static const String SHARED_PREF_ETH_GAS_PRICE_KEY = "shared_pref_gas_price_key";
   static const String SHARED_PREF_BTC_GAS_PRICE_KEY =
       "shared_pref_btc_gas_price_key";
 

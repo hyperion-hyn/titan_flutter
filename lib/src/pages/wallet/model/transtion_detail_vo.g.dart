@@ -12,7 +12,7 @@ TransactionDetailVo _$TransactionDetailVoFromJson(Map<String, dynamic> json) {
     localTransferType: json['localTransferType'] as int,
     type: json['type'] as int,
     state: json['state'] as int,
-    amount: double.parse(json['amount']),
+    amount: (json['amount'] as num)?.toDouble(),
     symbol: json['symbol'] as String,
     fromAddress: json['fromAddress'] as String,
     toAddress: json['toAddress'] as String,
@@ -24,12 +24,23 @@ TransactionDetailVo _$TransactionDetailVoFromJson(Map<String, dynamic> json) {
     gasUsed: json['gasUsed'] as String,
     describe: json['describe'] as String,
     data: json['data'] as String,
-    dataDecoded: json['dataDecoded'],
+    dataDecoded: json['dataDecoded'] as Map<String, dynamic>,
     blockHash: json['blockHash'] as String,
     blockNum: json['blockNum'] as int,
     epoch: json['epoch'] as int,
     transactionIndex: json['transactionIndex'] as int,
     hynType: json['hynType'] as int,
+    logsDecoded: json['logsDecoded'] == null
+        ? null
+        : LogsDecoded.fromJson(json['logsDecoded'] as Map<String, dynamic>),
+    payload: json['payload'] == null
+        ? null
+        : TransferPayload.fromJson(json['payload'] as Map<String, dynamic>),
+    internalTransactions: (json['internal_trans'] as List)
+        ?.map((e) => e == null
+            ? null
+            : InternalTransactions.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
     speedUpTimes: json['speedUpTimes'] as int,
     cancelTimes: json['cancelTimes'] as int,
     lastOptType: json['lastOptType'] as int,
@@ -40,11 +51,10 @@ Map<String, dynamic> _$TransactionDetailVoToJson(
         TransactionDetailVo instance) =>
     <String, dynamic>{
       'contractAddress': instance.contractAddress,
-      'localTransferType': instance.localTransferType,
       'type': instance.type,
       'hash': instance.hash,
       'state': instance.state,
-      'amount': instance.amount.toString(),
+      'amount': instance.amount,
       'symbol': instance.symbol,
       'fromAddress': instance.fromAddress,
       'toAddress': instance.toAddress,
@@ -61,7 +71,11 @@ Map<String, dynamic> _$TransactionDetailVoToJson(
       'epoch': instance.epoch,
       'transactionIndex': instance.transactionIndex,
       'hynType': instance.hynType,
+      'logsDecoded': instance.logsDecoded,
+      'payload': instance.payload,
+      'internal_trans': instance.internalTransactions,
       'speedUpTimes': instance.speedUpTimes,
       'cancelTimes': instance.cancelTimes,
       'lastOptType': instance.lastOptType,
+      'localTransferType': instance.localTransferType,
     };

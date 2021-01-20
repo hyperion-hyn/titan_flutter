@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/wallet/wallet_finish_create_page.dart';
-import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
-import 'wallet_backup_confirm_resume_word_page.dart';
 
 class ConfirmResumeWordPage extends StatefulWidget {
   final String createWalletMnemonicTemp;

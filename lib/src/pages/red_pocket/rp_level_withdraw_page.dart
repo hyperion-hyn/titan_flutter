@@ -14,8 +14,8 @@ import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/bloc/redpocket_bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
@@ -71,8 +71,8 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
     return current;
   }
 
-  CoinVo _coinVo;
-  WalletVo _activatedWallet;
+  CoinViewVo _coinVo;
+  WalletViewVo _activatedWallet;
   String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
 
   bool _isLoading = false;

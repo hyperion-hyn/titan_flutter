@@ -12,19 +12,16 @@ import 'package:titan/src/basic/widget/data_list_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/inject/injector.dart';
-import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
-import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -38,11 +35,10 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../pages/wallet/model/transtion_detail_vo.dart';
-import 'api/etherscan_api.dart';
 import 'api/hyn_api.dart';
 
 class ShowAccountPage extends StatefulWidget {
-  CoinVo coinVo;
+  CoinViewVo coinVo;
 
   ShowAccountPage(this.coinVo);
 
@@ -102,8 +98,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
   @override
   Widget build(BuildContext context) {
     //activated quote sign
-    ActiveQuoteVoAndSign activeQuoteVoAndSign =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+    var activeQuoteVoAndSign =
+        WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
 
     return Scaffold(
         appBar: AppBar(
@@ -161,7 +157,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(widget.coinVo) * (activeQuoteVoAndSign?.quoteVo?.price ?? 0))}",
+                                "≈ ${activeQuoteVoAndSign?.legal?.legal ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(widget.coinVo) * (activeQuoteVoAndSign?.price ?? 0))}",
                                 style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
                               ),
                             ),
@@ -518,7 +514,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
         //update balance
         BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent(
           symbol: widget.coinVo.symbol,
-          contractAddress: widget.coinVo.contractAddress,
+          // contractAddress: widget.coinVo.contractAddress,
         ));
       }
 
@@ -535,9 +531,9 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 Future<List<TransactionDetailVo>> getEthTransferList(AccountTransferService _accountTransferService) async {
   List<TransactionDetailVo> transferList = [];
   try {
-    WalletVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    WalletViewVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
     String fromAddress = walletVo.wallet.getEthAccount().address;
-    var coinVo = CoinVo(symbol: "ETH", address: fromAddress);
+    var coinVo = CoinViewVo(symbol: "ETH", address: fromAddress);
     transferList = await _accountTransferService.getTransferList(coinVo, 0);
   } catch (e) {
     logger.e(e);

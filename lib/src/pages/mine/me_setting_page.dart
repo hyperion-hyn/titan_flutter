@@ -23,9 +23,9 @@ class _MeSettingState extends State<MeSettingPage> {
         SettingInheritedModel.of(context, aspect: SettingAspect.language)
             .languageModel
             .name;
-    var quoteStr = WalletInheritedModel.of(context, aspect: WalletAspect.quote)
-        .activeQuotesSign
-        ?.quote;
+    var quoteStr = WalletInheritedModel.of(context, aspect: WalletAspect.legal)
+        .activeLegal
+        ?.legal;
     var area = SettingInheritedModel.of(context, aspect: SettingAspect.area)
         .areaModel
         .name(context);

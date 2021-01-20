@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
-import 'package:titan/src/components/auth/bloc/auth_event.dart';
-import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -16,8 +11,6 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
-import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget.dart';
-import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/route_util.dart';
@@ -26,7 +19,6 @@ import 'package:titan/src/pages/wallet/wallet_manager/bloc/bloc.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
@@ -59,7 +51,7 @@ class WalletManagerPage extends StatefulWidget {
       BlocProvider.of<WalletCmpBloc>(context)
           .add(ActiveWalletEvent(wallet: wallet));
       await Future.delayed(Duration(milliseconds: 300));
-      BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
+      // BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
 
       ///Clear exchange account when switch wallet
       BlocProvider.of<ExchangeCmpBloc>(context)

@@ -6,7 +6,7 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -35,7 +35,7 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
   List<String> imagesList = [];
   var shareAppImage = "";
   ScrollController scrollController = ScrollController();
-  WalletVo walletVo;
+  WalletViewVo walletVo;
 
   @override
   void didChangeDependencies() {

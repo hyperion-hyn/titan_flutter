@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/coin_market_api.dart';
-import 'package:titan/src/components/wallet/vo/symbol_quote_vo.dart';
+import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/atlas/token_burn_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
@@ -25,7 +25,7 @@ class TokenBurnInfoPage extends StatefulWidget {
 class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
   CoinMarketApi _coinMarketApi = CoinMarketApi();
 
-  SymbolQuoteVo hynQuote;
+  TokenPriceViewVo hynQuote;
 
   @override
   void initState() {
@@ -50,7 +50,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
   }
 
   _content() {
-    var quotesSign = WalletInheritedModel.of(context).activeQuotesSign;
+    var quotesSign = WalletInheritedModel.of(context).activeLegal;
     var _burnRate = Decimal.parse(widget._burnHistory.burnRate ?? '0') * Decimal.fromInt(100);
 
     var _burnTokenAmountStr = FormatUtil.stringFormatCoinNum(widget._burnHistory.getTotalAmount());
@@ -181,9 +181,9 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
 
   _getHynQuote() async {
     var quotes = await _coinMarketApi.quotes(widget._burnHistory.timestamp);
-    var quotesSign = WalletInheritedModel.of(context).activeQuotesSign;
+    var legalSign = WalletInheritedModel.of(context).activeLegal;
     for (var quoteItem in quotes) {
-      if (quoteItem.symbol == SupportedTokens.HYN_Atlas.symbol && quoteItem.quote == quotesSign?.quote) {
+      if (quoteItem.symbol == SupportedTokens.HYN_Atlas.symbol && quoteItem.legal.legal == legalSign?.legal) {
         hynQuote = quoteItem;
       }
     }

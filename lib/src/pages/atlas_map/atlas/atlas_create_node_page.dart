@@ -6,7 +6,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -50,7 +50,7 @@ class _AtlasCreateNodePageState extends BaseState<AtlasCreateNodePage> {
   List<Map3InfoEntity> _map3NodeList = List();
   var _selectedMap3NodeIndex = 0;
 
-  WalletVo activatedWallet;
+  WalletViewVo activatedWallet;
 
   @override
   void onCreated() {

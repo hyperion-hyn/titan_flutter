@@ -1,20 +1,19 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of '../wallet/model.dart';
+part of 'model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-QuotesSign _$QuotesSignFromJson(Map<String, dynamic> json) {
-  return QuotesSign(
-    quote: json['quote'] as String,
+LegalSign _$LegalSignFromJson(Map<String, dynamic> json) {
+  return LegalSign(
+    legal: json['legal'] as String,
     sign: json['sign'] as String,
   );
 }
 
-Map<String, dynamic> _$QuotesSignToJson(QuotesSign instance) =>
-    <String, dynamic>{
-      'quote': instance.quote,
+Map<String, dynamic> _$LegalSignToJson(LegalSign instance) => <String, dynamic>{
+      'legal': instance.legal,
       'sign': instance.sign,
     };

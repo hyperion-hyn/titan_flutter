@@ -13,8 +13,9 @@ import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
+import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -57,7 +58,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
   bool _isSafeLockUnlock = false;
   bool _isShowBalances = true;
   bool _hasBackupWallet = false;
-  QuotesSign activeQuotesSign;
+  LegalSign activeQuotesSign;
 
   @override
   bool get wantKeepAlive => true;
@@ -67,8 +68,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
     super.didChangeDependencies();
 
     activeQuotesSign =
-        WalletInheritedModel.of(context, aspect: WalletAspect.sign)
-            .activeQuotesSign;
+        WalletInheritedModel.of(context, aspect: WalletAspect.legal)
+            .activeLegal;
   }
 
   @override
@@ -326,7 +327,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
     }
   }
 
-  _headerWidget(WalletVo activatedWalletVo) {
+  _headerWidget(WalletViewVo activatedWalletVo) {
     return SliverToBoxAdapter(
       child: Container(
         padding:
@@ -487,7 +488,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
     );
   }
 
-  _coinListWidget(WalletVo activatedWalletVo) {
+  _coinListWidget(WalletViewVo activatedWalletVo) {
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
       var coinVo = activatedWalletVo.coins[index];
@@ -517,11 +518,11 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
     );
   }
 
-  Widget _buildAccountItem(BuildContext context, CoinVo coin,
+  Widget _buildAccountItem(BuildContext context, CoinViewVo coin,
       {bool hasPrice = true}) {
     var symbol = coin.symbol;
     var symbolQuote =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign(symbol);
+        WalletInheritedModel.of(context).tokenLegalPrice(symbol);
     var subSymbol = "";
 
     if (coin.coinType == CoinType.HYN_ATLAS) {
@@ -539,8 +540,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
       balancePrice = "";
     } else {
       balancePrice = _isShowBalances
-          ? "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}"
-          : '${symbolQuote?.sign?.sign ?? ''} *****';
+          ? "${symbolQuote?.legal?.legal ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.price ?? 0))}"
+          : '${symbolQuote?.legal?.legal ?? ''} *****';
     }
 
     return Padding(
@@ -622,7 +623,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
 
   Future listLoadingData() async {
     _checkDexAccount();
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
+    // BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
 
     if (mounted) {
       loadDataBloc.add(RefreshSuccessEvent());
@@ -631,8 +632,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
 
   Widget hynQuotesView() {
     //hyn quote
-    ActiveQuoteVoAndSign hynQuoteSign =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
+    TokenPriceViewVo hynQuoteSign =
+        WalletInheritedModel.of(context).tokenLegalPrice('HYN');
     return Container(
       padding: EdgeInsets.all(8),
       color: Color(0xFFF5F5F5),
@@ -660,7 +661,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
                 Spacer(),
                 //quote
                 Text(
-                  '${hynQuoteSign != null ? '${FormatUtil.formatPrice(hynQuoteSign.quoteVo.price)} ${hynQuoteSign.sign.quote}' : '--'}',
+                  '${hynQuoteSign != null ? '${FormatUtil.formatPrice(hynQuoteSign.price)} ${hynQuoteSign.legal.legal}' : '--'}',
                   style: TextStyle(
                       color: HexColor('#333333'),
                       fontWeight: FontWeight.bold,

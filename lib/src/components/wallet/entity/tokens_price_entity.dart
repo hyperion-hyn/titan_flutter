@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'symbol_quote_entity.g.dart';
+part 'tokens_price_entity.g.dart';
 
 @JsonSerializable()
-class SymbolQuoteEntity extends Object {
+class TokensPriceEntity extends Object {
   @JsonKey(name: 'id')
   int id;
 
@@ -73,7 +73,7 @@ class SymbolQuoteEntity extends Object {
   @JsonKey(name: 'rp_percent_change_usd24h')
   double rpPercentChangeUsd24h;
 
-  SymbolQuoteEntity(
+  TokensPriceEntity(
     this.id,
     this.createdAt,
     this.updatedAt,
@@ -99,8 +99,8 @@ class SymbolQuoteEntity extends Object {
     this.rpPercentChangeUsd24h,
   );
 
-  factory SymbolQuoteEntity.fromJson(Map<String, dynamic> srcJson) =>
-      _$SymbolQuoteEntityFromJson(srcJson);
+  factory TokensPriceEntity.fromJson(Map<String, dynamic> srcJson) =>
+      _$TokensPriceEntityFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$SymbolQuoteEntityToJson(this);
+  Map<String, dynamic> toJson() => _$TokensPriceEntityToJson(this);
 }

@@ -23,26 +23,24 @@ Map<String, dynamic> _$RpMyRpRecordEntityToJson(RpMyRpRecordEntity instance) =>
       'paging_key': instance.pagingKey,
     };
 
-
-RpMyRpSplitRecordEntity _$RpMyRpSplitRecordEntityFromJson(Map<String, dynamic> json) {
+RpMyRpSplitRecordEntity _$RpMyRpSplitRecordEntityFromJson(
+    Map<String, dynamic> json) {
   return RpMyRpSplitRecordEntity(
     (json['data'] as List)
         ?.map((e) => e == null
-        ? null
-        : RpOpenRecordEntity.fromJson(e as Map<String, dynamic>))
+            ? null
+            : RpOpenRecordEntity.fromJson(e as Map<String, dynamic>))
         ?.toList(),
     json['paging_key'] as Map<String, dynamic>,
   );
 }
 
-Map<String, dynamic> _$RpMyRpSplitRecordEntityToJson(RpMyRpSplitRecordEntity instance) =>
+Map<String, dynamic> _$RpMyRpSplitRecordEntityToJson(
+        RpMyRpSplitRecordEntity instance) =>
     <String, dynamic>{
       'data': instance.data,
       'paging_key': instance.pagingKey,
     };
-
-
-
 
 RpOpenRecordEntity _$RpOpenRecordEntityFromJson(Map<String, dynamic> json) {
   return RpOpenRecordEntity(
@@ -82,4 +80,5 @@ Map<String, dynamic> _$RpOpenRecordEntityToJson(RpOpenRecordEntity instance) =>
       'other_user_amount': instance.otherUserAmount,
       'role': instance.role,
       'level': instance.level,
+      'tx_hash': instance.txHash,
     };

@@ -109,9 +109,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     );
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
 
-    Future.delayed(Duration(milliseconds: 500)).then((value) {
-      BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent(updateGasPrice: true));
-    });
+    // Future.delayed(Duration(milliseconds: 500)).then((value) {
+    //   BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent(updateGasPrice: true));
+    // });
 
 //    Future.delayed(Duration(milliseconds: 2000)).then((value) {
 //      BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
@@ -142,7 +142,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
   }
 
   @override

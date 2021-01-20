@@ -6,7 +6,8 @@ part of 'user_payload_with_address_entity.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserPayloadWithAddressEntity _$UserPayloadWithAddressEntityFromJson(Map<String, dynamic> json) {
+UserPayloadWithAddressEntity _$UserPayloadWithAddressEntityFromJson(
+    Map<String, dynamic> json) {
   return UserPayloadWithAddressEntity(
     json['payload'] == null
         ? null
@@ -15,7 +16,8 @@ UserPayloadWithAddressEntity _$UserPayloadWithAddressEntityFromJson(Map<String, 
   );
 }
 
-Map<String, dynamic> _$UserPayloadWithAddressEntityToJson(UserPayloadWithAddressEntity instance) =>
+Map<String, dynamic> _$UserPayloadWithAddressEntityToJson(
+        UserPayloadWithAddressEntity instance) =>
     <String, dynamic>{
       'payload': instance.payload,
       'address': instance.address,
