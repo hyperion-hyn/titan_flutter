@@ -1542,7 +1542,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                       text: '$_currentEpoch',
                       style: TextStyle(
                         fontSize: 14,
-                        color: HexColor("#1096B1"),
+                        color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.w600,
                       )),
                 ])),
@@ -1562,7 +1562,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                       text: '$_renewRemainEpoch',
                       style: TextStyle(
                         fontSize: 14,
-                        color: HexColor("#1096B1"),
+                        color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.w600,
                       )),
                   TextSpan(text: ' ${S.of(context).epoch}', style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
@@ -2007,7 +2007,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                     ),
                     TextSpan(
                       text: '$_currentEpoch',
-                      style: TextStyle(fontSize: 14, color: HexColor('#1096B1')),
+                      style: TextStyle(fontSize: 14, color: Theme.of(context).primaryColor),
                     ),
                   ]),
                 ),
@@ -2098,7 +2098,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           var index = titles.indexOf(title);
           var subtitle = subtitles[index];
           var date = progressHints[index];
-          var textColor = _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
+          var textColor = _currentStep != index ? HexColor("#A7A7A7") : Theme.of(context).primaryColor;
 
           return CustomStep(
             title: Text(

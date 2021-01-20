@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/consts.dart';
@@ -160,10 +161,10 @@ class Map3NodeUtil {
   }
   */
 
-  static HexColor statusColor(Map3InfoStatus state) {
+  static Color statusColor(Map3InfoStatus state) {
     if (state == null) return HexColor('#999999');
 
-    var _map3StatusColor = HexColor("#999999");
+    Color _map3StatusColor = HexColor("#999999");
     switch (state) {
       case Map3InfoStatus.MAP:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
@@ -173,7 +174,8 @@ class Map3NodeUtil {
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        _map3StatusColor = HexColor("#1FB9C7");
+        // _map3StatusColor = HexColor("#1FB9C7");
+        _map3StatusColor = Theme.of(Keys.rootKey.currentContext).primaryColor;
         break;
 
       case Map3InfoStatus.CONTRACT_IS_END:
