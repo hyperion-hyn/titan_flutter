@@ -1075,6 +1075,8 @@ class AtlasApi {
       versionType = 'test';
     }
 
+    var lang = Localizations.localeOf(Keys.rootKey.currentContext).languageCode;
+
     return AtlasHttpCore.instance.postEntity(
       '/v1/app/version_check',
       EntityFactory<AppUpdateInfo>(
@@ -1083,6 +1085,7 @@ class AtlasApi {
         },
       ),
       params: {
+        "lang": lang,
         "address": walletAddress,
         "channel": channel,
         "device_id": deviceId,
