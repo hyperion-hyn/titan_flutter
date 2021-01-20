@@ -10,7 +10,7 @@ class HecoGasLimit {
 
 class HecoGasPrice {
   static const LOW_SPEED = 1 * EthereumUnitValue.G_WEI;
-  static const FAST_SPEED = 5 * EthereumUnitValue.G_WEI;
+  static const FAST_SPEED = 1 * EthereumUnitValue.G_WEI;
   static const SUPER_FAST_SPEED = 10 * EthereumUnitValue.G_WEI;
 
   static GasPriceRecommend getRecommend() {
@@ -53,7 +53,7 @@ class HecoRpcProvider {
 
 class HecoExplore {
   static String MAIN_SCAN_API = 'https://scan.hecochain.com';
-  static String TEST_SCAN_API = 'http://10.10.1.109:3001';
+  static String TEST_SCAN_API = 'http://heco-api.test.hyn.space';
   static String MAIN_SCAN_WEB = 'https://scan.hecochain.com';
   static String TEST_SCAN_WEB = 'https://http-testnet.hecochain.com';
 
