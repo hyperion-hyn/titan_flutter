@@ -48,8 +48,6 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
 
   @override
   Widget build(BuildContext context) {
-
-
     var atlasHomeEntity = AtlasInheritedModel.of(context).atlasHomeEntity;
     var map3Count = atlasHomeEntity?.map3Count?.toString() ?? '---';
     var map3CountActive = atlasHomeEntity?.map3CountActive?.toString() ?? '---';
@@ -127,7 +125,8 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                         ),
                         Text(
                           S.of(context).hyn_burning,
-                          style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
                         )
                       ],
                     ),
@@ -138,7 +137,8 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                   Spacer(),
                   InkWell(
                     onTap: () {
-                      var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+                      var activatedWallet =
+                          WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
                       var _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
                       if (_address.isEmpty) {
                         Application.router.navigateTo(
@@ -247,7 +247,9 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                           alignment: Alignment.topCenter,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(left: 4,),
+                              padding: const EdgeInsets.only(
+                                left: 4,
+                              ),
                               child: Text(
                                 map3Count,
                                 style: TextStyle(
