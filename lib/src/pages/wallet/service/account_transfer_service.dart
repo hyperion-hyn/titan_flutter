@@ -23,7 +23,11 @@ class AccountTransferService {
 
   Future<List<TransactionDetailVo>> getTransferList(CoinVo coinVo, int page) async {
     if (coinVo.coinType == CoinType.ETHEREUM) {
-      return await _getEthTransferList(coinVo, page);
+      if (coinVo.contractAddress != null) {
+        return await _getErc20TransferList(coinVo, page);
+      } else {
+        return await _getEthTransferList(coinVo, page);
+      }
     } else if (coinVo.coinType == CoinType.HB_HT) {
       if (coinVo.contractAddress != null) {
         return await _getHtErc20TransferList(coinVo, page);
