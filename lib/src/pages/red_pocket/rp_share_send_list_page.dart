@@ -138,6 +138,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
 
     var onGoing = model.state == RpShareState.ongoing;
     var refunded = model.state == RpShareState.refunded;
+    refunded = false;
 
     return InkWell(
       onTap: () {
@@ -254,7 +255,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                                       model?.hynRefundHash ?? '', SupportedTokens.HYN_Atlas.symbol);
                                 },
                                 child: Text(
-                                  ',查看钱包余额',
+                                  ',查看转账详情',
                                   style: TextStyle(
                                     color: HexColor("#1F81FF"),
                                     // color: HexColor("#999999"),
