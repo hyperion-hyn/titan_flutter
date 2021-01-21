@@ -366,6 +366,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
     if ((transactionDetail.state == null) ||
         (transactionDetail.state != null &&
             transactionDetail.state == 0 &&
+            transactionDetail.gasUsed == "0" &&
             widget.coinVo.coinType == CoinType.HB_HT)) {
       title = S.of(context).pending;
     } else if ((widget.coinVo.coinType == CoinType.HB_HT) && transactionDetail.state == 1) {
@@ -375,7 +376,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
         title = S.of(context).contract_call;
         iconPath = "res/drawable/ic_hyn_wallet_contract.png";
       }
-    } else if ((widget.coinVo.coinType == CoinType.HB_HT && transactionDetail.state == -1)) {
+    } else if ((widget.coinVo.coinType == CoinType.HB_HT && transactionDetail.state == 0 && transactionDetail.gasUsed != "0")) {
       title = S.of(context).wallet_fail_title;
       titleColor = DefaultColors.colorf23524;
     }
