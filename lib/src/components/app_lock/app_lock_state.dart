@@ -5,6 +5,8 @@ abstract class AppLockState {}
 
 class AppLockInitialState extends AppLockState {}
 
+class LoadAppLockConfigState extends AppLockState {}
+
 class SetWalletLockState extends AppLockState {
   final bool isEnabled;
 

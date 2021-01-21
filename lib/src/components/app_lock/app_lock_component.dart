@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nested/nested.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
@@ -39,14 +40,19 @@ class _AppLockManager extends StatefulWidget {
   }
 }
 
-class _AppLockManagerState extends State<_AppLockManager> {
+class _AppLockManagerState extends BaseState<_AppLockManager> {
   AppLockConfig _appLockConfig = AppLockConfig.fromDefault();
+
+  @override
+  void onCreated() async {
+    BlocProvider.of<AppLockBloc>(context).add(LoadAppLockConfigEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AppLockBloc, AppLockState>(
       listener: (context, state) async {
-        if (state is AppLockInitialState) {
+        if (state is LoadAppLockConfigState) {
           var configCache = await _loadAppLockConfig();
           if (configCache != null) {
             _appLockConfig = configCache;
@@ -88,7 +94,7 @@ class _AppLockManagerState extends State<_AppLockManager> {
     );
   }
 
-  _loadAppLockConfig() async {
+  Future<AppLockConfig> _loadAppLockConfig() async {
     var jsonStr = await AppCache.secureGetValue(
       SecurePrefsKey.APP_LOCK_CONFIG,
     );

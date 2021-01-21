@@ -3,6 +3,8 @@ part of 'app_lock_bloc.dart';
 @immutable
 abstract class AppLockEvent {}
 
+class LoadAppLockConfigEvent extends AppLockEvent {}
+
 class SetWalletLockEvent extends AppLockEvent {
   final bool isEnabled;
 
