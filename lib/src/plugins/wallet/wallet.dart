@@ -690,7 +690,7 @@ class Wallet {
     final client = WalletUtil.getWeb3Client(coinType);
     var credentials = await getCredentials(coinType, password);
     var rpHoldingContract =
-        WalletUtil.getRpHoldingContract(HyperionConfig.hynStakingContractAddress);
+        WalletUtil.getRpHoldingContract(HyperionConfig.rpHoldingContractAddress);
     var signedRaw = await client.signTransaction(
       credentials,
       web3.Transaction.callContract(
