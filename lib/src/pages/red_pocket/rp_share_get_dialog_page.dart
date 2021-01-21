@@ -267,7 +267,8 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                               return;
                             }
 
-                            //latlng = LatLng(26.4407743201789, 111.61888177114565);
+                            // todo: test
+                            //latlng = LatLng(22.29679699999997, 114.17090000000002);
                             //lat: 26.4407743201789, lng: 111.61888177114565
 
                             if (_shareEntity.info.rpType == RpShareType.location && latlng == null) {

@@ -48,30 +48,52 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
 
   @override
   Widget build(BuildContext context) {
+    var atlasHomeEntity = AtlasInheritedModel.of(context).atlasHomeEntity;
+    var map3Count = atlasHomeEntity?.map3Count?.toString() ?? '---';
+    var map3CountActive = atlasHomeEntity?.map3CountActive?.toString() ?? '---';
+    var map3CountDead = atlasHomeEntity?.map3CountDead?.toString() ?? '---';
+    var map3CountIdle = atlasHomeEntity?.map3CountIdle?.toString() ?? '---';
+
     List<DropdownMenuItem> serverList = List();
     for (int i = 0; i < 3; i++) {
-      var title = '${i * 10}';
+      var title = '---';
+      var count = '---';
 
       switch (i) {
         case 0:
-          title = '活跃:  $title';
+          title = '运行中: ';
+          count = '$map3CountActive';
           break;
         case 1:
-          title = '待启动:  $title';
+          title = '待启动: ';
+          count = '$map3CountIdle';
           break;
         case 2:
-          title = '终止:  $title';
+          title = '终止: ';
+          count = '$map3CountDead';
           break;
       }
       DropdownMenuItem item = DropdownMenuItem(
         value: i,
-        child: Text(
-          title,
-          style: TextStyle(
-            color: HexColor('#333333'),
-            fontWeight: FontWeight.normal,
-            fontSize: 12,
-          ),
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                color: HexColor('#999999'),
+                fontWeight: FontWeight.normal,
+                fontSize: 12,
+              ),
+            ),
+            Text(
+              count,
+              style: TextStyle(
+                color: HexColor('#333333'),
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
+              ),
+            )
+          ],
         ),
       );
       serverList.add(item);
@@ -103,7 +125,8 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                         ),
                         Text(
                           S.of(context).hyn_burning,
-                          style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
                         )
                       ],
                     ),
@@ -114,7 +137,8 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                   Spacer(),
                   InkWell(
                     onTap: () {
-                      var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+                      var activatedWallet =
+                          WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
                       var _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
                       if (_address.isEmpty) {
                         Application.router.navigateTo(
@@ -223,9 +247,11 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                           alignment: Alignment.topCenter,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(left: 4,),
+                              padding: const EdgeInsets.only(
+                                left: 4,
+                              ),
                               child: Text(
-                                '${AtlasInheritedModel.of(context).atlasHomeEntity?.map3Count?.toString() ?? '---'}',
+                                map3Count,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
