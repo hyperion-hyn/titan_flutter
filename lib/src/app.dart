@@ -56,9 +56,8 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         //print('-----[App] inactive');
         break;
       case AppLifecycleState.paused:
-        BlocProvider.of<AppLockBloc>(Keys.rootKey.currentContext)
-            .add(LockWalletEvent());
         print('-----[App] paused');
+        _setUpAppLock();
         break;
       case AppLifecycleState.detached:
         //print('-----[App] detached');
@@ -66,6 +65,14 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       case AppLifecycleState.resumed:
         //print('-----[App] resumed');
         break;
+    }
+  }
+
+  _setUpAppLock() {
+    if (AppLockInheritedModel.of(context).isWalletLockEnable) {
+      BlocProvider.of<AppLockBloc>(
+        Keys.rootKey.currentContext,
+      ).add(LockWalletEvent());
     }
   }
 
@@ -86,10 +93,8 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         ],
         child: MultiBlocProvider(
           providers: [
-            BlocProvider<UpdateBloc>(
-                create: (context) => UpdateBloc(context: context)),
-            BlocProvider<RootPageControlBloc>(
-                create: (context) => RootPageControlBloc()),
+            BlocProvider<UpdateBloc>(create: (context) => UpdateBloc(context: context)),
+            BlocProvider<RootPageControlBloc>(create: (context) => RootPageControlBloc()),
           ],
           child: Builder(
             builder: (context) {
@@ -109,8 +114,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                 child: MaterialApp(
                   key: Keys.materialAppKey,
                   debugShowCheckedModeBanner: false,
-                  locale: SettingInheritedModel.of(context,
-                          aspect: SettingAspect.language)
+                  locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
                       .languageModel
                       ?.locale,
                   title: 'titan',

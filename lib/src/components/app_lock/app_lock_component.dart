@@ -1,11 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nested/nested.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
 import 'app_lock_bloc.dart';
+import 'entity/app_lock_config.dart';
 
 class AppLockComponent extends SingleChildStatelessWidget {
   AppLockComponent({
@@ -36,68 +40,88 @@ class _AppLockManager extends StatefulWidget {
 }
 
 class _AppLockManagerState extends State<_AppLockManager> {
-  LockStatus _lockStatus = LockStatus();
+  AppLockConfig _appLockConfig = AppLockConfig.fromDefault();
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AppLockBloc, AppLockState>(
       listener: (context, state) async {
-        if (state is SetWalletLockState) {
-          await WalletUtil.setWalletSafeLockEnable(
-            state.walletAddress,
-            state.isEnabled,
-          );
-
-          _lockStatus.wallet.isEnabled = state.isEnabled;
-
+        if (state is AppLockInitialState) {
+          var configCache = await _loadAppLockConfig();
+          if (configCache != null) {
+            _appLockConfig = configCache;
+          }
+        } else if (state is SetWalletLockState) {
           ///set wallet on/off same as enabled
-          _lockStatus.wallet.isOn = state.isEnabled;
-        }
-        if (state is LockWalletState) {
-          if (_lockStatus.wallet.isEnabled) _lockStatus.wallet.isOn = true;
+          _appLockConfig?.walletLock?.isEnabled = state.isEnabled;
+          _appLockConfig?.walletLock?.isOn = state.isEnabled;
+
+          await _saveAppLockConfig();
+        } else if (state is SetWalletLockAwayTimeState) {
+          _appLockConfig?.walletLock?.awayTime = state.awayTime;
+          await _saveAppLockConfig();
+        } else if (state is SetWalletLockBioAuthState) {
+          _appLockConfig?.walletLock?.isBioAuthEnabled = state.isEnabled;
+          await _saveAppLockConfig();
+        } else if (state is LockWalletState) {
+          _appLockConfig?.walletLock?.isOn = true;
         } else if (state is UnlockWalletState) {
-          if (_lockStatus.wallet.isEnabled) _lockStatus.wallet.isOn = false;
+          _appLockConfig?.walletLock?.isOn = false;
         }
         if (mounted) setState(() {});
       },
       child: BlocBuilder<AppLockBloc, AppLockState>(
         builder: (context, state) {
           return AppLockInheritedModel(
-            lockStatus: _lockStatus,
+            appLockConfig: _appLockConfig,
             child: widget.child,
           );
         },
       ),
     );
   }
+
+  _saveAppLockConfig() async {
+    await AppCache.secureSaveValue(
+      SecurePrefsKey.APP_LOCK_CONFIG,
+      json.encode(_appLockConfig.toJson()),
+    );
+  }
+
+  _loadAppLockConfig() async {
+    var jsonStr = await AppCache.secureGetValue(
+      SecurePrefsKey.APP_LOCK_CONFIG,
+    );
+    return AppLockConfig.fromJson(json.decode(jsonStr));
+  }
 }
 
 enum AppLockAspect { none }
 
-class LockStatus {
-  Wallet wallet = Wallet();
-}
-
-class Wallet {
-  bool isEnabled = false;
-  bool isOn = false;
-}
-
 class AppLockInheritedModel extends InheritedModel<AppLockAspect> {
-  final LockStatus lockStatus;
+  final AppLockConfig appLockConfig;
 
   const AppLockInheritedModel({
     Key key,
     @required Widget child,
-    @required this.lockStatus,
+    @required this.appLockConfig,
   }) : super(key: key, child: child);
 
-  bool get isWalletLockOn {
-    return lockStatus?.wallet?.isOn ?? false;
+  bool get isWalletLockActive {
+    return (appLockConfig?.walletLock?.isEnabled ?? false) &&
+        (appLockConfig?.walletLock?.isOn ?? false);
   }
 
   bool get isWalletLockEnable {
-    return lockStatus?.wallet?.isEnabled ?? false;
+    return appLockConfig?.walletLock?.isEnabled ?? false;
+  }
+
+  int get walletLockAwayTime {
+    return appLockConfig?.walletLock?.awayTime ?? 0;
+  }
+
+  bool get isWalletLockBioAuthEnabled {
+    return appLockConfig?.walletLock?.isBioAuthEnabled ?? false;
   }
 
   @override
@@ -105,8 +129,7 @@ class AppLockInheritedModel extends InheritedModel<AppLockAspect> {
     return true;
   }
 
-  static AppLockInheritedModel of(BuildContext context,
-      {AppLockAspect aspect}) {
+  static AppLockInheritedModel of(BuildContext context, {AppLockAspect aspect}) {
     return InheritedModel.inheritFrom<AppLockInheritedModel>(
       context,
       aspect: aspect,
@@ -116,7 +139,6 @@ class AppLockInheritedModel extends InheritedModel<AppLockAspect> {
   @override
   bool updateShouldNotifyDependent(
       AppLockInheritedModel oldWidget, Set<AppLockAspect> dependencies) {
-    return lockStatus != oldWidget.lockStatus &&
-        dependencies.contains(AppLockAspect.none);
+    return appLockConfig != oldWidget.appLockConfig && dependencies.contains(AppLockAspect.none);
   }
 }

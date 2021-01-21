@@ -65,8 +65,7 @@ class Const {
   }
 
   static const String TITAN_SCHEMA = "titan://";
-  static const String TITAN_SHARE_URL_PREFIX =
-      'https://www.hyn.mobi/titan/sharev2/?key=';
+  static const String TITAN_SHARE_URL_PREFIX = 'https://www.hyn.mobi/titan/sharev2/?key=';
   static const String CIPHER_TEXT_PREFIX = "titan_cipher";
   static const String CIPHER_TOKEN_PREFIX = "titan_cls";
 
@@ -111,16 +110,12 @@ class Const {
       'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-without-contribution-en.json';
 
   //black
-  static const kBlackMapStyleCn =
-      "https://cn.tile.map3.network/fiord-color.json";
-  static const kBlackMapStyle =
-      "https://static.hyn.space/maptiles/fiord-color.json";
+  static const kBlackMapStyleCn = "https://cn.tile.map3.network/fiord-color.json";
+  static const kBlackMapStyle = "https://static.hyn.space/maptiles/fiord-color.json";
   static const kNCovMapStyle = 'https://cn.tile.map3.network/ncov_v1.json';
 
-  static const String POI_POLICY =
-      "https://api.hyn.space/map-collector/pol-policy";
-  static const String PRIVACY_POLICY =
-      "https://api.hyn.space/map-collector/upload/privacy-policy";
+  static const String POI_POLICY = "https://api.hyn.space/map-collector/pol-policy";
+  static const String PRIVACY_POLICY = "https://api.hyn.space/map-collector/upload/privacy-policy";
   static const String APP_POLICY =
       'https://github.com/hyperion-hyn/titan_flutter/blob/master/LICENSE';
   static const String HELP_PAGE = "http://h.hyn.space/helpPage";
@@ -135,8 +130,7 @@ class Keys {
   static final mapParentKey = GlobalKey(debugLabel: '__map_parent__');
   static final mapHeatKey = GlobalKey(debugLabel: '__map_heat__');
   static final homePanelKey = GlobalKey(debugLabel: '__home_panel_parent__');
-  static final mapDraggablePanelKey =
-      GlobalKey(debugLabel: 'mapDraggablePanelKey');
+  static final mapDraggablePanelKey = GlobalKey(debugLabel: 'mapDraggablePanelKey');
 }
 
 class PrefsKey {
@@ -180,8 +174,7 @@ class PrefsKey {
   static const String VERIFY_DATE = 'verify_date';
 
   static const String SHARED_PREF_ETH_GAS_PRICE_KEY = "shared_pref_gas_price_key";
-  static const String SHARED_PREF_BTC_GAS_PRICE_KEY =
-      "shared_pref_btc_gas_price_key";
+  static const String SHARED_PREF_BTC_GAS_PRICE_KEY = "shared_pref_btc_gas_price_key";
 
   static const String SHARED_PREF_GAS_FEE_KEY = "shared_pref_gas_fee_key";
 
@@ -192,16 +185,15 @@ class PrefsKey {
 
   static const String CACHE_MARKET_ITEM_LIST = 'cache_market_item_list_v2';
   static const String CACHE_EXCHANGE_COIN_LIST = 'cache_exchange_coin_list';
-  
+
   static const String EXCHANGE_ACCOUNT = 'exchange_account';
-  static const String EXCHANGE_ACCOUNT_LAST_AUTH_TIME =
-      'exchange_account_last_auth_time';
+  static const String EXCHANGE_ACCOUNT_LAST_AUTH_TIME = 'exchange_account_last_auth_time';
+
   // static const String PENDING_TRANSFER_KEY_PREFIX = 'pending_transfer_key_';
   static const String PENDING_TRANSACTIONS_KEY_PREFIX = 'pending_transactions_key_';
 
   static const String EXCHANGE_ACCOUNT_ABNORMAL = 'exchange_account_abnormal_';
 
-  
   ///Policy
   static const String IS_CONFIRM_WALLET_POLICY = 'wallet_policy_confirmed';
   static const String IS_CONFIRM_DEX_POLICY = 'dex_policy_confirmed';
@@ -211,15 +203,15 @@ class PrefsKey {
 
 class SecurePrefsKey {
   ///complete key:  WALLET_PWD_KEY_PREFIX + wallet.getEthAccount().address
-  static final String WALLET_PWD_KEY_PREFIX = 'wallet_pwd_';
-  static final String AUTH_LOCK_PATTERN_KEY = 'lockpattern';
-  static final String MY_PUBLIC_KEY = 'my_public_key';
-  static final String MY_PRIVATE_KEY = 'my_private_key';
+  static const WALLET_PWD_KEY_PREFIX = 'wallet_pwd_';
+  static const MY_PUBLIC_KEY = 'my_public_key';
+  static const MY_PRIVATE_KEY = 'my_private_key';
 
   ///complete key:  WALLET_P2P_PUB_KEY_PREFIX + wallet.getEthAccount().address
-  static final String WALLET_P2P_PUB_KEY_PREFIX = 'wallet_p2p_pub_key_';
-  static final String WALLET_P2P_DECOMP_PUB_KEY_PREFIX =
-      'wallet_p2p_decomp_pub_key_';
+  static const WALLET_P2P_PUB_KEY_PREFIX = 'wallet_p2p_pub_key_';
+  static const WALLET_P2P_DECOMP_PUB_KEY_PREFIX = 'wallet_p2p_decomp_pub_key_';
+
+  static const APP_LOCK_CONFIG = 'app_lock_config';
 }
 
 enum Status { idle, loading, success, failed, cancelled }
