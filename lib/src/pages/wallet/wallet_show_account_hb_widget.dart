@@ -35,6 +35,7 @@ import 'package:titan/src/pages/wallet/wallet_receive_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 
@@ -524,8 +525,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
       retList.addAll(transferList);
     } catch (e, stacktrace) {
       retList.add('header');
-      print(stacktrace);
-      logger.e(e);
+      LogUtil.toastException(e);
     }
     return retList;
   }
