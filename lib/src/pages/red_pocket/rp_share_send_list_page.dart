@@ -223,28 +223,38 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                                 ),
                               ),
                             ),
-                            Text(
-                              shareStateToName(model.state),
-                              //onGoing ? '派发中...' : '已过期',
-                              style: TextStyle(
-                                color: onGoing ? HexColor("#E8AC13") : HexColor("#999999"),
-                                fontSize: 12,
-                                fontWeight: FontWeight.normal,
+                            InkWell(
+                              onTap: () {
+                                if (!refunded) return;
+                                if ((model?.rpRefundHash ?? '').isEmpty) return;
+
+                                WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(context,
+                                    model?.rpRefundHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+                              },
+                              child: Text(
+                                shareStateToName(model.state),
+                                //onGoing ? '派发中...' : '已过期',
+                                style: TextStyle(
+                                  color: onGoing ? HexColor("#E8AC13") : HexColor("#999999"),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                                maxLines: 2,
+                                textAlign: TextAlign.right,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 2,
-                              textAlign: TextAlign.right,
-                              overflow: TextOverflow.ellipsis,
                             ),
                             if (refunded)
                               InkWell(
                                 onTap: () {
+                                  if (!refunded) return;
                                   if ((model?.hynRefundHash ?? '').isEmpty) return;
 
                                   WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(context,
                                       model?.hynRefundHash ?? '', SupportedTokens.HYN_Atlas.symbol);
                                 },
                                 child: Text(
-                                  ',稍后查看钱包余额',
+                                  ',查看钱包余额',
                                   style: TextStyle(
                                     color: HexColor("#1F81FF"),
                                     // color: HexColor("#999999"),
