@@ -194,9 +194,7 @@ class AccountTransferService {
 
     List<TransactionDetailVo> detailList = erc20TransferHistoryList.map((erc20TransferHistory) {
       var type = 0;
-      print("!!!!!!  ${coinVo.address.toLowerCase()}");
       if (erc20TransferHistory.from.toLowerCase() == coinVo.address.toLowerCase()) {
-        print("!!!!!!111  ${coinVo.address.toLowerCase()}");
         type = TransactionType.TRANSFER_OUT;
       } else if (erc20TransferHistory.to.toLowerCase() == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_IN;
