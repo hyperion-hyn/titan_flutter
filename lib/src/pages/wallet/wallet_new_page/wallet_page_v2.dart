@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -48,8 +49,7 @@ class WalletPageV2 extends StatefulWidget {
   }
 }
 
-class _WalletPageV2State extends BaseState<WalletPageV2>
-    with AutomaticKeepAliveClientMixin {
+class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   final LocalAuthentication auth = LocalAuthentication();
 
@@ -62,14 +62,13 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
 
   @override
   bool get wantKeepAlive => true;
+  bool _isRefreshBalances = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    activeQuotesSign =
-        WalletInheritedModel.of(context, aspect: WalletAspect.legal)
-            .activeLegal;
+    activeQuotesSign = WalletInheritedModel.of(context, aspect: WalletAspect.legal).activeLegal;
   }
 
   @override
@@ -79,6 +78,25 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
 
   @override
   Future<void> onCreated() async {
+    BlocProvider.of<WalletCmpBloc>(context).listen((state) {
+      if (state is BalanceState && state.symbol == null && state.status != Status.loading) {
+        if (mounted) {
+          setState(() {
+            _isRefreshBalances = false;
+          });
+        }
+      } else if (state is BalanceState && state.symbol == null && state.status == Status.loading) {
+        if (mounted) {
+          setState(() {
+            _isRefreshBalances = true;
+          });
+        }
+      } else if (state is QuotesState && state.status == Status.failed) {
+        if (mounted) {
+          Fluttertoast.showToast(msg: "刷新行情失败");
+        }
+      }
+    });
   }
 
   _checkDexAccount() async {
@@ -119,9 +137,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
     ).activatedWallet;
     _hasBackupWallet = await WalletUtil.checkIsBackUpMnemonic(
         activatedWalletVo?.wallet?.getEthAccount()?.address ?? "");
-    if (activatedWalletVo == null ||
-        _hasBackupWallet ||
-        Application.hasShowBackupWalletDialog) {
+    if (activatedWalletVo == null || _hasBackupWallet || Application.hasShowBackupWalletDialog) {
       return;
     }
     Application.hasShowBackupWalletDialog = true;
@@ -154,14 +170,10 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  top: 13, bottom: 21.0, left: 20, right: 20),
-              child: Text(
-                  "你的身份助记词未备份，请务必备份助记词\n助记词可用于恢复身份钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失。",
+              padding: const EdgeInsets.only(top: 13, bottom: 21.0, left: 20, right: 20),
+              child: Text("你的身份助记词未备份，请务必备份助记词\n助记词可用于恢复身份钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失。",
                   style: TextStyle(
-                      fontSize: 14,
-                      color: HexColor("#666666"),
-                      decoration: TextDecoration.none)),
+                      fontSize: 14, color: HexColor("#666666"), decoration: TextDecoration.none)),
             ),
           ],
         ),
@@ -170,8 +182,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
             "立即备份",
             () async {
               Navigator.pop(context);
-              var walletStr = FluroConvertUtils.object2string(
-                  activatedWalletVo.wallet.toJson());
+              var walletStr = FluroConvertUtils.object2string(activatedWalletVo.wallet.toJson());
               Application.router.navigateTo(
                   context,
                   Routes.wallet_setting_wallet_backup_notice +
@@ -280,12 +291,10 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
     if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) {
       navigateToFixPage();
     } else {
-      await Navigator.push(
-          context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+      await Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
 
       ///if authorized, jump to fix error page
-      if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount())
-        navigateToFixPage();
+      if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) navigateToFixPage();
     }
   }
 
@@ -330,8 +339,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
   _headerWidget(WalletViewVo activatedWalletVo) {
     return SliverToBoxAdapter(
       child: Container(
-        padding:
-            const EdgeInsets.only(top: 20, bottom: 20, left: 16, right: 16),
+        padding: const EdgeInsets.only(top: 20, bottom: 20, left: 16, right: 16),
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -343,8 +351,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
           children: [
             InkWell(
               onTap: () {
-                WalletManagerPage.jumpWalletManager(context,
-                    hasWalletUpdate: (wallet) {
+                WalletManagerPage.jumpWalletManager(context, hasWalletUpdate: (wallet) {
                   setState(() {
                     // _isRefreshBalances = true;
                   });
@@ -421,8 +428,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
                       });
                     },
                     child: Padding(
-                      padding:
-                          const EdgeInsets.only(left: 8.0, top: 8, bottom: 8),
+                      padding: const EdgeInsets.only(left: 8.0, top: 8, bottom: 8),
                       child: Image.asset(
                         _isShowBalances
                             ? "res/drawable/ic_input_psw_show.png"
@@ -432,54 +438,72 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
                     ))
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Stack(
+              alignment: Alignment.center,
               children: [
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      "res/drawable/ic_wallet_account_list_send_v2.png",
-                      width: 26,
-                      height: 26,
+                    Column(
+                      children: [
+                        Image.asset(
+                          "res/drawable/ic_wallet_account_list_send_v2.png",
+                          width: 26,
+                          height: 26,
+                        ),
+                        Text(
+                          "发送",
+                          style: TextStyles.textC333S14bold,
+                        ),
+                      ],
                     ),
-                    Text(
-                      "发送",
-                      style: TextStyles.textC333S14bold,
+                    SizedBox(
+                      width: 51,
+                    ),
+                    Column(
+                      children: [
+                        Image.asset(
+                          "res/drawable/ic_wallet_account_list_receiver_v2.png",
+                          width: 26,
+                          height: 26,
+                        ),
+                        Text(
+                          "接收",
+                          style: TextStyles.textC333S14bold,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: 51,
+                    ),
+                    Column(
+                      children: [
+                        Image.asset(
+                          "res/drawable/ic_wallet_account_list_exchange_v2.png",
+                          width: 26,
+                          height: 26,
+                        ),
+                        Text(
+                          "交易",
+                          style: TextStyles.textC333S14bold,
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                SizedBox(
-                  width: 51,
-                ),
-                Column(
-                  children: [
-                    Image.asset(
-                      "res/drawable/ic_wallet_account_list_receiver_v2.png",
-                      width: 26,
-                      height: 26,
+                if (_isRefreshBalances)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: SizedBox(
+                      height: 25,
+                      width: 25,
+                      child: CircularProgressIndicator(
+                        backgroundColor: Colors.transparent,
+                        valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
+                        strokeWidth: 1,
+                      ),
                     ),
-                    Text(
-                      "接收",
-                      style: TextStyles.textC333S14bold,
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  width: 51,
-                ),
-                Column(
-                  children: [
-                    Image.asset(
-                      "res/drawable/ic_wallet_account_list_exchange_v2.png",
-                      width: 26,
-                      height: 26,
-                    ),
-                    Text(
-                      "交易",
-                      style: TextStyles.textC333S14bold,
-                    ),
-                  ],
-                )
+                  ),
               ],
             )
           ],
@@ -496,10 +520,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
       return InkWell(
           onTap: () {
             var coinVo = activatedWalletVo.coins[index];
-            var coinVoJsonStr =
-                FluroConvertUtils.object2string(coinVo.toJson());
-            Application.router.navigateTo(context,
-                Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
+            var coinVoJsonStr = FluroConvertUtils.object2string(coinVo.toJson());
+            Application.router
+                .navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
           },
           child: _buildAccountItem(context, coinVo, hasPrice: hasPrice));
     }, childCount: activatedWalletVo.coins.length));
@@ -518,11 +541,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
     );
   }
 
-  Widget _buildAccountItem(BuildContext context, CoinViewVo coin,
-      {bool hasPrice = true}) {
+  Widget _buildAccountItem(BuildContext context, CoinViewVo coin, {bool hasPrice = true}) {
     var symbol = coin.symbol;
-    var symbolQuote =
-        WalletInheritedModel.of(context).tokenLegalPrice(symbol);
+    var symbolQuote = WalletInheritedModel.of(context).tokenLegalPrice(symbol);
     var subSymbol = "";
 
     if (coin.coinType == CoinType.HYN_ATLAS) {
@@ -540,168 +561,142 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
       balancePrice = "";
     } else {
       balancePrice = _isShowBalances
-          ? "${symbolQuote?.legal?.legal ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.price ?? 0))}"
-          : '${symbolQuote?.legal?.legal ?? ''} *****';
+          ? "${symbolQuote?.legal?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.price ?? 0))}"
+          : '${symbolQuote?.legal?.sign ?? ''} *****';
     }
 
     return Padding(
-      padding:
-          const EdgeInsets.only(left: 22.0, right: 22, top: 16, bottom: 16),
-      child: Row(
-        children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-            width: 48,
-            height: 48,
-            child: ImageUtil.getCoinImage(coin.logo),
-          ),
-          SizedBox(
-            width: 12,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      symbol,
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF252525)),
+      padding: const EdgeInsets.only(left: 22.0, right: 22, top: 16, bottom: 16),
+      child: Column(
+        children: [
+          Row(
+            children: <Widget>[
+              Container(
+                alignment: Alignment.center,
+                width: 48,
+                height: 48,
+                child: ImageUtil.getCoinImage(coin.logo),
+              ),
+              SizedBox(
+                width: 12,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          symbol,
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
+                        ),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          subSymbol,
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ],
                     ),
                     SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      subSymbol,
-                      style: TextStyle(fontSize: 12),
+                      height: 4,
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 4,
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                    _isShowBalances
-                        ? "${FormatUtil.coinBalanceHumanReadFormat(coin)}"
-                        : '*****',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(color: Color(0xFF252525), fontSize: 16),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Text(
-                      balancePrice,
-                      style: TextStyles.textC9b9b9bS12,
-                    ),
-                  ),
-                ],
               ),
-            ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        _isShowBalances
+                            ? "${FormatUtil.coinBalanceHumanReadFormat(coin)}"
+                            : '*****',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(color: Color(0xFF252525), fontSize: 16),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Text(
+                          balancePrice,
+                          style: TextStyles.textC9b9b9bS12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Spacer(),
+              if (coin.refreshStatus == Status.failed)
+                InkWell(
+                  onTap: () {
+                    BlocProvider.of<WalletCmpBloc>(context)
+                        .add(UpdateActivatedWalletBalanceEvent(symbol: symbol));
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "加载失败",
+                        style: TextStyle(color: HexColor("#FF1A1A"), fontSize: 12),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3.0),
+                        child: Icon(
+                          Icons.refresh,
+                          size: 16,
+                          color: HexColor("#AAAAAA"),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              if (coin.refreshStatus == Status.loading && !_isRefreshBalances)
+                SizedBox(
+                  height: 19,
+                  width: 19,
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.transparent,
+                    valueColor: new AlwaysStoppedAnimation<Color>(HexColor("#E7BB00")),
+                    strokeWidth: 1,
+                  ),
+                )
+            ],
+          )
         ],
       ),
     );
   }
 
   Future listLoadingData() async {
+    _isRefreshBalances = true;
     _checkDexAccount();
-    // BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+    await Future.delayed(Duration(milliseconds: 100), () {});
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesEvent());
 
     if (mounted) {
       loadDataBloc.add(RefreshSuccessEvent());
     }
-  }
-
-  Widget hynQuotesView() {
-    //hyn quote
-    TokenPriceViewVo hynQuoteSign =
-        WalletInheritedModel.of(context).tokenLegalPrice('HYN');
-    return Container(
-      padding: EdgeInsets.all(8),
-      color: Color(0xFFF5F5F5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Image.asset(
-                    'res/drawable/ic_hyperion.png',
-                    width: 20,
-                    height: 20,
-                  ),
-                ),
-                Text(
-                  S.of(context).hyn_price,
-                  style: TextStyle(color: Color(0xFF6D6D6D), fontSize: 14),
-                ),
-                //Container(width: 100,),
-                Spacer(),
-                //quote
-                Text(
-                  '${hynQuoteSign != null ? '${FormatUtil.formatPrice(hynQuoteSign.price)} ${hynQuoteSign.legal.legal}' : '--'}',
-                  style: TextStyle(
-                      color: HexColor('#333333'),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
-                ),
-              ],
-            ),
-          ),
-          Image.asset('res/drawable/bg_banner_hyn_burn.png')
-        ],
-      ),
-    );
-  }
-
-  Widget _authorizedView() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: <Widget>[
-          Spacer(),
-          Image.asset(
-            'res/drawable/logo_manwu.png',
-            width: 23,
-            height: 23,
-            color: Colors.grey[500],
-          ),
-          SizedBox(
-            width: 4.0,
-          ),
-          Text(
-            S.of(context).safety_certification_by_organizations,
-            style: TextStyle(
-              color: Colors.grey[500],
-              fontSize: 12.0,
-            ),
-          ),
-          Spacer()
-        ],
-      ),
-    );
   }
 
   Widget loadingView(context) {
