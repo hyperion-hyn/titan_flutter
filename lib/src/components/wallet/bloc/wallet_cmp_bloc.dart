@@ -72,9 +72,10 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       if (event.wallet != null && !isSameWallet) {
         _lastUpdateBalanceTime = 0; //set can update balance in time.
 
-        // 还原余额
+        // 还原余额、扩展信息
         if (_activatedWalletVo != null) {
-          _recoverBalanceFromDisk(_activatedWalletVo);
+          await _recoverBalanceFromDisk(_activatedWalletVo);
+          _activatedWalletVo.wallet.walletExpandInfoEntity = await WalletUtil.getWalletExpandInfo(event.wallet.getEthAccount().address);
         }
 
         if (event.onlyActive != true) {
@@ -101,7 +102,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       var nowTime = DateTime.now().millisecondsSinceEpoch;
       //10 second cache time
       bool isTimeExpired = nowTime - _lastUpdateBalanceTime > 10000;
-      if (_activatedWalletVo != null && isTimeExpired) {
+      // if (_activatedWalletVo != null && isTimeExpired) {
         _lastUpdateBalanceTime = nowTime;
 
         for (var vo in _activatedWalletVo.coins) {
@@ -123,7 +124,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           yield BalanceState(
               walletVo: _activatedWalletVo, status: Status.failed, symbol: event.symbol);
         }
-      }
+      // }
     } else if (event is LoadLocalDiskWalletAndActiveEvent) {
       // 恢复法币计价
       var legalSign = await _recoverLegalSign();
@@ -135,70 +136,22 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       //now active loaded wallet. tips: maybe null
       add(ActiveWalletEvent(wallet: wallet, onlyActive: true));
     }
-    /*else if (event is UpdateWalletPageEvent) {
-      try {
-        yield UpdateWalletPageState(
-          1,
-        );
-        var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_LEGAL_SIGN);
-        LegalSign quotesSign =
-            quoteSignStr != null ? LegalSign.fromJson(json.decode(quoteSignStr)) : SupportedLegal.defaultLegal;
-
-        var symbols = DEFAULT_SYMBOLS;
-        // final symbolString =
-        //     symbols.reduce((value, element) => value + ',' + element);
-
-        var quotes = await _coinMarketApi.quotesLatest([], ['CNY', 'USD']);
-        */ /*var addQuotes = List<SymbolQuoteVo>();
-        for (var quote in quotes) {
-          if (quote.symbol == SupportedTokens.HYN_Atlas.symbol) {
-//            var q = symbolQuoteEntity.SymbolQuoteVo.clone(quote);
-            var q = SymbolQuoteVo.clone(quote);
-            q.symbol = SupportedTokens.HYN_ERC20.symbol;
-            addQuotes.add(q);
-          }
-        }
-        quotes.addAll(addQuotes);*/ /*
-
-        var currentQuotesModel = QuotesModel(
-            quotes: quotes,
-            // symbolStr: symbolString,
-            lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
-
-        if (_activatedWalletVo != null) {
-          //faster show quote
-          yield UpdateWalletPageState(1, sign: quotesSign, quoteModel: currentQuotesModel);
-          await walletRepository.updateWalletVoBalance(_activatedWalletVo);
-          _saveWalletVoBalanceToDisk(_activatedWalletVo); //save balance data to disk;
-          yield UpdateWalletPageState(0,
-              sign: quotesSign, quoteModel: currentQuotesModel, walletVo: _activatedWalletVo.copyWith());
-        } else {
-          yield UpdateWalletPageState(0, sign: quotesSign, quoteModel: currentQuotesModel);
-        }
-
-        if (event.updateGasPrice) {
-          BlocProvider.of<WalletCmpBloc>(Keys.rootKey.currentContext).add(UpdateGasPriceEvent());
-        }
-      } catch (e, stack) {
-        yield UpdateWalletPageState(-1);
-      }
-    }*/
     else if (event is UpdateQuotesEvent) {
       var nowTime = DateTime.now().millisecondsSinceEpoch;
       // 30秒
       bool isTimeExpired = nowTime - _lastUpdateQuotesTime > 30000;
-      if (isTimeExpired) {
+      // if (isTimeExpired) {
         yield QuotesState(status: Status.loading);
 
         try {
-          var allLegal = SupportedLegal.all.map((legal) => legal.legal);
+          var allLegal = SupportedLegal.all.map((legal) => legal.legal).toList();
           var quotes = await _coinMarketApi.quotesLatest(allLegal);
           yield QuotesState(status: Status.success, quotes: QuotesModel(quotes: quotes));
-        } catch (e) {
-          LogUtil.uploadException(e, 'Update Quotes Error');
+        } catch (e,stack) {
+          LogUtil.uploadException("$e$stack", 'Update Quotes Error');
           yield QuotesState(status: Status.failed);
         }
-      }
+      // }
     } else if (event is UpdateLegalSignEvent) {
       _saveLegalSign(event.legal);
       yield LegalSignState(sign: event.legal);
@@ -232,7 +185,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           }
         }
       }
-
       if (event.type == GasPriceType.BTC || event.type == null) {
         try {
           var btcResponse = await BitcoinApi.requestBtcFeeRecommend();
@@ -274,7 +226,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
     if (legalSignStr != null && legalSignStr != '') {
       return LegalSign.fromJson(json.decode(legalSignStr));
     }
-    return null;
+    return SupportedLegal.usd;
   }
 
   /// 保存法币计价
@@ -328,7 +280,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   }
 
   /// 从本地恢复余额
-  void _recoverBalanceFromDisk(WalletViewVo vo) async {
+  Future _recoverBalanceFromDisk(WalletViewVo vo) async {
     var coinsJson = await AppCache.getValue(_getCoinsSaveKey(vo));
     if (coinsJson != null && coinsJson != '') {
       List coins = json.decode(coinsJson);

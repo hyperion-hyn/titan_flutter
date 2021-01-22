@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -20,6 +21,7 @@ import 'package:titan/src/plugins/wallet/rp_holding_abi.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
 import 'package:http/http.dart';
+import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 import 'package:bip39/bip39.dart' as bip39;
@@ -87,6 +89,25 @@ class WalletUtil {
       '${PrefsKey.WALLET_SAFE_LOCK_PWD_PREFIX}_$walletAddress',
       pwd,
     );
+  }
+
+  static setWalletExpandInfo(
+      String walletAddress,
+      WalletExpandInfoEntity walletExpandInfoEntity,
+      ) async {
+    await AppCache.saveValue(
+      '${PrefsKey.WALLET_EXPAND_INFO_PREFIX}$walletAddress',
+      "${json.encode(walletExpandInfoEntity.toJson())}",
+    );
+  }
+
+  static Future<WalletExpandInfoEntity> getWalletExpandInfo(
+      String walletAddress,
+      ) async {
+    String entityStr = await AppCache.getValue(
+      '${PrefsKey.WALLET_EXPAND_INFO_PREFIX}$walletAddress',
+    );
+    return WalletExpandInfoEntity.fromJson(json.decode(entityStr));
   }
 
   ///scan all wallets

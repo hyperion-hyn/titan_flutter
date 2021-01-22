@@ -29,6 +29,7 @@ import 'package:web3dart/json_rpc.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 import 'package:web3dart/web3dart.dart';
 
+import 'wallet_expand_info_entity.dart';
 import 'wallet_util.dart';
 
 part 'wallet.g.dart';
@@ -38,6 +39,7 @@ class Wallet {
   ///activated account of this wallet,  btc, eth etc.
   List<Account> accounts;
   KeyStore keystore;
+  WalletExpandInfoEntity walletExpandInfoEntity;
 
   Wallet({this.keystore, this.accounts});
 
