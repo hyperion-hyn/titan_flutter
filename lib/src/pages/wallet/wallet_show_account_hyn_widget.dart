@@ -31,6 +31,7 @@ import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/pages/wallet/wallet_receive_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../pages/wallet/model/transtion_detail_vo.dart';
@@ -639,7 +640,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
       retList.addAll(transferList);
     } catch (e, stacktrace) {
       retList.add('header');
-      print(stacktrace);
+      LogUtil.toastException(e);
     }
     return retList;
   }

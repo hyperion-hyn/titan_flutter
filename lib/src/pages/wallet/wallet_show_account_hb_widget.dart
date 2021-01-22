@@ -35,6 +35,7 @@ import 'package:titan/src/pages/wallet/wallet_receive_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 
@@ -366,6 +367,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
     if ((transactionDetail.state == null) ||
         (transactionDetail.state != null &&
             transactionDetail.state == 0 &&
+            transactionDetail.gasUsed == "0" &&
             widget.coinVo.coinType == CoinType.HB_HT)) {
       title = S.of(context).pending;
     } else if ((widget.coinVo.coinType == CoinType.HB_HT) && transactionDetail.state == 1) {
@@ -375,7 +377,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
         title = S.of(context).contract_call;
         iconPath = "res/drawable/ic_hyn_wallet_contract.png";
       }
-    } else if ((widget.coinVo.coinType == CoinType.HB_HT && transactionDetail.state == -1)) {
+    } else if ((widget.coinVo.coinType == CoinType.HB_HT && transactionDetail.state == 0 && transactionDetail.gasUsed != "0")) {
       title = S.of(context).wallet_fail_title;
       titleColor = DefaultColors.colorf23524;
     }
@@ -523,8 +525,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
       retList.addAll(transferList);
     } catch (e, stacktrace) {
       retList.add('header');
-      print(stacktrace);
-      logger.e(e);
+      LogUtil.toastException(e);
     }
     return retList;
   }
