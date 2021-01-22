@@ -76,13 +76,14 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
       DropdownMenuItem item = DropdownMenuItem(
         value: i,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
               title,
               style: TextStyle(
                 color: HexColor('#999999'),
                 fontWeight: FontWeight.normal,
-                fontSize: 12,
+                fontSize: 10,
               ),
             ),
             Text(
@@ -248,7 +249,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(
-                                left: 4,
+                                right: 2,
                               ),
                               child: Text(
                                 map3Count,
@@ -262,13 +263,16 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                             DropdownButtonHideUnderline(
                               child: Container(
                                 height: 16,
+                                // color: Colors.yellow,
                                 child: DropdownButton(
                                   // value: 0,
                                   icon: Icon(
                                     Icons.arrow_drop_down_sharp,
                                     color: Colors.white,
-                                    size: 20,
+                                    size: 16,
                                   ),
+                                  isDense: true,
+                                  isExpanded: false,
                                   items: serverList,
                                   onChanged: (value) {
                                     // setState(() {
