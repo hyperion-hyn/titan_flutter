@@ -19,6 +19,8 @@ import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -58,6 +60,7 @@ class _WalletCreateAccountPageV2State
   bool isShowRemind = true;
   BuildContext dialogContext;
   String userImagePath;
+  String userImageLocalPath;
   AtlasApi _atlasApi = AtlasApi();
   FocusNode _focusNode = FocusNode();
 
@@ -218,6 +221,7 @@ class _WalletCreateAccountPageV2State
                                   );
                                   if (netImagePath != null &&
                                       netImagePath.isNotEmpty) {
+                                    userImageLocalPath = tempListImagePaths[0].path;
                                     userImagePath = netImagePath;
                                     setState(() {});
                                   } else {
@@ -556,7 +560,7 @@ class _WalletCreateAccountPageV2State
         return;
       }
 
-      var wallet;
+      Wallet wallet;
       var mnemonic;
       if(widget.isCreateWallet){
         mnemonic = await WalletUtil.makeMnemonic();
@@ -583,6 +587,9 @@ class _WalletCreateAccountPageV2State
 
       BlocProvider.of<WalletCmpBloc>(context)
           .add(ActiveWalletEvent(wallet: wallet));
+      ///save expand info
+      WalletExpandInfoEntity walletExpandInfoEntity = WalletExpandInfoEntity(userImageLocalPath,userImagePath,_walletPwsHintController.text.trim());
+      WalletUtil.setWalletExpandInfo(wallet.getEthAccount().address, walletExpandInfoEntity);
       ///Use digits password now
       WalletUtil.useDigitsPwd(wallet);
       ///Clear exchange account when switch wallet

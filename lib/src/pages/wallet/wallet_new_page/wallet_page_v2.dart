@@ -219,9 +219,6 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   _walletView() {
     return Column(
       children: <Widget>[
-        SizedBox(
-          height: 16,
-        ),
         _isExchangeAccountAbnormal ? _abnormalAccountBanner() : SizedBox(),
         Expanded(
           child: _buildWalletView(context),
@@ -676,7 +673,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                   width: 19,
                   child: CircularProgressIndicator(
                     backgroundColor: Colors.transparent,
-                    valueColor: new AlwaysStoppedAnimation<Color>(HexColor("#E7BB00")),
+                    valueColor: new AlwaysStoppedAnimation<Color>(DefaultColors.colore7bb00),
                     strokeWidth: 1,
                   ),
                 )

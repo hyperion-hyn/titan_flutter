@@ -72,9 +72,10 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       if (event.wallet != null && !isSameWallet) {
         _lastUpdateBalanceTime = 0; //set can update balance in time.
 
-        // 还原余额
+        // 还原余额、扩展信息
         if (_activatedWalletVo != null) {
-          _recoverBalanceFromDisk(_activatedWalletVo);
+          await _recoverBalanceFromDisk(_activatedWalletVo);
+          _activatedWalletVo.wallet.walletExpandInfoEntity = await WalletUtil.getWalletExpandInfo(event.wallet.getEthAccount().address);
         }
 
         if (event.onlyActive != true) {
@@ -236,7 +237,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
     if (legalSignStr != null && legalSignStr != '') {
       return LegalSign.fromJson(json.decode(legalSignStr));
     }
-    return null;
+    return SupportedLegal.usd;
   }
 
   /// 保存法币计价
@@ -290,7 +291,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   }
 
   /// 从本地恢复余额
-  void _recoverBalanceFromDisk(WalletViewVo vo) async {
+  Future _recoverBalanceFromDisk(WalletViewVo vo) async {
     var coinsJson = await AppCache.getValue(_getCoinsSaveKey(vo));
     if (coinsJson != null && coinsJson != '') {
       List coins = json.decode(coinsJson);
