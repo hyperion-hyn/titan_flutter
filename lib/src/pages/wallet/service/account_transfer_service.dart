@@ -23,7 +23,11 @@ class AccountTransferService {
 
   Future<List<TransactionDetailVo>> getTransferList(CoinVo coinVo, int page) async {
     if (coinVo.coinType == CoinType.ETHEREUM) {
-      return await _getEthTransferList(coinVo, page);
+      if (coinVo.contractAddress != null) {
+        return await _getErc20TransferList(coinVo, page);
+      } else {
+        return await _getEthTransferList(coinVo, page);
+      }
     } else if (coinVo.coinType == CoinType.HB_HT) {
       if (coinVo.contractAddress != null) {
         return await _getHtErc20TransferList(coinVo, page);
@@ -97,9 +101,9 @@ class AccountTransferService {
 
     List<TransactionDetailVo> detailList = erc20TransferHistoryList.map((erc20TransferHistory) {
       var type = 0;
-      if (erc20TransferHistory.from == coinVo.address.toLowerCase()) {
+      if (erc20TransferHistory.from.toLowerCase() == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_OUT;
-      } else if (erc20TransferHistory.to == coinVo.address.toLowerCase()) {
+      } else if (erc20TransferHistory.to.toLowerCase() == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_IN;
       }
       return TransactionDetailVo(
@@ -127,9 +131,9 @@ class AccountTransferService {
 
     List<TransactionDetailVo> detailList = ethTransferHistoryList.map((ethTransferHistory) {
       var type = 0;
-      if (ethTransferHistory.from == coinVo.address.toLowerCase()) {
+      if (ethTransferHistory.from.toLowerCase() == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_OUT;
-      } else if (ethTransferHistory.to == coinVo.address.toLowerCase()) {
+      } else if (ethTransferHistory.to.toLowerCase() == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_IN;
       }
       return TransactionDetailVo(
@@ -155,9 +159,9 @@ class AccountTransferService {
 
     List<TransactionDetailVo> detailList = ethTransferHistoryList.map((ethTransferHistory) {
       var type = 0;
-      if (ethTransferHistory.from == coinVo.address.toLowerCase()) {
+      if (ethTransferHistory.from.toLowerCase() == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_OUT;
-      } else if (ethTransferHistory.to == coinVo.address.toLowerCase()) {
+      } else if (ethTransferHistory.to.toLowerCase() == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_IN;
       } else {
         type = TransactionType.TRANSFER_IN;
@@ -190,9 +194,9 @@ class AccountTransferService {
 
     List<TransactionDetailVo> detailList = erc20TransferHistoryList.map((erc20TransferHistory) {
       var type = 0;
-      if (erc20TransferHistory.from == coinVo.address.toLowerCase()) {
+      if (erc20TransferHistory.from.toLowerCase() == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_OUT;
-      } else if (erc20TransferHistory.to == coinVo.address.toLowerCase()) {
+      } else if (erc20TransferHistory.to.toLowerCase() == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_IN;
       } else {
         type = TransactionType.TRANSFER_IN;
