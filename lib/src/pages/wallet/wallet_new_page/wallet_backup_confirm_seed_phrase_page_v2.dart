@@ -22,8 +22,7 @@ class WalletBackupConfirmSeedPhrasePageV2 extends StatefulWidget {
   }
 }
 
-class _BackupConfirmResumeWordState
-    extends State<WalletBackupConfirmSeedPhrasePageV2> {
+class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhrasePageV2> {
   List<CandidateWordVo> _candidateWords = [];
 
   List<CandidateWordVo> _selectedResumeWords = [];
@@ -39,8 +38,7 @@ class _BackupConfirmResumeWordState
     _candidateWords = widget.mnemonic
         .split(" ")
         .asMap()
-        .map((index, word) =>
-            MapEntry(index, CandidateWordVo("$index-$word", word, false)))
+        .map((index, word) => MapEntry(index, CandidateWordVo("$index-$word", word, false)))
         .values
         .toList();
 
@@ -98,19 +96,23 @@ class _BackupConfirmResumeWordState
                         S.of(context).next_step,
                         () {
                           var selectedMnemonitc = "";
-                          _selectedResumeWords.forEach((word) =>
-                              selectedMnemonitc =
-                                  selectedMnemonitc + word.text + " ");
+                          _selectedResumeWords.forEach(
+                              (word) => selectedMnemonitc = selectedMnemonitc + word.text + " ");
 
-                          logger
-                              .i("selectedMnemonitc.trim() $selectedMnemonitc");
-                          if (selectedMnemonitc.trim() ==
-                              widget.mnemonic.trim()) {
+                          logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
+                          if (selectedMnemonitc.trim() == widget.mnemonic.trim()) {
                             WalletUtil.confirmBackUpMnemonic(
                               widget.wallet.getEthAccount()?.address,
                             );
-                            Fluttertoast.showToast(
-                                msg: S.of(context).backup_finish);
+
+                            UiUtil.showHintToast(
+                                context,
+                                Image.asset(
+                                  'res/drawable/ic_toast_check.png',
+                                  width: 60,
+                                  height: 60,
+                                ),
+                                S.of(context).backup_finish);
                             Routes.popUntilCachedEntryRouteName(context);
                           } else {
                             _showWrongOrderErrorHint(context);
@@ -209,8 +211,7 @@ class _BackupConfirmResumeWordState
       children: List.generate(_candidateWords.length, (index) {
         var candidateWordVo = _candidateWords[index];
 
-        var isShow = !candidateWordVo.selected &&
-            !_selectedResumeWords.contains(candidateWordVo);
+        var isShow = !candidateWordVo.selected && !_selectedResumeWords.contains(candidateWordVo);
 
         if (!isShow) return SizedBox();
 
