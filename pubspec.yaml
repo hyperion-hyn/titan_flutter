@@ -177,6 +177,7 @@ dependencies:
   pinput: ^0.2.0
   #https://pub:dev/packages/detect_testflight/install:
   detect_testflight: ^1.0.3
+  flutter_switch: ^0.2.0
 
 dev_dependencies:
   flutter_driver:

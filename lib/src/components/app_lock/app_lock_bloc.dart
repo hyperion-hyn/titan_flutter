@@ -15,10 +15,15 @@ class AppLockBloc extends Bloc<AppLockEvent, AppLockState> {
   Stream<AppLockState> mapEventToState(
     AppLockEvent event,
   ) async* {
-    if (event is SetWalletLockEvent) {
-      yield SetWalletLockState(event.walletAddress, event.isEnabled);
-    }
-    if (event is LockWalletEvent) {
+    if (event is LoadAppLockConfigEvent) {
+      yield LoadAppLockConfigState();
+    } else if (event is SetWalletLockEvent) {
+      yield SetWalletLockState(event.isEnabled);
+    } else if (event is SetWalletLockAwayTimeEvent) {
+      yield SetWalletLockAwayTimeState(event.awayTime);
+    } else if (event is SetWalletLockBioAuthEvent) {
+      yield SetWalletLockBioAuthState(event.isEnabled);
+    } else if (event is LockWalletEvent) {
       yield LockWalletState();
     } else if (event is UnLockWalletEvent) {
       yield UnlockWalletState();

@@ -13,6 +13,7 @@ import 'package:titan/src/components/updater/bloc/update_event.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/entity/update.dart';
+import 'package:titan/src/pages/app_lock/app_lock_preferences_page.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/dex_wallet_m_page.dart';
@@ -92,12 +93,10 @@ class _MyPageState extends BaseState<MyPage> {
           });
         }
       } else {
-
         _setupVersion();
 
         print('[updater] 已经是最新版本');
       }
-
     } catch (err) {
       logger.e(err);
     }
@@ -159,7 +158,8 @@ class _MyPageState extends BaseState<MyPage> {
                           color: HexColor("#D8D8D8").withOpacity(0.1),
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(216), bottomRight: Radius.circular(216)), // 也可控件一边圆角大小
+                              topRight: Radius.circular(216),
+                              bottomRight: Radius.circular(216)), // 也可控件一边圆角大小
                         ),
                       ),
                       Container(
@@ -169,7 +169,8 @@ class _MyPageState extends BaseState<MyPage> {
                         decoration: BoxDecoration(
                           color: HexColor("#D8D8D8").withOpacity(0.1),
                           shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.only(topRight: Radius.circular(289.39)), // 也可控件一边圆角大小
+                          borderRadius:
+                              BorderRadius.only(topRight: Radius.circular(289.39)), // 也可控件一边圆角大小
                         ),
                       ),
                       Padding(
@@ -179,7 +180,9 @@ class _MyPageState extends BaseState<MyPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             SizedBox(height: 16),
-                            _wallet == null ? _buildWalletCreateRow() : _buildWalletDetailRow(_wallet),
+                            _wallet == null
+                                ? _buildWalletCreateRow()
+                                : _buildWalletDetailRow(_wallet),
                             SizedBox(height: 16),
                             _buildSloganRow(),
                           ],
@@ -246,11 +249,22 @@ class _MyPageState extends BaseState<MyPage> {
                     imageName: "ic_me_page_manage_wallet",
                     color: Colors.cyan[300],
                   ),
+                  _buildMenuBar(
+                    '安全锁设置',
+                    Icons.account_balance_wallet,
+                    () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => AppLockPreferencesPage()));
+                    },
+                    imageName: "ic_me_page_manage_wallet",
+                    color: Colors.cyan[300],
+                  ),
                   _lineWidget(),
                   _buildMenuBar(
                     S.of(context).preferences,
                     Icons.settings,
-                    () => Navigator.push(context, MaterialPageRoute(builder: (context) => MeSettingPage())),
+                    () => Navigator.push(
+                        context, MaterialPageRoute(builder: (context) => MeSettingPage())),
                     imageName: "ic_me_page_setting",
                     color: Colors.cyan[400],
                   ),
@@ -286,7 +300,8 @@ class _MyPageState extends BaseState<MyPage> {
                   _buildMenuBar(
                     S.of(context).about_us,
                     Icons.info,
-                    () => Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage())),
+                    () => Navigator.push(
+                        context, MaterialPageRoute(builder: (context) => AboutMePage())),
                     imageName: "ic_me_page_about_us",
                     color: Colors.cyan[300],
                   ),
@@ -301,8 +316,8 @@ class _MyPageState extends BaseState<MyPage> {
                       if (_haveNewVersion) {
                         _showUpdateDialog(_updateEntity);
                       } else {
-                        BlocProvider.of<UpdateBloc>(context)
-                            .add(CheckUpdate(lang: Localizations.localeOf(context).languageCode, isManual: true));
+                        BlocProvider.of<UpdateBloc>(context).add(CheckUpdate(
+                            lang: Localizations.localeOf(context).languageCode, isManual: true));
                       }
                     },
                     subText: _version,
@@ -328,8 +343,11 @@ class _MyPageState extends BaseState<MyPage> {
                     '0x9D05DDfC30bc83e7215EB3C5C3C7A443e7Ee1dB6'.toLowerCase(),
                     '0x5AD1e746E6610401f598486d8747d9907Cf114b2'.toLowerCase(),
                   ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
-                    _buildMenuBar('链上子钱包', Icons.account_balance_wallet,
-                        () => Navigator.push(context, MaterialPageRoute(builder: (context) => DexWalletManagerPage()))),
+                    _buildMenuBar(
+                        '链上子钱包',
+                        Icons.account_balance_wallet,
+                        () => Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => DexWalletManagerPage()))),
                 ],
               ),
             ),
@@ -538,8 +556,8 @@ class _MyPageState extends BaseState<MyPage> {
     var walletStr = FluroConvertUtils.object2string(wallet.toJson());
     var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
 
-    Application.router
-        .navigateTo(context, Routes.wallet_setting + '?entryRouteName=$currentRouteName&walletStr=$walletStr');
+    Application.router.navigateTo(
+        context, Routes.wallet_setting + '?entryRouteName=$currentRouteName&walletStr=$walletStr');
   }
 
   Widget _buildSloganRow() {

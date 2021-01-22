@@ -39,8 +39,8 @@ class WalletUtil {
   static Future<bool> checkIsBackUpMnemonic(
     String walletAddress,
   ) async {
-    bool isMnemonicBackUp = await AppCache.getValue(
-        '${PrefsKey.WALLET_MNEMONIC_BACK_UP_PREFIX}_$walletAddress');
+    bool isMnemonicBackUp =
+        await AppCache.getValue('${PrefsKey.WALLET_MNEMONIC_BACK_UP_PREFIX}_$walletAddress');
 
     return (isMnemonicBackUp ?? false);
   }
@@ -57,28 +57,26 @@ class WalletUtil {
   static Future<bool> checkWalletSafeLockIsEnable(
     String walletAddress,
   ) async {
-    bool isEnabled = await AppCache.getValue(
-        '${PrefsKey.WALLET_SAFE_LOCK_IS_ENABLE_PREFIX}_$walletAddress');
+    bool isEnabled =
+        await AppCache.getValue('${PrefsKey.WALLET_SAFE_LOCK_IS_ENABLE_PREFIX}_$walletAddress');
 
     return (isEnabled ?? false);
   }
 
   static setWalletSafeLockEnable(
-    String walletAddress,
     bool enabled,
   ) async {
     await AppCache.saveValue(
-      '${PrefsKey.WALLET_SAFE_LOCK_IS_ENABLE_PREFIX}_$walletAddress',
+      '${PrefsKey.WALLET_SAFE_LOCK_IS_ENABLE_PREFIX}',
       enabled,
     );
   }
 
   static Future<bool> checkWalletSafeLockPwd(
-    String walletAddress,
     String input,
   ) async {
     String pwd = await AppCache.secureGetValue(
-      '${PrefsKey.WALLET_SAFE_LOCK_PWD_PREFIX}_$walletAddress',
+      '${PrefsKey.WALLET_SAFE_LOCK_PWD_PREFIX}',
     );
     return (pwd == (input ?? ''));
   }
@@ -129,9 +127,7 @@ class WalletUtil {
 
   ///store mnemonic
   static Future<Wallet> storeByMnemonic(
-      {@required String name,
-      @required String password,
-      @required String mnemonic}) async {
+      {@required String name, @required String password, @required String mnemonic}) async {
     var fileName = await WalletChannel.saveAsTrustWalletKeyStoreByMnemonic(
       name: name,
       mnemonic: mnemonic,
@@ -143,9 +139,7 @@ class WalletUtil {
 
   ///store private key
   static Future<Wallet> storePrivateKey(
-      {@required String name,
-      @required String password,
-      @required String prvKeyHex}) async {
+      {@required String name, @required String password, @required String prvKeyHex}) async {
     var fileName = await WalletChannel.saveAsTrustWalletKeyStoreByPrivateKey(
         name: name, prvKeyHex: prvKeyHex, password: password);
     return loadWallet(fileName);
@@ -180,8 +174,7 @@ class WalletUtil {
     @required String fileName,
     @required password,
   }) {
-    return WalletChannel.exportPrivateKey(
-        fileName: fileName, password: password);
+    return WalletChannel.exportPrivateKey(fileName: fileName, password: password);
   }
 
   static Future<String> exportMnemonic({
@@ -306,10 +299,8 @@ class WalletUtil {
       List<dynamic> params = const [],
       bool include0x = true,
       bool padToEvenLength = true}) {
-    var abi = getErc20FuncAbi(
-        contractAddress: contractAddress, params: params, funName: funName);
-    return bytesToHex(abi,
-        include0x: include0x, padToEvenLength: padToEvenLength);
+    var abi = getErc20FuncAbi(contractAddress: contractAddress, params: params, funName: funName);
+    return bytesToHex(abi, include0x: include0x, padToEvenLength: padToEvenLength);
   }
 
   static String getMap3FuncAbiHex(
@@ -318,10 +309,8 @@ class WalletUtil {
       List<dynamic> params = const [],
       bool include0x = true,
       bool padToEvenLength = true}) {
-    var abi = getMap3FuncAbi(
-        contractAddress: contractAddress, params: params, funName: funName);
-    return bytesToHex(abi,
-        include0x: include0x, padToEvenLength: padToEvenLength);
+    var abi = getMap3FuncAbi(contractAddress: contractAddress, params: params, funName: funName);
+    return bytesToHex(abi, include0x: include0x, padToEvenLength: padToEvenLength);
   }
 
   static Wallet _parseWalletJson(dynamic map) {
@@ -350,7 +339,8 @@ class WalletUtil {
       }
     }
 
-    var accounts = List<Account>.from(backAccounts.map((accountMap) => Account.fromJsonWithNet(accountMap)));
+    var accounts =
+        List<Account>.from(backAccounts.map((accountMap) => Account.fromJsonWithNet(accountMap)));
 
     //filter only ETHEREUM
 //    accounts = accounts.where((account) {
@@ -366,31 +356,32 @@ class WalletUtil {
   }
 
   static web3.DeployedContract _newErc20Contract(String contractAddress, String name) {
-    final contract = web3.DeployedContract(
-        web3.ContractAbi.fromJson(HYN_ERC20_ABI, name), web3.EthereumAddress.fromHex(contractAddress));
+    final contract = web3.DeployedContract(web3.ContractAbi.fromJson(HYN_ERC20_ABI, name),
+        web3.EthereumAddress.fromHex(contractAddress));
     return contract;
   }
 
   static web3.DeployedContract _newRpHoldingContract(String contractAddress, String name) {
-    final contract = web3.DeployedContract(
-        web3.ContractAbi.fromJson(RP_HOLDING_ABI, name), web3.EthereumAddress.fromHex(contractAddress));
+    final contract = web3.DeployedContract(web3.ContractAbi.fromJson(RP_HOLDING_ABI, name),
+        web3.EthereumAddress.fromHex(contractAddress));
     return contract;
   }
 
   static web3.DeployedContract _newMap3Contract(String contractAddress, String name) {
-    final contract = web3.DeployedContract(
-        web3.ContractAbi.fromJson(MAP3_STAKING_ABI, name), web3.EthereumAddress.fromHex(contractAddress));
+    final contract = web3.DeployedContract(web3.ContractAbi.fromJson(MAP3_STAKING_ABI, name),
+        web3.EthereumAddress.fromHex(contractAddress));
     return contract;
   }
 
   static web3.DeployedContract _newHynStakingContract(String contractAddress, String name) {
-    final contract = web3.DeployedContract(
-        web3.ContractAbi.fromJson(HYN_STAKING_ABI, name), web3.EthereumAddress.fromHex(contractAddress));
+    final contract = web3.DeployedContract(web3.ContractAbi.fromJson(HYN_STAKING_ABI, name),
+        web3.EthereumAddress.fromHex(contractAddress));
     return contract;
   }
 
   /// https://infura.io/docs/gettingStarted/makeRequests.md
-  static Future<dynamic> postToEthereumNetwork(int coinType, {String method, List params, int id = 1}) {
+  static Future<dynamic> postToEthereumNetwork(int coinType,
+      {String method, List params, int id = 1}) {
     //{jsonrpc: 2.0, id: 1, result: 0x4547fdfbf3f1cfd25c0fa7267a97c7832ddda76352456b8e78898e9bd619adb7}
     var rpcApi = _getRpcApiByCoinType(coinType);
     return HttpCore.instance.post(rpcApi,
@@ -404,7 +395,8 @@ class WalletUtil {
   /// coinType_chainType, clientInstance
   static Map<String, web3.Web3Client> web3ClientMap = {};
 
-  static web3.DeployedContract _getContract(ContractMaker maker, String contractAddress, String name) {
+  static web3.DeployedContract _getContract(
+      ContractMaker maker, String contractAddress, String name) {
     if (deployedContractMap.containsKey(contractAddress) == null) {
       return deployedContractMap[contractAddress];
     }
@@ -466,13 +458,13 @@ class WalletUtil {
     return key;
   }
 
-  static Future<BigInt> getBalanceByCoinTypeAndAddress(
-      int coinType, String address,
+  static Future<BigInt> getBalanceByCoinTypeAndAddress(int coinType, String address,
       [String contractAddress, String block = 'latest']) async {
     address = bech32ToEthAddress(address);
     if (contractAddress == null) {
       //主链币
-      var response = await postToEthereumNetwork(coinType, method: "eth_getBalance", params: [address, block]);
+      var response =
+          await postToEthereumNetwork(coinType, method: "eth_getBalance", params: [address, block]);
       if (response['result'] != null) {
         return hexToInt(response['result']);
       }
@@ -480,8 +472,10 @@ class WalletUtil {
       //合约币
       final contract = getErc20Contract(contractAddress, 'HYN');
       final balanceFun = contract.function('balanceOf');
-      final balance = await getWeb3Client(coinType)
-          .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(address)]);
+      final balance = await getWeb3Client(coinType).call(
+          contract: contract,
+          function: balanceFun,
+          params: [web3.EthereumAddress.fromHex(address)]);
       return balance.first;
     }
     return BigInt.from(0);

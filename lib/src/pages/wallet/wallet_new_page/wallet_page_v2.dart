@@ -304,7 +304,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
       aspect: WalletAspect.activatedWallet,
     ).activatedWallet;
     if (activatedWalletVo != null) {
-      if (AppLockInheritedModel.of(context).isWalletLockOn)
+      if (AppLockInheritedModel.of(context).isWalletLockActive)
         return WalletSafeLock(
           onUnlock: () {
             BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
