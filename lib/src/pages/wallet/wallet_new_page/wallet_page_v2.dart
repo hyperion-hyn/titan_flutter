@@ -48,7 +48,8 @@ class WalletPageV2 extends StatefulWidget {
   }
 }
 
-class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAliveClientMixin {
+class _WalletPageV2State extends BaseState<WalletPageV2>
+    with AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   final LocalAuthentication auth = LocalAuthentication();
 
@@ -66,7 +67,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    activeQuotesSign = WalletInheritedModel.of(context, aspect: WalletAspect.legal).activeLegal;
+    activeQuotesSign =
+        WalletInheritedModel.of(context, aspect: WalletAspect.legal)
+            .activeLegal;
   }
 
   @override
@@ -75,7 +78,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   }
 
   @override
-  Future<void> onCreated() async {}
+  Future<void> onCreated() async {
+  }
 
   _checkDexAccount() async {
     var activatedWalletVo = WalletInheritedModel.of(
@@ -115,7 +119,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     ).activatedWallet;
     _hasBackupWallet = await WalletUtil.checkIsBackUpMnemonic(
         activatedWalletVo?.wallet?.getEthAccount()?.address ?? "");
-    if (activatedWalletVo == null || _hasBackupWallet || Application.hasShowBackupWalletDialog) {
+    if (activatedWalletVo == null ||
+        _hasBackupWallet ||
+        Application.hasShowBackupWalletDialog) {
       return;
     }
     Application.hasShowBackupWalletDialog = true;
@@ -148,10 +154,14 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 13, bottom: 21.0, left: 20, right: 20),
-              child: Text("你的身份助记词未备份，请务必备份助记词\n助记词可用于恢复身份钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失。",
+              padding: const EdgeInsets.only(
+                  top: 13, bottom: 21.0, left: 20, right: 20),
+              child: Text(
+                  "你的身份助记词未备份，请务必备份助记词\n助记词可用于恢复身份钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失。",
                   style: TextStyle(
-                      fontSize: 14, color: HexColor("#666666"), decoration: TextDecoration.none)),
+                      fontSize: 14,
+                      color: HexColor("#666666"),
+                      decoration: TextDecoration.none)),
             ),
           ],
         ),
@@ -160,7 +170,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
             "立即备份",
             () async {
               Navigator.pop(context);
-              var walletStr = FluroConvertUtils.object2string(activatedWalletVo.wallet.toJson());
+              var walletStr = FluroConvertUtils.object2string(
+                  activatedWalletVo.wallet.toJson());
               Application.router.navigateTo(
                   context,
                   Routes.wallet_setting_wallet_backup_notice +
@@ -269,10 +280,12 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) {
       navigateToFixPage();
     } else {
-      await Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+      await Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
 
       ///if authorized, jump to fix error page
-      if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) navigateToFixPage();
+      if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount())
+        navigateToFixPage();
     }
   }
 
@@ -317,7 +330,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   _headerWidget(WalletViewVo activatedWalletVo) {
     return SliverToBoxAdapter(
       child: Container(
-        padding: const EdgeInsets.only(top: 20, bottom: 20, left: 16, right: 16),
+        padding:
+            const EdgeInsets.only(top: 20, bottom: 20, left: 16, right: 16),
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -329,7 +343,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
           children: [
             InkWell(
               onTap: () {
-                WalletManagerPage.jumpWalletManager(context, hasWalletUpdate: (wallet) {
+                WalletManagerPage.jumpWalletManager(context,
+                    hasWalletUpdate: (wallet) {
                   setState(() {
                     // _isRefreshBalances = true;
                   });
@@ -406,7 +421,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                       });
                     },
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0, top: 8, bottom: 8),
+                      padding:
+                          const EdgeInsets.only(left: 8.0, top: 8, bottom: 8),
                       child: Image.asset(
                         _isShowBalances
                             ? "res/drawable/ic_input_psw_show.png"
@@ -480,9 +496,10 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
       return InkWell(
           onTap: () {
             var coinVo = activatedWalletVo.coins[index];
-            var coinVoJsonStr = FluroConvertUtils.object2string(coinVo.toJson());
-            Application.router
-                .navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
+            var coinVoJsonStr =
+                FluroConvertUtils.object2string(coinVo.toJson());
+            Application.router.navigateTo(context,
+                Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
           },
           child: _buildAccountItem(context, coinVo, hasPrice: hasPrice));
     }, childCount: activatedWalletVo.coins.length));
@@ -501,9 +518,11 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     );
   }
 
-  Widget _buildAccountItem(BuildContext context, CoinViewVo coin, {bool hasPrice = true}) {
+  Widget _buildAccountItem(BuildContext context, CoinViewVo coin,
+      {bool hasPrice = true}) {
     var symbol = coin.symbol;
-    var symbolQuote = WalletInheritedModel.of(context).tokenLegalPrice(symbol);
+    var symbolQuote =
+        WalletInheritedModel.of(context).tokenLegalPrice(symbol);
     var subSymbol = "";
 
     if (coin.coinType == CoinType.HYN_ATLAS) {
@@ -526,7 +545,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     }
 
     return Padding(
-      padding: const EdgeInsets.only(left: 22.0, right: 22, top: 16, bottom: 16),
+      padding:
+          const EdgeInsets.only(left: 22.0, right: 22, top: 16, bottom: 16),
       child: Row(
         children: <Widget>[
           Container(
@@ -549,7 +569,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                     Text(
                       symbol,
                       style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF252525)),
                     ),
                     SizedBox(
                       width: 4,
@@ -573,7 +595,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Text(
-                    _isShowBalances ? "${FormatUtil.coinBalanceHumanReadFormat(coin)}" : '*****',
+                    _isShowBalances
+                        ? "${FormatUtil.coinBalanceHumanReadFormat(coin)}"
+                        : '*****',
                     textAlign: TextAlign.right,
                     style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                     overflow: TextOverflow.ellipsis,
@@ -608,7 +632,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
 
   Widget hynQuotesView() {
     //hyn quote
-    TokenPriceViewVo hynQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice('HYN');
+    TokenPriceViewVo hynQuoteSign =
+        WalletInheritedModel.of(context).tokenLegalPrice('HYN');
     return Container(
       padding: EdgeInsets.all(8),
       color: Color(0xFFF5F5F5),
@@ -638,7 +663,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                 Text(
                   '${hynQuoteSign != null ? '${FormatUtil.formatPrice(hynQuoteSign.price)} ${hynQuoteSign.legal.legal}' : '--'}',
                   style: TextStyle(
-                      color: HexColor('#333333'), fontWeight: FontWeight.bold, fontSize: 16),
+                      color: HexColor('#333333'),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
                 ),
               ],
             ),

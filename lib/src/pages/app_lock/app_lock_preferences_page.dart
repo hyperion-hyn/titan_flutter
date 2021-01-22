@@ -7,7 +7,9 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/app_lock/app_lock_component.dart';
+import 'package:titan/src/pages/app_lock/app_lock_wallet_not_backup_dialog.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 class AppLockPreferencesPage extends StatefulWidget {
   AppLockPreferencesPage();
@@ -47,6 +49,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
           slivers: [
             _basicPreferences(),
             _awayTimePreference(),
+            _awayTimeHint(),
           ],
         ),
       ),
@@ -79,6 +82,16 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                       BlocProvider.of<AppLockBloc>(context).add(
                         SetWalletLockEvent(value),
                       );
+
+                      showModalBottomSheet(
+                          context: context,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          enableDrag: false,
+                          builder: (BuildContext context) {
+                            return AppLockWalletNotBackUpDialog();
+                          });
                     },
                   ),
                 ],
@@ -156,6 +169,21 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
       ),
       title: '自动锁定时间',
       childPadding: EdgeInsets.all(0),
+    );
+  }
+
+  _awayTimeHint() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(
+          '离开钱包界面一定时间后安全锁将自动锁定钱包，继续使用钱包功能需要先解锁钱包。',
+          style: TextStyle(
+            color: DefaultColors.color999,
+            fontSize: 12,
+          ),
+        ),
+      ),
     );
   }
 

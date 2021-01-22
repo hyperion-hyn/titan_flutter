@@ -81,8 +81,7 @@ class UiUtil {
       ),
       flushbarStyle: FlushbarStyle.GROUNDED,
       flushbarPosition: FlushbarPosition.TOP,
-      duration:
-          errorHintType == ErrorHintType.ERROR ? Duration(seconds: 5) : null,
+      duration: errorHintType == ErrorHintType.ERROR ? Duration(seconds: 5) : null,
     ).show(context);
   }
 
@@ -150,8 +149,7 @@ class UiUtil {
       context: context,
       // 构建 Dialog 的视图
       builder: (_) => AnimatedPadding(
-        padding: MediaQuery.of(context).viewInsets +
-            const EdgeInsets.symmetric(horizontal: 36.0),
+        padding: MediaQuery.of(context).viewInsets + const EdgeInsets.symmetric(horizontal: 36.0),
         duration: const Duration(milliseconds: 100),
         curve: Curves.decelerate,
         child: Column(
@@ -160,8 +158,8 @@ class UiUtil {
           children: <Widget>[
             Container(
               //alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              decoration:
+                  BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
               child: Stack(
                 children: <Widget>[
                   isShowCloseIcon
@@ -196,31 +194,23 @@ class UiUtil {
                             top: 16,
                             left: 24,
                             right: 24,
-                            bottom: (contentItem != null || detail.isNotEmpty)
-                                ? 0
-                                : 18),
+                            bottom: (contentItem != null || detail.isNotEmpty) ? 0 : 18),
                         child: RichText(
                             text: TextSpan(
                                 text: content,
                                 style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor("#333333"),
-                                    height: 1.8),
+                                    fontSize: 14, color: HexColor("#333333"), height: 1.8),
                                 children: [
                               TextSpan(
                                 text: boldContent,
                                 style: boldStyle ??
                                     TextStyle(
-                                        fontSize: 14,
-                                        color: HexColor("#FF4C3B"),
-                                        height: 1.8),
+                                        fontSize: 14, color: HexColor("#FF4C3B"), height: 1.8),
                               ),
                               TextSpan(
                                 text: suffixContent,
                                 style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor("#333333"),
-                                    height: 1.8),
+                                    fontSize: 14, color: HexColor("#333333"), height: 1.8),
                               ),
                             ])),
                       ),
@@ -275,13 +265,11 @@ class UiUtil {
       context: context,
       // 构建 Dialog 的视图
       builder: (_) => AnimatedPadding(
-        padding: MediaQuery.of(context).viewInsets +
-            const EdgeInsets.symmetric(horizontal: 36.0),
+        padding: MediaQuery.of(context).viewInsets + const EdgeInsets.symmetric(horizontal: 36.0),
         duration: const Duration(milliseconds: 100),
         curve: Curves.decelerate,
         child: Column(
-          mainAxisAlignment:
-              isShowBottom ? MainAxisAlignment.end : MainAxisAlignment.center,
+          mainAxisAlignment: isShowBottom ? MainAxisAlignment.end : MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Container(
@@ -773,10 +761,7 @@ class UiUtil {
               ),
               Text(
                 msg,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.white),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
               ),
               Spacer()
             ],
@@ -791,8 +776,7 @@ class UiUtil {
     );
   }
 
-  static Future showLoadingDialog(
-      BuildContext context, msg, Function createContext) async {
+  static Future showLoadingDialog(BuildContext context, msg, Function createContext) async {
     Widget widget = Center(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),
@@ -867,16 +851,14 @@ class UiUtil {
             Navigator.pop(context);
 
             ///
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
           },
         ),
       ],
     );
   }
 
-  static Future<T> showDialogsNoCallback<T>(
-      BuildContext context, String title, String content,
+  static Future<T> showDialogsNoCallback<T>(BuildContext context, String title, String content,
       {String confirm = ""}) {
     return showDialogWidget<T>(
       context,
@@ -903,8 +885,7 @@ class UiUtil {
           return Wrap(
             children: <Widget>[
               ListTile(
-                title: Text(S.of(context).camera_scan,
-                    textAlign: TextAlign.center),
+                title: Text(S.of(context).camera_scan, textAlign: TextAlign.center),
                 onTap: () async {
                   Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext, true);
@@ -915,8 +896,7 @@ class UiUtil {
                 },
               ),
               ListTile(
-                title: Text(S.of(context).import_from_album,
-                    textAlign: TextAlign.center),
+                title: Text(S.of(context).import_from_album, textAlign: TextAlign.center),
                 onTap: () async {
                   Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext, true);
@@ -930,8 +910,7 @@ class UiUtil {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
-                  if (tempListImagePaths != null &&
-                      tempListImagePaths.length == 1) {
+                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
                     RScanResult mnemonicWords =
                         await RScan.scanImagePath(tempListImagePaths[0].path);
                     String mnemonicWord = mnemonicWords?.message;
@@ -968,8 +947,7 @@ class UiUtil {
                 },
               ),
               ListTile(
-                title: Text(S.of(context).import_from_album,
-                    textAlign: TextAlign.center),
+                title: Text(S.of(context).import_from_album, textAlign: TextAlign.center),
                 onTap: () async {
                   Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext, true);
@@ -983,8 +961,7 @@ class UiUtil {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
-                  if (tempListImagePaths != null &&
-                      tempListImagePaths.length == 1) {
+                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
                     var path = tempListImagePaths[0].path;
                     callback(path);
                   }

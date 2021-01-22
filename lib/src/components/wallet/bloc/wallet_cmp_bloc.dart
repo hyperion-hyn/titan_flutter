@@ -81,17 +81,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           walletRepository
               .saveActivatedWalletFileName(_activatedWalletVo?.wallet?.keystore?.fileName);
 
-          ///set up wallet lock
-          // var isWalletLockEnabled = await WalletUtil.checkWalletSafeLockIsEnable(
-          //   event?.wallet?.getAtlasAccount()?.address ?? '',
-          // );
-          // BlocProvider.of<AppLockBloc>(
-          //   Keys.rootKey.currentContext,
-          // ).add(SetWalletLockEvent(
-          //   event?.wallet?.getAtlasAccount()?.address ?? '',
-          //   isWalletLockEnabled,
-          // ));
-
           //sync wallet account to server  BTC生成找零地址等这些
           if (event.wallet?.getBitcoinZPub()?.isNotEmpty ?? false) {
             BitcoinApi.syncBitcoinPubToServer(

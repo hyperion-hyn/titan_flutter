@@ -14,6 +14,7 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_options_page.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/bitcoin.dart';
@@ -563,6 +564,17 @@ class _WalletDemoState extends State<WalletDemo> {
                     BlocProvider.of<AppLockBloc>(context).add(SetWalletLockEvent(value));
                   })
             ],
+          ),
+          RaisedButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => BioAuthOptionsPage(
+                            WalletInheritedModel.of(context).activatedWallet?.wallet,
+                          )));
+            },
+            child: Text('Wallet bio-auth options'),
           )
         ],
       ),
