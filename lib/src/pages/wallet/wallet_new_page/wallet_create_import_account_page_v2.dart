@@ -585,8 +585,7 @@ class _WalletCreateAccountPageV2State
             mnemonic: mnemonic);
       }
 
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(ActiveWalletEvent(wallet: wallet));
+      BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
       ///save expand info
       WalletExpandInfoEntity walletExpandInfoEntity = WalletExpandInfoEntity(userImageLocalPath,userImagePath,_walletPwsHintController.text.trim());
       WalletUtil.setWalletExpandInfo(wallet.getEthAccount().address, walletExpandInfoEntity);
@@ -607,7 +606,7 @@ class _WalletCreateAccountPageV2State
       }
 
       var userPayload = UserPayloadWithAddressEntity(Payload(userName: wallet.keystore.name,userPic: userImagePath),wallet.getAtlasAccount().address,);
-      await AtlasApi.postUserSync(userPayload);
+      AtlasApi.postUserSync(userPayload);
 
       Fluttertoast.showToast(msg: widget.isCreateWallet ? "创建成功" : "导入成功");
       Routes.popUntilCachedEntryRouteName(context, wallet);

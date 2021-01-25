@@ -3,12 +3,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
+import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
@@ -18,6 +23,7 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 
 typedef TextChangeCallback = void Function(String text);
 
@@ -34,7 +40,8 @@ class WalletSettingPageV2 extends StatefulWidget {
 
 class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAware {
   bool isBackup = false;
-  Wallet wallet;
+  BuildContext dialogContext;
+  AtlasApi _atlasApi = AtlasApi();
 
   @override
   void initState() {
@@ -51,7 +58,6 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
 
   @override
   void didChangeDependencies() {
-    wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
     super.didChangeDependencies();
   }
 
@@ -93,50 +99,111 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
         '身份信息',
         Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 16, bottom: 16.0),
-              child: Row(
-                children: [
-                  Text(
-                    "头像",
-                    style: TextStyles.textC333S14,
-                  ),
-                  Spacer(),
-                  iconWalletWidget(widget.wallet),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 6),
-                    child: Icon(
-                      Icons.chevron_right,
-                      color: DefaultColors.color999,
+            InkWell(
+              onTap: () {
+                editIconSheet(context, (path) async {
+                  if (path != null) {
+                    UiUtil.showLoadingDialog(context, "头像上传中...", (context) {
+                      dialogContext = context;
+                    });
+
+                    var netImagePath = await _atlasApi.postUploadImageFile(
+                      "0x",
+                      path,
+                      (count, total) {},
+                    );
+                    if (netImagePath != null && netImagePath.isNotEmpty) {
+                      widget.wallet.walletExpandInfoEntity.localHeadImg = path;
+                      widget.wallet.walletExpandInfoEntity.netHeadImg = netImagePath;
+                      WalletUtil.setWalletExpandInfo(widget.wallet.getEthAccount().address,
+                          widget.wallet.walletExpandInfoEntity);
+
+                      setState(() {});
+                    } else {
+                      Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
+                    }
+                    if (dialogContext != null) {
+                      Navigator.pop(dialogContext);
+                    }
+                    return;
+                  }
+                });
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16, bottom: 16.0),
+                child: Row(
+                  children: [
+                    Text(
+                      "头像",
+                      style: TextStyles.textC333S14,
                     ),
-                  ),
-                ],
+                    Spacer(),
+                    iconWalletWidget(widget.wallet, isCircle: true),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 6),
+                      child: Icon(
+                        Icons.chevron_right,
+                        color: DefaultColors.color999,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Divider(
               height: 0.5,
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16, bottom: 16.0),
-              child: Row(
-                children: [
-                  Text(
-                    "名称",
-                    style: TextStyles.textC333S14,
-                  ),
-                  Spacer(),
-                  Text(
-                    widget.wallet.keystore.name,
-                    style: TextStyles.textC999S14,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 6),
-                    child: Icon(
-                      Icons.chevron_right,
-                      color: DefaultColors.color999,
+            InkWell(
+              onTap: () async {
+                var password = await UiUtil.showWalletPasswordDialogV2(context, widget.wallet);
+                if (password == null) {
+                  return;
+                }
+                String text = await Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) => OptionEditPage(
+                          title: "名称",
+                          content: widget.wallet?.keystore?.name,
+                          maxLength: 8,
+                        )));
+                if (text != null && text.isNotEmpty) {
+                  var success = await WalletUtil.updateWallet(
+                      wallet: widget.wallet, password: password, name: text);
+                  if (success == true) {
+                    UiUtil.toast(S.of(context).update_success);
+                    var userPayload = UserPayloadWithAddressEntity(
+                      Payload(
+                        userName: widget.wallet.keystore.name,
+                      ),
+                      widget.wallet.getAtlasAccount().address,
+                    );
+                    AtlasApi.postUserSync(userPayload);
+                  }
+
+                  setState(() {});
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16, bottom: 16.0),
+                child: Row(
+                  children: [
+                    Text(
+                      "名称",
+                      style: TextStyles.textC333S14,
                     ),
-                  ),
-                ],
+                    Spacer(),
+                    Text(
+                      widget.wallet.keystore.name,
+                      style: TextStyles.textC999S14,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 6),
+                      child: Icon(
+                        Icons.chevron_right,
+                        color: DefaultColors.color999,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             )
           ],
@@ -234,13 +301,13 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             _optionItem(
               imagePath: "res/drawable/ic_wallet_setting_psw_remind.png",
               title: '密码提示',
-              editHint: wallet?.walletExpandInfoEntity?.pswRemind == null ? "未设置" : "",
-              isCanEdit:true,
-              content: wallet.walletExpandInfoEntity.pswRemind,
+              editHint: widget.wallet?.walletExpandInfoEntity?.pswRemind == null ? "未设置" : "",
+              isCanEdit: true,
+              content: widget.wallet.walletExpandInfoEntity?.pswRemind,
               editCallback: (text) {
-                wallet.walletExpandInfoEntity.pswRemind = text;
-                WalletUtil.setWalletExpandInfo(wallet.getEthAccount().address,wallet.walletExpandInfoEntity);
-                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
+                widget.wallet.walletExpandInfoEntity.pswRemind = text;
+                WalletUtil.setWalletExpandInfo(
+                    widget.wallet.getEthAccount().address, widget.wallet.walletExpandInfoEntity);
               },
             ),
           ],
@@ -259,7 +326,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                 imageHeight: 66,
                 showCloseBtn: isBackup,
                 actions: [
-                  if(isBackup)
+                  if (isBackup)
                     ClickOvalButton(
                       "确认退出",
                       () async {},
@@ -268,36 +335,38 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                       btnColor: [HexColor("#FF4B4B")],
                       fontSize: 16,
                     ),
-                  if(!isBackup)
+                  if (!isBackup)
                     ClickOvalButton(
                       "取消",
-                          () async {
+                      () async {
                         Navigator.pop(context);
-                          },
+                      },
                       width: 140,
                       height: 40,
                       fontColor: DefaultColors.color999,
                       btnColor: [HexColor("#F2F2F2")],
                       fontSize: 16,
                     ),
-                  if(!isBackup)
+                  if (!isBackup)
                     Padding(
-                      padding: const EdgeInsets.only(left:12.0),
+                      padding: const EdgeInsets.only(left: 12.0),
                       child: ClickOvalButton(
                         "前往备份",
-                            () async {
-                              Navigator.pop(context);
-                              var walletStr = FluroConvertUtils.object2string(
-                                  widget.wallet.toJson());
-                              Application.router.navigateTo(
-                                  context,
-                                  Routes.wallet_setting_wallet_backup_notice +
-                                      '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
-                            },
+                        () async {
+                          Navigator.pop(context);
+                          var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
+                          Application.router.navigateTo(
+                              context,
+                              Routes.wallet_setting_wallet_backup_notice +
+                                  '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
+                        },
                         width: 140,
                         height: 40,
                         fontColor: DefaultColors.color333,
-                        btnColor: [HexColor("#F7D33D"),HexColor("#E7C01A"),],
+                        btnColor: [
+                          HexColor("#F7D33D"),
+                          HexColor("#E7C01A"),
+                        ],
                         fontSize: 16,
                       ),
                     ),
@@ -370,7 +439,6 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
     String warning = '',
   }) {
     return InkWell(
-      splashColor: Colors.blue,
       onTap: () async {
         if (isCanEdit) {
           String text = await Navigator.of(context).push(MaterialPageRoute(
@@ -379,7 +447,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                     content: content,
                     hint: editHint,
                     keyboardType: keyboardType,
-                maxLength: 8,
+                    maxLength: 8,
                   )));
           if (text != null && text.isNotEmpty) {
             setState(() {
