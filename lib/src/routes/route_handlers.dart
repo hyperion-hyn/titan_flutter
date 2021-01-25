@@ -144,7 +144,7 @@ var settingWalletHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   Wallet wallet =
       Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
-  return WalletSettingPage(wallet);
+  return WalletSettingPageV2(wallet);
 });
 
 var settingBackupNoticeWalletHandler = Handler(handlerFunc: (context, params) {

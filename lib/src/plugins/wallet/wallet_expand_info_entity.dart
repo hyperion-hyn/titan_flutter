@@ -17,6 +17,8 @@ class WalletExpandInfoEntity extends Object {
 
   WalletExpandInfoEntity(this.localHeadImg,this.netHeadImg,this.pswRemind,);
 
+  WalletExpandInfoEntity.defaultEntity();
+
   factory WalletExpandInfoEntity.fromJson(Map<String, dynamic> srcJson) => _$WalletExpandInfoEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$WalletExpandInfoEntityToJson(this);

@@ -325,6 +325,101 @@ class UiUtil {
     );
   }
 
+  static Future<T> showBottomDialogView<T>(BuildContext context, {
+    double dialogHeight = 288,
+    Widget customWidget,
+    String imagePath,
+    double imageHeight,
+    String dialogTitle,
+    String dialogSubTitle,
+    bool enableDrag = true,
+    bool showCloseBtn = true,
+    List<Widget> actions,
+  }) {
+    return showModalBottomSheet<T>(
+        context: context,
+        enableDrag: enableDrag,
+        shape: RoundedRectangleBorder(
+          borderRadius:
+          BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        ),
+        builder: (BuildContext context) {
+          return Container(
+            height: dialogHeight,
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (customWidget != null) customWidget,
+                    if (imagePath != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 24.0),
+                        child: Image.asset(
+                          imagePath,
+                          height: imageHeight,
+                        ),
+                      ),
+                    if (dialogTitle != null)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 19,
+                          left: 49,
+                          right: 49,
+                        ),
+                        child: Text(
+                          dialogTitle,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: DefaultColors.color333,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    if (dialogSubTitle != null)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 16,
+                          left: 49,
+                          right: 49,
+                        ),
+                        child: Text(
+                          dialogSubTitle,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 14, color: HexColor('#666666')),
+                        ),
+                      ),
+                    if (actions != null)
+                      Padding(
+                        padding: EdgeInsets.only(top: 26, bottom: 26),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: actions,
+                        ),
+                      )
+                  ],
+                ),
+                if(showCloseBtn)
+                  Positioned(
+                    child: InkWell(
+                      child: Image.asset(
+                        'res/drawable/ic_close.png',
+                        width: 16,
+                        height: 16,
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    left: 24,
+                    top: 24,
+                  )
+              ],
+            ),
+          );
+        });
+  }
+
   static Future<T> showDialogWidget<T>(
     BuildContext context, {
     Widget title,

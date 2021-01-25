@@ -38,7 +38,7 @@ HynTransferHistory _$HynTransferHistoryFromJson(Map<String, dynamic> json) {
     json['value'] as String,
     json['payload'] == null
         ? null
-        : TransferPayload.fromJson(json['payload'] as Map<String, dynamic>),
+        : ((json['payload'].toString() != "") ? TransferPayload.fromJson(json['payload'] as Map<String, dynamic>) : null),
     (json['internal_trans'] as List)
         ?.map((e) => e == null
             ? null

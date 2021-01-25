@@ -2,12 +2,22 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 typedef TextChangeCallback = void Function(String text);
 
@@ -22,19 +32,32 @@ class WalletSettingPageV2 extends StatefulWidget {
   }
 }
 
-class _WalletSettingPageV2State extends State<WalletSettingPageV2> {
+class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAware {
+  bool isBackup = false;
+  Wallet wallet;
+
   @override
   void initState() {
     super.initState();
   }
 
   @override
+  void didPush() async {
+    isBackup = await WalletUtil.checkIsBackUpMnemonic(widget.wallet.getEthAccount().address);
+  }
+
+  @override
+  void didPopNext() async {}
+
+  @override
   void didChangeDependencies() {
+    wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
+    Application.routeObserver.unsubscribe(this);
     super.dispose();
   }
 
@@ -50,8 +73,14 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> {
         child: CustomScrollView(
           slivers: [
             _basicInfoOptions(),
-            _addressList(),
+            // _addressList(),
             _securityOptions(),
+            SliverToBoxAdapter(
+              child: Container(
+                color: HexColor("#F6F6F6"),
+                height: 10,
+              ),
+            ),
             _pop()
           ],
         ),
@@ -63,7 +92,54 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> {
     return _section(
         '身份信息',
         Column(
-          children: [Text('ss')],
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 16, bottom: 16.0),
+              child: Row(
+                children: [
+                  Text(
+                    "头像",
+                    style: TextStyles.textC333S14,
+                  ),
+                  Spacer(),
+                  iconWalletWidget(widget.wallet),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 6),
+                    child: Icon(
+                      Icons.chevron_right,
+                      color: DefaultColors.color999,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Divider(
+              height: 0.5,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16, bottom: 16.0),
+              child: Row(
+                children: [
+                  Text(
+                    "名称",
+                    style: TextStyles.textC333S14,
+                  ),
+                  Spacer(),
+                  Text(
+                    widget.wallet.keystore.name,
+                    style: TextStyles.textC999S14,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 6),
+                    child: Icon(
+                      Icons.chevron_right,
+                      color: DefaultColors.color999,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
         ));
   }
 
@@ -88,15 +164,11 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> {
               Text(
                 chain,
                 style: TextStyle(
-                    fontSize: 16,
-                    color: DefaultColors.color333,
-                    fontWeight: FontWeight.w500),
+                    fontSize: 16, color: DefaultColors.color333, fontWeight: FontWeight.w500),
               ),
               Text(
                 address,
-                style: TextStyle(
-                    fontSize: 10,
-                    color: DefaultColors.color333.withOpacity(0.6)),
+                style: TextStyle(fontSize: 10, color: DefaultColors.color333.withOpacity(0.6)),
               ),
             ],
           ),
@@ -135,10 +207,42 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> {
         Column(
           children: [
             _optionItem(
+                imagePath: "res/drawable/ic_wallet_setting_show_mnemonic.png",
                 title: '显示助记词',
                 editCallback: (text) {},
                 subContent: '如果你无法访问这个设备，你的资金将无法找回，除非你备份了!',
-                warning: '未备份')
+                warning: !isBackup ? '未备份' : ""),
+            Divider(
+              height: 0.5,
+            ),
+            _optionItem(
+              imagePath: "res/drawable/ic_wallet_setting_bio_auth.png",
+              title: '生物验证',
+              editCallback: (text) {},
+            ),
+            Divider(
+              height: 0.5,
+            ),
+            _optionItem(
+              imagePath: "res/drawable/ic_wallet_setting_modify_pws.png",
+              title: '修改密码',
+              editCallback: (text) {},
+            ),
+            Divider(
+              height: 0.5,
+            ),
+            _optionItem(
+              imagePath: "res/drawable/ic_wallet_setting_psw_remind.png",
+              title: '密码提示',
+              editHint: wallet?.walletExpandInfoEntity?.pswRemind == null ? "未设置" : "",
+              isCanEdit:true,
+              content: wallet.walletExpandInfoEntity.pswRemind,
+              editCallback: (text) {
+                wallet.walletExpandInfoEntity.pswRemind = text;
+                WalletUtil.setWalletExpandInfo(wallet.getEthAccount().address,wallet.walletExpandInfoEntity);
+                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
+              },
+            ),
           ],
         ));
   }
@@ -148,13 +252,65 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> {
         '',
         InkWell(
           onTap: () {
-            Navigator.of(context).pop();
+            UiUtil.showBottomDialogView(context,
+                imagePath: "res/drawable/ic_wallet_setting_delete_account.png",
+                dialogTitle: "退出身份",
+                dialogSubTitle: "退出身份后将删除所有钱包数据，请务必确保助记词已经备份",
+                imageHeight: 66,
+                showCloseBtn: isBackup,
+                actions: [
+                  if(isBackup)
+                    ClickOvalButton(
+                      "确认退出",
+                      () async {},
+                      width: 300,
+                      height: 44,
+                      btnColor: [HexColor("#FF4B4B")],
+                      fontSize: 16,
+                    ),
+                  if(!isBackup)
+                    ClickOvalButton(
+                      "取消",
+                          () async {
+                        Navigator.pop(context);
+                          },
+                      width: 140,
+                      height: 40,
+                      fontColor: DefaultColors.color999,
+                      btnColor: [HexColor("#F2F2F2")],
+                      fontSize: 16,
+                    ),
+                  if(!isBackup)
+                    Padding(
+                      padding: const EdgeInsets.only(left:12.0),
+                      child: ClickOvalButton(
+                        "前往备份",
+                            () async {
+                              Navigator.pop(context);
+                              var walletStr = FluroConvertUtils.object2string(
+                                  widget.wallet.toJson());
+                              Application.router.navigateTo(
+                                  context,
+                                  Routes.wallet_setting_wallet_backup_notice +
+                                      '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
+                            },
+                        width: 140,
+                        height: 40,
+                        fontColor: DefaultColors.color333,
+                        btnColor: [HexColor("#F7D33D"),HexColor("#E7C01A"),],
+                        fontSize: 16,
+                      ),
+                    ),
+                ]);
           },
-          child: Center(
-            child: Text(
-              '退出',
-              style: TextStyle(
-                color: HexColor('#FF001B'),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 15, bottom: 15),
+            child: Center(
+              child: Text(
+                '退出',
+                style: TextStyle(
+                  color: HexColor('#FF001B'),
+                ),
               ),
             ),
           ),
@@ -168,16 +324,18 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> {
           children: [
             title.isNotEmpty
                 ? Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                    padding: EdgeInsets.only(
+                      top: 20,
+                      bottom: 10,
+                      left: 16,
+                      right: 16,
                     ),
                     child: Row(
                       children: [
                         Text(
                           title,
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                             color: DefaultColors.color999,
                           ),
                         ),
@@ -188,14 +346,11 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> {
             Container(
               width: double.infinity,
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.only(left: 16.0, right: 16),
                 child: child,
               ),
               color: Colors.white,
             ),
-            SizedBox(
-              height: 8,
-            )
           ],
         ),
       ),
@@ -203,6 +358,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> {
   }
 
   _optionItem({
+    String imagePath,
     String title,
     String editHint = '',
     String content,
@@ -223,8 +379,9 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> {
                     content: content,
                     hint: editHint,
                     keyboardType: keyboardType,
+                maxLength: 8,
                   )));
-          if (text.isNotEmpty) {
+          if (text != null && text.isNotEmpty) {
             setState(() {
               editCallback(text);
             });
@@ -242,11 +399,20 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> {
       },
       child: Container(
         color: Colors.white,
+        padding: const EdgeInsets.only(top: 16, bottom: 16),
         child: Column(
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                Image.asset(
+                  imagePath,
+                  width: 20,
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 8,
+                ),
                 Text(
                   title,
                   style: TextStyle(
@@ -254,67 +420,27 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> {
                     fontSize: 14,
                   ),
                 ),
+                Spacer(),
                 if (warning.isNotEmpty)
-                  Expanded(
-                      child: Row(
+                  Row(
                     children: [
-                      Spacer(),
                       Image.asset(
                         'res/drawable/ic_warning_triangle_v2.png',
                         width: 15,
                         height: 15,
                       ),
+                      SizedBox(
+                        width: 6,
+                      ),
                       Align(
                         alignment: Alignment.centerRight,
                         child: Text(
                           warning,
-                          style: TextStyle(
-                            color: HexColor('#E7BB00'),
-                          ),
+                          style: TextStyle(color: HexColor('#E7BB00'), fontSize: 14),
                         ),
                       )
                     ],
-                  )),
-                isAvatar
-                    ? 'path' != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: Container(
-                              width: 36,
-                              height: 36,
-                              child: Image.file(
-                                File(content),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          )
-                        : Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: HexColor('#FFDEDEDE'),
-                            ),
-                            child: Icon(
-                              Icons.add,
-                              color: Colors.white,
-                            ),
-                          )
-                    : content != null
-                        ? Text(
-                            content,
-                            style: TextStyle(
-                              color: HexColor("#999999"),
-                              fontSize: 14,
-                            ),
-                          )
-                        : Text(
-                            editHint,
-                            style: TextStyle(
-                              color: HexColor("#999999"),
-                              fontSize: 14,
-                            ),
-                          ),
+                  ),
                 Padding(
                   padding: const EdgeInsets.only(left: 6),
                   child: Icon(
@@ -324,11 +450,18 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> {
                 ),
               ],
             ),
-            SizedBox(height: 8),
-            Text(
-              subContent,
-              style: TextStyle(color: HexColor("#999999"), fontSize: 12),
-            ),
+            if (subContent.isNotEmpty)
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 27.0),
+                    child: Text(
+                      subContent,
+                      style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
       ),
