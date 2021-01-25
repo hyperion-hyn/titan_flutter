@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nested/nested.dart';
+import 'package:titan/src/app.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -42,10 +43,26 @@ class _AppLockManager extends StatefulWidget {
 
 class _AppLockManagerState extends BaseState<_AppLockManager> {
   AppLockConfig _appLockConfig = AppLockConfig.fromDefault();
+  Timer _awayTimer;
+  int _currentAwayTime = 0;
 
   @override
   void onCreated() async {
     BlocProvider.of<AppLockBloc>(context).add(LoadAppLockConfigEvent());
+  }
+
+  @override
+  void dispose() {
+    _cancelTimer();
+    super.dispose();
+  }
+
+  _cancelTimer() {
+    if (_awayTimer != null) {
+      if (_awayTimer.isActive) {
+        _awayTimer.cancel();
+      }
+    }
   }
 
   @override
@@ -56,9 +73,12 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
           var configCache = await _loadAppLockConfig();
           if (configCache != null) {
             _appLockConfig = configCache;
+
+            ///if enabled, default on when app opens
+            _appLockConfig.walletLock.isOn = true;
           }
         } else if (state is SetWalletLockState) {
-          ///set wallet on/off same as enabled
+          ///set on/off same as enabled
           _appLockConfig?.walletLock?.isEnabled = state.isEnabled;
           _appLockConfig?.walletLock?.isOn = state.isEnabled;
 
@@ -69,6 +89,22 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
         } else if (state is SetWalletLockBioAuthState) {
           _appLockConfig?.walletLock?.isBioAuthEnabled = state.isEnabled;
           await _saveAppLockConfig();
+        } else if (state is SetWalletLockCountDownState) {
+          if (state.isStop) {
+            _currentAwayTime = 0;
+            _cancelTimer();
+          } else {
+            ///only count-down if wallet-lock is enable but not on
+            if (AppLockInheritedModel.of(Keys.rootKey.currentContext).isWalletNotActive)
+              _awayTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+                _currentAwayTime++;
+                //print(' WalletLock awayTime $_currentAwayTime');
+                if (_currentAwayTime > (_appLockConfig?.walletLock?.awayTime ?? 0)) {
+                  _appLockConfig?.walletLock?.isOn = true;
+                  _cancelTimer();
+                }
+              });
+          }
         } else if (state is LockWalletState) {
           _appLockConfig?.walletLock?.isOn = true;
         } else if (state is UnlockWalletState) {
@@ -116,6 +152,15 @@ class AppLockInheritedModel extends InheritedModel<AppLockAspect> {
   bool get isWalletLockActive {
     return (appLockConfig?.walletLock?.isEnabled ?? false) &&
         (appLockConfig?.walletLock?.isOn ?? false);
+  }
+
+  bool get isWalletNotActive {
+    return (appLockConfig?.walletLock?.isEnabled ?? false) &&
+        !(appLockConfig?.walletLock?.isOn ?? false);
+  }
+
+  bool get isWalletLockOn {
+    return appLockConfig?.walletLock?.isOn ?? false;
   }
 
   bool get isWalletLockEnable {

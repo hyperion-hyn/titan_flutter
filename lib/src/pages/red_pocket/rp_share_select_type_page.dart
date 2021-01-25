@@ -78,51 +78,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
             ),
           ),
         ),
-        ClickOvalButton(
-          S.of(context).next_step,
-          () async{
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => RpShareEditInfoPage(
-                  shareTypeEntity: _selectedEntity,
-                ),
-              ),
-            );
-            
-            /*
-            return;
-
-            if (_selectedEntity.index == 0) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => RpShareEditInfoPage(
-                    shareTypeEntity: _selectedEntity,
-                  ),
-                ),
-              );
-            }
-            else {
-              var latlng = await getLatlng();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => RpShareEditInfoPage(
-                    shareTypeEntity: _selectedEntity,
-                    userPosition: latlng,
-                  ),
-                ),
-              );
-            }
-            */
-          },
-          btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
-          fontSize: 16,
-          width: 260,
-          height: 42,
-        ),
+        _confirmButtonWidget(),
         SizedBox(
           height: 40,
         ),
@@ -130,6 +86,26 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
     );
   }
 
+  Widget _confirmButtonWidget() {
+    return ClickOvalButton(
+      S.of(context).next_step,
+          () async{
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RpShareEditInfoPage(
+              shareTypeEntity: _selectedEntity,
+            ),
+          ),
+        );
+      },
+      btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
+      fontSize: 16,
+      width: 260,
+      height: 42,
+    );
+  }
 
   Future<LatLng> getLatlng() async {
     var latlng =

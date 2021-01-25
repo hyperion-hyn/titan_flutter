@@ -31,6 +31,7 @@ import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_safe_lock.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -456,18 +457,33 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        Image.asset(
-                          "res/drawable/ic_wallet_account_list_send_v2.png",
-                          width: 26,
-                          height: 26,
+                    InkWell(
+                      onTap: (){
+                        var coinVo =
+                        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
+                            .getCoinVoBySymbol(SupportedTokens.ETHEREUM.symbol);
+
+                        Application.router.navigateTo(
+                            context,
+                            Routes.wallet_account_send_transaction +
+                                '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
+
+                      },
+                      child: Container(
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              "res/drawable/ic_wallet_account_list_send_v2.png",
+                              width: 26,
+                              height: 26,
+                            ),
+                            Text(
+                              "发送",
+                              style: TextStyles.textC333S14bold,
+                            ),
+                          ],
                         ),
-                        Text(
-                          "发送",
-                          style: TextStyles.textC333S14bold,
-                        ),
-                      ],
+                      ),
                     ),
                     SizedBox(
                       width: 51,
