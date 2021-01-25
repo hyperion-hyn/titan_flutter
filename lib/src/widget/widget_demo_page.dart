@@ -12,10 +12,10 @@ import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/fl_pie_chart.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
-import 'package:titan/src/pages/wallet/wallet_new_page/wallet_safe_lock.dart';
+import 'package:titan/src/pages/wallet/wallet_new_page/wallet_lock.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/round_border_textfield.dart';
+import 'package:titan/src/widget/round_border_textField.dart';
 
 import 'atlas_map_widget.dart';
 import 'clip_tab_bar.dart';
@@ -175,7 +175,7 @@ class _WidgetDemoPageState extends State<WidgetDemoPage> with SingleTickerProvid
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                WalletSafeLock(),
+                WalletLock(),
               ],
             )));
   }

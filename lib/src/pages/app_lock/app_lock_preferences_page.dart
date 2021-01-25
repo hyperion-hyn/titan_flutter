@@ -7,9 +7,10 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/app_lock/app_lock_component.dart';
-import 'package:titan/src/pages/app_lock/app_lock_wallet_not_backup_dialog.dart';
+import 'package:titan/src/pages/wallet/wallet_new_page/wallet_lock.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/utils/utile_ui.dart';
+
+import 'app_lock_set_pwd_page.dart';
 
 class AppLockPreferencesPage extends StatefulWidget {
   AppLockPreferencesPage();
@@ -79,19 +80,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                     inactiveColor: HexColor('#DEDEDE'),
                     value: AppLockInheritedModel.of(context).isWalletLockEnable,
                     onToggle: (value) {
-                      BlocProvider.of<AppLockBloc>(context).add(
-                        SetWalletLockEvent(value),
-                      );
-
-                      showModalBottomSheet(
-                          context: context,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          enableDrag: false,
-                          builder: (BuildContext context) {
-                            return AppLockWalletNotBackUpDialog();
-                          });
+                      _setUpAppLock(value);
                     },
                   ),
                 ],
@@ -127,6 +116,77 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
         ),
         padding: EdgeInsets.symmetric(vertical: 8.0),
         childPadding: EdgeInsets.symmetric(vertical: 0.0));
+  }
+
+  _setUpAppLock(bool value) async {
+    if (value) {
+      _showSetPwdDialog(() {
+        BlocProvider.of<AppLockBloc>(context).add(
+          SetWalletLockEvent(value),
+        );
+      });
+
+      // WalletUtil.getNotBackUpWalletList().then((value) {
+      //   print('xxxx ${value}');
+      //   if (value.isNotEmpty) {
+      //     showModalBottomSheet(
+      //         context: context,
+      //         shape: RoundedRectangleBorder(
+      //           borderRadius: BorderRadius.circular(20.0),
+      //         ),
+      //         enableDrag: false,
+      //         builder: (BuildContext context) {
+      //           return AppLockWalletNotBackUpDialog(value);
+      //         });
+      //   } else {}
+      // });
+
+    } else {
+      _showWalletLockDialog(() {
+        BlocProvider.of<AppLockBloc>(context).add(
+          SetWalletLockEvent(value),
+        );
+      });
+    }
+  }
+
+  _showWalletLockDialog(Function onUnlock) async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return WalletLock(
+            onUnlock: () {
+              Navigator.of(context).pop();
+              onUnlock.call();
+            },
+            isDialog: true,
+          );
+        });
+  }
+
+  _showSetPwdDialog(Function onPwdSet) {
+    var height = MediaQuery.of(context).size.height - 80;
+    showDialog(
+      context: context,
+      builder: (_) => Material(
+        type: MaterialType.transparency,
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            height: height,
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+              child: AppLockSetPwdPage(
+                onPwdSet: onPwdSet,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   _awayTimePreference() {

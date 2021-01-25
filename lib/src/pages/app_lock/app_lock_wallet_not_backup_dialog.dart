@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class AppLockWalletNotBackUpDialog extends StatefulWidget {
-  AppLockWalletNotBackUpDialog();
+  final List<Wallet> walletList;
+
+  AppLockWalletNotBackUpDialog(this.walletList);
 
   @override
   State<StatefulWidget> createState() {
@@ -84,7 +87,7 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
   }
 
   _walletList() {
-    List<Widget> walletList = List.generate(20, (index) {
+    List<Widget> walletList = List.generate(widget.walletList.length, (index) {
       return Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 36.0,
@@ -94,14 +97,16 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
           children: [
             Expanded(
                 child: Text(
-              'Wallet sdkjfhashdg',
+              '${widget.walletList[index].keystore.name} ${widget.walletList[index].getEthAccount().address}',
               style: TextStyle(
                 color: DefaultColors.color999,
               ),
             )),
             ClickOvalButton(
               '去备份',
-              () {},
+              () {
+                Navigator.of(context).pop();
+              },
               width: 50,
               height: 22,
               fontSize: 10,

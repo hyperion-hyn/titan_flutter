@@ -24,7 +24,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:titan/src/widget/round_border_textfield.dart';
+import 'package:titan/src/widget/round_border_textField.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 
 import 'package:web3dart/credentials.dart';

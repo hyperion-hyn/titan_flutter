@@ -83,6 +83,10 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
           _appLockConfig?.walletLock?.isOn = state.isEnabled;
 
           await _saveAppLockConfig();
+        } else if (state is SetAppLockPwdState) {
+          _appLockConfig?.walletLock?.pwd = state.pwd;
+          _appLockConfig?.walletLock?.pwdHint = state.hint;
+          await _saveAppLockConfig();
         } else if (state is SetWalletLockAwayTimeState) {
           _appLockConfig?.walletLock?.awayTime = state.awayTime;
           await _saveAppLockConfig();
@@ -173,6 +177,10 @@ class AppLockInheritedModel extends InheritedModel<AppLockAspect> {
 
   bool get isWalletLockBioAuthEnabled {
     return appLockConfig?.walletLock?.isBioAuthEnabled ?? false;
+  }
+
+  String get walletLockPwdHint {
+    return appLockConfig?.walletLock?.pwdHint;
   }
 
   @override

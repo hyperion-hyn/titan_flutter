@@ -11,7 +11,9 @@ class AppLockConfig extends Object {
     this.walletLock,
   );
 
-  factory AppLockConfig.fromDefault() => AppLockConfig(WalletLock(false, false, null, 0, false));
+  factory AppLockConfig.fromDefault() => AppLockConfig(
+        WalletLock(false, false, null, null, 0, false),
+      );
 
   factory AppLockConfig.fromJson(Map<String, dynamic> srcJson) => _$AppLockConfigFromJson(srcJson);
 
@@ -28,6 +30,9 @@ class WalletLock extends Object {
   @JsonKey(name: 'pwd')
   String pwd;
 
+  @JsonKey(name: 'pwdHint')
+  String pwdHint;
+
   @JsonKey(name: 'awayTime')
   int awayTime;
 
@@ -38,6 +43,7 @@ class WalletLock extends Object {
     this.isEnabled,
     this.isOn,
     this.pwd,
+    this.pwdHint,
     this.awayTime,
     this.isBioAuthEnabled,
   );
