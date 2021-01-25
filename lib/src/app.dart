@@ -56,24 +56,25 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         //print('-----[App] inactive');
         break;
       case AppLifecycleState.paused:
-        print('-----[App] paused');
-        _setUpAppLock();
+        //print('-----[App] paused');
+        _setAppLockCountDown(false);
         break;
       case AppLifecycleState.detached:
         //print('-----[App] detached');
         break;
       case AppLifecycleState.resumed:
         //print('-----[App] resumed');
+        _setAppLockCountDown(true);
         break;
     }
   }
 
-  _setUpAppLock() {
-    if (AppLockInheritedModel.of(context).isWalletLockEnable) {
-      BlocProvider.of<AppLockBloc>(
-        Keys.rootKey.currentContext,
-      ).add(LockWalletEvent());
-    }
+  _setAppLockCountDown(bool isStop) {
+    BlocProvider.of<AppLockBloc>(
+      Keys.rootKey.currentContext,
+    ).add(
+      SetAppLockCountDownEvent(isStop),
+    );
   }
 
   @override
