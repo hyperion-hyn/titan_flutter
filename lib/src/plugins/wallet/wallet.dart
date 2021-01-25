@@ -61,6 +61,16 @@ class Wallet {
     return null;
   }
 
+  String getHeadImg(){
+    if((walletExpandInfoEntity?.localHeadImg ?? "").isNotEmpty){
+      return walletExpandInfoEntity.localHeadImg;
+    }
+    if((walletExpandInfoEntity?.netHeadImg ?? "").isNotEmpty){
+      return walletExpandInfoEntity.netHeadImg;
+    }
+    return null;
+  }
+
   Account getBitcoinAccount() {
     for (var account in accounts) {
       if (account.coinType == CoinType.BITCOIN) {

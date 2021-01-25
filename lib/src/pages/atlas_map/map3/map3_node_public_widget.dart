@@ -21,6 +21,7 @@ import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -66,6 +67,13 @@ Widget iconMap3Widget(Map3InfoEntity infoEntity, {bool isCircle = false}) {
     return iconEmptyDefault();
   }
   return iconWidget(infoEntity.pic, infoEntity.name, infoEntity.address, isCircle: isCircle);
+}
+
+Widget iconWalletWidget(Wallet walletEntity, {bool isCircle = true}) {
+  if (walletEntity == null) {
+    return iconEmptyDefault();
+  }
+  return iconWidget(walletEntity.getHeadImg(), walletEntity.keystore.name, walletEntity.getEthAccount().address, isCircle: isCircle);
 }
 
 Widget iconWidget(String picture, String name, String address, {bool isCircle = false}) {
