@@ -14,6 +14,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/wallet/wallet_gas_setting_page.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
@@ -193,47 +194,60 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
             paddingH: 16,
             paddingV: 10,
             marginV: 0,
-            child: Row(
-              children: [
-                Text(
-                  S.of(context).transfer_gas_fee,
-                  style: TextStyle(
-                    color: HexColor('#333333'),
-                    fontSize: 14,
+            child: InkWell(
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WalletGasSettingPage(
+                      FluroConvertUtils.object2string(widget.coinVo.toJson()),
+                      widget.toAddress,
+                    ),
                   ),
-                ),
-                Spacer(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '0.006 HYN',
-                      style: TextStyle(
-                        color: HexColor('#333333'),
-                        fontSize: 12,
+                );
+              },
+              child: Row(
+                children: [
+                  Text(
+                    S.of(context).transfer_gas_fee,
+                    style: TextStyle(
+                      color: HexColor('#333333'),
+                      fontSize: 14,
+                    ),
+                  ),
+                  Spacer(),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '0.006 HYN',
+                        style: TextStyle(
+                          color: HexColor('#333333'),
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 2,
-                    ),
-                    Text(
-                      '¥ 0.03',
-                      style: TextStyle(
-                        color: HexColor('#999999'),
-                        fontSize: 10,
+                      SizedBox(
+                        height: 2,
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  width: 12,
-                ),
-                Image.asset(
-                  'res/drawable/wallet_gas_right.png',
-                  width: 8,
-                  height: 8,
-                ),
-              ],
+                      Text(
+                        '¥ 0.03',
+                        style: TextStyle(
+                          color: HexColor('#999999'),
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    width: 12,
+                  ),
+                  Image.asset(
+                    'res/drawable/wallet_gas_right.png',
+                    width: 8,
+                    height: 8,
+                  ),
+                ],
+              ),
             ),
           ),
           SizedBox(
@@ -466,6 +480,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
     );
   }
 
+  double _amountFontSize = 30;
+
   Widget _amountEditWidget() {
     var activatedQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
@@ -513,12 +529,27 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
                 }
                 return null;
               },
-              onChanged: (String inputValue) {},
+              onChanged: (String inputValue) {
+                //print("[$runtimeType] inputValue:$inputValue");
+
+                double fontSize = 30;
+                if ((inputValue?.length ?? 0) > 8) {
+                  fontSize = 24;
+                } else {
+                  fontSize = 30;
+                }
+
+                if (fontSize != _amountFontSize) {
+                  setState(() {
+                    _amountFontSize = fontSize;
+                  });
+                }
+              },
               onFieldSubmitted: (String inputText) {
                 FocusScope.of(context).requestFocus(FocusNode());
               },
               style: TextStyle(
-                fontSize: 30,
+                fontSize: _amountFontSize,
                 fontWeight: FontWeight.w500,
                 color: HexColor('#333333'),
               ),
@@ -677,14 +708,13 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
   }
 
   void _confirmAction() {
-
     var toValidate = _toKey.currentState.validate();
     var amountValidate = _amountKey.currentState.validate();
     var highLevel = true;
     if (_isHighLevel) {
-      var nonceValidate= _nonceKey.currentState.validate();
+      var nonceValidate = _nonceKey.currentState.validate();
       highLevel = nonceValidate;
-    }  
+    }
     if (toValidate && amountValidate && highLevel) {
       var amountTrim = _amountController.text.trim();
       var count = double.parse(amountTrim);
