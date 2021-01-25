@@ -28,29 +28,34 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import '../../global.dart';
 
-class WalletSendPage extends StatefulWidget {
+class WalletSendPageV2 extends StatefulWidget {
   final CoinViewVo coinVo;
   final String toAddress;
 
-  WalletSendPage(String coinVo, [String toAddress])
+  WalletSendPageV2(String coinVo, [String toAddress])
       : this.coinVo = CoinViewVo.fromJson(FluroConvertUtils.string2map(coinVo)),
         this.toAddress = toAddress;
 
   @override
   State<StatefulWidget> createState() {
-    return _WalletSendState();
+    return _WalletSendStateV2();
   }
 }
 
-class _WalletSendState extends BaseState<WalletSendPage> {
+class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _toController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _nonceController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
 
   final _toKey = GlobalKey<FormState>();
   final _amountKey = GlobalKey<FormState>();
+  final _nonceKey = GlobalKey<FormState>();
+  final _dateKey = GlobalKey<FormState>();
 
   double _notionalValue = 0;
+  bool _isHighLevel = false;
 
   @override
   void initState() {
@@ -100,7 +105,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
         Expanded(
           child: SingleChildScrollView(
             controller: _scrollController,
-            child: _editWidget(),
+            child: _contentWidget(),
           ),
         ),
         _confirmButtonWidget(),
@@ -108,7 +113,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
     );
   }
 
-  Widget _editWidget() {
+  Widget _contentWidget() {
     var activatedQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var quotePrice = activatedQuoteSign?.price ?? 0;
@@ -131,7 +136,11 @@ class _WalletSendState extends BaseState<WalletSendPage> {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 18,),
+      padding: const EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 18,
+      ),
       child: Column(
         children: <Widget>[
           Row(
@@ -144,195 +153,223 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                   fontWeight: FontWeight.normal,
                 ),
               ),
-              Spacer(),
-              InkWell(
-                onTap: _onPasteAction,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Image.asset(
-                    'res/drawable/ic_copy.png',
-                    height: 18,
-                    width: 18,
-                    color: HexColor('#999999'),
-                  ),
-                ),
-              ),
-
             ],
           ),
           _clipRectWidget(
             child: _toEditWidget(),
-          ),
-       
-          Row(
-            children: <Widget>[
-              Text(
-                S.of(context).send_count_label(widget.coinVo.symbol),
-                style:
-                    TextStyle(color: Color(0xFF333333), fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-              Text(
-                '(' +
-                    S.of(context).can_use +
-                    ' ${FormatUtil.coinBalanceHumanReadFormat(widget.coinVo)})',
-                style: TextStyle(fontSize: 12, color: Colors.black38),
-              ),
-              Spacer(),
-              InkWell(
-                onTap: () {
-                  _amountController.text = FormatUtil.coinBalanceHumanRead(widget.coinVo);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-                  child: Text(
-                    S.of(context).all,
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        textBaseline: TextBaseline.ideographic),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-            child: TextFormField(
-              validator: (value) {
-                value = value.trim();
-                if (value == "0") {
-                  return S.of(context).input_corrent_count_hint;
-                }
-                if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
-                  return S.of(context).input_corrent_count_hint;
-                }
-                if (Decimal.parse(value) >
-                    Decimal.parse(FormatUtil.coinBalanceHumanRead(widget.coinVo))) {
-                  return S.of(context).input_count_over_balance;
-                }
-                if (value.contains(".") && value.split(".")[1].length > widget.coinVo.decimals) {
-                  return "超过${widget.coinVo.decimals}位最大小数位";
-                }
-                return null;
-              },
-              controller: _amountController,
-              decoration: InputDecoration(
-                hintText: S.of(context).input_transfer_num,
-                hintStyle: TextStyle(
-                  color: HexColor('#FF999999'),
-                  fontSize: 13,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                    color: HexColor('#FFD0D0D0'),
-                    width: 0.5,
-                  ),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                    color: HexColor('#FFD0D0D0'),
-                    width: 0.5,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                    color: HexColor('#FFD0D0D0'),
-                    width: 0.5,
-                  ),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                    color: Colors.red,
-                    width: 0.5,
-                  ),
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              ),
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-//                        onChanged: (value) {
-//                          setState(() {
-//                            _notionalValue = double.parse(value) * quotePrice;
-//                          });
-//                        },
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                  padding: EdgeInsets.only(left: 8, top: 8),
-                  child: Text(
-                    "≈ ${quoteSign ?? ""}${FormatUtil.formatPrice(_notionalValue)}",
-                    style: TextStyle(
-                      color: Color(0xFF9B9B9B),
-                    ),
-                  )),
-            ],
+            paddingV: 4,
           ),
           SizedBox(
             height: 12,
           ),
+          Row(
+            children: <Widget>[
+              Text(
+                '金额',
+                style: TextStyle(
+                  color: Color(0xFF333333),
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              Spacer(),
+              Text(
+                '可用 ' +
+                    FormatUtil.coinBalanceHumanReadFormat(widget.coinVo) +
+                    ' ${widget.coinVo.symbol.toUpperCase()}',
+                style: TextStyle(
+                  color: Color(0xFFaaaaaa),
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+          _clipRectWidget(
+            child: _amountEditWidget(),
+            paddingV: 12,
+          ),
+          _clipRectWidget(
+            paddingH: 16,
+            paddingV: 10,
+            marginV: 0,
+            child: Row(
+              children: [
+                Text(
+                  S.of(context).transfer_gas_fee,
+                  style: TextStyle(
+                    color: HexColor('#333333'),
+                    fontSize: 14,
+                  ),
+                ),
+                Spacer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '0.006 HYN',
+                      style: TextStyle(
+                        color: HexColor('#333333'),
+                        fontSize: 12,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 2,
+                    ),
+                    Text(
+                      '¥ 0.03',
+                      style: TextStyle(
+                        color: HexColor('#999999'),
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Image.asset(
+                  'res/drawable/wallet_gas_right.png',
+                  width: 8,
+                  height: 8,
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          InkWell(
+            onTap: () {
+              if (mounted) {
+                setState(() {
+                  _isHighLevel = !_isHighLevel;
+                });
+              }
+            },
+            child: Row(
+              children: <Widget>[
+                Text(
+                  '高级模式',
+                  style: TextStyle(
+                    color: Color(0xFF999999),
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Image.asset(
+                    'res/drawable/wallet_gas_${!_isHighLevel ? 'down' : 'up'}.png',
+                    height: 8,
+                    width: 12,
+                    color: HexColor('#999999'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 12,
+          ),
+          _isHighLevel ? _highLevelWidget() : Container(),
         ],
       ),
     );
   }
 
-  Widget _clipRectWidget({
-    Widget child,
-    String desc = '',
-    double vertical = 12,
-  }) {
+  Widget _highLevelWidget() {
     return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(
-            // horizontal: 16,
-            vertical: vertical,
-          ),
-          margin:  EdgeInsets.symmetric(
-            // horizontal: 16,
-            vertical: vertical,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(
-              Radius.circular(12),
-            ),
-          ),
-          child: child,
-        ),
+      children: <Widget>[
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  top: 8,
-                ),
-                child: Text(
-                  desc,
-                  maxLines: 3,
-                  textAlign: TextAlign.end,
-                  style: TextStyle(
-                    color: HexColor('#999999'),
-                    fontSize: 12,
-                  ),
-                ),
+          children: <Widget>[
+            Text(
+              '随机数（Nonce）',
+              style: TextStyle(
+                color: Color(0xFF999999),
+                fontSize: 12,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Image.asset(
+                'res/drawable/wallet_gas_info.png',
+                height: 12,
+                width: 12,
+                color: HexColor('#999999'),
+              ),
+            ),
+            Spacer(),
+            Text(
+              '当前确认数 1',
+              style: TextStyle(
+                color: Color(0xFF999999),
+                fontSize: 12,
+                fontWeight: FontWeight.normal,
               ),
             ),
           ],
-        )
+        ),
+        _clipRectWidget(
+          child: _nonceEditWidget(),
+          paddingV: 2,
+        ),
+        SizedBox(
+          height: 8,
+        ),
+        Row(
+          children: <Widget>[
+            Text(
+              'Date',
+              style: TextStyle(
+                color: Color(0xFF999999),
+                fontSize: 12,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Image.asset(
+                'res/drawable/wallet_gas_info.png',
+                height: 12,
+                width: 12,
+                color: HexColor('#999999'),
+              ),
+            ),
+          ],
+        ),
+        _clipRectWidget(
+          child: _dateEditWidget(),
+          paddingV: 4,
+        ),
       ],
     );
   }
 
+  Widget _clipRectWidget({
+    Widget child,
+    double paddingV = 12,
+    double paddingH = 0,
+    double marginV = 12,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: paddingH,
+        vertical: paddingV,
+      ),
+      margin: EdgeInsets.symmetric(
+        vertical: marginV,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(
+          Radius.circular(6),
+        ),
+      ),
+      child: child,
+    );
+  }
 
   Widget _toEditWidget() {
     var activatedQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
@@ -359,7 +396,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
     return Form(
       key: _toKey,
       child: Container(
-        color: Colors.redAccent,
+        // color: Colors.redAccent,
         child: TextFormField(
           controller: _toController,
           textAlign: TextAlign.start,
@@ -370,24 +407,20 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                 : value;
             if (address.isEmpty) {
               return S.of(context).receiver_address_not_empty_hint;
-            } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS &&
-                !value.startsWith('hyn1')) {
+            } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS && !value.startsWith('hyn1')) {
               return addressErrorHint;
             } else if (!_basicAddressReg.hasMatch(address)) {
               return addressErrorHint;
-            } else if (((activatedWallet?.wallet?.getAtlasAccount()?.address ?? null) !=
-                null) &&
+            } else if (((activatedWallet?.wallet?.getAtlasAccount()?.address ?? null) != null) &&
                 ((WalletUtil.ethAddressToBech32Address(
-                    activatedWallet.wallet.getAtlasAccount().address) ==
-                    value) ||
+                            activatedWallet.wallet.getAtlasAccount().address) ==
+                        value) ||
                     (activatedWallet.wallet.getAtlasAccount().address == value))) {
               return S.of(context).cant_transfer_myself;
             }
             return null;
           },
-          onChanged: (String inputValue) {
-
-          },
+          onChanged: (String inputValue) {},
           onFieldSubmitted: (String inputText) {
             FocusScope.of(context).requestFocus(FocusNode());
           },
@@ -418,7 +451,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                 });
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Icon(
                   ExtendsIconFont.qrcode_scan,
                   size: 18,
@@ -427,7 +460,197 @@ class _WalletSendState extends BaseState<WalletSendPage> {
               ),
             ),
           ),
-          keyboardType: TextInputType.text ,
+          keyboardType: TextInputType.text,
+        ),
+      ),
+    );
+  }
+
+  Widget _amountEditWidget() {
+    var activatedQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
+    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+    var quotePrice = activatedQuoteSign?.price ?? 0;
+    var quoteSign = activatedQuoteSign?.legal?.sign;
+
+    var addressHint = "";
+    RegExp _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
+    String addressErrorHint = "";
+    if (widget.coinVo.coinType == CoinType.BITCOIN) {
+      _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
+      addressHint = S.of(context).example + ': bc1q7fhqwluhcrs2ek...';
+      addressErrorHint = S.of(context).legal_address_starting_1_or_bc_or_3;
+    } else {
+      _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
+      var addressExample = widget.coinVo.coinType == CoinType.HYN_ATLAS
+          ? 'hyn1ntjklkvx9jlkrz9'
+          : '0x81e7A0529AC1726e';
+      addressHint = S.of(context).example + ': $addressExample...';
+      addressErrorHint = S.of(context).input_valid_address;
+    }
+
+    return Form(
+      key: _amountKey,
+      child: Column(
+        children: [
+          Container(
+            child: TextFormField(
+              controller: _amountController,
+              textAlign: TextAlign.start,
+
+              validator: (value) {
+                value = value.trim();
+                if (value == "0") {
+                  return S.of(context).input_corrent_count_hint;
+                }
+                if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
+                  return S.of(context).input_corrent_count_hint;
+                }
+                if (Decimal.parse(value) >
+                    Decimal.parse(FormatUtil.coinBalanceHumanRead(widget.coinVo))) {
+                  return S.of(context).input_count_over_balance;
+                }
+                if (value.contains(".") && value.split(".")[1].length > widget.coinVo.decimals) {
+                  return "超过${widget.coinVo.decimals}位最大小数位";
+                }
+                return null;
+              },
+              onChanged: (String inputValue) {},
+              onFieldSubmitted: (String inputText) {
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.w500,
+                color: HexColor('#333333'),
+              ),
+              cursorColor: Theme.of(context).primaryColor,
+              //光标圆角
+              cursorRadius: Radius.circular(5),
+              //光标宽度
+              cursorWidth: 1.8,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                border: InputBorder.none,
+                hintText: '0',
+                errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
+                hintStyle: TextStyle(
+                  fontSize: 30,
+                  color: HexColor('#C1C1C1'),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.only(
+                    left: 16,
+                    bottom: 8,
+                  ),
+                  child: Text(
+                    "${quoteSign ?? ""} ${FormatUtil.formatPrice(_notionalValue)}",
+                    style: TextStyle(
+                      color: Color(0xFFc1c1c1),
+                      fontWeight: FontWeight.normal,
+                      fontSize: 12,
+                    ),
+                  )),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _nonceEditWidget() {
+    return Form(
+      key: _nonceKey,
+      child: Container(
+        child: TextFormField(
+          controller: _nonceController,
+          textAlign: TextAlign.start,
+          validator: (value) {
+            value = value.trim();
+            if (value == "0") {
+              return S.of(context).input_corrent_count_hint;
+            }
+            return null;
+          },
+          onChanged: (String inputValue) {},
+          onFieldSubmitted: (String inputText) {
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+            color: HexColor('#333333'),
+          ),
+          cursorColor: Theme.of(context).primaryColor,
+          //光标圆角
+          cursorRadius: Radius.circular(5),
+          //光标宽度
+          cursorWidth: 1.8,
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+            border: InputBorder.none,
+            hintText: '0',
+            errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
+            hintStyle: TextStyle(
+              fontSize: 16,
+              color: HexColor('#999999'),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          keyboardType: TextInputType.numberWithOptions(decimal: true),
+        ),
+      ),
+    );
+  }
+
+  Widget _dateEditWidget() {
+    return Form(
+      key: _dateKey,
+      child: Container(
+        child: TextFormField(
+          controller: _dateController,
+          textAlign: TextAlign.start,
+          maxLines: 3,
+          validator: (value) {
+            value = value.trim();
+            if (value == "0") {
+              return S.of(context).input_corrent_count_hint;
+            }
+            return null;
+          },
+          onChanged: (String inputValue) {},
+          onFieldSubmitted: (String inputText) {
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.normal,
+            color: HexColor('#333333'),
+          ),
+          cursorColor: Theme.of(context).primaryColor,
+          //光标圆角
+          cursorRadius: Radius.circular(5),
+          //光标宽度
+          cursorWidth: 1.8,
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+            border: InputBorder.none,
+            hintText: '十六进制字符',
+            errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
+            hintStyle: TextStyle(
+              fontSize: 16,
+              color: HexColor('#C1C1C1'),
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+          keyboardType: TextInputType.text,
         ),
       ),
     );
@@ -437,6 +660,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
     return Padding(
       padding: const EdgeInsets.only(
         bottom: 36,
+        top: 20,
       ),
       child: ClickOvalButton(
         S.of(context).next_step,
@@ -454,7 +678,15 @@ class _WalletSendState extends BaseState<WalletSendPage> {
   }
 
   void _confirmAction() {
-    if (_toKey.currentState.validate()) {
+
+    var toValidate = _toKey.currentState.validate();
+    var amountValidate = _amountKey.currentState.validate();
+    var highLevel = true;
+    if (_isHighLevel) {
+      var nonceValidate= _nonceKey.currentState.validate();
+      highLevel = nonceValidate;
+    }  
+    if (toValidate && amountValidate && highLevel) {
       var amountTrim = _amountController.text.trim();
       var count = double.parse(amountTrim);
       if (count <= 0) {
@@ -537,6 +769,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
     }
   }
 
+  /*
   Future _onPasteAction() async {
     var text = await Clipboard.getData(Clipboard.kTextPlain);
     if (text == null) {
@@ -544,4 +777,6 @@ class _WalletSendState extends BaseState<WalletSendPage> {
     }
     _toController.text = text.text;
   }
+  */
+
 }

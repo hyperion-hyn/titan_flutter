@@ -123,7 +123,7 @@ var walletAccountDetailHandler = Handler(handlerFunc: (context, params) {
 var walletAccountSendTransactionHandler =
     Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return WalletSendPage(params['coinVo']?.first, params['toAddress']?.first);
+  return WalletSendPageV2(params['coinVo']?.first, params['toAddress']?.first);
 });
 
 var transferConfirmHandler = Handler(handlerFunc: (context, params) {
