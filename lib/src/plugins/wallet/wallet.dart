@@ -41,7 +41,7 @@ class Wallet {
   KeyStore keystore;
   WalletExpandInfoEntity walletExpandInfoEntity;
 
-  Wallet({this.keystore, this.accounts});
+  Wallet({this.keystore, this.accounts, this.walletExpandInfoEntity});
 
   Account getEthAccount() {
     for (var account in accounts) {

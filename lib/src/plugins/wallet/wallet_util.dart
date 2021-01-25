@@ -130,6 +130,9 @@ class WalletUtil {
 //      logger.i(map);
       var wallet = _parseWalletJson(map);
       if (wallet != null) {
+        wallet.walletExpandInfoEntity =
+            await WalletUtil.getWalletExpandInfo(wallet.getEthAccount().address) ??
+                WalletExpandInfoEntity.defaultEntity();
         wallets.add(wallet);
       }
     }

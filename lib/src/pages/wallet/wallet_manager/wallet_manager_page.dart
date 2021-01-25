@@ -525,6 +525,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                 onTap: () {
                   var walletStr = FluroConvertUtils.object2string(wallet.toJson());
                   var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
+                  print("!!!!2222 ${wallet.walletExpandInfoEntity.toJson()}");
 
                   Application.router.navigateTo(
                       context,

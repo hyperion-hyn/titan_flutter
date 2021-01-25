@@ -77,12 +77,23 @@ Widget iconWalletWidget(Wallet walletEntity, {bool isCircle = true}) {
 }
 
 Widget iconWidget(String picture, String name, String address, {bool isCircle = false}) {
-  if (picture?.isNotEmpty ?? false) {
+  if ((picture?.isNotEmpty ?? false) && picture.contains("http")) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(4.0),
+      borderRadius: BorderRadius.circular(isCircle ? 21 : 4.0),
       child: FadeInImage.assetNetwork(
         image: picture,
         placeholder: 'res/drawable/img_placeholder.jpg',
+        width: 42,
+        height: 42,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  if ((picture?.isNotEmpty ?? false)) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(isCircle ? 21 : 4.0),
+      child: Image.asset(picture,
         width: 42,
         height: 42,
         fit: BoxFit.cover,
