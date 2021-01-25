@@ -79,6 +79,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           _activatedWalletVo.wallet.walletExpandInfoEntity =
               await WalletUtil.getWalletExpandInfo(event.wallet.getEthAccount().address) ??
                   WalletExpandInfoEntity.defaultEntity();
+          print("!!!!1111 ${_activatedWalletVo.wallet.walletExpandInfoEntity.toJson()}");
         }
 
         if (event.onlyActive != true) {
