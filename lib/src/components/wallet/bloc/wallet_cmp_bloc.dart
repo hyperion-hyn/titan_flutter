@@ -11,6 +11,7 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import '../coin_market_api.dart';
 import 'package:titan/src/config/consts.dart';
@@ -75,7 +76,9 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         // 还原余额、扩展信息
         if (_activatedWalletVo != null) {
           await _recoverBalanceFromDisk(_activatedWalletVo);
-          _activatedWalletVo.wallet.walletExpandInfoEntity = await WalletUtil.getWalletExpandInfo(event.wallet.getEthAccount().address);
+          _activatedWalletVo.wallet.walletExpandInfoEntity =
+              await WalletUtil.getWalletExpandInfo(event.wallet.getEthAccount().address) ??
+                  WalletExpandInfoEntity.defaultEntity();
         }
 
         if (event.onlyActive != true) {
@@ -103,27 +106,27 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       //10 second cache time
       bool isTimeExpired = nowTime - _lastUpdateBalanceTime > 10000;
       // if (_activatedWalletVo != null && isTimeExpired) {
-        _lastUpdateBalanceTime = nowTime;
+      _lastUpdateBalanceTime = nowTime;
 
-        for (var vo in _activatedWalletVo.coins) {
-          if (event.symbol == null || event.symbol == vo.symbol) {
-            vo.refreshStatus = Status.loading;
-          }
+      for (var vo in _activatedWalletVo.coins) {
+        if (event.symbol == null || event.symbol == vo.symbol) {
+          vo.refreshStatus = Status.loading;
         }
+      }
+      yield BalanceState(
+          walletVo: _activatedWalletVo, status: Status.loading, symbol: event.symbol);
+
+      try {
+        await walletRepository.updateWalletVoBalance(_activatedWalletVo, event.symbol);
+        //save balance data to disk;
+        _saveWalletVoBalanceToDisk(_activatedWalletVo);
         yield BalanceState(
-            walletVo: _activatedWalletVo, status: Status.loading, symbol: event.symbol);
-
-        try {
-          await walletRepository.updateWalletVoBalance(_activatedWalletVo, event.symbol);
-          //save balance data to disk;
-          _saveWalletVoBalanceToDisk(_activatedWalletVo);
-          yield BalanceState(
-              walletVo: _activatedWalletVo, status: Status.success, symbol: event.symbol);
-        } catch (e) {
-          LogUtil.uploadException(e, 'UpdateWalletBalance Error');
-          yield BalanceState(
-              walletVo: _activatedWalletVo, status: Status.failed, symbol: event.symbol);
-        }
+            walletVo: _activatedWalletVo, status: Status.success, symbol: event.symbol);
+      } catch (e) {
+        LogUtil.uploadException(e, 'UpdateWalletBalance Error');
+        yield BalanceState(
+            walletVo: _activatedWalletVo, status: Status.failed, symbol: event.symbol);
+      }
       // }
     } else if (event is LoadLocalDiskWalletAndActiveEvent) {
       // 恢复法币计价
@@ -135,22 +138,21 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       var wallet = await walletRepository.getActivatedWalletFormLocalDisk();
       //now active loaded wallet. tips: maybe null
       add(ActiveWalletEvent(wallet: wallet, onlyActive: true));
-    }
-    else if (event is UpdateQuotesEvent) {
+    } else if (event is UpdateQuotesEvent) {
       var nowTime = DateTime.now().millisecondsSinceEpoch;
       // 30秒
       bool isTimeExpired = nowTime - _lastUpdateQuotesTime > 30000;
       // if (isTimeExpired) {
-        yield QuotesState(status: Status.loading);
+      yield QuotesState(status: Status.loading);
 
-        try {
-          var allLegal = SupportedLegal.all.map((legal) => legal.legal).toList();
-          var quotes = await _coinMarketApi.quotesLatest(allLegal);
-          yield QuotesState(status: Status.success, quotes: QuotesModel(quotes: quotes));
-        } catch (e,stack) {
-          LogUtil.uploadException("$e$stack", 'Update Quotes Error');
-          yield QuotesState(status: Status.failed);
-        }
+      try {
+        var allLegal = SupportedLegal.all.map((legal) => legal.legal).toList();
+        var quotes = await _coinMarketApi.quotesLatest(allLegal);
+        yield QuotesState(status: Status.success, quotes: QuotesModel(quotes: quotes));
+      } catch (e, stack) {
+        LogUtil.uploadException("$e$stack", 'Update Quotes Error');
+        yield QuotesState(status: Status.failed);
+      }
       // }
     } else if (event is UpdateLegalSignEvent) {
       _saveLegalSign(event.legal);

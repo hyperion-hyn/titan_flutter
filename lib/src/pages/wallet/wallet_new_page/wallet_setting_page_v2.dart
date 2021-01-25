@@ -2,13 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -31,6 +34,7 @@ class WalletSettingPageV2 extends StatefulWidget {
 
 class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAware {
   bool isBackup = false;
+  Wallet wallet;
 
   @override
   void initState() {
@@ -40,9 +44,6 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
   @override
   void didPush() async {
     isBackup = await WalletUtil.checkIsBackUpMnemonic(widget.wallet.getEthAccount().address);
-    setState(() {
-
-    });
   }
 
   @override
@@ -50,6 +51,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
 
   @override
   void didChangeDependencies() {
+    wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
     super.didChangeDependencies();
   }
 
@@ -232,7 +234,14 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             _optionItem(
               imagePath: "res/drawable/ic_wallet_setting_psw_remind.png",
               title: '密码提示',
-              editCallback: (text) {},
+              editHint: wallet?.walletExpandInfoEntity?.pswRemind == null ? "未设置" : "",
+              isCanEdit:true,
+              content: wallet.walletExpandInfoEntity.pswRemind,
+              editCallback: (text) {
+                wallet.walletExpandInfoEntity.pswRemind = text;
+                WalletUtil.setWalletExpandInfo(wallet.getEthAccount().address,wallet.walletExpandInfoEntity);
+                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
+              },
             ),
           ],
         ));
@@ -370,8 +379,9 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                     content: content,
                     hint: editHint,
                     keyboardType: keyboardType,
+                maxLength: 8,
                   )));
-          if (text.isNotEmpty) {
+          if (text != null && text.isNotEmpty) {
             setState(() {
               editCallback(text);
             });
