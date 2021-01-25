@@ -25,6 +25,8 @@ class AppLockBloc extends Bloc<AppLockEvent, AppLockState> {
       yield SetWalletLockBioAuthState(event.isEnabled);
     } else if (event is SetAppLockCountDownEvent) {
       yield SetWalletLockCountDownState(event.isStop);
+    } else if (event is SetAppLockPwdEvent) {
+      yield SetAppLockPwdState(event.pwd, event.hint);
     } else if (event is LockWalletEvent) {
       yield LockWalletState();
     } else if (event is UnLockWalletEvent) {

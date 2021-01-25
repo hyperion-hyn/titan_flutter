@@ -20,7 +20,7 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as allPage;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:titan/src/widget/round_border_textfield.dart';
+import 'package:titan/src/widget/round_border_textField.dart';
 
 class RpShareGetDialogPage extends StatefulWidget {
   static String shareDomain = "https://h.hyn.space/newUsersRedPocket";

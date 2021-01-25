@@ -28,7 +28,7 @@ import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
-import 'package:titan/src/pages/wallet/wallet_new_page/wallet_safe_lock.dart';
+import 'package:titan/src/pages/wallet/wallet_new_page/wallet_lock.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -49,8 +49,7 @@ class WalletPageV2 extends StatefulWidget {
   }
 }
 
-class _WalletPageV2State extends BaseState<WalletPageV2>
-    with AutomaticKeepAliveClientMixin {
+class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   final LocalAuthentication auth = LocalAuthentication();
 
@@ -69,9 +68,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    activeQuotesSign =
-        WalletInheritedModel.of(context, aspect: WalletAspect.legal)
-            .activeLegal;
+    activeQuotesSign = WalletInheritedModel.of(context, aspect: WalletAspect.legal).activeLegal;
   }
 
   @override
@@ -140,9 +137,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
     ).activatedWallet;
     _hasBackupWallet = await WalletUtil.checkIsBackUpMnemonic(
         activatedWalletVo?.wallet?.getEthAccount()?.address ?? "");
-    if (activatedWalletVo == null ||
-        _hasBackupWallet ||
-        Application.hasShowBackupWalletDialog) {
+    if (activatedWalletVo == null || _hasBackupWallet || Application.hasShowBackupWalletDialog) {
       return;
     }
     Application.hasShowBackupWalletDialog = true;
@@ -175,14 +170,10 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  top: 13, bottom: 21.0, left: 20, right: 20),
-              child: Text(
-                  "你的身份助记词未备份，请务必备份助记词\n助记词可用于恢复身份钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失。",
+              padding: const EdgeInsets.only(top: 13, bottom: 21.0, left: 20, right: 20),
+              child: Text("你的身份助记词未备份，请务必备份助记词\n助记词可用于恢复身份钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失。",
                   style: TextStyle(
-                      fontSize: 14,
-                      color: HexColor("#666666"),
-                      decoration: TextDecoration.none)),
+                      fontSize: 14, color: HexColor("#666666"), decoration: TextDecoration.none)),
             ),
           ],
         ),
@@ -191,8 +182,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
             "立即备份",
             () async {
               Navigator.pop(context);
-              var walletStr = FluroConvertUtils.object2string(
-                  activatedWalletVo.wallet.toJson());
+              var walletStr = FluroConvertUtils.object2string(activatedWalletVo.wallet.toJson());
               Application.router.navigateTo(
                   context,
                   Routes.wallet_setting_wallet_backup_notice +
@@ -298,12 +288,10 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
     if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) {
       navigateToFixPage();
     } else {
-      await Navigator.push(
-          context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+      await Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
 
       ///if authorized, jump to fix error page
-      if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount())
-        navigateToFixPage();
+      if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) navigateToFixPage();
     }
   }
 
@@ -314,10 +302,15 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
     ).activatedWallet;
     if (activatedWalletVo != null) {
       if (AppLockInheritedModel.of(context).isWalletLockActive)
-        return WalletSafeLock(
-          onUnlock: () {
-            BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
-          },
+        return Column(
+          children: [
+            SizedBox(height: 32),
+            WalletLock(
+              onUnlock: () {
+                BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
+              },
+            ),
+          ],
         );
 
       return LoadDataContainer(
@@ -348,8 +341,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
   _headerWidget(WalletViewVo activatedWalletVo) {
     return SliverToBoxAdapter(
       child: Container(
-        padding:
-            const EdgeInsets.only(top: 20, bottom: 20, left: 16, right: 16),
+        padding: const EdgeInsets.only(top: 20, bottom: 20, left: 16, right: 16),
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -361,8 +353,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
           children: [
             InkWell(
               onTap: () {
-                WalletManagerPage.jumpWalletManager(context,
-                    hasWalletUpdate: (wallet) {
+                WalletManagerPage.jumpWalletManager(context, hasWalletUpdate: (wallet) {
                   setState(() {
                     // _isRefreshBalances = true;
                   });
@@ -439,8 +430,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
                       });
                     },
                     child: Padding(
-                      padding:
-                          const EdgeInsets.only(left: 8.0, top: 8, bottom: 8),
+                      padding: const EdgeInsets.only(left: 8.0, top: 8, bottom: 8),
                       child: Image.asset(
                         _isShowBalances
                             ? "res/drawable/ic_input_psw_show.png"
@@ -532,10 +522,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
       return InkWell(
           onTap: () {
             var coinVo = activatedWalletVo.coins[index];
-            var coinVoJsonStr =
-                FluroConvertUtils.object2string(coinVo.toJson());
-            Application.router.navigateTo(context,
-                Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
+            var coinVoJsonStr = FluroConvertUtils.object2string(coinVo.toJson());
+            Application.router
+                .navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
           },
           child: _buildAccountItem(context, coinVo, hasPrice: hasPrice));
     }, childCount: activatedWalletVo.coins.length));
@@ -554,11 +543,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2>
     );
   }
 
-  Widget _buildAccountItem(BuildContext context, CoinViewVo coin,
-      {bool hasPrice = true}) {
+  Widget _buildAccountItem(BuildContext context, CoinViewVo coin, {bool hasPrice = true}) {
     var symbol = coin.symbol;
-    var symbolQuote =
-        WalletInheritedModel.of(context).tokenLegalPrice(symbol);
+    var symbolQuote = WalletInheritedModel.of(context).tokenLegalPrice(symbol);
     var subSymbol = "";
 
     if (coin.coinType == CoinType.HYN_ATLAS) {
