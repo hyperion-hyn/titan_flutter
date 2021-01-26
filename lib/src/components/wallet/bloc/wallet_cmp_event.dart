@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
 
 abstract class WalletCmpEvent {
   const WalletCmpEvent();
@@ -57,6 +58,13 @@ class UpdateGasPriceEvent extends WalletCmpEvent {
   final GasPriceType type;
 
   UpdateGasPriceEvent({this.status, this.type});
+}
+
+class UpdateWalletExpandEvent extends WalletCmpEvent {
+  final String address;
+  final WalletExpandInfoEntity walletExpandInfoEntity;
+
+  UpdateWalletExpandEvent(this.address, this.walletExpandInfoEntity);
 }
 
 enum GasPriceType { ETH, BTC }

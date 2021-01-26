@@ -3,6 +3,7 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
 
 abstract class WalletCmpState {
   const WalletCmpState();
@@ -85,4 +86,10 @@ class GasPriceState extends WalletCmpState with EquatableMixin {
 
   @override
   List<Object> get props => [status, ethGasPriceRecommend, btcGasPriceRecommend];
+}
+
+class UpdateWalletExpandState extends WalletCmpState {
+  final WalletExpandInfoEntity walletExpandInfoEntity;
+
+  UpdateWalletExpandState(this.walletExpandInfoEntity);
 }

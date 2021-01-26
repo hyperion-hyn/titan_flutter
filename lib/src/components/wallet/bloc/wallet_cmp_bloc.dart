@@ -79,7 +79,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           _activatedWalletVo.wallet.walletExpandInfoEntity =
               await WalletUtil.getWalletExpandInfo(event.wallet.getEthAccount().address) ??
                   WalletExpandInfoEntity.defaultEntity();
-          print("!!!!1111 ${_activatedWalletVo.wallet.walletExpandInfoEntity.toJson()}");
         }
 
         if (event.onlyActive != true) {
@@ -219,6 +218,13 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
             yield GasPriceState(status: Status.failed, type: event.type);
           }
         }
+      }
+    } else if (event is UpdateWalletExpandEvent) {
+      WalletUtil.setWalletExpandInfo(
+          event.address, event.walletExpandInfoEntity);
+      if(_activatedWalletVo != null && _activatedWalletVo.wallet.getEthAccount().address == event.address){
+        _activatedWalletVo.wallet.walletExpandInfoEntity = event.walletExpandInfoEntity;
+        yield UpdateWalletExpandState(event.walletExpandInfoEntity);
       }
     }
   }

@@ -136,6 +136,8 @@ class _WalletManagerState extends State<_WalletManager> {
             }
             _activatedWallet = _activatedWallet.copyWith(WalletViewVo(balance: balance));
           }
+        } else if (state is UpdateWalletExpandState) {
+          _activatedWallet.wallet.walletExpandInfoEntity = state.walletExpandInfoEntity;
         }
       },
       child: BlocBuilder<WalletCmpBloc, WalletCmpState>(

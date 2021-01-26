@@ -15,6 +15,7 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
+import 'package:titan/src/pages/wallet/wallet_new_page/wallet_modify_psw_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -115,8 +116,8 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                     if (netImagePath != null && netImagePath.isNotEmpty) {
                       widget.wallet.walletExpandInfoEntity.localHeadImg = path;
                       widget.wallet.walletExpandInfoEntity.netHeadImg = netImagePath;
-                      WalletUtil.setWalletExpandInfo(widget.wallet.getEthAccount().address,
-                          widget.wallet.walletExpandInfoEntity);
+                      BlocProvider.of<WalletCmpBloc>(context)
+                          .add(UpdateWalletExpandEvent(widget.wallet.getEthAccount().address, widget.wallet.walletExpandInfoEntity));
 
                       setState(() {});
                     } else {
@@ -293,7 +294,19 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             _optionItem(
               imagePath: "res/drawable/ic_wallet_setting_modify_pws.png",
               title: '修改密码',
-              editCallback: (text) {},
+              editCallback: (text) {
+              },
+              editFunc: ()async {
+                String pswRemind = await Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) => WalletModifyPswPage(
+                      widget.wallet
+                    )));
+                if(pswRemind != null && pswRemind.isNotEmpty){
+                  setState(() {
+                    widget.wallet.walletExpandInfoEntity.pswRemind = pswRemind;
+                  });
+                }
+              }
             ),
             Divider(
               height: 0.5,
@@ -306,8 +319,8 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
               content: widget.wallet.walletExpandInfoEntity?.pswRemind,
               editCallback: (text) {
                 widget.wallet.walletExpandInfoEntity.pswRemind = text;
-                WalletUtil.setWalletExpandInfo(
-                    widget.wallet.getEthAccount().address, widget.wallet.walletExpandInfoEntity);
+                BlocProvider.of<WalletCmpBloc>(context)
+                    .add(UpdateWalletExpandEvent(widget.wallet.getEthAccount().address, widget.wallet.walletExpandInfoEntity));
               },
             ),
           ],
@@ -432,9 +445,9 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
     String editHint = '',
     String content,
     bool isCanEdit = false,
+    Function editFunc,
     TextChangeCallback editCallback,
     TextInputType keyboardType = TextInputType.text,
-    bool isAvatar = false,
     String subContent = '',
     String warning = '',
   }) {
@@ -456,12 +469,8 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
           }
           return;
         }
-        if (isAvatar) {
-          editIconSheet(context, (path) {
-            setState(() {
-              editCallback(path);
-            });
-          });
+        if (editFunc != null) {
+          editFunc();
           return;
         }
       },
