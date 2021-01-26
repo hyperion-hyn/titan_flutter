@@ -56,18 +56,20 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
               '设置安全锁',
               style: TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 24.0,
-                vertical: 16,
+                vertical: 14,
               ),
               child: Text(
                 '安全锁密码忘记后只有助记词可恢复钱包身份，请务必确保所有钱包助记词已备份！',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: HexColor('#666666')),
+                style: TextStyle(
+                  color: HexColor('#666666'),
+                ),
               ),
             ),
             _walletList(),
@@ -117,15 +119,20 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
                 Navigator.pop(context);
                 var walletStr = FluroConvertUtils.object2string(widget.walletList[index].toJson());
                 Application.router.navigateTo(
-                    context,
-                    Routes.wallet_setting_wallet_backup_notice +
-                        '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
+                  context,
+                  Routes.wallet_setting_wallet_backup_notice +
+                      '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr',
+                );
               },
               width: 50,
               height: 22,
               fontSize: 10,
+              fontWeight: FontWeight.w600,
               fontColor: Colors.black,
-              btnColor: [HexColor("#E7C01A"), HexColor("#F7D33D")],
+              btnColor: [
+                HexColor("#F7D33D"),
+                HexColor("#E7C01A"),
+              ],
             )
           ],
         ),
@@ -147,7 +154,7 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
                 child: Text(
                   '未备份钱包:',
                   style: TextStyle(
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
                 ),
