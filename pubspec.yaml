@@ -178,6 +178,7 @@ dependencies:
   #https://pub:dev/packages/detect_testflight/install:
   detect_testflight: ^1.0.3
   flutter_switch: ^0.2.0
+  flutter_app_lock: ^1.4.0+1
 
 dev_dependencies:
   flutter_driver:

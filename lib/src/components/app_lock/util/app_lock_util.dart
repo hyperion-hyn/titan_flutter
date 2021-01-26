@@ -16,4 +16,42 @@ class AppLockUtil {
       return false;
     }
   }
+
+  static Future<int> getAwayTime() async {
+    var jsonStr = await AppCache.secureGetValue(
+      SecurePrefsKey.APP_LOCK_CONFIG,
+    );
+    var config = AppLockConfig.fromJson(json.decode(jsonStr));
+    if (config != null) {
+      return config.walletLock.awayTime;
+    } else {
+      return 0;
+    }
+  }
+
+  static Future<bool> checkBioAuthEnable() async {
+    var jsonStr = await AppCache.secureGetValue(
+      SecurePrefsKey.APP_LOCK_CONFIG,
+    );
+    var config = AppLockConfig.fromJson(json.decode(jsonStr));
+    if (config != null) {
+      return config.walletLock.isBioAuthEnabled;
+    } else {
+      return false;
+    }
+  }
+
+  static setBioAuth(bool enabled) async {
+    var jsonStr = await AppCache.secureGetValue(
+      SecurePrefsKey.APP_LOCK_CONFIG,
+    );
+    var config = AppLockConfig.fromJson(json.decode(jsonStr));
+    if (config != null) {
+      config.walletLock.isBioAuthEnabled = enabled;
+      await AppCache.secureSaveValue(
+        SecurePrefsKey.APP_LOCK_CONFIG,
+        json.encode(config.toJson()),
+      );
+    }
+  }
 }

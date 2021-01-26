@@ -9,6 +9,7 @@ import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/utils/auth_util.dart';
 
 import 'model.dart';
 import 'package:nested/nested.dart';
@@ -16,12 +17,10 @@ import 'package:nested/nested.dart';
 class AuthComponent extends SingleChildStatelessWidget {
   //final Widget child;
 
-  AuthComponent({Key key, Widget child}): super(key: key, child: child);
+  AuthComponent({Key key, Widget child}) : super(key: key, child: child);
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
-    //print("[$runtimeType] buildWithChild, context:$context, child:$child");
-
     return BlocProvider<AppLockBloc>(
       create: (ctx) => AppLockBloc(),
       child: _AuthManager(child: child),
@@ -55,28 +54,9 @@ class _AuthManagerState extends BaseState<_AuthManager> {
     return BlocListener<AppLockBloc, AuthState>(
       listener: (context, state) async {
         if (state is RefreshBioAuthConfigState) {
-          var authConfigStr = await AppCache.getValue<String>(
-              '${PrefsKey.AUTH_CONFIG}_${state.wallet.keystore.fileName}');
-          if (authConfigStr != null) {
-            authConfigModel =
-                AuthConfigModel.fromJson(json.decode(authConfigStr));
-          } else {
-            try {
-              availableBiometricTypes = await auth.getAvailableBiometrics();
-            } on PlatformException catch (e) {
-              print(e);
-            }
-            authConfigModel = AuthConfigModel(
-              walletFileName: state.wallet.keystore.fileName,
-              setBioAuthAsked: false,
-              lastBioAuthTime: 0,
-              useFace: false,
-              useFingerprint: false,
-              availableBiometricTypes: availableBiometricTypes,
-            );
-          }
+          authConfigModel = await AuthUtil.getAuthConfig(state.wallet);
+
           setState(() {});
-          print('RefreshBioAuthConfigState:::: ${authConfigModel.toJSON()}');
         } else if (state is SetBioAuthState) {
           try {
             availableBiometricTypes = await auth.getAvailableBiometrics();
@@ -84,20 +64,17 @@ class _AuthManagerState extends BaseState<_AuthManager> {
             print(e);
           }
           if (authConfigModel != null) {
-            if (authConfigModel.availableBiometricTypes
-                    .contains(BiometricType.face) &&
+            if (authConfigModel.availableBiometricTypes.contains(BiometricType.face) &&
                 state.biometricType == BiometricType.face) {
               authConfigModel.useFace = state.value;
             }
 
-            if (authConfigModel.availableBiometricTypes
-                    .contains(BiometricType.fingerprint) &&
+            if (authConfigModel.availableBiometricTypes.contains(BiometricType.fingerprint) &&
                 state.biometricType == BiometricType.fingerprint) {
               authConfigModel.useFingerprint = state.value;
             }
 
-            authConfigModel.lastBioAuthTime =
-                DateTime.now().millisecondsSinceEpoch;
+            authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
 
             AppCache.saveValue(
               '${PrefsKey.AUTH_CONFIG}_${state.wallet.keystore.fileName}',
@@ -162,8 +139,7 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
     if (authConfigModel.availableBiometricTypes.contains(BiometricType.face) &&
         authConfigModel.useFace) {
       return BiometricType.face;
-    } else if (authConfigModel.availableBiometricTypes
-            .contains(BiometricType.fingerprint) &&
+    } else if (authConfigModel.availableBiometricTypes.contains(BiometricType.fingerprint) &&
         authConfigModel.useFingerprint) {
       return BiometricType.fingerprint;
     } else {
@@ -174,8 +150,7 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
   BiometricType get availableBioMetricType {
     if (authConfigModel.availableBiometricTypes.contains(BiometricType.face)) {
       return BiometricType.face;
-    } else if (authConfigModel.availableBiometricTypes
-        .contains(BiometricType.fingerprint)) {
+    } else if (authConfigModel.availableBiometricTypes.contains(BiometricType.fingerprint)) {
       return BiometricType.fingerprint;
     } else {
       return null;
@@ -195,9 +170,7 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
   }
 
   @override
-  bool updateShouldNotifyDependent(
-      AuthInheritedModel oldWidget, Set<AuthAspect> dependencies) {
-    return authConfigModel != oldWidget.authConfigModel &&
-        dependencies.contains(AuthAspect.config);
+  bool updateShouldNotifyDependent(AuthInheritedModel oldWidget, Set<AuthAspect> dependencies) {
+    return authConfigModel != oldWidget.authConfigModel && dependencies.contains(AuthAspect.config);
   }
 }

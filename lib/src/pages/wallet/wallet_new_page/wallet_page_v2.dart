@@ -30,7 +30,7 @@ import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
-import 'package:titan/src/pages/wallet/wallet_new_page/wallet_lock.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
@@ -310,7 +310,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         return Column(
           children: [
             SizedBox(height: 32),
-            WalletLock(
+            AppLockScreen(
               onUnlock: () {
                 BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
               },
