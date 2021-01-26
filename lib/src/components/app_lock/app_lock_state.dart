@@ -31,6 +31,13 @@ class SetWalletLockCountDownState extends AppLockState {
   SetWalletLockCountDownState(this.isStop);
 }
 
+class SetAppLockPwdState extends AppLockState {
+  final String pwd;
+  final String hint;
+
+  SetAppLockPwdState(this.pwd, this.hint);
+}
+
 class LockWalletState extends AppLockState {}
 
 class UnlockWalletState extends AppLockState {}

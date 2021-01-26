@@ -55,7 +55,7 @@ import 'package:titan/src/pages/wallet/wallet_import_account_page.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/bloc/bloc.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/pages/wallet/wallet_send_confirm_page.dart';
-import 'package:titan/src/pages/wallet/wallet_send_page.dart';
+import 'package:titan/src/pages/wallet/wallet_send_page_v2.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_widget.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_hyn_widget.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
@@ -123,7 +123,7 @@ var walletAccountDetailHandler = Handler(handlerFunc: (context, params) {
 var walletAccountSendTransactionHandler =
     Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return WalletSendPage(params['coinVo']?.first, params['toAddress']?.first);
+  return WalletSendPageV2(params['coinVo']?.first, params['toAddress']?.first);
 });
 
 var transferConfirmHandler = Handler(handlerFunc: (context, params) {

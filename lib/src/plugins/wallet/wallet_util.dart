@@ -54,6 +54,18 @@ class WalletUtil {
     );
   }
 
+  static Future<List<Wallet>> getNotBackUpWalletList() async {
+    var wallets = await WalletUtil.scanWallets();
+    var notBackUpWalletList = List<Wallet>();
+
+    ///add await or will pass loop
+    await wallets.forEach((wallet) async {
+      var isBackUp = await WalletUtil.checkIsBackUpMnemonic(wallet.getEthAccount().address);
+      if (!isBackUp) notBackUpWalletList.add(wallet);
+    });
+    return notBackUpWalletList;
+  }
+
   static Future<bool> checkWalletSafeLockIsEnable(
     String walletAddress,
   ) async {
@@ -92,9 +104,9 @@ class WalletUtil {
   }
 
   static setWalletExpandInfo(
-      String walletAddress,
-      WalletExpandInfoEntity walletExpandInfoEntity,
-      ) async {
+    String walletAddress,
+    WalletExpandInfoEntity walletExpandInfoEntity,
+  ) async {
     await AppCache.saveValue(
       '${PrefsKey.WALLET_EXPAND_INFO_PREFIX}$walletAddress',
       "${json.encode(walletExpandInfoEntity.toJson())}",
@@ -102,8 +114,8 @@ class WalletUtil {
   }
 
   static Future<WalletExpandInfoEntity> getWalletExpandInfo(
-      String walletAddress,
-      ) async {
+    String walletAddress,
+  ) async {
     String entityStr = await AppCache.getValue(
       '${PrefsKey.WALLET_EXPAND_INFO_PREFIX}$walletAddress',
     );

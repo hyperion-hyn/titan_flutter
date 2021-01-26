@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class AppLockWalletNotBackUpDialog extends StatefulWidget {
-  AppLockWalletNotBackUpDialog();
+  final List<Wallet> walletList;
+
+  AppLockWalletNotBackUpDialog(this.walletList);
 
   @override
   State<StatefulWidget> createState() {
@@ -84,7 +92,11 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
   }
 
   _walletList() {
-    List<Widget> walletList = List.generate(20, (index) {
+    List<Widget> walletList = List.generate(widget.walletList.length, (index) {
+      var name = widget.walletList[index].keystore.name;
+      var address = shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(
+        widget.walletList[index].getEthAccount().address,
+      ));
       return Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 36.0,
@@ -94,14 +106,21 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
           children: [
             Expanded(
                 child: Text(
-              'Wallet sdkjfhashdg',
+              '$name  ($address)',
               style: TextStyle(
                 color: DefaultColors.color999,
               ),
             )),
             ClickOvalButton(
               '去备份',
-              () {},
+              () {
+                Navigator.pop(context);
+                var walletStr = FluroConvertUtils.object2string(widget.walletList[index].toJson());
+                Application.router.navigateTo(
+                    context,
+                    Routes.wallet_setting_wallet_backup_notice +
+                        '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
+              },
               width: 50,
               height: 22,
               fontSize: 10,

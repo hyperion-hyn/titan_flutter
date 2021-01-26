@@ -29,6 +29,13 @@ class SetAppLockCountDownEvent extends AppLockEvent {
   SetAppLockCountDownEvent(this.isStop);
 }
 
+class SetAppLockPwdEvent extends AppLockEvent {
+  final String pwd;
+  final String hint;
+
+  SetAppLockPwdEvent(this.pwd, this.hint);
+}
+
 class LockWalletEvent extends AppLockEvent {}
 
 class UnLockWalletEvent extends AppLockEvent {}
