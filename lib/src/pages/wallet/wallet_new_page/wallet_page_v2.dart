@@ -477,18 +477,23 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                     SizedBox(
                       width: 51,
                     ),
-                    Column(
-                      children: [
-                        Image.asset(
-                          "res/drawable/ic_wallet_account_list_receiver_v2.png",
-                          width: 26,
-                          height: 26,
-                        ),
-                        Text(
-                          "接收",
-                          style: TextStyles.textC333S14bold,
-                        ),
-                      ],
+                    InkWell(
+                      onTap: (){
+                        _showActionDialog("接收");
+                      },
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            "res/drawable/ic_wallet_account_list_receiver_v2.png",
+                            width: 26,
+                            height: 26,
+                          ),
+                          Text(
+                            "接收",
+                            style: TextStyles.textC333S14bold,
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(
                       width: 51,
@@ -702,6 +707,20 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         ],
       ),
     );
+  }
+
+  void _showActionDialog(String titleStr) {
+    UiUtil.showBottomDialogView(context,
+        dialogHeight: MediaQuery.of(context).size.height - 80,
+        customWidget: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: Text(titleStr,style: TextStyles.textC999S14medium),
+            )
+          ],
+        ));
   }
 
   Future listLoadingData() async {

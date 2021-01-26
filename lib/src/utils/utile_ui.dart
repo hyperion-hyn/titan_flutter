@@ -720,9 +720,12 @@ class UiUtil {
     String dialogTitle,
     AuthType authType = AuthType.pay,
   }) async {
-    var useDigits = await WalletUtil.checkUseDigitsPwd(
-      wallet,
-    );
+
+    ///新版取消数字密码输入框
+    // var useDigits = await WalletUtil.checkUseDigitsPwd(
+    //   wallet,
+    // );
+    var useDigits = false;
 
     if (useDigits) {
       return showDialog(
