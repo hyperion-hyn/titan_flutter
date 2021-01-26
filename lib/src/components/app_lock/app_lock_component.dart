@@ -6,9 +6,11 @@ import 'package:nested/nested.dart';
 import 'package:titan/src/app.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/routes.dart';
 
 import 'app_lock_bloc.dart';
 import 'entity/app_lock_config.dart';
@@ -78,9 +80,8 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
             _appLockConfig.walletLock.isOn = true;
           }
         } else if (state is SetWalletLockState) {
-          ///set on/off same as enabled
           _appLockConfig?.walletLock?.isEnabled = state.isEnabled;
-          _appLockConfig?.walletLock?.isOn = state.isEnabled;
+          //_appLockConfig?.walletLock?.isOn = state.isEnabled;
 
           ///if not enable, turn off bio-auth too
           if (!state.isEnabled) {
@@ -110,6 +111,7 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
                 //print(' WalletLock awayTime $_currentAwayTime');
                 if (_currentAwayTime > (_appLockConfig?.walletLock?.awayTime ?? 0)) {
                   _appLockConfig?.walletLock?.isOn = true;
+
                   _cancelTimer();
                 }
               });
@@ -143,7 +145,11 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
     var jsonStr = await AppCache.secureGetValue(
       SecurePrefsKey.APP_LOCK_CONFIG,
     );
-    return AppLockConfig.fromJson(json.decode(jsonStr));
+    try {
+      return AppLockConfig.fromJson(json.decode(jsonStr));
+    } catch (e) {
+      return AppLockConfig.fromDefault();
+    }
   }
 }
 

@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
@@ -21,6 +22,7 @@ import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/app_tabbar_bloc.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
@@ -70,7 +72,8 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
       BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(page: AppTabBarPage()));
     } else {
       //launch setting
-      BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(page: SettingOnLauncherPage()));
+      BlocProvider.of<RootPageControlBloc>(context)
+          .add(SetRootPageEvent(page: SettingOnLauncherPage()));
     }
   }
 
@@ -90,8 +93,8 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
           }
           return Scaffold(
             body: Center(
-                //child: Text('please set the root page!'),
-                ),
+              //child: Text('please set the root page!'),
+            ),
           );
         },
       ),
