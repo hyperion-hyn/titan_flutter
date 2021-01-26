@@ -74,7 +74,7 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
           if (configCache != null) {
             _appLockConfig = configCache;
 
-            ///if enabled, default on when app opens
+            ///if enable, default on when app opens
             _appLockConfig.walletLock.isOn = true;
           }
         } else if (state is SetWalletLockState) {
@@ -82,7 +82,7 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
           _appLockConfig?.walletLock?.isEnabled = state.isEnabled;
           _appLockConfig?.walletLock?.isOn = state.isEnabled;
 
-          ///if unable turn off bio too
+          ///if not enable, turn off bio-auth too
           if (!state.isEnabled) {
             _appLockConfig?.walletLock?.isBioAuthEnabled = false;
           }
@@ -103,7 +103,7 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
             _currentAwayTime = 0;
             _cancelTimer();
           } else {
-            ///only count-down if wallet-lock is enable but not on
+            ///only count-down when wallet-lock is enable but not on
             if (AppLockInheritedModel.of(Keys.rootKey.currentContext).isWalletNotActive)
               _awayTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
                 _currentAwayTime++;
