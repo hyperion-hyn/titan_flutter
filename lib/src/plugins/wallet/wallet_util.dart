@@ -57,9 +57,10 @@ class WalletUtil {
   static Future<List<Wallet>> getNotBackUpWalletList() async {
     var wallets = await WalletUtil.scanWallets();
     var notBackUpWalletList = List<Wallet>();
-    wallets.forEach((wallet) async {
+
+    ///add await or will pass loop
+    await wallets.forEach((wallet) async {
       var isBackUp = await WalletUtil.checkIsBackUpMnemonic(wallet.getEthAccount().address);
-      print('${wallet.keystore.name} $isBackUp');
       if (!isBackUp) notBackUpWalletList.add(wallet);
     });
     return notBackUpWalletList;

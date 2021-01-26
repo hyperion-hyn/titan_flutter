@@ -8,9 +8,11 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_lock.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 
 import 'app_lock_set_pwd_page.dart';
+import 'app_lock_wallet_not_backup_dialog.dart';
 
 class AppLockPreferencesPage extends StatefulWidget {
   AppLockPreferencesPage();
@@ -120,27 +122,27 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
 
   _setUpAppLock(bool value) async {
     if (value) {
-      _showSetPwdDialog(() {
-        BlocProvider.of<AppLockBloc>(context).add(
-          SetWalletLockEvent(value),
-        );
-      });
-
-      // WalletUtil.getNotBackUpWalletList().then((value) {
-      //   print('xxxx ${value}');
-      //   if (value.isNotEmpty) {
-      //     showModalBottomSheet(
-      //         context: context,
-      //         shape: RoundedRectangleBorder(
-      //           borderRadius: BorderRadius.circular(20.0),
-      //         ),
-      //         enableDrag: false,
-      //         builder: (BuildContext context) {
-      //           return AppLockWalletNotBackUpDialog(value);
-      //         });
-      //   } else {}
-      // });
-
+      var notBackUpWalletList = await WalletUtil.getNotBackUpWalletList();
+      if (notBackUpWalletList.isNotEmpty) {
+        showModalBottomSheet(
+            context: context,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
+            ),
+            enableDrag: false,
+            builder: (BuildContext context) {
+              return AppLockWalletNotBackUpDialog(notBackUpWalletList);
+            });
+      } else {
+        _showSetPwdDialog(() {
+          BlocProvider.of<AppLockBloc>(context).add(
+            SetWalletLockEvent(value),
+          );
+        });
+      }
     } else {
       _showWalletLockDialog(() {
         BlocProvider.of<AppLockBloc>(context).add(

@@ -448,16 +448,15 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     InkWell(
-                      onTap: (){
+                      onTap: () {
                         var coinVo =
-                        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
-                            .getCoinVoBySymbol(SupportedTokens.ETHEREUM.symbol);
+                            WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
+                                .getCoinVoBySymbol(SupportedTokens.ETHEREUM.symbol);
 
                         Application.router.navigateTo(
                             context,
                             Routes.wallet_account_send_transaction +
                                 '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
-
                       },
                       child: Container(
                         child: Column(
