@@ -28,7 +28,7 @@ import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
-import 'package:titan/src/pages/wallet/wallet_new_page/wallet_lock.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
@@ -308,7 +308,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         return Column(
           children: [
             SizedBox(height: 32),
-            WalletLock(
+            AppLockScreen(
               onUnlock: () {
                 BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
               },
@@ -451,7 +451,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                   children: [
                     InkWell(
                       onTap: () {
-                        _showActionDialog(WalletPageJump.PAGE_SEND,activatedWalletVo);
+                        _showActionDialog(WalletPageJump.PAGE_SEND, activatedWalletVo);
                       },
                       child: Container(
                         child: Column(
@@ -473,8 +473,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                       width: 51,
                     ),
                     InkWell(
-                      onTap: (){
-                        _showActionDialog(WalletPageJump.PAGE_RECEIVER,activatedWalletVo);
+                      onTap: () {
+                        _showActionDialog(WalletPageJump.PAGE_RECEIVER, activatedWalletVo);
                       },
                       child: Column(
                         children: [
@@ -494,8 +494,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                       width: 51,
                     ),
                     InkWell(
-                      onTap: (){
-                        _showActionDialog(WalletPageJump.PAGE_EXCHANGE,activatedWalletVo);
+                      onTap: () {
+                        _showActionDialog(WalletPageJump.PAGE_EXCHANGE, activatedWalletVo);
                       },
                       child: Column(
                         children: [
@@ -709,9 +709,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     );
   }
 
-  void _showActionDialog(WalletPageJump jumpType,WalletViewVo activatedWalletVo) {
+  void _showActionDialog(WalletPageJump jumpType, WalletViewVo activatedWalletVo) {
     String titleStr = "";
-    switch(jumpType){
+    switch (jumpType) {
       case WalletPageJump.PAGE_SEND:
         titleStr = "发送";
         break;
@@ -726,49 +726,47 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         dialogHeight: MediaQuery.of(context).size.height - 80,
         isScrollControlled: true,
         customWidget: Expanded(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(14.0),
-                child: Center(child: Text(titleStr,style: TextStyles.textC999S14medium)),
+            child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: Center(child: Text(titleStr, style: TextStyles.textC999S14medium)),
+            ),
+            Expanded(
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                    var coinVo = activatedWalletVo.coins[index];
+                    var hasPrice = true;
+                    return InkWell(
+                        onTap: () {
+                          switch (jumpType) {
+                            case WalletPageJump.PAGE_SEND:
+                              var coinVo = activatedWalletVo.coins[index];
+                              Application.router.navigateTo(
+                                  context,
+                                  Routes.wallet_account_send_transaction +
+                                      '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
+                              break;
+                            case WalletPageJump.PAGE_RECEIVER:
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => WalletReceivePage(coinVo)));
+                              break;
+                            case WalletPageJump.PAGE_EXCHANGE:
+                              titleStr = "交易";
+                              break;
+                          }
+                        },
+                        child: _buildAccountItem(context, coinVo, hasPrice: hasPrice));
+                  }, childCount: activatedWalletVo.coins.length)),
+                ],
               ),
-              Expanded(
-                child: CustomScrollView(
-                  slivers: <Widget>[
-                    SliverList(
-                        delegate: SliverChildBuilderDelegate((context, index) {
-                          var coinVo = activatedWalletVo.coins[index];
-                          var hasPrice = true;
-                          return InkWell(
-                              onTap: () {
-                                switch(jumpType){
-                                  case WalletPageJump.PAGE_SEND:
-                                    var coinVo = activatedWalletVo.coins[index];
-                                    Application.router.navigateTo(
-                                        context,
-                                        Routes.wallet_account_send_transaction +
-                                            '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
-                                    break;
-                                  case WalletPageJump.PAGE_RECEIVER:
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                WalletReceivePage(coinVo)));
-                                    break;
-                                  case WalletPageJump.PAGE_EXCHANGE:
-                                    titleStr = "交易";
-                                    break;
-                                }
-                              },
-                              child: _buildAccountItem(context, coinVo, hasPrice: hasPrice));
-                        }, childCount: activatedWalletVo.coins.length)),
-                  ],
-                ),
-              ),
-            ],
-          )
-        ));
+            ),
+          ],
+        )));
   }
 
   Future listLoadingData() async {
@@ -802,7 +800,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   }
 }
 
-enum WalletPageJump{
+enum WalletPageJump {
   PAGE_SEND,
   PAGE_RECEIVER,
   PAGE_EXCHANGE,

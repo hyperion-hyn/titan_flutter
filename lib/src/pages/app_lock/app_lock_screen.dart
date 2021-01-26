@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app_lock/flutter_app_lock.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pinput/pin_put/pin_put.dart';
@@ -15,22 +16,22 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 
-class WalletLock extends StatefulWidget {
+class AppLockScreen extends StatefulWidget {
   final Function onUnlock;
   final bool isDialog;
 
-  WalletLock({
+  AppLockScreen({
     @required this.onUnlock,
     this.isDialog,
   });
 
   @override
   BaseState<StatefulWidget> createState() {
-    return _WalletLockState();
+    return _AppLockScreenState();
   }
 }
 
-class _WalletLockState extends BaseState<WalletLock> {
+class _AppLockScreenState extends BaseState<AppLockScreen> {
   final TextEditingController _pinPutController = TextEditingController();
   final FocusNode _pinPutFocusNode = FocusNode();
 
@@ -115,7 +116,7 @@ class _WalletLockState extends BaseState<WalletLock> {
                             autofocus: true,
                           ),
                         ),
-                        if (AppLockInheritedModel.of(context).walletLockPwdHint != null)
+                        if (AppLockInheritedModel?.of(context)?.walletLockPwdHint != null)
                           InkWell(
                             child: Text(
                               '密码提示',
@@ -159,6 +160,7 @@ class _WalletLockState extends BaseState<WalletLock> {
   _submit(String pin) async {
     if (await AppLockUtil.checkWalletLockPwd(pin)) {
       widget.onUnlock?.call();
+      AppLock.of(context).didUnlock();
     } else {
       UiUtil.showErrorTopHint(
         context,
@@ -169,7 +171,7 @@ class _WalletLockState extends BaseState<WalletLock> {
   }
 
   _bioAuth() async {
-    if (AppLockInheritedModel.of(context).isWalletLockBioAuthEnabled) {
+    if (await AppLockUtil.checkBioAuthEnable()) {
       var authConfig = await AuthUtil.getAuthConfig(
         null,
         authType: AuthType.walletLock,

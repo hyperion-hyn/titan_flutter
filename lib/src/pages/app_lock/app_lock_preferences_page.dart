@@ -8,9 +8,10 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/app_lock/app_lock_component.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
-import 'package:titan/src/pages/wallet/wallet_new_page/wallet_lock.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/auth_util.dart';
@@ -49,7 +50,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
     return Scaffold(
       appBar: BaseAppBar(
         backgroundColor: Colors.white,
-        baseTitle: '钱包安全锁',
+        baseTitle: '应用安全锁',
       ),
       body: Container(
         color: DefaultColors.colorf2f2f2,
@@ -283,6 +284,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
           BlocProvider.of<AppLockBloc>(context).add(
             SetWalletLockBioAuthEvent(value),
           );
+          //await AppLockUtil.setBioAuth(value);
 
           UiUtil.showHintToast(
             context,
@@ -320,7 +322,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return WalletLock(
+          return AppLockScreen(
             onUnlock: () {
               Navigator.of(context).pop();
               onUnlock.call();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_app_lock/flutter_app_lock.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
@@ -7,12 +8,15 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/account/account_component.dart';
 import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
+import 'package:titan/src/components/app_lock/entity/app_lock_config.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/components/style/theme.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'components/app_lock/app_lock_component.dart';
 import 'components/root_page_control_component/bloc/bloc.dart';
 import 'components/setting/setting_component.dart';
@@ -37,6 +41,8 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     Application.router = router;
   }
 
+  //int _appLockAwayTime = 0;
+
   @override
   void initState() {
     super.initState();
@@ -58,6 +64,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       case AppLifecycleState.paused:
         //print('-----[App] paused');
         _setAppLockCountDown(false);
+        //_appLockAwayTime = await AppLockUtil.getAwayTime();
         break;
       case AppLifecycleState.detached:
         //print('-----[App] detached');
@@ -65,6 +72,8 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       case AppLifecycleState.resumed:
         //print('-----[App] resumed');
         _setAppLockCountDown(true);
+        //print('appLockAwayTime $_appLockAwayTime');
+        //if (mounted) setState(() {});
         break;
     }
   }
@@ -137,6 +146,18 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         ),
       ),
     );
+    // return AppLock(
+    //   backgroundLockLatency: Duration(seconds: _appLockAwayTime),
+    //   lockScreen: Container(
+    //     color: Colors.white,
+    //     child: AppLockScreen(
+    //       onUnlock: () {},
+    //     ),
+    //   ),
+    //   builder: (args) {
+    //     return ;
+    //   },
+    // );
 
     /*
     return OKToast(

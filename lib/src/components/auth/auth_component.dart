@@ -9,6 +9,7 @@ import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/utils/auth_util.dart';
 
 import 'model.dart';
 import 'package:nested/nested.dart';
@@ -53,27 +54,9 @@ class _AuthManagerState extends BaseState<_AuthManager> {
     return BlocListener<AppLockBloc, AuthState>(
       listener: (context, state) async {
         if (state is RefreshBioAuthConfigState) {
-          var authConfigStr = await AppCache.getValue<String>(
-              '${PrefsKey.AUTH_CONFIG}_${state.wallet.keystore.fileName}');
-          if (authConfigStr != null) {
-            authConfigModel = AuthConfigModel.fromJson(json.decode(authConfigStr));
-          } else {
-            try {
-              availableBiometricTypes = await auth.getAvailableBiometrics();
-            } on PlatformException catch (e) {
-              print(e);
-            }
-            authConfigModel = AuthConfigModel(
-              walletFileName: state.wallet.keystore.fileName,
-              setBioAuthAsked: false,
-              lastBioAuthTime: 0,
-              useFace: false,
-              useFingerprint: false,
-              availableBiometricTypes: availableBiometricTypes,
-            );
-          }
+          authConfigModel = await AuthUtil.getAuthConfig(state.wallet);
+
           setState(() {});
-          print('RefreshBioAuthConfigState:::: ${authConfigModel.toJSON()}');
         } else if (state is SetBioAuthState) {
           try {
             availableBiometricTypes = await auth.getAvailableBiometrics();

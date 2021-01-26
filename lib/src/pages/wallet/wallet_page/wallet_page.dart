@@ -16,7 +16,7 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_page.dart';
-import 'package:titan/src/pages/wallet/wallet_new_page/wallet_lock.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/utils/format_util.dart';
 
@@ -254,7 +254,7 @@ class _WalletPageState extends BaseState<WalletPage> with AutomaticKeepAliveClie
     ).activatedWallet;
     if (activatedWalletVo != null) {
       if (!_isSafeLockUnlock)
-        return WalletLock(
+        return AppLockScreen(
           onUnlock: () {
             _isSafeLockUnlock = true;
             if (mounted) setState(() {});
