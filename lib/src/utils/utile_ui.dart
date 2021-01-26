@@ -332,13 +332,15 @@ class UiUtil {
     double imageHeight,
     String dialogTitle,
     String dialogSubTitle,
-    bool enableDrag = true,
     bool showCloseBtn = true,
+    bool enableDrag = true,
+    bool isScrollControlled = false,
     List<Widget> actions,
   }) {
     return showModalBottomSheet<T>(
         context: context,
         enableDrag: enableDrag,
+        isScrollControlled: isScrollControlled,
         shape: RoundedRectangleBorder(
           borderRadius:
           BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -400,19 +402,18 @@ class UiUtil {
                   ],
                 ),
                 if(showCloseBtn)
-                  Positioned(
-                    child: InkWell(
+                  InkWell(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
                       child: Image.asset(
                         'res/drawable/ic_close.png',
                         width: 16,
                         height: 16,
                       ),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
                     ),
-                    left: 24,
-                    top: 24,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
                   )
               ],
             ),
