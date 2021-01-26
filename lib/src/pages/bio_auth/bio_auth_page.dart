@@ -35,7 +35,7 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
   @override
   Future<void> onCreated() async {
     super.onCreated();
-    authConfigModel = await AuthUtil.getAuthConfigByWallet(
+    authConfigModel = await AuthUtil.getAuthConfig(
       widget._wallet,
       authType: widget._authType,
     );
@@ -339,4 +339,8 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
   }
 }
 
-enum AuthType { pay, exchange }
+enum AuthType {
+  pay,
+  exchange,
+  walletLock,
+}

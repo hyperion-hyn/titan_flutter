@@ -8,7 +8,9 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/auth_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
@@ -34,6 +36,9 @@ class _WalletLockState extends BaseState<WalletLock> {
 
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((callback) {
+      _bioAuth();
+    });
   }
 
   @override
@@ -160,6 +165,24 @@ class _WalletLockState extends BaseState<WalletLock> {
         '密码错误，请重试',
       );
       _pinPutController.text = '';
+    }
+  }
+
+  _bioAuth() async {
+    if (AppLockInheritedModel.of(context).isWalletLockBioAuthEnabled) {
+      var authConfig = await AuthUtil.getAuthConfig(
+        null,
+        authType: AuthType.walletLock,
+      );
+
+      var result = await AuthUtil.bioAuth(
+        context,
+        AuthUtil.currentBioMetricType(authConfig),
+      );
+
+      if (result) {
+        widget.onUnlock?.call();
+      }
     }
   }
 }

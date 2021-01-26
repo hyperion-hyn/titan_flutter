@@ -651,7 +651,7 @@ class UiUtil {
       );
     };
 
-    var authConfig = await AuthUtil.getAuthConfigByWallet(
+    var authConfig = await AuthUtil.getAuthConfig(
       wallet,
       authType: authType,
     );

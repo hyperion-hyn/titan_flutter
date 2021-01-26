@@ -3,13 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/app_lock/app_lock_component.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_lock.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/auth_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 import 'app_lock_set_pwd_page.dart';
 import 'app_lock_wallet_not_backup_dialog.dart';
@@ -51,8 +56,8 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
         child: CustomScrollView(
           slivers: [
             _basicPreferences(),
+            _bioAuthPreference(),
             _awayTimePreference(),
-            _awayTimeHint(),
           ],
         ),
       ),
@@ -88,36 +93,162 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '快捷解锁/生物验证',
-                      style: TextStyle(fontWeight: FontWeight.w500),
+            if (AuthInheritedModel.of(context).bioAuthAvailable)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '快捷解锁/生物验证',
+                        style: TextStyle(fontWeight: FontWeight.w500),
+                      ),
                     ),
-                  ),
-                  FlutterSwitch(
-                    width: 54.0,
-                    height: 26.0,
-                    toggleSize: 18.0,
-                    activeColor: HexColor('#EDC313'),
-                    inactiveColor: HexColor('#DEDEDE'),
-                    value: AppLockInheritedModel.of(context).isWalletLockBioAuthEnabled,
-                    onToggle: (value) {
-                      BlocProvider.of<AppLockBloc>(context).add(
-                        SetWalletLockBioAuthEvent(value),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            )
+                    FlutterSwitch(
+                      width: 54.0,
+                      height: 26.0,
+                      toggleSize: 18.0,
+                      activeColor: HexColor('#EDC313'),
+                      inactiveColor: HexColor('#DEDEDE'),
+                      value: AppLockInheritedModel.of(context).isWalletLockBioAuthEnabled,
+                      onToggle: (value) {
+                        _setUpBioAuth(value);
+                      },
+                    ),
+                  ],
+                ),
+              )
           ],
         ),
-        padding: EdgeInsets.symmetric(vertical: 8.0),
+        padding: EdgeInsets.only(top: 8.0),
         childPadding: EdgeInsets.symmetric(vertical: 0.0));
+  }
+
+  _awayTimePreference() {
+    var timeValueList = [0, 60, 300, 3600, 18000];
+    var timeShowList = ['立即', '1分钟', '5分钟', '1小时', '5小时'];
+    if (AppLockInheritedModel.of(context).isWalletLockEnable) {
+      return SliverToBoxAdapter(
+        child: Container(
+          child: Padding(
+            padding: const EdgeInsets.all(0.0),
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        '自动锁定时间',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: DefaultColors.color999,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  child: Column(
+                    children: List.generate(timeValueList.length, (index) {
+                      var timeShow = index == 0 ? '立即' : '如果离开${timeShowList[index]}';
+                      var selected = timeValueList[index] ==
+                          AppLockInheritedModel.of(context).walletLockAwayTime;
+                      return InkWell(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                timeShow,
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
+                              Spacer(),
+                              if (selected)
+                                Image.asset(
+                                  'res/drawable/ic_check_selected.png',
+                                  width: 18,
+                                  height: 18,
+                                ),
+                            ],
+                          ),
+                        ),
+                        onTap: () {
+                          BlocProvider.of<AppLockBloc>(context).add(
+                            SetWalletLockAwayTimeEvent(timeValueList[index]),
+                          );
+                        },
+                      );
+                    }),
+                  ),
+                  color: Colors.white,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    '离开钱包界面一定时间后安全锁将自动锁定钱包，继续使用钱包功能需要先解锁钱包。',
+                    style: TextStyle(
+                      color: DefaultColors.color999,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 8,
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      return SliverToBoxAdapter(
+        child: SizedBox(),
+      );
+    }
+  }
+
+  _bioAuthPreference() {
+    if (AppLockInheritedModel.of(context).isWalletLockEnable &&
+        AuthInheritedModel.of(context).bioAuthAvailable) {
+      return _section(
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  '快捷解锁/生物验证',
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+              FlutterSwitch(
+                width: 54.0,
+                height: 26.0,
+                toggleSize: 18.0,
+                activeColor: HexColor('#EDC313'),
+                inactiveColor: HexColor('#DEDEDE'),
+                value: AppLockInheritedModel.of(context).isWalletLockBioAuthEnabled,
+                onToggle: (value) {
+                  _setUpBioAuth(value);
+                },
+              ),
+            ],
+          ),
+        ),
+        title: '生物识别',
+        childPadding: EdgeInsets.symmetric(vertical: 0.0),
+      );
+    } else {
+      return SliverToBoxAdapter(
+        child: SizedBox(),
+      );
+    }
   }
 
   _setUpAppLock(bool value) async {
@@ -147,6 +278,63 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
       _showWalletLockDialog(() {
         BlocProvider.of<AppLockBloc>(context).add(
           SetWalletLockEvent(value),
+        );
+      });
+    }
+  }
+
+  _setUpBioAuth(bool value) async {
+    if (value) {
+      _showWalletLockDialog(() async {
+        var authConfig = await AuthUtil.getAuthConfig(
+          null,
+          authType: AuthType.walletLock,
+        );
+
+        var result = await AuthUtil.bioAuth(
+          context,
+          AuthUtil.currentBioMetricType(authConfig),
+        );
+
+        if (result) {
+          authConfig.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
+          AuthUtil.saveAuthConfig(
+            authConfig,
+            null,
+            authType: AuthType.walletLock,
+          );
+
+          BlocProvider.of<AppLockBloc>(context).add(
+            SetWalletLockBioAuthEvent(value),
+          );
+
+          UiUtil.showHintToast(
+            context,
+            Image.asset(
+              'res/drawable/ic_toast_check.png',
+              width: 60,
+              height: 60,
+            ),
+            S.of(context).set_bio_auth_success,
+          );
+        } else {
+          UiUtil.showHintToast(
+              context,
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Image.asset(
+                  'res/drawable/ic_toast_cross.png',
+                  width: 30,
+                  height: 30,
+                ),
+              ),
+              S.of(context).set_bio_auth_fail);
+        }
+      });
+    } else {
+      _showWalletLockDialog(() {
+        BlocProvider.of<AppLockBloc>(context).add(
+          SetWalletLockBioAuthEvent(value),
         );
       });
     }
@@ -185,64 +373,6 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                 onPwdSet: onPwdSet,
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  _awayTimePreference() {
-    var timeValueList = [0, 60, 300, 3600, 18000];
-    var timeShowList = ['立即', '1分钟', '5分钟', '1小时', '5小时'];
-
-    return _section(
-      Column(
-        children: List.generate(timeValueList.length, (index) {
-          var timeShow = index == 0 ? '立即' : '如果离开${timeShowList[index]}';
-          var selected =
-              timeValueList[index] == AppLockInheritedModel.of(context).walletLockAwayTime;
-          return InkWell(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    timeShow,
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                  Spacer(),
-                  if (selected)
-                    Image.asset(
-                      'res/drawable/ic_check_selected.png',
-                      width: 18,
-                      height: 18,
-                    ),
-                ],
-              ),
-            ),
-            onTap: () {
-              BlocProvider.of<AppLockBloc>(context).add(
-                SetWalletLockAwayTimeEvent(timeValueList[index]),
-              );
-            },
-          );
-        }),
-      ),
-      title: '自动锁定时间',
-      childPadding: EdgeInsets.all(0),
-    );
-  }
-
-  _awayTimeHint() {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Text(
-          '离开钱包界面一定时间后安全锁将自动锁定钱包，继续使用钱包功能需要先解锁钱包。',
-          style: TextStyle(
-            color: DefaultColors.color999,
-            fontSize: 12,
           ),
         ),
       ),
