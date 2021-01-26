@@ -477,7 +477,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                     Padding(
                       padding: const EdgeInsets.only(bottom: 3.0),
                       child: Text(
-                          "≈  ${selectQuote?.legal?.legal ?? ""} $_realTimeQuotePrice",
+                          "≈  ${selectQuote?.legal?.sign ?? ""} $_realTimeQuotePrice",
                           style: TextStyle(
                               fontSize: 10, color: DefaultColors.color777)),
                     ),

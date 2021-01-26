@@ -24,6 +24,8 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/widget/hyn_burn_banner.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
+import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
+import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
@@ -354,7 +356,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            InkWell(
+            /*InkWell(
               onTap: () {
                 WalletManagerPage.jumpWalletManager(context, hasWalletUpdate: (wallet) {
                   setState(() {
@@ -402,7 +404,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                     )
                 ],
               ),
-            ),
+            ),*/
             Row(
               children: [
                 Padding(
@@ -413,7 +415,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                 ),
                 Spacer(),
                 Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 30.0),
+                  padding: const EdgeInsets.only(top: 20,bottom: 10),
                   child: Text(
                     _isShowBalances
                         ? '${activeQuotesSign?.sign ?? ''} ${FormatUtil.formatPrice(activatedWalletVo.balance)}'
@@ -443,6 +445,11 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                     ))
               ],
             ),
+            Text(
+              activatedWalletVo?.wallet?.keystore?.name ?? "",
+              style: TextStyles.textC333S14,
+            ),
+            SizedBox(height: 24,),
             Stack(
               alignment: Alignment.center,
               children: [
@@ -741,9 +748,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                     var hasPrice = true;
                     return InkWell(
                         onTap: () {
+                          var coinVo = activatedWalletVo.coins[index];
                           switch (jumpType) {
                             case WalletPageJump.PAGE_SEND:
-                              var coinVo = activatedWalletVo.coins[index];
                               Application.router.navigateTo(
                                   context,
                                   Routes.wallet_account_send_transaction +
@@ -756,7 +763,26 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                                       builder: (context) => WalletReceivePage(coinVo)));
                               break;
                             case WalletPageJump.PAGE_EXCHANGE:
-                              titleStr = "交易";
+                              if ((coinVo.symbol == SupportedTokens.HYN_Atlas.symbol) ||
+                                  (coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol)) {
+                                var base = 'USDT';
+                                var quote = 'HYN';
+                                if (coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol) {
+                                  base = 'HYN';
+                                  quote = 'RP';
+                                }
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ExchangeDetailPage(
+                                              base: base,
+                                              quote: quote,
+                                              exchangeType: ExchangeType.BUY,
+                                            )));
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: S.of(context).exchange_is_not_yet_open(coinVo.symbol));
+                              }
                               break;
                           }
                         },

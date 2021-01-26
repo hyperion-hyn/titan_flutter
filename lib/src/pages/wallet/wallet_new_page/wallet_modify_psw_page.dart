@@ -81,7 +81,7 @@ class _WalletModifyPswPageState extends State<WalletModifyPswPage> {
                           Spacer(),
                           InkWell(
                               onTap: () {
-                                Fluttertoast.showToast(msg: widget.wallet.walletExpandInfoEntity.pswRemind ?? "");
+                                Fluttertoast.showToast(msg: "密码提示：${widget.wallet.walletExpandInfoEntity.pswRemind ?? ""}");
                               },
                               child: Text(
                                 "忘记密码？",
