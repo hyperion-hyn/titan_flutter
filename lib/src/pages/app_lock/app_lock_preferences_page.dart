@@ -66,62 +66,38 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
 
   _basicPreferences() {
     return _section(
-        Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Text(
-                      '安全锁',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
+      Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Text(
+                    '安全锁',
+                    style: TextStyle(fontWeight: FontWeight.w500),
                   ),
-                  FlutterSwitch(
-                    width: 54.0,
-                    height: 26.0,
-                    toggleSize: 18.0,
-                    activeColor: HexColor('#EDC313'),
-                    inactiveColor: HexColor('#DEDEDE'),
-                    value: AppLockInheritedModel.of(context).isWalletLockEnable,
-                    onToggle: (value) {
-                      _setUpAppLock(value);
-                    },
-                  ),
-                ],
-              ),
-            ),
-            if (AuthInheritedModel.of(context).bioAuthAvailable)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '快捷解锁/生物验证',
-                        style: TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    FlutterSwitch(
-                      width: 54.0,
-                      height: 26.0,
-                      toggleSize: 18.0,
-                      activeColor: HexColor('#EDC313'),
-                      inactiveColor: HexColor('#DEDEDE'),
-                      value: AppLockInheritedModel.of(context).isWalletLockBioAuthEnabled,
-                      onToggle: (value) {
-                        _setUpBioAuth(value);
-                      },
-                    ),
-                  ],
                 ),
-              )
-          ],
-        ),
-        padding: EdgeInsets.only(top: 8.0),
-        childPadding: EdgeInsets.symmetric(vertical: 0.0));
+                FlutterSwitch(
+                  width: 54.0,
+                  height: 26.0,
+                  toggleSize: 18.0,
+                  activeColor: HexColor('#EDC313'),
+                  inactiveColor: HexColor('#DEDEDE'),
+                  value: AppLockInheritedModel.of(context).isWalletLockEnable,
+                  onToggle: (value) {
+                    _setUpAppLock(value);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.only(top: 8.0),
+      childPadding: EdgeInsets.symmetric(vertical: 0.0),
+    );
   }
 
   _awayTimePreference() {
@@ -223,7 +199,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
             children: [
               Expanded(
                 child: Text(
-                  '快捷解锁/生物验证',
+                  '快捷解锁',
                   style: TextStyle(fontWeight: FontWeight.w500),
                 ),
               ),

@@ -82,6 +82,11 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
           _appLockConfig?.walletLock?.isEnabled = state.isEnabled;
           _appLockConfig?.walletLock?.isOn = state.isEnabled;
 
+          ///if unable turn off bio too
+          if (!state.isEnabled) {
+            _appLockConfig?.walletLock?.isBioAuthEnabled = false;
+          }
+
           await _saveAppLockConfig();
         } else if (state is SetAppLockPwdState) {
           _appLockConfig?.walletLock?.pwd = state.pwd;
