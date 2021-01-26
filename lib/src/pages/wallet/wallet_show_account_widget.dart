@@ -312,20 +312,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                       builder: (BuildContext context) {
                                         return InkWell(
                                           onTap: () {
-                                            if (widget.coinVo.symbol == SupportedTokens.USDT_ERC20.symbol ||
-                                                widget.coinVo.symbol == SupportedTokens.USDT_ERC20_ROPSTEN.symbol) {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) => ExchangeDetailPage(
-                                                          quote: 'HYN', base: 'USDT', exchangeType: ExchangeType.BUY)));
-                                            } else {
-                                              Fluttertoast.showToast(
-                                                  msg: S.of(context).exchange_is_not_yet_open(widget.coinVo.symbol));
-                                            }
-                                            /*Clipboard.setData(ClipboardData(text: coinVo.address));
-                                            Scaffold.of(context)
-                                                .showSnackBar(SnackBar(content: Text(S.of(context).address_copied)));*/
+                                            Fluttertoast.showToast(
+                                                msg: S.of(context).exchange_is_not_yet_open(widget.coinVo.symbol));
                                           },
                                           child: Row(
                                             children: <Widget>[

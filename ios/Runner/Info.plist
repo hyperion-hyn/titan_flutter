@@ -43,31 +43,31 @@
 		<true/>
 	</dict>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>Please allow obtain media library permission</string>
+	<string>Enable Titan to access your camera roll to upload your photos and save ones you&apos;ve taken with the app.</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Please allow obtain calendars permission</string>
+	<string>Enable Titan to access your calendars  get accurately date.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Please allow obtain camera permission</string>
+	<string>Enable Titan to access scan fuctions , take photos,  and so on.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>Please allow obtain contacts permission</string>
+	<string>Enable Titan to access your contracts  info for invite friends together use.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Please allow use face ID</string>
+	<string>Enable Titan to access face Id services, </string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Please allow obtain location permission</string>
+	<string>This allows us to use your location to provide you certain features lkie tracking your runs more accurately, keeping you in the loop about Titan events and exclusive product releases, and allowing you to tag your location.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Please allow obtain location permission</string>
+	<string>Turn on location services to find poi around you.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Please allow obtain location permission</string>
+	<string>Turn on location services to find poi around you.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Please allow obtain microphone permission</string>
+	<string>The app records you during the night to detect snoring sounds.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Please allow obtain motion permission</string>
+	<string> Keeping you in the loop about Titan events and exclusive product releases.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Please allow obtain add photo permission</string>
+	<string>Enable Titan to access your camera roll to upload your photos and save ones you&apos;ve taken with the app.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Please allow obtain photo library permission</string>
+	<string>Enable Titan to access your camera roll to upload your photos and save ones you&apos;ve taken with the app.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Please allow obtain speech recognition permission</string>
+	<string>The app records you during the night to detect snoring sounds.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
