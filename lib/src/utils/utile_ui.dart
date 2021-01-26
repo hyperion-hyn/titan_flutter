@@ -307,13 +307,14 @@ class UiUtil {
                   Column(
                     children: <Widget>[
                       contentWidget,
-                      Padding(
-                        padding: EdgeInsets.only(top: 18, bottom: 18),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: actions,
-                        ),
-                      )
+                      if(actions != null)
+                        Padding(
+                          padding: EdgeInsets.only(top: 18, bottom: 18),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: actions,
+                          ),
+                        )
                     ],
                   ),
                 ],
@@ -719,6 +720,7 @@ class UiUtil {
     @required CheckPwdValid onCheckPwdValid,
     bool isShowBioAuthIcon = true,
     String dialogTitle,
+    String remindStr,
     AuthType authType = AuthType.pay,
   }) async {
 
@@ -740,7 +742,54 @@ class UiUtil {
             authType: authType,
           ));
     } else {
-      var pwd = await showModalBottomSheet(
+      return showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return Builder(
+            builder: (BuildContext buildContext) {
+              return EnterWalletPasswordWidget(
+                isShowBioAuthIcon: isShowBioAuthIcon,
+                wallet: wallet,
+                authType: authType,
+                onPwdSubmitted: onCheckPwdValid,
+                remindStr: remindStr,
+              );
+            },
+          );
+        },
+      );
+      return showAlertViewNew(context,contentWidget: Material(
+        child: EnterWalletPasswordWidget(
+          isShowBioAuthIcon: isShowBioAuthIcon,
+          wallet: wallet,
+          authType: authType,
+          onPwdSubmitted: onCheckPwdValid,
+        ),
+      ),isShowCloseIcon: false);
+      /*return await showDialog(
+          context: context,
+          barrierDismissible: false,
+          child: AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            backgroundColor: Colors.transparent,
+            content: EnterWalletPasswordWidget(
+              isShowBioAuthIcon: isShowBioAuthIcon,
+              wallet: wallet,
+              authType: authType,
+              onPwdSubmitted: onCheckPwdValid,
+            ),
+          ));*/
+      /*return await showDialog(
+          context: context,
+          barrierDismissible: false,
+          child: EnterWalletPasswordWidget(
+            isShowBioAuthIcon: isShowBioAuthIcon,
+            wallet: wallet,
+            authType: authType,
+            onPwdSubmitted: onCheckPwdValid,
+          ));*/
+      /*var pwd = await showModalBottomSheet(
           isScrollControlled: true,
           context: context,
           shape: RoundedRectangleBorder(
@@ -759,7 +808,7 @@ class UiUtil {
         return pwd;
       } else {
         return null;
-      }
+      }*/
     }
   }
 
