@@ -18,3 +18,8 @@ class UpdateRootPageState extends RootPageControlState {
   @override
   List<Object> get props => [child];
 }
+
+class ShowAppLockState extends RootPageControlState {
+  @override
+  List<Object> get props => [];
+}

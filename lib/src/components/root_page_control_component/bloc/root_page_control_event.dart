@@ -13,3 +13,8 @@ class SetRootPageEvent extends RootPageControlEvent {
   @override
   List<Object> get props => [page];
 }
+
+class ShowAppLockEvent extends RootPageControlEvent {
+  @override
+  List<Object> get props => throw UnimplementedError();
+}

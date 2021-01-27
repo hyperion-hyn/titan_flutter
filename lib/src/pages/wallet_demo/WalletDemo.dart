@@ -535,7 +535,7 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
-            child: Text('Wallet Lock is ${AppLockInheritedModel.of(context).isWalletLockActive}'),
+            child: Text('Wallet Lock is ${AppLockInheritedModel.of(context).isLockActive}'),
           ),
           RaisedButton(
             child: Text('Lock wallet'),
@@ -553,7 +553,7 @@ class _WalletDemoState extends State<WalletDemo> {
             children: [
               Text('Wallet Lock Enabled'),
               Switch(
-                  value: (AppLockInheritedModel.of(context).isWalletLockEnable),
+                  value: (AppLockInheritedModel.of(context).isLockEnable),
                   onChanged: (value) {
                     var walletAddress = WalletInheritedModel.of(context)
                             ?.activatedWallet
