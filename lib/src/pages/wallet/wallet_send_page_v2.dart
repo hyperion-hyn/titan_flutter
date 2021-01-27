@@ -139,7 +139,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
     return Padding(
       padding: const EdgeInsets.only(
         left: 16,
-        right: 16,
+        right: 24,
         top: 18,
       ),
       child: Column(
@@ -201,7 +201,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
                   MaterialPageRoute(
                     builder: (context) => WalletGasSettingPage(
                       FluroConvertUtils.object2string(widget.coinVo.toJson()),
-                      widget.toAddress,
                     ),
                   ),
                 );
@@ -216,6 +215,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
                     ),
                   ),
                   Spacer(),
+                  // todo: 读取最新设置
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -297,6 +297,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
       children: <Widget>[
         Row(
           children: <Widget>[
+            // todo: 随机数
             Text(
               '随机数（Nonce）',
               style: TextStyle(
@@ -711,6 +712,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
     var toValidate = _toKey.currentState.validate();
     var amountValidate = _amountKey.currentState.validate();
     var highLevel = true;
+
+    // todo: 随机数检查
     if (_isHighLevel) {
       var nonceValidate = _nonceKey.currentState.validate();
       highLevel = nonceValidate;
