@@ -90,6 +90,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
 
   int get coinType => widget.coinVo.coinType;
 
+  bool get isBbcOrEth => (CoinType.BITCOIN == coinType || CoinType.ETHEREUM == coinType);
+
   String get baseUnit {
     var baseUnit = widget.coinVo.symbol;
 
@@ -292,6 +294,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
   void _setupDataList() {
     _activatedQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
 
+    // if (!isBbcOrEth) return;
+
     if (_isBTC) {
       _gasPriceRecommend =
           WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).btcGasPriceRecommend;
@@ -337,6 +341,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
   }
 
   void _initLastData() async {
+    if (!isBbcOrEth) return;
+
     if (_isBTC) {
       String custom = await AppCache.getValue(
         PrefsKey.WALLET_GAS_SAT_CUSTOM_KEY,
@@ -487,8 +493,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
 
   Widget _gasWidget() {
     var totalFee = '$feesStr $baseUnit';
-
-    var isBbcOrEth = (CoinType.BITCOIN == coinType || CoinType.ETHEREUM == coinType);
 
     return _clipRectWidget(
       paddingH: 16,
