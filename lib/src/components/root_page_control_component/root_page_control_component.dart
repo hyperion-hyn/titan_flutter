@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart';
@@ -70,6 +71,7 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
     ///show app-lock if enabled
     if (await AppLockUtil.checkEnable()) {
       Application.router.navigateTo(Keys.rootKey.currentContext, Routes.app_lock);
+      BlocProvider.of<AppLockBloc>(Keys.rootKey.currentContext).add(LockAppEvent());
     }
   }
 
@@ -80,7 +82,7 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
         BlocProvider<ScaffoldMapBloc>(create: (context) => ScaffoldMapBloc(context)),
         BlocProvider<AppTabBarBloc>(create: (context) => AppTabBarBloc()),
         BlocProvider<DiscoverBloc>(create: (context) => DiscoverBloc(context)),
-        BlocProvider<AppLockBloc>(create: (context) => AppLockBloc()),
+        BlocProvider<AuthBloc>(create: (context) => AuthBloc()),
       ],
       child: BlocBuilder<RootPageControlBloc, RootPageControlState>(
         builder: (ctx, state) {
