@@ -25,6 +25,7 @@ import 'keyboard_widget.dart';
 
 typedef Future<bool> CheckPwdValid(String pwd);
 
+@deprecated
 class WalletPasswordDialog extends StatefulWidget {
   String title;
   final CheckPwdValid checkPwdValid;

@@ -45,26 +45,11 @@ class _AppLockManager extends StatefulWidget {
 
 class _AppLockManagerState extends BaseState<_AppLockManager> {
   AppLockConfig _appLockConfig = AppLockConfig.fromDefault();
-  Timer _awayTimer;
-  int _currentAwayTime = 0;
+  int _lastSeenTime = 0;
 
   @override
   void onCreated() async {
     BlocProvider.of<AppLockBloc>(context).add(LoadAppLockConfigEvent());
-  }
-
-  @override
-  void dispose() {
-    _cancelTimer();
-    super.dispose();
-  }
-
-  _cancelTimer() {
-    if (_awayTimer != null) {
-      if (_awayTimer.isActive) {
-        _awayTimer.cancel();
-      }
-    }
   }
 
   @override
@@ -83,9 +68,10 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
           _appLockConfig?.walletLock?.isEnabled = state.isEnabled;
           //_appLockConfig?.walletLock?.isOn = state.isEnabled;
 
-          ///if not enable, turn off bio-auth too
+          ///if not enable, turn off all options too
           if (!state.isEnabled) {
             _appLockConfig?.walletLock?.isBioAuthEnabled = false;
+            _appLockConfig?.walletLock?.isOn = false;
           }
 
           await _saveAppLockConfig();
@@ -100,21 +86,15 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
           _appLockConfig?.walletLock?.isBioAuthEnabled = state.isEnabled;
           await _saveAppLockConfig();
         } else if (state is SetWalletLockCountDownState) {
-          if (state.isStop) {
-            _currentAwayTime = 0;
-            _cancelTimer();
+          if (state.isAway) {
+            _lastSeenTime = DateTime.now().millisecondsSinceEpoch;
           } else {
-            ///only count-down when wallet-lock is enable but not on
-            if (AppLockInheritedModel.of(Keys.rootKey.currentContext).isWalletNotActive)
-              _awayTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
-                _currentAwayTime++;
-                //print(' WalletLock awayTime $_currentAwayTime');
-                if (_currentAwayTime > (_appLockConfig?.walletLock?.awayTime ?? 0)) {
-                  _appLockConfig?.walletLock?.isOn = true;
-
-                  _cancelTimer();
-                }
-              });
+            var configAwayTime = (_appLockConfig?.walletLock?.awayTime ?? 0) * 1000;
+            var now = DateTime.now().millisecondsSinceEpoch;
+            var awayTime = now - _lastSeenTime;
+            if (awayTime > configAwayTime) {
+              _appLockConfig?.walletLock?.isOn = true;
+            }
           }
         } else if (state is LockWalletState) {
           _appLockConfig?.walletLock?.isOn = true;

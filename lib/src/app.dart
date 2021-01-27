@@ -63,7 +63,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.paused:
         //print('-----[App] paused');
-        _setAppLockCountDown(false);
+        _setAppLockCountDown(true);
         //_appLockAwayTime = await AppLockUtil.getAwayTime();
         break;
       case AppLifecycleState.detached:
@@ -71,18 +71,18 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.resumed:
         //print('-----[App] resumed');
-        _setAppLockCountDown(true);
+        _setAppLockCountDown(false);
         //print('appLockAwayTime $_appLockAwayTime');
         //if (mounted) setState(() {});
         break;
     }
   }
 
-  _setAppLockCountDown(bool isStop) {
+  _setAppLockCountDown(bool isAway) {
     BlocProvider.of<AppLockBloc>(
       Keys.rootKey.currentContext,
     ).add(
-      SetAppLockCountDownEvent(isStop),
+      SetAppLockCountDownEvent(isAway),
     );
   }
 
@@ -121,22 +121,54 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                 enableLoadingWhenFailed: false,
                 hideFooterWhenNotFull: true,
                 enableBallisticLoad: true,
-                child: MaterialApp(
-                  key: Keys.materialAppKey,
-                  debugShowCheckedModeBanner: false,
-                  locale: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel?.locale,
-                  title: 'titan',
-                  theme: SettingInheritedModel.of(context, aspect: SettingAspect.theme).themeModel?.theme??appTheme,
-                  localizationsDelegates: [
-                    S.delegate,
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                    RefreshLocalizations.delegate,
-                  ],
-                  supportedLocales: S.delegate.supportedLocales,
-                  navigatorObservers: [Application.routeObserver],
-                  onGenerateRoute: Application.router.generator,
+                child: Container(
+                  color: Colors.white,
+                  child: AppLockInheritedModel.of(context).isWalletLockActive
+                      ? MaterialApp(
+                          locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
+                              .languageModel
+                              ?.locale,
+                          localizationsDelegates: [
+                            S.delegate,
+                            GlobalMaterialLocalizations.delegate,
+                            GlobalWidgetsLocalizations.delegate,
+                            GlobalCupertinoLocalizations.delegate,
+                            RefreshLocalizations.delegate,
+                          ],
+                          supportedLocales: S.delegate.supportedLocales,
+                          home: Material(
+                            child: Container(
+                              color: Colors.white,
+                              child: AppLockScreen(
+                                onUnlock: () {
+                                  BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
+                                },
+                              ),
+                            ),
+                          ),
+                        )
+                      : MaterialApp(
+                          key: Keys.materialAppKey,
+                          debugShowCheckedModeBanner: false,
+                          locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
+                              .languageModel
+                              ?.locale,
+                          title: 'titan',
+                          theme: SettingInheritedModel.of(context, aspect: SettingAspect.theme)
+                                  .themeModel
+                                  ?.theme ??
+                              appTheme,
+                          localizationsDelegates: [
+                            S.delegate,
+                            GlobalMaterialLocalizations.delegate,
+                            GlobalWidgetsLocalizations.delegate,
+                            GlobalCupertinoLocalizations.delegate,
+                            RefreshLocalizations.delegate,
+                          ],
+                          supportedLocales: S.delegate.supportedLocales,
+                          navigatorObservers: [Application.routeObserver],
+                          onGenerateRoute: Application.router.generator,
+                        ),
                 ),
               );
             },

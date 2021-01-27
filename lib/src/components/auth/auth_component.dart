@@ -54,7 +54,7 @@ class _AuthManagerState extends BaseState<_AuthManager> {
     return BlocListener<AppLockBloc, AuthState>(
       listener: (context, state) async {
         if (state is RefreshBioAuthConfigState) {
-          authConfigModel = await AuthUtil.getAuthConfig(state.wallet);
+          authConfigModel = await BioAuthUtil.getAuthConfig(state.wallet);
 
           setState(() {});
         } else if (state is SetBioAuthState) {

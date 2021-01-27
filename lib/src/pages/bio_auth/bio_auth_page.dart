@@ -35,7 +35,7 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
   @override
   Future<void> onCreated() async {
     super.onCreated();
-    authConfigModel = await AuthUtil.getAuthConfig(
+    authConfigModel = await BioAuthUtil.getAuthConfig(
       widget._wallet,
       authType: widget._authType,
     );
@@ -260,7 +260,7 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
       );
 
       if (password != null) {
-        var authResult = await AuthUtil.bioAuth(context, biometricType);
+        var authResult = await BioAuthUtil.auth(context, biometricType);
 
         ///then check bio-auth
         if (authResult) {
@@ -281,7 +281,7 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
           authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
 
           ///Save auth config
-          AuthUtil.saveAuthConfig(
+          BioAuthUtil.saveAuthConfig(
             authConfigModel,
             widget._wallet,
             authType: widget._authType,
@@ -329,7 +329,7 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
       }
       authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
 
-      AuthUtil.saveAuthConfig(
+      BioAuthUtil.saveAuthConfig(
         authConfigModel,
         widget._wallet,
         authType: widget._authType,
