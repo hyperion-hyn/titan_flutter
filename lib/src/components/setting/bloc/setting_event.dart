@@ -33,3 +33,6 @@ class UpdateSettingEvent extends SettingEvent with EquatableMixin {
 class RestoreSettingEvent extends SettingEvent {}
 
 class SyncRemoteConfigEvent extends SettingEvent {}
+
+class SystemConfigEvent extends SettingEvent {}
+

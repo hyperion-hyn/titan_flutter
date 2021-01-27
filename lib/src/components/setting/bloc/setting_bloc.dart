@@ -63,7 +63,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
         _saveSystemConfig(netSystemConfigEntity);
         yield SystemConfigState(netSystemConfigEntity);
       }
-      yield UpdatedSettingState(languageModel: event.languageModel, areaModel: event.areaModel);
     } else if (event is SyncRemoteConfigEvent) {
       // var configStr = await AppCache.getValue<String>(PrefsKey.SETTING_REMOTE_SYSTEM_CONFIG);
       SystemConfigEntity netSystemConfigEntity = await api.getSystemConfigData();

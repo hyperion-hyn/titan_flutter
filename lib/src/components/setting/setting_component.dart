@@ -45,21 +45,22 @@ class _SettingManagerState extends BaseState<_SettingManager> {
   @override
   void onCreated() async {
 
+    themeModel = await SupportedTheme.defaultModel();
+
     var systemConfigStr = await AppCache.getValue<String>(PrefsKey.SETTING_SYSTEM_CONFIG);
     if (systemConfigStr != null) {
       systemConfigEntity = SystemConfigEntity.fromJson(json.decode(systemConfigStr));
     }
 
-    themeModel = await SupportedTheme.defaultModel();
-
-    super.onCreated();
-
     // 恢复历史设置
     BlocProvider.of<SettingBloc>(context).add(RestoreSettingEvent());
+
     //同步remote配置
     Future.delayed(Duration(milliseconds: 1000), () {
       BlocProvider.of<SettingBloc>(context).add(SyncRemoteConfigEvent());
     });
+
+    super.onCreated();
   }
 
   @override
@@ -86,7 +87,6 @@ class _SettingManagerState extends BaseState<_SettingManager> {
               themeModel = state.themeModel;
             }
           } else if (state is SystemConfigState) {
-            systemConfigEntity = state.systemConfigEntity;
 
             if (state.systemConfig != null) {
               systemConfigEntity = state.systemConfig;
@@ -106,7 +106,7 @@ class _SettingManagerState extends BaseState<_SettingManager> {
   }
 }
 
-enum SettingAspect { language, area, sign, systemConfig, theme }
+enum SettingAspect { language, area, systemConfig, theme }
 
 class SettingInheritedModel extends InheritedModel<SettingAspect> {
   final LanguageModel languageModel;
@@ -155,8 +155,6 @@ class SettingInheritedModel extends InheritedModel<SettingAspect> {
   bool updateShouldNotifyDependent(SettingInheritedModel oldWidget, Set<SettingAspect> dependencies) {
     return ((languageModel != oldWidget.languageModel && dependencies.contains(SettingAspect.language)) ||
             (areaModel != oldWidget.areaModel && dependencies.contains(SettingAspect.area)) ||
-            (systemConfigEntity != oldWidget.systemConfigEntity &&
-                dependencies.contains(SettingAspect.systemConfig))) ||
         (themeModel != oldWidget.themeModel && dependencies.contains(SettingAspect.theme)) ||
         (systemConfigEntity != oldWidget.systemConfigEntity && dependencies.contains(SettingAspect.systemConfig)));
   }

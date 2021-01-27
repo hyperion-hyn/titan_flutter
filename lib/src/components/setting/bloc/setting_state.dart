@@ -18,14 +18,12 @@ class InitialSettingState extends SettingState {}
 class UpdatedSettingState extends SettingState with EquatableMixin {
   final LanguageModel languageModel;
   final AreaModel areaModel;
-  final QuotesSign quotesSign;
   final ThemeModel themeModel;
   final SystemConfigEntity systemConfig;
 
   UpdatedSettingState({
     this.languageModel,
     this.areaModel,
-    this.quotesSign,
     this.themeModel,
     this.systemConfig,
   });
@@ -42,3 +40,10 @@ class UpdatedSettingState extends SettingState with EquatableMixin {
 //
 //   RemoteConfigSyncedState(this.systemConfigEntity);
 // }
+
+
+class SystemConfigState extends SettingState {
+  final SystemConfigEntity systemConfig;
+
+  SystemConfigState(this.systemConfig);
+}
