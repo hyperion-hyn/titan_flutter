@@ -1004,7 +1004,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       String custom = await AppCache.getValue(
         PrefsKey.WALLET_GAS_PRICE_CUSTOM_KEY,
       );
-      _selectedIndex = int?.tryParse(custom) ?? 0;
+      _selectedIndex = int?.tryParse(custom??'0') ?? 0;
 
       if (_isCustom) {
         _lastGasPrice = await AppCache.getValue(
@@ -1012,7 +1012,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         );
 
         _lastGasLimit = await AppCache.getValue(
-          PrefsKey.WALLET_GAS_PRICE_KEY,
+          PrefsKey.WALLET_GAS_LIMIT_KEY,
         );
         // print(
         //     "[$runtimeType] _selectedIndex:$_selectedIndex, _lastGasLimit:$_lastGasLimit, _lastGasPrice:$_lastGasPrice");

@@ -219,7 +219,6 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
               gasPriceEstimateStr =
                   "${quoteSign ?? ""}${FormatUtil.formatPrice(gasPriceEstimate.toDouble())}";
             }
-            // todo: 支持其他Symbol？？？？
 
             var totalFee = '$fees $baseUnit';
 
@@ -509,7 +508,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
 
           var validStr = '';
           if (inputText != null) {
-            validStr = '请输入有效的矿工费率';
+            // validStr = '请输入有效的矿工费率';
 
             var inputValue = int.tryParse(inputText ?? '0') ?? 0;
             var inputDecimalValue = Decimal.fromInt(inputValue);
@@ -538,7 +537,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
         validator: (String textStr) {
           var validStr = '';
           if (textStr != null) {
-            validStr = S.of(context).please_input_gas_price;
+            // validStr = S.of(context).please_input_gas_price;
 
             var inputValue = int.tryParse(textStr ?? '0') ?? 0;
             var inputDecimalValue = Decimal.fromInt(inputValue * EthereumUnitValue.G_WEI);
@@ -565,8 +564,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
         validator: (String textStr) {
           var validStr = '';
           if (textStr != null) {
-            validStr = '请输入有效的 Gas';
-
+            // validStr = '请输入有效的 Gas';
             var inputValue = int.tryParse(textStr ?? '0') ?? 0;
             var inputDecimalValue = Decimal.fromInt(inputValue);
 
@@ -910,7 +908,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
       String custom = await AppCache.getValue(
         PrefsKey.WALLET_GAS_PRICE_CUSTOM_KEY,
       );
-      _selectedIndex = int?.tryParse(custom) ?? 0;
+      _selectedIndex = int?.tryParse(custom??'0') ?? 0;
       _selectedIndexInit = _selectedIndex;
 
       if (_isCustom) {
@@ -921,15 +919,15 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
         _gasPriceController.text = gasPriceDecimalValue.toString();
 
         String gasLimit = await AppCache.getValue(
-          PrefsKey.WALLET_GAS_PRICE_KEY,
+          PrefsKey.WALLET_GAS_LIMIT_KEY,
         );
-        Decimal gasLimitDecimalValue = Decimal?.tryParse(gasLimit ?? '0') ?? Decimal.zero;
+        Decimal gasLimitDecimalValue = Decimal?.tryParse(gasLimit ?? '0') ?? _defaultGasLimit;
         _gasLimitController.text = gasLimitDecimalValue.toString();
 
         _inputController.add(gasPrice);
 
         _scrollController.animateTo(
-          200,
+          300,
           duration: Duration(milliseconds: 300, microseconds: 33),
           curve: Curves.linear,
         );
