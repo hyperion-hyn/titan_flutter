@@ -304,7 +304,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
       aspect: WalletAspect.activatedWallet,
     ).activatedWallet;
     if (activatedWalletVo != null) {
-      if (AppLockInheritedModel.of(context).isWalletLockActive)
+      if (AppLockInheritedModel.of(context).isLockActive)
         return Column(
           children: [
             SizedBox(height: 32),

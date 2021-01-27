@@ -5,10 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nested/nested.dart';
 import 'package:titan/src/app.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 
@@ -89,11 +91,16 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
           if (state.isAway) {
             _lastSeenTime = DateTime.now().millisecondsSinceEpoch;
           } else {
-            var configAwayTime = (_appLockConfig?.walletLock?.awayTime ?? 0) * 1000;
-            var now = DateTime.now().millisecondsSinceEpoch;
-            var awayTime = now - _lastSeenTime;
-            if (awayTime > configAwayTime) {
-              _appLockConfig?.walletLock?.isOn = true;
+            if (_appLockConfig?.walletLock?.isEnabled ?? false) {
+              var configAwayTime = (_appLockConfig?.walletLock?.awayTime ?? 0) * 1000;
+              var now = DateTime.now().millisecondsSinceEpoch;
+              var awayTime = now - _lastSeenTime;
+              if (awayTime > configAwayTime) {
+                _appLockConfig?.walletLock?.isOn = true;
+
+                ///show app-lock
+                Application.router.navigateTo(Keys.rootKey.currentContext, Routes.app_lock);
+              }
             }
           }
         } else if (state is LockWalletState) {
@@ -144,33 +151,28 @@ class AppLockInheritedModel extends InheritedModel<AppLockAspect> {
     @required this.appLockConfig,
   }) : super(key: key, child: child);
 
-  bool get isWalletLockActive {
+  bool get isLockActive {
     return (appLockConfig?.walletLock?.isEnabled ?? false) &&
         (appLockConfig?.walletLock?.isOn ?? false);
   }
 
-  bool get isWalletNotActive {
-    return (appLockConfig?.walletLock?.isEnabled ?? false) &&
-        !(appLockConfig?.walletLock?.isOn ?? false);
-  }
-
-  bool get isWalletLockOn {
+  bool get isLockOn {
     return appLockConfig?.walletLock?.isOn ?? false;
   }
 
-  bool get isWalletLockEnable {
+  bool get isLockEnable {
     return appLockConfig?.walletLock?.isEnabled ?? false;
   }
 
-  int get walletLockAwayTime {
+  int get lockAwayTime {
     return appLockConfig?.walletLock?.awayTime ?? 0;
   }
 
-  bool get isWalletLockBioAuthEnabled {
+  bool get isBioAuthEnabled {
     return appLockConfig?.walletLock?.isBioAuthEnabled ?? false;
   }
 
-  String get walletLockPwdHint {
+  String get lockPwdHint {
     return appLockConfig?.walletLock?.pwdHint;
   }
 

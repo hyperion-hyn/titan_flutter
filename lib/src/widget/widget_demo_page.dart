@@ -1,5 +1,6 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +8,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_success_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/fl_pie_chart.dart';
@@ -103,14 +105,34 @@ class _WidgetDemoPageState extends State<WidgetDemoPage> with SingleTickerProvid
                         dialogTitle: "退出身份",
                         dialogSubTitle: "退出身份后将删除所有钱包数据，请务必确保助记词已经备份",
                         imageHeight: 66,
-                        actions: [ClickOvalButton("确认退出", () async {
-
-                        },width: 300,height: 44,btnColor: [HexColor("#FF4B4B")],fontSize: 16,)]);
+                        actions: [
+                          ClickOvalButton(
+                            "确认退出",
+                            () async {},
+                            width: 300,
+                            height: 44,
+                            btnColor: [HexColor("#FF4B4B")],
+                            fontSize: 16,
+                          )
+                        ]);
                   },
                   child: Text("底部弹窗"),
                   color: DefaultColors.color999,
                 ),
               ),
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    RaisedButton(
+                      onPressed: () {
+                        BlocProvider.of<RootPageControlBloc>(context)
+                            .add(SetRootPageEvent(page: AppLockScreen()));
+                      },
+                      child: Text('切换rootPage'),
+                    )
+                  ],
+                ),
+              )
             ],
           )),
     );

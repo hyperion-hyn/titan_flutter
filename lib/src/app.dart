@@ -123,31 +123,31 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                 enableBallisticLoad: true,
                 child: Container(
                   color: Colors.white,
-                  child: AppLockInheritedModel.of(context).isWalletLockActive
-                      ? MaterialApp(
-                          locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
-                              .languageModel
-                              ?.locale,
-                          localizationsDelegates: [
-                            S.delegate,
-                            GlobalMaterialLocalizations.delegate,
-                            GlobalWidgetsLocalizations.delegate,
-                            GlobalCupertinoLocalizations.delegate,
-                            RefreshLocalizations.delegate,
-                          ],
-                          supportedLocales: S.delegate.supportedLocales,
-                          home: Material(
-                            child: Container(
-                              color: Colors.white,
-                              child: AppLockScreen(
-                                onUnlock: () {
-                                  BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
-                                },
-                              ),
-                            ),
-                          ),
-                        )
-                      : MaterialApp(
+                  // child: AppLockInheritedModel.of(context).isLockActive
+                  //     ? MaterialApp(
+                  //         locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
+                  //             .languageModel
+                  //             ?.locale,
+                  //         localizationsDelegates: [
+                  //           S.delegate,
+                  //           GlobalMaterialLocalizations.delegate,
+                  //           GlobalWidgetsLocalizations.delegate,
+                  //           GlobalCupertinoLocalizations.delegate,
+                  //           RefreshLocalizations.delegate,
+                  //         ],
+                  //         supportedLocales: S.delegate.supportedLocales,
+                  //         home: Material(
+                  //           child: Container(
+                  //             color: Colors.white,
+                  //             child: AppLockScreen(
+                  //               onUnlock: () {
+                  //                 BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
+                  //               },
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       )
+                     child : MaterialApp(
                           key: Keys.materialAppKey,
                           debugShowCheckedModeBanner: false,
                           locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)

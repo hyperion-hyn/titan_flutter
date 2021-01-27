@@ -274,7 +274,8 @@ class Wallet {
     int gasLimit,
     web3.IMessage message,
   }) async {
-    assert(password == null && cred == null, '密码/密钥不能为空');
+    // assert(password == null && cred == null, '密码/密钥不能为空');
+    assert(password == null || cred == null, '密码/密钥不能为空');
 
     if (gasPrice == null) {
       gasPrice = await WalletUtil.ethGasPrice(coinType);
@@ -315,8 +316,7 @@ class Wallet {
     }
 
  
-    var privateKey =
-        await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+    //var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
 
     final client = WalletUtil.getWeb3Client(coinType);
     var credentials = cred;
