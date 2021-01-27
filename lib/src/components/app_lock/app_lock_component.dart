@@ -91,21 +91,23 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
           if (state.isAway) {
             _lastSeenTime = DateTime.now().millisecondsSinceEpoch;
           } else {
-            if (_appLockConfig?.walletLock?.isEnabled ?? false) {
+            if (_appLockConfig.walletLock.isEnabled) {
               var configAwayTime = (_appLockConfig?.walletLock?.awayTime ?? 0) * 1000;
               var now = DateTime.now().millisecondsSinceEpoch;
               var awayTime = now - _lastSeenTime;
               if (awayTime > configAwayTime) {
-                _appLockConfig?.walletLock?.isOn = true;
-
-                ///show app-lock
-                Application.router.navigateTo(Keys.rootKey.currentContext, Routes.app_lock);
+                ///prevent push multiple times
+                if (!(_appLockConfig.walletLock.isOn)) {
+                  ///show app-lock
+                  Application.router.navigateTo(Keys.rootKey.currentContext, Routes.app_lock);
+                  _appLockConfig.walletLock.isOn = true;
+                }
               }
             }
           }
         } else if (state is LockWalletState) {
           _appLockConfig?.walletLock?.isOn = true;
-        } else if (state is UnlockWalletState) {
+        } else if (state is UnlockAppState) {
           _appLockConfig?.walletLock?.isOn = false;
         }
         if (mounted) setState(() {});
@@ -154,6 +156,11 @@ class AppLockInheritedModel extends InheritedModel<AppLockAspect> {
   bool get isLockActive {
     return (appLockConfig?.walletLock?.isEnabled ?? false) &&
         (appLockConfig?.walletLock?.isOn ?? false);
+  }
+
+  bool get isLockNotActive {
+    return (appLockConfig?.walletLock?.isEnabled ?? false) &&
+        !(appLockConfig?.walletLock?.isOn ?? false);
   }
 
   bool get isLockOn {

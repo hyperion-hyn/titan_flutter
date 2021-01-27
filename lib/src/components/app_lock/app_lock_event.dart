@@ -36,6 +36,6 @@ class SetAppLockPwdEvent extends AppLockEvent {
   SetAppLockPwdEvent(this.pwd, this.hint);
 }
 
-class LockWalletEvent extends AppLockEvent {}
+class LockAppEvent extends AppLockEvent {}
 
-class UnLockWalletEvent extends AppLockEvent {}
+class UnLockAppEvent extends AppLockEvent {}

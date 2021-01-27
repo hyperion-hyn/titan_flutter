@@ -540,13 +540,13 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             child: Text('Lock wallet'),
             onPressed: () async {
-              BlocProvider.of<AppLockBloc>(context).add(LockWalletEvent());
+              BlocProvider.of<AppLockBloc>(context).add(LockAppEvent());
             },
           ),
           RaisedButton(
             child: Text('Unlock wallet'),
             onPressed: () async {
-              BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
+              BlocProvider.of<AppLockBloc>(context).add(UnLockAppEvent());
             },
           ),
           Row(
