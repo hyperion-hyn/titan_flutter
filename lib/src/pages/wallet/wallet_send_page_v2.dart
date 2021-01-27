@@ -18,7 +18,9 @@ import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/wallet/wallet_gas_setting_page.dart';
+import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
@@ -837,6 +839,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
   }
 
   void _confirmAction() {
+
+
     var toValidate = _toKey.currentState.validate();
     var amountValidate = _amountKey.currentState.validate();
     var highLevel = true;
@@ -875,11 +879,16 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         }
       }
 
-      var voStr = FluroConvertUtils.object2string(widget.coinVo.toJson());
-      Application.router.navigateTo(
-          context,
-          Routes.wallet_transfer_token_confirm +
-              "?coinVo=$voStr&transferAmount=$amountTrim&receiverAddress=${widget.coinVo.coinType == CoinType.HYN_ATLAS ? WalletUtil.bech32ToEthAddress(_toController.text) : _toController.text}");
+      showWalletSendDialog(
+        context,
+        RpShareReqEntity.only("0", 'address', 0, 0, "1"),
+      );
+
+      // var voStr = FluroConvertUtils.object2string(widget.coinVo.toJson());
+      // Application.router.navigateTo(
+      //     context,
+      //     Routes.wallet_transfer_token_confirm +
+      //         "?coinVo=$voStr&transferAmount=$amountTrim&receiverAddress=${widget.coinVo.coinType == CoinType.HYN_ATLAS ? WalletUtil.bech32ToEthAddress(_toController.text) : _toController.text}");
     }
   }
 
@@ -1004,7 +1013,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       String custom = await AppCache.getValue(
         PrefsKey.WALLET_GAS_PRICE_CUSTOM_KEY,
       );
-      _selectedIndex = int?.tryParse(custom??'0') ?? 0;
+      _selectedIndex = int?.tryParse(custom ?? '0') ?? 0;
 
       if (_isCustom) {
         _lastGasPrice = await AppCache.getValue(

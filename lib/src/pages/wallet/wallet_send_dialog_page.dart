@@ -18,17 +18,17 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class RpShareSendDialogPage extends StatefulWidget {
+class WalletSendDialogPage extends StatefulWidget {
   final RpShareReqEntity reqEntity;
-  RpShareSendDialogPage({this.reqEntity});
+  WalletSendDialogPage({this.reqEntity});
 
   @override
   State<StatefulWidget> createState() {
-    return _RpShareSendDialogState();
+    return _WalletSendDialogState();
   }
 }
 
-class _RpShareSendDialogState extends BaseState<RpShareSendDialogPage> {
+class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
   final ScrollController _scrollController = ScrollController();
   final RPApi _rpApi = RPApi();
   bool _isLoading = false;
@@ -365,7 +365,7 @@ class _RpShareSendDialogState extends BaseState<RpShareSendDialogPage> {
   }
 }
 
-Future<bool> showShareRpSendDialog<T>(
+Future<bool> showWalletSendDialog<T>(
   BuildContext context,
   RpShareReqEntity reqEntity,
 ) {
@@ -374,7 +374,7 @@ Future<bool> showShareRpSendDialog<T>(
       backgroundColor: Colors.transparent,
       context: context,
       builder: (BuildContext context) {
-        return RpShareSendDialogPage(
+        return WalletSendDialogPage(
           reqEntity: reqEntity,
         );
       });
