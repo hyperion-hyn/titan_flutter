@@ -10,6 +10,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/components/wallet/wallet_repository.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -49,6 +50,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
   bool isBackup = false;
   BuildContext dialogContext;
   AtlasApi _atlasApi = AtlasApi();
+  WalletRepository _walletRepository = WalletRepository();
 
   @override
   void initState() {
@@ -441,6 +443,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
       print("del result ${widget.wallet.keystore.fileName} $result");
       if (result) {
         await AppCache.remove(widget.wallet.getBitcoinAccount()?.address ?? "");
+        WalletUtil.setWalletExpandInfo(widget.wallet.getEthAccount()?.address,null);
         List<Wallet> walletList = await WalletUtil.scanWallets();
         var activatedWalletVo =
             WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet);
@@ -450,17 +453,20 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             walletList.length > 0) {
           //delete current wallet
 
+          _walletRepository.saveActivatedWalletFileName(walletList[0].keystore.fileName);
           BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: walletList[0]));
           await Future.delayed(Duration(milliseconds: 500)); //延时确保激活成功
-
           Routes.popUntilCachedEntryRouteName(context);
         } else if (walletList.length > 0) {
           //delete other wallet
+
           Routes.popUntilCachedEntryRouteName(context);
         } else {
           //no wallet
-          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
+
           Routes.cachedEntryRouteName = null;
+          _walletRepository.saveActivatedWalletFileName(null);
+          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
           await Future.delayed(Duration(milliseconds: 500)); //延时确保激活成功
           Routes.popUntilCachedEntryRouteName(context);
         }
