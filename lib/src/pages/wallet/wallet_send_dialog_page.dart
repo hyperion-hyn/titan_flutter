@@ -103,7 +103,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                                   width: 44,
                                   height: 44,
                                   fit: BoxFit.cover,
-                                  // color: HexColor('#FF1F81FF'),
+                                  color: HexColor('#E7C01A'),
                                 ),
                               ),
                             ],
@@ -239,7 +239,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                   ),
                 ),
                 Text(
-                  subContent.isEmpty ? '' : '（$subContent）',
+                  (subContent?.isEmpty ?? true) ? '' : '（$subContent）',
                   style: TextStyle(
                     fontSize: 14,
                     color: HexColor('#999999'),
@@ -266,8 +266,14 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
       });
     }
 
-    bool isFinish = await widget.entity.callBack();
+    bool isFinish = await widget.entity.action();
     print("[$runtimeType] _sendAction, isFinish:$isFinish");
+
+    if (isFinish) {
+      Navigator.of(context).pop();
+
+      widget.entity.finished();
+    }
 
     if (mounted) {
       setState(() {
@@ -311,7 +317,8 @@ class WalletSendDialogEntity {
   final String gas1Desc;
   final String gasUnit;
 
-  final WalletSendEntityCallBack callBack;
+  final WalletSendEntityCallBack action;
+  final WalletSendEntityCallBack finished;
 
   WalletSendDialogEntity({
     this.type,
@@ -329,6 +336,7 @@ class WalletSendDialogEntity {
     this.gasDesc,
     this.gas1Desc,
     this.gasUnit,
-    this.callBack,
+    this.action,
+    this.finished,
   });
 }
