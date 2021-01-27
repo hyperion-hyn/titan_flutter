@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -12,12 +13,16 @@ import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/bitcoin.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class WalletGasSettingPage extends StatefulWidget {
@@ -43,12 +48,19 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
   final _gasLimitKey = GlobalKey<FormState>();
   final _gasSatKey = GlobalKey<FormState>();
 
+  bool _isInvalidGasSat = false;
+  bool _isInvalidGasPrice = false;
+  bool _isInvalidGasLimit = false;
+  bool _isFinishEdit = true;
+
   final StreamController<dynamic> _inputController = StreamController.broadcast();
 
   bool get _isBTC => (widget.coinVo.coinType == CoinType.BITCOIN);
   bool get _isCustom => _selectedIndex == -1;
 
-  int _selectedIndex = 0;
+  int _selectedIndex = -1;
+  int _selectedIndexInit = -1;
+
   List<GasPriceRecommendModel> _dataList = [];
 
   TokenPriceViewVo _activatedQuoteSign;
@@ -71,50 +83,11 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
 
   @override
   void onCreated() {
-    _activatedQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
+    // 1._gasPriceRecommend
+    _setupDataList();
 
-    if (_isBTC) {
-      _gasPriceRecommend =
-          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).btcGasPriceRecommend;
-    } else {
-      _gasPriceRecommend =
-          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).ethGasPriceRecommend;
-    }
-
-    if (_gasPriceRecommend != null) {
-      for (int index = 0; index < 3; index++) {
-        String title;
-        String time;
-        Decimal gas;
-
-        switch (index) {
-          case 0:
-            title = '快速';
-            time = S.of(context).wait_min(_gasPriceRecommend.fastWait.toString());
-            gas = _gasPriceRecommend.fast;
-            break;
-
-          case 1:
-            title = '一般';
-            time = S.of(context).wait_min(_gasPriceRecommend.avgWait.toString());
-            gas = _gasPriceRecommend.average;
-            break;
-
-          case 2:
-            title = '缓慢';
-            time = S.of(context).wait_min(_gasPriceRecommend.safeLowWait.toString());
-            gas = _gasPriceRecommend.safeLow;
-            break;
-        }
-        GasPriceRecommendModel model = GasPriceRecommendModel(
-          title: title,
-          time: time,
-          gas: gas,
-          index: index,
-        );
-        _dataList.add(model);
-      }
-    }
+    // 2.最近保存的值
+    _initLastData();
   }
 
   @override
@@ -126,13 +99,32 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: HexColor('#F6F6F6'),
-      appBar: BaseAppBar(
-        baseTitle: '矿工费设置',
+    return WillPopScope(
+      onWillPop: () async {
+        _showCloseDialog();
+        return false;
+      },
+      child: Scaffold(
         backgroundColor: HexColor('#F6F6F6'),
+        appBar: BaseAppBar(
+          baseTitle: '矿工费设置',
+          backgroundColor: HexColor('#F6F6F6'),
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: Image.asset(
+                  'res/drawable/add_position_image_pre.png',
+                  width: 18,
+                  height: 18,
+                  color: HexColor("#333333"),
+                ),
+                onPressed: _showCloseDialog,
+              );
+            },
+          ),
+        ),
+        body: _body(context),
       ),
-      body: _body(context),
     );
   }
 
@@ -174,7 +166,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
 
             var gasPriceEstimateStr = '';
             var quotePrice = _activatedQuoteSign?.price ?? 0;
-            var quoteSign = _activatedQuoteSign?.legal?.sign;
+            var quoteSign = _activatedQuoteSign?.legal?.sign ?? '';
 
             var baseUnit = widget.coinVo.symbol;
             var fees;
@@ -201,7 +193,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
               var gasPriceEstimate = fees * Decimal.parse(quotePrice.toString());
               gasPriceEstimateStr =
                   "$quoteSign ${FormatUtil.formatPrice(gasPriceEstimate.toDouble())}";
-            } else if (CoinType.ETHEREUM == coinType){
+            } else if (CoinType.ETHEREUM == coinType) {
               gasPrice = _isCustom
                   ? Decimal?.tryParse(_gasPriceController.text ?? '0') ?? Decimal.zero
                   : selectedGasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI);
@@ -299,26 +291,31 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
                 SizedBox(
                   height: 30,
                 ),
-                Row(
-                  children: <Widget>[
-                    Text(
-                      gasTitle,
-                      style: TextStyle(
-                        color: Color(0xFF333333),
-                        fontSize: 12,
-                        fontWeight: FontWeight.normal,
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        gasTitle,
+                        style: TextStyle(
+                          color: Color(0xFF333333),
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
-                    ),
-                    Spacer(),
-                    Text(
-                      '预计交易时间',
-                      style: TextStyle(
-                        color: Color(0xFF999999),
-                        fontSize: 12,
-                        fontWeight: FontWeight.normal,
+                      Spacer(),
+                      Text(
+                        '预计交易时间',
+                        style: TextStyle(
+                          color: Color(0xFF999999),
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 _clipRectWidget(
                   child: ListView.separated(
@@ -342,6 +339,8 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
                             setState(() {
                               _selectedIndex = index;
                               _inputController.add(model.gas);
+
+                              _isFinishEdit = _selectedIndexInit == index;
                             });
                           }
                         },
@@ -449,6 +448,8 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
                   }
 
                   _selectedIndex = -1;
+
+                  _isFinishEdit = false;
                 });
               }
             },
@@ -499,17 +500,97 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
     if (_isBTC) {
       var sat = _customItem(
         title: '矿工费率',
-        child: _gasSatEditWidget(),
+        key: _gasSatKey,
+        controller: _gasSatController,
+        validator: (String inputText) {
+          if (inputText.isEmpty || inputText == null) {
+            return '';
+          }
+
+          var validStr = '';
+          if (inputText != null) {
+            validStr = '请输入有效的矿工费率';
+
+            var inputValue = int.tryParse(inputText ?? '0') ?? 0;
+            var inputDecimalValue = Decimal.fromInt(inputValue);
+
+            if (_gasPriceRecommend.safeLow > inputDecimalValue &&
+                inputDecimalValue > Decimal.zero) {
+              validStr = '矿工费率过低，将会影响交易确认时间';
+            }
+
+            if (inputDecimalValue > _gasPriceRecommend.fast) {
+              validStr = '矿工费率过高，将会造成矿工费浪费';
+            }
+          }
+
+          _isInvalidGasSat = validStr.isNotEmpty;
+
+          return validStr;
+        },
       );
       children.add(sat);
     } else {
       var gasPrice = _customItem(
         title: 'Gas Price',
-        child: _gasPriceEditWidget(),
+        key: _gasPriceKey,
+        controller: _gasPriceController,
+        validator: (String textStr) {
+          var validStr = '';
+          if (textStr != null) {
+            validStr = S.of(context).please_input_gas_price;
+
+            var inputValue = int.tryParse(textStr ?? '0') ?? 0;
+            var inputDecimalValue = Decimal.fromInt(inputValue * EthereumUnitValue.G_WEI);
+
+            if (_gasPriceRecommend.safeLow > inputDecimalValue &&
+                inputDecimalValue > Decimal.zero) {
+              validStr = S.of(context).gas_low_affect_confirmation;
+            }
+
+            if (inputDecimalValue > _gasPriceRecommend.fast) {
+              validStr = S.of(context).gas_high_cause_waste_fees;
+            }
+          }
+
+          _isInvalidGasPrice = validStr.isNotEmpty;
+
+          return validStr;
+        },
       );
       var gas = _customItem(
+        key: _gasLimitKey,
+        controller: _gasLimitController,
         title: 'Gas',
-        child: _gasLimitEditWidget(),
+        validator: (String textStr) {
+          var validStr = '';
+          if (textStr != null) {
+            validStr = '请输入有效的 Gas';
+
+            var inputValue = int.tryParse(textStr ?? '0') ?? 0;
+            var inputDecimalValue = Decimal.fromInt(inputValue);
+
+            var ethTransferGasLimit =
+                SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+            var safeLow = Decimal.fromInt(ethTransferGasLimit);
+
+            var erc20TransferGasLimit =
+                SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
+            var fast = Decimal.fromInt(erc20TransferGasLimit);
+
+            if (safeLow > inputDecimalValue && inputDecimalValue > Decimal.zero) {
+              validStr = 'Gas 过低，$validStr';
+            }
+
+            if (inputDecimalValue > fast) {
+              validStr = 'Gas 过高，$validStr';
+            }
+          }
+
+          _isInvalidGasLimit = validStr.isNotEmpty;
+
+          return validStr;
+        },
       );
       children.add(gasPrice);
       children.add(gas);
@@ -519,41 +600,82 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
     );
   }
 
-  Widget _customItem({String title, Widget child}) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 8,
-          ),
-          child: Row(
-            children: <Widget>[
-              Text(
-                title,
-                style: TextStyle(
-                  color: Color(0xFF333333),
-                  fontSize: 12,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
+  Widget _customItem({
+    String title,
+    FormFieldValidator<String> validator,
+    Key key,
+    TextEditingController controller,
+  }) {
+    return StreamBuilder<Object>(
+      stream: _inputController.stream,
+      builder: (context, snapshot) {
+        String textStr = snapshot?.data;
+
+        var validStr = '';
+        if (textStr != null) {
+          validStr = validator(controller.text);
+        }
+
+        return Container(
+          child: Column(
+            children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Image.asset(
-                  'res/drawable/wallet_gas_info.png',
-                  height: 12,
-                  width: 12,
-                  color: HexColor('#999999'),
+                padding: const EdgeInsets.only(
+                  top: 8,
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      title,
+                      style: TextStyle(
+                        color: Color(0xFF333333),
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Image.asset(
+                        'res/drawable/wallet_gas_info.png',
+                        height: 12,
+                        width: 12,
+                        color: HexColor('#999999'),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              _clipRectWidget(
+                child: _gasTextFieldWidget(
+                  key: key,
+                  controller: controller,
+                ),
+                color: Color(0xFFF6F6F6),
+                paddingV: 0,
+              ),
+              validStr.isEmpty
+                  ? Container()
+                  : Padding(
+                      padding: EdgeInsets.only(
+                        bottom: 20,
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            validStr,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
             ],
           ),
-        ),
-        _clipRectWidget(
-          child: child,
-          color: Color(0xFFF6F6F6),
-          paddingV: 0,
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -582,21 +704,16 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
     );
   }
 
-  Widget _gasLimitEditWidget() {
+  Widget _gasTextFieldWidget({
+    Key key,
+    TextEditingController controller,
+  }) {
     return Form(
-      key: _gasLimitKey,
+      key: key,
       child: Container(
         child: TextFormField(
-          controller: _gasLimitController,
+          controller: controller,
           textAlign: TextAlign.start,
-          // todo: 验证有效性
-          validator: (value) {
-            value = value.trim();
-            if (value == "0") {
-              return S.of(context).input_corrent_count_hint;
-            }
-            return null;
-          },
           onChanged: (String inputValue) {
             _inputController.add(inputValue);
           },
@@ -608,103 +725,8 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
             fontWeight: FontWeight.normal,
             color: HexColor('#333333'),
           ),
-          cursorColor: Theme.of(context).primaryColor,
-          //光标圆角
-          cursorRadius: Radius.circular(5),
-          //光标宽度
-          cursorWidth: 1.8,
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-            border: InputBorder.none,
-            hintText: '0',
-            errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
-            hintStyle: TextStyle(
-              fontSize: 16,
-              color: HexColor('#999999'),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          keyboardType: TextInputType.numberWithOptions(decimal: true),
-        ),
-      ),
-    );
-  }
-
-  Widget _gasPriceEditWidget() {
-    return Form(
-      key: _gasPriceKey,
-      child: Container(
-        child: TextFormField(
-          controller: _gasPriceController,
-          textAlign: TextAlign.start,
-          // todo: 验证有效性
-          validator: (value) {
-            value = value.trim();
-            if (value == "0") {
-              return S.of(context).input_corrent_count_hint;
-            }
-            return null;
-          },
-          onChanged: (String inputValue) {
-            _inputController.add(inputValue);
-          },
-          onFieldSubmitted: (String inputText) {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.normal,
-            color: HexColor('#333333'),
-          ),
-          cursorColor: Theme.of(context).primaryColor,
-          //光标圆角
-          cursorRadius: Radius.circular(5),
-          //光标宽度
-          cursorWidth: 1.8,
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-            border: InputBorder.none,
-            hintText: '0',
-            errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
-            hintStyle: TextStyle(
-              fontSize: 16,
-              color: HexColor('#999999'),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          keyboardType: TextInputType.numberWithOptions(decimal: true),
-        ),
-      ),
-    );
-  }
-
-  Widget _gasSatEditWidget() {
-    return Form(
-      key: _gasSatKey,
-      child: Container(
-        child: TextFormField(
-          controller: _gasSatController,
-          textAlign: TextAlign.start,
-          // todo: 验证有效性
-          validator: (value) {
-            value = value.trim();
-            if (value == "0") {
-              return S.of(context).input_corrent_count_hint;
-            }
-            return null;
-          },
-          onChanged: (String inputValue) {
-            _inputController.add(inputValue);
-          },
-          onFieldSubmitted: (String inputText) {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.normal,
-            color: HexColor('#333333'),
-          ),
-          cursorColor: Theme.of(context).primaryColor,
+          // cursorColor: Theme.of(context).primaryColor,
+          cursorColor: Colors.blue,
           //光标圆角
           cursorRadius: Radius.circular(5),
           //光标宽度
@@ -719,17 +741,19 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
               color: HexColor('#999999'),
               fontWeight: FontWeight.w500,
             ),
-            suffixIcon: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                'sat/b',
-                style: TextStyle(
-                  color: HexColor('#999999'),
-                  fontWeight: FontWeight.normal,
-                  fontSize: 14,
-                ),
-              ),
-            ),
+            suffixIcon: _isBTC
+                ? Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'sat/b',
+                      style: TextStyle(
+                        color: HexColor('#999999'),
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
+                      ),
+                    ),
+                  )
+                : null,
           ),
           keyboardType: TextInputType.numberWithOptions(decimal: true),
         ),
@@ -758,9 +782,204 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
     );
   }
 
-  void _confirmAction() {
+  void _confirmAction() async {
+    if (_isBTC) {
+      String gasSat;
+      if (_isCustom) {
+        gasSat = _gasSatController.text;
+        var value = Decimal?.tryParse(gasSat) ?? Decimal.zero;
+        if (gasSat.isEmpty || value <= Decimal.zero) {
+          var validStr = '请输入有效的矿工费率';
+          Fluttertoast.showToast(msg: validStr);
+          return;
+        }
+      } else {
+        gasSat = _dataList[_selectedIndex].gas.toString();
+      }
 
-    // todo: 保存最近设置
+      await AppCache.saveValue(PrefsKey.WALLET_GAS_SAT_CUSTOM_KEY, _selectedIndex.toString());
+      await AppCache.saveValue(PrefsKey.WALLET_GAS_SAT_KEY, gasSat);
+    } else {
+      String gasPrice;
+      String gasLimit;
+
+      if (_isCustom) {
+        gasPrice = _gasPriceController.text;
+        var gasPriceValue = Decimal?.tryParse(gasPrice) ?? Decimal.zero;
+        if (gasPrice.isEmpty || gasPriceValue <= Decimal.zero) {
+          var validStr = S.of(context).please_input_gas_price;
+          Fluttertoast.showToast(msg: validStr);
+          return;
+        }
+
+        gasLimit = _gasLimitController.text;
+        var gasLimitValue = Decimal?.tryParse(gasPrice) ?? Decimal.zero;
+        if (gasLimit.isEmpty || gasLimitValue <= Decimal.zero) {
+          var validStr = '请输入有效的 Gas';
+          Fluttertoast.showToast(msg: validStr);
+          return;
+        }
+      } else {
+        gasPrice = _dataList[_selectedIndex].gas.toString();
+        gasLimit = _defaultGasLimit.toString();
+      }
+
+      await AppCache.saveValue(PrefsKey.WALLET_GAS_PRICE_CUSTOM_KEY, _selectedIndex.toString());
+      await AppCache.saveValue(PrefsKey.WALLET_GAS_PRICE_KEY, gasPrice);
+      await AppCache.saveValue(PrefsKey.WALLET_GAS_LIMIT_KEY, gasLimit);
+    }
+
+    Navigator.of(context).pop();
+  }
+
+  void _setupDataList() {
+    _activatedQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
+
+    if (_isBTC) {
+      _gasPriceRecommend =
+          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).btcGasPriceRecommend;
+    } else {
+      _gasPriceRecommend =
+          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).ethGasPriceRecommend;
+    }
+
+    if (_gasPriceRecommend != null) {
+      for (int index = 0; index < 3; index++) {
+        String title;
+        String time;
+        Decimal gas;
+
+        switch (index) {
+          case 0:
+            title = '快速';
+            time = S.of(context).wait_min(_gasPriceRecommend.fastWait.toString());
+            gas = _gasPriceRecommend.fast;
+            break;
+
+          case 1:
+            title = '一般';
+            time = S.of(context).wait_min(_gasPriceRecommend.avgWait.toString());
+            gas = _gasPriceRecommend.average;
+            break;
+
+          case 2:
+            title = '缓慢';
+            time = S.of(context).wait_min(_gasPriceRecommend.safeLowWait.toString());
+            gas = _gasPriceRecommend.safeLow;
+            break;
+        }
+        GasPriceRecommendModel model = GasPriceRecommendModel(
+          title: title,
+          time: time,
+          gas: gas,
+          index: index,
+        );
+        _dataList.add(model);
+      }
+    }
+  }
+  
+  void _initLastData() async {
+    if (_isBTC) {
+      String custom = await AppCache.getValue(
+        PrefsKey.WALLET_GAS_SAT_CUSTOM_KEY,
+      );
+      _selectedIndex = int?.tryParse(custom) ?? 0;
+      _selectedIndexInit = _selectedIndex;
+
+      if (_isCustom) {
+        String gasSat = await AppCache.getValue(
+          PrefsKey.WALLET_GAS_SAT_KEY,
+        );
+        _gasSatController.text = gasSat;
+        _inputController.add(gasSat);
+
+        _scrollController.animateTo(
+          200,
+          duration: Duration(milliseconds: 300, microseconds: 33),
+          curve: Curves.linear,
+        );
+
+        print("[$runtimeType] _selectedIndex:$_selectedIndex, gasSat:$gasSat");
+      } else {
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    } else {
+      String custom = await AppCache.getValue(
+        PrefsKey.WALLET_GAS_PRICE_CUSTOM_KEY,
+      );
+      _selectedIndex = int?.tryParse(custom) ?? 0;
+      _selectedIndexInit = _selectedIndex;
+
+      if (_isCustom) {
+        String gasPrice = await AppCache.getValue(
+          PrefsKey.WALLET_GAS_PRICE_KEY,
+        );
+        Decimal gasPriceDecimalValue = Decimal?.tryParse(gasPrice ?? '0') ?? Decimal.zero;
+        _gasPriceController.text = gasPriceDecimalValue.toString();
+
+        String gasLimit = await AppCache.getValue(
+          PrefsKey.WALLET_GAS_PRICE_KEY,
+        );
+        Decimal gasLimitDecimalValue = Decimal?.tryParse(gasLimit ?? '0') ?? Decimal.zero;
+        _gasLimitController.text = gasLimitDecimalValue.toString();
+
+        _inputController.add(gasPrice);
+
+        _scrollController.animateTo(
+          200,
+          duration: Duration(milliseconds: 300, microseconds: 33),
+          curve: Curves.linear,
+        );
+      } else {
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    }
+  }
+
+  _showCloseDialog() {
+    if (_isFinishEdit) {
+      Navigator.of(context).pop();
+      return;
+    }
+
+    UiUtil.showAlertView(
+      context,
+      title: S.of(context).tips,
+      actions: [
+        ClickOvalButton(
+          S.of(context).cancel,
+          () {
+            Navigator.pop(context, false);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+          fontColor: DefaultColors.color999,
+          btnColor: [Colors.transparent],
+        ),
+        SizedBox(
+          width: 20,
+        ),
+        ClickOvalButton(
+          S.of(context).confirm,
+          () {
+            Navigator.pop(context);
+            Navigator.of(context).pop();
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      ],
+      content: '矿工费设置未确认，确认要离开此页？',
+    );
   }
 }
 
