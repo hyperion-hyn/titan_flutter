@@ -321,7 +321,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                                               if (widget.coinVo.symbol ==
                                                   SupportedTokens
                                                       .HYN_RP_HRC30.symbol) {
-                                                base = 'HYN';
+                                                base = 'USDT';
                                                 quote = 'RP';
                                               }
                                               Navigator.push(
