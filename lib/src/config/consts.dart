@@ -162,8 +162,6 @@ class PrefsKey {
 
   static const WALLET_USE_DIGITS_PWD_PREFIX = 'digits_pwd';
 
-  static const WALLET_MNEMONIC_BACK_UP_PREFIX = 'mnemonic_backup';
-
   static const WALLET_SAFE_LOCK_IS_ENABLE_PREFIX = 'wallet_safe_lock_is_enable__';
   static const WALLET_SAFE_LOCK_PWD_PREFIX = 'wallet_safe_pwd_';
   static const WALLET_EXPAND_INFO_PREFIX = 'wallet_expand_info_';

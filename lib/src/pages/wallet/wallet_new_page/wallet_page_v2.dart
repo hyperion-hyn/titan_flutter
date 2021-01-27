@@ -62,7 +62,6 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   bool _isExchangeAccountAbnormal = false;
   bool _isSafeLockUnlock = false;
   bool _isShowBalances = true;
-  bool _hasBackupWallet = false;
   LegalSign activeQuotesSign;
 
   @override
@@ -140,8 +139,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
       context,
       aspect: WalletAspect.activatedWallet,
     ).activatedWallet;
-    _hasBackupWallet = await WalletUtil.checkIsBackUpMnemonic(
-        activatedWalletVo?.wallet?.getEthAccount()?.address ?? "");
+    var _hasBackupWallet = activatedWalletVo?.wallet?.walletExpandInfoEntity?.isBackup ?? false;
     if (activatedWalletVo == null || _hasBackupWallet || Application.hasShowBackupWalletDialog) {
       return;
     }

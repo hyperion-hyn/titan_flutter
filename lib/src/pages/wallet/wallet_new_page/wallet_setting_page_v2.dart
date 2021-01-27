@@ -56,15 +56,16 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
   }
 
   @override
-  void didPush() async {
-    isBackup = await WalletUtil.checkIsBackUpMnemonic(widget.wallet.getEthAccount().address);
-    setState(() {});
+  void didPush() {
+    isBackup = widget.wallet.walletExpandInfoEntity?.isBackup ?? false;
   }
 
   @override
   void didPopNext() async {
-    isBackup = await WalletUtil.checkIsBackUpMnemonic(widget.wallet.getEthAccount().address);
-    setState(() {});
+    widget.wallet.walletExpandInfoEntity = await WalletUtil.getWalletExpandInfo(widget.wallet.getEthAccount().address);
+    isBackup = widget.wallet.walletExpandInfoEntity?.isBackup ?? false;
+    setState(() {
+    });
   }
 
   @override

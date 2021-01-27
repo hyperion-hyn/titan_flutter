@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/global.dart';
@@ -94,16 +96,18 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
                     Center(
                       child: ClickOvalButton(
                         S.of(context).next_step,
-                        () {
+                        () async {
                           var selectedMnemonitc = "";
                           _selectedResumeWords.forEach(
                               (word) => selectedMnemonitc = selectedMnemonitc + word.text + " ");
 
                           logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
                           if (selectedMnemonitc.trim() == widget.mnemonic.trim()) {
-                            WalletUtil.confirmBackUpMnemonic(
-                              widget.wallet.getEthAccount()?.address,
-                            );
+                            var walletExpandInfoEntity = await WalletUtil.getWalletExpandInfo(widget.wallet.getEthAccount()?.address);
+                            walletExpandInfoEntity.isBackup = true;
+                            BlocProvider.of<WalletCmpBloc>(context)
+                                .add(UpdateWalletExpandEvent(widget.wallet.getEthAccount()?.address, walletExpandInfoEntity));
+                            await Future.delayed(Duration(milliseconds: 1000),(){});//延迟等待备份信息已修改，再退出
 
                             UiUtil.showHintToast(
                                 context,
