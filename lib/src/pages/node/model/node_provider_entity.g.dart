@@ -28,7 +28,9 @@ Regions _$RegionsFromJson(Map<String, dynamic> json) {
   return Regions(
     json['id'] as String,
     json['name'] as String,
-    Location.fromJson(json['location']),
+    json['location'] == null
+        ? null
+        : Location.fromJson(json['location'] as Map<String, dynamic>),
   );
 }
 
@@ -39,7 +41,6 @@ Map<String, dynamic> _$RegionsToJson(Regions instance) => <String, dynamic>{
     };
 
 Location _$LocationFromJson(Map<String, dynamic> json) {
-  //print('_LocationFromJson ${(json['coordinates'])}');
   return Location(
     (json['coordinates'] as List)?.map((e) => (e as num)?.toDouble())?.toList(),
     json['type'] as String,

@@ -10,7 +10,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
@@ -41,7 +41,7 @@ class RpFriendInvitePage extends StatefulWidget {
 }
 
 class _RpFriendInvitePageState extends BaseState<RpFriendInvitePage> {
-  WalletVo activityWallet;
+  WalletViewVo activityWallet;
   final ShotController _shotController = new ShotController();
   ScrollController scrollController = ScrollController();
   bool _isSharing = false;

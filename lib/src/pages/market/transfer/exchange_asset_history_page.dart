@@ -10,9 +10,8 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_event.
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
-import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
@@ -43,7 +42,7 @@ class ExchangeAssetHistoryPage extends StatefulWidget {
 
 class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage> {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
-  ActiveQuoteVoAndSign symbolQuote;
+  TokenPriceViewVo symbolQuote;
   List<AssetHistory> _assetHistoryList = List();
   ExchangeApi _exchangeApi = ExchangeApi();
   int _currentPage = 1;
@@ -59,7 +58,7 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
   @override
   void onCreated() {
     super.onCreated();
-    symbolQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
+    symbolQuote = WalletInheritedModel.of(context).tokenLegalPrice('USDT');
     _updateTypeToCurrency();
   }
 
@@ -73,7 +72,7 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
     try {
       var usdt = await _exchangeApi.type2currency(
         'USDT',
-        symbolQuote?.sign?.quote,
+        symbolQuote?.legal?.legal,
       );
       _usdtToCurrency = Decimal.parse(usdt.toString());
 
@@ -546,7 +545,7 @@ class AssetItemState extends State<AssetItem> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '${S.of(context).exchange_asset_convert}(${WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeQuotesSign.quote})',
+                      '${S.of(context).exchange_asset_convert}(${WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeLegal.legal})',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 12,

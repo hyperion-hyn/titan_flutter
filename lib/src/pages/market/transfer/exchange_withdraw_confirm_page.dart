@@ -14,8 +14,8 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
@@ -32,7 +32,7 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 
 class ExchangeWithdrawConfirmPage extends StatefulWidget {
-  final CoinVo coinVo;
+  final CoinViewVo coinVo;
   final String amount;
   final String withdrawFeeByGas;
 
@@ -40,7 +40,7 @@ class ExchangeWithdrawConfirmPage extends StatefulWidget {
     String coinVo,
     this.amount,
     this.withdrawFeeByGas,
-  ) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
+  ) : coinVo = CoinViewVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
   State<StatefulWidget> createState() {
@@ -48,8 +48,7 @@ class ExchangeWithdrawConfirmPage extends StatefulWidget {
   }
 }
 
-class _ExchangeWithdrawConfirmPageState
-    extends BaseState<ExchangeWithdrawConfirmPage> {
+class _ExchangeWithdrawConfirmPageState extends BaseState<ExchangeWithdrawConfirmPage> {
   var isGasFeeLoadingSuccess = false;
   int selectedPriceLevel = 1;
   Decimal _gasFeeByToken = Decimal.zero;
@@ -61,23 +60,16 @@ class _ExchangeWithdrawConfirmPageState
   ExchangeApi _exchangeApi = ExchangeApi();
   var isTransferring = false;
 
-  WalletVo get activatedWallet {
+  WalletViewVo get activatedWallet {
     return WalletInheritedModel.of(context).activatedWallet;
   }
 
   double get quotePrice {
-    return WalletInheritedModel.of(context)
-            .activatedQuoteVoAndSign(widget.coinVo.symbol)
-            ?.quoteVo
-            ?.price ??
-        0;
+    return WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol)?.price ?? 0;
   }
 
   String get quoteSign {
-    return WalletInheritedModel.of(context)
-            .activatedQuoteVoAndSign(widget.coinVo.symbol)
-            ?.sign
-            ?.sign ??
+    return WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol)?.legal?.legal ??
         '';
   }
 
@@ -129,7 +121,7 @@ class _ExchangeWithdrawConfirmPageState
   initData() {
     try {
       if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-        var hynQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN')?.quoteVo?.price ?? 0;
+        var hynQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('HYN')?.price ?? 0;
 
         ///Contract tokens
         var gasLimit = widget.coinVo.contractAddress != null
@@ -139,28 +131,25 @@ class _ExchangeWithdrawConfirmPageState
         var gasPriceEstimate = ConvertTokenUnit.weiToEther(
             weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
 
-        var gasFeeQuotePrice =
-            gasPriceEstimate * Decimal.parse(hynQuotePrice.toString()) * Decimal.parse(widget.withdrawFeeByGas);
+        var gasFeeQuotePrice = gasPriceEstimate *
+            Decimal.parse(hynQuotePrice.toString()) *
+            Decimal.parse(widget.withdrawFeeByGas);
 
-        _gasFeeByToken =
-            (Decimal.parse('$gasFeeQuotePrice') / Decimal.parse('$quotePrice'));
+        _gasFeeByToken = (Decimal.parse('$gasFeeQuotePrice') / Decimal.parse('$quotePrice'));
 
         _gasPriceEstimateStr =
             " ${(gasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI)).toStringAsFixed(1)} GDUST ($gasPriceEstimate HYN)";
       } else {
-        var ethQuotePrice = WalletInheritedModel.of(context)
-                .activatedQuoteVoAndSign('ETH')
-                ?.quoteVo
-                ?.price ??
-            0;
+        var ethQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('ETH')?.price ?? 0;
         var gasLimit = widget.coinVo.symbol == "ETH"
             ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
             : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
         var gasEstimate = ConvertTokenUnit.weiToEther(
             weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
 
-        var gasFeeQuotePrice =
-            gasEstimate * Decimal.parse(ethQuotePrice.toString()) * Decimal.parse(widget.withdrawFeeByGas);
+        var gasFeeQuotePrice = gasEstimate *
+            Decimal.parse(ethQuotePrice.toString()) *
+            Decimal.parse(widget.withdrawFeeByGas);
 
         _gasFeeByToken = Decimal.parse(FormatUtil.truncateDecimalNum(
           Decimal.parse('$gasFeeQuotePrice') / Decimal.parse('$quotePrice'),
@@ -172,8 +161,7 @@ class _ExchangeWithdrawConfirmPageState
       }
     } catch (e) {}
 
-    _actualAmount =
-        Decimal.parse(widget.amount) - Decimal.parse(_gasFeeByToken.toString());
+    _actualAmount = Decimal.parse(widget.amount) - Decimal.parse(_gasFeeByToken.toString());
   }
 
   @override
@@ -219,8 +207,7 @@ class _ExchangeWithdrawConfirmPageState
                     margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
                     constraints: BoxConstraints.expand(height: 48),
                     child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                       disabledColor: Colors.grey[600],
                       color: Theme.of(context).primaryColor,
                       textColor: Colors.white,
@@ -239,9 +226,7 @@ class _ExchangeWithdrawConfirmPageState
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text(
-                              isTransferring
-                                  ? S.of(context).please_waiting
-                                  : S.of(context).send,
+                              isTransferring ? S.of(context).please_waiting : S.of(context).send,
                               style: TextStyle(
                                 fontWeight: FontWeight.normal,
                                 fontSize: 16,
@@ -283,14 +268,11 @@ class _ExchangeWithdrawConfirmPageState
                       size: 48,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12.0, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                       child: Text(
                         _amountString,
                         style: TextStyle(
-                            color: Color(0xFF252525),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
+                            color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                     ),
                     Text(
@@ -460,8 +442,7 @@ class _ExchangeWithdrawConfirmPageState
                                           .add(UpdateGasPriceEvent());
                                     },
                                     child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 0.0),
+                                      padding: const EdgeInsets.only(bottom: 0.0),
                                       child: Row(
                                         children: [
                                           Icon(
@@ -499,9 +480,7 @@ class _ExchangeWithdrawConfirmPageState
                           : SizedBox(),
                     ),
                     Text(
-                      S
-                          .of(context)
-                          .fee_deducted_offset_by_symbol(widget.coinVo.symbol),
+                      S.of(context).fee_deducted_offset_by_symbol(widget.coinVo.symbol),
                       style: TextStyle(
                         color: DefaultColors.color999,
                         fontSize: 12,

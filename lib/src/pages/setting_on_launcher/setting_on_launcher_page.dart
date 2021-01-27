@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
@@ -61,9 +62,11 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
                     })).toList(),
                     onChanged: (value) {
                       _currentLanguage = value;
-                      BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(languageModel: value));
+                      BlocProvider.of<SettingBloc>(context)
+                          .add(UpdateSettingEvent(languageModel: value));
                     },
-                    value: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel,
+                    value: SettingInheritedModel.of(context, aspect: SettingAspect.language)
+                        .languageModel,
                   ),
                 ),
               ],
@@ -78,7 +81,8 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
             ListView(
               shrinkWrap: true,
               children: SupportedArea.all().map((area) {
-                if (area == SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel) {
+                if (area ==
+                    SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel) {
                   _currentArea = area;
                 }
                 return RadioListTile<AreaModel>(
@@ -91,7 +95,8 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
                     BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(areaModel: value));
                     _currentArea = value;
                   },
-                  groupValue: SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel,
+                  groupValue:
+                      SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel,
                 );
               }).toList(),
             ),
@@ -114,18 +119,22 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
                             }
 
                             //setting quote sign
-                            if(_currentLanguage == null){
-                              _currentLanguage = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel;
+                            if (_currentLanguage == null) {
+                              _currentLanguage =
+                                  SettingInheritedModel.of(context, aspect: SettingAspect.language)
+                                      .languageModel;
                             }
-                            var quoteSign = SupportedQuoteSigns.of('USD');
-                            if (_currentLanguage?.isZh()??true == true) {
-                              quoteSign = SupportedQuoteSigns.of('CNY');
+                            var quoteSign = SupportedLegal.of('USD');
+                            if (_currentLanguage?.isZh() ?? true == true) {
+                              quoteSign = SupportedLegal.of('CNY');
                             }
-                            WalletInheritedModel.saveQuoteSign(quoteSign);
+                            BlocProvider.of<WalletCmpBloc>(context).add(UpdateLegalSignEvent(legal: quoteSign));
+                            // WalletInheritedModel.saveQuoteSign(quoteSign);
 
                             var prefs = await SharedPreferences.getInstance();
                             await prefs.setBool(PrefsKey.FIRST_TIME_LAUNCHER_KEY, true);
-                            BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(page: AppTabBarPage()));
+                            BlocProvider.of<RootPageControlBloc>(context)
+                                .add(SetRootPageEvent(page: AppTabBarPage()));
                           },
                           child: Text('${S.of(context).enter} ${S.of(context).app_name}'),
                         );

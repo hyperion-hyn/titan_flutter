@@ -4,14 +4,14 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 
-class AtlasOptionEditPage extends StatefulWidget {
+class OptionEditPage extends StatefulWidget {
   final String title;
   final String content;
   final String hint;
   final TextInputType keyboardType;
   final int maxLength;
 
-  AtlasOptionEditPage({
+  OptionEditPage({
     this.title,
     this.content,
     this.hint,
@@ -25,7 +25,7 @@ class AtlasOptionEditPage extends StatefulWidget {
   }
 }
 
-class _AtlasNodeOptionEditState extends State<AtlasOptionEditPage> {
+class _AtlasNodeOptionEditState extends State<OptionEditPage> {
   TextEditingController _controller = TextEditingController();
   GlobalKey<FormState> formKey;
 

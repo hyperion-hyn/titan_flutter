@@ -8,15 +8,13 @@ part of 'exchange_coin_list.dart';
 
 ExchangeCoinList _$ExchangeCoinListFromJson(Map<String, dynamic> json) {
   return ExchangeCoinList(
-    (json['assets'] as List)?.map((e) => e as String)?.toList(),
-    json['activeExchangeMap'] == null
-        ? null
-        : json['activeExchangeMap'] as Map<String, dynamic>,
+    (json['base'] as List)?.map((e) => e as String)?.toList(),
+    json['activeExchangeMap'] as Map<String, dynamic>,
   );
 }
 
 Map<String, dynamic> _$ExchangeCoinListToJson(ExchangeCoinList instance) =>
     <String, dynamic>{
-      'assets': instance.assets,
+      'base': instance.assets,
       'activeExchangeMap': instance.activeExchangeMap,
     };

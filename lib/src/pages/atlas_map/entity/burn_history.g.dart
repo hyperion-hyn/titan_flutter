@@ -25,7 +25,6 @@ BurnHistory _$BurnHistoryFromJson(Map<String, dynamic> json) {
   );
 }
 
-
 Map<String, dynamic> _$BurnHistoryToJson(BurnHistory instance) =>
     <String, dynamic>{
       'id': instance.id,
@@ -54,6 +53,6 @@ BurnMsg _$BurnMsgFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$BurnMsgToJson(BurnMsg instance) => <String, dynamic>{
-      'actualAmount': instance.totalAmount,
+      'total': instance.totalAmount,
       'latest': instance.latestBurnHistory,
     };

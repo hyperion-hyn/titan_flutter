@@ -212,9 +212,9 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
   }
 
   Widget _headerWidget() {
-    var activatedQuoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
-    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 1;
-    var quoteSign = activatedQuoteSign?.sign?.sign ?? "￥";
+    var activatedLegalSign = WalletInheritedModel.of(context).tokenLegalPrice('HYN'); // activatedQuoteVoAndSign("HYN");
+    var quotePrice = activatedLegalSign?.price ?? 1;
+    var quoteSign = activatedLegalSign?.legal?.legal ?? "￥";
     var amountValue = double.parse(_amount ?? '0');
     var price = amountValue * quotePrice;
     var priceFormat = FormatUtil.formatPrice(price);
@@ -266,7 +266,9 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
       child: ClickOvalButton(
-        _isRunningTimer && _isTransferring? S.of(context).submitting_countdown_seconds(_timerActionCount):S.of(context).submit,
+        _isRunningTimer && _isTransferring
+            ? S.of(context).submitting_countdown_seconds(_timerActionCount)
+            : S.of(context).submit,
         _isTransferring ? null : _action,
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,
@@ -301,19 +303,19 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
   Timer _timer;
   var _timerActionCount = 10;
   var _isRunningTimer = false;
+
   _initTimer(VoidCallback callback) {
     _isRunningTimer = true;
 
     print("[confirm] _initTimer");
+
     ///refresh epoch
     ///
     _timer = Timer.periodic(Duration(seconds: 1), (t) {
       _timerActionCount--;
       if (_timerActionCount >= 0) {
         print("[timer] _timerActionCount-->:$_timerActionCount ");
-        setState(() {
-
-        });
+        setState(() {});
       } else {
         _closeTimer();
         callback();
@@ -337,7 +339,6 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
       _timer = null;
     }
   }
-
 
   _action() {
     if (needEditBLS) {

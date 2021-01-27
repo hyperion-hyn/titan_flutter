@@ -9,16 +9,17 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_page.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
+import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/utils/format_util.dart';
 
-import 'view/wallet_empty_widget.dart';
 import 'view/wallet_show_widget.dart';
 
 class WalletPage extends StatefulWidget {
@@ -37,7 +38,7 @@ class _WalletPageState extends BaseState<WalletPage> with AutomaticKeepAliveClie
 
   bool _isExchangeAccountAbnormal = false;
 
-  // bool _isShowConfirmPolicy = false;
+  bool _isSafeLockUnlock = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -46,11 +47,11 @@ class _WalletPageState extends BaseState<WalletPage> with AutomaticKeepAliveClie
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    var quoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
+    var quoteSign =
+        WalletInheritedModel.of(context).tokenLegalPrice("HYN");
     print(
-        "show quote ${quoteSign?.quoteVo?.price ?? "no value"}  ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
+        "show quote ${quoteSign?.price ?? "no value"}  ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
 
-    // _checkConfirmWalletPolicy();
     ///check dex account is abnormal
 //    _checkDexAccount();
   }
@@ -58,7 +59,6 @@ class _WalletPageState extends BaseState<WalletPage> with AutomaticKeepAliveClie
   @override
   void initState() {
     super.initState();
-    // _checkConfirmWalletPolicy();
 //    WidgetsBinding.instance.addPostFrameCallback((callback) {
 //      _showAtlasExchangeAlert();
 //    });
@@ -165,78 +165,6 @@ class _WalletPageState extends BaseState<WalletPage> with AutomaticKeepAliveClie
     );
   }
 
-  // _confirmPolicyView() {
-  //   return Container(
-  //     width: double.infinity,
-  //     color: Colors.white,
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.center,
-  //       children: <Widget>[
-  //         SizedBox(
-  //           height: 32,
-  //         ),
-  //         Padding(
-  //           padding: const EdgeInsets.all(16.0),
-  //           child: Image.asset(
-  //             'res/drawable/safe_lock.png',
-  //             width: 100,
-  //             height: 100,
-  //           ),
-  //         ),
-  //         Padding(
-  //           padding: const EdgeInsets.symmetric(vertical: 16.0),
-  //           child: Container(
-  //             width: 300,
-  //             child: Text(
-  //               S.of(context).please_read_and_agree_wallet_policy,
-  //               textAlign: TextAlign.center,
-  //               style: TextStyle(height: 1.8, fontSize: 15),
-  //             ),
-  //           ),
-  //         ),
-  //         SizedBox(
-  //           height: 32,
-  //         ),
-  //         Container(
-  //           width: 280,
-  //           child: RaisedButton(
-  //             shape: RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.circular(30),
-  //             ),
-  //             disabledColor: Colors.grey[600],
-  //             color: Theme.of(context).primaryColor,
-  //             textColor: Colors.white,
-  //             disabledTextColor: Colors.white,
-  //             onPressed: () async {
-  //               var result = await Navigator.of(context).push(MaterialPageRoute(
-  //                 builder: (BuildContext context) => PolicyConfirmPage(
-  //                   PolicyType.WALLET,
-  //                 ),
-  //               ));
-  //               _checkConfirmWalletPolicy();
-  //             },
-  //             child: Padding(
-  //               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
-  //               child: Row(
-  //                 mainAxisAlignment: MainAxisAlignment.center,
-  //                 children: <Widget>[
-  //                   Text(
-  //                     S.of(context).check,
-  //                     style: TextStyle(
-  //                       fontWeight: FontWeight.normal,
-  //                       fontSize: 14,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   _walletView() {
     return Column(
       children: <Widget>[
@@ -253,15 +181,6 @@ class _WalletPageState extends BaseState<WalletPage> with AutomaticKeepAliveClie
       ],
     );
   }
-
-  // _checkConfirmWalletPolicy() async {
-  //   var isConfirmWalletPolicy = await AppCache.getValue(
-  //     PrefsKey.IS_CONFIRM_WALLET_POLICY,
-  //   );
-  //   setState(() {
-  //     _isShowConfirmPolicy = isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
-  //   });
-  // }
 
   _abnormalAccountBanner() {
     return InkWell(
@@ -329,11 +248,19 @@ class _WalletPageState extends BaseState<WalletPage> with AutomaticKeepAliveClie
   }
 
   Widget _buildWalletView(BuildContext context) {
-    var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
+    var activatedWalletVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).activatedWallet;
     if (activatedWalletVo != null) {
-      // if (_isShowConfirmPolicy) {
-      //   return _confirmPolicyView();
-      // } else {
+      if (!_isSafeLockUnlock)
+        return AppLockScreen(
+          onUnlock: () {
+            _isSafeLockUnlock = true;
+            if (mounted) setState(() {});
+          },
+        );
+
       return LoadDataContainer(
         bloc: loadDataBloc,
         enablePullUp: false,
@@ -351,9 +278,8 @@ class _WalletPageState extends BaseState<WalletPage> with AutomaticKeepAliveClie
           child: ShowWalletView(activatedWalletVo, loadDataBloc),
         ),
       );
-      // }
     } else {
-      return EmptyWalletView(
+      return EmptyWalletViewV2(
         loadDataBloc: loadDataBloc,
       );
     }
@@ -390,7 +316,7 @@ class _WalletPageState extends BaseState<WalletPage> with AutomaticKeepAliveClie
         .add(UpdateActivatedWalletBalanceEvent());*/
 
     _checkDexAccount();
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
+    // BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
 
     if (mounted) {
       loadDataBloc.add(RefreshSuccessEvent());
@@ -399,7 +325,7 @@ class _WalletPageState extends BaseState<WalletPage> with AutomaticKeepAliveClie
 
   Widget hynQuotesView() {
     //hyn quote
-    ActiveQuoteVoAndSign hynQuoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
+    TokenPriceViewVo hynQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice('HYN');
     return Container(
       padding: EdgeInsets.all(8),
       color: Color(0xFFF5F5F5),
@@ -427,7 +353,7 @@ class _WalletPageState extends BaseState<WalletPage> with AutomaticKeepAliveClie
                 Spacer(),
                 //quote
                 Text(
-                  '${hynQuoteSign != null ? '${FormatUtil.formatPrice(hynQuoteSign.quoteVo.price)} ${hynQuoteSign.sign.quote}' : '--'}',
+                  '${hynQuoteSign != null ? '${FormatUtil.formatPrice(hynQuoteSign.price)} ${hynQuoteSign.legal.legal}' : '--'}',
                   style: TextStyle(color: HexColor('#333333'), fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ],

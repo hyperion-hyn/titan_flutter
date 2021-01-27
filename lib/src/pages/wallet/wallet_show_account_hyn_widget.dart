@@ -14,7 +14,7 @@ import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
@@ -39,7 +39,7 @@ import 'api/etherscan_api.dart';
 import 'api/hyn_api.dart';
 
 class ShowAccountHynPage extends StatefulWidget {
-  final CoinVo coinVo;
+  final CoinViewVo coinVo;
 
   ShowAccountHynPage(this.coinVo);
 
@@ -133,8 +133,8 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
   @override
   Widget build(BuildContext context) {
     //activated quote sign
-    ActiveQuoteVoAndSign activeQuoteVoAndSign = WalletInheritedModel.of(context)
-        .activatedQuoteVoAndSign(widget.coinVo.symbol);
+    var activeQuoteVoAndSign = WalletInheritedModel.of(context)
+        .tokenLegalPrice(widget.coinVo.symbol);
 
     var coinVo =
         WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
@@ -189,7 +189,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coinVo) * (activeQuoteVoAndSign?.quoteVo?.price ?? 0))}",
+                                "≈ ${activeQuoteVoAndSign?.legal?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coinVo) * (activeQuoteVoAndSign?.price ?? 0))}",
                                 style: TextStyle(
                                     fontSize: 14, color: Color(0xFF6D6D6D)),
                               ),
@@ -629,7 +629,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
         BlocProvider.of<WalletCmpBloc>(context)
             .add(UpdateActivatedWalletBalanceEvent(
           symbol: widget.coinVo.symbol,
-          contractAddress: widget.coinVo.contractAddress,
+          // contractAddress: widget.coinVo.contractAddress,
         ));
       }
       retList.addAll(transferList);

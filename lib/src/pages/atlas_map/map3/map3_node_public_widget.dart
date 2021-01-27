@@ -5,7 +5,7 @@ import 'package:image_pickers/image_pickers.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -21,6 +21,7 @@ import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -29,7 +30,7 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/widget/round_border_textfield.dart';
+import 'package:titan/src/widget/round_border_textField.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'map3_node_pronounce_page.dart';
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
@@ -68,13 +69,31 @@ Widget iconMap3Widget(Map3InfoEntity infoEntity, {bool isCircle = false}) {
   return iconWidget(infoEntity.pic, infoEntity.name, infoEntity.address, isCircle: isCircle);
 }
 
+Widget iconWalletWidget(Wallet walletEntity, {bool isCircle = true}) {
+  if (walletEntity == null) {
+    return iconEmptyDefault();
+  }
+  return iconWidget(walletEntity.getHeadImg(), walletEntity.keystore.name, walletEntity.getEthAccount().address, isCircle: isCircle);
+}
+
 Widget iconWidget(String picture, String name, String address, {bool isCircle = false}) {
-  if (picture?.isNotEmpty ?? false) {
+  if ((picture?.isNotEmpty ?? false) && picture.contains("http")) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(4.0),
+      borderRadius: BorderRadius.circular(isCircle ? 21 : 4.0),
       child: FadeInImage.assetNetwork(
         image: picture,
         placeholder: 'res/drawable/img_placeholder.jpg',
+        width: 42,
+        height: 42,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  if ((picture?.isNotEmpty ?? false)) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(isCircle ? 21 : 4.0),
+      child: Image.asset(picture,
         width: 42,
         height: 42,
         fit: BoxFit.cover,
@@ -1104,7 +1123,7 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
         getRecordAmountStr: true,
       )}";
 
-  WalletVo _activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+  WalletViewVo _activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
   var walletAddress = _activatedWallet?.wallet?.getAtlasAccount()?.address?.toLowerCase() ?? "";
 
   var isYou = item.from.toLowerCase() == walletAddress;

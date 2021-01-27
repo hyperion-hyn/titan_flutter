@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:android_intent/android_intent.dart';
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -14,8 +15,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:r_scan/r_scan.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
+import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -43,8 +46,52 @@ class UiUtil {
     ));
   }
 
+  static showErrorTopHint(BuildContext context, String message,
+      {ErrorHintType errorHintType = ErrorHintType.ERROR}) {
+    List<Color> backColors;
+    if (errorHintType == ErrorHintType.ERROR) {
+      backColors = [HexColor('#FFEB8686'), HexColor('#FFEB8686')];
+    } else if (errorHintType == ErrorHintType.REMIND) {
+      backColors = [HexColor('#F7D33D'), HexColor('#E7C01A')];
+    }
+    Flushbar(
+      padding: EdgeInsets.symmetric(
+        vertical: 20.0,
+      ),
+      backgroundGradient: LinearGradient(
+        colors: backColors,
+      ),
+      icon: Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Image.asset(
+          'res/drawable/ic_warning_triangle.png',
+          width: 18,
+          height: 18,
+          color: Colors.white,
+        ),
+      ),
+      messageText: Padding(
+        padding: const EdgeInsets.only(right: 16.0),
+        child: Text(
+          message,
+          style: TextStyle(
+            fontSize: 13.0,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      flushbarStyle: FlushbarStyle.GROUNDED,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: errorHintType == ErrorHintType.ERROR ? Duration(seconds: 5) : null,
+    ).show(context);
+  }
+
   static toast(String message) {
-    Fluttertoast.showToast(msg: message, backgroundColor: Colors.black, textColor: Colors.white, timeInSecForIosWeb: 3);
+    Fluttertoast.showToast(
+        msg: message,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        timeInSecForIosWeb: 3);
   }
 
   static String shortEthAddress(String address, {int limitLength = 9}) {
@@ -54,7 +101,9 @@ class UiUtil {
     if (address.length < limitLength) {
       return address;
     }
-    return address.substring(0, limitLength) + "..." + address.substring(address.length - limitLength, address.length);
+    return address.substring(0, limitLength) +
+        "..." +
+        address.substring(address.length - limitLength, address.length);
   }
 
   static String shortString(String address, {int limitLength = 9}) {
@@ -110,7 +159,8 @@ class UiUtil {
           children: <Widget>[
             Container(
               //alignment: Alignment.center,
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              decoration:
+                  BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
               child: Stack(
                 children: <Widget>[
                   isShowCloseIcon
@@ -142,19 +192,26 @@ class UiUtil {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            top: 16, left: 24, right: 24, bottom: (contentItem != null || detail.isNotEmpty) ? 0 : 18),
+                            top: 16,
+                            left: 24,
+                            right: 24,
+                            bottom: (contentItem != null || detail.isNotEmpty) ? 0 : 18),
                         child: RichText(
                             text: TextSpan(
                                 text: content,
-                                style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.8),
+                                style: TextStyle(
+                                    fontSize: 14, color: HexColor("#333333"), height: 1.8),
                                 children: [
                               TextSpan(
                                 text: boldContent,
-                                style: boldStyle ?? TextStyle(fontSize: 14, color: HexColor("#FF4C3B"), height: 1.8),
+                                style: boldStyle ??
+                                    TextStyle(
+                                        fontSize: 14, color: HexColor("#FF4C3B"), height: 1.8),
                               ),
                               TextSpan(
                                 text: suffixContent,
-                                style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.8),
+                                style: TextStyle(
+                                    fontSize: 14, color: HexColor("#333333"), height: 1.8),
                               ),
                             ])),
                       ),
@@ -199,9 +256,12 @@ class UiUtil {
     Widget contentWidget,
     bool barrierDismissible = true,
     bool isShowCloseIcon = true,
+    bool isShowBottom = false,
+    Color barrierColor,
   }) {
     return showDialog<T>(
       barrierDismissible: barrierDismissible,
+      barrierColor: barrierColor,
       // 传入 context
       context: context,
       // 构建 Dialog 的视图
@@ -210,24 +270,37 @@ class UiUtil {
         duration: const Duration(milliseconds: 100),
         curve: Curves.decelerate,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: isShowBottom ? MainAxisAlignment.end : MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Container(
+              margin: EdgeInsets.only(bottom: isShowBottom ? 65 : 0),
               //alignment: Alignment.center,
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey[200],
+                    blurRadius: 1.0,
+                  ),
+                ],
+              ),
               child: Stack(
                 children: <Widget>[
                   isShowCloseIcon
                       ? Positioned(
-                          right: 10,
-                          top: 10,
+                          right: 0,
+                          top: 0,
                           child: GestureDetector(
-                            onTap: () => Navigator.pop(_),
-                            child: Image.asset(
-                              "res/drawable/map3_node_close.png",
-                              width: 18,
-                              height: 18,
+                            onTap: () => Navigator.pop(context),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Image.asset(
+                                "res/drawable/map3_node_close.png",
+                                width: 18,
+                                height: 18,
+                              ),
                             ),
                           ),
                         )
@@ -235,13 +308,14 @@ class UiUtil {
                   Column(
                     children: <Widget>[
                       contentWidget,
-                      Padding(
-                        padding: EdgeInsets.only(top: 18, bottom: 18),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: actions,
-                        ),
-                      )
+                      if (actions != null)
+                        Padding(
+                          padding: EdgeInsets.only(top: 18, bottom: 18),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: actions,
+                          ),
+                        )
                     ],
                   ),
                 ],
@@ -251,6 +325,103 @@ class UiUtil {
         ),
       ),
     );
+  }
+
+  static Future<T> showBottomDialogView<T>(
+    BuildContext context, {
+    double dialogHeight = 288,
+    Widget customWidget,
+    String imagePath,
+    double imageHeight,
+    String dialogTitle,
+    String dialogSubTitle,
+    bool showCloseBtn = true,
+    bool enableDrag = true,
+    bool isScrollControlled = false,
+    List<Widget> actions,
+  }) {
+    return showModalBottomSheet<T>(
+        context: context,
+        enableDrag: enableDrag,
+        isScrollControlled: isScrollControlled,
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        ),
+        builder: (BuildContext context) {
+          return Container(
+            height: dialogHeight,
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (customWidget != null) customWidget,
+                    if (imagePath != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 24.0),
+                        child: Image.asset(
+                          imagePath,
+                          height: imageHeight,
+                        ),
+                      ),
+                    if (dialogTitle != null)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 19,
+                          left: 49,
+                          right: 49,
+                        ),
+                        child: Text(
+                          dialogTitle,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: DefaultColors.color333,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    if (dialogSubTitle != null)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 16,
+                          left: 49,
+                          right: 49,
+                        ),
+                        child: Text(
+                          dialogSubTitle,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 14, color: HexColor('#666666')),
+                        ),
+                      ),
+                    if (actions != null)
+                      Padding(
+                        padding: EdgeInsets.only(top: 26, bottom: 26),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: actions,
+                        ),
+                      )
+                  ],
+                ),
+                if (showCloseBtn)
+                  InkWell(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Image.asset(
+                        'res/drawable/ic_close.png',
+                        width: 16,
+                        height: 16,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+              ],
+            ),
+          );
+        });
   }
 
   static Future<T> showDialogWidget<T>(
@@ -277,7 +448,8 @@ class UiUtil {
     );
   }
 
-  static Future<T> showConfirmDialogWidget<T>(BuildContext context, {Widget content, List<Widget> actions}) {
+  static Future<T> showConfirmDialogWidget<T>(BuildContext context,
+      {Widget content, List<Widget> actions}) {
     return showDialog<T>(
       context: context,
       builder: (context) {
@@ -305,10 +477,13 @@ class UiUtil {
     ]);
   }
 
-  static Future<bool> showRequestLocationAuthDialog<T>(BuildContext context, bool isServiceTurnOff) {
+  static Future<bool> showRequestLocationAuthDialog<T>(
+      BuildContext context, bool isServiceTurnOff) {
     return showDialogs<T>(
       context: context,
-      title: isServiceTurnOff == true ? S.of(context).open_location_service : S.of(context).require_location,
+      title: isServiceTurnOff == true
+          ? S.of(context).open_location_service
+          : S.of(context).require_location,
       content: isServiceTurnOff == true
           ? S.of(context).open_location_service_message
           : S.of(context).require_location_message,
@@ -480,14 +655,14 @@ class UiUtil {
       );
     };
 
-    var authConfig = await AuthUtil.getAuthConfigByWallet(
+    var authConfig = await BioAuthUtil.getAuthConfig(
       wallet,
       authType: authType,
     );
 
-    if (AuthUtil.bioAuthEnabled(authConfig)) {
+    if (BioAuthUtil.bioAuthEnabled(authConfig)) {
       ///Bio-auth is expired, ask for pwd with password dialog.
-      if (AuthUtil.bioAuthExpired(authConfig)) {
+      if (BioAuthUtil.bioAuthExpired(authConfig)) {
         Fluttertoast.showToast(msg: S.of(context).bio_auth_expired_hint);
         var pwd = await showPasswordDialog(
           context,
@@ -500,7 +675,7 @@ class UiUtil {
           ///Update last bio-auth time if pwd is correct
           if (await onCheckPwdValid(pwd)) {
             authConfig.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
-            AuthUtil.saveAuthConfig(
+            BioAuthUtil.saveAuthConfig(
               authConfig,
               wallet,
               authType: authType,
@@ -511,9 +686,9 @@ class UiUtil {
         }
       } else {
         ////BioAuth is not expired, check the password from disk is correct
-        var bioAuthResult = await AuthUtil.bioAuth(
+        var bioAuthResult = await BioAuthUtil.auth(
           context,
-          AuthUtil.currentBioMetricType(authConfig),
+          BioAuthUtil.currentBioMetricType(authConfig),
         );
 
         if (bioAuthResult != null && bioAuthResult) {
@@ -547,11 +722,14 @@ class UiUtil {
     @required CheckPwdValid onCheckPwdValid,
     bool isShowBioAuthIcon = true,
     String dialogTitle,
+    String remindStr,
     AuthType authType = AuthType.pay,
   }) async {
-    var useDigits = await WalletUtil.checkUseDigitsPwd(
-      wallet,
-    );
+    ///新版取消数字密码输入框
+    // var useDigits = await WalletUtil.checkUseDigitsPwd(
+    //   wallet,
+    // );
+    var useDigits = false;
 
     if (useDigits) {
       return showDialog(
@@ -565,7 +743,56 @@ class UiUtil {
             authType: authType,
           ));
     } else {
-      var pwd = await showModalBottomSheet(
+      return showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return Builder(
+            builder: (BuildContext buildContext) {
+              return EnterWalletPasswordWidget(
+                isShowBioAuthIcon: isShowBioAuthIcon,
+                wallet: wallet,
+                authType: authType,
+                onPwdSubmitted: onCheckPwdValid,
+                remindStr: remindStr,
+              );
+            },
+          );
+        },
+      );
+      return showAlertViewNew(context,
+          contentWidget: Material(
+            child: EnterWalletPasswordWidget(
+              isShowBioAuthIcon: isShowBioAuthIcon,
+              wallet: wallet,
+              authType: authType,
+              onPwdSubmitted: onCheckPwdValid,
+            ),
+          ),
+          isShowCloseIcon: false);
+      /*return await showDialog(
+          context: context,
+          barrierDismissible: false,
+          child: AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            backgroundColor: Colors.transparent,
+            content: EnterWalletPasswordWidget(
+              isShowBioAuthIcon: isShowBioAuthIcon,
+              wallet: wallet,
+              authType: authType,
+              onPwdSubmitted: onCheckPwdValid,
+            ),
+          ));*/
+      /*return await showDialog(
+          context: context,
+          barrierDismissible: false,
+          child: EnterWalletPasswordWidget(
+            isShowBioAuthIcon: isShowBioAuthIcon,
+            wallet: wallet,
+            authType: authType,
+            onPwdSubmitted: onCheckPwdValid,
+          ));*/
+      /*var pwd = await showModalBottomSheet(
           isScrollControlled: true,
           context: context,
           shape: RoundedRectangleBorder(
@@ -584,7 +811,7 @@ class UiUtil {
         return pwd;
       } else {
         return null;
-      }
+      }*/
     }
   }
 
@@ -636,6 +863,37 @@ class UiUtil {
 //    }
 //  }
 
+  static showConfirmPolicyDialog(
+    BuildContext context,
+    PolicyType policyType, {
+    bool isShowConfirm = true,
+  }) {
+    var height = MediaQuery.of(context).size.height - 80;
+    showDialog(
+      context: context,
+      builder: (_) => Material(
+        type: MaterialType.transparency,
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            height: height,
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+              child: PolicyConfirmPage(
+                policyType,
+                isShowConfirm: isShowConfirm,
+                isDialog: true,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   static showHintToast(BuildContext context, Widget icon, msg) {
     Widget widget = Center(
       child: ClipRRect(
@@ -669,6 +927,60 @@ class UiUtil {
     );
   }
 
+  static Future showLoadingDialog(BuildContext context, msg, Function createContext) async {
+    Widget widget = Center(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0),
+        child: Container(
+          width: 150,
+          height: 150,
+          color: HexColor('#4D000000'),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Spacer(),
+              SizedBox(
+                height: 32,
+                width: 32,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 1.5,
+                ),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Text(
+                msg,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.white,
+                    decoration: TextDecoration.none),
+              ),
+              Spacer()
+            ],
+          ),
+        ),
+      ),
+    );
+    await showDialog<bool>(
+        barrierColor: Colors.transparent,
+        barrierDismissible: false,
+        // 传入 context
+        context: context,
+        // 构建 Dialog 的视图
+        builder: (_) => Builder(builder: (context) {
+              createContext(context);
+              return WillPopScope(
+                  onWillPop: () {
+                    Navigator.pop(context, true);
+                    return;
+                  },
+                  child: widget);
+            }));
+  }
+
   static Future<T> showExchangeAuthAgainDialog<T>(
     BuildContext context, {
     Widget title,
@@ -697,7 +1009,8 @@ class UiUtil {
     );
   }
 
-  static Future<T> showDialogsNoCallback<T>(BuildContext context, String title, String content, {String confirm = ""}) {
+  static Future<T> showDialogsNoCallback<T>(BuildContext context, String title, String content,
+      {String confirm = ""}) {
     return showDialogWidget<T>(
       context,
       title: Text(title),
@@ -715,7 +1028,8 @@ class UiUtil {
     );
   }
 
-  static Future<bool> showScanImagePickerSheet(BuildContext context, {ImageCallback callback}) async {
+  static Future<bool> showScanImagePickerSheet(BuildContext context,
+      {ImageCallback callback}) async {
     return await showModalBottomSheet(
         context: context,
         builder: (BuildContext dialogContext) {
@@ -747,8 +1061,13 @@ class UiUtil {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
+
+                  ///turn off app-lock
+                  AppLockUtil.appLockSwitch(context, false);
+
                   if (tempListImagePaths != null && tempListImagePaths.length == 1) {
-                    RScanResult mnemonicWords = await RScan.scanImagePath(tempListImagePaths[0].path);
+                    RScanResult mnemonicWords =
+                        await RScan.scanImagePath(tempListImagePaths[0].path);
                     String mnemonicWord = mnemonicWords?.message;
                     callback(mnemonicWord);
                   }
@@ -765,7 +1084,8 @@ class UiUtil {
         });
   }
 
-  static Future<bool> showIconImagePickerSheet(BuildContext context, {ImageCallback callback}) async {
+  static Future<bool> showIconImagePickerSheet(BuildContext context,
+      {ImageCallback callback}) async {
     return await showModalBottomSheet(
         context: context,
         builder: (BuildContext dialogContext) {
@@ -796,6 +1116,10 @@ class UiUtil {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
+
+                  ///turn off app-lock
+                  AppLockUtil.appLockSwitch(context, false);
+
                   if (tempListImagePaths != null && tempListImagePaths.length == 1) {
                     var path = tempListImagePaths[0].path;
                     callback(path);
@@ -821,3 +1145,5 @@ void callLater(FrameCallback callback) {
     callback(timeStamp);
   });
 }
+
+enum ErrorHintType { ERROR, REMIND }

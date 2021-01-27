@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/app.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/data/db/transfer_history_dao.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/global.dart';
@@ -31,34 +32,34 @@ void main() {
   Api api = Api();
   SearchHistoryDao searchDao = SearchHistoryDao();
   TransferHistoryDao transferHistoryDao = TransferHistoryDao();
-  Repository repository = Repository(api: api, searchHistoryDao: searchDao, transferHistoryDao: transferHistoryDao);
+  Repository repository =
+      Repository(api: api, searchHistoryDao: searchDao, transferHistoryDao: transferHistoryDao);
   SearchInteractor searchInteractor = SearchInteractor(repository);
   TransactionInteractor transactionInteractor = TransactionInteractor(repository);
 
   BlocSupervisor.delegate = AppBlocDelegate();
 
 //  if (env.buildType == BuildType.PROD) {
-    FlutterBugly.init(
-      androidAppId: Config.BUGLY_ANDROID_APPID,
-      iOSAppId: Config.BUGLY_IOS_APPID,
-    );
+  FlutterBugly.init(
+    androidAppId: Config.BUGLY_ANDROID_APPID,
+    iOSAppId: Config.BUGLY_IOS_APPID,
+  );
 //  }
 
   FlutterBugly.postCatchedException(
-    () => runApp(Injector(
-      child: App(),
-      repository: repository,
-      searchInteractor: searchInteractor,
-      transactionInteractor: transactionInteractor,
+      () => runApp(Injector(
+            child: App(),
+            repository: repository,
+            searchInteractor: searchInteractor,
+            transactionInteractor: transactionInteractor,
 //      mapStore: ScaffoldMapStore(),
-    )),
-    debugUpload: env.buildType == BuildType.PROD,
-    handler: (FlutterErrorDetails detail) {
-      if (env.buildType == BuildType.PROD) {
-        LogUtil.uploadExceptionStr("${detail?.exception?.toString() ?? ""} ${detail.stack?.toString() ?? ""}","main error");
-      }
-      print(detail.toString());
-      //logger.e(detail.exception?.message, detail.exception, detail.stack);
+          )),
+      debugUpload: env.buildType == BuildType.PROD, handler: (FlutterErrorDetails detail) {
+    if (env.buildType == BuildType.PROD) {
+      LogUtil.uploadExceptionStr(
+          "${detail?.exception?.toString() ?? ""} ${detail.stack?.toString() ?? ""}", "main error");
     }
-  );
+    print(detail.toString());
+    //logger.e(detail.exception?.message, detail.exception, detail.stack);
+  });
 }

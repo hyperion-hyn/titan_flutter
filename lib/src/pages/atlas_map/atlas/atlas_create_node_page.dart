@@ -6,7 +6,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -19,7 +19,7 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:titan/src/widget/round_border_textfield.dart';
+import 'package:titan/src/widget/round_border_textField.dart';
 
 import 'atlas_stake_list_page.dart';
 
@@ -50,7 +50,7 @@ class _AtlasCreateNodePageState extends BaseState<AtlasCreateNodePage> {
   List<Map3InfoEntity> _map3NodeList = List();
   var _selectedMap3NodeIndex = 0;
 
-  WalletVo activatedWallet;
+  WalletViewVo activatedWallet;
 
   @override
   void onCreated() {
@@ -591,7 +591,7 @@ class _AtlasCreateNodePageState extends BaseState<AtlasCreateNodePage> {
           return;
         }
         String text = await Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => AtlasOptionEditPage(
+            builder: (BuildContext context) => OptionEditPage(
                   title: title,
                   content: content,
                   hint: hint,

@@ -18,7 +18,8 @@ CommitteeInfoEntity _$CommitteeInfoEntityFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$CommitteeInfoEntityToJson(CommitteeInfoEntity instance) =>
+Map<String, dynamic> _$CommitteeInfoEntityToJson(
+        CommitteeInfoEntity instance) =>
     <String, dynamic>{
       'block_height': instance.blockHeight,
       'block_num': instance.blockNum,

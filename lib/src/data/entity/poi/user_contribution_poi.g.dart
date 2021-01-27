@@ -41,8 +41,8 @@ Map<String, dynamic> _$UserContributionPoiToJson(
       'images': instance.images,
       'postcode': instance.postcode,
       'website': instance.website,
+      'myself': instance.myself,
       'remark': instance.remark,
-      'remark': instance.myself,
     };
 
 Location _$LocationFromJson(Map<String, dynamic> json) {

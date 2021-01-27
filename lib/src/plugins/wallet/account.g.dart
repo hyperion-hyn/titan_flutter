@@ -18,6 +18,7 @@ Account _$AccountFromJson(Map<String, dynamic> json) {
         ?.map((e) =>
             e == null ? null : AssetToken.fromJson(e as Map<String, dynamic>))
         ?.toList(),
+    extendedPublicKey: json['extendedPublicKey'] as String,
   );
 }
 
@@ -25,6 +26,7 @@ Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
       'address': instance.address,
       'derivationPath': instance.derivationPath,
       'coinType': instance.coinType,
+      'extendedPublicKey': instance.extendedPublicKey,
       'token': instance.token,
       'contractAssetTokens': instance.contractAssetTokens,
     };

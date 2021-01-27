@@ -103,6 +103,7 @@ class _RpShareSendDialogState extends BaseState<RpShareSendDialogPage> {
                       controller: _scrollController,
                       child: Column(
                         children: [
+                          SizedBox(height: 200,),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [

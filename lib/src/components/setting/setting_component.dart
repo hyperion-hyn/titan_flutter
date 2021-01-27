@@ -13,8 +13,7 @@ import 'bloc/bloc.dart';
 import 'package:nested/nested.dart';
 
 class SettingComponent extends SingleChildStatelessWidget {
-
-  SettingComponent({Key key, Widget child}): super(key: key, child: child);
+  SettingComponent({Key key, Widget child}) : super(key: key, child: child);
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
@@ -43,13 +42,12 @@ class _SettingManagerState extends BaseState<_SettingManager> {
 
   @override
   void onCreated() async {
-    var systemConfigStr =
-        await AppCache.getValue<String>(PrefsKey.SETTING_SYSTEM_CONFIG);
-    if (systemConfigStr != null) {
-      systemConfigEntity =
-          SystemConfigEntity.fromJson(json.decode(systemConfigStr));
-    }
-    super.onCreated();
+    // 恢复历史设置
+    BlocProvider.of<SettingBloc>(context).add(RestoreSettingEvent());
+    //同步remote配置
+    Future.delayed(Duration(milliseconds: 1000), () {
+      BlocProvider.of<SettingBloc>(context).add(SyncRemoteConfigEvent());
+    });
   }
 
   @override
@@ -71,8 +69,10 @@ class _SettingManagerState extends BaseState<_SettingManager> {
             if (state.areaModel != null) {
               areaModel = state.areaModel;
             }
-          } else if (state is SystemConfigState) {
-            systemConfigEntity = state.systemConfigEntity;
+
+            if (state.systemConfig != null) {
+              systemConfigEntity = state.systemConfig;
+            }
           }
 
           return SettingInheritedModel(
@@ -103,7 +103,7 @@ class SettingInheritedModel extends InheritedModel<SettingAspect> {
   }) : super(key: key, child: child);
 
   String get languageCode {
-    return languageModel?.locale?.languageCode??'zh';
+    return languageModel?.locale?.languageCode ?? 'zh';
   }
 
   String get netLanguageCode {
@@ -121,25 +121,18 @@ class SettingInheritedModel extends InheritedModel<SettingAspect> {
         systemConfigEntity != oldWidget.systemConfigEntity;
   }
 
-  static SettingInheritedModel of(BuildContext context,
-      {SettingAspect aspect}) {
-    return InheritedModel.inheritFrom<SettingInheritedModel>(context,
-        aspect: aspect);
+  static SettingInheritedModel of(BuildContext context, {SettingAspect aspect}) {
+    return InheritedModel.inheritFrom<SettingInheritedModel>(context, aspect: aspect);
   }
 
   static SettingInheritedModel ofConfig(BuildContext context) {
-    return InheritedModel.inheritFrom<SettingInheritedModel>(context,
-        aspect: SettingAspect.systemConfig);
+    return InheritedModel.inheritFrom<SettingInheritedModel>(context, aspect: SettingAspect.systemConfig);
   }
 
   @override
-  bool updateShouldNotifyDependent(
-      SettingInheritedModel oldWidget, Set<SettingAspect> dependencies) {
-    return ((languageModel != oldWidget.languageModel &&
-            dependencies.contains(SettingAspect.language)) ||
-        (areaModel != oldWidget.areaModel &&
-            dependencies.contains(SettingAspect.area)) ||
-        (systemConfigEntity != oldWidget.systemConfigEntity &&
-            dependencies.contains(SettingAspect.systemConfig)));
+  bool updateShouldNotifyDependent(SettingInheritedModel oldWidget, Set<SettingAspect> dependencies) {
+    return ((languageModel != oldWidget.languageModel && dependencies.contains(SettingAspect.language)) ||
+        (areaModel != oldWidget.areaModel && dependencies.contains(SettingAspect.area)) ||
+        (systemConfigEntity != oldWidget.systemConfigEntity && dependencies.contains(SettingAspect.systemConfig)));
   }
 }

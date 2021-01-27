@@ -1,4 +1,4 @@
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
@@ -21,7 +21,7 @@ class AccountTransferService {
   AtlasApi _atlasApi = AtlasApi();
   HbApi _hbApi = HbApi();
 
-  Future<List<TransactionDetailVo>> getTransferList(CoinVo coinVo, int page) async {
+  Future<List<TransactionDetailVo>> getTransferList(CoinViewVo coinVo, int page) async {
     if (coinVo.coinType == CoinType.ETHEREUM) {
       if (coinVo.contractAddress != null) {
         return await _getErc20TransferList(coinVo, page);
@@ -47,7 +47,7 @@ class AccountTransferService {
     }
   }
 
-  Future<List<TransactionDetailVo>> _getHYNAtlasTransferList(CoinVo coinVo, int page) async {
+  Future<List<TransactionDetailVo>> _getHYNAtlasTransferList(CoinViewVo coinVo, int page) async {
     List<HynTransferHistory> hynTransferHistoryList = await _atlasApi.queryHYNHistory(coinVo.address, page);
 
     List<TransactionDetailVo> detailList = hynTransferHistoryList.map((hynTransferHistory) {
@@ -64,7 +64,7 @@ class AccountTransferService {
     return detailList;
   }
 
-  Future<List<TransactionDetailVo>> _getHYNHrc30TransferList(CoinVo coinVo, int page) async {
+  Future<List<TransactionDetailVo>> _getHYNHrc30TransferList(CoinViewVo coinVo, int page) async {
     var assetToken = Tokens.getTokenByContractAddress(coinVo.contractAddress);
     if (assetToken == null) {
       return [];
@@ -95,7 +95,7 @@ class AccountTransferService {
     return detailList;
   }
 
-  Future<List<TransactionDetailVo>> _getErc20TransferList(CoinVo coinVo, int page) async {
+  Future<List<TransactionDetailVo>> _getErc20TransferList(CoinViewVo coinVo, int page) async {
     List<Erc20TransferHistory> erc20TransferHistoryList =
         await _etherScanApi.queryErc20History(coinVo.contractAddress, coinVo.address, page);
 
@@ -126,7 +126,7 @@ class AccountTransferService {
     return detailList;
   }
 
-  Future<List<TransactionDetailVo>> _getEthTransferList(CoinVo coinVo, int page) async {
+  Future<List<TransactionDetailVo>> _getEthTransferList(CoinViewVo coinVo, int page) async {
     List<EthTransferHistory> ethTransferHistoryList = await _etherScanApi.queryEthHistory(coinVo.address, page);
 
     List<TransactionDetailVo> detailList = ethTransferHistoryList.map((ethTransferHistory) {
@@ -154,7 +154,7 @@ class AccountTransferService {
     return detailList;
   }
 
-  Future<List<TransactionDetailVo>> _getHtTransferList(CoinVo coinVo, int page) async {
+  Future<List<TransactionDetailVo>> _getHtTransferList(CoinViewVo coinVo, int page) async {
     List<HtTransferHistory> ethTransferHistoryList = await _hbApi.queryHtHistory(coinVo.address, page);
 
     List<TransactionDetailVo> detailList = ethTransferHistoryList.map((ethTransferHistory) {
@@ -184,7 +184,7 @@ class AccountTransferService {
     return detailList;
   }
 
-  Future<List<TransactionDetailVo>> _getHtErc20TransferList(CoinVo coinVo, int page) async {
+  Future<List<TransactionDetailVo>> _getHtErc20TransferList(CoinViewVo coinVo, int page) async {
     var assetToken = Tokens.getTokenByContractAddress(coinVo.contractAddress);
     if (assetToken == null) {
       return [];
@@ -221,7 +221,7 @@ class AccountTransferService {
     return detailList;
   }
 
-  Future<List<TransactionDetailVo>> _getBitcoinTransferList(CoinVo coinVo, int page) async {
+  Future<List<TransactionDetailVo>> _getBitcoinTransferList(CoinViewVo coinVo, int page) async {
     List<BitcoinTransferHistory> bitcoinTransferList =
         await BitcoinApi.getBitcoinTransferList(coinVo.extendedPublicKey, page - 1, 10);
 

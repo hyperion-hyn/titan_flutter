@@ -9,23 +9,31 @@ import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 
-import 'vo/coin_vo.dart';
-import 'vo/wallet_vo.dart';
+import 'vo/coin_view_vo.dart';
+import 'vo/wallet_view_vo.dart';
 
 class WalletRepository {
-  Future updateWalletVoBalance(WalletVo walletVo, [String symbol, String contractAddress]) {
+  Future updateWalletVoBalance(WalletViewVo walletVo, [String symbol]) {
     return Future.wait(walletVo.coins
-        .where((coin) => symbol == null || (coin.symbol == symbol && coin.contractAddress == contractAddress))
-        .map((coin) => updateCoinBalance(walletVo.wallet, coin))
+        .where((coin) => symbol == null || coin.symbol == symbol)
+        .map((coin) => safeUpdateCoinBalance(walletVo.wallet, coin))
         .toList());
   }
 
-  Future updateCoinBalance(Wallet wallet, CoinVo coin) async {
-    var balance = BigInt.from(0);
-    if (coin.coinType == CoinType.BITCOIN) {
-      balance = await wallet.getBitcoinBalance(wallet.getBitcoinZPub());
-    } else {
-      balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
+  Future safeUpdateCoinBalance(Wallet wallet, CoinViewVo coin) async {
+    var balance = coin.balance ?? BigInt.zero;
+    try {
+      coin.refreshStatus = Status.loading;
+      if (coin.coinType == CoinType.BITCOIN) {
+        balance = await wallet.getBitcoinBalance(wallet.getBitcoinZPub());
+      } else {
+        balance = await wallet.getBalanceByCoinTypeAndAddress(
+            coin.coinType, coin.address, coin.contractAddress);
+      }
+      coin.refreshStatus = Status.success;
+    } catch (e) {
+      LogUtil.uploadException(e, 'balance update error');
+      coin.refreshStatus = Status.failed;
     }
     coin.balance = balance;
 //    coin.balance = (Decimal.parse(balance.toString()) / Decimal.parse(pow(10, coin.decimals).toString())).toDouble();
@@ -35,6 +43,12 @@ class WalletRepository {
     var keystoreFileName = await getActivatedWalletFileName();
     if (keystoreFileName != null) {
       return await WalletUtil.loadWallet(keystoreFileName);
+    }else{
+      var walletList = await WalletUtil.scanWallets();
+      if(walletList.length > 0){
+        await saveActivatedWalletFileName(walletList[0].keystore.fileName);
+        return walletList[0];
+      }
     }
     return null;
   }

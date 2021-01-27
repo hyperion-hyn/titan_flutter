@@ -1,5 +1,6 @@
 import 'package:decimal/decimal.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 class ConvertTokenUnit {
   static BigInt numToWei(double num, [int decimals = 18]) {
@@ -7,10 +8,9 @@ class ConvertTokenUnit {
     return BigInt.parse(dstr);
   }
 
-  @deprecated
   static BigInt decimalToWei(Decimal num, [int decimals = 18]) {
-    var dstr = (num * Decimal.fromInt(10).pow(decimals)).toString();
-    return BigInt.parse(dstr);
+    var dstr = FormatUtil.truncateDecimalNum(num * Decimal.fromInt(10).pow(decimals), 0);
+    return BigInt.tryParse(dstr) ?? BigInt.zero;
   }
 
   static BigInt bigintToWei(BigInt num, [int decimals = 18]) {
@@ -19,7 +19,7 @@ class ConvertTokenUnit {
 
   static BigInt strToBigInt(String str, [int decimals = 18]) {
     var dStr = ((Decimal?.tryParse(str) ?? Decimal.zero) * Decimal.fromInt(10).pow(decimals)).toString();
-    return BigInt?.tryParse(dStr) ?? BigInt.zero;
+    return BigInt.tryParse(dStr) ?? BigInt.zero;
   }
 
   static Decimal weiToDecimal(BigInt wei, [int decimals = 18]) {

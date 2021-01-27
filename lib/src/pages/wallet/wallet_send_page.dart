@@ -12,7 +12,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
@@ -28,11 +28,11 @@ import 'package:titan/src/utils/utile_ui.dart';
 import '../../global.dart';
 
 class WalletSendPage extends StatefulWidget {
-  final CoinVo coinVo;
+  final CoinViewVo coinVo;
   final String toAddress;
 
   WalletSendPage(String coinVo, [String toAddress])
-      : this.coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo)),
+      : this.coinVo = CoinViewVo.fromJson(FluroConvertUtils.string2map(coinVo)),
         this.toAddress = toAddress;
 
   @override
@@ -54,8 +54,8 @@ class _WalletSendState extends BaseState<WalletSendPage> {
     _amountController.addListener(() {
       if (_amountController.text.trim() != null && _amountController.text.trim().length > 0) {
         var inputAmount = _amountController.text.trim();
-        var activatedQuoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
-        var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
+        var activatedQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
+        var quotePrice = activatedQuoteSign?.price ?? 0;
         setState(() {
           _notionalValue = double.parse(inputAmount) * quotePrice;
         });
@@ -79,10 +79,10 @@ class _WalletSendState extends BaseState<WalletSendPage> {
 
   @override
   Widget build(BuildContext context) {
-    var activatedQuoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+    var activatedQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
-    var quoteSign = activatedQuoteSign?.sign?.sign;
+    var quotePrice = activatedQuoteSign?.price ?? 0;
+    var quoteSign = activatedQuoteSign?.legal?.legal;
 
     var addressHint = "";
     RegExp _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);

@@ -6,8 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/components/setting/setting_component.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
@@ -509,78 +507,45 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
 
                                 var txhash = '';
 
-                                if (tokenType == TokenType.ETH) {
-                                  //需要转ETH
+                                if (tokenType == TokenType.ETH || tokenType == TokenType.HYN_MAIN) {
+                                  //转主链币
                                   try {
-                                    final client = WalletUtil.getWeb3Client(CoinType.ETHEREUM);
+                                    var coinType = tokenType == TokenType.ETH ? CoinType.ETHEREUM : CoinType.HYN_ATLAS;
+                                    final client = WalletUtil.getWeb3Client(coinType);
                                     final credentials =
                                         await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
-                                    txhash = await client.sendTransaction(
-                                      credentials,
-                                      web3.Transaction(
-                                        to: web3.EthereumAddress.fromHex(_toAddress),
-                                        gasPrice: web3.EtherAmount.inWei(BigInt.from(
-                                            WalletInheritedModel.of(context).ethGasPriceRecommend.fast.toInt())),
-                                        maxGas: 21000,
-                                        value: web3.EtherAmount.inWei(ConvertTokenUnit.decimalToWei(_amount)),
-                                      ),
-                                      fetchChainIdFromNetworkId: true,
-                                    );
+                                    var gasPrice = coinType == CoinType.HYN_ATLAS ? BigInt.one : null;
+                                    var nonce =
+                                        await wallet.getCurrentWalletNonce(coinType, atBlock: web3.BlockNum.current());
 
-                                    print('txhash $txhash');
-                                    UiUtil.toast('转账 $_amount，请等待成功后再执行其他转账');
+                                    txhash = await wallet.sendTransaction(coinType,
+                                        cred: credentials,
+                                        toAddress: _toAddress,
+                                        value: ConvertTokenUnit.decimalToWei(_amount),
+                                        nonce: nonce,
+                                        gasPrice: gasPrice);
                                   } catch (e) {
                                     print(e);
-                                    UiUtil.toast('ETH转账异常 ${e.message}');
-                                  }
-                                } else if (tokenType == TokenType.HYN_MAIN) {
-                                  try {
-                                    final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
-                                    final credentials =
-                                        await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
-                                    txhash = await client.sendTransaction(
-                                      credentials,
-                                      web3.Transaction(
-                                        to: web3.EthereumAddress.fromHex(WalletUtil.bech32ToEthAddress(_toAddress)),
-                                        gasPrice: web3.EtherAmount.inWei(BigInt.one),
-                                        maxGas: 21000,
-                                        value: web3.EtherAmount.inWei(ConvertTokenUnit.decimalToWei(_amount)),
-                                        type: web3.MessageType.typeNormal,
-                                      ),
-                                      fetchChainIdFromNetworkId: false,
-                                    );
-
-                                    print('txhash $txhash');
-                                    UiUtil.toast('转账$_amount，请等待成功后再执行其他转账');
-                                  } catch (e) {
-                                    print(e);
-                                    UiUtil.toast('HYN转账异常 ${e.message}');
+                                    UiUtil.toast('转账异常 ${e.message}');
                                   }
                                 } else if (tokenType == TokenType.RP_HRC30) {
-                                  //转hrc30
+                                  //转hrc30 rp
                                   try {
                                     final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
                                     final credentials =
                                         await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
+                                    var nonce = await wallet.getCurrentWalletNonce(CoinType.HYN_ATLAS,
+                                        atBlock: web3.BlockNum.current());
 
-                                    var contract = WalletUtil.getErc20Contract(HyperionConfig.hynRPHrc30Address, 'RP');
                                     var decimals = SupportedTokens.HYN_RP_HRC30.decimals;
-
-                                    txhash = await client.sendTransaction(
-                                      credentials,
-                                      web3.Transaction.callContract(
-                                        contract: contract,
-                                        function: contract.function('transfer'),
-                                        parameters: [
-                                          web3.EthereumAddress.fromHex(WalletUtil.bech32ToEthAddress(_toAddress)),
-                                          ConvertTokenUnit.decimalToWei(_amount, decimals)
-                                        ],
-                                        gasPrice: web3.EtherAmount.inWei(BigInt.one),
-                                        maxGas: 65000,
-                                        type: web3.MessageType.typeNormal,
-                                      ),
-                                      fetchChainIdFromNetworkId: false,
-                                    );
+                                    var amount = ConvertTokenUnit.decimalToWei(_amount, decimals);
+                                    txhash = await wallet.sendErc20Transaction(CoinType.HYN_ATLAS,
+                                        contractAddress: HyperionConfig.hynRPHrc30Address,
+                                        toAddress: _toAddress,
+                                        cred: credentials,
+                                        gasPrice: BigInt.one,
+                                        nonce: nonce,
+                                        value: amount);
 
                                     print('txhash $txhash');
                                     UiUtil.toast('转账$_amount，请等待成功后再执行其他转账');
@@ -594,40 +559,26 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                     final client = WalletUtil.getWeb3Client(CoinType.ETHEREUM);
                                     final credentials =
                                         await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
+                                    var nonce = await wallet.getCurrentWalletNonce(CoinType.ETHEREUM,
+                                        atBlock: web3.BlockNum.current());
 
-                                    var contract;
                                     var decimals;
+                                    var amount;
                                     if (tokenType == TokenType.USDT_ERC20) {
-                                      contract =
-                                          WalletUtil.getErc20Contract(EthereumConfig.getUsdtErc20Address(), 'USDT');
                                       decimals = SupportedTokens.USDT_ERC20.decimals;
-                                    }
-                                    /*else if (tokenType == TokenType.HYN_ERC20) {
-                                      contract = WalletUtil.getHynErc20Contract(WalletConfig.getHynErc20Address);
-                                      decimals = SupportedTokens.HYN_ERC20.decimals;
-                                    }*/
-                                    else {
+                                      amount = ConvertTokenUnit.decimalToWei(_amount, decimals);
+                                      txhash = await wallet.sendErc20Transaction(CoinType.ETHEREUM,
+                                          cred: credentials,
+                                          contractAddress: EthereumConfig.getUsdtErc20Address(),
+                                          toAddress: _toAddress,
+                                          nonce: nonce,
+                                          value: amount);
+                                      print('txhash $txhash');
+                                      UiUtil.toast('转账$_amount，请等待成功后再执行其他转账');
+                                    } else {
                                       UiUtil.toast('错误的类型 $tokenType');
                                       return;
                                     }
-                                    txhash = await client.sendTransaction(
-                                      credentials,
-                                      web3.Transaction.callContract(
-                                        contract: contract,
-                                        function: contract.function('transfer'),
-                                        parameters: [
-                                          web3.EthereumAddress.fromHex(_toAddress),
-                                          ConvertTokenUnit.decimalToWei(_amount, decimals)
-                                        ],
-                                        gasPrice: web3.EtherAmount.inWei(BigInt.from(
-                                            WalletInheritedModel.of(context).ethGasPriceRecommend.fast.toInt())),
-                                        maxGas: 65000,
-                                      ),
-                                      fetchChainIdFromNetworkId: true,
-                                    );
-
-                                    print('txhash $txhash');
-                                    UiUtil.toast('转账$_amount，请等待成功后再执行其他转账');
                                   } catch (e) {
                                     print(e);
                                     UiUtil.toast('转账异常, ${e.message}');

@@ -1,7 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/repository/repository.dart';
 import 'package:titan/src/global.dart';
@@ -21,7 +21,7 @@ class TransactionInteractor {
   Future<bool> insertTransactionDB(
       String hash, String toAddress, BigInt value, BigInt gasPrice, int gasLimit, int transType, int nonce,
       {int optType, contractAddress}) async {
-    WalletVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    WalletViewVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
     String fromAddress = walletVo.wallet.getEthAccount().address;
     int time = DateTime.now().millisecondsSinceEpoch;
 //    if(nonce == null){

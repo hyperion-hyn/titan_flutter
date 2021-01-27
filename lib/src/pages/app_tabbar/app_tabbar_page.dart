@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
@@ -19,6 +20,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'package:titan/src/pages/app_tabbar/bottom_fabs_widget.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_node_tabs_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -71,6 +73,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
   ScaffoldMapState _mapState;
   var _isShowAnnounceDialog = false;
   var homePageFirst = true;
+
   bool get _isDefaultState => _mapState is DefaultScaffoldMapState || _mapState == null;
   bool get _isDMap => (_mapState is FocusingDMapState) ?? false;
 
@@ -110,9 +113,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     );
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
 
-    Future.delayed(Duration(milliseconds: 500)).then((value) {
-      BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent(updateGasPrice: true));
-    });
+    // Future.delayed(Duration(milliseconds: 500)).then((value) {
+    //   BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent(updateGasPrice: true));
+    // });
 
 //    Future.delayed(Duration(milliseconds: 2000)).then((value) {
 //      BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
@@ -249,6 +252,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
   @override
   Widget build(BuildContext context) {
     bool isDebug = env.buildType == BuildType.DEV;
+
     return UpdaterComponent(
       child: MultiBlocListener(
         listeners: [

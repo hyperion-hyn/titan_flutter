@@ -11,13 +11,16 @@ CheckInModel _$CheckInModelFromJson(Map<String, dynamic> json) {
     json['day'] as String,
     json['total'] as int,
     (json['detail'] as List)
-        ?.map((e) => e == null ? null : CheckInModelDetail.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : CheckInModelDetail.fromJson(e as Map<String, dynamic>))
         ?.toList(),
     json['completed'] as bool,
   );
 }
 
-Map<String, dynamic> _$CheckInModelToJson(CheckInModel instance) => <String, dynamic>{
+Map<String, dynamic> _$CheckInModelToJson(CheckInModel instance) =>
+    <String, dynamic>{
       'day': instance.day,
       'total': instance.total,
       'detail': instance.detail,
@@ -27,11 +30,14 @@ Map<String, dynamic> _$CheckInModelToJson(CheckInModel instance) => <String, dyn
 CheckInModelDetail _$CheckInModelDetailFromJson(Map<String, dynamic> json) {
   return CheckInModelDetail(
     json['action'] as String,
-    json['state'] == null ? null : CheckInModelState.fromJson(json['state'] as Map<String, dynamic>),
+    json['state'] == null
+        ? null
+        : CheckInModelState.fromJson(json['state'] as Map<String, dynamic>),
   );
 }
 
-Map<String, dynamic> _$CheckInModelDetailToJson(CheckInModelDetail instance) => <String, dynamic>{
+Map<String, dynamic> _$CheckInModelDetailToJson(CheckInModelDetail instance) =>
+    <String, dynamic>{
       'action': instance.action,
       'state': instance.state,
     };
@@ -41,12 +47,15 @@ CheckInModelState _$CheckInModelStateFromJson(Map<String, dynamic> json) {
     json['total'] as int,
     json['real'] as int,
     (json['pois'] as List)
-        ?.map((e) => e == null ? null : CheckInModelPoi.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : CheckInModelPoi.fromJson(e as Map<String, dynamic>))
         ?.toList(),
   );
 }
 
-Map<String, dynamic> _$CheckInModelStateToJson(CheckInModelState instance) => <String, dynamic>{
+Map<String, dynamic> _$CheckInModelStateToJson(CheckInModelState instance) =>
+    <String, dynamic>{
       'total': instance.total,
       'real': instance.real,
       'pois': instance.pois,
@@ -67,13 +76,18 @@ CheckInModelPoi _$CheckInModelPoiFromJson(Map<String, dynamic> json) {
     json['isReal'] as bool,
     json['answer'] as bool,
     json['created_at'] as int,
-    (json['originalImgs'] as List)?.map((e) => (e as String)?.toString())?.toList(),
+    (json['originalImgs'] as List)?.map((e) => e as String)?.toList(),
     json['poiCreatedAt'] as int,
-    (json['detail'] as List)?.map((e) => e == null ? null : CheckInModelPoi.fromJson(e as Map<String, dynamic>))?.toList(),
+    (json['detail'] as List)
+        ?.map((e) => e == null
+            ? null
+            : CheckInModelPoi.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
   );
 }
 
-Map<String, dynamic> _$CheckInModelPoiToJson(CheckInModelPoi instance) => <String, dynamic>{
+Map<String, dynamic> _$CheckInModelPoiToJson(CheckInModelPoi instance) =>
+    <String, dynamic>{
       'poi_id': instance.poiId,
       'coordinates': instance.coordinates,
       'name': instance.name,
@@ -86,7 +100,7 @@ Map<String, dynamic> _$CheckInModelPoiToJson(CheckInModelPoi instance) => <Strin
       'image': instance.image,
       'isReal': instance.isReal,
       'answer': instance.answer,
-      'createdAt': instance.createdAt,
+      'created_at': instance.createdAt,
       'originalImgs': instance.originalImgs,
       'poiCreatedAt': instance.poiCreatedAt,
       'detail': instance.detail,

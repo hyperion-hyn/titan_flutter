@@ -1,24 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'symbol_quote_vo.dart';
+part of 'token_price_view_vo.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-SymbolQuoteVo _$SymbolQuoteVoFromJson(Map<String, dynamic> json) {
-  return SymbolQuoteVo(
+TokenPriceViewVo _$TokenPriceViewVoFromJson(Map<String, dynamic> json) {
+  return TokenPriceViewVo(
     symbol: json['symbol'] as String,
-    quote: json['quote'] as String,
+    legal: json['legal'] == null
+        ? null
+        : LegalSign.fromJson(json['legal'] as Map<String, dynamic>),
     price: (json['price'] as num)?.toDouble(),
     percentChange24h: (json['percentChange24h'] as num)?.toDouble(),
   );
 }
 
-Map<String, dynamic> _$SymbolQuoteVoToJson(SymbolQuoteVo instance) =>
+Map<String, dynamic> _$TokenPriceViewVoToJson(TokenPriceViewVo instance) =>
     <String, dynamic>{
       'symbol': instance.symbol,
-      'quote': instance.quote,
+      'legal': instance.legal,
       'price': instance.price,
       'percentChange24h': instance.percentChange24h,
     };

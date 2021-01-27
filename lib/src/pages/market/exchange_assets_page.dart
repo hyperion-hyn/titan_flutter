@@ -12,7 +12,7 @@ import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/exchange/model.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
-import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
@@ -43,7 +43,7 @@ class ExchangeAssetsPage extends StatefulWidget {
 class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   ExchangeApi _exchangeApi = ExchangeApi();
-  ActiveQuoteVoAndSign symbolQuote;
+  TokenPriceViewVo symbolQuote;
   Decimal _usdtToCurrency;
   ExchangeModel _exchangeModel;
 
@@ -54,7 +54,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   @override
   void onCreated() {
     symbolQuote =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
+        WalletInheritedModel.of(context).tokenLegalPrice('USDT');
     _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
 
     transactionInteractor = Injector.of(context).transactionInteractor;
@@ -344,8 +344,8 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                                       _totalByHyn == null ||
                                       _totalByUsdt == null
                                   ? '--'
-                                  : '≈ $_totalUSDTQuotePrice ${symbolQuote?.sign?.quote ?? '-'}'
-                              : '≈ ***** ${symbolQuote?.sign?.quote ?? '-'}',
+                                  : '≈ $_totalUSDTQuotePrice ${symbolQuote?.legal?.legal ?? '-'}'
+                              : '≈ ***** ${symbolQuote?.legal?.legal ?? '-'}',
                           style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -624,7 +624,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
     try {
       var ret = await _exchangeApi.type2currency(
         'USDT',
-        symbolQuote?.sign?.quote,
+        symbolQuote?.legal?.legal,
       );
       _usdtToCurrency = Decimal.parse(ret.toString());
 
@@ -789,7 +789,7 @@ class AssetItemState extends State<AssetItem> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        '${S.of(context).exchange_asset_convert}(${WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeQuotesSign?.quote ?? '-'})',
+                        '${S.of(context).exchange_asset_convert}(${WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeLegal?.legal ?? '-'})',
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,

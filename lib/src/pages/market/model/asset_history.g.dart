@@ -8,16 +8,17 @@ part of 'asset_history.dart';
 
 AssetHistory _$AssetHistoryFromJson(Map<String, dynamic> json) {
   return AssetHistory(
-      json['name'] as String,
-      json['id'] as String,
-      json['type'] as String,
-      json['balance'] as String,
-      json['fee'] as String,
-      json['tx_id'] as String,
-      json['status'] as String,
-      json['mtime'] as String,
-      json['ctime'] as String,
-      json['chain'] as String);
+    json['name'] as String,
+    json['id'] as String,
+    json['type'] as String,
+    json['balance'] as String,
+    json['fee'] as String,
+    json['tx_id'] as String,
+    json['status'] as String,
+    json['mtime'] as String,
+    json['ctime'] as String,
+    json['chain'] as String,
+  );
 }
 
 Map<String, dynamic> _$AssetHistoryToJson(AssetHistory instance) =>

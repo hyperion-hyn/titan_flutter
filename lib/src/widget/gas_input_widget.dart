@@ -5,7 +5,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -16,7 +16,7 @@ import 'package:titan/src/utils/utile_ui.dart';
 typedef GasInputChangedCallback = void Function(Decimal gasPrice, int gasPriceLimit);
 
 class GasInputWidget extends StatefulWidget {
-  final CoinVo coinVo;
+  final CoinViewVo coinVo;
   final double currentEthPrice;
   final GasInputChangedCallback callback;
 
@@ -50,7 +50,7 @@ class _GasInputWidgetState extends BaseState<GasInputWidget> {
 
   @override
   void onCreated() {
-    var ethQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0;
+    var ethQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('ETH')?.price ?? 0;
 
     var gasLimit = widget.coinVo.symbol == "ETH"
         ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
