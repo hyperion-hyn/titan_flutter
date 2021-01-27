@@ -40,4 +40,4 @@ class SetAppLockPwdState extends AppLockState {
 
 class LockWalletState extends AppLockState {}
 
-class UnlockWalletState extends AppLockState {}
+class UnlockAppState extends AppLockState {}

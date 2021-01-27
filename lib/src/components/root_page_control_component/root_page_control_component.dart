@@ -4,27 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
-import 'package:titan/src/components/auth/bloc/auth_event.dart';
-import 'package:titan/src/components/auth/bloc/auth_state.dart';
-import 'package:titan/src/components/auth/model.dart';
-import 'package:titan/src/components/inject/injector.dart';
-import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
-import 'package:titan/src/components/setting/bloc/bloc.dart';
-import 'package:titan/src/components/setting/model.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/data/cache/app_cache.dart';
-import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/app_tabbar_bloc.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
@@ -80,6 +67,7 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
           .add(SetRootPageEvent(page: SettingOnLauncherPage()));
     }
 
+    ///show app-lock if enabled
     if (await AppLockUtil.checkEnable()) {
       Application.router.navigateTo(Keys.rootKey.currentContext, Routes.app_lock);
     }

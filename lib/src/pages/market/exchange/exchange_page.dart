@@ -423,10 +423,6 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
     var _isShowBalance = ExchangeInheritedModel.of(context).exchangeModel?.isShowBalances ?? true;
     var _isExchangeAccountLoggin =
         ExchangeInheritedModel.of(context).exchangeModel?.hasActiveAccount() ?? false;
-
-    if (AppLockInheritedModel.of(context).isLockActive) {
-      return Text('请先解锁钱包');
-    }
     if (_isExchangeAccountLoggin) {
       return Text.rich(
         TextSpan(children: [

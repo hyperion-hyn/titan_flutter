@@ -5,18 +5,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/components/account/account_component.dart';
 import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
-import 'package:titan/src/components/app_lock/entity/app_lock_config.dart';
-import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
-import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/components/style/theme.dart';
-import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'components/app_lock/app_lock_component.dart';
 import 'components/root_page_control_component/bloc/bloc.dart';
 import 'components/setting/setting_component.dart';
@@ -123,49 +118,25 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                 enableBallisticLoad: true,
                 child: Container(
                   color: Colors.white,
-                  // child: AppLockInheritedModel.of(context).isLockActive
-                  //     ? MaterialApp(
-                  //         locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
-                  //             .languageModel
-                  //             ?.locale,
-                  //         localizationsDelegates: [
-                  //           S.delegate,
-                  //           GlobalMaterialLocalizations.delegate,
-                  //           GlobalWidgetsLocalizations.delegate,
-                  //           GlobalCupertinoLocalizations.delegate,
-                  //           RefreshLocalizations.delegate,
-                  //         ],
-                  //         supportedLocales: S.delegate.supportedLocales,
-                  //         home: Material(
-                  //           child: Container(
-                  //             color: Colors.white,
-                  //             child: AppLockScreen(
-                  //               onUnlock: () {
-                  //                 BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
-                  //               },
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       )
-                     child : MaterialApp(
-                          key: Keys.materialAppKey,
-                          debugShowCheckedModeBanner: false,
-                          locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
-                              .languageModel
-                              ?.locale,
-                          title: 'titan',
-                          theme: appTheme,
-                          localizationsDelegates: [
-                            S.delegate,
-                            GlobalMaterialLocalizations.delegate,
-                            GlobalWidgetsLocalizations.delegate,
-                            GlobalCupertinoLocalizations.delegate,
-                            RefreshLocalizations.delegate,
-                          ],
-                          supportedLocales: S.delegate.supportedLocales,
-                          navigatorObservers: [Application.routeObserver],
-                          onGenerateRoute: Application.router.generator,
-                        ),
+                  child: MaterialApp(
+                    key: Keys.materialAppKey,
+                    debugShowCheckedModeBanner: false,
+                    locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
+                        .languageModel
+                        ?.locale,
+                    title: 'titan',
+                    theme: appTheme,
+                    localizationsDelegates: [
+                      S.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalCupertinoLocalizations.delegate,
+                      RefreshLocalizations.delegate,
+                    ],
+                    supportedLocales: S.delegate.supportedLocales,
+                    navigatorObservers: [Application.routeObserver],
+                    onGenerateRoute: Application.router.generator,
+                  ),
                 ),
               );
             },

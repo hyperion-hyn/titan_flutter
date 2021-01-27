@@ -1,6 +1,7 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
@@ -73,6 +74,9 @@ var appLockHandler = Handler(handlerFunc: (context, params) {
   return AppLockScreen(
     onUnlock: () {
       Navigator.of(context).pop();
+      BlocProvider.of<AppLockBloc>(
+        Keys.rootKey.currentContext,
+      ).add(UnLockAppEvent());
     },
   );
 });
