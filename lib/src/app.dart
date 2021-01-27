@@ -121,38 +121,52 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                 enableLoadingWhenFailed: false,
                 hideFooterWhenNotFull: true,
                 enableBallisticLoad: true,
-                child: AppLockInheritedModel.of(context).isWalletLockActive
-                    ? MaterialApp(
-                        home: Material(
-                          child: Container(
-                            color: Colors.white,
-                            child: AppLockScreen(
-                              onUnlock: () {
-                                BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
-                              },
+                child: Container(
+                  color: Colors.white,
+                  child: AppLockInheritedModel.of(context).isWalletLockActive
+                      ? MaterialApp(
+                          locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
+                              .languageModel
+                              ?.locale,
+                          localizationsDelegates: [
+                            S.delegate,
+                            GlobalMaterialLocalizations.delegate,
+                            GlobalWidgetsLocalizations.delegate,
+                            GlobalCupertinoLocalizations.delegate,
+                            RefreshLocalizations.delegate,
+                          ],
+                          supportedLocales: S.delegate.supportedLocales,
+                          home: Material(
+                            child: Container(
+                              color: Colors.white,
+                              child: AppLockScreen(
+                                onUnlock: () {
+                                  BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
+                                },
+                              ),
                             ),
                           ),
+                        )
+                      : MaterialApp(
+                          key: Keys.materialAppKey,
+                          debugShowCheckedModeBanner: false,
+                          locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
+                              .languageModel
+                              ?.locale,
+                          title: 'titan',
+                          theme: appTheme,
+                          localizationsDelegates: [
+                            S.delegate,
+                            GlobalMaterialLocalizations.delegate,
+                            GlobalWidgetsLocalizations.delegate,
+                            GlobalCupertinoLocalizations.delegate,
+                            RefreshLocalizations.delegate,
+                          ],
+                          supportedLocales: S.delegate.supportedLocales,
+                          navigatorObservers: [Application.routeObserver],
+                          onGenerateRoute: Application.router.generator,
                         ),
-                      )
-                    : MaterialApp(
-                        key: Keys.materialAppKey,
-                        debugShowCheckedModeBanner: false,
-                        locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
-                            .languageModel
-                            ?.locale,
-                        title: 'titan',
-                        theme: appTheme,
-                        localizationsDelegates: [
-                          S.delegate,
-                          GlobalMaterialLocalizations.delegate,
-                          GlobalWidgetsLocalizations.delegate,
-                          GlobalCupertinoLocalizations.delegate,
-                          RefreshLocalizations.delegate,
-                        ],
-                        supportedLocales: S.delegate.supportedLocales,
-                        navigatorObservers: [Application.routeObserver],
-                        onGenerateRoute: Application.router.generator,
-                      ),
+                ),
               );
             },
           ),

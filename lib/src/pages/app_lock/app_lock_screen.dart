@@ -170,14 +170,14 @@ class _AppLockScreenState extends BaseState<AppLockScreen> {
 
   _bioAuth() async {
     if (await AppLockUtil.checkBioAuthEnable()) {
-      var authConfig = await AuthUtil.getAuthConfig(
+      var authConfig = await BioAuthUtil.getAuthConfig(
         null,
         authType: AuthType.walletLock,
       );
 
-      var result = await AuthUtil.bioAuth(
+      var result = await BioAuthUtil.auth(
         context,
-        AuthUtil.currentBioMetricType(authConfig),
+        BioAuthUtil.currentBioMetricType(authConfig),
       );
 
       if (result) {

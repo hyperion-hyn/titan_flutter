@@ -10,6 +10,7 @@ import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -191,6 +192,47 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
   }
 
   _bioAuthPreference() {
+    return FutureBuilder(
+      future: BioAuthUtil.checkBioAuthAvailable(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          bool isBioAuthAvailable = snapshot.data;
+          if (isBioAuthAvailable) {
+            return _section(
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '快捷解锁',
+                        style: TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    FlutterSwitch(
+                      width: 54.0,
+                      height: 26.0,
+                      toggleSize: 18.0,
+                      activeColor: HexColor('#EDC313'),
+                      inactiveColor: HexColor('#DEDEDE'),
+                      value: AppLockInheritedModel.of(context).isWalletLockBioAuthEnabled,
+                      onToggle: (value) {
+                        _setUpBioAuth(value);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              title: '生物识别',
+              childPadding: EdgeInsets.symmetric(vertical: 0.0),
+            );
+          }
+        }
+        return SliverToBoxAdapter(
+          child: SizedBox(),
+        );
+      },
+    );
     if (AppLockInheritedModel.of(context).isWalletLockEnable &&
         AuthInheritedModel.of(context).bioAuthAvailable) {
       return _section(
@@ -263,19 +305,19 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
   _setUpBioAuth(bool value) async {
     if (value) {
       _showWalletLockDialog(() async {
-        var authConfig = await AuthUtil.getAuthConfig(
+        var authConfig = await BioAuthUtil.getAuthConfig(
           null,
           authType: AuthType.walletLock,
         );
 
-        var result = await AuthUtil.bioAuth(
+        var result = await BioAuthUtil.auth(
           context,
-          AuthUtil.currentBioMetricType(authConfig),
+          BioAuthUtil.currentBioMetricType(authConfig),
         );
 
         if (result) {
           authConfig.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
-          AuthUtil.saveAuthConfig(
+          BioAuthUtil.saveAuthConfig(
             authConfig,
             null,
             authType: AuthType.walletLock,

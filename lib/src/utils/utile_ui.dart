@@ -653,14 +653,14 @@ class UiUtil {
       );
     };
 
-    var authConfig = await AuthUtil.getAuthConfig(
+    var authConfig = await BioAuthUtil.getAuthConfig(
       wallet,
       authType: authType,
     );
 
-    if (AuthUtil.bioAuthEnabled(authConfig)) {
+    if (BioAuthUtil.bioAuthEnabled(authConfig)) {
       ///Bio-auth is expired, ask for pwd with password dialog.
-      if (AuthUtil.bioAuthExpired(authConfig)) {
+      if (BioAuthUtil.bioAuthExpired(authConfig)) {
         Fluttertoast.showToast(msg: S.of(context).bio_auth_expired_hint);
         var pwd = await showPasswordDialog(
           context,
@@ -673,7 +673,7 @@ class UiUtil {
           ///Update last bio-auth time if pwd is correct
           if (await onCheckPwdValid(pwd)) {
             authConfig.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
-            AuthUtil.saveAuthConfig(
+            BioAuthUtil.saveAuthConfig(
               authConfig,
               wallet,
               authType: authType,
@@ -684,9 +684,9 @@ class UiUtil {
         }
       } else {
         ////BioAuth is not expired, check the password from disk is correct
-        var bioAuthResult = await AuthUtil.bioAuth(
+        var bioAuthResult = await BioAuthUtil.auth(
           context,
-          AuthUtil.currentBioMetricType(authConfig),
+          BioAuthUtil.currentBioMetricType(authConfig),
         );
 
         if (bioAuthResult != null && bioAuthResult) {
