@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class AppLockWalletNotBackUpDialog extends StatefulWidget {
@@ -51,18 +56,20 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
               '设置安全锁',
               style: TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 24.0,
-                vertical: 16,
+                vertical: 14,
               ),
               child: Text(
                 '安全锁密码忘记后只有助记词可恢复钱包身份，请务必确保所有钱包助记词已备份！',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: HexColor('#666666')),
+                style: TextStyle(
+                  color: HexColor('#666666'),
+                ),
               ),
             ),
             _walletList(),
@@ -88,6 +95,10 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
 
   _walletList() {
     List<Widget> walletList = List.generate(widget.walletList.length, (index) {
+      var name = widget.walletList[index].keystore.name;
+      var address = shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(
+        widget.walletList[index].getEthAccount().address,
+      ));
       return Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 36.0,
@@ -97,7 +108,7 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
           children: [
             Expanded(
                 child: Text(
-              '${widget.walletList[index].keystore.name} ${widget.walletList[index].getEthAccount().address}',
+              '$name  ($address)',
               style: TextStyle(
                 color: DefaultColors.color999,
               ),
@@ -105,13 +116,23 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
             ClickOvalButton(
               '去备份',
               () {
-                Navigator.of(context).pop();
+                Navigator.pop(context);
+                var walletStr = FluroConvertUtils.object2string(widget.walletList[index].toJson());
+                Application.router.navigateTo(
+                  context,
+                  Routes.wallet_setting_wallet_backup_notice +
+                      '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr',
+                );
               },
               width: 50,
               height: 22,
               fontSize: 10,
+              fontWeight: FontWeight.w600,
               fontColor: Colors.black,
-              btnColor: [HexColor("#E7C01A"), HexColor("#F7D33D")],
+              btnColor: [
+                HexColor("#F7D33D"),
+                HexColor("#E7C01A"),
+              ],
             )
           ],
         ),
@@ -133,7 +154,7 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
                 child: Text(
                   '未备份钱包:',
                   style: TextStyle(
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
                 ),

@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
@@ -19,6 +20,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'package:titan/src/pages/app_tabbar/bottom_fabs_widget.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_node_tabs_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -71,6 +73,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
   ScaffoldMapState _mapState;
   var _isShowAnnounceDialog = false;
   var homePageFirst = true;
+
   bool get _isDefaultState => _mapState is DefaultScaffoldMapState || _mapState == null;
 
   @override
@@ -186,8 +189,10 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
       MemoryCache.shareKey = key;
       print("shareuser jump $key");
       var infoEntity = Map3InfoEntity.onlyNodeId(nodeId);
-      Application.router.navigateTo(context,
-          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
+      Application.router.navigateTo(
+          context,
+          Routes.map3node_contract_detail_page +
+              '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
     } else if (type == "rp" && subType == "detail") {
       var inviterAddress = content["from"];
       var walletName = content["name"];
@@ -246,6 +251,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
   @override
   Widget build(BuildContext context) {
     bool isDebug = env.buildType == BuildType.DEV;
+
     return UpdaterComponent(
       child: MultiBlocListener(
         listeners: [
@@ -297,9 +303,11 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
             onNotification: (notification) {
               bool isHomePanelMoving = notification.context.widget.key == Keys.homePanelKey;
               if (notification.extent <= notification.anchorExtent &&
-                  ((_isDefaultState && isHomePanelMoving) || (!_isDefaultState && !isHomePanelMoving))) {
+                  ((_isDefaultState && isHomePanelMoving) ||
+                      (!_isDefaultState && !isHomePanelMoving))) {
                 SchedulerBinding.instance.addPostFrameCallback((_) {
-                  var toValue = (notification.extent * (notification.maxHeight + _fabsHeight)) / notification.maxHeight;
+                  var toValue = (notification.extent * (notification.maxHeight + _fabsHeight)) /
+                      notification.maxHeight;
                   _fabsBarPositionAnimationController.value = toValue;
                 });
               }
@@ -323,7 +331,8 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                   return false;
                 }
 
-                if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
+                if (_lastPressedAt == null ||
+                    DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
                   _lastPressedAt = DateTime.now();
                   Fluttertoast.showToast(msg: S.of(context).click_again_to_exist_app);
                   return false;
@@ -341,8 +350,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                     ScaffoldMap(key: Keys.scaffoldMap),
                     userLocationBar(),
                     Padding(
-                      padding:
-                          EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight),
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).padding.bottom +
+                              kBottomNavigationBarHeight),
                       child: _getTabView(_currentTabIndex),
                     ),
                     bottomNavigationBar(),
@@ -360,8 +370,8 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
         ),
       ),
     );
-  }
 
+  }
 
   Widget userLocationBar() {
     return LayoutBuilder(
@@ -369,8 +379,8 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
         var additionalBottomPadding = MediaQuery.of(context).padding.bottom;
         var barHeight = additionalBottomPadding + kBottomNavigationBarHeight;
 
-        var bottomMostRelative = RelativeRect.fromLTRB(
-            0.0, constraints.biggest.height - _fabsHeight - (_isDefaultState ? barHeight : 0), 0.0, 0.0);
+        var bottomMostRelative = RelativeRect.fromLTRB(0.0,
+            constraints.biggest.height - _fabsHeight - (_isDefaultState ? barHeight : 0), 0.0, 0.0);
         var topMostRelative = RelativeRect.fromLTRB(0.0, 0, 0.0, 0);
         final Animation<RelativeRect> barAnimationRect = _fabsBarPositionAnimationController.drive(
           RelativeRectTween(
@@ -398,9 +408,11 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
       builder: (context, constraints) {
         var additionalBottomPadding = MediaQuery.of(context).padding.bottom;
         var barHeight = additionalBottomPadding + kBottomNavigationBarHeight;
-        var expandedRelative = RelativeRect.fromLTRB(0.0, constraints.biggest.height - barHeight, 0.0, 0.0);
+        var expandedRelative =
+            RelativeRect.fromLTRB(0.0, constraints.biggest.height - barHeight, 0.0, 0.0);
         var hideRelative = RelativeRect.fromLTRB(0.0, constraints.biggest.height, 0.0, -barHeight);
-        final Animation<RelativeRect> barAnimationRect = _bottomBarPositionAnimationController.drive(
+        final Animation<RelativeRect> barAnimationRect =
+            _bottomBarPositionAnimationController.drive(
           RelativeRectTween(
             begin: expandedRelative,
             end: hideRelative,
@@ -422,7 +434,8 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                     ),
                   ],
                 ),
-                padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, left: 8, right: 8),
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).padding.bottom, left: 8, right: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -467,7 +480,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                     ),
                     Text(
                       text,
-                      style: TextStyle(fontSize: 12, color: selected ? Theme.of(context).primaryColor : Colors.black38),
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: selected ? Theme.of(context).primaryColor : Colors.black38),
                     ),
                   ],
                 ),

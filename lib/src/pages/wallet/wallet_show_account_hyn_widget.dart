@@ -188,7 +188,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "≈ ${activeQuoteVoAndSign?.legal?.legal ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coinVo) * (activeQuoteVoAndSign?.price ?? 0))}",
+                                "≈ ${activeQuoteVoAndSign?.legal?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coinVo) * (activeQuoteVoAndSign?.price ?? 0))}",
                                 style: TextStyle(
                                     fontSize: 14, color: Color(0xFF6D6D6D)),
                               ),

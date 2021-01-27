@@ -7,21 +7,28 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_options_page.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
+import 'package:titan/src/pages/wallet/wallet_new_page/wallet_modify_psw_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 
@@ -51,6 +58,9 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
   @override
   void didPush() async {
     isBackup = await WalletUtil.checkIsBackUpMnemonic(widget.wallet.getEthAccount().address);
+    setState(() {
+
+    });
   }
 
   @override
@@ -59,6 +69,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    Application.routeObserver.subscribe(this, ModalRoute.of(context));
   }
 
   @override
@@ -87,7 +98,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                 height: 10,
               ),
             ),
-            _pop()
+            _confirmAction()
           ],
         ),
       ),
@@ -115,8 +126,8 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                     if (netImagePath != null && netImagePath.isNotEmpty) {
                       widget.wallet.walletExpandInfoEntity.localHeadImg = path;
                       widget.wallet.walletExpandInfoEntity.netHeadImg = netImagePath;
-                      WalletUtil.setWalletExpandInfo(widget.wallet.getEthAccount().address,
-                          widget.wallet.walletExpandInfoEntity);
+                      BlocProvider.of<WalletCmpBloc>(context)
+                          .add(UpdateWalletExpandEvent(widget.wallet.getEthAccount().address, widget.wallet.walletExpandInfoEntity));
 
                       setState(() {});
                     } else {
@@ -276,7 +287,13 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             _optionItem(
                 imagePath: "res/drawable/ic_wallet_setting_show_mnemonic.png",
                 title: '显示助记词',
-                editCallback: (text) {},
+                editFunc: (){
+                  var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
+                  Application.router.navigateTo(
+                      context,
+                      Routes.wallet_setting_wallet_backup_notice +
+                          '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
+                },
                 subContent: '如果你无法访问这个设备，你的资金将无法找回，除非你备份了!',
                 warning: !isBackup ? '未备份' : ""),
             Divider(
@@ -285,7 +302,9 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             _optionItem(
               imagePath: "res/drawable/ic_wallet_setting_bio_auth.png",
               title: '生物验证',
-              editCallback: (text) {},
+              editFunc: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => BioAuthOptionsPage(widget.wallet)));
+              },
             ),
             Divider(
               height: 0.5,
@@ -293,7 +312,19 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             _optionItem(
               imagePath: "res/drawable/ic_wallet_setting_modify_pws.png",
               title: '修改密码',
-              editCallback: (text) {},
+              editCallback: (text) {
+              },
+              editFunc: ()async {
+                String pswRemind = await Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) => WalletModifyPswPage(
+                      widget.wallet
+                    )));
+                if(pswRemind != null && pswRemind.isNotEmpty){
+                  setState(() {
+                    widget.wallet.walletExpandInfoEntity.pswRemind = pswRemind;
+                  });
+                }
+              }
             ),
             Divider(
               height: 0.5,
@@ -306,15 +337,15 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
               content: widget.wallet.walletExpandInfoEntity?.pswRemind,
               editCallback: (text) {
                 widget.wallet.walletExpandInfoEntity.pswRemind = text;
-                WalletUtil.setWalletExpandInfo(
-                    widget.wallet.getEthAccount().address, widget.wallet.walletExpandInfoEntity);
+                BlocProvider.of<WalletCmpBloc>(context)
+                    .add(UpdateWalletExpandEvent(widget.wallet.getEthAccount().address, widget.wallet.walletExpandInfoEntity));
               },
             ),
           ],
         ));
   }
 
-  _pop() {
+  _confirmAction() {
     return _section(
         '',
         InkWell(
@@ -329,7 +360,17 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                   if (isBackup)
                     ClickOvalButton(
                       "确认退出",
-                      () async {},
+                      () async {
+                        Navigator.pop(context);
+                        CheckPwdValid onCheckPwdValid = (walletPwd) {
+                          return WalletUtil.checkPwdValid(
+                            context,
+                            widget.wallet,
+                            walletPwd,
+                          );
+                        };
+                        UiUtil.showPasswordDialog(context,widget.wallet, isShowBioAuthIcon:false, onCheckPwdValid: onCheckPwdValid,remindStr: "警告：若无妥善备份，删除钱包后将无法找回钱包，请慎重处理该操作");
+                      },
                       width: 300,
                       height: 44,
                       btnColor: [HexColor("#FF4B4B")],
@@ -386,6 +427,54 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
         ));
   }
 
+  Future<void> deleteWallet(String walletPassword) async {
+    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+      context,
+      widget.wallet,
+    );
+    print("walletPassword:$walletPassword");
+    if (walletPassword == null) {
+      return;
+    }
+
+    try {
+      var result = await widget.wallet.delete(walletPassword);
+      print("del result ${widget.wallet.keystore.fileName} $result");
+      if (result) {
+        await AppCache.remove(widget.wallet.getBitcoinAccount()?.address ?? "");
+        List<Wallet> walletList = await WalletUtil.scanWallets();
+        var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet);
+
+        if (activatedWalletVo.activatedWallet.wallet.keystore.fileName == widget.wallet.keystore.fileName &&
+            walletList.length > 0) {
+          //delete current wallet
+
+          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: walletList[0]));
+          await Future.delayed(Duration(milliseconds: 500)); //延时确保激活成功
+
+          Routes.popUntilCachedEntryRouteName(context);
+        } else if (walletList.length > 0) {
+          //delete other wallet
+          Routes.popUntilCachedEntryRouteName(context);
+        } else {
+          //no wallet
+          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
+          Routes.cachedEntryRouteName = null;
+          await Future.delayed(Duration(milliseconds: 500)); //延时确保激活成功
+          Routes.popUntilCachedEntryRouteName(context);
+        }
+        Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
+
+        ///log out exchange account
+        BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
+      } else {
+        Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
+      }
+    } catch (_) {
+      LogUtil.toastException(_);
+    }
+  }
+
   _section(String title, Widget child) {
     return SliverToBoxAdapter(
       child: Container(
@@ -432,9 +521,9 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
     String editHint = '',
     String content,
     bool isCanEdit = false,
+    Function editFunc,
     TextChangeCallback editCallback,
     TextInputType keyboardType = TextInputType.text,
-    bool isAvatar = false,
     String subContent = '',
     String warning = '',
   }) {
@@ -456,12 +545,8 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
           }
           return;
         }
-        if (isAvatar) {
-          editIconSheet(context, (path) {
-            setState(() {
-              editCallback(path);
-            });
-          });
+        if (editFunc != null) {
+          editFunc();
           return;
         }
       },

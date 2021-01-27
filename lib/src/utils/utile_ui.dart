@@ -307,13 +307,14 @@ class UiUtil {
                   Column(
                     children: <Widget>[
                       contentWidget,
-                      Padding(
-                        padding: EdgeInsets.only(top: 18, bottom: 18),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: actions,
-                        ),
-                      )
+                      if(actions != null)
+                        Padding(
+                          padding: EdgeInsets.only(top: 18, bottom: 18),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: actions,
+                          ),
+                        )
                     ],
                   ),
                 ],
@@ -332,13 +333,15 @@ class UiUtil {
     double imageHeight,
     String dialogTitle,
     String dialogSubTitle,
-    bool enableDrag = true,
     bool showCloseBtn = true,
+    bool enableDrag = true,
+    bool isScrollControlled = false,
     List<Widget> actions,
   }) {
     return showModalBottomSheet<T>(
         context: context,
         enableDrag: enableDrag,
+        isScrollControlled: isScrollControlled,
         shape: RoundedRectangleBorder(
           borderRadius:
           BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -400,19 +403,18 @@ class UiUtil {
                   ],
                 ),
                 if(showCloseBtn)
-                  Positioned(
-                    child: InkWell(
+                  InkWell(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
                       child: Image.asset(
                         'res/drawable/ic_close.png',
                         width: 16,
                         height: 16,
                       ),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
                     ),
-                    left: 24,
-                    top: 24,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
                   )
               ],
             ),
@@ -651,7 +653,7 @@ class UiUtil {
       );
     };
 
-    var authConfig = await AuthUtil.getAuthConfigByWallet(
+    var authConfig = await AuthUtil.getAuthConfig(
       wallet,
       authType: authType,
     );
@@ -718,11 +720,15 @@ class UiUtil {
     @required CheckPwdValid onCheckPwdValid,
     bool isShowBioAuthIcon = true,
     String dialogTitle,
+    String remindStr,
     AuthType authType = AuthType.pay,
   }) async {
-    var useDigits = await WalletUtil.checkUseDigitsPwd(
-      wallet,
-    );
+
+    ///新版取消数字密码输入框
+    // var useDigits = await WalletUtil.checkUseDigitsPwd(
+    //   wallet,
+    // );
+    var useDigits = false;
 
     if (useDigits) {
       return showDialog(
@@ -736,7 +742,54 @@ class UiUtil {
             authType: authType,
           ));
     } else {
-      var pwd = await showModalBottomSheet(
+      return showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return Builder(
+            builder: (BuildContext buildContext) {
+              return EnterWalletPasswordWidget(
+                isShowBioAuthIcon: isShowBioAuthIcon,
+                wallet: wallet,
+                authType: authType,
+                onPwdSubmitted: onCheckPwdValid,
+                remindStr: remindStr,
+              );
+            },
+          );
+        },
+      );
+      return showAlertViewNew(context,contentWidget: Material(
+        child: EnterWalletPasswordWidget(
+          isShowBioAuthIcon: isShowBioAuthIcon,
+          wallet: wallet,
+          authType: authType,
+          onPwdSubmitted: onCheckPwdValid,
+        ),
+      ),isShowCloseIcon: false);
+      /*return await showDialog(
+          context: context,
+          barrierDismissible: false,
+          child: AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            backgroundColor: Colors.transparent,
+            content: EnterWalletPasswordWidget(
+              isShowBioAuthIcon: isShowBioAuthIcon,
+              wallet: wallet,
+              authType: authType,
+              onPwdSubmitted: onCheckPwdValid,
+            ),
+          ));*/
+      /*return await showDialog(
+          context: context,
+          barrierDismissible: false,
+          child: EnterWalletPasswordWidget(
+            isShowBioAuthIcon: isShowBioAuthIcon,
+            wallet: wallet,
+            authType: authType,
+            onPwdSubmitted: onCheckPwdValid,
+          ));*/
+      /*var pwd = await showModalBottomSheet(
           isScrollControlled: true,
           context: context,
           shape: RoundedRectangleBorder(
@@ -755,7 +808,7 @@ class UiUtil {
         return pwd;
       } else {
         return null;
-      }
+      }*/
     }
   }
 

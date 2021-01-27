@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
+import 'package:titan/src/components/auth/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
@@ -135,7 +136,14 @@ class _WalletManagerState extends State<_WalletManager> {
               }
             }
             _activatedWallet = _activatedWallet.copyWith(WalletViewVo(balance: balance));
+
+            ///Refresh bio-auth config
+            BlocProvider.of<AppLockBloc>(context).add(RefreshBioAuthConfigEvent(
+              _activatedWallet.wallet,
+            ));
           }
+        } else if (state is UpdateWalletExpandState) {
+          _activatedWallet.wallet.walletExpandInfoEntity = state.walletExpandInfoEntity;
         }
       },
       child: BlocBuilder<WalletCmpBloc, WalletCmpState>(

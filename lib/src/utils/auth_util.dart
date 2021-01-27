@@ -93,7 +93,7 @@ class AuthUtil {
     return authenticated;
   }
 
-  static Future<AuthConfigModel> getAuthConfigByWallet(
+  static Future<AuthConfigModel> getAuthConfig(
     Wallet wallet, {
     AuthType authType = AuthType.pay,
   }) async {
@@ -101,10 +101,25 @@ class AuthUtil {
     List availableBiometricTypes = List();
     LocalAuthentication auth = LocalAuthentication();
 
+    var authConfigCacheKey = '';
+
+    switch (authType) {
+      case AuthType.pay:
+        authConfigCacheKey = '${PrefsKey.AUTH_CONFIG}_${wallet.keystore.fileName}';
+        break;
+      case AuthType.exchange:
+        authConfigCacheKey = '${PrefsKey.AUTH_CONFIG}_exchange_${wallet.keystore.fileName}';
+        break;
+      case AuthType.walletLock:
+        authConfigCacheKey = '${PrefsKey.AUTH_CONFIG}_wallet_lock';
+        break;
+      default:
+        break;
+    }
+
     ///
-    var authConfigStr = await AppCache.getValue<String>(authType == AuthType.pay
-        ? '${PrefsKey.AUTH_CONFIG}_${wallet.keystore.fileName}'
-        : '${PrefsKey.AUTH_CONFIG}_exchange_${wallet.keystore.fileName}');
+    var authConfigStr = await AppCache.getValue<String>(authConfigCacheKey);
+
     if (authConfigStr != null) {
       authConfigModel = AuthConfigModel.fromJson(json.decode(authConfigStr));
     } else {
@@ -113,8 +128,10 @@ class AuthUtil {
       } on PlatformException catch (e) {
         print(e);
       }
+      var walletFileName =
+          authType == AuthType.walletLock ? 'wallet_lock' : wallet.keystore.fileName;
       authConfigModel = AuthConfigModel(
-        walletFileName: wallet.keystore.fileName,
+        walletFileName: walletFileName,
         setBioAuthAsked: false,
         lastBioAuthTime: 0,
         useFace: false,
@@ -130,10 +147,24 @@ class AuthUtil {
     Wallet wallet, {
     AuthType authType = AuthType.pay,
   }) async {
+    var authConfigCacheKey = '';
+
+    switch (authType) {
+      case AuthType.pay:
+        authConfigCacheKey = '${PrefsKey.AUTH_CONFIG}_${wallet.keystore.fileName}';
+        break;
+      case AuthType.exchange:
+        authConfigCacheKey = '${PrefsKey.AUTH_CONFIG}_exchange_${wallet.keystore.fileName}';
+        break;
+      case AuthType.walletLock:
+        authConfigCacheKey = '${PrefsKey.AUTH_CONFIG}_wallet_lock';
+        break;
+      default:
+        break;
+    }
+
     await AppCache.saveValue(
-      authType == AuthType.pay
-          ? '${PrefsKey.AUTH_CONFIG}_${wallet.keystore.fileName}'
-          : '${PrefsKey.AUTH_CONFIG}_exchange_${wallet.keystore.fileName}',
+      authConfigCacheKey,
       json.encode(authConfigModel.toJSON()),
     );
   }
@@ -142,7 +173,7 @@ class AuthUtil {
     Wallet _wallet,
     AuthType _authType,
   ) async {
-    var authConfigModel = await getAuthConfigByWallet(
+    var authConfigModel = await getAuthConfig(
       _wallet,
       authType: _authType,
     );
@@ -159,12 +190,15 @@ class AuthUtil {
   }
 
   static BiometricType currentBioMetricType(AuthConfigModel authConfigModel) {
-    if (authConfigModel.availableBiometricTypes.contains(BiometricType.face) &&
-        authConfigModel.useFace) {
+    bool containFace = authConfigModel.availableBiometricTypes.contains(
+      BiometricType.face,
+    );
+    bool containFingerPrint = authConfigModel.availableBiometricTypes.contains(
+      BiometricType.fingerprint,
+    );
+    if (containFace && authConfigModel.useFace) {
       return BiometricType.face;
-    } else if (authConfigModel.availableBiometricTypes
-            .contains(BiometricType.fingerprint) &&
-        authConfigModel.useFingerprint) {
+    } else if (containFingerPrint && authConfigModel.useFingerprint) {
       return BiometricType.fingerprint;
     } else {
       ///Default

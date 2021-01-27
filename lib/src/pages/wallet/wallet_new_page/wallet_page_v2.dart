@@ -24,11 +24,13 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/widget/hyn_burn_banner.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
+import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
+import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
-import 'package:titan/src/pages/wallet/wallet_new_page/wallet_lock.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
@@ -42,6 +44,8 @@ import 'package:titan/src/utils/image_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+
+import '../wallet_receive_page.dart';
 
 class WalletPageV2 extends StatefulWidget {
   @override
@@ -306,7 +310,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         return Column(
           children: [
             SizedBox(height: 32),
-            WalletLock(
+            AppLockScreen(
               onUnlock: () {
                 BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
               },
@@ -352,7 +356,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            InkWell(
+            /*InkWell(
               onTap: () {
                 WalletManagerPage.jumpWalletManager(context, hasWalletUpdate: (wallet) {
                   setState(() {
@@ -400,7 +404,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                     )
                 ],
               ),
-            ),
+            ),*/
             Row(
               children: [
                 Padding(
@@ -411,7 +415,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                 ),
                 Spacer(),
                 Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 30.0),
+                  padding: const EdgeInsets.only(top: 20,bottom: 10),
                   child: Text(
                     _isShowBalances
                         ? '${activeQuotesSign?.sign ?? ''} ${FormatUtil.formatPrice(activatedWalletVo.balance)}'
@@ -441,6 +445,11 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                     ))
               ],
             ),
+            Text(
+              activatedWalletVo?.wallet?.keystore?.name ?? "",
+              style: TextStyles.textC333S14,
+            ),
+            SizedBox(height: 24,),
             Stack(
               alignment: Alignment.center,
               children: [
@@ -448,16 +457,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     InkWell(
-                      onTap: (){
-                        var coinVo =
-                        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
-                            .getCoinVoBySymbol(SupportedTokens.ETHEREUM.symbol);
-
-                        Application.router.navigateTo(
-                            context,
-                            Routes.wallet_account_send_transaction +
-                                '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
-
+                      onTap: () {
+                        _showActionDialog(WalletPageJump.PAGE_SEND, activatedWalletVo);
                       },
                       child: Container(
                         child: Column(
@@ -478,34 +479,44 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                     SizedBox(
                       width: 51,
                     ),
-                    Column(
-                      children: [
-                        Image.asset(
-                          "res/drawable/ic_wallet_account_list_receiver_v2.png",
-                          width: 26,
-                          height: 26,
-                        ),
-                        Text(
-                          "接收",
-                          style: TextStyles.textC333S14bold,
-                        ),
-                      ],
+                    InkWell(
+                      onTap: () {
+                        _showActionDialog(WalletPageJump.PAGE_RECEIVER, activatedWalletVo);
+                      },
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            "res/drawable/ic_wallet_account_list_receiver_v2.png",
+                            width: 26,
+                            height: 26,
+                          ),
+                          Text(
+                            "接收",
+                            style: TextStyles.textC333S14bold,
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(
                       width: 51,
                     ),
-                    Column(
-                      children: [
-                        Image.asset(
-                          "res/drawable/ic_wallet_account_list_exchange_v2.png",
-                          width: 26,
-                          height: 26,
-                        ),
-                        Text(
-                          "交易",
-                          style: TextStyles.textC333S14bold,
-                        ),
-                      ],
+                    InkWell(
+                      onTap: () {
+                        _showActionDialog(WalletPageJump.PAGE_EXCHANGE, activatedWalletVo);
+                      },
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            "res/drawable/ic_wallet_account_list_exchange_v2.png",
+                            width: 26,
+                            height: 26,
+                          ),
+                          Text(
+                            "交易",
+                            style: TextStyles.textC333S14bold,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -705,6 +716,85 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     );
   }
 
+  void _showActionDialog(WalletPageJump jumpType, WalletViewVo activatedWalletVo) {
+    String titleStr = "";
+    switch (jumpType) {
+      case WalletPageJump.PAGE_SEND:
+        titleStr = "发送";
+        break;
+      case WalletPageJump.PAGE_RECEIVER:
+        titleStr = "接收";
+        break;
+      case WalletPageJump.PAGE_EXCHANGE:
+        titleStr = "交易";
+        break;
+    }
+    UiUtil.showBottomDialogView(context,
+        dialogHeight: MediaQuery.of(context).size.height - 80,
+        isScrollControlled: true,
+        customWidget: Expanded(
+            child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: Center(child: Text(titleStr, style: TextStyles.textC999S14medium)),
+            ),
+            Expanded(
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                    var coinVo = activatedWalletVo.coins[index];
+                    var hasPrice = true;
+                    return InkWell(
+                        onTap: () {
+                          var coinVo = activatedWalletVo.coins[index];
+                          switch (jumpType) {
+                            case WalletPageJump.PAGE_SEND:
+                              Application.router.navigateTo(
+                                  context,
+                                  Routes.wallet_account_send_transaction +
+                                      '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
+                              break;
+                            case WalletPageJump.PAGE_RECEIVER:
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => WalletReceivePage(coinVo)));
+                              break;
+                            case WalletPageJump.PAGE_EXCHANGE:
+                              if ((coinVo.symbol == SupportedTokens.HYN_Atlas.symbol) ||
+                                  (coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol)) {
+                                var base = 'USDT';
+                                var quote = 'HYN';
+                                if (coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol) {
+                                  base = 'HYN';
+                                  quote = 'RP';
+                                }
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ExchangeDetailPage(
+                                              base: base,
+                                              quote: quote,
+                                              exchangeType: ExchangeType.BUY,
+                                            )));
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: S.of(context).exchange_is_not_yet_open(coinVo.symbol));
+                              }
+                              break;
+                          }
+                        },
+                        child: _buildAccountItem(context, coinVo, hasPrice: hasPrice));
+                  }, childCount: activatedWalletVo.coins.length)),
+                ],
+              ),
+            ),
+          ],
+        )));
+  }
+
   Future listLoadingData() async {
     _isRefreshBalances = true;
     _checkDexAccount();
@@ -734,4 +824,10 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     loadDataBloc.close();
     super.dispose();
   }
+}
+
+enum WalletPageJump {
+  PAGE_SEND,
+  PAGE_RECEIVER,
+  PAGE_EXCHANGE,
 }
