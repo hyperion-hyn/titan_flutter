@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-ThemeData appTheme = appThemeDefault;
+ThemeData appTheme = appThemeDeepYellow;
 
 ThemeData appThemeDefault = ThemeData.light().copyWith(
     primaryColor: Color(0xff1F81FF),

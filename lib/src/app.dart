@@ -126,7 +126,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                   debugShowCheckedModeBanner: false,
                   locale: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel?.locale,
                   title: 'titan',
-                  theme: SettingInheritedModel.of(context, aspect: SettingAspect.theme).themeModel?.theme??appThemeDefault,
+                  theme: SettingInheritedModel.of(context, aspect: SettingAspect.theme).themeModel?.theme??appTheme,
                   localizationsDelegates: [
                     S.delegate,
                     GlobalMaterialLocalizations.delegate,
