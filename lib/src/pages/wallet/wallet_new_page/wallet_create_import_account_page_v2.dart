@@ -398,7 +398,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
 
       ///save expand info
       WalletExpandInfoEntity walletExpandInfoEntity = WalletExpandInfoEntity(
-          userImageLocalPath, userImagePath, _walletPswHintController.text.trim(), widget.isCreateWallet);
+          userImageLocalPath, userImagePath, _walletPswHintController.text.trim(), !widget.isCreateWallet);
       BlocProvider.of<WalletCmpBloc>(context)
           .add(UpdateWalletExpandEvent(wallet.getEthAccount().address, walletExpandInfoEntity));
 
