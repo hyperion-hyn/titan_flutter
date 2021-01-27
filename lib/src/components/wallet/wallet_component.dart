@@ -267,17 +267,6 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
     return null;
   }
 
-  String getCoinIconPathBySymbol(String symbol) {
-    if (this.activatedWallet != null) {
-      for (var coin in this.activatedWallet.coins) {
-        if (coin.symbol == symbol) {
-          return coin.logo;
-        }
-      }
-    }
-    return '';
-  }
-
   CoinViewVo getCoinVoOfHyn() {
     if (this.activatedWallet != null) {
       for (var coin in this.activatedWallet.coins) {

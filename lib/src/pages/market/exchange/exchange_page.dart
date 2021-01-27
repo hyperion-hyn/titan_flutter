@@ -516,7 +516,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
         value: key,
         child: _coinItem(
           key,
-          WalletInheritedModel.of(context).getCoinIconPathBySymbol(key),
+          Tokens.getCoinIconPathBySymbol(key),
           false,
         ),
       ));
@@ -533,7 +533,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
             value: coin,
             child: _coinItem(
               coin,
-              WalletInheritedModel.of(context).getCoinIconPathBySymbol(coin),
+              Tokens.getCoinIconPathBySymbol(coin),
               false,
             ),
           ));
