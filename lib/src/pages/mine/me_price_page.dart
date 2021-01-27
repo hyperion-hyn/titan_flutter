@@ -53,7 +53,8 @@ class _MePriceState extends BaseState<MePricePage> {
                 // WalletInheritedModel.saveQuoteSign(activeLegal);
                 // BlocProvider.of<WalletCmpBloc>(context).add(UpdateLegalSignEvent(sign: activeLegal));
                 // BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
-                BlocProvider.of<WalletCmpBloc>(context).add(UpdateLegalSignEvent(legal: activeLegal));
+                BlocProvider.of<WalletCmpBloc>(context)
+                    .add(UpdateLegalSignEvent(legal: activeLegal));
               }
 
               Navigator.pop(context);

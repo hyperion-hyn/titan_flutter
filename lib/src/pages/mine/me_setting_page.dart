@@ -5,7 +5,6 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/mine/me_theme_page.dart';
-
 import 'me_area_page.dart';
 import 'me_language_page.dart';
 import 'me_price_page.dart';
@@ -25,8 +24,6 @@ class _MeSettingState extends State<MeSettingPage> {
     var area = SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.name(context);
     var theme = SettingInheritedModel.of(context, aspect: SettingAspect.theme)?.themeModel?.theme;
     var quoteStr =WalletInheritedModel.of(context, aspect: WalletAspect.legal).activeLegal.legal;
-
-    print("[$runtimeType] quoteStr:$quoteStr");
 
     Widget _lineWidget({double height = 5}) {
       return Container(

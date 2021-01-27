@@ -52,6 +52,8 @@ class _SettingManagerState extends BaseState<_SettingManager> {
       systemConfigEntity = SystemConfigEntity.fromJson(json.decode(systemConfigStr));
     }
 
+    BlocProvider.of<SettingBloc>(context).add(SystemConfigEvent());
+
     // 恢复历史设置
     BlocProvider.of<SettingBloc>(context).add(RestoreSettingEvent());
 
