@@ -75,6 +75,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
   var homePageFirst = true;
 
   bool get _isDefaultState => _mapState is DefaultScaffoldMapState || _mapState == null;
+  bool get _isDMap => (_mapState is FocusingDMapState) ?? false;
 
   @override
   void initState() {
@@ -278,17 +279,17 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
             listener: (context, state) {
               if (state is ActiveDMapState) {
                 DMapCreationModel model = DMapDefine.kMapList[state.name];
-                print("[app_Dmap] ---1");
+                //print("[app_Dmap] ---1");
 
                 if (model != null) {
                   this.setState(() {
-                    print("[app_Dmap] ---2 - 2");
+                    //print("[app_Dmap] ---2 - 2");
                     createDAppWidgetFunction = model.createDAppWidgetFunction;
                   });
                 }
               } else {
                 this.setState(() {
-                  print("[app_Dmap] ---2 - 3");
+                  //print("[app_Dmap] ---2 - 3");
                   createDAppWidgetFunction = null;
                 });
               }
@@ -312,7 +313,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                 });
               }
 
-              var shouldShow = notification.extent <= notification.anchorExtent;
+              var shouldShow = (notification.extent <= notification.anchorExtent) ?? false;
               SchedulerBinding.instance.addPostFrameCallback((_) {
                 (_bottomBarKey.currentState as BottomFabsWidgetState).setVisible(shouldShow);
               });
@@ -348,11 +349,11 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                 return Stack(
                   children: <Widget>[
                     ScaffoldMap(key: Keys.scaffoldMap),
-                    userLocationBar(),
+                    if (!_isDMap) userLocationBar(),
                     Padding(
                       padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).padding.bottom +
-                              kBottomNavigationBarHeight),
+                          bottom:
+                              MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight),
                       child: _getTabView(_currentTabIndex),
                     ),
                     bottomNavigationBar(),
@@ -370,7 +371,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
         ),
       ),
     );
-
   }
 
   Widget userLocationBar() {

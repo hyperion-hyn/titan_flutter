@@ -52,10 +52,10 @@ class HecoRpcProvider {
 }
 
 class HecoExplore {
-  static String MAIN_SCAN_API = 'https://scan.hecochain.com';
+  static String MAIN_SCAN_API = 'https://heco-api.hyn.space';
   static String TEST_SCAN_API = 'http://heco-api.test.hyn.space';
   static String MAIN_SCAN_WEB = 'https://scan.hecochain.com';
-  static String TEST_SCAN_WEB = 'https://http-testnet.hecochain.com';
+  static String TEST_SCAN_WEB = 'https://scan-testnet.hecochain.com';
 
   static String get hecoScanApi {
     switch (HecoConfig.chainType) {

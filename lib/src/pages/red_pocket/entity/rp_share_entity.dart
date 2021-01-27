@@ -89,7 +89,8 @@ class RpShareOpenEntity extends Object {
     this.hynHash,
   );
 
-  factory RpShareOpenEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareOpenEntityFromJson(srcJson);
+  factory RpShareOpenEntity.fromJson(Map<String, dynamic> srcJson) =>
+      _$RpShareOpenEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RpShareOpenEntityToJson(this);
 }
@@ -165,6 +166,12 @@ class RpShareSendEntity extends Object {
   @JsonKey(name: 'lng')
   double lng;
 
+  @JsonKey(name: 'HYNRefundHash')
+  String hynRefundHash;
+
+  @JsonKey(name: 'RPRefundHash')
+  String rpRefundHash;
+
   RpShareSendEntity(
     this.address,
     this.alreadyGot,
@@ -189,9 +196,12 @@ class RpShareSendEntity extends Object {
     this.hynHash,
     this.lat,
     this.lng,
+    this.hynRefundHash,
+    this.rpRefundHash,
   );
 
-  factory RpShareSendEntity.fromJson(Map<String, dynamic> srcJson) => _$RpShareSendEntityFromJson(srcJson);
+  factory RpShareSendEntity.fromJson(Map<String, dynamic> srcJson) =>
+      _$RpShareSendEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RpShareSendEntityToJson(this);
 }
