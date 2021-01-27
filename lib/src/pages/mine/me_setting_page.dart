@@ -22,9 +22,11 @@ class _MeSettingState extends State<MeSettingPage> {
   Widget build(BuildContext context) {
 
     var language = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel.name;
-    var quoteStr = WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeLegal.legal;
     var area = SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.name(context);
     var theme = SettingInheritedModel.of(context, aspect: SettingAspect.theme)?.themeModel?.theme;
+    var quoteStr =WalletInheritedModel.of(context, aspect: WalletAspect.legal).activeLegal.legal;
+
+    print("[$runtimeType] quoteStr:$quoteStr");
 
     Widget _lineWidget({double height = 5}) {
       return Container(
