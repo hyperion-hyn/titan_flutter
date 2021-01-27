@@ -27,6 +27,7 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/auth_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
@@ -64,10 +65,10 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
 
   @override
   void didPopNext() async {
-    widget.wallet.walletExpandInfoEntity = await WalletUtil.getWalletExpandInfo(widget.wallet.getEthAccount().address);
+    widget.wallet.walletExpandInfoEntity =
+        await WalletUtil.getWalletExpandInfo(widget.wallet.getEthAccount().address);
     isBackup = widget.wallet.walletExpandInfoEntity?.isBackup ?? false;
-    setState(() {
-    });
+    setState(() {});
   }
 
   @override
@@ -304,14 +305,26 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             Divider(
               height: 0.5,
             ),
-            _optionItem(
-              imagePath: "res/drawable/ic_wallet_setting_bio_auth.png",
-              title: '生物验证',
-              editFunc: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => BioAuthOptionsPage(widget.wallet)));
-              },
-            ),
+            FutureBuilder(
+                future: BioAuthUtil.checkBioAuthAvailable(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    bool isBioAuthAvailable = snapshot.data;
+                    if (isBioAuthAvailable) {
+                      return _optionItem(
+                        imagePath: "res/drawable/ic_wallet_setting_bio_auth.png",
+                        title: '生物验证',
+                        editFunc: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BioAuthOptionsPage(widget.wallet)));
+                        },
+                      );
+                    }
+                  }
+                  return SizedBox();
+                }),
             Divider(
               height: 0.5,
             ),
@@ -443,7 +456,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
       print("del result ${widget.wallet.keystore.fileName} $result");
       if (result) {
         await AppCache.remove(widget.wallet.getBitcoinAccount()?.address ?? "");
-        WalletUtil.setWalletExpandInfo(widget.wallet.getEthAccount()?.address,null);
+        WalletUtil.setWalletExpandInfo(widget.wallet.getEthAccount()?.address, null);
         List<Wallet> walletList = await WalletUtil.scanWallets();
         var activatedWalletVo =
             WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet);
