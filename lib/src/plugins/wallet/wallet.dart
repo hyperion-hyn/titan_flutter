@@ -274,7 +274,8 @@ class Wallet {
     int gasLimit,
     web3.IMessage message,
   }) async {
-    assert(password == null && cred == null, '密码/密钥不能为空');
+    // assert(password == null && cred == null, '密码/密钥不能为空');
+    assert(password == null || cred == null, '密码/密钥不能为空');
 
     if (gasPrice == null) {
       gasPrice = await WalletUtil.ethGasPrice(coinType);
