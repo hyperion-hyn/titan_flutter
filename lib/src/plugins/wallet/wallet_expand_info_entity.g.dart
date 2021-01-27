@@ -12,6 +12,7 @@ WalletExpandInfoEntity _$WalletExpandInfoEntityFromJson(
     json['localHeadImg'] as String,
     json['netHeadImg'] as String,
     json['pswRemind'] as String,
+    json['isBackup'] as bool,
   );
 }
 
@@ -21,4 +22,5 @@ Map<String, dynamic> _$WalletExpandInfoEntityToJson(
       'localHeadImg': instance.localHeadImg,
       'netHeadImg': instance.netHeadImg,
       'pswRemind': instance.pswRemind,
+      'isBackup': instance.isBackup,
     };

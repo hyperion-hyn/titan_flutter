@@ -36,24 +36,6 @@ class WalletUtil {
     return Future.value(bip39.generateMnemonic(strength: 128));
   }
 
-  static Future<bool> checkIsBackUpMnemonic(
-    String walletAddress,
-  ) async {
-    bool isMnemonicBackUp =
-        await AppCache.getValue('${PrefsKey.WALLET_MNEMONIC_BACK_UP_PREFIX}_$walletAddress');
-
-    return (isMnemonicBackUp ?? false);
-  }
-
-  static confirmBackUpMnemonic(
-    String walletAddress,
-  ) async {
-    await AppCache.saveValue(
-      '${PrefsKey.WALLET_MNEMONIC_BACK_UP_PREFIX}_$walletAddress',
-      true,
-    );
-  }
-
   static Future<List<Wallet>> getNotBackUpWalletList() async {
     var notBackUpWalletList = List<Wallet>();
     try {
@@ -61,7 +43,7 @@ class WalletUtil {
 
       ///add await or will pass loop
       await wallets.forEach((wallet) async {
-        var isBackUp = await WalletUtil.checkIsBackUpMnemonic(wallet.getEthAccount().address);
+        var isBackUp = wallet.walletExpandInfoEntity.isBackup;
         if (!isBackUp) notBackUpWalletList.add(wallet);
       });
     } catch (e) {}
