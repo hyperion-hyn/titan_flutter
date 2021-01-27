@@ -28,7 +28,7 @@ class AppLockBloc extends Bloc<AppLockEvent, AppLockState> {
     } else if (event is SetAppLockPwdEvent) {
       yield SetAppLockPwdState(event.pwd, event.hint);
     } else if (event is LockAppEvent) {
-      yield LockWalletState();
+      yield LockAppState();
     } else if (event is UnLockAppEvent) {
       yield UnlockAppState();
     }
