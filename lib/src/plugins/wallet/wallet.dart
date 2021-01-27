@@ -316,8 +316,7 @@ class Wallet {
     }
 
  
-    var privateKey =
-        await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+    //var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
 
     final client = WalletUtil.getWeb3Client(coinType);
     var credentials = cred;
