@@ -38,87 +38,93 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
       body: Container(
         height: double.infinity,
         color: Colors.white,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24),
-                  child: Image.asset(
-                    "res/drawable/backup_notice_image.png",
-                    height: 130,
-                  ),
-                ),
-                SizedBox(
-                  height: 32,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            S.of(context).backup_notice_label,
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF252525),
-                                fontWeight: FontWeight.w500),
-                          ),
-                          SizedBox(
-                            height: 8.0,
-                          ),
-                          Text(
-                            S.of(context).backup_wallet_notice_text1,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF9B9B9B),
-                            ),
-                            softWrap: true,
-                          ),
-                        ],
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        child: Image.asset(
+                          "res/drawable/backup_notice_image.png",
+                          height: 130,
+                        ),
                       ),
+                      SizedBox(
+                        height: 32,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  S.of(context).backup_notice_label,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0xFF252525),
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                SizedBox(
+                                  height: 8.0,
+                                ),
+                                Text(
+                                  S.of(context).backup_wallet_notice_text1,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xFF9B9B9B),
+                                  ),
+                                  softWrap: true,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0,
+                          vertical: 24.0,
+                        ),
+                        child: Divider(
+                          height: 1,
+                          thickness: 0.5,
+                          color: DefaultColors.colorf2f2f2,
+                        ),
+                      ),
+                      _reminder('助记词由英文单词组成，请抄写并妥善保管。'),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      _reminder('助记词丢失，无法找回，请务必备份助记词。'),
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                    vertical: 24.0,
-                  ),
-                  child: Divider(
-                    height: 1,
-                    thickness: 0.5,
-                    color: DefaultColors.colorf2f2f2,
-                  ),
-                ),
-                _reminder('助记词由英文单词组成，请抄写并妥善保管。'),
-                SizedBox(
-                  height: 16,
-                ),
-                _reminder('助记词丢失，无法找回，请务必备份助记词。'),
-                SizedBox(
-                  height: 120,
-                ),
-                ClickOvalButton(
-                  '下一步',
-                  () {
-                    _showScreenshotWarningDialog();
-                  },
-                  width: 300,
-                  height: 46,
-                  btnColor: [
-                    HexColor("#F7D33D"),
-                    HexColor("#E7C01A"),
-                  ],
-                  fontSize: 16,
-                  fontColor: DefaultColors.color333,
-                ),
-              ],
+              ),
             ),
-          ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 36.0, top: 22),
+              child: ClickOvalButton(
+                S.of(context).next_step,
+                () async {
+                  _showScreenshotWarningDialog();
+                },
+                width: 300,
+                height: 46,
+                btnColor: [
+                  HexColor("#F7D33D"),
+                  HexColor("#E7C01A"),
+                ],
+                fontSize: 16,
+                fontColor: DefaultColors.color333,
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -180,8 +186,10 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    WalletBackupShowSeedPhrasePageV2(wallet, mnemonic)));
+                builder: (context) => WalletBackupShowSeedPhrasePageV2(
+                      wallet,
+                      mnemonic,
+                    )));
       } else {
         print(S.of(context).isnt_trustwallet_cant_export);
       }

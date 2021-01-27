@@ -26,7 +26,6 @@ class WalletBackupConfirmSeedPhrasePageV2 extends StatefulWidget {
 
 class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhrasePageV2> {
   List<CandidateWordVo> _candidateWords = [];
-
   List<CandidateWordVo> _selectedResumeWords = [];
 
   @override
@@ -40,7 +39,10 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
     _candidateWords = widget.mnemonic
         .split(" ")
         .asMap()
-        .map((index, word) => MapEntry(index, CandidateWordVo("$index-$word", word, false)))
+        .map((index, word) => MapEntry(
+              index,
+              CandidateWordVo("$index-$word", word, false),
+            ))
         .values
         .toList();
 
@@ -61,80 +63,83 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
             color: Colors.white,
             width: double.infinity,
             height: double.infinity,
-            child: SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.all(16),
-                alignment: Alignment.center,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      '确认助记词',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Text(
-                      '请按顺序点击助记词，以确认您正确备份。',
-                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
-                    ),
-                    SizedBox(
-                      height: 36,
-                    ),
-                    _selectedCandidateWordsView(),
-                    SizedBox(
-                      height: 32,
-                    ),
-                    _candidateWordsView(),
-                    SizedBox(
-                      height: 32,
-                    ),
-                    Center(
-                      child: ClickOvalButton(
-                        S.of(context).next_step,
-                        () async {
-                          var selectedMnemonitc = "";
-                          _selectedResumeWords.forEach(
-                              (word) => selectedMnemonitc = selectedMnemonitc + word.text + " ");
-
-                          logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
-                          if (selectedMnemonitc.trim() == widget.mnemonic.trim()) {
-                            var walletExpandInfoEntity = await WalletUtil.getWalletExpandInfo(widget.wallet.getEthAccount()?.address);
-                            walletExpandInfoEntity.isBackup = true;
-                            BlocProvider.of<WalletCmpBloc>(context)
-                                .add(UpdateWalletExpandEvent(widget.wallet.getEthAccount()?.address, walletExpandInfoEntity));
-                            await Future.delayed(Duration(milliseconds: 1000),(){});//延迟等待备份信息已修改，再退出
-
-                            UiUtil.showHintToast(
-                                context,
-                                Image.asset(
-                                  'res/drawable/ic_toast_check.png',
-                                  width: 60,
-                                  height: 60,
-                                ),
-                                S.of(context).backup_finish);
-                            Routes.popUntilCachedEntryRouteName(context);
-                          } else {
-                            _showWrongOrderErrorHint(context);
-                          }
-                        },
-                        width: 300,
-                        height: 46,
-                        btnColor: [
-                          HexColor("#F7D33D"),
-                          HexColor("#E7C01A"),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      alignment: Alignment.center,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            '确认助记词',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            '请按顺序点击助记词，以确认您正确备份。',
+                            style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                          ),
+                          SizedBox(
+                            height: 36,
+                          ),
+                          _selectedCandidateWordsView(),
+                          SizedBox(
+                            height: 32,
+                          ),
+                          _candidateWordsView(),
+                          SizedBox(
+                            height: 32,
+                          ),
                         ],
-                        fontSize: 16,
-                        fontColor: DefaultColors.color333,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 36.0, top: 22),
+                  child: ClickOvalButton(
+                    S.of(context).next_step,
+                    () async {
+                      var selectedMnemonitc = "";
+                      _selectedResumeWords.forEach(
+                        (word) => selectedMnemonitc = selectedMnemonitc + word.text + " ",
+                      );
+
+                      logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
+                      if (selectedMnemonitc.trim() == widget.mnemonic.trim()) {
+                        _confirmBackUp();
+                        UiUtil.showHintToast(
+                            context,
+                            Image.asset(
+                              'res/drawable/ic_toast_check.png',
+                              width: 60,
+                              height: 60,
+                            ),
+                            S.of(context).backup_finish);
+                        Routes.popUntilCachedEntryRouteName(context);
+                      } else {
+                        _showWrongOrderErrorHint(context);
+                      }
+                    },
+                    width: 300,
+                    height: 46,
+                    btnColor: [
+                      HexColor("#F7D33D"),
+                      HexColor("#E7C01A"),
+                    ],
+                    fontSize: 16,
+                    fontColor: DefaultColors.color333,
+                  ),
+                )
+              ],
             ),
           );
         }));
@@ -279,6 +284,22 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
       }
     });
     setState(() {});
+  }
+
+  _confirmBackUp() async {
+    var walletExpandInfoEntity = await WalletUtil.getWalletExpandInfo(
+      widget.wallet.getEthAccount()?.address,
+    );
+    walletExpandInfoEntity.isBackup = true;
+
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletExpandEvent(
+      widget.wallet.getEthAccount()?.address,
+      walletExpandInfoEntity,
+    ));
+    await Future.delayed(
+      Duration(milliseconds: 1000),
+      () {},
+    ); //延迟等待备份信息已修改，再退出
   }
 
   _showWrongOrderErrorHint(BuildContext context) {
