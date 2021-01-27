@@ -105,6 +105,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         });
       }
     });
+
     if (widget.toAddress != null) {
       _toController.text = widget.toAddress;
     }
@@ -839,8 +840,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
   }
 
   void _confirmAction() {
-
-
     var toValidate = _toKey.currentState.validate();
     var amountValidate = _amountKey.currentState.validate();
     var highLevel = true;
@@ -879,9 +878,29 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         }
       }
 
+      WalletSendDialogEntity entity = WalletSendDialogEntity(
+        type: 'tx_normal',
+        value: 0.01,
+        value1: 0.02,
+        valueUnit: 'HYN',
+        value1Unit: 'RP',
+        title: '发红包',
+        fromName: 'name1',
+        fromAddress: 'address1',
+        toName: 'name2',
+        toAddress: 'address2',
+        gas: '0.01',
+        gas1: '0.01',
+        gasDesc: 'HYN 产生',
+        gas1Desc: 'RP 产生',
+        gasUnit: 'HYN',
+        callBack: () async{
+          return true;
+        },
+      );
       showWalletSendDialog(
-        context,
-        RpShareReqEntity.only("0", 'address', 0, 0, "1"),
+        context: context,
+        entity: entity,
       );
 
       // var voStr = FluroConvertUtils.object2string(widget.coinVo.toJson());

@@ -1,26 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/rp/redpocket_component.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_send_success_location_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_send_success_page.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
-import 'package:titan/src/utils/log_util.dart';
-import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class WalletSendDialogPage extends StatefulWidget {
-  final RpShareReqEntity reqEntity;
-  WalletSendDialogPage({this.reqEntity});
+  final WalletSendDialogEntity entity;
+  WalletSendDialogPage({
+    @required this.entity,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -30,53 +19,33 @@ class WalletSendDialogPage extends StatefulWidget {
 
 class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
   final ScrollController _scrollController = ScrollController();
-  final RPApi _rpApi = RPApi();
   bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    var walletVo = WalletInheritedModel.of(context).activatedWallet;
-    var wallet = walletVo.wallet;
-    var address = wallet.getAtlasAccount().address;
-
-    var walletName = wallet.keystore.name;
-    var hynAddress = WalletUtil.ethAddressToBech32Address(address);
-    var walletAddress = shortBlockChainAddress(hynAddress);
-    var rpFee = '0.0001';
-    var hynFee = '0.0001';
-
     Widget widget1 = Container();
     Widget widget2 = Container();
 
-    if ((widget.reqEntity?.hynAmount ?? 0) > 0 && (widget.reqEntity?.rpAmount ?? 0) > 0) {
+    if ((widget.entity.value ?? 0) > 0 && (widget.entity.value1 ?? 0) > 0) {
       widget1 = _rowText(
         title: S.of(context).transfer_gas_fee,
-        content: '$rpFee HYN',
-        subContent: 'RP 产生',
+        content: '${widget.entity.gas} ${widget.entity.gasUnit}',
+        subContent: widget.entity.gasDesc,
         showLine: false,
       );
 
       widget2 = _rowText(
         title: '',
-        content: '$hynFee HYN',
-        subContent: 'HYN 产生',
+        content: '${widget.entity.gas1} ${widget.entity.gasUnit}',
+        subContent: widget.entity.gas1Desc,
         showLine: false,
       );
     } else {
-      if ((widget.reqEntity?.rpAmount ?? 0) > 0) {
+      if ((widget.entity.value ?? 0) > 0) {
         widget1 = _rowText(
           title: S.of(context).transfer_gas_fee,
-          content: '$rpFee HYN',
-          subContent: 'RP 产生',
-          showLine: false,
-        );
-      }
-
-      if ((widget.reqEntity?.hynAmount ?? 0) > 0) {
-        widget2 = _rowText(
-          title: S.of(context).transfer_gas_fee,
-          content: '$hynFee HYN',
-          subContent: 'HYN 产生',
+          content: '${widget.entity.gas} ${widget.entity.gasUnit}',
+          subContent: widget.entity.gasDesc,
           showLine: false,
         );
       }
@@ -139,7 +108,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                               ),
                             ],
                           ),
-                          if ((widget.reqEntity?.rpAmount ?? 0) > 0)
+                          if ((widget.entity?.value ?? 0) > 0)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -148,7 +117,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                                     top: 16,
                                   ),
                                   child: Text(
-                                    '${widget.reqEntity?.rpAmount ?? '0'} RP',
+                                    '${widget.entity?.value ?? '0'} ${widget.entity.valueUnit}',
                                     style: TextStyle(
                                       color: HexColor('#333333'),
                                       fontWeight: FontWeight.w600,
@@ -158,7 +127,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                                 ),
                               ],
                             ),
-                          if ((widget.reqEntity?.hynAmount ?? 0) > 0)
+                          if ((widget.entity?.value1 ?? 0) > 0)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -167,7 +136,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                                     top: 16,
                                   ),
                                   child: Text(
-                                    '${widget.reqEntity?.hynAmount ?? '0'} HYN',
+                                    '${widget.entity?.value1 ?? '0'} ${widget.entity.value1Unit}',
                                     style: TextStyle(
                                       color: HexColor('#333333'),
                                       fontWeight: FontWeight.w600,
@@ -182,16 +151,17 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                           ),
                           _rowText(
                             title: '交易信息',
-                            content: '发红包',
+                            content: widget.entity.title,
                           ),
                           _rowText(
                             title: S.of(context).exchange_from,
-                            content: walletName,
-                            subContent: walletAddress,
+                            content: widget.entity.fromName,
+                            subContent: widget.entity.fromAddress,
                           ),
                           _rowText(
                             title: S.of(context).exchange_to,
-                            content: S.of(context).rp_red_pocket,
+                            content: widget.entity.toName,
+                            subContent: widget.entity.toAddress,
                           ),
                           widget1,
                           widget2,
@@ -202,7 +172,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                   ClickOvalButton(
                     S.of(context).send,
                     _sendAction,
-                    btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
+                    btnColor: [HexColor("#E7C01A"), HexColor("#F7D33D")],
                     fontSize: 16,
                     width: 260,
                     height: 42,
@@ -290,92 +260,75 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
   }
 
   void _sendAction() async {
-    var walletVo = WalletInheritedModel.of(context).activatedWallet;
-    var wallet = walletVo.wallet;
-    var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
-    if (password == null) {
-      return;
-    }
-
-    var rpShareConfig = RedPocketInheritedModel.of(context).rpShareConfig;
-    var toAddress = rpShareConfig?.receiveAddr ?? '';
-    if (toAddress.isEmpty) {
-      Fluttertoast.showToast(msg: '网络异常，请稍后重试!');
-      return;
-    }
-
     if (mounted) {
       setState(() {
         _isLoading = true;
       });
     }
 
-    var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('RP');
-    print("【$runtimeType】postSendShareRp， 1");
+    bool isFinish = await widget.entity.callBack();
+    print("[$runtimeType] _sendAction, isFinish:$isFinish");
 
-    try {
-      RpShareReqEntity result = await _rpApi.postSendShareRp(
-        password: password,
-        activeWallet: walletVo,
-        reqEntity: widget.reqEntity,
-        toAddress: toAddress,
-        coinVo: coinVo,
-      );
-
-      print("[$runtimeType] postSendShareRp, 2, result:${result.toJson()}");
-
-      if (result.id.isNotEmpty) {
-        if (widget.reqEntity.rpType == RpShareType.normal) {
-          widget.reqEntity.id = result.id;
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RpShareSendSuccessPage(
-                reqEntity: widget.reqEntity,
-              ),
-            ),
-          );
-        } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RpShareSendSuccessLocationPage(),
-            ),
-          );
-        }
-      } else {
-        Fluttertoast.showToast(msg: '发送红包失败！');
-      }
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      LogUtil.toastException(e);
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 }
 
-Future<bool> showWalletSendDialog<T>(
-  BuildContext context,
-  RpShareReqEntity reqEntity,
-) {
+Future<bool> showWalletSendDialog<T>({
+  @required BuildContext context,
+  @required WalletSendDialogEntity entity,
+}) {
   return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       context: context,
       builder: (BuildContext context) {
         return WalletSendDialogPage(
-          reqEntity: reqEntity,
+          entity: entity,
         );
       });
+}
+
+typedef WalletSendEntityCallBack = Future<bool> Function();
+
+class WalletSendDialogEntity {
+  final String type;
+  final double value;
+  final double value1;
+  final String valueUnit;
+  final String value1Unit;
+  final String title;
+  final String fromName;
+  final String fromAddress;
+  final String toName;
+  final String toAddress;
+  final String gas;
+  final String gas1;
+  final String gasDesc;
+  final String gas1Desc;
+  final String gasUnit;
+
+  final WalletSendEntityCallBack callBack;
+
+  WalletSendDialogEntity({
+    this.type,
+    this.value,
+    this.value1,
+    this.valueUnit,
+    this.value1Unit,
+    this.title,
+    this.fromName,
+    this.fromAddress,
+    this.toName,
+    this.toAddress,
+    this.gas,
+    this.gas1,
+    this.gasDesc,
+    this.gas1Desc,
+    this.gasUnit,
+    this.callBack,
+  });
 }
