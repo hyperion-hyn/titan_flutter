@@ -40,10 +40,7 @@ class Wallet {
   List<Account> accounts;
   KeyStore keystore;
 
-  //WalletExpandInfoEntity walletExpandInfoEntity;
-
-  TransactionInteractor transactionInteractor =
-      Injector.of(Keys.rootKey.currentContext).transactionInteractor;
+  WalletExpandInfoEntity walletExpandInfoEntity;
 
   Wallet({this.keystore, this.accounts, this.walletExpandInfoEntity});
 
@@ -253,12 +250,8 @@ class Wallet {
     } else if (responseMap['result'] != null) {
       // 本地记录ethereum pending
       if (coinType == CoinType.ETHEREUM) {
-/*
         await Injector.of(Keys.rootKey.currentContext).transactionInteractor.insertTransactionDB(
             responseMap['result'], toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce,
-*/
-        await transactionInteractor.insertTransactionDB(responseMap['result'], toAddress, value,
-            gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce,
             optType: optType);
       }
     }
@@ -402,12 +395,8 @@ class Wallet {
     } else if (responseMap['result'] != null) {
       // 本地记录ethereum erc20 pending
       if (coinType == CoinType.ETHEREUM) {
-/*
         await Injector.of(Keys.rootKey.currentContext).transactionInteractor.insertTransactionDB(
             responseMap['result'], toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ERC20, nonce,
-*/
-        await transactionInteractor.insertTransactionDB(responseMap['result'], toAddress, value,
-            gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ERC20, nonce,
             optType: optType, contractAddress: contractAddress);
       }
     }
