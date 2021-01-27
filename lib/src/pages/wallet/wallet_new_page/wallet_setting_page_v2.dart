@@ -58,13 +58,14 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
   @override
   void didPush() async {
     isBackup = await WalletUtil.checkIsBackUpMnemonic(widget.wallet.getEthAccount().address);
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
-  void didPopNext() async {}
+  void didPopNext() async {
+    isBackup = await WalletUtil.checkIsBackUpMnemonic(widget.wallet.getEthAccount().address);
+    setState(() {});
+  }
 
   @override
   void didChangeDependencies() {
@@ -126,8 +127,9 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                     if (netImagePath != null && netImagePath.isNotEmpty) {
                       widget.wallet.walletExpandInfoEntity.localHeadImg = path;
                       widget.wallet.walletExpandInfoEntity.netHeadImg = netImagePath;
-                      BlocProvider.of<WalletCmpBloc>(context)
-                          .add(UpdateWalletExpandEvent(widget.wallet.getEthAccount().address, widget.wallet.walletExpandInfoEntity));
+                      BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletExpandEvent(
+                          widget.wallet.getEthAccount().address,
+                          widget.wallet.walletExpandInfoEntity));
 
                       setState(() {});
                     } else {
@@ -287,7 +289,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             _optionItem(
                 imagePath: "res/drawable/ic_wallet_setting_show_mnemonic.png",
                 title: '显示助记词',
-                editFunc: (){
+                editFunc: () {
                   var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
                   Application.router.navigateTo(
                       context,
@@ -303,29 +305,26 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
               imagePath: "res/drawable/ic_wallet_setting_bio_auth.png",
               title: '生物验证',
               editFunc: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => BioAuthOptionsPage(widget.wallet)));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => BioAuthOptionsPage(widget.wallet)));
               },
             ),
             Divider(
               height: 0.5,
             ),
             _optionItem(
-              imagePath: "res/drawable/ic_wallet_setting_modify_pws.png",
-              title: '修改密码',
-              editCallback: (text) {
-              },
-              editFunc: ()async {
-                String pswRemind = await Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) => WalletModifyPswPage(
-                      widget.wallet
-                    )));
-                if(pswRemind != null && pswRemind.isNotEmpty){
-                  setState(() {
-                    widget.wallet.walletExpandInfoEntity.pswRemind = pswRemind;
-                  });
-                }
-              }
-            ),
+                imagePath: "res/drawable/ic_wallet_setting_modify_pws.png",
+                title: '修改密码',
+                editCallback: (text) {},
+                editFunc: () async {
+                  String pswRemind = await Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => WalletModifyPswPage(widget.wallet)));
+                  if (pswRemind != null && pswRemind.isNotEmpty) {
+                    setState(() {
+                      widget.wallet.walletExpandInfoEntity.pswRemind = pswRemind;
+                    });
+                  }
+                }),
             Divider(
               height: 0.5,
             ),
@@ -337,8 +336,8 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
               content: widget.wallet.walletExpandInfoEntity?.pswRemind,
               editCallback: (text) {
                 widget.wallet.walletExpandInfoEntity.pswRemind = text;
-                BlocProvider.of<WalletCmpBloc>(context)
-                    .add(UpdateWalletExpandEvent(widget.wallet.getEthAccount().address, widget.wallet.walletExpandInfoEntity));
+                BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletExpandEvent(
+                    widget.wallet.getEthAccount().address, widget.wallet.walletExpandInfoEntity));
               },
             ),
           ],
@@ -362,14 +361,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                       "确认退出",
                       () async {
                         Navigator.pop(context);
-                        CheckPwdValid onCheckPwdValid = (walletPwd) {
-                          return WalletUtil.checkPwdValid(
-                            context,
-                            widget.wallet,
-                            walletPwd,
-                          );
-                        };
-                        UiUtil.showPasswordDialog(context,widget.wallet, isShowBioAuthIcon:false, onCheckPwdValid: onCheckPwdValid,remindStr: "警告：若无妥善备份，删除钱包后将无法找回钱包，请慎重处理该操作");
+                        deleteWallet();
                       },
                       width: 300,
                       height: 44,
@@ -427,12 +419,18 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
         ));
   }
 
-  Future<void> deleteWallet(String walletPassword) async {
-    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
-      context,
-      widget.wallet,
-    );
-    print("walletPassword:$walletPassword");
+  Future<void> deleteWallet() async {
+    CheckPwdValid onCheckPwdValid = (walletPwd) {
+      return WalletUtil.checkPwdValid(
+        context,
+        widget.wallet,
+        walletPwd,
+      );
+    };
+    var walletPassword = await UiUtil.showPasswordDialog(context, widget.wallet,
+        isShowBioAuthIcon: false,
+        onCheckPwdValid: onCheckPwdValid,
+        remindStr: "警告：若无妥善备份，删除钱包后将无法找回钱包，请慎重处理该操作");
     if (walletPassword == null) {
       return;
     }
@@ -443,9 +441,11 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
       if (result) {
         await AppCache.remove(widget.wallet.getBitcoinAccount()?.address ?? "");
         List<Wallet> walletList = await WalletUtil.scanWallets();
-        var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet);
+        var activatedWalletVo =
+            WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet);
 
-        if (activatedWalletVo.activatedWallet.wallet.keystore.fileName == widget.wallet.keystore.fileName &&
+        if (activatedWalletVo.activatedWallet.wallet.keystore.fileName ==
+                widget.wallet.keystore.fileName &&
             walletList.length > 0) {
           //delete current wallet
 
