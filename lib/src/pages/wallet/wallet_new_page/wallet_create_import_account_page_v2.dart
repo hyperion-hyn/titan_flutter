@@ -10,6 +10,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -209,6 +210,10 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                                   compressSize: 500,
                                   uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                                 );
+
+                                ///turn off app-lock
+                                AppLockUtil.appLockSwitch(context, false);
+
                                 if (tempListImagePaths != null && tempListImagePaths.length == 1) {
                                   UiUtil.showLoadingDialog(context, "头像上传中...", (context) {
                                     dialogContext = context;

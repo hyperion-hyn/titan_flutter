@@ -54,7 +54,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.inactive:
-        //print('-----[App] inactive');
+       // print('-----[App] inactive');
         break;
       case AppLifecycleState.paused:
         //print('-----[App] paused');
