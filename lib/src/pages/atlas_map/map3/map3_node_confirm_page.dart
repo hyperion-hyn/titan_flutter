@@ -363,6 +363,9 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
         return;
       }
 
+      print("[Map3NodeConfirmPage]: password:$password， 1");
+
+
       if (needEditBLS) {
         var editResult = false;
         editResult = await widget.editMessage.action(password);
