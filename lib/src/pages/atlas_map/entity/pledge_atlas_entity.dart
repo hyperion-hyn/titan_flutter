@@ -58,9 +58,9 @@ part 'pledge_atlas_entity.g.dart';
 
   PledgeAtlasPayload(this.atlasAddress,this.map3Address,);
 
-  factory PledgeAtlasPayload.fromJson(Map<String, dynamic> srcJson) => _$AtlasPayloadFromJson(srcJson);
+  factory PledgeAtlasPayload.fromJson(Map<String, dynamic> srcJson) => _$PledgeAtlasPayloadFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$AtlasPayloadToJson(this);
+  Map<String, dynamic> toJson() => _$PledgeAtlasPayloadToJson(this);
 
 }
 

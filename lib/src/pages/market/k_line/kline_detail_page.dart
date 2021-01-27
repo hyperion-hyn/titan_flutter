@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
@@ -332,15 +331,15 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
 
     try {
       var _selectedQuote =
-          WalletInheritedModel.of(context).activatedQuoteVoAndSign(
+          WalletInheritedModel.of(context).tokenLegalPrice(
         marketItemEntity?.base,
       );
       var _latestQuotePrice = FormatUtil.truncateDoubleNum(
-        double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
+        double.parse(_latestPrice) * _selectedQuote?.price,
         4,
       );
       _latestQuotePriceString =
-          '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
+          '${_selectedQuote?.legal?.legal ?? ''} $_latestQuotePrice';
     } catch (e) {}
 
     return SliverToBoxAdapter(

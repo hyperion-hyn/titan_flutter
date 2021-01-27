@@ -27,7 +27,7 @@ Map3NodeEntity _$Map3NodeEntityFromJson(Map<String, dynamic> json) {
     json['reward_rate'] as String,
     json['staking'] as String,
     json['start_time'] as String,
-    Map3InfoStatus.values[json['status'] as int],
+    _$enumDecodeNullable(_$Map3InfoStatusEnumMap, json['status']),
     json['updated_at'] as String,
   );
 }
@@ -53,6 +53,49 @@ Map<String, dynamic> _$Map3NodeEntityToJson(Map3NodeEntity instance) =>
       'reward_rate': instance.rewardRate,
       'staking': instance.staking,
       'start_time': instance.startTime,
-      'status': instance.status,
+      'status': _$Map3InfoStatusEnumMap[instance.status],
       'updated_at': instance.updatedAt,
     };
+
+T _$enumDecode<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    throw ArgumentError('A value must be provided. Supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+
+  final value = enumValues.entries
+      .singleWhere((e) => e.value == source, orElse: () => null)
+      ?.key;
+
+  if (value == null && unknownValue == null) {
+    throw ArgumentError('`$source` is not one of the supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+  return value ?? unknownValue;
+}
+
+T _$enumDecodeNullable<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+}
+
+const _$Map3InfoStatusEnumMap = {
+  Map3InfoStatus.MAP: 'MAP',
+  Map3InfoStatus.CREATE_SUBMIT_ING: 'CREATE_SUBMIT_ING',
+  Map3InfoStatus.CREATE_FAIL: 'CREATE_FAIL',
+  Map3InfoStatus.FUNDRAISING_NO_CANCEL: 'FUNDRAISING_NO_CANCEL',
+  Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT: 'FUNDRAISING_CANCEL_SUBMIT',
+  Map3InfoStatus.CANCEL_NODE_SUCCESS: 'CANCEL_NODE_SUCCESS',
+  Map3InfoStatus.CONTRACT_HAS_STARTED: 'CONTRACT_HAS_STARTED',
+  Map3InfoStatus.CONTRACT_IS_END: 'CONTRACT_IS_END',
+};

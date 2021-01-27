@@ -1,9 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/config/consts.dart';
 
-part 'coin_vo.g.dart';
+part 'coin_view_vo.g.dart';
 
 @JsonSerializable()
-class CoinVo {
+class CoinViewVo {
   final String name;
   final String symbol;
   final String logo;
@@ -16,7 +17,10 @@ class CoinVo {
 
   BigInt balance;
 
-  CoinVo(
+  //余额是否刷新成功
+  Status refreshStatus;
+
+  CoinViewVo(
       {this.decimals,
       this.name,
       this.symbol,
@@ -25,11 +29,12 @@ class CoinVo {
       this.contractAddress,
       this.extendedPublicKey,
       this.balance,
-      this.coinType});
+      this.coinType,
+      this.refreshStatus});
 
-  factory CoinVo.fromJson(Map<String, dynamic> json) => _$CoinVoFromJson(json);
+  factory CoinViewVo.fromJson(Map<String, dynamic> json) => _$CoinViewVoFromJson(json);
 
-  Map<String, dynamic> toJson() => _$CoinVoToJson(this);
+  Map<String, dynamic> toJson() => _$CoinViewVoToJson(this);
 
   @override
   String toString() {

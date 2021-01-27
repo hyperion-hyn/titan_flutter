@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/src/basic/http/signer.dart';
+import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
+import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -9,6 +14,8 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/token_burn_info_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/api/exchange_const.dart';
+import 'package:titan/src/pages/market/exchange/bloc/bloc.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/wallet_demo/recaptcha_test_page.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -23,6 +30,15 @@ class ApiDemo extends StatefulWidget {
 class _ApiDemoState extends State {
   ExchangeApi _exchangeApi = ExchangeApi();
   int _lastRequestCoinTime = 0;
+
+  final StreamController<bool> _walletLockStatusController =
+      StreamController.broadcast();
+
+  @override
+  void dispose() {
+    _walletLockStatusController?.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -6,44 +6,43 @@ part of 'hyn_transfer_history.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-HynTransferHistory _$HynTransferHistoryFromJson(Map<String, dynamic> jsonMap) {
+HynTransferHistory _$HynTransferHistoryFromJson(Map<String, dynamic> json) {
   return HynTransferHistory(
-    jsonMap['atlas_address'] as String,
-    jsonMap['block_hash'] as String,
-    jsonMap['block_num'] as int,
-    jsonMap['contract_address'] as String,
-    jsonMap['created_at'] as int,
-    jsonMap['data'] as String,
-    jsonMap['data_decoded'] == null
+    json['atlas_address'] as String,
+    json['block_hash'] as String,
+    json['block_num'] as int,
+    json['contract_address'] as String,
+    json['created_at'] as int,
+    json['data'] as String,
+    json['data_decoded'] as Map<String, dynamic>,
+    json['epoch'] as int,
+    json['from'] as String,
+    json['gas_limit'] as int,
+    json['gas_price'] as String,
+    json['gas_used'] as int,
+    json['id'] as int,
+    json['logs_decoded'] == null
         ? null
-        : jsonMap['data_decoded'] as Map<String, dynamic>,
-    jsonMap['epoch'] as int,
-    jsonMap['from'] as String,
-    jsonMap['gas_limit'] as int,
-    jsonMap['gas_price'] as String,
-    jsonMap['gas_used'] as int,
-    jsonMap['id'] as int,
-    jsonMap['logs_decoded'] == null
+        : LogsDecoded.fromJson(json['logs_decoded'] as Map<String, dynamic>),
+    json['map3_address'] as String,
+    json['name'] as String,
+    json['nonce'] as int,
+    json['pic'] as String,
+    json['status'] as int,
+    json['timestamp'] as int,
+    json['to'] as String,
+    json['transaction_index'] as int,
+    json['tx_hash'] as String,
+    json['type'] as int,
+    json['updated_at'] as int,
+    json['value'] as String,
+    json['payload'] == null
         ? null
-        : LogsDecoded.fromJson(jsonMap['logs_decoded'] as Map<String, dynamic>),
-    jsonMap['map3_address'] as String,
-    jsonMap['name'] as String,
-    jsonMap['nonce'] as int,
-    jsonMap['pic'] as String,
-    jsonMap['status'] as int,
-    jsonMap['timestamp'] as int,
-    jsonMap['to'] as String,
-    jsonMap['transaction_index'] as int,
-    jsonMap['tx_hash'] as String,
-    jsonMap['type'] as int,
-    jsonMap['updated_at'] as int,
-    jsonMap['value'] as String,
-    (jsonMap['payload'] == null || (jsonMap['payload'] as String).isEmpty ) ? null
-        : TransferPayload.fromJson(json.decode(jsonMap['payload'])),
-    (jsonMap['internal_trans'] as List)
+        : ((json['payload'].toString() != "") ? TransferPayload.fromJson(json['payload'] as Map<String, dynamic>) : null),
+    (json['internal_trans'] as List)
         ?.map((e) => e == null
-        ? null
-        : InternalTransactions.fromJson(e as Map<String, dynamic>))
+            ? null
+            : InternalTransactions.fromJson(e as Map<String, dynamic>))
         ?.toList(),
   );
 }
@@ -126,7 +125,7 @@ LogsDecoded _$LogsDecodedFromJson(Map<String, dynamic> json) {
   return LogsDecoded(
     (json['rewards'] as List)
         ?.map((e) =>
-    e == null ? null : Rewards.fromJson(e as Map<String, dynamic>))
+            e == null ? null : Rewards.fromJson(e as Map<String, dynamic>))
         ?.toList(),
     json['topics'] as String,
   );
@@ -146,16 +145,16 @@ Rewards _$RewardsFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$RewardsToJson(Rewards instance) => <String, dynamic>{
-  'address': instance.address,
-  'amount': instance.amount,
-};
+      'address': instance.address,
+      'amount': instance.amount,
+    };
 
 TransferPayload _$TransferPayloadFromJson(Map<String, dynamic> json) {
   return TransferPayload(
     json['Delegator'] as String,
     json['Map3Node'] as String,
-    json['Amount']?.toString() ?? "",
-    json['Reward']?.toString() ?? "",
+    json['Amount'] as String,
+    json['Reward'] as String,
   );
 }
 
@@ -184,7 +183,7 @@ InternalTransactions _$InternalTransactionsFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$InternalTransactionsToJson(
-    InternalTransactions instance) =>
+        InternalTransactions instance) =>
     <String, dynamic>{
       'tx_hash': instance.txHash,
       'log_index': instance.logIndex,

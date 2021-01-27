@@ -65,7 +65,7 @@ class Map3NodeCreateWalletPage extends StatelessWidget {
                                   Application.router.navigateTo(
                                       context,
                                       Routes.wallet_create +
-                                          '?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}');
+                                          '?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}&isCreate=1');
                                 },
                                 child: Container(
                                   child: Padding(
@@ -94,7 +94,7 @@ class Map3NodeCreateWalletPage extends StatelessWidget {
                                   onPressed: () {
                                     Application.router.navigateTo(
                                         context,
-                                        Routes.wallet_import +
+                                        Routes.wallet_create +
                                             '?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}');
                                   },
                                   child: Container(

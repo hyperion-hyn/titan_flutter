@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'symbol_quote_entity.dart';
+part of 'tokens_price_entity.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-SymbolQuoteEntity _$SymbolQuoteEntityFromJson(Map<String, dynamic> json) {
-  return SymbolQuoteEntity(
+TokensPriceEntity _$TokensPriceEntityFromJson(Map<String, dynamic> json) {
+  return TokensPriceEntity(
     json['id'] as int,
     json['created_at'] as String,
     json['updated_at'] as String,
@@ -34,7 +34,7 @@ SymbolQuoteEntity _$SymbolQuoteEntityFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$SymbolQuoteEntityToJson(SymbolQuoteEntity instance) =>
+Map<String, dynamic> _$TokensPriceEntityToJson(TokensPriceEntity instance) =>
     <String, dynamic>{
       'id': instance.id,
       'created_at': instance.createdAt,

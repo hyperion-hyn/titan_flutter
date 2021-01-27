@@ -7,7 +7,7 @@ import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/setting/system_config_entity.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
@@ -29,6 +29,7 @@ import 'package:web3dart/json_rpc.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 import 'package:web3dart/web3dart.dart';
 
+import 'wallet_expand_info_entity.dart';
 import 'wallet_util.dart';
 
 part 'wallet.g.dart';
@@ -38,10 +39,10 @@ class Wallet {
   ///activated account of this wallet,  btc, eth etc.
   List<Account> accounts;
   KeyStore keystore;
-  TransactionInteractor transactionInteractor =
-      Injector.of(Keys.rootKey.currentContext).transactionInteractor;
 
-  Wallet({this.keystore, this.accounts});
+  WalletExpandInfoEntity walletExpandInfoEntity;
+
+  Wallet({this.keystore, this.accounts, this.walletExpandInfoEntity});
 
   Account getEthAccount() {
     for (var account in accounts) {
@@ -57,6 +58,16 @@ class Wallet {
       if (account.coinType == CoinType.HYN_ATLAS) {
         return account;
       }
+    }
+    return null;
+  }
+
+  String getHeadImg(){
+    if((walletExpandInfoEntity?.localHeadImg ?? "").isNotEmpty){
+      return walletExpandInfoEntity.localHeadImg;
+    }
+    if((walletExpandInfoEntity?.netHeadImg ?? "").isNotEmpty){
+      return walletExpandInfoEntity.netHeadImg;
     }
     return null;
   }
@@ -200,7 +211,8 @@ class Wallet {
   /// 如果[type]和[message]都是null，则为ethereum转账
   Future<String> sendTransaction(
     int coinType, {
-    @required String password,
+    String password,
+    Credentials cred,
     @required BigInt gasPrice,
     String toAddress,
     BigInt value,
@@ -221,6 +233,7 @@ class Wallet {
     final signedRawHex = await signTransaction(
       coinType,
       password: password,
+      cred: cred,
       toAddress: toAddress,
       gasPrice: gasPrice,
       value: value,
@@ -237,8 +250,8 @@ class Wallet {
     } else if (responseMap['result'] != null) {
       // 本地记录ethereum pending
       if (coinType == CoinType.ETHEREUM) {
-        await transactionInteractor.insertTransactionDB(responseMap['result'], toAddress, value,
-            gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce,
+        await Injector.of(Keys.rootKey.currentContext).transactionInteractor.insertTransactionDB(
+            responseMap['result'], toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce,
             optType: optType);
       }
     }
@@ -252,7 +265,8 @@ class Wallet {
   /// 如果[type]和[message]都是null，则为ethereum转账
   Future<String> signTransaction(
     int coinType, {
-    @required String password,
+    String password,
+    Credentials cred,
     BigInt gasPrice,
     BigInt value,
     String toAddress,
@@ -260,7 +274,7 @@ class Wallet {
     int gasLimit,
     web3.IMessage message,
   }) async {
-    assert(password != null, '密码不能为空');
+    assert(password == null && cred == null, '密码/密钥不能为空');
 
     if (gasPrice == null) {
       gasPrice = await WalletUtil.ethGasPrice(coinType);
@@ -300,10 +314,16 @@ class Wallet {
       type = MessageType.typeNormal;
     }
 
+ 
     var privateKey =
         await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+
     final client = WalletUtil.getWeb3Client(coinType);
-    final credentials = await client.credentialsFromPrivateKey(privateKey);
+    var credentials = cred;
+    if (credentials == null) {
+      var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+      credentials = await client.credentialsFromPrivateKey(privateKey);
+    }
     var chainId = _getChainId(coinType);
     final rawTx = await client.signTransaction(
       credentials,
@@ -338,10 +358,11 @@ class Wallet {
     int coinType, {
     int optType = OptType.TRANSFER,
     @required String contractAddress,
-    @required String password,
+    String password,
+    Credentials cred,
     @required String toAddress,
     @required BigInt value,
-    @required BigInt gasPrice,
+    BigInt gasPrice,
     int nonce,
     int gasLimit,
   }) async {
@@ -358,6 +379,7 @@ class Wallet {
       coinType,
       contractAddress: contractAddress,
       password: password,
+      cred: cred,
       toAddress: toAddress,
       value: value,
       gasLimit: gasLimit,
@@ -373,8 +395,8 @@ class Wallet {
     } else if (responseMap['result'] != null) {
       // 本地记录ethereum erc20 pending
       if (coinType == CoinType.ETHEREUM) {
-        await transactionInteractor.insertTransactionDB(responseMap['result'], toAddress, value,
-            gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ERC20, nonce,
+        await Injector.of(Keys.rootKey.currentContext).transactionInteractor.insertTransactionDB(
+            responseMap['result'], toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ERC20, nonce,
             optType: optType, contractAddress: contractAddress);
       }
     }
@@ -385,7 +407,8 @@ class Wallet {
   Future<String> signErc20Transaction(
     int coinType, {
     @required String contractAddress,
-    @required String password,
+    String password,
+    Credentials cred,
     @required String toAddress,
     @required BigInt value,
     BigInt gasPrice,
@@ -393,7 +416,7 @@ class Wallet {
     int gasLimit,
   }) async {
     assert(contractAddress != null, '合约地址不能为空');
-    assert(password != null, '密码不能为空');
+    assert(password == null && cred == null, '密码/密钥不能为空');
     assert(toAddress != null, '接收人不能为空');
     assert(value != null, '转账数量不能为空');
 
@@ -417,10 +440,15 @@ class Wallet {
       throw Exception('${baseCoinVo.symbol}余额不足以支付网络费用');
     }
 
+ 
     var privateKey =
         await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client(coinType);
-    final credentials = await client.credentialsFromPrivateKey(privateKey);
+    var credentials = cred;
+    if (credentials == null) {
+      var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+      credentials = await client.credentialsFromPrivateKey(privateKey);
+    }
     final contract = WalletUtil.getErc20Contract(contractAddress, 'HYN');
 
     var chainId = _getChainId(coinType);

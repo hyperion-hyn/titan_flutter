@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
+import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -12,6 +14,7 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_options_page.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/bitcoin.dart';
@@ -49,7 +52,8 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               var index = EthereumChainType.values.indexOf(EthereumConfig.chainType);
               setState(() {
-                EthereumConfig.chainType = EthereumChainType.values[(index + 1) % EthereumChainType.values.length];
+                EthereumConfig.chainType =
+                    EthereumChainType.values[(index + 1) % EthereumChainType.values.length];
               });
             },
             child: Text('Ethereum chain -> ${EthereumConfig.chainType.toString().split('.')[1]}'),
@@ -61,7 +65,8 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               var index = HyperionChainType.values.indexOf(HyperionConfig.chainType);
               setState(() {
-                HyperionConfig.chainType = HyperionChainType.values[(index + 1) % HyperionChainType.values.length];
+                HyperionConfig.chainType =
+                    HyperionChainType.values[(index + 1) % HyperionChainType.values.length];
               });
             },
             child: Text('Hyperion chain -> ${HyperionConfig.chainType.toString().split('.')[1]}'),
@@ -73,7 +78,8 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               var index = HecoChainType.values.indexOf(HecoConfig.chainType);
               setState(() {
-                HecoConfig.chainType = HecoChainType.values[(index + 1) % HecoChainType.values.length];
+                HecoConfig.chainType =
+                    HecoChainType.values[(index + 1) % HecoChainType.values.length];
               });
             },
             child: Text('Heco chain -> ${HecoConfig.chainType.toString().split('.')[1]}'),
@@ -85,7 +91,8 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               var index = BitcoinChainType.values.indexOf(BitcoinConfig.chainType);
               setState(() {
-                BitcoinConfig.chainType = BitcoinChainType.values[(index + 1) % BitcoinChainType.values.length];
+                BitcoinConfig.chainType =
+                    BitcoinChainType.values[(index + 1) % BitcoinChainType.values.length];
               });
             },
             child: Text('Bitcoin chain -> ${BitcoinConfig.chainType.toString().split('.')[1]}'),
@@ -127,7 +134,8 @@ class _WalletDemoState extends State<WalletDemo> {
               //var walletName = "我的助记词钱包1";
               var walletName = _mnemonic.split(" ").first;
               var password = '111111';
-              var wallet = await WalletUtil.storeByMnemonic(name: walletName, password: password, mnemonic: _mnemonic);
+              var wallet = await WalletUtil.storeByMnemonic(
+                  name: walletName, password: password, mnemonic: _mnemonic);
               if (wallet != null) {
                 var userPayload = UserPayloadWithAddressEntity(
                     Payload(userName: wallet.keystore.name), wallet.getAtlasAccount().address);
@@ -136,7 +144,8 @@ class _WalletDemoState extends State<WalletDemo> {
                 //激活它
                 BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
 
-                logger.i("-快捷一步，创建一个新钱包, name:$walletName, keystore: ${wallet.keystore.fileName}， 成功！");
+                logger.i(
+                    "-快捷一步，创建一个新钱包, name:$walletName, keystore: ${wallet.keystore.fileName}， 成功！");
               } else {
                 logger.i("-快捷一步，创建一个新钱包：错误 ");
               }
@@ -151,7 +160,10 @@ class _WalletDemoState extends State<WalletDemo> {
                 Account account = activeWallet.getAtlasAccount();
                 if (account != null) {
                   // balance = await activeWallet.getBalance(account);
-                  balance = await WalletUtil.getBalanceByCoinTypeAndAddress(CoinType.HYN_ATLAS, '0x89A9855032047fAF65BAA95F43128af6EE5721eD', HyperionConfig.hynRPHrc30Address);
+                  balance = await WalletUtil.getBalanceByCoinTypeAndAddress(
+                      CoinType.HYN_ATLAS,
+                      '0x89A9855032047fAF65BAA95F43128af6EE5721eD',
+                      HyperionConfig.hynRPHrc30Address);
                   print(
                       "账户0x89A9855032047fAF65BAA95F43128af6EE5721eD RP 余额是 ${balance / BigInt.from(pow(10, account.token.decimals))}");
 
@@ -205,7 +217,8 @@ class _WalletDemoState extends State<WalletDemo> {
 //                        wallet: wallet, oldPassword: 'new password', newPassword: "111111", name: '修改的钱包');
                     if (success) {
                       print('-修改成功');
-                      print('-最后成为${wallet.wallet.keystore.name} ${wallet.wallet.keystore.fileName}');
+                      print(
+                          '-最后成为${wallet.wallet.keystore.name} ${wallet.wallet.keystore.fileName}');
                     }
                   }
                 },
@@ -219,7 +232,10 @@ class _WalletDemoState extends State<WalletDemo> {
                     var wallet = wallets[0];
                     print('-即将修改${wallet.keystore.fileName} 的密码');
                     var success = await WalletUtil.updateWallet(
-                        wallet: wallet, password: '111111_wrong', newPassword: "new password", name: '修改的钱包');
+                        wallet: wallet,
+                        password: '111111_wrong',
+                        newPassword: "new password",
+                        name: '修改的钱包');
                     if (success) {
                       print('-修改密码成功');
                       print('-最后成为${wallet.keystore.fileName}');
@@ -238,8 +254,8 @@ class _WalletDemoState extends State<WalletDemo> {
                   if (wallets.length > 0) {
                     var wallet = wallets[0];
                     try {
-                      var prvKey =
-                          await WalletUtil.exportPrivateKey(fileName: wallet.keystore.fileName, password: '111111');
+                      var prvKey = await WalletUtil.exportPrivateKey(
+                          fileName: wallet.keystore.fileName, password: '111111');
                       logger.i('your prvKey is: $prvKey');
                     } catch (e) {
                       logger.e(e);
@@ -275,8 +291,8 @@ class _WalletDemoState extends State<WalletDemo> {
                     var wallet = wallets[0];
                     try {
                       if ((wallet.keystore is KeyStore) && wallet.keystore.isMnemonic) {
-                        var mnemonic =
-                            await WalletUtil.exportMnemonic(fileName: wallet.keystore.fileName, password: '111111');
+                        var mnemonic = await WalletUtil.exportMnemonic(
+                            fileName: wallet.keystore.fileName, password: '111111');
                         logger.i('your mnemonic is: $mnemonic');
                       } else {
                         print('-不是TrustWallet钱包，不支持导出助记词');
@@ -357,7 +373,8 @@ class _WalletDemoState extends State<WalletDemo> {
                 double myStaking = 100000; //我要抵押的量
                 var gasLimit = 1000000; //TODO 暂定的，到时候要调成合适的.
                 var gasPriceRecommend =
-                    WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).ethGasPriceRecommend;
+                    WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
+                        .ethGasPriceRecommend;
 
                 var funAbi = WalletUtil.getMap3FuncAbiHex(
                     contractAddress: EthereumConfig.map3EthereumContractAddress,
@@ -452,7 +469,11 @@ class _WalletDemoState extends State<WalletDemo> {
               try {
                 var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
                 var hashTx = await activeWallet.sendBitcoinTransaction(
-                    "111111", activeWallet.getBitcoinZPub(), "bc1q5ldpsdpnds87wkvtgss9us2zf6rmtr80qeelzc", 13, 10000);
+                    "111111",
+                    activeWallet.getBitcoinZPub(),
+                    "bc1q5ldpsdpnds87wkvtgss9us2zf6rmtr80qeelzc",
+                    13,
+                    10000);
                 logger.i('Bitcoin交易已提交，交易hash $hashTx');
               } catch (e) {
                 logger.e(e);
@@ -512,6 +533,49 @@ class _WalletDemoState extends State<WalletDemo> {
             },
             child: Text('identifier'),
           ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Text('Wallet Lock is ${AppLockInheritedModel.of(context).isWalletLockActive}'),
+          ),
+          RaisedButton(
+            child: Text('Lock wallet'),
+            onPressed: () async {
+              BlocProvider.of<AppLockBloc>(context).add(LockWalletEvent());
+            },
+          ),
+          RaisedButton(
+            child: Text('Unlock wallet'),
+            onPressed: () async {
+              BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
+            },
+          ),
+          Row(
+            children: [
+              Text('Wallet Lock Enabled'),
+              Switch(
+                  value: (AppLockInheritedModel.of(context).isWalletLockEnable),
+                  onChanged: (value) {
+                    var walletAddress = WalletInheritedModel.of(context)
+                            ?.activatedWallet
+                            ?.wallet
+                            ?.getAtlasAccount()
+                            ?.address ??
+                        '';
+                    BlocProvider.of<AppLockBloc>(context).add(SetWalletLockEvent(value));
+                  })
+            ],
+          ),
+          RaisedButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => BioAuthOptionsPage(
+                            WalletInheritedModel.of(context).activatedWallet?.wallet,
+                          )));
+            },
+            child: Text('Wallet bio-auth options'),
+          )
         ],
       ),
     );

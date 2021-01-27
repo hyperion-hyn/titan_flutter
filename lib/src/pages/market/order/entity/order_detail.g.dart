@@ -9,7 +9,7 @@ part of 'order_detail.dart';
 OrderDetail _$OrderDetailFromJson(Map<String, dynamic> json) {
   return OrderDetail(
     json['market'] as String,
-    json["side"] as String,
+    json['side'] as String,
     json['oid'] as String,
     json['price'] as String,
     json['amount'] as String,

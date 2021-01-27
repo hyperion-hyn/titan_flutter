@@ -44,6 +44,7 @@ class _SettingManagerState extends BaseState<_SettingManager> {
 
   @override
   void onCreated() async {
+
     var systemConfigStr = await AppCache.getValue<String>(PrefsKey.SETTING_SYSTEM_CONFIG);
     if (systemConfigStr != null) {
       systemConfigEntity = SystemConfigEntity.fromJson(json.decode(systemConfigStr));
@@ -52,6 +53,13 @@ class _SettingManagerState extends BaseState<_SettingManager> {
     themeModel = await SupportedTheme.defaultModel();
 
     super.onCreated();
+
+    // 恢复历史设置
+    BlocProvider.of<SettingBloc>(context).add(RestoreSettingEvent());
+    //同步remote配置
+    Future.delayed(Duration(milliseconds: 1000), () {
+      BlocProvider.of<SettingBloc>(context).add(SyncRemoteConfigEvent());
+    });
   }
 
   @override
@@ -73,11 +81,16 @@ class _SettingManagerState extends BaseState<_SettingManager> {
             if (state.areaModel != null) {
               areaModel = state.areaModel;
             }
+
             if (state.themeModel != null) {
               themeModel = state.themeModel;
             }
           } else if (state is SystemConfigState) {
             systemConfigEntity = state.systemConfigEntity;
+
+            if (state.systemConfig != null) {
+              systemConfigEntity = state.systemConfig;
+            }
           }
 
           return SettingInheritedModel(
@@ -144,6 +157,7 @@ class SettingInheritedModel extends InheritedModel<SettingAspect> {
             (areaModel != oldWidget.areaModel && dependencies.contains(SettingAspect.area)) ||
             (systemConfigEntity != oldWidget.systemConfigEntity &&
                 dependencies.contains(SettingAspect.systemConfig))) ||
-        (themeModel != oldWidget.themeModel && dependencies.contains(SettingAspect.theme));
+        (themeModel != oldWidget.themeModel && dependencies.contains(SettingAspect.theme)) ||
+        (systemConfigEntity != oldWidget.systemConfigEntity && dependencies.contains(SettingAspect.systemConfig)));
   }
 }

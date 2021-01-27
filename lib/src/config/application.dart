@@ -26,6 +26,8 @@ class Application {
   // Announce
   //-----------------
   static bool isUpdateAnnounce = false;
+
+  static bool hasShowBackupWalletDialog = false;
 }
 
 class ClearBadgeEvent {}

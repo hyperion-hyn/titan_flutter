@@ -20,6 +20,7 @@ class MeSettingPage extends StatefulWidget {
 class _MeSettingState extends State<MeSettingPage> {
   @override
   Widget build(BuildContext context) {
+
     var language = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel.name;
     var quoteStr = WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeQuotesSign?.quote;
     var area = SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.name(context);

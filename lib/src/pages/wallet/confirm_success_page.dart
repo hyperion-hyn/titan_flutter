@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
-import 'package:titan/src/pages/wallet/service/wallet_service.dart';
-import 'package:titan/src/global.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 
 class ConfirmSuccessPage extends StatefulWidget {

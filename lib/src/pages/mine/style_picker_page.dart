@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class StylePickerPage extends StatefulWidget {
@@ -37,7 +37,7 @@ class _StylePickerPageState extends BaseState<StylePickerPage> {
   List<Widget> _children;
 
   ScrollController scrollController = ScrollController();
-  WalletVo walletVo;
+  WalletViewVo walletVo;
 
   @override
   void initState() {

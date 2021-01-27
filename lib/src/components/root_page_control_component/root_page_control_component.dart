@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
@@ -21,6 +22,7 @@ import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/app_tabbar_bloc.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
@@ -35,12 +37,11 @@ class RootPageControlComponent extends StatefulWidget {
   }
 }
 
-class RootPageControlComponentState
-    extends BaseState<RootPageControlComponent> {
+class RootPageControlComponentState extends BaseState<RootPageControlComponent> {
   @override
   void initState() {
     super.initState();
-    _initSetting();
+    // _initSetting();
     launchRootPage();
   }
 
@@ -50,48 +51,25 @@ class RootPageControlComponentState
 //    _initSetting();
 //  }
 
-  _initSetting() async {
-    var languageStr =
-        await AppCache.getValue<String>(PrefsKey.SETTING_LANGUAGE);
-    LanguageModel languageModel = languageStr != null
-        ? LanguageModel.fromJson(json.decode(languageStr))
-        : SupportedLanguage.defaultModel(context);
-
-    var areaModelStr = await AppCache.getValue<String>(PrefsKey.SETTING_AREA);
-    AreaModel areaModel = areaModelStr != null
-        ? AreaModel.fromJson(json.decode(areaModelStr))
-        : SupportedArea.defaultModel();
-
-    var quoteSignStr =
-        await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
-    QuotesSign quotesSign = quoteSignStr != null
-        ? QuotesSign.fromJson(json.decode(quoteSignStr))
-        : SupportedQuoteSigns.defaultQuotesSign;
-
-
-    WalletInheritedModel.saveQuoteSign(quotesSign);
-
-    BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(
-        areaModel: areaModel,
-        languageModel: languageModel));
-
-    //faster show wallet
-    BlocProvider.of<WalletCmpBloc>(context).add(LoadLocalDiskWalletAndActiveEvent());
-
-    //Future.delayed(Duration(milliseconds: 1500), () {
-      BlocProvider.of<SettingBloc>(context).add(SystemConfigEvent());
-    //});
-  }
+  // _initSetting() async {
+  //   // 恢复历史设置
+  //   BlocProvider.of<SettingBloc>(context).add(RestoreSettingEvent());
+  //   //同步remote配置
+  //   Future.delayed(Duration(milliseconds: 1000), () {
+  //     BlocProvider.of<SettingBloc>(context).add(SyncRemoteConfigEvent());
+  //   });
+  //
+  //   //faster show wallet
+  //   BlocProvider.of<WalletCmpBloc>(context).add(LoadLocalDiskWalletAndActiveEvent());
+  // }
 
   void launchRootPage() async {
     var prefs = await SharedPreferences.getInstance();
-    bool notFirstTimeLauncher =
-        prefs.containsKey(PrefsKey.FIRST_TIME_LAUNCHER_KEY);
+    bool notFirstTimeLauncher = prefs.containsKey(PrefsKey.FIRST_TIME_LAUNCHER_KEY);
     if (notFirstTimeLauncher) {
 //    if (false) {
       //launch dashboard
-      BlocProvider.of<RootPageControlBloc>(context)
-          .add(SetRootPageEvent(page: AppTabBarPage()));
+      BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(page: AppTabBarPage()));
     } else {
       //launch setting
       BlocProvider.of<RootPageControlBloc>(context)
@@ -103,11 +81,10 @@ class RootPageControlComponentState
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<ScaffoldMapBloc>(
-            create: (context) => ScaffoldMapBloc(context)),
+        BlocProvider<ScaffoldMapBloc>(create: (context) => ScaffoldMapBloc(context)),
         BlocProvider<AppTabBarBloc>(create: (context) => AppTabBarBloc()),
         BlocProvider<DiscoverBloc>(create: (context) => DiscoverBloc(context)),
-        BlocProvider<AuthBloc>(create: (context) => AuthBloc()),
+        BlocProvider<AppLockBloc>(create: (context) => AppLockBloc()),
       ],
       child: BlocBuilder<RootPageControlBloc, RootPageControlState>(
         builder: (ctx, state) {
@@ -116,8 +93,8 @@ class RootPageControlComponentState
           }
           return Scaffold(
             body: Center(
-                //child: Text('please set the root page!'),
-                ),
+              //child: Text('please set the root page!'),
+            ),
           );
         },
       ),

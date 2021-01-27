@@ -50,9 +50,9 @@ Utxo _$UtxoFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$UtxoToJson(Utxo instance) => <String, dynamic>{
       'sub': instance.sub,
       'index': instance.index,
-      'txHash': instance.txHash,
+      'tx_hash': instance.txHash,
       'address': instance.address,
-      'txOutputN': instance.txOutputN,
+      'tx_output_n': instance.txOutputN,
       'value': instance.value,
     };
 

@@ -9,8 +9,8 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/widget/hyn_burn_banner.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -23,7 +23,7 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
 class ShowWalletView extends StatefulWidget {
-  final WalletVo walletVo;
+  final WalletViewVo walletVo;
   final LoadDataBloc loadDataBloc;
 
   ShowWalletView(this.walletVo, this.loadDataBloc);
@@ -53,30 +53,30 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
 
   @override
   void onCreated() {
-    BlocProvider.of<WalletCmpBloc>(context).listen((state) {
-      if (state is UpdateWalletPageState && state.updateStatus == 0) {
-        if(mounted){
-          setState(() {
-            _isRefreshBalances = false;
-            _isRefreshFail = false;
-          });
-        }
-      }else if(state is UpdateWalletPageState && (state.updateStatus == -1)){
-        if(mounted){
-          setState(() {
-            _isRefreshBalances = false;
-            _isRefreshFail = true;
-          });
-        }
-      }else if(state is UpdateWalletPageState && (state.updateStatus == 1)){
-        if(mounted){
-          setState(() {
-            _isRefreshFail = false;
-            _isRefreshBalances = true;
-          });
-        }
-      }
-    });
+    // BlocProvider.of<WalletCmpBloc>(context).listen((state) {
+    //   if (state is UpdateWalletPageState && state.updateStatus == 0) {
+    //     if(mounted){
+    //       setState(() {
+    //         _isRefreshBalances = false;
+    //         _isRefreshFail = false;
+    //       });
+    //     }
+    //   }else if(state is UpdateWalletPageState && (state.updateStatus == -1)){
+    //     if(mounted){
+    //       setState(() {
+    //         _isRefreshBalances = false;
+    //         _isRefreshFail = true;
+    //       });
+    //     }
+    //   }else if(state is UpdateWalletPageState && (state.updateStatus == 1)){
+    //     if(mounted){
+    //       setState(() {
+    //         _isRefreshFail = false;
+    //         _isRefreshBalances = true;
+    //       });
+    //     }
+    //   }
+    // });
     // BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
     super.onCreated();
   }
@@ -163,7 +163,7 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
                       Row(
                         children: <Widget>[
                           Text(
-                            WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeQuotesSign?.sign ?? '',
+                            WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeLegal?.sign ?? '',
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 20,
@@ -237,7 +237,7 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
   }
 
   Widget _bitcoinEmptyView(BuildContext context) {
-    var coinVo = CoinVo(
+    var coinVo = CoinViewVo(
       name: "BITCOIN",
       symbol: "BTC",
       coinType: 0,
@@ -309,9 +309,9 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
     );
   }
 
-  Widget _buildAccountItem(BuildContext context, CoinVo coin, {bool hasPrice = true}) {
+  Widget _buildAccountItem(BuildContext context, CoinViewVo coin, {bool hasPrice = true}) {
     var symbol = coin.symbol;
-    var symbolQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign(symbol);
+    var symbolQuote = WalletInheritedModel.of(context).tokenLegalPrice(symbol);
     var subSymbol = "";
 
     if (coin.coinType == CoinType.HYN_ATLAS) {
@@ -330,10 +330,10 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
       quotePrice = S.of(context).exchange_soon;
       balancePrice = "";
     } else {
-      quotePrice = "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(symbolQuote?.quoteVo?.price ?? 0.0)}";
+      quotePrice = "${symbolQuote?.legal?.legal ?? ''} ${FormatUtil.formatPrice(symbolQuote?.price ?? 0.0)}";
       balancePrice = _isShowBalances
-          ? "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}"
-          : '${symbolQuote?.sign?.sign ?? ''} *****';
+          ? "${symbolQuote?.legal?.legal ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.price ?? 0))}"
+          : '${symbolQuote?.legal?.legal ?? ''} *****';
     }
 
     return Padding(

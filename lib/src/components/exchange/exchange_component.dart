@@ -113,6 +113,7 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
           sharePref.remove(PrefsKey.EXCHANGE_ACCOUNT);
           sharePref.remove(PrefsKey.EXCHANGE_ACCOUNT_LAST_AUTH_TIME);
         } else if (state is UpdateAssetsState) {
+          print('xxxx updateAssets');
           try {
             var ret = await _exchangeApi.getAssetsList();
             print("[object] ---> ret:$ret");

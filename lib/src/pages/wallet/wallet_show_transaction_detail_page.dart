@@ -11,7 +11,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/coin_market_api.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/components/wallet/vo/symbol_quote_vo.dart';
+import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -132,11 +132,11 @@ class WalletShowTransactionDetailPageState
         timestamp = int.parse(transDetail.time.toString().substring(0, 10));
       }
       var quotes = await _coinMarketApi.quotes(timestamp);
-      SymbolQuoteVo hynQuote;
-      var quotesSign = WalletInheritedModel.of(context).activeQuotesSign;
+      TokenPriceViewVo hynQuote;
+      var quotesSign = WalletInheritedModel.of(context).activeLegal;
       for (var quoteItem in quotes) {
         if (quoteItem.symbol == SupportedTokens.HYN_Atlas.symbol &&
-            quoteItem.quote == quotesSign.quote) {
+            quoteItem.legal == quotesSign.legal) {
           hynQuote = quoteItem;
         }
       }

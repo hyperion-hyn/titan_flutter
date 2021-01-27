@@ -6,7 +6,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
@@ -23,7 +23,7 @@ class RpShareSelectTypePage extends StatefulWidget {
 
 class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
   final ScrollController _scrollController = ScrollController();
-  WalletVo _walletVo;
+  WalletViewVo _walletVo;
 
   RpShareTypeEntity _selectedEntity = SupportedShareType.NORMAL;
 
@@ -78,51 +78,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
             ),
           ),
         ),
-        ClickOvalButton(
-          S.of(context).next_step,
-          () async{
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => RpShareEditInfoPage(
-                  shareTypeEntity: _selectedEntity,
-                ),
-              ),
-            );
-            
-            /*
-            return;
-
-            if (_selectedEntity.index == 0) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => RpShareEditInfoPage(
-                    shareTypeEntity: _selectedEntity,
-                  ),
-                ),
-              );
-            }
-            else {
-              var latlng = await getLatlng();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => RpShareEditInfoPage(
-                    shareTypeEntity: _selectedEntity,
-                    userPosition: latlng,
-                  ),
-                ),
-              );
-            }
-            */
-          },
-          btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
-          fontSize: 16,
-          width: 260,
-          height: 42,
-        ),
+        _confirmButtonWidget(),
         SizedBox(
           height: 40,
         ),
@@ -130,6 +86,26 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
     );
   }
 
+  Widget _confirmButtonWidget() {
+    return ClickOvalButton(
+      S.of(context).next_step,
+          () async{
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RpShareEditInfoPage(
+              shareTypeEntity: _selectedEntity,
+            ),
+          ),
+        );
+      },
+      btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
+      fontSize: 16,
+      width: 260,
+      height: 42,
+    );
+  }
 
   Future<LatLng> getLatlng() async {
     var latlng =

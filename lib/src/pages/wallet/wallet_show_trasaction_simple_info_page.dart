@@ -6,7 +6,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
@@ -58,7 +58,7 @@ class WalletShowTransactionSimpleInfoPageState extends BaseState<WalletShowTrans
   var isContract = false;
   var isToken = false;
   TransactionDetailVo transactionDetail;
-  WalletVo walletVo;
+  WalletViewVo walletVo;
   List<AccountInfoItemView> _accountInfoViewList = [];
 
   @override

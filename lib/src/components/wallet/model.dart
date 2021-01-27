@@ -5,63 +5,70 @@ import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/heco.dart';
 import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 
-import 'vo/symbol_quote_vo.dart';
+import 'vo/token_price_view_vo.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'model.g.dart';
 
+/// 行情数据（实时）
 class QuotesModel extends Equatable {
-  final String symbolStr;
-  final List<SymbolQuoteVo> quotes;
-  final int lastUpdateTime;
+  // 行情数据，包括所有支持的法币
+  final List<TokenPriceViewVo> quotes;
 
-  QuotesModel({this.symbolStr, this.quotes, this.lastUpdateTime});
+  // final int lastUpdateTime;
+
+  QuotesModel({/*this.symbolStr, */ this.quotes /*, this.lastUpdateTime*/
+      });
 
   @override
-  List<Object> get props => [symbolStr, quotes, lastUpdateTime];
+  List<Object> get props => [
+        /*symbolStr, */ quotes /*, lastUpdateTime*/
+      ];
 }
 
+/// 法币计价
 @JsonSerializable()
-class QuotesSign extends Object {
-  @JsonKey(name: 'quote')
-  String quote;
+class LegalSign extends Object {
+  @JsonKey(name: 'legal')
+  String legal;
 
   @JsonKey(name: 'sign')
   String sign;
 
-  QuotesSign({this.quote, this.sign});
+  LegalSign({this.legal, this.sign});
 
-  factory QuotesSign.fromJson(Map<String, dynamic> srcJson) => _$QuotesSignFromJson(srcJson);
+  LegalSign clone() => LegalSign(sign: sign, legal: this.legal);
 
-  Map<String, dynamic> toJson() => _$QuotesSignToJson(this);
+  factory LegalSign.fromJson(Map<String, dynamic> srcJson) => _$LegalSignFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$LegalSignToJson(this);
 }
 
-class ActiveQuoteVoAndSign {
-  final SymbolQuoteVo quoteVo;
-  final QuotesSign sign;
+// class ActiveQuoteVoAndSign {
+//   final TokenPriceViewVo quoteVo;
+//   final LegalSign sign;
+//
+//   ActiveQuoteVoAndSign({this.quoteVo, this.sign});
+// }
 
-  ActiveQuoteVoAndSign({this.quoteVo, this.sign});
-}
+/// 支持的法币
+class SupportedLegal {
+  static LegalSign usd = LegalSign(legal: 'USD', sign: '\$');
+  static LegalSign cny = LegalSign(legal: 'CNY', sign: '¥');
 
-class SupportedQuoteSigns {
-  static QuotesSign defaultQuotesSign = QuotesSign(quote: 'USD', sign: '\$');
+  static List<LegalSign> all = [usd, cny];
 
-  static List<QuotesSign> all = [
-    defaultQuotesSign,
-    QuotesSign(quote: 'CNY', sign: '¥'),
-  ];
-
-  static QuotesSign of(String quotes) {
-    for (var sign in all) {
-      if (sign.quote == quotes) {
-        return sign;
+  static LegalSign of(String legal) {
+    for (var legalSign in all) {
+      if (legalSign.legal == legal) {
+        return legalSign.clone();
       }
     }
-    return defaultQuotesSign;
+    return null;
   }
 }
 
-@JsonSerializable()
+// @JsonSerializable()
 class GasPriceRecommend extends Object {
   @JsonKey(name: 'fast')
   Decimal fast;

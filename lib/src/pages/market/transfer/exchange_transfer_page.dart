@@ -10,7 +10,7 @@ import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
@@ -46,7 +46,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   final _formKey = GlobalKey<FormState>();
   bool _fromExchangeToWallet = false;
   ExchangeApi _exchangeApi = ExchangeApi();
-  WalletVo activatedWallet;
+  WalletViewVo activatedWallet;
 
   @override
   void onCreated() {

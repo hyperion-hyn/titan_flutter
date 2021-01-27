@@ -26,7 +26,8 @@ RpShareReqEntity _$RpShareReqEntityFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$RpShareReqEntityToJson(RpShareReqEntity instance) => <String, dynamic>{
+Map<String, dynamic> _$RpShareReqEntityToJson(RpShareReqEntity instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'address': instance.address,
       'lat': instance.lat,

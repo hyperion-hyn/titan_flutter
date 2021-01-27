@@ -13,7 +13,7 @@ Order _$OrderFromJson(Map<String, dynamic> json) {
     json['side'] as String,
     json['price'] as String,
     json['amount'] as String,
-    (int.parse(json['ctime']) * 1000).toString(),
+    json['ctime'] as String,
     json['status'] as String,
     json['amount_deal'] as String,
     json['amount_no_deal'] as String,

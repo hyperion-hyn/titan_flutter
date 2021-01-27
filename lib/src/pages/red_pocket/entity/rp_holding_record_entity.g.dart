@@ -6,8 +6,7 @@ part of 'rp_holding_record_entity.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-RPLevelHistory _$RpHoldingRecordEntityFromJson(
-    Map<String, dynamic> json) {
+RPLevelHistory _$RPLevelHistoryFromJson(Map<String, dynamic> json) {
   return RPLevelHistory(
     json['address'] as String,
     json['burning'] as String,
@@ -27,8 +26,7 @@ RPLevelHistory _$RpHoldingRecordEntityFromJson(
   );
 }
 
-Map<String, dynamic> _$RpHoldingRecordEntityToJson(
-        RPLevelHistory instance) =>
+Map<String, dynamic> _$RPLevelHistoryToJson(RPLevelHistory instance) =>
     <String, dynamic>{
       'address': instance.address,
       'burning': instance.burning,

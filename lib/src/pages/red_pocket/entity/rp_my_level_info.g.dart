@@ -15,11 +15,10 @@ RpMyLevelInfo _$RpMyLevelInfoFromJson(Map<String, dynamic> json) {
   );
 }
 
-
 Map<String, dynamic> _$RpMyLevelInfoToJson(RpMyLevelInfo instance) =>
     <String, dynamic>{
       'current_holding': instance.currentHolding,
+      'curr_burning': instance.currBurning,
       'current_level': instance.currentLevel,
       'highest_level': instance.highestLevel,
-      'curr_burning': instance.currBurning,
     };

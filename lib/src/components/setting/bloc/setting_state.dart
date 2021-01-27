@@ -20,17 +20,25 @@ class UpdatedSettingState extends SettingState with EquatableMixin {
   final AreaModel areaModel;
   final QuotesSign quotesSign;
   final ThemeModel themeModel;
+  final SystemConfigEntity systemConfig;
 
-  UpdatedSettingState({this.languageModel, this.areaModel, this.quotesSign, this.themeModel,});
+  UpdatedSettingState({
+    this.languageModel,
+    this.areaModel,
+    this.quotesSign,
+    this.themeModel,
+    this.systemConfig,
+  });
 
   @override
-  List<Object> get props => [languageModel, areaModel, quotesSign, themeModel];
+  List<Object> get props => [languageModel, areaModel, themeModel, systemConfig];
 
   @override
   bool get stringify => true;
 }
 
-class SystemConfigState extends SettingState {
-  final SystemConfigEntity systemConfigEntity;
-  SystemConfigState(this.systemConfigEntity);
-}
+// class RemoteConfigSyncedState extends SettingState {
+//   final SystemConfigEntity systemConfigEntity;
+//
+//   RemoteConfigSyncedState(this.systemConfigEntity);
+// }

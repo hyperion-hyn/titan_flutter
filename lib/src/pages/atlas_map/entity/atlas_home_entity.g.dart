@@ -20,36 +20,15 @@ AtlasHomeEntity _$AtlasHomeEntityFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$AtlasHomeEntityToJson(AtlasHomeEntity instance) => <String, dynamic>{
-      'info': instance.info.toJson(),
+Map<String, dynamic> _$AtlasHomeEntityToJson(AtlasHomeEntity instance) =>
+    <String, dynamic>{
+      'info': instance.info,
       'my_nodes': instance.atlasHomeNodeList,
       'points': instance.points,
       'map3_num': instance.map3Count,
       'map3_num_active': instance.map3CountActive,
       'map3_num_dead': instance.map3CountDead,
       'map3_num_idle': instance.map3CountIdle,
-    };
-
-CommitteeInfoEntity _$CommitteeInfoEntityFromJson(Map<String, dynamic> json) {
-  return CommitteeInfoEntity(
-    json['block_height'] as int,
-    json['block_num'] as int,
-    json['block_num_start'] as int,
-    json['candidate'] as int,
-    json['elected'] as int,
-    json['epoch'] as int,
-    json['sec_per_block'] as int,
-  );
-}
-
-Map<String, dynamic> _$CommitteeInfoEntityToJson(CommitteeInfoEntity instance) => <String, dynamic>{
-      'block_height': instance.blockHeight,
-      'block_num': instance.blockNum,
-      'block_num_start': instance.blockNumStart,
-      'candidate': instance.candidate,
-      'elected': instance.elected,
-      'epoch': instance.epoch,
-      'sec_per_block': instance.secPerBlock,
     };
 
 AtlasHomeNode _$AtlasHomeNodeFromJson(Map<String, dynamic> json) {

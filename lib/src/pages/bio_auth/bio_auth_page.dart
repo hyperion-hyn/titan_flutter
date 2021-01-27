@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/auth_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
@@ -13,7 +16,10 @@ class BioAuthPage extends StatefulWidget {
   final Wallet _wallet;
   final AuthType _authType;
 
-  BioAuthPage(this._wallet, this._authType);
+  BioAuthPage(
+    this._wallet,
+    this._authType,
+  );
 
   @override
   State<StatefulWidget> createState() {
@@ -29,7 +35,7 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
   @override
   Future<void> onCreated() async {
     super.onCreated();
-    authConfigModel = await AuthUtil.getAuthConfigByWallet(
+    authConfigModel = await AuthUtil.getAuthConfig(
       widget._wallet,
       authType: widget._authType,
     );
@@ -58,132 +64,163 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
           style: TextStyle(color: Colors.black, fontSize: 18),
         ),
       ),
-      body: Column(
-        children: <Widget>[
-          Center(
-            child: Padding(
-              padding: EdgeInsets.all(32.0),
-              child: Image.asset(
-                'res/drawable/ic_bio_auth.png',
-                width: 60,
-                height: 60,
-              ),
-            ),
-          ),
+      body: CustomScrollView(
+        slivers: [
+          _icon(),
           if (_availableBiometrics.contains(BiometricType.face)) _faceAuth(),
-          if (_availableBiometrics.contains(BiometricType.fingerprint))
-            _fingerprintAuth(),
+          if (_availableBiometrics.contains(BiometricType.fingerprint)) _fingerprintAuth(),
           _description()
         ],
       ),
     );
   }
 
+  _icon() {
+    return SliverToBoxAdapter(
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.all(32.0),
+          child: Image.asset(
+            'res/drawable/ic_bio_auth.png',
+            width: 60,
+            height: 60,
+          ),
+        ),
+      ),
+    );
+  }
+
   _faceAuth() {
-    return Container(
-      color: Colors.white,
-      child: SwitchListTile(
-        title: Text(S.of(context).face_recognition),
-        value: authConfigModel?.useFace,
-        onChanged: (bool value) async {
-          _setBioAuth(BiometricType.face, value);
-        },
+    return SliverToBoxAdapter(
+      child: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  S.of(context).face_recognition,
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+              FlutterSwitch(
+                width: 54.0,
+                height: 26.0,
+                toggleSize: 18.0,
+                activeColor: HexColor('#EDC313'),
+                inactiveColor: HexColor('#DEDEDE'),
+                value: authConfigModel?.useFace,
+                onToggle: (value) {
+                  _setBioAuth(BiometricType.face, value);
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   _fingerprintAuth() {
-    return Container(
-      color: Colors.white,
-      child: SwitchListTile(
-        title: Text(S.of(context).fingerprint_recognition),
-        value: authConfigModel.useFingerprint,
-        onChanged: (bool value) async {
-          _setBioAuth(BiometricType.fingerprint, value);
-        },
+    return SliverToBoxAdapter(
+      child: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  S.of(context).fingerprint_recognition,
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+              FlutterSwitch(
+                width: 54.0,
+                height: 26.0,
+                toggleSize: 18.0,
+                activeColor: HexColor('#EDC313'),
+                inactiveColor: HexColor('#DEDEDE'),
+                value: authConfigModel.useFingerprint,
+                onToggle: (value) {
+                  _setBioAuth(BiometricType.fingerprint, value);
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   _description() {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 16,
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              height: 16,
+            ),
+            Text(
+              widget._authType == AuthType.pay
+                  ? S.of(context).introduct_non_secret_payment
+                  : S.of(context).bio_auth_intro_title_exchange,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
               ),
-              Text(
-                widget._authType == AuthType.pay
-                    ? S.of(context).introduct_non_secret_payment
-                    : S.of(context).bio_auth_intro_title_exchange,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            Text(
+              widget._authType == AuthType.pay
+                  ? S.of(context).non_secret_payment_introduction_detail
+                  : S.of(context).bio_auth_exchange_intro_content,
+              style: TextStyle(height: 1.7, fontSize: 13, color: DefaultColors.color999),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Text(
+              widget._authType == AuthType.pay
+                  ? S.of(context).remind_after_open_non_secret_payment
+                  : S.of(context).bio_auth_exchange_intro_content_2,
+              style: TextStyle(height: 1.7, fontSize: 13, color: DefaultColors.color999),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                S.of(context).risk_warning,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
-              SizedBox(
-                height: 8,
+            ),
+            Text(
+              widget._authType == AuthType.pay
+                  ? S.of(context).risk_warning_detail_non_secret_payment
+                  : S.of(context).bio_auth_exchange_risk_content,
+              style: TextStyle(height: 1.8, fontSize: 13, color: DefaultColors.color999),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                S.of(context).disclaimer,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
-              Text(
-                widget._authType == AuthType.pay
-                    ? S.of(context).non_secret_payment_introduction_detail
-                    : S.of(context).bio_auth_exchange_intro_content,
-                style: TextStyle(
-                  height: 1.7,
-                  fontSize: 13,
-                ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Text(
-                widget._authType == AuthType.pay
-                    ? S.of(context).remind_after_open_non_secret_payment
-                    : S.of(context).bio_auth_exchange_intro_content_2,
-                style: TextStyle(
-                  height: 1.7,
-                  fontSize: 13,
-                ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  S.of(context).risk_warning,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                ),
-              ),
-              Text(
-                widget._authType == AuthType.pay
-                    ? S.of(context).risk_warning_detail_non_secret_payment
-                    : S.of(context).bio_auth_exchange_risk_content,
-                style: TextStyle(
-                  height: 1.8,
-                  fontSize: 13,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  S.of(context).disclaimer,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                ),
-              ),
-              Text(
-                S.of(context).disclaimer_detail_non_secret_payment,
-                style: TextStyle(
-                  height: 1.8,
-                  fontSize: 13,
-                ),
-              )
-            ],
-          ),
+            ),
+            Text(
+              S.of(context).disclaimer_detail_non_secret_payment,
+              style: TextStyle(height: 1.8, fontSize: 13, color: DefaultColors.color999),
+            )
+          ],
         ),
       ),
     );
@@ -241,8 +278,7 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
           }
 
           ///Update last auth time
-          authConfigModel.lastBioAuthTime =
-              DateTime.now().millisecondsSinceEpoch;
+          authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
 
           ///Save auth config
           AuthUtil.saveAuthConfig(
@@ -303,4 +339,8 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
   }
 }
 
-enum AuthType { pay, exchange }
+enum AuthType {
+  pay,
+  exchange,
+  walletLock,
+}

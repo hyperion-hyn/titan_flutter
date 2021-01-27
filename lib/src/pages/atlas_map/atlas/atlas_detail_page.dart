@@ -7,7 +7,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -82,7 +82,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   AtlasInfoEntity _atlasInfoEntity;
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   var _selectedMap3NodeValue = 0;
-  WalletVo _activatedWallet;
+  WalletViewVo _activatedWallet;
   var showMyMap3 = false;
   List<Map3InfoEntity> showMap3List = [];
   List<RewardHistoryEntity> rewardHistoryList = [];

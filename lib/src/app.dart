@@ -5,12 +5,19 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/components/account/account_component.dart';
+import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
+import 'package:titan/src/components/app_lock/entity/app_lock_config.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/components/style/theme.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
+import 'components/app_lock/app_lock_component.dart';
 import 'components/root_page_control_component/bloc/bloc.dart';
 import 'components/setting/setting_component.dart';
 import 'components/socket/socket_component.dart';
@@ -27,11 +34,56 @@ class App extends StatefulWidget {
   }
 }
 
-class _AppState extends State<App> {
+class _AppState extends State<App> with WidgetsBindingObserver {
   _AppState() {
     var router = MyRouter();
     Routes.configureRoutes(router);
     Application.router = router;
+  }
+
+  int _appLockAwayTime = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.inactive:
+        //print('-----[App] inactive');
+        break;
+      case AppLifecycleState.paused:
+        //print('-----[App] paused');
+        _setAppLockCountDown(false);
+        //_appLockAwayTime = await AppLockUtil.getAwayTime();
+        break;
+      case AppLifecycleState.detached:
+        //print('-----[App] detached');
+        break;
+      case AppLifecycleState.resumed:
+        //print('-----[App] resumed');
+        _setAppLockCountDown(true);
+        //print('appLockAwayTime $_appLockAwayTime');
+        //if (mounted) setState(() {});
+        break;
+    }
+  }
+
+  _setAppLockCountDown(bool isStop) {
+    BlocProvider.of<AppLockBloc>(
+      Keys.rootKey.currentContext,
+    ).add(
+      SetAppLockCountDownEvent(isStop),
+    );
   }
 
   @override
@@ -47,6 +99,7 @@ class _AppState extends State<App> {
           AtlasComponent(),
           RedPocketComponent(),
           //AccountComponent(),
+          AppLockComponent(),
         ],
         child: MultiBlocProvider(
           providers: [

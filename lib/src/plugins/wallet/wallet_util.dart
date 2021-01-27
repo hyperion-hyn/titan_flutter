@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -5,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/http/http.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
@@ -20,6 +21,7 @@ import 'package:titan/src/plugins/wallet/rp_holding_abi.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
 import 'package:http/http.dart';
+import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 import 'package:bip39/bip39.dart' as bip39;
@@ -34,6 +36,95 @@ class WalletUtil {
     return Future.value(bip39.generateMnemonic(strength: 128));
   }
 
+  static Future<bool> checkIsBackUpMnemonic(
+    String walletAddress,
+  ) async {
+    bool isMnemonicBackUp =
+        await AppCache.getValue('${PrefsKey.WALLET_MNEMONIC_BACK_UP_PREFIX}_$walletAddress');
+
+    return (isMnemonicBackUp ?? false);
+  }
+
+  static confirmBackUpMnemonic(
+    String walletAddress,
+  ) async {
+    await AppCache.saveValue(
+      '${PrefsKey.WALLET_MNEMONIC_BACK_UP_PREFIX}_$walletAddress',
+      true,
+    );
+  }
+
+  static Future<List<Wallet>> getNotBackUpWalletList() async {
+    var notBackUpWalletList = List<Wallet>();
+    try {
+      var wallets = await WalletUtil.scanWallets();
+
+      ///add await or will pass loop
+      await wallets.forEach((wallet) async {
+        var isBackUp = await WalletUtil.checkIsBackUpMnemonic(wallet.getEthAccount().address);
+        if (!isBackUp) notBackUpWalletList.add(wallet);
+      });
+    } catch (e) {}
+
+    return notBackUpWalletList;
+  }
+
+  static Future<bool> checkWalletSafeLockIsEnable(
+    String walletAddress,
+  ) async {
+    bool isEnabled =
+        await AppCache.getValue('${PrefsKey.WALLET_SAFE_LOCK_IS_ENABLE_PREFIX}_$walletAddress');
+
+    return (isEnabled ?? false);
+  }
+
+  static setWalletSafeLockEnable(
+    bool enabled,
+  ) async {
+    await AppCache.saveValue(
+      '${PrefsKey.WALLET_SAFE_LOCK_IS_ENABLE_PREFIX}',
+      enabled,
+    );
+  }
+
+  static Future<bool> checkWalletSafeLockPwd(
+    String input,
+  ) async {
+    String pwd = await AppCache.secureGetValue(
+      '${PrefsKey.WALLET_SAFE_LOCK_PWD_PREFIX}',
+    );
+    return (pwd == (input ?? ''));
+  }
+
+  static setWalletSafeLockPwd(
+    String walletAddress,
+    String pwd,
+  ) async {
+    await AppCache.secureSaveValue(
+      '${PrefsKey.WALLET_SAFE_LOCK_PWD_PREFIX}_$walletAddress',
+      pwd,
+    );
+  }
+
+  static setWalletExpandInfo(
+    String walletAddress,
+    WalletExpandInfoEntity walletExpandInfoEntity,
+  ) async {
+    await AppCache.saveValue(
+      '${PrefsKey.WALLET_EXPAND_INFO_PREFIX}$walletAddress',
+      "${json.encode(walletExpandInfoEntity.toJson())}",
+    );
+  }
+
+  static Future<WalletExpandInfoEntity> getWalletExpandInfo(
+    String walletAddress,
+  ) async {
+    String entityStr = await AppCache.getValue(
+      '${PrefsKey.WALLET_EXPAND_INFO_PREFIX}$walletAddress',
+    );
+    return WalletExpandInfoEntity.fromJson(json.decode(entityStr));
+  }
+
   ///scan all wallets
   static Future<List<Wallet>> scanWallets() async {
     var wallets = <Wallet>[];
@@ -43,6 +134,9 @@ class WalletUtil {
 //      logger.i(map);
       var wallet = _parseWalletJson(map);
       if (wallet != null) {
+        wallet.walletExpandInfoEntity =
+            await WalletUtil.getWalletExpandInfo(wallet.getEthAccount().address) ??
+                WalletExpandInfoEntity.defaultEntity();
         wallets.add(wallet);
       }
     }
@@ -64,8 +158,8 @@ class WalletUtil {
   ///store private key
   static Future<Wallet> storePrivateKey(
       {@required String name, @required String password, @required String prvKeyHex}) async {
-    var fileName =
-        await WalletChannel.saveAsTrustWalletKeyStoreByPrivateKey(name: name, prvKeyHex: prvKeyHex, password: password);
+    var fileName = await WalletChannel.saveAsTrustWalletKeyStoreByPrivateKey(
+        name: name, prvKeyHex: prvKeyHex, password: password);
     return loadWallet(fileName);
   }
 
@@ -116,7 +210,8 @@ class WalletUtil {
   }
 
   static checkUseDigitsPwd(Wallet wallet) async {
-    var result = await AppCache.getValue<bool>('${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_${wallet.keystore.fileName}');
+    var result = await AppCache.getValue<bool>(
+        '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_${wallet.keystore.fileName}');
     return result != null && result;
   }
 
@@ -146,7 +241,8 @@ class WalletUtil {
     BuildContext context,
     Wallet wallet,
   ) async {
-    String pwd = await AppCache.secureGetValue('${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${wallet.keystore.fileName}');
+    String pwd = await AppCache.secureGetValue(
+        '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${wallet.keystore.fileName}');
 
     ///Check password from secureStorage is correct
     String result;
@@ -261,7 +357,8 @@ class WalletUtil {
       }
     }
 
-    var accounts = List<Account>.from(backAccounts.map((accountMap) => Account.fromJsonWithNet(accountMap)));
+    var accounts =
+        List<Account>.from(backAccounts.map((accountMap) => Account.fromJsonWithNet(accountMap)));
 
     //filter only ETHEREUM
 //    accounts = accounts.where((account) {
@@ -277,31 +374,32 @@ class WalletUtil {
   }
 
   static web3.DeployedContract _newErc20Contract(String contractAddress, String name) {
-    final contract = web3.DeployedContract(
-        web3.ContractAbi.fromJson(HYN_ERC20_ABI, name), web3.EthereumAddress.fromHex(contractAddress));
+    final contract = web3.DeployedContract(web3.ContractAbi.fromJson(HYN_ERC20_ABI, name),
+        web3.EthereumAddress.fromHex(contractAddress));
     return contract;
   }
 
   static web3.DeployedContract _newRpHoldingContract(String contractAddress, String name) {
-    final contract = web3.DeployedContract(
-        web3.ContractAbi.fromJson(RP_HOLDING_ABI, name), web3.EthereumAddress.fromHex(contractAddress));
+    final contract = web3.DeployedContract(web3.ContractAbi.fromJson(RP_HOLDING_ABI, name),
+        web3.EthereumAddress.fromHex(contractAddress));
     return contract;
   }
 
   static web3.DeployedContract _newMap3Contract(String contractAddress, String name) {
-    final contract = web3.DeployedContract(
-        web3.ContractAbi.fromJson(MAP3_STAKING_ABI, name), web3.EthereumAddress.fromHex(contractAddress));
+    final contract = web3.DeployedContract(web3.ContractAbi.fromJson(MAP3_STAKING_ABI, name),
+        web3.EthereumAddress.fromHex(contractAddress));
     return contract;
   }
 
   static web3.DeployedContract _newHynStakingContract(String contractAddress, String name) {
-    final contract = web3.DeployedContract(
-        web3.ContractAbi.fromJson(HYN_STAKING_ABI, name), web3.EthereumAddress.fromHex(contractAddress));
+    final contract = web3.DeployedContract(web3.ContractAbi.fromJson(HYN_STAKING_ABI, name),
+        web3.EthereumAddress.fromHex(contractAddress));
     return contract;
   }
 
   /// https://infura.io/docs/gettingStarted/makeRequests.md
-  static Future<dynamic> postToEthereumNetwork(int coinType, {String method, List params, int id = 1}) {
+  static Future<dynamic> postToEthereumNetwork(int coinType,
+      {String method, List params, int id = 1}) {
     //{jsonrpc: 2.0, id: 1, result: 0x4547fdfbf3f1cfd25c0fa7267a97c7832ddda76352456b8e78898e9bd619adb7}
     var rpcApi = _getRpcApiByCoinType(coinType);
     return HttpCore.instance.post(rpcApi,
@@ -315,7 +413,8 @@ class WalletUtil {
   /// coinType_chainType, clientInstance
   static Map<String, web3.Web3Client> web3ClientMap = {};
 
-  static web3.DeployedContract _getContract(ContractMaker maker, String contractAddress, String name) {
+  static web3.DeployedContract _getContract(
+      ContractMaker maker, String contractAddress, String name) {
     if (deployedContractMap.containsKey(contractAddress) == null) {
       return deployedContractMap[contractAddress];
     }
@@ -382,7 +481,8 @@ class WalletUtil {
     address = bech32ToEthAddress(address);
     if (contractAddress == null) {
       //主链币
-      var response = await postToEthereumNetwork(coinType, method: "eth_getBalance", params: [address, block]);
+      var response =
+          await postToEthereumNetwork(coinType, method: "eth_getBalance", params: [address, block]);
       if (response['result'] != null) {
         return hexToInt(response['result']);
       }
@@ -390,14 +490,16 @@ class WalletUtil {
       //合约币
       final contract = getErc20Contract(contractAddress, 'HYN');
       final balanceFun = contract.function('balanceOf');
-      final balance = await getWeb3Client(coinType)
-          .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(address)]);
+      final balance = await getWeb3Client(coinType).call(
+          contract: contract,
+          function: balanceFun,
+          params: [web3.EthereumAddress.fromHex(address)]);
       return balance.first;
     }
     return BigInt.from(0);
   }
 
-  static String formatToHynAddrIfAtlasChain(CoinVo coinVo, String ethAddress) {
+  static String formatToHynAddrIfAtlasChain(CoinViewVo coinVo, String ethAddress) {
     if (coinVo.coinType == CoinType.HYN_ATLAS) {
       return ethAddressToBech32Address(ethAddress);
     } else {

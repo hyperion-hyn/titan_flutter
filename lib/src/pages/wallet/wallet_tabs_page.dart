@@ -4,6 +4,8 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/market/exchange/exchange_page.dart';
+import 'package:titan/src/pages/wallet/wallet_new_page/wallet_page_v2.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'wallet_page/wallet_page.dart';
 
 class WalletTabsPage extends StatefulWidget {
@@ -43,23 +45,29 @@ class _WalletTabsPageState extends State<WalletTabsPage>
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(kToolbarHeight),
           child: Container(
-            color: Colors.white,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xffEDC313), Color(0xffF7D33D)],
+              ),
+            ),
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: TabBar(
                   controller: _tabController,
                   isScrollable: true,
-                  labelColor: Theme.of(context).primaryColor,
+                  labelColor: DefaultColors.color333,
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
                   indicatorSize: TabBarIndicatorSize.label,
-                  indicatorColor: Theme.of(context).primaryColor,
+                  indicatorColor: DefaultColors.color333,
                   indicatorWeight: 2,
                   indicatorPadding: EdgeInsets.only(bottom: 2),
-                  unselectedLabelColor: HexColor("#FF333333"),
+                  unselectedLabelStyle: TextStyle(
+                    color: DefaultColors.color333,
+                  ),
                   tabs: [
                     Tab(
                       child: Text(
@@ -82,7 +90,7 @@ class _WalletTabsPageState extends State<WalletTabsPage>
         body: TabBarView(
           controller: _tabController,
           children: [
-            WalletPage(),
+            WalletPageV2(),
             ExchangePage(),
           ],
         ),
