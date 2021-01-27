@@ -14,6 +14,8 @@ class Routes {
   static const String toolspage_webview_page = '/toolspage/webview_page';
   static const String toolspage_qrcode_page = '/toolspage/qrcode_page';
 
+  static const String app_lock = '/app_lock';
+
   //wallet
   static const String wallet_create = '/wallet/create';
   static const String wallet_import = '/wallet/import';
@@ -110,7 +112,8 @@ class Routes {
   }
 
   static void configureRoutes(FluroRouter router) {
-    router.notFoundHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+    router.notFoundHandler =
+        Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
       print("ROUTE WAS NOT FOUND !!!");
       return unknownPage();
     });
@@ -118,24 +121,34 @@ class Routes {
     //root
     router.define(root, handler: rootHandler, transitionType: TransitionType.fadeIn);
 
+    //app lock
+    router.define(app_lock, handler: appLockHandler, transitionType: TransitionType.fadeIn);
+
     //tools
-    router.define(toolspage_webview_page, handler: toolsPageWebviewHandler, transitionType: pushNewPageTransitionType);
-    router.define(toolspage_qrcode_page, handler: toolsPageQrcodeHandler, transitionType: pushNewPageTransitionType);
+    router.define(toolspage_webview_page,
+        handler: toolsPageWebviewHandler, transitionType: pushNewPageTransitionType);
+    router.define(toolspage_qrcode_page,
+        handler: toolsPageQrcodeHandler, transitionType: pushNewPageTransitionType);
 
     //wallet
-    router.define(wallet_create, handler: createWalletHandler, transitionType: pushNewPageTransitionType);
-    router.define(wallet_import, handler: importWalletHandler, transitionType: pushNewPageTransitionType);
+    router.define(wallet_create,
+        handler: createWalletHandler, transitionType: pushNewPageTransitionType);
+    router.define(wallet_import,
+        handler: importWalletHandler, transitionType: pushNewPageTransitionType);
     router.define(wallet_account_detail,
         handler: walletAccountDetailHandler, transitionType: pushNewPageTransitionType);
     router.define(wallet_account_send_transaction,
         handler: walletAccountSendTransactionHandler, transitionType: pushNewPageTransitionType);
     router.define(wallet_transfer_token_confirm,
         handler: transferConfirmHandler, transitionType: pushNewPageTransitionType);
-    router.define(wallet_manager, handler: managerWalletHandler, transitionType: pushNewPageTransitionType);
-    router.define(wallet_setting, handler: settingWalletHandler, transitionType: pushNewPageTransitionType);
+    router.define(wallet_manager,
+        handler: managerWalletHandler, transitionType: pushNewPageTransitionType);
+    router.define(wallet_setting,
+        handler: settingWalletHandler, transitionType: pushNewPageTransitionType);
     router.define(wallet_setting_wallet_backup_notice,
         handler: settingBackupNoticeWalletHandler, transitionType: pushNewPageTransitionType);
-    router.define(confirm_success_papge, handler: confirmSuccessHandler, transitionType: pushNewPageTransitionType);
+    router.define(confirm_success_papge,
+        handler: confirmSuccessHandler, transitionType: pushNewPageTransitionType);
 
     ///Exchange
     router.define(
@@ -166,7 +179,8 @@ class Routes {
     );
 
     //contribution
-    router.define(contribute_tasks_list, handler: contributionTasksHandler, transitionType: pushNewPageTransitionType);
+    router.define(contribute_tasks_list,
+        handler: contributionTasksHandler, transitionType: pushNewPageTransitionType);
     router.define(
       contribute_done,
       handler: contributionDoneHandler,

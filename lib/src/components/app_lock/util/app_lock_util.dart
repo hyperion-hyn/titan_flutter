@@ -5,14 +5,22 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 
 class AppLockUtil {
-  static Future<bool> checkWalletLockPwd(String pwd) async {
+  static Future<AppLockConfig> getAppLockConfig() async {
     var jsonStr = await AppCache.secureGetValue(
       SecurePrefsKey.APP_LOCK_CONFIG,
     );
     var config = AppLockConfig.fromJson(json.decode(jsonStr));
-    if (config != null) {
+    return config;
+  }
+
+  static Future<bool> checkWalletLockPwd(String pwd) async {
+    var jsonStr = await AppCache.secureGetValue(
+      SecurePrefsKey.APP_LOCK_CONFIG,
+    );
+    try {
+      var config = AppLockConfig.fromJson(json.decode(jsonStr));
       return pwd == config.walletLock.pwd;
-    } else {
+    } catch (e) {
       return false;
     }
   }

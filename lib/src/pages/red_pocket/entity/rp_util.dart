@@ -300,6 +300,8 @@ class RpShareState {
   static const String expires = 'expires';
   static const String allGot = 'allGot';
   static const String ongoing = 'ongoing';
+  static const String refunded = 'refunded';
+  static const String refundOngoing = 'refundOngoing';
 }
 
 String shareStateToName(String state) {
@@ -325,6 +327,14 @@ String shareStateToName(String state) {
 
     case RpShareState.allGot:
       name = '已领完';
+      break;
+
+    case RpShareState.refunded:
+      name = '已退回';
+      break;
+
+    case RpShareState.refundOngoing:
+      name = '退回中...';
       break;
 
     default:

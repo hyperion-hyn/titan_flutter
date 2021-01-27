@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_app_lock/flutter_app_lock.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pinput/pin_put/pin_put.dart';
@@ -160,11 +159,10 @@ class _AppLockScreenState extends BaseState<AppLockScreen> {
   _submit(String pin) async {
     if (await AppLockUtil.checkWalletLockPwd(pin)) {
       widget.onUnlock?.call();
-      AppLock.of(context).didUnlock();
     } else {
       UiUtil.showErrorTopHint(
         context,
-        '密码错误，请重试',
+        S.of(context).password_incorrect,
       );
       _pinPutController.text = '';
     }
@@ -172,14 +170,14 @@ class _AppLockScreenState extends BaseState<AppLockScreen> {
 
   _bioAuth() async {
     if (await AppLockUtil.checkBioAuthEnable()) {
-      var authConfig = await AuthUtil.getAuthConfig(
+      var authConfig = await BioAuthUtil.getAuthConfig(
         null,
         authType: AuthType.walletLock,
       );
 
-      var result = await AuthUtil.bioAuth(
+      var result = await BioAuthUtil.auth(
         context,
-        AuthUtil.currentBioMetricType(authConfig),
+        BioAuthUtil.currentBioMetricType(authConfig),
       );
 
       if (result) {

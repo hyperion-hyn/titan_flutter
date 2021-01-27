@@ -14,8 +14,8 @@ import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
-class AuthUtil {
-  static Future<bool> bioAuth(
+class BioAuthUtil {
+  static Future<bool> auth(
     BuildContext context,
     BiometricType biometricType,
   ) async {
@@ -91,6 +91,17 @@ class AuthUtil {
       }
     }
     return authenticated;
+  }
+
+  static Future<bool> checkBioAuthAvailable() async {
+    List availableBiometricTypes = List();
+    LocalAuthentication auth = LocalAuthentication();
+    try {
+      availableBiometricTypes = await auth.getAvailableBiometrics();
+    } on PlatformException catch (e) {
+      print(e);
+    }
+    return availableBiometricTypes.isNotEmpty;
   }
 
   static Future<AuthConfigModel> getAuthConfig(
