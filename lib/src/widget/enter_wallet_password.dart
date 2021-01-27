@@ -104,13 +104,6 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
 //                                if (widget.useDigits)
 //                                  LengthLimitingTextInputFormatter(6),
                                   ],
-                                  validator: (value) {
-                                    if (!ValidatorUtil.validatePassword(value)) {
-                                      return S.of(context).wallet_password_error;
-                                    } else {
-                                      return null;
-                                    }
-                                  },
                                   controller: passwordEditingController,
                                   keyboardType: TextInputType.emailAddress,
                                   errorText: walletEditErrorMsg != null ? walletEditErrorMsg : null,
