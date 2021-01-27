@@ -38,6 +38,6 @@ class SetAppLockPwdState extends AppLockState {
   SetAppLockPwdState(this.pwd, this.hint);
 }
 
-class LockWalletState extends AppLockState {}
+class LockAppState extends AppLockState {}
 
-class UnlockWalletState extends AppLockState {}
+class UnlockAppState extends AppLockState {}

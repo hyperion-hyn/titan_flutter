@@ -535,25 +535,25 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
-            child: Text('Wallet Lock is ${AppLockInheritedModel.of(context).isWalletLockActive}'),
+            child: Text('Wallet Lock is ${AppLockInheritedModel.of(context).isLockActive}'),
           ),
           RaisedButton(
             child: Text('Lock wallet'),
             onPressed: () async {
-              BlocProvider.of<AppLockBloc>(context).add(LockWalletEvent());
+              BlocProvider.of<AppLockBloc>(context).add(LockAppEvent());
             },
           ),
           RaisedButton(
             child: Text('Unlock wallet'),
             onPressed: () async {
-              BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
+              BlocProvider.of<AppLockBloc>(context).add(UnLockAppEvent());
             },
           ),
           Row(
             children: [
               Text('Wallet Lock Enabled'),
               Switch(
-                  value: (AppLockInheritedModel.of(context).isWalletLockEnable),
+                  value: (AppLockInheritedModel.of(context).isLockEnable),
                   onChanged: (value) {
                     var walletAddress = WalletInheritedModel.of(context)
                             ?.activatedWallet

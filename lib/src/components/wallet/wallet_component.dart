@@ -138,7 +138,7 @@ class _WalletManagerState extends State<_WalletManager> {
             _activatedWallet = _activatedWallet.copyWith(WalletViewVo(balance: balance));
 
             ///Refresh bio-auth config
-            BlocProvider.of<AppLockBloc>(context).add(RefreshBioAuthConfigEvent(
+            BlocProvider.of<AuthBloc>(context).add(RefreshBioAuthConfigEvent(
               _activatedWallet.wallet,
             ));
           }
@@ -265,17 +265,6 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
       }
     }
     return null;
-  }
-
-  String getCoinIconPathBySymbol(String symbol) {
-    if (this.activatedWallet != null) {
-      for (var coin in this.activatedWallet.coins) {
-        if (coin.symbol == symbol) {
-          return coin.logo;
-        }
-      }
-    }
-    return '';
   }
 
   CoinViewVo getCoinVoOfHyn() {

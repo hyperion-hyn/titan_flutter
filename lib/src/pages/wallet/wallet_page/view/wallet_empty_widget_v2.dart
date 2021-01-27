@@ -27,6 +27,7 @@ class EmptyWalletViewV2 extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
+          SizedBox(height: 36),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Container(
@@ -52,13 +53,11 @@ class EmptyWalletViewV2 extends StatelessWidget {
               tips ?? S.of(context).private_wallet_tips,
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  fontSize: 12,
-                  color: HexColor('#FF9B9B9B')),
+                  fontWeight: FontWeight.normal, fontSize: 12, color: HexColor('#FF9B9B9B')),
             ),
           ),
           SizedBox(
-            height: 64,
+            height: 100,
           ),
           Padding(
             padding: const EdgeInsets.all(16),
@@ -72,25 +71,17 @@ class EmptyWalletViewV2 extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  _optionItem(context, S.of(context).create_wallet, '第一次使用钱包',
-                      () async {
+                  _optionItem(context, S.of(context).create_wallet, '第一次使用钱包', () async {
                     if (await _checkConfirmWalletPolicy()) {
                       UiUtil.showConfirmPolicyDialog(
                         context,
                         PolicyType.WALLET,
                       );
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //   builder: (BuildContext context) => PolicyConfirmPage(
-                      //     PolicyType.WALLET,
-                      //   ),
-                      // ));
                     } else {
-                      var currentRouteName =
-                          RouteUtil.encodeRouteNameWithoutParams(context);
+                      var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
                       await Application.router.navigateTo(
                         context,
-                        Routes.wallet_create +
-                            '?entryRouteName=$currentRouteName&isCreate=1',
+                        Routes.wallet_create + '?entryRouteName=$currentRouteName&isCreate=1',
                       );
                       backAndUpdatePage(context);
                     }
@@ -98,18 +89,15 @@ class EmptyWalletViewV2 extends StatelessWidget {
                   _divider(),
                   _optionItem(context, '恢复身份', '已拥有钱包', () async {
                     if (await _checkConfirmWalletPolicy()) {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => PolicyConfirmPage(
-                          PolicyType.WALLET,
-                        ),
-                      ));
+                      UiUtil.showConfirmPolicyDialog(
+                        context,
+                        PolicyType.WALLET,
+                      );
                     } else {
-                      var currentRouteName =
-                          RouteUtil.encodeRouteNameWithoutParams(context);
+                      var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
                       Application.router.navigateTo(
                         context,
-                        Routes.wallet_create +
-                            '?entryRouteName=$currentRouteName',
+                        Routes.wallet_create + '?entryRouteName=$currentRouteName',
                       );
                       backAndUpdatePage(context);
                     }
@@ -132,7 +120,10 @@ class EmptyWalletViewV2 extends StatelessWidget {
     return InkWell(
       onTap: action,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(
+          vertical: 12.0,
+          horizontal: 16.0,
+        ),
         child: Row(
           children: [
             SizedBox(
@@ -187,8 +178,7 @@ class EmptyWalletViewV2 extends StatelessWidget {
 
   backAndUpdatePage(BuildContext context) {
     var activatedWalletVo =
-        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
-            ?.activatedWallet;
+        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)?.activatedWallet;
     if (activatedWalletVo != null && loadDataBloc != null) {
       loadDataBloc.add(LoadingEvent());
     }

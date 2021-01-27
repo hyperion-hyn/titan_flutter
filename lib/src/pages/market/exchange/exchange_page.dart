@@ -423,10 +423,6 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
     var _isShowBalance = ExchangeInheritedModel.of(context).exchangeModel?.isShowBalances ?? true;
     var _isExchangeAccountLoggin =
         ExchangeInheritedModel.of(context).exchangeModel?.hasActiveAccount() ?? false;
-
-    if (AppLockInheritedModel.of(context).isWalletLockActive) {
-      return Text('请先解锁钱包');
-    }
     if (_isExchangeAccountLoggin) {
       return Text.rich(
         TextSpan(children: [
@@ -516,7 +512,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
         value: key,
         child: _coinItem(
           key,
-          WalletInheritedModel.of(context).getCoinIconPathBySymbol(key),
+          Tokens.getCoinIconPathBySymbol(key),
           false,
         ),
       ));
@@ -533,7 +529,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
             value: coin,
             child: _coinItem(
               coin,
-              WalletInheritedModel.of(context).getCoinIconPathBySymbol(coin),
+              Tokens.getCoinIconPathBySymbol(coin),
               false,
             ),
           ));

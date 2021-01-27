@@ -62,7 +62,6 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   bool _isExchangeAccountAbnormal = false;
   bool _isSafeLockUnlock = false;
   bool _isShowBalances = true;
-  bool _hasBackupWallet = false;
   LegalSign activeQuotesSign;
 
   @override
@@ -140,8 +139,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
       context,
       aspect: WalletAspect.activatedWallet,
     ).activatedWallet;
-    _hasBackupWallet = await WalletUtil.checkIsBackUpMnemonic(
-        activatedWalletVo?.wallet?.getEthAccount()?.address ?? "");
+    var _hasBackupWallet = activatedWalletVo?.wallet?.walletExpandInfoEntity?.isBackup ?? false;
     if (activatedWalletVo == null || _hasBackupWallet || Application.hasShowBackupWalletDialog) {
       return;
     }
@@ -306,17 +304,17 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
       aspect: WalletAspect.activatedWallet,
     ).activatedWallet;
     if (activatedWalletVo != null) {
-      if (AppLockInheritedModel.of(context).isWalletLockActive)
-        return Column(
-          children: [
-            SizedBox(height: 32),
-            AppLockScreen(
-              onUnlock: () {
-                BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
-              },
-            ),
-          ],
-        );
+      // if (AppLockInheritedModel.of(context).isLockActive)
+      //   return Column(
+      //     children: [
+      //       SizedBox(height: 32),
+      //       AppLockScreen(
+      //         onUnlock: () {
+      //           BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
+      //         },
+      //       ),
+      //     ],
+      //   );
 
       return LoadDataContainer(
         bloc: loadDataBloc,

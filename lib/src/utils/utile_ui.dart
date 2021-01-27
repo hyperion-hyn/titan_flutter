@@ -15,6 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:r_scan/r_scan.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
@@ -307,7 +308,7 @@ class UiUtil {
                   Column(
                     children: <Widget>[
                       contentWidget,
-                      if(actions != null)
+                      if (actions != null)
                         Padding(
                           padding: EdgeInsets.only(top: 18, bottom: 18),
                           child: Row(
@@ -326,7 +327,8 @@ class UiUtil {
     );
   }
 
-  static Future<T> showBottomDialogView<T>(BuildContext context, {
+  static Future<T> showBottomDialogView<T>(
+    BuildContext context, {
     double dialogHeight = 288,
     Widget customWidget,
     String imagePath,
@@ -344,7 +346,7 @@ class UiUtil {
         isScrollControlled: isScrollControlled,
         shape: RoundedRectangleBorder(
           borderRadius:
-          BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
         ),
         builder: (BuildContext context) {
           return Container(
@@ -402,7 +404,7 @@ class UiUtil {
                       )
                   ],
                 ),
-                if(showCloseBtn)
+                if (showCloseBtn)
                   InkWell(
                     child: Padding(
                       padding: const EdgeInsets.all(24.0),
@@ -723,7 +725,6 @@ class UiUtil {
     String remindStr,
     AuthType authType = AuthType.pay,
   }) async {
-
     ///新版取消数字密码输入框
     // var useDigits = await WalletUtil.checkUseDigitsPwd(
     //   wallet,
@@ -759,14 +760,16 @@ class UiUtil {
           );
         },
       );
-      return showAlertViewNew(context,contentWidget: Material(
-        child: EnterWalletPasswordWidget(
-          isShowBioAuthIcon: isShowBioAuthIcon,
-          wallet: wallet,
-          authType: authType,
-          onPwdSubmitted: onCheckPwdValid,
-        ),
-      ),isShowCloseIcon: false);
+      return showAlertViewNew(context,
+          contentWidget: Material(
+            child: EnterWalletPasswordWidget(
+              isShowBioAuthIcon: isShowBioAuthIcon,
+              wallet: wallet,
+              authType: authType,
+              onPwdSubmitted: onCheckPwdValid,
+            ),
+          ),
+          isShowCloseIcon: false);
       /*return await showDialog(
           context: context,
           barrierDismissible: false,
@@ -1058,6 +1061,10 @@ class UiUtil {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
+
+                  ///turn off app-lock
+                  AppLockUtil.appLockSwitch(context, false);
+
                   if (tempListImagePaths != null && tempListImagePaths.length == 1) {
                     RScanResult mnemonicWords =
                         await RScan.scanImagePath(tempListImagePaths[0].path);
@@ -1109,6 +1116,10 @@ class UiUtil {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
+
+                  ///turn off app-lock
+                  AppLockUtil.appLockSwitch(context, false);
+
                   if (tempListImagePaths != null && tempListImagePaths.length == 1) {
                     var path = tempListImagePaths[0].path;
                     callback(path);

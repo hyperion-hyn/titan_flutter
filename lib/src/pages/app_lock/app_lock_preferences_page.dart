@@ -87,7 +87,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                   toggleSize: 18.0,
                   activeColor: HexColor('#EDC313'),
                   inactiveColor: HexColor('#DEDEDE'),
-                  value: AppLockInheritedModel.of(context).isWalletLockEnable,
+                  value: AppLockInheritedModel.of(context).isLockEnable,
                   onToggle: (value) {
                     _setUpAppLock(value);
                   },
@@ -105,7 +105,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
   _awayTimePreference() {
     var timeValueList = [0, 60, 300, 3600, 18000];
     var timeShowList = ['立即', '1分钟', '5分钟', '1小时', '5小时'];
-    if (AppLockInheritedModel.of(context).isWalletLockEnable) {
+    if (AppLockInheritedModel.of(context).isLockEnable) {
       return SliverToBoxAdapter(
         child: Container(
           child: Padding(
@@ -134,8 +134,8 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                   child: Column(
                     children: List.generate(timeValueList.length, (index) {
                       var timeShow = index == 0 ? '立即' : '如果离开${timeShowList[index]}';
-                      var selected = timeValueList[index] ==
-                          AppLockInheritedModel.of(context).walletLockAwayTime;
+                      var selected =
+                          timeValueList[index] == AppLockInheritedModel.of(context).lockAwayTime;
                       return InkWell(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -197,7 +197,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
           bool isBioAuthAvailable = snapshot.data;
-          if (isBioAuthAvailable) {
+          if (isBioAuthAvailable && AppLockInheritedModel.of(context).isLockEnable) {
             return _section(
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -215,7 +215,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                       toggleSize: 18.0,
                       activeColor: HexColor('#EDC313'),
                       inactiveColor: HexColor('#DEDEDE'),
-                      value: AppLockInheritedModel.of(context).isWalletLockBioAuthEnabled,
+                      value: AppLockInheritedModel.of(context).isBioAuthEnabled,
                       onToggle: (value) {
                         _setUpBioAuth(value);
                       },

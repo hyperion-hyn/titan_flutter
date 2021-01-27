@@ -10,6 +10,8 @@ class RootPageControlBloc extends Bloc<RootPageControlEvent, RootPageControlStat
   Stream<RootPageControlState> mapEventToState(RootPageControlEvent event) async* {
     if (event is SetRootPageEvent) {
       yield UpdateRootPageState(child: event.page);
+    } else if (event is ShowAppLockEvent) {
+      yield ShowAppLockState();
     }
   }
 }
