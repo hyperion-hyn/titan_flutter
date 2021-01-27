@@ -26,9 +26,9 @@ class SetWalletLockBioAuthState extends AppLockState {
 }
 
 class SetWalletLockCountDownState extends AppLockState {
-  final bool isStop;
+  final bool isAway;
 
-  SetWalletLockCountDownState(this.isStop);
+  SetWalletLockCountDownState(this.isAway);
 }
 
 class SetAppLockPwdState extends AppLockState {

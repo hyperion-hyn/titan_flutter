@@ -233,41 +233,6 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
         );
       },
     );
-    if (AppLockInheritedModel.of(context).isWalletLockEnable &&
-        AuthInheritedModel.of(context).bioAuthAvailable) {
-      return _section(
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '快捷解锁',
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-              ),
-              FlutterSwitch(
-                width: 54.0,
-                height: 26.0,
-                toggleSize: 18.0,
-                activeColor: HexColor('#EDC313'),
-                inactiveColor: HexColor('#DEDEDE'),
-                value: AppLockInheritedModel.of(context).isWalletLockBioAuthEnabled,
-                onToggle: (value) {
-                  _setUpBioAuth(value);
-                },
-              ),
-            ],
-          ),
-        ),
-        title: '生物识别',
-        childPadding: EdgeInsets.symmetric(vertical: 0.0),
-      );
-    } else {
-      return SliverToBoxAdapter(
-        child: SizedBox(),
-      );
-    }
   }
 
   _setUpAppLock(bool value) async {

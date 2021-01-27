@@ -24,9 +24,9 @@ class SetWalletLockBioAuthEvent extends AppLockEvent {
 }
 
 class SetAppLockCountDownEvent extends AppLockEvent {
-  final bool isStop;
+  final bool isAway;
 
-  SetAppLockCountDownEvent(this.isStop);
+  SetAppLockCountDownEvent(this.isAway);
 }
 
 class SetAppLockPwdEvent extends AppLockEvent {

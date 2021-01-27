@@ -63,7 +63,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.paused:
         //print('-----[App] paused');
-        _setAppLockCountDown(false);
+        _setAppLockCountDown(true);
         //_appLockAwayTime = await AppLockUtil.getAwayTime();
         break;
       case AppLifecycleState.detached:
@@ -71,18 +71,18 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.resumed:
         //print('-----[App] resumed');
-        _setAppLockCountDown(true);
+        _setAppLockCountDown(false);
         //print('appLockAwayTime $_appLockAwayTime');
         //if (mounted) setState(() {});
         break;
     }
   }
 
-  _setAppLockCountDown(bool isStop) {
+  _setAppLockCountDown(bool isAway) {
     BlocProvider.of<AppLockBloc>(
       Keys.rootKey.currentContext,
     ).add(
-      SetAppLockCountDownEvent(isStop),
+      SetAppLockCountDownEvent(isAway),
     );
   }
 
