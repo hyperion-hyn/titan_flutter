@@ -389,9 +389,6 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
 
       BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
 
-      ///Use digits password now
-      // WalletUtil.useDigitsPwd(wallet);
-
       ///Clear exchange account when switch wallet
       BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
       await Future.delayed(Duration(milliseconds: 500)); //延时确保激活成功

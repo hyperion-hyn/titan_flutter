@@ -92,10 +92,14 @@ class WalletUtil {
     String walletAddress,
     WalletExpandInfoEntity walletExpandInfoEntity,
   ) async {
-    await AppCache.saveValue(
-      '${PrefsKey.WALLET_EXPAND_INFO_PREFIX}$walletAddress',
-      "${json.encode(walletExpandInfoEntity.toJson())}",
-    );
+    if (walletExpandInfoEntity == null) {
+      await AppCache.remove("${PrefsKey.WALLET_EXPAND_INFO_PREFIX}$walletAddress");
+    } else {
+      await AppCache.saveValue(
+        "${PrefsKey.WALLET_EXPAND_INFO_PREFIX}$walletAddress",
+        "${json.encode(walletExpandInfoEntity.toJson())}",
+      );
+    }
   }
 
   static Future<WalletExpandInfoEntity> getWalletExpandInfo(
@@ -104,6 +108,9 @@ class WalletUtil {
     String entityStr = await AppCache.getValue(
       '${PrefsKey.WALLET_EXPAND_INFO_PREFIX}$walletAddress',
     );
+    if(entityStr == null){
+      return null;
+    }
     return WalletExpandInfoEntity.fromJson(json.decode(entityStr));
   }
 
