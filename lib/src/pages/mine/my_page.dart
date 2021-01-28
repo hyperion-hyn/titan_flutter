@@ -130,18 +130,16 @@ class _MyPageState extends BaseState<MyPage> {
           children: <Widget>[
             Container(
               alignment: Alignment.centerLeft,
-              height: 180.0 + MediaQuery.of(context).padding.top,
+              height: 170.0 + MediaQuery.of(context).padding.top,
               child: Container(
                 // color: Theme.of(context).primaryColor,
                 decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("res/drawable/person_header_bg.png"),
+                    fit: BoxFit.cover,
+                  ),
                   gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: <Color>[
-                      Color(0xffE7C01A),
-                      Color(0xffEDC82B),
-                      Color(0xffEDC82B),
-                    ],
+                    colors: SupportedTheme.defaultBtnColors(context),
                   ),
                 ),
                 child: Stack(
@@ -430,8 +428,14 @@ class _MyPageState extends BaseState<MyPage> {
 
                 // Application.router.navigateTo(context, Routes.wallet_manager);
               },
-              child: Text(S.of(context).create_import_wallet_account,
-                  style: TextStyle(color: SupportedTheme.textColorBlack, fontSize: 20))),
+              child: Text(
+                S.of(context).create_import_wallet_account,
+                style: TextStyle(
+                  color: HexColor('#0068E4'),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),),
         ),
         Spacer(),
       ],
@@ -529,7 +533,11 @@ class _MyPageState extends BaseState<MyPage> {
           SizedBox(width: 16),
           Text(
             S.of(context).titan_encrypted_map_ecology,
-            style: Theme.of(context).textTheme.apply().bodyText1,
+            style: TextStyle(
+              color: SupportedTheme.textColorBlack,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           Spacer(),
           InkWell(
@@ -538,7 +546,11 @@ class _MyPageState extends BaseState<MyPage> {
               children: [
                 Text(
                   S.of(context).share_app,
-                  style: Theme.of(context).textTheme.apply().bodyText1,
+                  style: TextStyle(
+                    color: SupportedTheme.textColorBlack,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -557,8 +569,8 @@ class _MyPageState extends BaseState<MyPage> {
                     child: Image.asset(
                       'res/drawable/tabbar_person_share.png',
                       // color: Color(0xffffffff),
-                      width: 16,
-                      height: 16,
+                      width: 18,
+                      height: 18,
                     ),
                     /*child: Icon(
                       Icons.share,
