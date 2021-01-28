@@ -281,45 +281,14 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
           authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
 
           ///Save auth config
-          BioAuthUtil.saveAuthConfig(
-            authConfigModel,
-            widget._wallet,
-            authType: widget._authType,
-          );
+          BioAuthUtil.saveAuthConfig(authConfigModel, widget._wallet, authType: widget._authType);
 
-          UiUtil.showHintToast(
-              context,
-              Image.asset(
-                'res/drawable/ic_toast_check.png',
-                width: 60,
-                height: 60,
-              ),
-              S.of(context).set_bio_auth_success);
+          UiUtil.showStateHint(context, true, S.of(context).set_bio_auth_success);
         } else {
-          UiUtil.showHintToast(
-              context,
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Image.asset(
-                  'res/drawable/ic_toast_cross.png',
-                  width: 30,
-                  height: 30,
-                ),
-              ),
-              S.of(context).set_bio_auth_fail);
+          UiUtil.showStateHint(context, false, S.of(context).set_bio_auth_fail);
         }
       } else {
-        UiUtil.showHintToast(
-            context,
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Image.asset(
-                'res/drawable/ic_toast_cross.png',
-                width: 30,
-                height: 30,
-              ),
-            ),
-            S.of(context).set_bio_auth_fail);
+        UiUtil.showStateHint(context, false, S.of(context).set_bio_auth_fail);
       }
     } else {
       if (biometricType == BiometricType.face) {

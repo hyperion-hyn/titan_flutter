@@ -122,6 +122,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
                 ],
                 fontSize: 16,
                 fontColor: DefaultColors.color333,
+                fontWeight: FontWeight.bold,
               ),
             )
           ],
