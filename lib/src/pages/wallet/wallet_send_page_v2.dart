@@ -684,6 +684,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       addressErrorHint = S.of(context).input_valid_address;
     }
 
+    // todo: 区分各种币种
     return Form(
       key: _toKey,
       child: Container(
@@ -728,7 +729,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
           decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             border: InputBorder.none,
-            hintText: 'HYN地址',
+            hintText: '请输入收款地址',
             errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
             hintStyle: TextStyle(
               fontSize: 16,
@@ -1064,7 +1065,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
           if (password == null) {
             return false;
           }
-          print("1111");
 
           // 1.Bitcoin
           if (_isBTC) {
@@ -1106,7 +1106,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
               );
             }
           }
-          print("2222");
 
           return true;
         } catch (e) {
@@ -1123,7 +1122,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         }
         msg = FluroConvertUtils.fluroCnParamsEncode(msg);
         Application.router.navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
-        print("3333");
 
         return true;
       },
