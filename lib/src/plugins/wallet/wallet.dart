@@ -416,7 +416,7 @@ class Wallet {
     int gasLimit,
   }) async {
     assert(contractAddress != null, '合约地址不能为空');
-    assert(password == null && cred == null, '密码/密钥不能为空');
+    assert((password == null || cred == null), '密码/密钥不能为空');
     assert(toAddress != null, '接收人不能为空');
     assert(value != null, '转账数量不能为空');
 
