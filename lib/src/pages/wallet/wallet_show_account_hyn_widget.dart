@@ -625,6 +625,9 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
       if (page == getStartPage()) {
         retList.add('header');
 
+        if(context == null){
+          return retList;
+        }
         //update balance
         BlocProvider.of<WalletCmpBloc>(context)
             .add(UpdateActivatedWalletBalanceEvent(
@@ -635,7 +638,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
       retList.addAll(transferList);
     } catch (e, stacktrace) {
       retList.add('header');
-      LogUtil.toastException("$e  $stacktrace");
+      LogUtil.toastException(e);
     }
     return retList;
   }
