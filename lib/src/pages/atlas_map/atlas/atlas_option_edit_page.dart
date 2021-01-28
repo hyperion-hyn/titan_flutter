@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -67,6 +68,9 @@ class _AtlasNodeOptionEditState extends State<OptionEditPage> {
         child: Form(
           key: formKey,
           child: TextFormField(
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(widget.maxLength),
+            ],
             autofocus: true,
             controller: _controller,
             keyboardType: widget.keyboardType ?? TextInputType.text,
