@@ -35,14 +35,10 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
   }
 
   void initMnemonic() {
-    logger.i("mnemonic:${widget.mnemonic}");
     _candidateWords = widget.mnemonic
         .split(" ")
         .asMap()
-        .map((index, word) => MapEntry(
-              index,
-              CandidateWordVo("$index-$word", word, false),
-            ))
+        .map((index, word) => MapEntry(index, CandidateWordVo("$index-$word", word, false)))
         .values
         .toList();
 
@@ -73,138 +69,104 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(
-                            '确认助记词',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Text(
-                            '请按顺序点击助记词，以确认您正确备份。',
-                            style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
-                          ),
-                          SizedBox(
-                            height: 36,
-                          ),
+                          _header(),
                           _selectedCandidateWordsView(),
-                          SizedBox(
-                            height: 32,
-                          ),
                           _candidateWordsView(),
-                          SizedBox(
-                            height: 32,
-                          ),
                         ],
                       ),
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 36.0, top: 22),
-                  child: ClickOvalButton(
-                    S.of(context).next_step,
-                    () async {
-                      var selectedMnemonitc = "";
-                      _selectedResumeWords.forEach(
-                        (word) => selectedMnemonitc = selectedMnemonitc + word.text + " ",
-                      );
-
-                      logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
-                      if (selectedMnemonitc.trim() == widget.mnemonic.trim()) {
-                        await _confirmBackUp();
-
-                        UiUtil.showStateHint(context, true, S.of(context).backup_finish);
-                        Routes.popUntilCachedEntryRouteName(context);
-                      } else {
-                        _showWrongOrderErrorHint(context);
-                      }
-                    },
-                    width: 300,
-                    height: 46,
-                    btnColor: [
-                      HexColor("#F7D33D"),
-                      HexColor("#E7C01A"),
-                    ],
-                    fontSize: 14,
-                    fontColor: DefaultColors.color333,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
+                _bottomBtn(),
               ],
             ),
           );
         }));
   }
 
-  _selectedCandidateWordsView() {
-    return Container(
-      width: double.infinity,
-      constraints: BoxConstraints(
-        minHeight: 200,
-      ),
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-          border: Border.all(
-            color: DefaultColors.colordedede,
+  _header() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '确认助记词',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
-          color: DefaultColors.colorf6f6f6,
-          borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(0.0),
-        child: Wrap(
-          children: List.generate(_selectedResumeWords.length, (index) {
-            var candidateWordVo = _selectedResumeWords[index];
-            return InkWell(
-              onTap: () {
-                _unSelectedWord(candidateWordVo);
-              },
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6.0,
-                      vertical: 6.0,
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          color: HexColor("#FFDEDEDE"),
-                          width: 0.5,
+        ),
+        SizedBox(height: 8),
+        Text(
+          '请按顺序点击助记词，以确认您正确备份。',
+          style: TextStyle(
+            color: Color(0xFF9B9B9B),
+            fontSize: 14,
+          ),
+        ),
+      ],
+    );
+  }
+
+  _selectedCandidateWordsView() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 36.0),
+      child: Container(
+        width: double.infinity,
+        constraints: BoxConstraints(
+          minHeight: 200,
+        ),
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+            border: Border.all(
+              color: DefaultColors.colordedede,
+            ),
+            color: DefaultColors.colorf6f6f6,
+            borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(0.0),
+          child: Wrap(
+            children: List.generate(_selectedResumeWords.length, (index) {
+              var candidateWordVo = _selectedResumeWords[index];
+              return InkWell(
+                onTap: () {
+                  _unSelectedWord(candidateWordVo);
+                },
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 6.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: HexColor("#FFDEDEDE"),
+                            width: 0.5,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8.0,
-                          horizontal: 16.0,
-                        ),
-                        child: Text(
-                          candidateWordVo.text,
-                          style: TextStyle(
-                            color: DefaultColors.color333,
-                            fontWeight: FontWeight.w500,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                          child: Text(
+                            candidateWordVo.text,
+                            style: TextStyle(
+                              color: DefaultColors.color333,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Positioned(
+                    Positioned(
                       top: 3,
                       right: 3,
-                      child: Image.asset(
-                        'res/drawable/ic_transfer_account_detail_fail.png',
-                        width: 12,
-                        height: 12,
-                      )),
-                ],
-              ),
-            );
-          }),
+                      child: Image.asset('res/drawable/ic_transfer_account_detail_fail.png',
+                          width: 12, height: 12),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ),
         ),
       ),
     );
@@ -250,6 +212,38 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
           ),
         );
       }),
+    );
+  }
+
+  _bottomBtn() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 36.0, top: 22),
+      child: ClickOvalButton(
+        S.of(context).next_step,
+        () async {
+          var selectedMnemonitc = "";
+          _selectedResumeWords.forEach(
+            (word) => selectedMnemonitc = selectedMnemonitc + word.text + " ",
+          );
+          if (selectedMnemonitc.trim() == widget.mnemonic.trim()) {
+            await _confirmBackUp();
+
+            UiUtil.showStateHint(context, true, S.of(context).backup_finish);
+            Routes.popUntilCachedEntryRouteName(context);
+          } else {
+            _showWrongOrderErrorHint(context);
+          }
+        },
+        width: 300,
+        height: 46,
+        btnColor: [
+          HexColor("#F7D33D"),
+          HexColor("#E7C01A"),
+        ],
+        fontSize: 14,
+        fontColor: DefaultColors.color333,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 
