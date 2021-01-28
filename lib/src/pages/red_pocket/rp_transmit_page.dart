@@ -949,53 +949,43 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     }
 
     var value = _hynPerRpValue * (int.tryParse(inputText) ?? 0);
-    var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
-    var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
-
-    var fees = ConvertTokenUnit.weiToEther(
-        weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
 
     showSendDialog(
       context: context,
       value: value,
-      valueUnit: 'HYN',
-      gasValue: fees.toDouble(),
-      gasUnit: 'HYN',
-      gasPrice: gasPrice,
-      gasLimit: gasLimit,
     );
   }
 
   Future<bool> showSendDialog<T>({
     BuildContext context,
-    String to,
     double value,
-    String valueUnit,
-    double gasValue,
-    String gasUnit,
-    Decimal gasPrice,
-    int gasLimit,
   }) async {
     var walletVo = WalletInheritedModel.of(context).activatedWallet;
     var wallet = walletVo.wallet;
-    var walletName = wallet.keystore.name;
 
+    var fromName = wallet.keystore.name;
     var from = wallet.getAtlasAccount().address;
     var fromAddressHyn = WalletUtil.ethAddressToBech32Address(from);
     var fromAddress = shortBlockChainAddress(fromAddressHyn);
 
+    var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+    var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+    var gasValue = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)))
+        .toDouble();
+
     WalletSendDialogEntity entity = WalletSendDialogEntity(
       type: 'tx_rp_transmit',
       value: value,
-      valueUnit: valueUnit,
+      valueUnit: 'HYN',
       title: '抵押传导',
-      fromName: walletName,
+      fromName: fromName,
       fromAddress: fromAddress,
       toName: '传导池',
       toAddress: '',
       gas: gasValue.toString(),
       gasDesc: '',
-      gasUnit: gasUnit,
+      gasUnit: 'HYN',
       action: () async {
         try {
           print("1111");
