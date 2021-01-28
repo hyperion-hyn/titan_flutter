@@ -11,12 +11,10 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
-import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
-import 'package:titan/src/plugins/wallet/config/bitcoin.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -55,7 +53,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
 
   final StreamController<dynamic> _inputController = StreamController.broadcast();
 
-  bool get _isBTC => (widget.coinVo.coinType == CoinType.BITCOIN);
+  bool get _isBTC => (_coinType == CoinType.BITCOIN);
   bool get _isCustom => _selectedIndex == -1;
 
   int _selectedIndex = -1;
@@ -75,6 +73,9 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
 
     return defaultValue;
   }
+
+  int get _coinType => widget.coinVo.coinType;
+
 
   @override
   void initState() {
@@ -162,7 +163,6 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
       child: StreamBuilder<Object>(
           stream: _inputController.stream,
           builder: (context, snapshot) {
-            var coinType = widget.coinVo.coinType;
 
             var gasPriceEstimateStr = '';
             var quotePrice = _activatedQuoteSign?.price ?? 0;
@@ -178,12 +178,12 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
             var gasLimit;
             var gasUnit;
 
-            if (CoinType.BITCOIN == coinType) {
+            if (CoinType.BITCOIN == _coinType) {
               gasPrice = _isCustom
                   ? Decimal?.tryParse(_gasSatController.text ?? '0') ?? Decimal.zero
                   : selectedGasPrice;
               gasLimit = 78;
-              // gasLimit = BitcoinGasPrice.BTC_RAWTX_SIZE;
+
               gasUnit = 'sat/b';
               gasTitle = '矿工费率';
               format = '$gasPrice $gasUnit * $gasLimit bytes  ';
@@ -193,7 +193,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
               var gasPriceEstimate = fees * Decimal.parse(quotePrice.toString());
               gasPriceEstimateStr =
                   "$quoteSign ${FormatUtil.formatPrice(gasPriceEstimate.toDouble())}";
-            } else if (CoinType.ETHEREUM == coinType) {
+            } else if (CoinType.ETHEREUM == _coinType) {
               gasPrice = _isCustom
                   ? Decimal?.tryParse(_gasPriceController.text ?? '0') ?? Decimal.zero
                   : selectedGasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI);
@@ -322,9 +322,9 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
                       var model = _dataList[index];
                       var gasValue;
 
-                      if (CoinType.BITCOIN == coinType) {
+                      if (CoinType.BITCOIN == _coinType) {
                         gasValue = model.gas;
-                      } else if (CoinType.ETHEREUM == coinType) {
+                      } else if (CoinType.ETHEREUM == _coinType) {
                         gasValue = model.gas / Decimal.fromInt(EthereumUnitValue.G_WEI);
                       } else {
                         gasValue = model.gas / Decimal.fromInt(EthereumUnitValue.G_WEI);
@@ -435,10 +435,10 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
             onTap: () {
               if (mounted && _selectedIndex != -1) {
                 setState(() {
-                  var coinType = widget.coinVo.coinType;
-                  if (CoinType.BITCOIN == coinType) {
+
+                  if (CoinType.BITCOIN == _coinType) {
                     _gasSatController.text = '';
-                  } else if (CoinType.ETHEREUM == coinType) {
+                  } else if (CoinType.ETHEREUM == _coinType) {
                     _gasLimitController.text = '$_defaultGasLimit';
                     _gasPriceController.text = '';
                   } else {

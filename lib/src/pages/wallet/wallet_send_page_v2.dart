@@ -64,20 +64,11 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
   int get _nonce {
     return int.tryParse(_nonceController.text) ?? null;
   }
-
-  double _notionalValue = 0;
-  bool _isHighLevel = false;
-  double _amountFontSize = 30;
-
+  
   bool get _isCustom => _selectedIndex == -1;
+  
   bool get _isBTC => (widget.coinVo.coinType == CoinType.BITCOIN);
-
-  int _selectedIndex = 0;
-  List<GasPriceRecommendModel> _dataList = [];
-
-  TokenPriceViewVo _activatedQuoteSign;
-  var _gasPriceRecommend;
-
+  
   int get _defaultGasLimit {
     var defaultValue = widget.coinVo.symbol == "ETH"
         ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
@@ -88,19 +79,19 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     return defaultValue;
   }
 
-  int get coinType => widget.coinVo.coinType;
+  int get _coinType => widget.coinVo.coinType;
 
-  bool get isBbcOrEth => (CoinType.BITCOIN == coinType || CoinType.ETHEREUM == coinType);
+  bool get _isBbcOrEth => (CoinType.BITCOIN == _coinType || CoinType.ETHEREUM == _coinType);
 
-  String get baseUnit {
+  String get _baseUnit {
     var baseUnit = widget.coinVo.symbol;
 
     // 1.BTC
-    if (CoinType.BITCOIN == coinType) {
+    if (CoinType.BITCOIN == _coinType) {
       baseUnit = 'BTC';
     }
     // 2.ETH
-    else if (CoinType.ETHEREUM == coinType) {
+    else if (CoinType.ETHEREUM == _coinType) {
       baseUnit = 'ETH';
     }
     // 3.ATLAS
@@ -115,100 +106,21 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     return baseUnit;
   }
 
-  String get feesStr => FormatUtil.formatNumDecimal(fees.toDouble(), decimal: 6);
+  Decimal get _selectedGasPrice => _dataList[_isCustom ? 0 : _selectedIndex].gas;
 
-  Decimal get fees {
-    var fees;
+  String get _quoteSign => _activatedQuoteSign?.legal?.sign ?? '';
 
-    // 1.BTC
-    if (CoinType.BITCOIN == coinType) {
-      fees = ConvertTokenUnit.weiToDecimal(
-          BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toString()), 8);
-    }
-    // 2.ETH
-    else if (CoinType.ETHEREUM == coinType) {
-      fees = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(
-              (gasPrice * Decimal.fromInt(gasLimit) * Decimal.fromInt(EthereumUnitValue.G_WEI))
-                  .toStringAsFixed(0)));
-    }
-    // 3.ATLAS
-    else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      fees = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
-    }
-    // 3.HB
-    else if (widget.coinVo.coinType == CoinType.HB_HT) {
-      fees = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
-    }
-
-    return fees;
-  }
-
-  String get gasPriceEstimateStr {
-    var gasPriceEstimateStr = '';
+  Decimal get _gasPrice {
+    var gasPrice = _selectedGasPrice;
 
     // 1.BTC
-    if (CoinType.BITCOIN == coinType) {
-      var feesDecimalValue = ConvertTokenUnit.weiToDecimal(
-          BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toString()), 8);
-
-      var btcQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('BTC')?.price ?? 0;
-      var gasPriceEstimate = feesDecimalValue * Decimal.parse(btcQuotePrice.toString());
-      gasPriceEstimateStr = "$quoteSign ${FormatUtil.formatPrice(gasPriceEstimate.toDouble())}";
-    }
-    // 2.ETH
-    else if (CoinType.ETHEREUM == coinType) {
-      var feesDecimalValue = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(
-              (gasPrice * Decimal.fromInt(gasLimit) * Decimal.fromInt(EthereumUnitValue.G_WEI))
-                  .toStringAsFixed(0)));
-
-      var ethQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('ETH')?.price ?? 0;
-      var gasPriceEstimate = feesDecimalValue * Decimal.parse(ethQuotePrice.toString());
-      gasPriceEstimateStr =
-          "${quoteSign ?? ""}${FormatUtil.formatPrice(gasPriceEstimate.toDouble())}";
-    }
-    // 3.ATLAS
-    else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      var feesDecimalValue = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
-
-      var hynQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('HYN')?.price ?? 0;
-      var gasPriceEstimate = feesDecimalValue * Decimal.parse(hynQuotePrice.toString());
-      gasPriceEstimateStr =
-          '${quoteSign ?? ""} ${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())}';
-    }
-    // 3.HB
-    else if (widget.coinVo.coinType == CoinType.HB_HT) {
-      var feesDecimalValue = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
-
-      var htQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('HT')?.price ?? 0;
-      var gasPriceEstimate = feesDecimalValue * Decimal.parse(htQuotePrice.toString());
-      gasPriceEstimateStr =
-          '${quoteSign ?? ""} ${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())}';
-    }
-
-    return gasPriceEstimateStr;
-  }
-
-  Decimal get selectedGasPrice => _dataList[_isCustom ? 0 : _selectedIndex].gas;
-
-  String get quoteSign => _activatedQuoteSign?.legal?.sign ?? '';
-
-  Decimal get gasPrice {
-    var gasPrice = selectedGasPrice;
-
-    // 1.BTC
-    if (CoinType.BITCOIN == coinType) {
+    if (CoinType.BITCOIN == _coinType) {
       gasPrice =
-          _isCustom ? Decimal?.tryParse(_lastGasSat ?? '0') ?? Decimal.zero : selectedGasPrice;
+          _isCustom ? Decimal?.tryParse(_lastGasSat ?? '0') ?? Decimal.zero : _selectedGasPrice;
     }
     // 2.ETH
-    else if (CoinType.ETHEREUM == coinType) {
-      var initGasPrice = selectedGasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI);
+    else if (CoinType.ETHEREUM == _coinType) {
+      var initGasPrice = _selectedGasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI);
       gasPrice = _isCustom ? Decimal?.tryParse(_lastGasPrice ?? '0') ?? initGasPrice : initGasPrice;
     }
     // 3.ATLAS
@@ -223,16 +135,16 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     return gasPrice;
   }
 
-  int get gasLimit {
+  int get _gasLimit {
     var gasLimit;
 
     // 1.BTC
-    if (CoinType.BITCOIN == coinType) {
+    if (CoinType.BITCOIN == _coinType) {
       gasLimit = 78;
       // gasLimit = BitcoinGasPrice.BTC_RAWTX_SIZE;
     }
     // 2.ETH
-    else if (CoinType.ETHEREUM == coinType) {
+    else if (CoinType.ETHEREUM == _coinType) {
       var initGasLimit = _defaultGasLimit;
       gasLimit = _isCustom ? int?.tryParse(_lastGasLimit ?? '0') ?? initGasLimit : initGasLimit;
     }
@@ -248,6 +160,95 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     return gasLimit;
   }
 
+  Decimal get _gasFees {
+    var fees;
+
+    // 1.BTC
+    if (CoinType.BITCOIN == _coinType) {
+      fees = ConvertTokenUnit.weiToDecimal(
+          BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toString()), 8);
+    }
+    // 2.ETH
+    else if (CoinType.ETHEREUM == _coinType) {
+      fees = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse(
+              (_gasPrice * Decimal.fromInt(_gasLimit) * Decimal.fromInt(EthereumUnitValue.G_WEI))
+                  .toStringAsFixed(0)));
+    }
+    // 3.ATLAS
+    else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+      fees = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toStringAsFixed(0)));
+    }
+    // 3.HB
+    else if (widget.coinVo.coinType == CoinType.HB_HT) {
+      fees = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toStringAsFixed(0)));
+    }
+
+    return fees;
+  }
+
+  String get _gasFeesStr => FormatUtil.formatNumDecimal(_gasFees.toDouble(), decimal: 6);
+
+  String get _gasPriceEstimateStr {
+    var gasPriceEstimateStr = '';
+
+    // 1.BTC
+    if (CoinType.BITCOIN == _coinType) {
+      var feesDecimalValue = ConvertTokenUnit.weiToDecimal(
+          BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toString()), 8);
+
+      var btcQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('BTC')?.price ?? 0;
+      var gasPriceEstimate = feesDecimalValue * Decimal.parse(btcQuotePrice.toString());
+      gasPriceEstimateStr = "$_quoteSign ${FormatUtil.formatPrice(gasPriceEstimate.toDouble())}";
+    }
+    // 2.ETH
+    else if (CoinType.ETHEREUM == _coinType) {
+      var feesDecimalValue = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse(
+              (_gasPrice * Decimal.fromInt(_gasLimit) * Decimal.fromInt(EthereumUnitValue.G_WEI))
+                  .toStringAsFixed(0)));
+
+      var ethQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('ETH')?.price ?? 0;
+      var gasPriceEstimate = feesDecimalValue * Decimal.parse(ethQuotePrice.toString());
+      gasPriceEstimateStr =
+      "${_quoteSign ?? ""}${FormatUtil.formatPrice(gasPriceEstimate.toDouble())}";
+    }
+    // 3.ATLAS
+    else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+      var feesDecimalValue = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toStringAsFixed(0)));
+
+      var hynQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('HYN')?.price ?? 0;
+      var gasPriceEstimate = feesDecimalValue * Decimal.parse(hynQuotePrice.toString());
+      gasPriceEstimateStr =
+      '${_quoteSign ?? ""} ${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())}';
+    }
+    // 3.HB
+    else if (widget.coinVo.coinType == CoinType.HB_HT) {
+      var feesDecimalValue = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toStringAsFixed(0)));
+
+      var htQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('HT')?.price ?? 0;
+      var gasPriceEstimate = feesDecimalValue * Decimal.parse(htQuotePrice.toString());
+      gasPriceEstimateStr =
+      '${_quoteSign ?? ""} ${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())}';
+    }
+
+    return gasPriceEstimateStr;
+  }
+
+  double _notionalValue = 0;
+  bool _isHighLevel = false;
+  double _amountFontSize = 30;
+
+  int _selectedIndex = 0;
+  List<GasPriceRecommendModel> _dataList = [];
+
+  TokenPriceViewVo _activatedQuoteSign;
+  var _gasPriceRecommend;
+  
   String _lastGasSat;
   String _lastGasPrice;
   String _lastGasLimit;
@@ -341,7 +342,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
   }
 
   void _initLastData() async {
-    if (!isBbcOrEth) return;
+    if (!_isBbcOrEth) return;
 
     if (_isBTC) {
       String custom = await AppCache.getValue(
@@ -492,7 +493,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
   }
 
   Widget _gasWidget() {
-    var totalFee = '$feesStr $baseUnit';
+    var totalFee = '$_gasFeesStr $_baseUnit';
 
     return _clipRectWidget(
       paddingH: 16,
@@ -500,7 +501,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       marginV: 0,
       child: InkWell(
         onTap: () {
-          if (isBbcOrEth) {
+          if (_isBbcOrEth) {
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -535,7 +536,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
                   height: 2,
                 ),
                 Text(
-                  gasPriceEstimateStr,
+                  _gasPriceEstimateStr,
                   style: TextStyle(
                     color: HexColor('#999999'),
                     fontSize: 10,
@@ -543,11 +544,11 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
                 ),
               ],
             ),
-            if (isBbcOrEth)
+            if (_isBbcOrEth)
               SizedBox(
                 width: 12,
               ),
-            if (isBbcOrEth)
+            if (_isBbcOrEth)
               Image.asset(
                 'res/drawable/wallet_gas_right.png',
                 width: 8,
@@ -835,7 +836,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
                     bottom: 8,
                   ),
                   child: Text(
-                    "${quoteSign ?? ""} ${FormatUtil.formatPrice(_notionalValue)}",
+                    "${_quoteSign ?? ""} ${FormatUtil.formatPrice(_notionalValue)}",
                     style: TextStyle(
                       color: Color(0xFFc1c1c1),
                       fontWeight: FontWeight.normal,
@@ -963,9 +964,9 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         to: _toController.text,
         value: value,
         valueUnit: widget.coinVo.symbol,
-        gasValue: fees.toDouble(),
-        gasUnit: baseUnit,
-        gasPrice: gasPrice,
+        gasValue: _gasFees.toDouble(),
+        gasUnit: _baseUnit,
+        gasPrice: _gasPrice,
       );
     }
   }
