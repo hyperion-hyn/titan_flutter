@@ -99,10 +99,7 @@ class _ExchangeQuoteListPageState extends State<ExchangeQuoteListPage> {
                           )));
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 16.0,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               child: Column(
                 children: <Widget>[
                   Row(

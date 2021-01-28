@@ -14,9 +14,9 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class WalletBackupConfirmSeedPhrasePageV2 extends StatefulWidget {
   final Wallet wallet;
-  final String mnemonic;
+  final String seedPhrase;
 
-  WalletBackupConfirmSeedPhrasePageV2(this.wallet, this.mnemonic);
+  WalletBackupConfirmSeedPhrasePageV2(this.wallet, this.seedPhrase);
 
   @override
   State<StatefulWidget> createState() {
@@ -26,16 +26,16 @@ class WalletBackupConfirmSeedPhrasePageV2 extends StatefulWidget {
 
 class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhrasePageV2> {
   List<CandidateWordVo> _candidateWords = [];
-  List<CandidateWordVo> _selectedResumeWords = [];
+  List<CandidateWordVo> _selectedWords = [];
 
   @override
   void initState() {
-    initMnemonic();
+    initSeedPhrase();
     super.initState();
   }
 
-  void initMnemonic() {
-    _candidateWords = widget.mnemonic
+  void initSeedPhrase() {
+    _candidateWords = widget.seedPhrase
         .split(" ")
         .asMap()
         .map((index, word) => MapEntry(index, CandidateWordVo("$index-$word", word, false)))
@@ -125,8 +125,8 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
         child: Padding(
           padding: const EdgeInsets.all(0.0),
           child: Wrap(
-            children: List.generate(_selectedResumeWords.length, (index) {
-              var candidateWordVo = _selectedResumeWords[index];
+            children: List.generate(_selectedWords.length, (index) {
+              var candidateWordVo = _selectedWords[index];
               return InkWell(
                 onTap: () {
                   _unSelectedWord(candidateWordVo);
@@ -176,9 +176,7 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
     return Wrap(
       children: List.generate(_candidateWords.length, (index) {
         var candidateWordVo = _candidateWords[index];
-
-        var isShow = !candidateWordVo.selected && !_selectedResumeWords.contains(candidateWordVo);
-
+        var isShow = !candidateWordVo.selected && !_selectedWords.contains(candidateWordVo);
         if (!isShow) return SizedBox();
 
         return Padding(
@@ -189,17 +187,11 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
             },
             child: Container(
               decoration: BoxDecoration(
-                border: Border.all(
-                  color: HexColor("#FFDEDEDE"),
-                  width: 0.5,
-                ),
+                border: Border.all(color: HexColor("#FFDEDEDE"), width: 0.5),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8.0,
-                  horizontal: 16.0,
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: Text(
                   candidateWordVo.text,
                   style: TextStyle(
@@ -221,17 +213,17 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
       child: ClickOvalButton(
         S.of(context).next_step,
         () async {
-          var selectedMnemonitc = "";
-          _selectedResumeWords.forEach(
-            (word) => selectedMnemonitc = selectedMnemonitc + word.text + " ",
+          var selectedWords = "";
+          _selectedWords.forEach(
+            (word) => selectedWords = selectedWords + word.text + " ",
           );
-          if (selectedMnemonitc.trim() == widget.mnemonic.trim()) {
+          if (selectedWords.trim() == widget.seedPhrase.trim()) {
             await _confirmBackUp();
 
             UiUtil.showStateHint(context, true, S.of(context).backup_finish);
             Routes.popUntilCachedEntryRouteName(context);
           } else {
-            _showWrongOrderErrorHint(context);
+            _showWrongSeedPhraseHint(context);
           }
         },
         width: 300,
@@ -255,15 +247,15 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
         }
       }
     });
-    if (!_selectedResumeWords.contains(word)) {
-      _selectedResumeWords.add(word);
+    if (!_selectedWords.contains(word)) {
+      _selectedWords.add(word);
     }
     setState(() {});
   }
 
   void _unSelectedWord(CandidateWordVo word) {
-    if (_selectedResumeWords.contains(word)) {
-      _selectedResumeWords.remove(word);
+    if (_selectedWords.contains(word)) {
+      _selectedWords.remove(word);
     }
     _candidateWords.forEach((candidateWordVoTemp) {
       if (candidateWordVoTemp == word) {
@@ -282,13 +274,12 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
       widget.wallet.getEthAccount()?.address,
       widget.wallet.walletExpandInfoEntity,
     ));
-    await Future.delayed(
-      Duration(milliseconds: 1000),
-      () {},
-    ); //延迟等待备份信息已修改，再退出
+
+    ///延迟等待备份信息已修改，再退出
+    await Future.delayed(Duration(milliseconds: 1000), () {});
   }
 
-  _showWrongOrderErrorHint(BuildContext context) {
+  _showWrongSeedPhraseHint(BuildContext context) {
     UiUtil.showErrorTopHint(
       context,
       '助记词顺序不正确，请校对',

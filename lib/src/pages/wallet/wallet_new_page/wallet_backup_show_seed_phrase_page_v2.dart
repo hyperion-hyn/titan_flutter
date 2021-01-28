@@ -8,11 +8,11 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class WalletBackupShowSeedPhrasePageV2 extends StatefulWidget {
   final Wallet wallet;
-  final String mnemonic;
+  final String seedPhrase;
 
   WalletBackupShowSeedPhrasePageV2(
     this.wallet,
-    this.mnemonic,
+    this.seedPhrase,
   );
 
   @override
@@ -22,19 +22,19 @@ class WalletBackupShowSeedPhrasePageV2 extends StatefulWidget {
 }
 
 class _BackupShowResumeWordState extends State<WalletBackupShowSeedPhrasePageV2> {
-  List _resumeWords = [];
+  List _seedPhrase = [];
 
   @override
   void initState() {
-    getMnemonic();
+    getSeedPhrase();
     super.initState();
   }
 
-  Future getMnemonic() async {
-    var mnemonic = widget.mnemonic;
+  Future getSeedPhrase() async {
+    var seedPhrase = widget.seedPhrase;
 
-    if (mnemonic != null && mnemonic.isNotEmpty) {
-      _resumeWords = mnemonic.split(" ");
+    if (seedPhrase != null && seedPhrase.isNotEmpty) {
+      _seedPhrase = seedPhrase.split(" ");
       setState(() {});
     }
   }
@@ -43,10 +43,9 @@ class _BackupShowResumeWordState extends State<WalletBackupShowSeedPhrasePageV2>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Colors.black),
-        ),
+            elevation: 0,
+            backgroundColor: Colors.white,
+            iconTheme: IconThemeData(color: Colors.black)),
         body: Container(
           color: Colors.white,
           height: double.infinity,
@@ -90,9 +89,7 @@ class _BackupShowResumeWordState extends State<WalletBackupShowSeedPhrasePageV2>
             fontSize: 16,
           ),
         ),
-        SizedBox(
-          height: 8,
-        ),
+        SizedBox(height: 8),
         Text(
           '请按顺序抄写助记词，确保备份正确。',
           style: TextStyle(
@@ -114,7 +111,7 @@ class _BackupShowResumeWordState extends State<WalletBackupShowSeedPhrasePageV2>
             crossAxisCount: 3,
             childAspectRatio: 2.2,
           ),
-          itemCount: _resumeWords.length,
+          itemCount: _seedPhrase.length,
           itemBuilder: (BuildContext context, int index) {
             var borderRadius = BorderRadius.zero;
             if (index == 0) {
@@ -125,11 +122,11 @@ class _BackupShowResumeWordState extends State<WalletBackupShowSeedPhrasePageV2>
               borderRadius = BorderRadius.only(
                 topRight: Radius.circular(8),
               );
-            } else if (index == _resumeWords.length - 1) {
+            } else if (index == _seedPhrase.length - 1) {
               borderRadius = BorderRadius.only(
                 bottomRight: Radius.circular(8),
               );
-            } else if (index == _resumeWords.length - 3) {
+            } else if (index == _seedPhrase.length - 3) {
               borderRadius = BorderRadius.only(
                 bottomLeft: Radius.circular(8),
               );
@@ -138,28 +135,20 @@ class _BackupShowResumeWordState extends State<WalletBackupShowSeedPhrasePageV2>
             return Container(
               decoration: BoxDecoration(
                 color: HexColor('#FFF6F6F6'),
-                border: Border.all(
-                  color: HexColor("#FFDEDEDE"),
-                  width: 0.5,
-                ),
+                border: Border.all(color: HexColor("#FFDEDEDE"), width: 0.5),
                 borderRadius: borderRadius,
               ),
               child: Stack(
                 children: [
                   Align(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Row(
                         children: [
                           Expanded(
                             child: Text(
-                              '${_resumeWords[index]}',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
+                              '${_seedPhrase[index]}',
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                             ),
                           ),
                         ],
@@ -224,7 +213,7 @@ class _BackupShowResumeWordState extends State<WalletBackupShowSeedPhrasePageV2>
               MaterialPageRoute(
                 builder: (context) => WalletBackupConfirmSeedPhrasePageV2(
                   widget.wallet,
-                  widget.mnemonic,
+                  widget.seedPhrase,
                 ),
               ));
         },

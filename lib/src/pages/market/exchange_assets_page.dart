@@ -53,8 +53,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
 
   @override
   void onCreated() {
-    symbolQuote =
-        WalletInheritedModel.of(context).tokenLegalPrice('USDT');
+    symbolQuote = WalletInheritedModel.of(context).tokenLegalPrice('USDT');
     _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
 
     transactionInteractor = Injector.of(context).transactionInteractor;
@@ -91,9 +90,11 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
           InkWell(
             onTap: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ExchangeOrderManagementPage('')));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ExchangeOrderManagementPage(''),
+                ),
+              );
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -117,9 +118,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
               ),
             ),
           ),
-          SizedBox(
-            width: 16,
-          )
+          SizedBox(width: 16)
         ],
       ),
       body: Column(
@@ -127,13 +126,11 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
           if (hasPendingDepositTx)
             InkWell(
               onTap: () {
-                var coinVo =
-                    WalletInheritedModel.of(context).getCoinVoBySymbol('USDT');
+                var coinVo = WalletInheritedModel.of(context).getCoinVoBySymbol('USDT');
                 if (coinVo != null) {
-                  var coinVoJsonStr =
-                      FluroConvertUtils.object2string(coinVo.toJson());
-                  Application.router.navigateTo(context,
-                      Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
+                  var coinVoJsonStr = FluroConvertUtils.object2string(coinVo.toJson());
+                  Application.router
+                      .navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
                 }
               },
               child: Container(
@@ -146,8 +143,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                       style: TextStyle(fontSize: 12),
                     ),
                     Spacer(),
-                    Text(S.of(context).check,
-                        style: TextStyle(fontSize: 12, color: Colors.blue)),
+                    Text(S.of(context).check, style: TextStyle(fontSize: 12, color: Colors.blue)),
                   ],
                 ),
               ),
@@ -159,12 +155,10 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                 bloc: _loadDataBloc,
                 enablePullUp: false,
                 onLoadData: () async {
-                  print('xxx onLoadData');
                   _refreshAssets();
                   _loadDataBloc.add(RefreshSuccessEvent());
                 },
                 onRefresh: () async {
-                  print('xxx onRefresh');
                   _refreshAssets();
                   _loadDataBloc.add(RefreshSuccessEvent());
                 },
@@ -216,8 +210,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                     Navigator.of(context).pop();
                     showLogoutDialog(context, () {
                       ///
-                      BlocProvider.of<ExchangeCmpBloc>(context)
-                          .add(ClearExchangeAccountEvent());
+                      BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
                       Navigator.of(context).pop();
                       Routes.popUntilCachedEntryRouteName(context);
                     });
@@ -251,11 +244,8 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
       usdtExchangeAddress = ret['address'];
     }
     var lastPendingState = hasPendingDepositTx;
-    var ethAddress = WalletInheritedModel.of(context)
-        ?.activatedWallet
-        ?.wallet
-        ?.getEthAccount()
-        ?.address;
+    var ethAddress =
+        WalletInheritedModel.of(context)?.activatedWallet?.wallet?.getEthAccount()?.address;
     await transactionInteractor.removeLocalPendingConfirmedTxsOfAddress(
         ethAddress, LocalTransferType.LOCAL_TRANSFER_ERC20, EthereumConfig.getUsdtErc20Address());
     var localPendingTxs = await transactionInteractor.getLocalPendingTransactions(
@@ -278,8 +268,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   _totalBalances() {
     var _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
 
-    var _isShowBalances =
-        ExchangeInheritedModel.of(context).exchangeModel.isShowBalances;
+    var _isShowBalances = ExchangeInheritedModel.of(context).exchangeModel.isShowBalances;
 
     var _totalByHyn = '--';
 
@@ -289,13 +278,11 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
 
     try {
       _totalByHyn = _exchangeModel.isActiveAccountAndHasAssets()
-          ? FormatUtil.truncateDecimalNum(
-              _exchangeModel.activeAccount?.assetList?.getTotalHyn(), 6)
+          ? FormatUtil.truncateDecimalNum(_exchangeModel.activeAccount?.assetList?.getTotalHyn(), 6)
           : '--';
       if (_exchangeModel.isActiveAccountAndHasAssets()) {
         _totalUSDTQuotePrice = FormatUtil.truncateDecimalNum(
-          _usdtToCurrency *
-              _exchangeModel.activeAccount?.assetList?.getTotalUsdt(),
+          _usdtToCurrency * _exchangeModel.activeAccount?.assetList?.getTotalUsdt(),
           4,
         );
       }
@@ -310,20 +297,15 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(
-                  height: 16,
-                ),
+                SizedBox(height: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
                       S.of(context).exchange_total_balance,
-                      style: TextStyle(
-                          fontSize: 12.0, color: HexColor('FF999999')),
+                      style: TextStyle(fontSize: 12.0, color: HexColor('FF999999')),
                     ),
-                    SizedBox(
-                      height: 8,
-                    ),
+                    SizedBox(height: 8),
                     Wrap(
                       crossAxisAlignment: WrapCrossAlignment.end,
                       children: <Widget>[
@@ -335,9 +317,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                           ),
                           maxLines: 3,
                         ),
-                        SizedBox(
-                          width: 8.0,
-                        ),
+                        SizedBox(width: 8.0),
                         Text(
                           _isShowBalances
                               ? _usdtToCurrency == null ||
@@ -356,9 +336,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 24,
-                ),
+                SizedBox(height: 24),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Row(
@@ -369,8 +347,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                         child: OutlineButton(
                           child: Text(
                             S.of(context).exchange_transfer,
-                            style: TextStyle(
-                                color: Theme.of(context).primaryColor),
+                            style: TextStyle(color: Theme.of(context).primaryColor),
                           ),
                           onPressed: () {
                             if (ExchangeInheritedModel.of(context)
@@ -384,13 +361,8 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                               UiUtil.showExchangeAuthAgainDialog(context);
                             }
                           },
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                            width: 1,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
+                          borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
                         ),
                       ),
                       SizedBox(
@@ -402,8 +374,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                         child: OutlineButton(
                           child: Text(
                             S.of(context).ordinary_deposit,
-                            style: TextStyle(
-                                color: Theme.of(context).primaryColor),
+                            style: TextStyle(color: Theme.of(context).primaryColor),
                           ),
                           onPressed: () {
                             if (ExchangeInheritedModel.of(context)
@@ -466,9 +437,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
     var _assetList = _exchangeModel.isActiveAccountAndHasAssets()
         ? _exchangeModel?.activeAccount?.assetList
         : null;
-    var _isShowBalances =
-        ExchangeInheritedModel.of(context)?.exchangeModel?.isShowBalances ??
-            true;
+    var _isShowBalances = ExchangeInheritedModel.of(context)?.exchangeModel?.isShowBalances ?? true;
     var activeAssets = MarketInheritedModel.of(
           context,
           aspect: SocketAspect.marketItemList,
@@ -751,8 +720,7 @@ class AssetItemState extends State<AssetItem> {
                         Text(
                           widget._isShowBalances ? exchangeAvailable : '*****',
                           maxLines: 2,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 12),
+                          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
                         ),
                       ],
                     ),
@@ -802,9 +770,7 @@ class AssetItemState extends State<AssetItem> {
                         children: <Widget>[
                           Expanded(
                             child: Text(
-                              ExchangeInheritedModel.of(context)
-                                      .exchangeModel
-                                      .isShowBalances
+                              ExchangeInheritedModel.of(context).exchangeModel.isShowBalances
                                   ? balanceByCurrency
                                   : '*****',
                               textAlign: TextAlign.end,

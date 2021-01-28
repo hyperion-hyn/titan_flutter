@@ -70,24 +70,47 @@ Widget iconMap3Widget(Map3InfoEntity infoEntity, {bool isCircle = false}) {
   return iconWidget(infoEntity.pic, infoEntity.name, infoEntity.address, isCircle: isCircle);
 }
 
-Widget iconWalletWidget(Wallet walletEntity, {bool isCircle = true}) {
+Widget iconWalletWidget(
+  Wallet walletEntity, {
+  bool isCircle = true,
+  double size = 42,
+}) {
   if (walletEntity == null) {
-    return iconEmptyDefault();
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(isCircle ? 100 : 4.0),
+      child: FadeInImage.assetNetwork(
+        image: "",
+        placeholder: 'res/drawable/img_placeholder.jpg',
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+      ),
+    );
   }
   return iconWidget(
-      walletEntity.getHeadImg(), walletEntity.keystore.name, walletEntity.getEthAccount().address,
-      isCircle: isCircle);
+    walletEntity.getHeadImg(),
+    walletEntity.keystore.name,
+    walletEntity.getEthAccount().address,
+    isCircle: isCircle,
+    size: size,
+  );
 }
 
-Widget iconWidget(String picture, String name, String address, {bool isCircle = false}) {
+Widget iconWidget(
+  String picture,
+  String name,
+  String address, {
+  bool isCircle = false,
+  double size = 42,
+}) {
   if ((picture?.isNotEmpty ?? false) && picture.contains("http")) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(isCircle ? 21 : 4.0),
       child: FadeInImage.assetNetwork(
         image: picture,
         placeholder: 'res/drawable/img_placeholder.jpg',
-        width: 42,
-        height: 42,
+        width: size,
+        height: size,
         fit: BoxFit.cover,
       ),
     );

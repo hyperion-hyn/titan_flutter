@@ -453,8 +453,6 @@ class Wallet {
       throw Exception('${baseCoinVo.symbol}余额不足以支付网络费用');
     }
 
-    var privateKey =
-        await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client(coinType);
     var credentials = cred;
     if (credentials == null) {

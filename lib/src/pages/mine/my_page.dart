@@ -18,6 +18,7 @@ import 'package:titan/src/data/entity/app_update_info.dart';
 import 'package:titan/src/data/entity/update.dart';
 import 'package:titan/src/pages/app_lock/app_lock_preferences_page.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/dex_wallet_m_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
@@ -469,9 +470,7 @@ class _MyPageState extends BaseState<MyPage> {
             ),
           ),
         ),
-        SizedBox(
-          width: 12,
-        ),
+        SizedBox(width: 12),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
@@ -521,7 +520,6 @@ class _MyPageState extends BaseState<MyPage> {
       opacity: 0.8,
       child: Row(
         children: <Widget>[
-          //Image.asset('res/drawable/ic_logo.png', width: 40.0),
           Image.asset(
             'res/drawable/logo_title.png',
             width: 72.0,

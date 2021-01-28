@@ -90,9 +90,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          SizedBox(
-            height: 32,
-          ),
+          SizedBox(height: 32),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Image.asset(
@@ -107,11 +105,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
               width: 300,
               child: Text(
                 S.of(context).exchange_auth_description(
-                      WalletInheritedModel.of(context)
-                          ?.activatedWallet
-                          ?.wallet
-                          ?.keystore
-                          ?.name,
+                      WalletInheritedModel.of(context)?.activatedWallet?.wallet?.keystore?.name,
                     ),
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -120,9 +114,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
               ),
             ),
           ),
-          SizedBox(
-            height: 32,
-          ),
+          SizedBox(height: 32),
           Container(
             width: 200,
             child: RaisedButton(
@@ -139,8 +131,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
                       _startLogin();
                     },
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -166,11 +157,10 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   _checkIsAuthAlready() async {
     var _wallet = WalletInheritedModel.of(context)?.activatedWallet?.wallet;
     if (_wallet != null) {
-      bool _isAuthAlready = await AppCache.getValue(
-              'exchange_auth_already_${_wallet.getEthAccount().address}') ??
-          false;
-      var _bioAuthEnabled =
-          await BioAuthUtil.bioAuthEnabledByWallet(_wallet, AuthType.exchange);
+      bool _isAuthAlready =
+          await AppCache.getValue('exchange_auth_already_${_wallet.getEthAccount().address}') ??
+              false;
+      var _bioAuthEnabled = await BioAuthUtil.bioAuthEnabledByWallet(_wallet, AuthType.exchange);
       if (_isAuthAlready && _bioAuthEnabled) {
         _startLogin();
       }
@@ -224,9 +214,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          SizedBox(
-            height: 32,
-          ),
+          SizedBox(height: 32),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Image.asset(
@@ -248,18 +236,11 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
               ),
             ),
           ),
-          SizedBox(
-            height: 32,
-          ),
+          SizedBox(height: 32),
           ClickOvalButton(
             S.of(context).create_wallet,
             () {
               WalletManagerPage.jumpWalletManager(context);
-
-              /*Application.router.navigateTo(
-                context,
-                Routes.wallet_manager,
-              );*/
             },
             height: 45,
           )
@@ -267,10 +248,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
       ),
     );
   }
-
-
 }
-
 
 Future<bool> checkConfirmWalletPolicy() async {
   var isConfirmWalletPolicy = await AppCache.getValue(
