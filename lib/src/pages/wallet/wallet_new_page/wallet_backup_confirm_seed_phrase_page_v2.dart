@@ -115,7 +115,7 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
 
                       logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
                       if (selectedMnemonitc.trim() == widget.mnemonic.trim()) {
-                        _confirmBackUp();
+                        await _confirmBackUp();
                         UiUtil.showHintToast(
                             context,
                             Image.asset(
@@ -286,7 +286,7 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
     setState(() {});
   }
 
-  _confirmBackUp() async {
+  Future _confirmBackUp() async {
     widget.wallet.walletExpandInfoEntity.isBackup = true;
 
     BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletExpandEvent(
