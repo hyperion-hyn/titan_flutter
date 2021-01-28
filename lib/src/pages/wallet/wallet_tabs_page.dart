@@ -45,15 +45,12 @@ class _WalletTabsPageState extends State<WalletTabsPage>
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(kToolbarHeight),
           child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xffEDC313), Color(0xffF7D33D)],
-              ),
-            ),
+            color: Colors.white,
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: TabBar(
+
                   controller: _tabController,
                   isScrollable: true,
                   labelColor: DefaultColors.color333,

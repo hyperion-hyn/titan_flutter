@@ -344,15 +344,15 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   _headerWidget(WalletViewVo activatedWalletVo) {
     return SliverToBoxAdapter(
       child: Container(
-        padding: const EdgeInsets.only(top: 20, bottom: 20, left: 16, right: 16),
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.symmetric(vertical:20,horizontal:16),
         decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
           gradient: LinearGradient(
-            colors: [Color(0xffEDC313), Color(0xffF7D33D)],
+            colors: [Color(0xffE7C01A), Color(0xffF7D33D)],
           ),
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /*InkWell(
               onTap: () {
@@ -403,117 +403,120 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                 ],
               ),
             ),*/
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, top: 8, bottom: 8),
-                  child: SizedBox(
-                    width: 20,
-                  ),
-                ),
-                Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20,bottom: 10),
-                  child: Text(
-                    _isShowBalances
-                        ? '${activeQuotesSign?.sign ?? ''} ${FormatUtil.formatPrice(activatedWalletVo.balance)}'
-                        : '${activeQuotesSign?.sign ?? ''} *******',
+            SizedBox(height: 15,),
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                      "${activatedWalletVo?.wallet?.keystore?.name ?? ""} 总资产",
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 28,
+                      fontSize: 14,
                       color: DefaultColors.color333,
                     ),
                   ),
-                ),
-                Spacer(),
-                InkWell(
-                    onTap: () {
-                      setState(() {
-                        _isShowBalances = !_isShowBalances;
-                      });
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0, top: 8, bottom: 8),
-                      child: Image.asset(
-                        _isShowBalances
-                            ? "res/drawable/ic_input_psw_show.png"
-                            : "res/drawable/ic_input_psw_hide.png",
-                        width: 20,
-                      ),
-                    ))
-              ],
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          _isShowBalances = !_isShowBalances;
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10.0, top: 5, right:10,bottom: 5),
+                        child: Image.asset(
+                          _isShowBalances
+                              ? "res/drawable/ic_input_psw_show.png"
+                              : "res/drawable/ic_input_psw_hide.png",
+                          width: 18,
+                        ),
+                      ))
+                ],
+              ),
             ),
-            Text(
-              activatedWalletVo?.wallet?.keystore?.name ?? "",
-              style: TextStyles.textC333S14,
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16,top: 2),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom:3.0),
+                    child: Text('${activeQuotesSign?.sign ?? ''}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: DefaultColors.color333,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ),
+                  Text(
+                    _isShowBalances
+                        ? ' ${FormatUtil.formatPrice(activatedWalletVo.balance)}'
+                        : ' *******',
+                    style: TextStyle(
+                      fontSize: 22,
+                      color: DefaultColors.color333,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 24,),
             Stack(
               alignment: Alignment.center,
               children: [
+                Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8),bottomRight: Radius.circular(8)),
+                    color: HexColor("#8000000"),
+                  ),
+                ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    InkWell(
-                      onTap: () {
-                        _showActionDialog(WalletPageJump.PAGE_SEND, activatedWalletVo);
-                      },
-                      child: Container(
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              "res/drawable/ic_wallet_account_list_send_v2.png",
-                              width: 26,
-                              height: 26,
-                            ),
-                            Text(
-                              "发送",
-                              style: TextStyles.textC333S14bold,
-                            ),
-                          ],
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          _showActionDialog(WalletPageJump.PAGE_SEND, activatedWalletVo);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(left:27,bottom:11,top:12.0,right: 11),
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                "res/drawable/ic_wallet_account_list_send_v3.png",
+                                width: 16,
+                              ),
+                              SizedBox(width: 7,),
+                              Text(
+                                "发送",
+                                style: TextStyles.textC333S12,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: 51,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        _showActionDialog(WalletPageJump.PAGE_RECEIVER, activatedWalletVo);
-                      },
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "res/drawable/ic_wallet_account_list_receiver_v2.png",
-                            width: 26,
-                            height: 26,
-                          ),
-                          Text(
-                            "接收",
-                            style: TextStyles.textC333S14bold,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      width: 51,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        _showActionDialog(WalletPageJump.PAGE_EXCHANGE, activatedWalletVo);
-                      },
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "res/drawable/ic_wallet_account_list_exchange_v2.png",
-                            width: 26,
-                            height: 26,
-                          ),
-                          Text(
-                            "交易",
-                            style: TextStyles.textC333S14bold,
-                          ),
-                        ],
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          _showActionDialog(WalletPageJump.PAGE_RECEIVER, activatedWalletVo);
+                        },
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              "res/drawable/ic_wallet_account_list_receiver_v3.png",
+                              width: 18,
+                            ),
+                            SizedBox(width: 7,),
+                            Text(
+                              "接收",
+                              style: TextStyles.textC333S12,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -521,13 +524,16 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                 if (_isRefreshBalances)
                   Align(
                     alignment: Alignment.centerRight,
-                    child: SizedBox(
-                      height: 25,
-                      width: 25,
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.transparent,
-                        valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
-                        strokeWidth: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top:3.0,bottom: 3,right: 10),
+                      child: SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.transparent,
+                          valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
+                          strokeWidth: 1,
+                        ),
                       ),
                     ),
                   ),
