@@ -166,7 +166,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    '离开钱包界面一定时间后应用锁将自动锁定钱包，继续使用钱包功能需要先解锁钱包。',
+                    '离开应用一定时间后应用锁将自动锁定应用，继续使用应用需要先解锁',
                     style: TextStyle(
                       color: DefaultColors.color999,
                       fontSize: 12,
