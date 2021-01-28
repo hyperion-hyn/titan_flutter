@@ -193,9 +193,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          width: 4,
-                        ),
+                        SizedBox(width: 4),
                         Text(
                           hasExchangeAuth
                               ? S.of(context).exchange_account

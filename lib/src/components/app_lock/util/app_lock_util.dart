@@ -18,9 +18,7 @@ class AppLockUtil {
   }
 
   static Future<void> ignoreAppLock(BuildContext context, bool value) async {
-    // print('xxx ignoreAppLock');
-    // BlocProvider.of<AppLockBloc>(context).add(IgnoreAppLockEvent(value));
-    // await Future.delayed(Duration(milliseconds: 300));
+    BlocProvider.of<AppLockBloc>(context).add(IgnoreAppLockEvent(value));
   }
 
   static Future<bool> checkEnable() async {

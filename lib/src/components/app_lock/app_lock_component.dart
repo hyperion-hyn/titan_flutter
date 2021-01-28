@@ -104,7 +104,7 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
               }
             }
 
-            ///lock again
+            ///not ignore when app seen again
             _ignoreAppLock = false;
           }
         }

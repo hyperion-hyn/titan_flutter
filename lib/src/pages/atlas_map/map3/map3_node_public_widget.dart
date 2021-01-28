@@ -1063,6 +1063,9 @@ Future editIconSheet(BuildContext context, EditIconCallback callback) async {
                     Navigator.pop(dialogContext);
                   });
 
+                  ///Ignore App Lock
+                  AppLockUtil.ignoreAppLock(context, true);
+
                   var tempListImagePaths = await ImagePickers.openCamera(
                     compressSize: 500,
                   );

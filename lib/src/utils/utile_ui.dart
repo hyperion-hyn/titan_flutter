@@ -406,7 +406,8 @@ class UiUtil {
                 ),
                 if (showCloseBtn)
                   InkWell(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
                     child: Padding(
                       padding: const EdgeInsets.all(24.0),
                       child: Image.asset(
@@ -1042,6 +1043,9 @@ class UiUtil {
                   Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext, true);
                   });
+
+                  ///Ignore App Lock
+                  AppLockUtil.ignoreAppLock(context, true);
 
                   String mnemonicWords = await BarcodeScanner.scan();
                   callback(mnemonicWords);
