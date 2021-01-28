@@ -1,3 +1,5 @@
+import 'package:bitcoin_flutter/bitcoin_flutter.dart' as bitWallet;
+import 'package:ethereum_address/ethereum_address.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -35,6 +37,7 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:bip39/bip39.dart' as bip39;
+import "package:convert/convert.dart" show hex;
 
 class WalletCreateAccountPageV2 extends StatefulWidget {
   final bool isCreateWallet;
@@ -385,6 +388,23 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
           Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
           return;
         }
+
+        var seed = bip39.mnemonicToSeed(mnemonic);
+        var hdWallet = bitWallet.HDWallet.fromSeed(seed, network: bitWallet.bitcoin);
+        var ethWallet = hdWallet.derivePath("m/44'/60'/0'/0/0");
+        var address = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
+        var walletList = await WalletUtil.scanWallets();
+        bool hasSame = false;
+        walletList.forEach((element) {
+          if(element.getEthAccount().address == address){
+            Fluttertoast.showToast(msg: "该钱包已存在");
+            hasSame = true;
+          }
+        });
+        if(hasSame){
+          return;
+        }
+
         wallet = await WalletUtil.storeByMnemonic(
             name: _walletNameController.text,
             password: _walletPswController.text,
@@ -420,8 +440,8 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
 
       Fluttertoast.showToast(msg: widget.isCreateWallet ? "创建成功" : "导入成功");
       Routes.popUntilCachedEntryRouteName(context, wallet);
-    } catch (error) {
-      LogUtil.toastException(error);
+    } catch (error,stack) {
+      LogUtil.toastException("$error $stack");
     }
   }
 }
