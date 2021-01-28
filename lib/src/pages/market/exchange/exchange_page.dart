@@ -611,24 +611,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
   }
 
   _showConfirmDexPolicy() {
-    UiUtil.showAlertView(
-      context,
-      title: S.of(context).important_hint,
-      actions: [
-        ClickOvalButton(
-          S.of(context).check,
-          () async {
-            Navigator.pop(context);
-            UiUtil.showConfirmPolicyDialog(context, PolicyType.DEX);
-          },
-          width: 160,
-          height: 38,
-          fontSize: 16,
-        ),
-      ],
-      content: S.of(context).please_read_and_agress_dex_policy,
-      barrierDismissible: false,
-    );
+    UiUtil.showConfirmPolicyDialog(context, PolicyType.DEX);
   }
 
   Future<bool> _checkShowConfirmPolicy() async {
