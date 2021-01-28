@@ -43,6 +43,12 @@ class WalletRepository {
     var keystoreFileName = await getActivatedWalletFileName();
     if (keystoreFileName != null) {
       return await WalletUtil.loadWallet(keystoreFileName);
+    }else{
+      var walletList = await WalletUtil.scanWallets();
+      if(walletList.length > 0){
+        await saveActivatedWalletFileName(walletList[0].keystore.fileName);
+        return walletList[0];
+      }
     }
     return null;
   }

@@ -122,7 +122,11 @@ class Routes {
     router.define(root, handler: rootHandler, transitionType: TransitionType.fadeIn);
 
     //app lock
-    router.define(app_lock, handler: appLockHandler, transitionType: TransitionType.fadeIn);
+    router.define(
+      app_lock,
+      handler: appLockHandler,
+      transitionType: TransitionType.fadeIn,
+    );
 
     //tools
     router.define(toolspage_webview_page,

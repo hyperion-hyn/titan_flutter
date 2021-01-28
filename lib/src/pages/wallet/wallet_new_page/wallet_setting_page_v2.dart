@@ -10,6 +10,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/components/wallet/wallet_repository.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -26,6 +27,7 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/auth_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
@@ -49,6 +51,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
   bool isBackup = false;
   BuildContext dialogContext;
   AtlasApi _atlasApi = AtlasApi();
+  WalletRepository _walletRepository = WalletRepository();
 
   @override
   void initState() {
@@ -56,14 +59,15 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
   }
 
   @override
-  void didPush() async {
-    isBackup = await WalletUtil.checkIsBackUpMnemonic(widget.wallet.getEthAccount().address);
-    setState(() {});
+  void didPush() {
+    isBackup = widget.wallet.walletExpandInfoEntity?.isBackup ?? false;
   }
 
   @override
   void didPopNext() async {
-    isBackup = await WalletUtil.checkIsBackUpMnemonic(widget.wallet.getEthAccount().address);
+    widget.wallet.walletExpandInfoEntity =
+        await WalletUtil.getWalletExpandInfo(widget.wallet.getEthAccount().address);
+    isBackup = widget.wallet.walletExpandInfoEntity?.isBackup ?? false;
     setState(() {});
   }
 
@@ -301,14 +305,26 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             Divider(
               height: 0.5,
             ),
-            _optionItem(
-              imagePath: "res/drawable/ic_wallet_setting_bio_auth.png",
-              title: '生物验证',
-              editFunc: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => BioAuthOptionsPage(widget.wallet)));
-              },
-            ),
+            FutureBuilder(
+                future: BioAuthUtil.checkBioAuthAvailable(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    bool isBioAuthAvailable = snapshot.data;
+                    if (isBioAuthAvailable) {
+                      return _optionItem(
+                        imagePath: "res/drawable/ic_wallet_setting_bio_auth.png",
+                        title: '生物验证',
+                        editFunc: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BioAuthOptionsPage(widget.wallet)));
+                        },
+                      );
+                    }
+                  }
+                  return SizedBox();
+                }),
             Divider(
               height: 0.5,
             ),
@@ -440,6 +456,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
       print("del result ${widget.wallet.keystore.fileName} $result");
       if (result) {
         await AppCache.remove(widget.wallet.getBitcoinAccount()?.address ?? "");
+        WalletUtil.setWalletExpandInfo(widget.wallet.getEthAccount()?.address, null);
         List<Wallet> walletList = await WalletUtil.scanWallets();
         var activatedWalletVo =
             WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet);
@@ -449,17 +466,20 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             walletList.length > 0) {
           //delete current wallet
 
+          _walletRepository.saveActivatedWalletFileName(walletList[0].keystore.fileName);
           BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: walletList[0]));
           await Future.delayed(Duration(milliseconds: 500)); //延时确保激活成功
-
           Routes.popUntilCachedEntryRouteName(context);
         } else if (walletList.length > 0) {
           //delete other wallet
+
           Routes.popUntilCachedEntryRouteName(context);
         } else {
           //no wallet
-          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
+
           Routes.cachedEntryRouteName = null;
+          _walletRepository.saveActivatedWalletFileName(null);
+          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
           await Future.delayed(Duration(milliseconds: 500)); //延时确保激活成功
           Routes.popUntilCachedEntryRouteName(context);
         }

@@ -17,8 +17,8 @@ class AtlasComponent extends SingleChildStatelessWidget {
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
-    return BlocProvider<AppLockBloc>(
-      create: (ctx) => AppLockBloc(),
+    return BlocProvider<AuthBloc>(
+      create: (ctx) => AuthBloc(),
       child: _AtlasManager(child: child),
     );
   }
@@ -57,9 +57,9 @@ class _AtlasManagerState extends BaseState<_AtlasManager> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AppLockBloc, AuthState>(
+    return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {},
-      child: BlocBuilder<AppLockBloc, AuthState>(
+      child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
           return AtlasInheritedModel(
             atlasHomeEntity: _atlasHomeEntity,

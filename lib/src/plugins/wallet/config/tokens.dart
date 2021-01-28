@@ -15,6 +15,16 @@ class Tokens {
     return null;
   }
 
+  static String getCoinIconPathBySymbol(String symbol) {
+    List<AssetToken> tokens = allTokens();
+    for (var token in tokens) {
+      if (token.symbol == symbol) {
+        return token.logo;
+      }
+    }
+    return "";
+  }
+
   static List<AssetToken> contractTokensByCoinType(int coinType) {
     List<AssetToken> tokens = [];
     if (coinType == CoinType.HYN_ATLAS) {

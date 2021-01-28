@@ -251,7 +251,7 @@ class _MyPageState extends BaseState<MyPage> {
                     color: Colors.cyan[300],
                   ),
                   _buildMenuBar(
-                    '钱包安全锁',
+                    '安全锁',
                     Icons.account_balance_wallet,
                     () {
                       Navigator.push(context,
@@ -259,7 +259,7 @@ class _MyPageState extends BaseState<MyPage> {
                     },
                     imageName: "ic_me_page_safe_lock",
                     color: Colors.cyan[300],
-                    subText: AppLockInheritedModel.of(context).isWalletLockEnable ? '已开启' : '',
+                    subText: AppLockInheritedModel.of(context).isLockEnable ? '已开启' : '',
                   ),
                   _lineWidget(),
                   _buildMenuBar(
