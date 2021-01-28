@@ -99,11 +99,11 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                                   top: 32,
                                 ),
                                 child: Image.asset(
-                                  'res/drawable/rp_share_send.png',
+                                  'res/drawable/wallet_send_dialog.png',
                                   width: 44,
                                   height: 44,
                                   fit: BoxFit.cover,
-                                  color: HexColor('#E7C01A'),
+                                  // color: HexColor('#E7C01A'),
                                 ),
                               ),
                             ],

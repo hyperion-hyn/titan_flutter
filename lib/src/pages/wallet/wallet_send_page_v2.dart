@@ -64,11 +64,11 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
   int get _nonce {
     return int.tryParse(_nonceController.text) ?? null;
   }
-  
+
   bool get _isCustom => _selectedIndex == -1;
-  
+
   bool get _isBTC => (widget.coinVo.coinType == CoinType.BITCOIN);
-  
+
   int get _defaultGasLimit {
     var defaultValue = widget.coinVo.symbol == "ETH"
         ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
@@ -213,7 +213,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       var ethQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('ETH')?.price ?? 0;
       var gasPriceEstimate = feesDecimalValue * Decimal.parse(ethQuotePrice.toString());
       gasPriceEstimateStr =
-      "${_quoteSign ?? ""}${FormatUtil.formatPrice(gasPriceEstimate.toDouble())}";
+          "${_quoteSign ?? ""}${FormatUtil.formatPrice(gasPriceEstimate.toDouble())}";
     }
     // 3.ATLAS
     else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
@@ -223,7 +223,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       var hynQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('HYN')?.price ?? 0;
       var gasPriceEstimate = feesDecimalValue * Decimal.parse(hynQuotePrice.toString());
       gasPriceEstimateStr =
-      '${_quoteSign ?? ""} ${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())}';
+          '${_quoteSign ?? ""} ${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())}';
     }
     // 3.HB
     else if (widget.coinVo.coinType == CoinType.HB_HT) {
@@ -233,7 +233,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       var htQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('HT')?.price ?? 0;
       var gasPriceEstimate = feesDecimalValue * Decimal.parse(htQuotePrice.toString());
       gasPriceEstimateStr =
-      '${_quoteSign ?? ""} ${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())}';
+          '${_quoteSign ?? ""} ${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())}';
     }
 
     return gasPriceEstimateStr;
@@ -248,7 +248,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
 
   TokenPriceViewVo _activatedQuoteSign;
   var _gasPriceRecommend;
-  
+
   String _lastGasSat;
   String _lastGasPrice;
   String _lastGasLimit;
@@ -757,7 +757,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     );
   }
 
-
   Widget _amountEditWidget() {
     return Form(
       key: _amountKey,
@@ -1025,7 +1024,12 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     double gasValue,
     String gasUnit,
     Decimal gasPrice,
-  }) {
+  }) async {
+    if (to?.isEmpty ?? true) {
+      Fluttertoast.showToast(msg: '网络异常，请稍后重试!');
+      return false;
+    }
+
     var walletVo = WalletInheritedModel.of(context).activatedWallet;
     var wallet = walletVo.wallet;
 
@@ -1035,12 +1039,11 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     var fromAddressHyn = WalletUtil.ethAddressToBech32Address(from);
     var fromAddress = shortBlockChainAddress(fromAddressHyn);
 
-    var toAddress;
-    if (to?.isEmpty ?? true) {
-      Fluttertoast.showToast(msg: '网络异常，请稍后重试!');
+    var toAddress = to;
+    if (_coinType == CoinType.HYN_ATLAS) {
+      toAddress = WalletUtil.bech32ToEthAddress(to);
     } else {
-      var toAddressHyn = WalletUtil.ethAddressToBech32Address(to);
-      toAddress = shortBlockChainAddress(toAddressHyn);
+      toAddress = to;
     }
 
     WalletSendDialogEntity entity = WalletSendDialogEntity(
@@ -1050,7 +1053,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       title: '转账',
       fromName: walletName,
       fromAddress: fromAddress,
-      toName: toAddress,
+      toName: shortBlockChainAddress(to),
       toAddress: '',
       gas: gasValue.toString(),
       gasDesc: '',
@@ -1065,8 +1068,12 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
 
           // 1.Bitcoin
           if (_isBTC) {
-            var transResult = await wallet.sendBitcoinTransaction(password, wallet.getBitcoinZPub(),
-                to, gasPrice.toInt(), ConvertTokenUnit.strToBigInt(value.toString(), 8).toInt());
+            var transResult = await wallet.sendBitcoinTransaction(
+                password,
+                wallet.getBitcoinZPub(),
+                toAddress,
+                gasPrice.toInt(),
+                ConvertTokenUnit.strToBigInt(value.toString(), 8).toInt());
             if (transResult["code"] != 0) {
               LogUtil.uploadException(transResult, "bitcoin upload");
               Fluttertoast.showToast(
@@ -1081,7 +1088,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
                 widget.coinVo.coinType,
                 password,
                 ConvertTokenUnit.strToBigInt(value.toString(), widget.coinVo.decimals),
-                to,
+                toAddress,
                 wallet,
                 gasPrice,
               );
@@ -1093,7 +1100,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
                 widget.coinVo.coinType,
                 password,
                 ConvertTokenUnit.strToBigInt(value.toString(), widget.coinVo.decimals),
-                to,
+                toAddress,
                 wallet,
                 gasPrice,
               );
