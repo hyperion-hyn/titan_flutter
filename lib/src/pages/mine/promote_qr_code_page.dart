@@ -170,7 +170,7 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
             scrollController.jumpTo(scrollController.position.maxScrollExtent);
             await _shareQr(context);
           },
-          btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
+          // btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
           fontSize: 16,
           width: 200,
           height: 38,
@@ -212,7 +212,7 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
                     width: 60,
                     decoration: (shareAppImage == imagePath)
                         ? BoxDecoration(
-                            border: Border.all(color: HexColor('#FF0527'), width: 2),
+                            border: Border.all(color: Theme.of(context).primaryColor, width: 2),
                             borderRadius: BorderRadius.circular(5.0),
                           )
                         : null,

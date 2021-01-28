@@ -92,7 +92,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   Widget build(BuildContext context) {
     return Container(
       child: LoadDataContainer(
-        enablePullUp: _pendingList.isNotEmpty,
+        enablePullUp: _pendingList?.isNotEmpty ?? false,
         //enablePullUp: (_nodePageEntityVo.contractNodeList != null && _nodePageEntityVo.contractNodeList.length > 0),
         bloc: loadDataBloc,
         onLoadData: () async {
@@ -112,7 +112,8 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
             _sectionTitleWidget(title: S.of(context).my_map3_nodes, hasMore: true, isMine: true),
             _sizedBox(),
             _myNodeListWidget(),
-            _sectionTitleWidget(title: S.of(context).lastest_launched_nodes, hasMore: _lastActiveList.isNotEmpty),
+            _sectionTitleWidget(
+                title: S.of(context).lastest_launched_nodes, hasMore: _lastActiveList.isNotEmpty),
             _lastActiveWidget(),
             _sectionTitleWidget(title: S.of(context).wait_start_node_contract, hasMore: false),
             _pendingListWidget(),
@@ -165,7 +166,6 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         setState(() {});
       }
     } catch (e) {
-
       if (mounted) {
         print(e);
         loadDataBloc.add(RefreshFailEvent());
@@ -177,9 +177,10 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
     _currentPage++;
 
     try {
-      Map3StakingEntity map3stakingEntity = await _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10);
+      Map3StakingEntity map3stakingEntity =
+          await _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10);
 
-      if (map3stakingEntity != null && map3stakingEntity.map3Nodes.isNotEmpty) {
+      if (map3stakingEntity?.map3Nodes?.isNotEmpty ?? false) {
         List<Map3InfoEntity> lastPendingList = List.from(_pendingList);
         List<Map3InfoEntity> list = map3stakingEntity.map3Nodes;
         lastPendingList.addAll(list);
@@ -207,7 +208,9 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   Widget _myNodeListWidget() {
     if (_myList.isEmpty) {
       return emptyListWidget(
-          title: _address.isEmpty ? S.of(context).check_after_has_wallet : S.of(context).my_nodes_empty);
+          title: _address.isEmpty
+              ? S.of(context).check_after_has_wallet
+              : S.of(context).my_nodes_empty);
     }
 
     return SliverList(
@@ -253,7 +256,9 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
   void _pushWalletManagerAction() {
     Application.router.navigateTo(
-        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+        context,
+        Routes.map3node_create_wallet +
+            "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
   Widget _sectionTitleWidget({
@@ -383,7 +388,10 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Text(title,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: DefaultColors.colorcc000000)),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: DefaultColors.colorcc000000)),
                 Spacer(),
                 InkWell(
                   onTap: _pushWebViewAction,
@@ -410,13 +418,16 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
                   child: ClipRRect(
                     child:
                         // todo: old: ic_map3_node_item_2, new: map3_logo_new
-                        Image.asset("res/drawable/map3_logo_new.png", width: 80, height: 80, fit: BoxFit.cover),
+                        Image.asset("res/drawable/map3_logo_new.png",
+                            width: 80, height: 80, fit: BoxFit.cover),
                     borderRadius: BorderRadius.circular(4.0),
                   ),
                 ),
                 SizedBox(width: 16),
                 Flexible(
-                  child: Text(desc, style: TextStyle(fontSize: 12, height: 1.7, color: DefaultColors.color99000000)),
+                  child: Text(desc,
+                      style:
+                          TextStyle(fontSize: 12, height: 1.7, color: DefaultColors.color99000000)),
                 )
               ],
             ),
@@ -453,8 +464,10 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
   Future _pushCreateContractAction() async {
     if (_address.isEmpty) {
-      Application.router.navigateTo(context,
-          Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
+      Application.router.navigateTo(
+          context,
+          Routes.map3node_create_wallet +
+              "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
       // 1.push预创建
       await Application.router.navigateTo(context, Routes.map3node_introduction_page);
@@ -478,7 +491,8 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   Future _pushContractDetail(Map3InfoEntity infoEntity) async {
     Application.router.navigateTo(
       context,
-      Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}',
+      Routes.map3node_contract_detail_page +
+          '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}',
     );
   }
 }

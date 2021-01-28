@@ -241,7 +241,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
         //mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           Image.asset(
-            "res/drawable/ic_map3_node_item_2.png",
+            "res/drawable/map3_logo_new.png",
             width: 62,
             height: 62,
             fit: BoxFit.cover,

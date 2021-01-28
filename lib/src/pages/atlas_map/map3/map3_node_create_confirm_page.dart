@@ -172,7 +172,7 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
                           ),
                         )
                       : Image.asset(
-                          detail ?? "res/drawable/ic_map3_node_item_2.png",
+                          detail ?? "res/drawable/map3_logo_new.png",
                           width: 36,
                           height: 36,
                           fit: BoxFit.cover,

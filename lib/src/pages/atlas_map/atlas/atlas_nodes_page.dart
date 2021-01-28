@@ -501,6 +501,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                     'res/drawable/ic_atlas_node_rank_bg.png',
                     width: 20,
                     height: 20,
+                    color: Theme.of(context).primaryColor,
                   ),
                   Text(
                     '${index + 1}',

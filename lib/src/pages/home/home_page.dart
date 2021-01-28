@@ -110,7 +110,7 @@ class HomePageState extends BaseState<HomePage> {
                                 var mapSceneState = Keys.mapContainerKey.currentState as MapContainerState;
                                 MapboxMapController mapboxMapController = mapSceneState.mapboxMapController;
                                 LatLng latLng = LatLng(model.lat, model.lng);
-                                mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLng(latLng), 700);
+                                mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLngZoom(latLng, 15), 700);
                               }
 
                               // await Future.delayed(Duration(milliseconds: 1600));

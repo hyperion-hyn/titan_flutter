@@ -103,7 +103,7 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
                 Positioned(
                   top: 60,
                   child: Image.asset(
-                    "res/drawable/ic_map3_node_item_2.png",
+                    "res/drawable/map3_logo_new.png",
                     width: 168,
                     height: 168,
                   ),

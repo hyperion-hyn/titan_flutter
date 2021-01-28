@@ -182,7 +182,7 @@ class _AtlasDetailEditPageState extends State<AtlasDetailEditPage> {
                                     height: 36,
                                   )
                                 : Image.asset(
-                                    _localImagePath ?? "res/drawable/ic_map3_node_item_2.png",
+                                    _localImagePath ?? "res/drawable/map3_logo_new.png",
                                     width: 36,
                                     height: 36,
                                     fit: BoxFit.cover,
