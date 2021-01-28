@@ -31,6 +31,8 @@ class AppLockBloc extends Bloc<AppLockEvent, AppLockState> {
       yield LockAppState();
     } else if (event is UnLockAppEvent) {
       yield UnlockAppState();
+    } else if (event is IgnoreAppLockEvent) {
+      yield IgnoreAppLockState(event.value);
     }
   }
 }

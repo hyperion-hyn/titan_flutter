@@ -2,28 +2,27 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'app_update_info.g.dart';
 
-
 @JsonSerializable()
 class AppUpdateInfo extends Object {
-
   @JsonKey(name: 'need_update')
   int needUpdate;
 
   @JsonKey(name: 'new_version')
   New_version newVersion;
 
-  AppUpdateInfo(this.needUpdate,this.newVersion,);
+  AppUpdateInfo(
+    this.needUpdate,
+    this.newVersion,
+  );
 
-  factory AppUpdateInfo.fromJson(Map<String, dynamic> srcJson) => _$AppUpdateInfoFromJson(srcJson);
+  factory AppUpdateInfo.fromJson(Map<String, dynamic> srcJson) =>
+      _$AppUpdateInfoFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$AppUpdateInfoToJson(this);
-
 }
-
 
 @JsonSerializable()
 class New_version extends Object {
-
   @JsonKey(name: 'channel')
   String channel;
 
@@ -51,12 +50,20 @@ class New_version extends Object {
   @JsonKey(name: 'version_type')
   String versionType;
 
-  New_version(this.channel,this.describe,this.force,this.status,this.urlInstall,this.urlJump,this.versionCode,this.versionName,this.versionType,);
+  New_version(
+    this.channel,
+    this.describe,
+    this.force,
+    this.status,
+    this.urlInstall,
+    this.urlJump,
+    this.versionCode,
+    this.versionName,
+    this.versionType,
+  );
 
-  factory New_version.fromJson(Map<String, dynamic> srcJson) => _$New_versionFromJson(srcJson);
+  factory New_version.fromJson(Map<String, dynamic> srcJson) =>
+      _$New_versionFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$New_versionToJson(this);
-
 }
-
-

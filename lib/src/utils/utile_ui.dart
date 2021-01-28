@@ -406,12 +406,14 @@ class UiUtil {
                 ),
                 if (showCloseBtn)
                   InkWell(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
                     child: Padding(
                       padding: const EdgeInsets.all(24.0),
                       child: Image.asset(
                         'res/drawable/ic_close.png',
-                        width: 16,
-                        height: 16,
+                        width: 14,
+                        height: 14,
                       ),
                     ),
                     onTap: () {
@@ -1042,6 +1044,9 @@ class UiUtil {
                     Navigator.pop(dialogContext, true);
                   });
 
+                  ///Ignore App Lock
+                  AppLockUtil.ignoreAppLock(context, true);
+
                   String mnemonicWords = await BarcodeScanner.scan();
                   callback(mnemonicWords);
                 },
@@ -1053,6 +1058,9 @@ class UiUtil {
                     Navigator.pop(dialogContext, true);
                   });
 
+                  ///Ignore AppLock
+                  await AppLockUtil.ignoreAppLock(context, true);
+
                   var tempListImagePaths = await ImagePickers.pickerPaths(
                     galleryMode: GalleryMode.image,
                     selectCount: 1,
@@ -1061,9 +1069,6 @@ class UiUtil {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
-
-                  ///turn off app-lock
-                  AppLockUtil.appLockSwitch(context, false);
 
                   if (tempListImagePaths != null && tempListImagePaths.length == 1) {
                     RScanResult mnemonicWords =
@@ -1108,6 +1113,9 @@ class UiUtil {
                     Navigator.pop(dialogContext, true);
                   });
 
+                  ///Ignore AppLock
+                  await AppLockUtil.ignoreAppLock(context, true);
+
                   var tempListImagePaths = await ImagePickers.pickerPaths(
                     galleryMode: GalleryMode.image,
                     selectCount: 1,
@@ -1116,9 +1124,6 @@ class UiUtil {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
-
-                  ///turn off app-lock
-                  AppLockUtil.appLockSwitch(context, false);
 
                   if (tempListImagePaths != null && tempListImagePaths.length == 1) {
                     var path = tempListImagePaths[0].path;

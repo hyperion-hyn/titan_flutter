@@ -967,7 +967,7 @@ class AtlasApi {
     return configEntity;
   }
 
-  Future<AppUpdateInfo> checkUpdate() async {
+  static Future<AppUpdateInfo> checkUpdate() async {
     var walletAddress = WalletInheritedModel.of(Keys.rootKey.currentContext)
             ?.activatedWallet
             ?.wallet
@@ -987,7 +987,7 @@ class AtlasApi {
       AndroidDeviceInfo deviceInfo = await deviceInfoPlugin?.androidInfo;
       deviceId = deviceInfo?.androidId;
       if (env.channel == BuildChannel.OFFICIAL) {
-        channel = 'android-titan';
+        channel = 'android-official';
       } else if (env.channel == BuildChannel.STORE) {
         channel = 'android-google';
       }
@@ -1011,6 +1011,8 @@ class AtlasApi {
       versionType = 'test';
     }
 
+    var lang = Localizations.localeOf(Keys.rootKey.currentContext).languageCode;
+
     return AtlasHttpCore.instance.postEntity(
       '/v1/app/version_check',
       EntityFactory<AppUpdateInfo>(
@@ -1019,12 +1021,18 @@ class AtlasApi {
         },
       ),
       params: {
+        "lang": lang,
         "address": walletAddress,
         "channel": channel,
         "device_id": deviceId,
         "version": '$versionName.$versionCode.$versionType'
       },
-      options: RequestOptions(contentType: "application/json"),
+
+      ///use same url on both env
+      options: RequestOptions(
+        contentType: "application/json",
+        baseUrl: Config.ATLAS_API_URL,
+      ),
     );
   }
 }

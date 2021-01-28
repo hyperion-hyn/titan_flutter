@@ -112,6 +112,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
           children: [
             InkWell(
               onTap: () {
+
                 editIconSheet(context, (path) async {
                   if (path != null) {
                     UiUtil.showLoadingDialog(context, "头像上传中...", (context) {

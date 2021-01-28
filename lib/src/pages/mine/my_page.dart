@@ -13,6 +13,7 @@ import 'package:titan/src/components/updater/bloc/bloc.dart';
 import 'package:titan/src/components/updater/bloc/update_event.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/data/entity/app_update_info.dart';
 import 'package:titan/src/data/entity/update.dart';
 import 'package:titan/src/pages/app_lock/app_lock_preferences_page.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -45,11 +46,11 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends BaseState<MyPage> {
   Wallet _wallet;
-  String _version = "";
-  String _channel = "";
+  String _versionStr = '';
 
   bool _haveNewVersion = false;
-  UpdateEntity _updateEntity;
+
+  AppUpdateInfo _appUpdateInfo;
 
   @override
   void initState() {
@@ -58,46 +59,11 @@ class _MyPageState extends BaseState<MyPage> {
 
   Future _loadData() async {
     try {
-      var injector = Injector.of(context);
-      var channel = "";
-      if (env.channel == BuildChannel.OFFICIAL) {
-        channel = "official";
-      } else if (env.channel == BuildChannel.STORE) {
-        channel = "store";
-      }
+      _appUpdateInfo = await AtlasApi.checkUpdate();
 
-      var platform = "";
-      if (Platform.isAndroid) {
-        platform = "android";
-      } else if (Platform.isIOS) {
-        platform = "ios";
+      _haveNewVersion = (_appUpdateInfo?.needUpdate ?? 0) == 1;
 
-        bool isTestFlight = await DetectTestflight.isTestflight;
-        if (isTestFlight) {
-          _channel = 'TestFlight';
-        } else {
-          _channel = 'AppStore';
-        }
-      }
-      var lang = Localizations.localeOf(context).languageCode;
-      var versionModel = await injector.repository.checkNewVersion(channel, lang, platform);
-
-      PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-      var newBuildNumber = versionModel?.build ?? 0;
-      if (int.parse(packageInfo.buildNumber) < newBuildNumber) {
-        if (mounted) {
-          setState(() {
-            _version = '${versionModel.versionName}.${versionModel.build}';
-            _haveNewVersion = true;
-            _updateEntity = versionModel;
-          });
-        }
-      } else {
-        _setupVersion();
-
-        print('[updater] 已经是最新版本');
-      }
+      _setupVersion();
     } catch (err) {
       logger.e(err);
     }
@@ -112,21 +78,39 @@ class _MyPageState extends BaseState<MyPage> {
     _setupVersion();
   }
 
-  _setupVersion() {
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-      if (mounted) {
-        setState(() {
-          _version = packageInfo.version;
-          if (env.buildType != BuildType.PROD) {
-            _version += '(Test1.3)';
-          }
+  _setupVersion() async {
+    var channel = "";
 
-          if (_channel.isNotEmpty) {
-            _version = '$_channel：$_version';
-          }
-        });
+    if (Platform.isAndroid) {
+      if (env.channel == BuildChannel.OFFICIAL) {
+        channel = "Official";
+      } else if (env.channel == BuildChannel.STORE) {
+        channel = "Store";
       }
-    });
+    } else if (Platform.isIOS) {
+      bool isTestFlight = await DetectTestflight.isTestflight;
+      if (isTestFlight) {
+        channel = 'TestFlight';
+      } else {
+        channel = 'AppStore';
+      }
+    }
+
+    var packageInfo = await PackageInfo.fromPlatform();
+
+    var versionName = packageInfo?.version ?? '';
+    var versionCode = packageInfo?.buildNumber ?? '';
+    var versionType = '';
+
+    if (env.buildType == BuildType.DEV && Platform.isAndroid) {
+      versionType = '.test';
+    }
+
+    _versionStr = '$channel：$versionName.$versionCode$versionType';
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -315,14 +299,12 @@ class _MyPageState extends BaseState<MyPage> {
                     S.of(context).version_update,
                     Icons.batch_prediction,
                     () {
-                      if (_haveNewVersion) {
-                        _showUpdateDialog(_updateEntity);
-                      } else {
-                        BlocProvider.of<UpdateBloc>(context).add(CheckUpdate(
-                            lang: Localizations.localeOf(context).languageCode, isManual: true));
-                      }
+                      BlocProvider.of<UpdateBloc>(context).add(CheckUpdate(
+                        lang: Localizations.localeOf(context).languageCode,
+                        isManual: true,
+                      ));
                     },
-                    subText: _version,
+                    subText: _versionStr,
                     haveCircle: _haveNewVersion,
                     imageName: "ic_me_page_version_update",
                     color: Colors.cyan[400],
@@ -447,7 +429,8 @@ class _MyPageState extends BaseState<MyPage> {
           alignment: Alignment.center,
           width: 52,
           height: 52,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+          decoration: BoxDecoration(
+              shape: BoxShape.circle, color: Theme.of(context).primaryColor),
           child: InkWell(
             onTap: () {},
             child: Stack(
@@ -486,7 +469,8 @@ class _MyPageState extends BaseState<MyPage> {
   Widget _buildWalletDetailRow(Wallet wallet) {
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
-    String walletName = walletKeyStore.name[0].toUpperCase() + walletKeyStore.name.substring(1);
+    String walletName =
+        walletKeyStore.name[0].toUpperCase() + walletKeyStore.name.substring(1);
 
     return Row(
       children: <Widget>[
@@ -494,7 +478,8 @@ class _MyPageState extends BaseState<MyPage> {
           alignment: Alignment.center,
 //          width: 52,
 //          height: 52,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+          decoration: BoxDecoration(
+              shape: BoxShape.circle, color: Theme.of(context).primaryColor),
           child: InkWell(
             onTap: () {
               goSetWallet(wallet);
@@ -529,7 +514,10 @@ class _MyPageState extends BaseState<MyPage> {
               children: <Widget>[
                 Text(
                   walletName,
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
                 SizedBox(
                   height: 4,
@@ -574,14 +562,16 @@ class _MyPageState extends BaseState<MyPage> {
             height: 36,
           ),
           SizedBox(width: 16),
-          Text(S.of(context).titan_encrypted_map_ecology, style: TextStyle(color: Colors.white70))
+          Text(S.of(context).titan_encrypted_map_ecology,
+              style: TextStyle(color: Colors.white70))
         ],
       ),
     );
   }
 
   void shareApp() async {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => PromoteQrCodePage()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => PromoteQrCodePage()));
     /*
     return;
 
@@ -599,13 +589,13 @@ class _MyPageState extends BaseState<MyPage> {
     */
   }
 
-  void _showUpdateDialog(UpdateEntity updateEntity) async {
+  void _showUpdateDialog(AppUpdateInfo appUpdateInfo) async {
     await showDialog<String>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         String title = S.of(context).new_update_available;
-        String message = updateEntity.content;
+        String message = appUpdateInfo?.newVersion?.describe;
         String btnLabelCancel = S.of(context).later;
         return Material(
           color: Colors.transparent,
@@ -637,7 +627,8 @@ class _MyPageState extends BaseState<MyPage> {
                                 height: 88,
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(top: 15.0, bottom: 15),
+                                padding: const EdgeInsets.only(
+                                    top: 15.0, bottom: 15),
                                 child: Text(
                                   title,
                                   style: TextStyles.textC333S18,
@@ -646,7 +637,8 @@ class _MyPageState extends BaseState<MyPage> {
                               Container(
                                 height: 104,
                                 width: double.infinity,
-                                padding: const EdgeInsets.only(left: 24.0, right: 24),
+                                padding: const EdgeInsets.only(
+                                    left: 24.0, right: 24),
                                 child: SingleChildScrollView(
                                   child: Text(
                                     message,
@@ -663,7 +655,7 @@ class _MyPageState extends BaseState<MyPage> {
                                 child: ClickOvalButton(
                                   S.of(context).experience_now,
                                   () {
-                                    _launch(updateEntity);
+                                    _launch(appUpdateInfo);
                                   },
                                   width: 200,
                                   height: 38,
@@ -705,12 +697,12 @@ class _MyPageState extends BaseState<MyPage> {
     );
   }
 
-  void _launch(UpdateEntity versionModel) async {
+  void _launch(AppUpdateInfo appUpdateInfo) async {
     Navigator.maybePop(context);
 
-    launchUrl(versionModel.downloadUrl);
+    launchUrl(appUpdateInfo?.newVersion?.urlJump);
 
-    if (versionModel.forceUpdate != 1) {
+    if ((appUpdateInfo?.newVersion?.force ?? 0) != 1) {
       Navigator.pop(context);
     }
   }

@@ -958,7 +958,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         }
       }
 
-      showNormalSendDialog(
+      showSendDialog(
         context: context,
         to: _toController.text,
         value: value,
@@ -1016,7 +1016,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     }
   }
 
-  Future<bool> showNormalSendDialog<T>({
+  Future<bool> showSendDialog<T>({
     BuildContext context,
     String to,
     double value,

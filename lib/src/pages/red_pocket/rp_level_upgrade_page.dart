@@ -12,6 +12,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
@@ -23,11 +24,15 @@ import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
+import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textField.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -76,10 +81,12 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     return inputValue > Decimal.zero ? inputValue : Decimal.zero;
   }
 
-  Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
+  Decimal get _balanceValue =>
+      Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
 
   //Decimal get _currentHoldValue => Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? Decimal.zero;
-  Decimal get _holdingValue => Decimal.tryParse(widget?.levelRule?.holdingStr ?? '0') ?? Decimal.zero;
+  Decimal get _holdingValue =>
+      Decimal.tryParse(widget?.levelRule?.holdingStr ?? '0') ?? Decimal.zero;
 
   Decimal get _needHoldMinValue {
     var zeroValue = Decimal.zero;
@@ -108,7 +115,9 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   }
 
   String get _needTotalMinValueStr =>
-      S.of(context).at_least + FormatUtil.stringFormatCoinNum(_needTotalMinValue.toString()) + ' RP';
+      S.of(context).at_least +
+      FormatUtil.stringFormatCoinNum(_needTotalMinValue.toString()) +
+      ' RP';
 
   bool _isLoading = false;
   bool _haveFinishRequest = false;
@@ -153,12 +162,14 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   @override
   Widget build(BuildContext context) {
-    var levelName = levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4);
+    var levelName =
+        levelValueToLevelName(widget.promotionRuleEntity?.supplyInfo?.randomMinLevel ?? 4);
     var tips = S.of(context).rp_upgrade_tips_func(levelName);
 
     var currentHoldingStr = FormatUtil.stringFormatCoinNum(_myLevelInfo?.currentHoldingStr ?? '0');
     var currBurningStr = FormatUtil.stringFormatCoinNum(_myLevelInfo?.currBurningStr ?? '0');
-    var currentHoldingBurning = S.of(context).rp_upgrade_current_func(currentHoldingStr, currBurningStr);
+    var currentHoldingBurning =
+        S.of(context).rp_upgrade_current_func(currentHoldingStr, currBurningStr);
 
     return Scaffold(
       appBar: BaseAppBar(
@@ -286,7 +297,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                       ],
                                       hintText: _needTotalMinValueStr,
                                       validator: (textStr) {
-                                        if (textStr.length == 0 && _needTotalMinValue > Decimal.zero) {
+                                        if (textStr.length == 0 &&
+                                            _needTotalMinValue > Decimal.zero) {
                                           return S.of(context).input_num_please;
                                         }
 
@@ -432,9 +444,13 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                     children: <Widget>[
                                       Expanded(
                                         child: Text(
-                                          S.of(context).rp_upgrade_detail_func(preBurnStr, preHoldingStr),
+                                          S
+                                              .of(context)
+                                              .rp_upgrade_detail_func(preBurnStr, preHoldingStr),
                                           style: TextStyle(
-                                              fontWeight: FontWeight.normal, fontSize: 12, color: HexColor('#999999')),
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: 12,
+                                              color: HexColor('#999999')),
                                         ),
                                       ),
                                     ],
@@ -621,7 +637,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
             try {
               var inviteAddress = _addressEditController?.text ?? '';
 
-              String inviteResult = await _rpApi.postRpInviter(inviteAddress, _activatedWallet?.wallet);
+              String inviteResult =
+                  await _rpApi.postRpInviter(inviteAddress, _activatedWallet?.wallet);
               if (inviteResult?.isNotEmpty ?? false) {
                 Fluttertoast.showToast(msg: S.of(context).rp_upgrade_continue_toast);
 
@@ -695,7 +712,8 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   Future<String> _parseText(String scanStr) async {
     if (scanStr == null) {
       return '';
-    } else if (scanStr.contains(PromoteQrCodePage.downloadDomain) || scanStr.contains(RpFriendInvitePage.shareDomain)) {
+    } else if (scanStr.contains(PromoteQrCodePage.downloadDomain) ||
+        scanStr.contains(RpFriendInvitePage.shareDomain)) {
       var fromArr = scanStr.split("from=");
       if (fromArr[1].length > 0) {
         fromArr = fromArr[1].split("&");
@@ -748,53 +766,94 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   }
 
   _upgradeAction() async {
-    var password = await UiUtil.showWalletPasswordDialogV2(context, _activatedWallet.wallet);
-    if (password == null) {
-      return;
-    }
+    Future.delayed(Duration(milliseconds: 111)).then((_) {
+      var value = _inputValue.toDouble();
 
-    var burningAmount = ConvertTokenUnit.strToBigInt(widget.levelRule.burnStr);
+      showSendDialog(
+        context: context,
+        value: value,
+      );
+    });
+  }
 
-    var inputHoldValue = (_inputValue - _needBurnValue);
-    inputHoldValue = inputHoldValue > Decimal.zero ? inputHoldValue : Decimal.zero;
-    var holdingAmount = ConvertTokenUnit.strToBigInt(inputHoldValue?.toString() ?? '0');
+  Future<bool> showSendDialog<T>({
+    BuildContext context,
+    double value,
+  }) async {
+    var walletVo = WalletInheritedModel.of(context).activatedWallet;
+    var wallet = walletVo.wallet;
 
-    if (mounted) {
-      setState(() {
-        _isLoading = true;
-      });
-    }
-    Future.delayed(Duration(milliseconds: 111)).then((_) async {
-      try {
-        await _rpApi.postRpDepositAndBurn(
-          from: _myLevelInfo?.currentLevel ?? 0,
-          to: widget.levelRule.level,
-          depositAmount: holdingAmount,
-          burningAmount: burningAmount,
-          activeWallet: _activatedWallet,
-          password: password,
-        );
+    var fromName = wallet.keystore.name;
+    var from = wallet.getAtlasAccount().address;
+    var fromAddressHyn = WalletUtil.ethAddressToBech32Address(from);
+    var fromAddress = shortBlockChainAddress(fromAddressHyn);
 
+    var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+    var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+    gasLimit = 100000;
+    var gasValue = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)))
+        .toDouble();
+
+    var toAddress = HyperionConfig.rpHoldingContractAddress;
+    var toAddressHyn = WalletUtil.ethAddressToBech32Address(toAddress);
+    var toName = shortBlockChainAddress(toAddressHyn);
+    WalletSendDialogEntity entity = WalletSendDialogEntity(
+      type: 'tx_rp_level_upgrade',
+      value: value,
+      valueUnit: 'RP',
+      title: '智能合约调用',
+      titleDesc: '提升量级',
+      fromName: fromName,
+      fromAddress: fromAddress,
+      toName: toName,
+      toAddress: '',
+      gas: gasValue.toString(),
+      gasDesc: '',
+      gasUnit: 'HYN',
+      action: () async {
+        try {
+          var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
+          if (password == null) {
+            return false;
+          }
+
+          var burningAmount = ConvertTokenUnit.strToBigInt(widget.levelRule.burnStr);
+
+          var inputHoldValue = (_inputValue - _needBurnValue);
+          inputHoldValue = inputHoldValue > Decimal.zero ? inputHoldValue : Decimal.zero;
+          var holdingAmount = ConvertTokenUnit.strToBigInt(inputHoldValue?.toString() ?? '0');
+
+          await _rpApi.postRpDepositAndBurn(
+            from: _myLevelInfo?.currentLevel ?? 0,
+            to: widget.levelRule.level,
+            depositAmount: holdingAmount,
+            burningAmount: burningAmount,
+            activeWallet: walletVo,
+            password: password,
+          );
+
+          return true;
+        } catch (e) {
+          LogUtil.toastException(e);
+        }
+        return false;
+      },
+      finished: () async {
         Fluttertoast.showToast(
           msg: S.of(context).rp_level_up_broadcast_sent,
           gravity: ToastGravity.CENTER,
         );
         Navigator.of(context)..pop()..pop();
 
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      } catch (e) {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-        LogUtil.toastException(e);
-      }
-    });
+        return true;
+      },
+    );
+
+    return showWalletSendDialog(
+      context: context,
+      entity: entity,
+    );
   }
 }
 

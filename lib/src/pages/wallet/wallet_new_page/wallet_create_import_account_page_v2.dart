@@ -202,6 +202,9 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                             ),
                             GestureDetector(
                               onTap: () async {
+                                ///Ignore AppLock
+                                await AppLockUtil.ignoreAppLock(context, true);
+
                                 var tempListImagePaths = await ImagePickers.pickerPaths(
                                   galleryMode: GalleryMode.image,
                                   selectCount: 1,
@@ -211,8 +214,6 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                                   uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                                 );
 
-                                ///turn off app-lock
-                                AppLockUtil.appLockSwitch(context, false);
 
                                 if (tempListImagePaths != null && tempListImagePaths.length == 1) {
                                   UiUtil.showLoadingDialog(context, "头像上传中...", (context) {

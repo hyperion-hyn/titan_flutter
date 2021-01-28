@@ -46,25 +46,28 @@ class RPApi {
     BigInt amount,
     String password = '',
     WalletViewVo activeWallet,
+    int gasLimit = 300000,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(
       HynContractMethod.STAKE,
       password,
       stakingAmount: amount,
+      gasLimit: gasLimit,
     );
     print("[Rp_api] postStakingRp, address:$address, txHash:$txHash");
     if (txHash == null) {
       return;
     }
 
-    return await RPHttpCore.instance.postEntity("/v1/rp/create", EntityFactory<dynamic>((json) => json),
-        params: {
-          "address": address,
-          "hyn_amount": amount.toString(),
-          "tx_hash": txHash,
-        },
-        options: RequestOptions(contentType: "application/json"));
+    return await RPHttpCore.instance
+        .postEntity("/v1/rp/create", EntityFactory<dynamic>((json) => json),
+            params: {
+              "address": address,
+              "hyn_amount": amount.toString(),
+              "tx_hash": txHash,
+            },
+            options: RequestOptions(contentType: "application/json"));
   }
 
   Future<dynamic> postRetrieveHyn({
@@ -72,17 +75,19 @@ class RPApi {
     WalletViewVo activeWallet,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
-    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password);
+    var txHash =
+        await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password);
     print("[Rp_api] postRetrieveHyn, address:$address, txHash:$txHash");
     if (txHash == null) {
       return;
     }
-    return await RPHttpCore.instance.postEntity("/v1/rp/retrieve", EntityFactory<dynamic>((json) => json),
-        params: {
-          "address": address,
-          "tx_hash": txHash,
-        },
-        options: RequestOptions(contentType: "application/json"));
+    return await RPHttpCore.instance
+        .postEntity("/v1/rp/retrieve", EntityFactory<dynamic>((json) => json),
+            params: {
+              "address": address,
+              "tx_hash": txHash,
+            },
+            options: RequestOptions(contentType: "application/json"));
   }
 
   ///统计信息
@@ -269,12 +274,13 @@ class RPApi {
       Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).can_not_invite_myself);
       return null;
     }
-    var result = await RPHttpCore.instance.postEntity("/v1/rp/confirm_invite", EntityFactory<dynamic>((json) => json),
-        params: {
-          "invitee": myAddress,
-          "inviter": inviterAddress,
-        },
-        options: RequestOptions(contentType: "application/json"));
+    var result = await RPHttpCore.instance
+        .postEntity("/v1/rp/confirm_invite", EntityFactory<dynamic>((json) => json),
+            params: {
+              "invitee": myAddress,
+              "inviter": inviterAddress,
+            },
+            options: RequestOptions(contentType: "application/json"));
     return result['identify'];
   }
 
@@ -515,9 +521,11 @@ class RPApi {
     var amount = depositAmount + burningAmount;
     final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
     var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
-    var approveHex = await postRpApprove(password: password, activeWallet: activeWallet, amount: amount, nonce: nonce);
+    var approveHex = await postRpApprove(
+        password: password, activeWallet: activeWallet, amount: amount, nonce: nonce);
     if (approveHex?.isEmpty ?? true) {
-      throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
+      throw HttpResponseCodeNotSuccess(
+          -30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
     }
     print('[rp_api] postRpDepositAndBurn, approveHex: $approveHex');
 
@@ -528,19 +536,21 @@ class RPApi {
         depositAmount: depositAmount, burningAmount: burningAmount, nonce: nonce);
     print("[Rp_api] postRpDepositAndBurn, sendRpHolding, address:$address, txHash:$rawTxHash");
     if (rawTxHash == null) {
-      throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
+      throw HttpResponseCodeNotSuccess(
+          -30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
     }
 
-    return await RPHttpCore.instance.postEntity("/v1/rp/level/promotion/submit", EntityFactory<dynamic>((json) => json),
-        params: {
-          "address": address,
-          "burning": burningAmount.toString(),
-          "holding": depositAmount.toString(),
-          "from": from,
-          "to": to,
-          'raw_tx': rawTxHash,
-        },
-        options: RequestOptions(contentType: "application/json"));
+    return await RPHttpCore.instance
+        .postEntity("/v1/rp/level/promotion/submit", EntityFactory<dynamic>((json) => json),
+            params: {
+              "address": address,
+              "burning": burningAmount.toString(),
+              "holding": depositAmount.toString(),
+              "from": from,
+              "to": to,
+              'raw_tx': rawTxHash,
+            },
+            options: RequestOptions(contentType: "application/json"));
   }
 
   Future<dynamic> postRpWithdraw({
@@ -560,18 +570,20 @@ class RPApi {
 
     print("[Rp_api] postRpWithdraw, sendRpHolding, address:$address, rawTxHash:$rawTxHash");
     if (rawTxHash == null) {
-      throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
+      throw HttpResponseCodeNotSuccess(
+          -30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
     }
 
-    return await RPHttpCore.instance.postEntity("/v1/rp/level/withdraw/submit", EntityFactory<dynamic>((json) => json),
-        params: {
-          "address": address,
-          "withdraw": withdrawAmount.toString(),
-          "raw_tx": rawTxHash,
-          "from": from,
-          "to": to,
-        },
-        options: RequestOptions(contentType: "application/json"));
+    return await RPHttpCore.instance
+        .postEntity("/v1/rp/level/withdraw/submit", EntityFactory<dynamic>((json) => json),
+            params: {
+              "address": address,
+              "withdraw": withdrawAmount.toString(),
+              "raw_tx": rawTxHash,
+              "from": from,
+              "to": to,
+            },
+            options: RequestOptions(contentType: "application/json"));
   }
 
   ///预提交 , 授权
@@ -587,7 +599,8 @@ class RPApi {
 
     var gasLimit = 100000;
     var gasPrice = BigInt.from(WalletInheritedModel.of(context).ethGasPriceRecommend.fast.toInt());
-    print('[rp_api] postRpApprove, address:$address, amount:$amount, gasPrice:$gasPrice, gasLimit:$gasLimit');
+    print(
+        '[rp_api] postRpApprove, address:$address, amount:$amount, gasPrice:$gasPrice, gasLimit:$gasLimit');
 
     var ret = await wallet.getAllowance(
       HyperionConfig.hynRPHrc30Address,
@@ -703,11 +716,14 @@ class RPApi {
 
     if (responseEntity.code == -40013) {
       return -40013;
-    }
-    else if (responseEntity.code == ResponseCode.SUCCESS || responseEntity.code == 200) {
+    } else if (responseEntity.code == ResponseCode.SUCCESS || responseEntity.code == 200) {
       return responseEntity.data;
     } else {
-      throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg, subMsg: responseEntity.subMsg,);
+      throw HttpResponseCodeNotSuccess(
+        responseEntity.code,
+        responseEntity.msg,
+        subMsg: responseEntity.subMsg,
+      );
     }
 
     // return -40013;
@@ -749,9 +765,11 @@ class RPApi {
         toAddress: toAddress,
         value: ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
-        nonce: rpNonce,);
+        nonce: rpNonce,
+      );
       if (rpSignedTX == null) {
-        throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
+        throw HttpResponseCodeNotSuccess(
+            -30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
       }
       print('[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
 
@@ -770,11 +788,14 @@ class RPApi {
         toAddress: toAddress,
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
         value: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
-        nonce: hynNonce,);
+        nonce: hynNonce,
+      );
       if (hynSignedTX?.isEmpty ?? true) {
-        throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
+        throw HttpResponseCodeNotSuccess(
+            -30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
       }
-      print('[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
+      print(
+          '[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
     } else {
       if (reqEntity.rpAmount > 0) {
         /*rpSignedTX = await HYNApi.signTransferHYNHrc30(
@@ -792,11 +813,14 @@ class RPApi {
           toAddress: toAddress,
           value: ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
           gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
-          nonce: rpNonce,);
-        print('[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
+          nonce: rpNonce,
+        );
+        print(
+            '[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
 
         if (rpSignedTX == null) {
-          throw HttpResponseCodeNotSuccess(-30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
+          throw HttpResponseCodeNotSuccess(
+              -30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
         }
       }
 
@@ -815,11 +839,14 @@ class RPApi {
           toAddress: toAddress,
           gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
           value: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
-          nonce: hynNonce,);
-        print('[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
+          nonce: hynNonce,
+        );
+        print(
+            '[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
 
         if (hynSignedTX?.isEmpty ?? true) {
-          throw HttpResponseCodeNotSuccess(-30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
+          throw HttpResponseCodeNotSuccess(
+              -30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
         }
       }
     }

@@ -15,6 +15,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -25,13 +26,16 @@ import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_detail_page.dart';
+import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textField.dart';
 
@@ -180,7 +184,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   }
 
   _poolInfo() {
-    String totalStakingHyn = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalStakingHynStr) ?? '--';
+    String totalStakingHyn =
+        FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalStakingHynStr) ?? '--';
     String transmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.transmitStr) ?? '--';
     //String totalTransmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalTransmitStr) ?? '--';
 
@@ -231,7 +236,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
   _myRPInfo() {
     int totalAmount = _rpStatistics?.self?.totalAmount ?? 0;
-    String totalStakingHyn = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalStakingHynStr) ?? '--';
+    String totalStakingHyn =
+        FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalStakingHynStr) ?? '--';
     String totalRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalRpStr) ?? '--';
     String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
 
@@ -317,7 +323,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                           crossAxisAlignment: CrossAxisAlignment.start,
                         ),
                       ),
-                      _columnWidget('$totalRp RP', S.of(context).rp_my_total_transmit, isBold: true),
+                      _columnWidget('$totalRp RP', S.of(context).rp_my_total_transmit,
+                          isBold: true),
                       Padding(
                         padding: const EdgeInsets.only(
                           bottom: 8,
@@ -330,7 +337,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                         onTap: _pushRecordAction,
                         child: Row(
                           children: <Widget>[
-                            _columnWidget('$yesterday RP', S.of(context).rp_my_yesterday_transmit, isBold: true),
+                            _columnWidget('$yesterday RP', S.of(context).rp_my_yesterday_transmit,
+                                isBold: true),
                             Padding(
                               padding: const EdgeInsets.only(
                                 left: 8,
@@ -514,7 +522,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 160),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16.0),
-              child: emptyListWidget(title: S.of(context).rp_empty_staking_record, isAdapter: false),
+              child:
+                  emptyListWidget(title: S.of(context).rp_empty_staking_record, isAdapter: false),
             ),
           ),
         ),
@@ -551,7 +560,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     }
 
     var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
-    var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectRetrieveTime ?? '0', isSecond: true);
+    var expectReleaseTime =
+        FormatUtil.newFormatUTCDateStr(model?.expectRetrieveTime ?? '0', isSecond: true);
 
     return InkWell(
       onTap: () => _pushStakingInfoAction(index),
@@ -934,26 +944,90 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     }
 
     var inputText = _textEditController?.text ?? '';
-
     if (inputText.isEmpty) {
       return;
     }
 
-    Navigator.pop(context, true);
+    var value = _hynPerRpValue * (int.tryParse(inputText) ?? 0);
 
-    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
-    if (password == null) {
-      return;
-    }
+    showSendDialog(
+      context: context,
+      value: value,
+    );
+  }
 
-    var total = _hynPerRpValue * (int.tryParse(inputText) ?? 0);
-    var amount = ConvertTokenUnit.strToBigInt(total.toString());
-    try {
-      await _rpApi.postStakingRp(amount: amount, activeWallet: _activeWallet, password: password);
-      getNetworkData();
-    } catch (e) {
-      LogUtil.toastException(e);
-    }
+  Future<bool> showSendDialog<T>({
+    BuildContext context,
+    double value,
+  }) async {
+    var walletVo = WalletInheritedModel.of(context).activatedWallet;
+    var wallet = walletVo.wallet;
+
+    var fromName = wallet.keystore.name;
+    var from = wallet.getAtlasAccount().address;
+    var fromAddressHyn = WalletUtil.ethAddressToBech32Address(from);
+    var fromAddress = shortBlockChainAddress(fromAddressHyn);
+
+    var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+    var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+    var gasValue = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)))
+        .toDouble();
+
+    WalletSendDialogEntity entity = WalletSendDialogEntity(
+      type: 'tx_rp_transmit',
+      value: value,
+      valueUnit: 'HYN',
+      title: '抵押传导',
+      fromName: fromName,
+      fromAddress: fromAddress,
+      toName: '传导池',
+      toAddress: '',
+      gas: gasValue.toString(),
+      gasDesc: '',
+      gasUnit: 'HYN',
+      action: () async {
+        try {
+          print("1111");
+
+          var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
+          if (password == null) {
+            Fluttertoast.showToast(msg: '请输入密码!');
+            return false;
+          }
+
+          var amount = ConvertTokenUnit.strToBigInt(value.toString());
+
+          await _rpApi.postStakingRp(
+            amount: amount,
+            activeWallet: walletVo,
+            password: password,
+            gasLimit: gasLimit,
+          );
+
+          print("2222");
+
+          return true;
+        } catch (e) {
+          LogUtil.toastException(e);
+        }
+        return false;
+      },
+      finished: () async {
+        getNetworkData();
+
+        Navigator.pop(context, true);
+
+        print("3333");
+
+        return true;
+      },
+    );
+
+    return showWalletSendDialog(
+      context: context,
+      entity: entity,
+    );
   }
 
   _pushRecordAction() {

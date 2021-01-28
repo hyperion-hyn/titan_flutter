@@ -427,12 +427,16 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
             Padding(
               padding: const EdgeInsets.only(left: 16, right: 16,top: 2),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('${activeQuotesSign?.sign ?? ''}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: DefaultColors.color333,
-                      fontWeight: FontWeight.bold
+                  Padding(
+                    padding: const EdgeInsets.only(bottom:3.0),
+                    child: Text('${activeQuotesSign?.sign ?? ''}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: DefaultColors.color333,
+                        fontWeight: FontWeight.bold
+                      ),
                     ),
                   ),
                   Text(
