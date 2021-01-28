@@ -43,6 +43,7 @@ class _AppLockManager extends StatefulWidget {
 class _AppLockManagerState extends BaseState<_AppLockManager> {
   AppLockConfig _appLockConfig = AppLockConfig.fromDefault();
   int _lastSeenTime = 0;
+  bool _ignoreAppLock = false;
 
   @override
   void onCreated() async {
@@ -65,6 +66,8 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
           _appLockConfig?.walletLock?.isOn = true;
         } else if (state is UnlockAppState) {
           _appLockConfig?.walletLock?.isOn = false;
+        } else if (state is IgnoreAppLockState) {
+          _ignoreAppLock = state.value;
         } else if (state is SetWalletLockState) {
           _appLockConfig?.walletLock?.isEnabled = state.isEnabled;
 
@@ -88,7 +91,7 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
           if (state.isAway) {
             _lastSeenTime = DateTime.now().millisecondsSinceEpoch;
           } else {
-            if (_appLockConfig.walletLock.isEnabled) {
+            if (_appLockConfig.walletLock.isEnabled && !_ignoreAppLock) {
               var configAwayTime = (_appLockConfig?.walletLock?.awayTime ?? 0) * 1000;
               var now = DateTime.now().millisecondsSinceEpoch;
               var awayTime = now - _lastSeenTime;
@@ -100,6 +103,9 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
                 }
               }
             }
+
+            ///lock again
+            _ignoreAppLock = false;
           }
         }
         if (mounted) setState(() {});

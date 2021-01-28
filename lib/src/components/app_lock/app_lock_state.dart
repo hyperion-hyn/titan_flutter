@@ -41,3 +41,10 @@ class SetAppLockPwdState extends AppLockState {
 class LockAppState extends AppLockState {}
 
 class UnlockAppState extends AppLockState {}
+
+
+class IgnoreAppLockState extends AppLockState {
+  final bool value;
+
+  IgnoreAppLockState(this.value);
+}

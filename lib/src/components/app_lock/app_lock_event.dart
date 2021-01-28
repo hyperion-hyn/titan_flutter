@@ -39,3 +39,9 @@ class SetAppLockPwdEvent extends AppLockEvent {
 class LockAppEvent extends AppLockEvent {}
 
 class UnLockAppEvent extends AppLockEvent {}
+
+class IgnoreAppLockEvent extends AppLockEvent {
+  final bool value;
+
+  IgnoreAppLockEvent(this.value);
+}

@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -863,6 +864,9 @@ class _AddNcovState extends BaseState<AddNcovPage> {
 
   // actions
   Future<void> _selectImages() async {
+    ///Ignore AppLock
+    await AppLockUtil.ignoreAppLock(context, true);
+
     var tempListImagePaths = await ImagePickers.pickerPaths(
       galleryMode: GalleryMode.image,
       selectCount: _listImagePathsMaxLength - _listImagePaths.length,

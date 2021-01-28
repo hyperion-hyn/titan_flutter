@@ -35,6 +35,7 @@ import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -43,6 +44,7 @@ import 'package:titan/src/widget/loading_button/click_oval_icon_button.dart';
 import '../k_line/kline_detail_page.dart';
 import 'bloc/bloc.dart';
 import 'dart:convert';
+import 'dart:math' as math;
 
 class ExchangePage extends StatefulWidget {
   @override
@@ -52,20 +54,11 @@ class ExchangePage extends StatefulWidget {
 }
 
 class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAliveClientMixin {
-  var _selectedBase = '';
-  var _selectedQuote = '';
-  var _exchangeType = ExchangeType.BUY;
-
   ExchangeBloc _exchangeBloc = ExchangeBloc();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   RefreshController _refreshController = RefreshController(
     initialRefresh: true,
   );
-
-  ExchangeCoinList _exchangeCoinList;
-
-  List<DropdownMenuItem> baseCoinItemLIst = List();
-  List<DropdownMenuItem> quoteCoinItemLIst = List();
 
   @override
   bool get wantKeepAlive => true;
@@ -83,53 +76,6 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
 
     ///check account
     BlocProvider.of<ExchangeCmpBloc>(context).add(CheckAccountEvent());
-
-    _updateQuotes();
-
-    _setUpExchangeCoinList();
-  }
-
-  _showConfirmDexPolicy() {
-    UiUtil.showAlertView(
-      context,
-      title: S.of(context).important_hint,
-      actions: [
-        ClickOvalButton(
-          S.of(context).check,
-          () async {
-            Navigator.pop(context);
-            UiUtil.showConfirmPolicyDialog(context, PolicyType.DEX);
-          },
-          width: 160,
-          height: 38,
-          fontSize: 16,
-        ),
-      ],
-      content: S.of(context).please_read_and_agress_dex_policy,
-      barrierDismissible: false,
-    );
-  }
-
-  _updateQuotes() async {
-    // var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
-    // QuotesSign quotesSign = quoteSignStr != null
-    //     ? QuotesSign.fromJson(json.decode(quoteSignStr))
-    //     : SupportedQuoteSigns.defaultQuotesSign;
-    //
-    // BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign));
-    // BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
-  }
-
-  _setUpExchangeCoinList() async {
-    var list = MarketInheritedModel.of(
-      context,
-      aspect: SocketAspect.marketItemList,
-    ).exchangeCoinList;
-
-    if (list != null) {
-      _exchangeCoinList = list;
-      await _resetCoinList(true);
-    }
   }
 
   @override
@@ -147,10 +93,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
         ),
         BlocListener<SocketBloc, SocketState>(
           listener: (context, state) async {
-            if (state is UpdateExchangeCoinListState) {
-              await _setUpExchangeCoinList();
-              if (mounted) setState(() {});
-            }
+            if (state is UpdateExchangeCoinListState) {}
           },
         ),
       ],
@@ -175,8 +118,6 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
                 ///update symbol list
                 BlocProvider.of<SocketBloc>(context).add(MarketSymbolEvent());
 
-                // BlocProvider.of<SocketBloc>(context).add(UpdateExchangeCoinListEvent());
-
                 _loadDataBloc.add(RefreshSuccessEvent());
                 _refreshController.refreshCompleted();
               },
@@ -187,12 +128,6 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
                   ),
                   SliverToBoxAdapter(
                     child: _account(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _exchange(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _divider(),
                   ),
                   SliverToBoxAdapter(
                     child: _quotesTabs(),
@@ -207,248 +142,164 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
     );
   }
 
-  _exchange() {
-    var switchButton = Expanded(
-      flex: 1,
-      child: IconButton(
-        icon: Image.asset(
-          'res/drawable/market_exchange_btn_icon.png',
-          width: 20,
-          height: 18,
-        ),
-        onPressed: () {
-          setState(() {
-            _exchangeType =
-                (_exchangeType == ExchangeType.BUY ? ExchangeType.SELL : ExchangeType.BUY);
-          });
-        },
+  _account() {
+    var hasExchangeAuth = ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount();
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        vertical: 8.0,
+        horizontal: 16.0,
       ),
-    );
-    var baseDropDown = Expanded(
-      flex: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: _baseDropDownList(),
-      ),
-    );
-
-    var quoteDropDown = Expanded(
-      flex: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: _quoteDropDownList(),
-      ),
-    );
-    List<Widget> widgetList = [];
-    if (_exchangeType == ExchangeType.BUY) {
-      widgetList = [baseDropDown, switchButton, quoteDropDown];
-    } else {
-      widgetList = [quoteDropDown, switchButton, baseDropDown];
-    }
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Material(
-            borderRadius: BorderRadius.circular(
-              8.0,
-            ),
-            elevation: 3.0,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8.0,
-                vertical: 8.0,
-              ),
-              child: Row(
-                children: widgetList.isNotEmpty ? widgetList : [SizedBox()],
-              ),
-            ),
+      child: Container(
+        decoration: new BoxDecoration(
+          gradient: LinearGradient(
+            colors: <Color>[
+              HexColor('#FF91A0'),
+              HexColor('#FF9EAC'),
+            ],
           ),
+          borderRadius: BorderRadius.circular(8.0),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 16.0,
-            horizontal: 8.0,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Spacer(),
-              ClickOvalIconButton(
-                S.of(context).exchange_trade,
-                () async {
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: 16.0,
+                horizontal: 16.0,
+              ),
+              child: InkWell(
+                onTap: () async {
                   if (await _checkShowConfirmPolicy()) {
                     _showConfirmDexPolicy();
                   } else {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ExchangeDetailPage(
-                                  exchangeType: _exchangeType,
-                                  base: _selectedBase,
-                                  quote: _selectedQuote,
-                                )));
+                    if (hasExchangeAuth) {
+                      Application.router.navigateTo(
+                          context,
+                          Routes.exchange_assets_page +
+                              '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
+                    } else {
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+                    }
                   }
                 },
-                width: 88,
-                height: 38,
-                radius: 6,
-                fontSize: 14,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 4.0),
-                  child: Icon(
-                    Icons.arrow_forward,
-                    size: 15,
-                    color: Colors.white,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Row(children: [_asset()]),
+                    SizedBox(height: 4.0),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          hasExchangeAuth
+                              ? S.of(context).exchange_account
+                              : S.of(context).exchange_logged_out,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            size: 12,
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(
-                width: 8,
-              )
-            ],
-          ),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            _exchange(),
+          ],
         ),
-        SizedBox(
-          height: 16,
-        )
-      ],
+      ),
     );
   }
 
-  _account() {
-    var quote = WalletInheritedModel.of(context).tokenLegalPrice('USDT')?.legal?.legal;
-    return InkWell(
-      onTap: () async {
-        if (await _checkShowConfirmPolicy()) {
-          _showConfirmDexPolicy();
-        } else {
-          if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) {
-            Application.router.navigateTo(
-                context,
-                Routes.exchange_assets_page +
-                    '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
-          } else {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
-          }
-        }
-      },
-      child: Container(
+  _exchange() {
+    return Container(
+      color: HexColor('#000000').withOpacity(0.03),
+      child: InkWell(
+        onTap: () {
+          _showQuoteListDialog();
+        },
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 6.0,
-                  vertical: 6.0,
-                ),
-                child: quote == null
-                    ? Image.asset(
-                        'res/drawable/ic_exchange_account_cny.png',
-                        width: 20,
-                        height: 20,
-                        color: Theme.of(context).primaryColor,
-                      )
-                    : WalletInheritedModel.of(context)
-                                .tokenLegalPrice('USDT')
-                                ?.legal
-                                ?.legal ==
-                            'CNY'
-                        ? Image.asset(
-                            'res/drawable/ic_exchange_account_cny.png',
-                            width: 18,
-                            height: 18,
-                            color: Theme.of(context).primaryColor,
-                          )
-                        : Image.asset(
-                            'res/drawable/ic_exchange_account_usd.png',
-                            width: 18,
-                            height: 18,
-                            color: Theme.of(context).primaryColor,
-                          ),
+            children: [
+              SizedBox(width: 8),
+              Image.asset(
+                'res/drawable/icon_btn_exchange.png',
+                width: 16,
+                height: 16,
               ),
+              SizedBox(width: 6),
               Text(
-                S.of(context).exchange_account,
+                '兑换',
                 style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 16,
+                  fontSize: 12,
                 ),
               ),
-              Spacer(),
-              _assetView(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                ),
-              )
             ],
+          ),
+          padding: EdgeInsets.symmetric(
+            vertical: 12.0,
+            horizontal: 16.0,
           ),
         ),
       ),
     );
   }
 
-  Future<bool> _checkShowConfirmPolicy() async {
-    var isConfirmDexPolicy = await AppCache.getValue(
-      PrefsKey.IS_CONFIRM_DEX_POLICY,
-    );
-    return isConfirmDexPolicy == null || !isConfirmDexPolicy;
-  }
-
-  _assetView() {
-    var _usdtTotalQuotePrice = '--';
-
-    try {
-      var _totalByUSDT =
-          ExchangeInheritedModel.of(context).exchangeModel.activeAccount?.assetList?.getTotalUsdt();
-
-      var _coinQuotePrice =
-          WalletInheritedModel.of(context).tokenLegalPrice('USDT')?.price;
-
-      _usdtTotalQuotePrice = FormatUtil.truncateDecimalNum(
-        _totalByUSDT *
-            Decimal.parse(
-              '$_coinQuotePrice',
-            ),
-        4,
-      );
-    } catch (e) {}
-
-    var _quoteSymbol =
-        WalletInheritedModel.of(context).tokenLegalPrice('USDT')?.legal?.legal;
+  _asset() {
+    var _fiatSign = WalletInheritedModel.of(context)?.tokenLegalPrice('USDT')?.legal?.sign ?? '';
     var _isShowBalance = ExchangeInheritedModel.of(context).exchangeModel?.isShowBalances ?? true;
-    var _isExchangeAccountLoggin =
-        ExchangeInheritedModel.of(context).exchangeModel?.hasActiveAccount() ?? false;
-    if (_isExchangeAccountLoggin) {
-      return Text.rich(
-        TextSpan(children: [
-          TextSpan(
-              text: _isShowBalance ? _usdtTotalQuotePrice : '*****',
-              style: TextStyle(
-                fontSize: 12,
-              )),
-          TextSpan(
-            text: ' (${_quoteSymbol ?? ''})',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 10,
-            ),
-          )
-        ]),
-        textAlign: TextAlign.center,
-      );
-    } else {
-      return Text(
-        S.of(context).exchange_logged_out,
-        style: TextStyle(
-          color: HexColor('#FF1F81FF'),
-        ),
-      );
+    var _hasExchangeAuth = ExchangeInheritedModel.of(context).exchangeModel?.hasActiveAccount();
+
+    var _usdtTotalQuotePrice = '-----';
+
+    if (_hasExchangeAuth) {
+      try {
+        var _totalByUSDT = ExchangeInheritedModel.of(context)
+            .exchangeModel
+            .activeAccount
+            ?.assetList
+            ?.getTotalUsdt();
+
+        var _coinQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('USDT')?.price;
+
+        _usdtTotalQuotePrice =
+            FormatUtil.truncateDecimalNum(_totalByUSDT * Decimal.parse('$_coinQuotePrice'), 4);
+      } catch (e) {}
     }
+
+    return Text.rich(
+      TextSpan(children: [
+        TextSpan(
+          text: '$_fiatSign  ',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        TextSpan(
+          text: _isShowBalance ? _usdtTotalQuotePrice : '*****',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+        ),
+      ]),
+      textAlign: TextAlign.center,
+    );
   }
 
   _quoteList() {
@@ -464,116 +315,6 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
         },
         childCount: quoteList.length,
       ),
-    );
-  }
-
-  _coinItem(
-    String name,
-    String logoPath,
-    bool isOnlinePath,
-  ) {
-    return Row(
-      children: <Widget>[
-        Container(
-          alignment: Alignment.center,
-          width: 26,
-          height: 26,
-          decoration: BoxDecoration(
-            border: Border.all(color: Color(0xFF9B9B9B), width: 0),
-            shape: BoxShape.circle,
-          ),
-          child: isOnlinePath
-              ? FadeInImage.assetNetwork(
-                  placeholder: 'res/drawable/img_placeholder_circle.png',
-                  image: logoPath,
-                  fit: BoxFit.cover,
-                )
-              : Image.asset(logoPath),
-        ),
-        SizedBox(
-          width: 8.0,
-        ),
-        Text(
-          name,
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 20,
-          ),
-        )
-      ],
-    );
-  }
-
-  _resetCoinList(bool isApiRefresh) {
-    baseCoinItemLIst.clear();
-    quoteCoinItemLIst.clear();
-    _exchangeCoinList?.activeExchangeMap?.forEach((key, value) {
-      baseCoinItemLIst.add(DropdownMenuItem(
-        value: key,
-        child: _coinItem(
-          key,
-          Tokens.getCoinIconPathBySymbol(key),
-          false,
-        ),
-      ));
-    });
-
-    if (baseCoinItemLIst.first != null && isApiRefresh) {
-      _selectedBase = baseCoinItemLIst.first.value;
-    }
-
-    _exchangeCoinList?.activeExchangeMap?.forEach((key, value) {
-      if (key == _selectedBase) {
-        value?.forEach((coin) {
-          quoteCoinItemLIst.add(DropdownMenuItem(
-            value: coin,
-            child: _coinItem(
-              coin,
-              Tokens.getCoinIconPathBySymbol(coin),
-              false,
-            ),
-          ));
-        });
-      }
-    });
-
-    if (quoteCoinItemLIst.first != null) {
-      _selectedQuote = quoteCoinItemLIst.first.value;
-    }
-  }
-
-  _baseDropDownList() {
-    return Row(
-      children: [
-        DropdownButtonHideUnderline(
-          child: DropdownButton(
-            onChanged: (value) async {
-              _selectedBase = value;
-              await _resetCoinList(false);
-              setState(() {});
-            },
-            value: _selectedBase,
-            items: baseCoinItemLIst,
-          ),
-        ),
-      ],
-    );
-  }
-
-  _quoteDropDownList() {
-    return Row(
-      children: [
-        DropdownButtonHideUnderline(
-          child: DropdownButton(
-            onChanged: (value) async {
-              _selectedQuote = value;
-              setState(() {});
-            },
-            value: _selectedQuote,
-            items: quoteCoinItemLIst,
-          ),
-        )
-      ],
     );
   }
 
@@ -837,10 +578,167 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
     );
   }
 
-  _divider() {
-    return Container(
-      height: 8,
-      color: HexColor('#FFF2F2F2'),
+  _quoteListItem(MarketItemEntity marketItemEntity) {
+    var base = marketItemEntity?.base;
+    var quote = marketItemEntity?.quote;
+
+    // price
+    var _latestPrice = '--';
+    var _latestPercentBgColor = HexColor('#FF53AE86');
+
+    try {
+      var _latestClose = Decimal.tryParse('${marketItemEntity.kLineEntity?.close}');
+
+      if (_latestClose != null) {
+        _latestPrice = FormatUtil.truncateDecimalNum(_latestClose, 4);
+      }
+    } catch (e) {}
+
+    return Column(
+      children: <Widget>[
+        InkWell(
+            onTap: () async {
+              Navigator.of(context).pop();
+              if (await _checkShowConfirmPolicy()) {
+                _showConfirmDexPolicy();
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ExchangeDetailPage(
+                              exchangeType: ExchangeType.BUY,
+                              base: marketItemEntity.base,
+                              quote: marketItemEntity.quote,
+                            )));
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 16.0,
+              ),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text.rich(TextSpan(children: [
+                        TextSpan(
+                            text: quote,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                              fontSize: 16,
+                            )),
+                        TextSpan(
+                            text: '/',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey,
+                              fontSize: 12,
+                            )),
+                        TextSpan(
+                            text: base,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey,
+                              fontSize: 12,
+                            )),
+                      ])),
+                      Spacer(),
+                      Text(
+                        _latestPrice,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                          color: _latestPercentBgColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            )),
+      ],
     );
+  }
+
+  _showQuoteListDialog() {
+    var quoteList = MarketInheritedModel.of(
+      context,
+      aspect: SocketAspect.marketItemList,
+    ).getFilterMarketItemList();
+
+    UiUtil.showBottomDialogView(context,
+        dialogHeight: MediaQuery.of(context).size.height - 80,
+        isScrollControlled: true,
+        customWidget: Expanded(
+            child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Center(
+                child: Text('选择币对', style: TextStyles.textC333S14bold),
+              ),
+            ),
+            Expanded(
+                child: CustomScrollView(
+              semanticChildCount: quoteList.length,
+              slivers: <Widget>[
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      final int itemIndex = index ~/ 2;
+                      if (index.isEven) {
+                        return _quoteListItem(quoteList[itemIndex]);
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Divider(
+                          height: 1,
+                        ),
+                      );
+                    },
+                    semanticIndexCallback: (Widget widget, int localIndex) {
+                      if (localIndex.isEven) {
+                        return localIndex ~/ 2;
+                      }
+                      return null;
+                    },
+                    childCount: math.max(0, quoteList.length * 2 - 1),
+                  ),
+                ),
+              ],
+            )),
+          ],
+        )));
+  }
+
+  _showConfirmDexPolicy() {
+    UiUtil.showAlertView(
+      context,
+      title: S.of(context).important_hint,
+      actions: [
+        ClickOvalButton(
+          S.of(context).check,
+          () async {
+            Navigator.pop(context);
+            UiUtil.showConfirmPolicyDialog(context, PolicyType.DEX);
+          },
+          width: 160,
+          height: 38,
+          fontSize: 16,
+        ),
+      ],
+      content: S.of(context).please_read_and_agress_dex_policy,
+      barrierDismissible: false,
+    );
+  }
+
+  Future<bool> _checkShowConfirmPolicy() async {
+    var isConfirmDexPolicy = await AppCache.getValue(
+      PrefsKey.IS_CONFIRM_DEX_POLICY,
+    );
+    return isConfirmDexPolicy == null || !isConfirmDexPolicy;
   }
 }

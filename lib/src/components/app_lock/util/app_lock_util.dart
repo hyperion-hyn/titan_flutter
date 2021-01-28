@@ -17,6 +17,12 @@ class AppLockUtil {
     }
   }
 
+  static Future<void> ignoreAppLock(BuildContext context, bool value) async {
+    // print('xxx ignoreAppLock');
+    // BlocProvider.of<AppLockBloc>(context).add(IgnoreAppLockEvent(value));
+    // await Future.delayed(Duration(milliseconds: 300));
+  }
+
   static Future<bool> checkEnable() async {
     var jsonStr = await AppCache.secureGetValue(
       SecurePrefsKey.APP_LOCK_CONFIG,
