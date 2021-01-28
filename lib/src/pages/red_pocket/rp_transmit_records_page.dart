@@ -133,7 +133,7 @@ class _RpTransmitRecordsState extends BaseState<RpTransmitRecordsPage> {
     return InkWell(
       onTap: () {
         WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
-            context, model?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+            context, model?.txHash ?? '', DefaultTokenDefine.HYN_RP_HRC30.symbol);
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),

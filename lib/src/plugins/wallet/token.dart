@@ -9,12 +9,20 @@ class AssetToken {
   final String symbol;
   final String logo;
   final String contractAddress;
+  final bool hideable;
 
-  const AssetToken({this.name, this.decimals, this.contractAddress, this.symbol, this.logo});
+  const AssetToken({
+    this.name,
+    this.decimals,
+    this.contractAddress,
+    this.symbol,
+    this.logo,
+    this.hideable,
+  });
 
   @override
   String toString() {
-    return 'AssetToken{decimals: $decimals, name: $name, symbol: $symbol, logo: $logo, contractAddress: $contractAddress}';
+    return toJson().toString();
   }
 
   factory AssetToken.fromJson(Map<String, dynamic> json) => _$AssetTokenFromJson(json);

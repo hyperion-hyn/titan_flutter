@@ -12,6 +12,7 @@ import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 import 'bloc/bloc.dart';
@@ -120,10 +121,8 @@ class _WalletManagerState extends State<_WalletManager> {
             }
           }
         } else if (state is BalanceState) {
-          if (state.walletVo != null) {
-            var balance = _calculateTotalBalance(state.walletVo);
-            _activatedWallet = state.walletVo.copyWith(WalletViewVo(balance: balance));
-          }
+          var balance = _calculateTotalBalance(state.walletVo);
+          _activatedWallet = state.walletVo.copyWith(WalletViewVo(balance: balance));
         } else if (state is ActivatedWalletState) {
           _activatedWallet = state.walletVo;
           if (_activatedWallet != null) {
@@ -143,6 +142,10 @@ class _WalletManagerState extends State<_WalletManager> {
             ));
           }
         } else if (state is UpdateWalletExpandState) {
+          if(_activatedWallet != null) {
+            var newWallet = _activatedWallet.wallet.copyWith(Wallet(walletExpandInfoEntity: state.walletExpandInfoEntity));
+            _activatedWallet = _activatedWallet.copyWith(WalletViewVo(wallet: newWallet));
+          }
           _activatedWallet.wallet.walletExpandInfoEntity = state.walletExpandInfoEntity;
         }
       },
@@ -248,7 +251,7 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
   String activatedHynAddress() {
     if (this.activatedWallet != null) {
       for (var coin in this.activatedWallet.coins) {
-        if (coin.symbol == SupportedTokens.ETHEREUM.symbol) {
+        if (coin.symbol == DefaultTokenDefine.ETHEREUM.symbol) {
           return coin.address;
         }
       }
@@ -270,7 +273,7 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
   CoinViewVo getCoinVoOfHyn() {
     if (this.activatedWallet != null) {
       for (var coin in this.activatedWallet.coins) {
-        if (coin.symbol == SupportedTokens.HYN_ERC20.symbol) {
+        if (coin.symbol == DefaultTokenDefine.HYN_ERC20.symbol) {
           return coin;
         }
       }

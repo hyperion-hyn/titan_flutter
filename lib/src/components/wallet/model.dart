@@ -11,6 +11,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'model.g.dart';
 
 /// 行情数据（实时）
+@JsonSerializable()
 class QuotesModel extends Equatable {
   // 行情数据，包括所有支持的法币
   final List<TokenPriceViewVo> quotes;
@@ -24,6 +25,10 @@ class QuotesModel extends Equatable {
   List<Object> get props => [
         /*symbolStr, */ quotes /*, lastUpdateTime*/
       ];
+
+  factory QuotesModel.fromJson(Map<String, dynamic> srcJson) => _$QuotesModelFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$QuotesModelToJson(this);
 }
 
 /// 法币计价

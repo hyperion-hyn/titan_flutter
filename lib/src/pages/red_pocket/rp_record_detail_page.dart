@@ -947,7 +947,7 @@ class _RpRecordDetailState extends BaseState<RpRecordDetailPage> {
     WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
       context,
       _detailEntity?.txHash,
-      SupportedTokens.HYN_RP_HRC30.symbol,
+      DefaultTokenDefine.HYN_RP_HRC30.symbol,
     );
   }
 

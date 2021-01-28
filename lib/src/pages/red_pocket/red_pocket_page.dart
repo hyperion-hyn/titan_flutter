@@ -194,7 +194,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
     var rpBalanceStr = '--';
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-      SupportedTokens.HYN_RP_HRC30.symbol,
+      DefaultTokenDefine.HYN_RP_HRC30.symbol,
     );
     try {
       rpBalanceStr = FormatUtil.coinBalanceHumanReadFormat(

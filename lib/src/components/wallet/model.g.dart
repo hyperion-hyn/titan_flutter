@@ -6,6 +6,21 @@ part of 'model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+QuotesModel _$QuotesModelFromJson(Map<String, dynamic> json) {
+  return QuotesModel(
+    quotes: (json['quotes'] as List)
+        ?.map((e) => e == null
+            ? null
+            : TokenPriceViewVo.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
+  );
+}
+
+Map<String, dynamic> _$QuotesModelToJson(QuotesModel instance) =>
+    <String, dynamic>{
+      'quotes': instance.quotes,
+    };
+
 LegalSign _$LegalSignFromJson(Map<String, dynamic> json) {
   return LegalSign(
     legal: json['legal'] as String,

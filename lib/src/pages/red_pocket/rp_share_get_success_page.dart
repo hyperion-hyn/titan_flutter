@@ -80,7 +80,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
       return;
     }
     WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
-        context, myRpOpenEntity?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+        context, myRpOpenEntity?.rpHash ?? '', DefaultTokenDefine.HYN_RP_HRC30.symbol);
   }
 
   void _hynHandlePress() {
@@ -88,7 +88,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
       return;
     }
     WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
-        context, myRpOpenEntity?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
+        context, myRpOpenEntity?.hynHash ?? '', DefaultTokenDefine.HYN_Atlas.symbol);
   }
 
   @override
@@ -509,7 +509,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                                 GestureDetector(
                                   onTap: () {
                                     WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
-                                        context, item?.rpHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+                                        context, item?.rpHash ?? '', DefaultTokenDefine.HYN_RP_HRC30.symbol);
                                   },
                                   child: Text(
                                     "${getCoinAmount(item.rpAmount)} RP",
@@ -541,7 +541,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                                 GestureDetector(
                                   onTap: () {
                                     WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
-                                        context, item?.hynHash ?? '', SupportedTokens.HYN_Atlas.symbol);
+                                        context, item?.hynHash ?? '', DefaultTokenDefine.HYN_Atlas.symbol);
                                   },
                                   child: Text(
                                     "${getCoinAmount(item.hynAmount)} HYN",

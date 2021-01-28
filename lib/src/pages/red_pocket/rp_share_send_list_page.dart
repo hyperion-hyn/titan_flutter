@@ -230,7 +230,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                                 if ((model?.rpRefundHash ?? '').isEmpty) return;
 
                                 WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(context,
-                                    model?.rpRefundHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+                                    model?.rpRefundHash ?? '', DefaultTokenDefine.HYN_RP_HRC30.symbol);
                               },
                               child: Text(
                                 shareStateToName(model.state),
@@ -252,7 +252,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                                   if ((model?.hynRefundHash ?? '').isEmpty) return;
 
                                   WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(context,
-                                      model?.hynRefundHash ?? '', SupportedTokens.HYN_Atlas.symbol);
+                                      model?.hynRefundHash ?? '', DefaultTokenDefine.HYN_Atlas.symbol);
                                 },
                                 child: Text(
                                   ',查看转账详情',

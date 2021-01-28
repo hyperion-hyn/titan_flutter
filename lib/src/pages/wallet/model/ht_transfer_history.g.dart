@@ -8,24 +8,24 @@ part of 'ht_transfer_history.dart';
 
 HtTransferHistory _$HtTransferHistoryFromJson(Map<String, dynamic> json) {
   return HtTransferHistory(
-    json['blockNumber'].toString(),
-    json['timeStamp'].toString(),
+    json['blockNumber'] as String,
+    json['timeStamp'] as String,
     json['hash'] as String,
-    json['nonce'].toString(),
+    json['nonce'] as String,
     json['blockHash'] as String,
-    json['transactionIndex'].toString(),
+    json['transactionIndex'] as String,
     json['from'] as String,
     json['to'] as String,
-    json['value'].toString(),
-    json['gas'].toString(),
-    json['gasPrice'].toString(),
+    json['value'] as String,
+    json['gas'] as String,
+    json['gasPrice'] as String,
     json['isError'] as String,
-    json['txReceiptStatus'].toString(),
+    json['txReceiptStatus'] as String,
     json['input'] as String,
     json['contractAddress'] as String,
-    json['cumulativeGasUsed'].toString(),
-    json['gasUsed'].toString(),
-    json['confirmations'].toString(),
+    json['cumulativeGasUsed'] as String,
+    json['gasUsed'] as String,
+    json['confirmations'] as String,
   );
 }
 

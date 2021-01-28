@@ -98,7 +98,7 @@ class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage>
               WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
                   context,
                   widget.rpStakingInfo?.txHash ?? '',
-                  SupportedTokens.HYN_Atlas.symbol);
+                  DefaultTokenDefine.HYN_Atlas.symbol);
             },
             child: Text(
               S.of(context).rp_check_staking_tx,
@@ -410,7 +410,7 @@ class _RpTransmitDetailPageState extends BaseState<RpTransmitDetailPage>
     return InkWell(
       onTap: () {
         WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
-            context, model?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+            context, model?.txHash ?? '', DefaultTokenDefine.HYN_RP_HRC30.symbol);
       },
       child: Container(
         color: HexColor('#F8F8F8'),

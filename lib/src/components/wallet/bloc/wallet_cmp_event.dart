@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
@@ -58,6 +59,20 @@ class UpdateGasPriceEvent extends WalletCmpEvent {
   final GasPriceType type;
 
   UpdateGasPriceEvent({this.status, this.type});
+}
+
+/// 关闭部分合约币显示
+class TurnOffTokensEvent extends WalletCmpEvent {
+  final List<CoinViewVo> vos;
+
+  TurnOffTokensEvent({@required this.vos});
+}
+
+/// 开启部分合约币显示
+class TurnOnTokensEvent extends WalletCmpEvent {
+  final List<CoinViewVo> vos;
+
+  TurnOnTokensEvent({@required this.vos});
 }
 
 class UpdateWalletExpandEvent extends WalletCmpEvent {

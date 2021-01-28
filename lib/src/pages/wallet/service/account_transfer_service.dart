@@ -65,7 +65,7 @@ class AccountTransferService {
   }
 
   Future<List<TransactionDetailVo>> _getHYNHrc30TransferList(CoinViewVo coinVo, int page) async {
-    var assetToken = Tokens.getTokenByContractAddress(coinVo.contractAddress);
+    var assetToken = Tokens.getDefaultTokenByContractAddress(coinVo.contractAddress);
     if (assetToken == null) {
       return [];
     }
@@ -185,7 +185,7 @@ class AccountTransferService {
   }
 
   Future<List<TransactionDetailVo>> _getHtErc20TransferList(CoinViewVo coinVo, int page) async {
-    var assetToken = Tokens.getTokenByContractAddress(coinVo.contractAddress);
+    var assetToken = Tokens.getDefaultTokenByContractAddress(coinVo.contractAddress);
     if (assetToken == null) {
       return [];
     }
