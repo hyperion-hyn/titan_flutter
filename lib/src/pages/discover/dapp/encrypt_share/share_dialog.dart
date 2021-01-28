@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/utils/encryption.dart';
@@ -52,8 +53,7 @@ class ShareDialogState extends State<ShareDialog> {
     Duration insetAnimationDuration = const Duration(milliseconds: 100);
     Curve insetAnimationCurve = Curves.decelerate;
     return AnimatedPadding(
-      padding: MediaQuery.of(context).viewInsets +
-          const EdgeInsets.symmetric(horizontal: 32.0),
+      padding: MediaQuery.of(context).viewInsets + const EdgeInsets.symmetric(horizontal: 32.0),
       duration: insetAnimationDuration,
       curve: insetAnimationCurve,
       child: Center(
@@ -111,8 +111,7 @@ class ShareDialogState extends State<ShareDialog> {
                   Center(
                     child: Text(
                       S.of(context).share_encrypted_location,
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                     ),
                   ),
                   Container(
@@ -221,9 +220,7 @@ class ShareDialogState extends State<ShareDialog> {
               Text(
                 S.of(context).accept_share_pub_key,
                 style: TextStyle(
-                    fontSize: 17,
-                    color: HexColor('#FF333333'),
-                    fontWeight: FontWeight.bold),
+                    fontSize: 17, color: HexColor('#FF333333'), fontWeight: FontWeight.bold),
               ),
               Spacer(),
               InkWell(
@@ -277,8 +274,7 @@ class ShareDialogState extends State<ShareDialog> {
                     width: 0.5,
                   ),
                 ),
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
               style: TextStyle(fontSize: 13),
               onSaved: (value) {
@@ -291,17 +287,14 @@ class ShareDialogState extends State<ShareDialog> {
           ),
           Text(
             S.of(context).postscript,
-            style: TextStyle(
-                fontSize: 17,
-                color: HexColor('#FF333333'),
-                fontWeight: FontWeight.bold),
+            style:
+                TextStyle(fontSize: 17, color: HexColor('#FF333333'), fontWeight: FontWeight.bold),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 16),
             child: Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  color: HexColor('#FFF2F2F2')),
+                  borderRadius: BorderRadius.circular(30), color: HexColor('#FFF2F2F2')),
               child: TextFormField(
                 autofocus: true,
                 decoration: InputDecoration(
@@ -338,8 +331,7 @@ class ShareDialogState extends State<ShareDialog> {
                       width: 0.5,
                     ),
                   ),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
                 onSaved: (value) {
                   remark = value;
@@ -364,19 +356,21 @@ class ShareDialogState extends State<ShareDialog> {
   Future onScan() async {
 //    print('TODO scan');
     try {
+      ///Ignore App Lock
+      AppLockUtil.ignoreAppLock(context, true);
+
       String barcode = await BarcodeScanner.scan();
 //      if (barcode.length != 130) {
 //        Fluttertoast.showToast(
 //            msg: S.of(context).public_key_scan_fail_rescan,
 //            toastLength: Toast.LENGTH_SHORT);
 //      } else {
-        pubKeyTextEditController.text = barcode;
-        setState(() => {});
+      pubKeyTextEditController.text = barcode;
+      setState(() => {});
 //      }
     } catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
-        Fluttertoast.showToast(
-            msg: S.of(context).open_camera, toastLength: Toast.LENGTH_SHORT);
+        Fluttertoast.showToast(msg: S.of(context).open_camera, toastLength: Toast.LENGTH_SHORT);
       } else {
         logger.e("", e);
         setState(() => this.pubAddress = S.of(context).unknown_error);
@@ -392,8 +386,7 @@ class ShareDialogState extends State<ShareDialog> {
     bool isReEncrypt = pubAddress == null || pubAddress.isEmpty;
     if (isReEncrypt) {
       try {
-        cipherText = await reEncryptPoi(
-            Injector.of(context).repository, widget.poi, remark);
+        cipherText = await reEncryptPoi(Injector.of(context).repository, widget.poi, remark);
       } catch (err) {
         logger.e(err);
         Fluttertoast.showToast(msg: S.of(context).encrypt_error);
@@ -412,8 +405,7 @@ class ShareDialogState extends State<ShareDialog> {
     }
 
     if (cipherText != null && cipherText.isNotEmpty) {
-      Share.text(
-          S.of(context).share_encrypted_location, cipherText, 'text/plain');
+      Share.text(S.of(context).share_encrypted_location, cipherText, 'text/plain');
       Navigator.pop(context, true);
     }
   }
