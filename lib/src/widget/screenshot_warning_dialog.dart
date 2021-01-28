@@ -86,7 +86,7 @@ class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
                           S.of(context).warning_no_sceenshot,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 14,
                             color: HexColor('#FF6D6D6D'),
                             height: 1.7,
                           ),
@@ -106,8 +106,10 @@ class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
                             HexColor("#F7D33D"),
                             HexColor("#E7C01A"),
                           ],
-                          fontSize: 16,
+                          fontSize: 14,
                           fontColor: DefaultColors.color333,
+                          fontWeight: FontWeight.bold,
+
                         ),
                       ),
                     ],

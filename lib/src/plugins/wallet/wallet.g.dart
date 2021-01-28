@@ -16,7 +16,7 @@ Wallet _$WalletFromJson(Map<String, dynamic> json) {
             e == null ? null : Account.fromJson(e as Map<String, dynamic>))
         ?.toList(),
   )..walletExpandInfoEntity = json['walletExpandInfoEntity'] == null
-      ? null
+      ? WalletExpandInfoEntity.defaultEntity()
       : WalletExpandInfoEntity.fromJson(
           json['walletExpandInfoEntity'] as Map<String, dynamic>);
 }

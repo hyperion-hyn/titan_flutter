@@ -60,9 +60,9 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
 
   @override
   void didPopNext() async {
-    widget.wallet.walletExpandInfoEntity =
-        await WalletUtil.getWalletExpandInfo(widget.wallet.getEthAccount().address);
-    isBackup = widget.wallet.walletExpandInfoEntity?.isBackup ?? false;
+    var walletExpandInfoEntity = await WalletUtil.getWalletExpandInfo(widget.wallet.getEthAccount().address);
+    widget.wallet.walletExpandInfoEntity?.isBackup = walletExpandInfoEntity.isBackup;
+    isBackup = walletExpandInfoEntity.isBackup;
     setState(() {});
   }
 
@@ -130,7 +130,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                       BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletExpandEvent(
                           widget.wallet.getEthAccount().address,
                           widget.wallet.walletExpandInfoEntity));
-
+                      postUserSync();
                       setState(() {});
                     } else {
                       Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
@@ -183,14 +183,9 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                       wallet: widget.wallet, password: password, name: text);
                   if (success == true) {
                     UiUtil.toast(S.of(context).update_success);
-                    var userPayload = UserPayloadWithAddressEntity(
-                      Payload(
-                        userName: widget.wallet.keystore.name,
-                      ),
-                      widget.wallet.getAtlasAccount().address,
-                    );
-                    AtlasApi.postUserSync(userPayload);
+                    postUserSync();
                   }
+                  widget.wallet?.keystore?.name = text;
 
                   setState(() {});
                 }
@@ -296,7 +291,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                       Routes.wallet_setting_wallet_backup_notice +
                           '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
                 },
-                subContent: '如果你无法访问这个设备，你的资金将无法找回，除非你备份了!',
+                subContent: '钱包私密数据只存在你的设备上，一旦你的【助记词】被人知晓，那么资产将无法找回！请在安全的地方开始手抄备份你的【助记词】',
                 warning: !isBackup ? '未备份' : ""),
             Divider(
               height: 0.5,
@@ -635,5 +630,16 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
         ),
       ),
     );
+  }
+
+  void postUserSync() {
+    var userPayload = UserPayloadWithAddressEntity(
+      Payload(
+        userName: widget.wallet.keystore.name,
+        userPic: widget.wallet.walletExpandInfoEntity.netHeadImg,
+      ),
+      widget.wallet.getAtlasAccount().address,
+    );
+    AtlasApi.postUserSync(userPayload);
   }
 }

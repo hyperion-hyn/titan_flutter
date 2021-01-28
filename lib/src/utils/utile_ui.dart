@@ -896,25 +896,38 @@ class UiUtil {
     );
   }
 
-  static showHintToast(BuildContext context, Widget icon, msg) {
+  static showStateHint(BuildContext context, bool value, String msg) {
     Widget widget = Center(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),
         child: Container(
-          width: 150,
-          height: 150,
+          width: 140,
+          height: 140,
           color: HexColor('#4D000000'),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Spacer(),
-              icon,
+              value
+                  ? Image.asset(
+                      'res/drawable/ic_toast_check.png',
+                      width: 60,
+                      height: 60,
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Image.asset(
+                        'res/drawable/ic_toast_cross.png',
+                        width: 30,
+                        height: 30,
+                      ),
+                    ),
               SizedBox(
                 height: 16,
               ),
               Text(
                 msg,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                style: TextStyle(fontSize: 16, color: Colors.white),
               ),
               Spacer()
             ],
