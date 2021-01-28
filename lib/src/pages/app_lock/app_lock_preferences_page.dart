@@ -166,7 +166,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    '离开应用一定时间后应用锁将自动锁定应用，继续使用应用需要先解锁',
+                    '离开应用一定时间后应用锁将自动锁定应用，继续使用应用需要先解锁。',
                     style: TextStyle(
                       color: DefaultColors.color999,
                       fontSize: 12,
@@ -288,29 +288,10 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
           BlocProvider.of<AppLockBloc>(context).add(
             SetWalletLockBioAuthEvent(value),
           );
-          //await AppLockUtil.setBioAuth(value);
 
-          UiUtil.showHintToast(
-            context,
-            Image.asset(
-              'res/drawable/ic_toast_check.png',
-              width: 60,
-              height: 60,
-            ),
-            S.of(context).set_bio_auth_success,
-          );
+          UiUtil.showStateHint(context, true, S.of(context).set_bio_auth_success);
         } else {
-          UiUtil.showHintToast(
-              context,
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Image.asset(
-                  'res/drawable/ic_toast_cross.png',
-                  width: 30,
-                  height: 30,
-                ),
-              ),
-              S.of(context).set_bio_auth_fail);
+          UiUtil.showStateHint(context, false, S.of(context).set_bio_auth_fail);
         }
       });
     } else {

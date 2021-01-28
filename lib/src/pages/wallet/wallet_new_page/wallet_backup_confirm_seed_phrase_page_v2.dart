@@ -116,14 +116,8 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
                       logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
                       if (selectedMnemonitc.trim() == widget.mnemonic.trim()) {
                         await _confirmBackUp();
-                        UiUtil.showHintToast(
-                            context,
-                            Image.asset(
-                              'res/drawable/ic_toast_check.png',
-                              width: 60,
-                              height: 60,
-                            ),
-                            S.of(context).backup_finish);
+
+                        UiUtil.showStateHint(context, true, S.of(context).backup_finish);
                         Routes.popUntilCachedEntryRouteName(context);
                       } else {
                         _showWrongOrderErrorHint(context);
@@ -135,8 +129,9 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
                       HexColor("#F7D33D"),
                       HexColor("#E7C01A"),
                     ],
-                    fontSize: 16,
+                    fontSize: 14,
                     fontColor: DefaultColors.color333,
+                    fontWeight: FontWeight.bold,
                   ),
                 )
               ],

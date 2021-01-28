@@ -189,8 +189,9 @@ class _BackupShowResumeWordState extends State<WalletBackupShowSeedPhrasePageV2>
                     HexColor("#F7D33D"),
                     HexColor("#E7C01A"),
                   ],
-                  fontSize: 16,
+                  fontSize: 14,
                   fontColor: DefaultColors.color333,
+                  fontWeight: FontWeight.bold,
                 ),
               )
             ],
@@ -245,11 +246,12 @@ class _BackupShowResumeWordState extends State<WalletBackupShowSeedPhrasePageV2>
 
   _reminder(String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: const EdgeInsets.only(bottom: 16.0, right: 16.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(right: 8.0),
+            padding: const EdgeInsets.only(right: 8.0, top: 10),
             child: Container(
               width: 5,
               height: 5,
@@ -263,7 +265,7 @@ class _BackupShowResumeWordState extends State<WalletBackupShowSeedPhrasePageV2>
             child: Text(
               '$text',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 13,
                 color: DefaultColors.color999,
               ),
             ),
