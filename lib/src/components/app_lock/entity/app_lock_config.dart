@@ -18,6 +18,7 @@ class AppLockConfig extends Object {
   Map<String, dynamic> toJson() => _$AppLockConfigToJson(this);
 }
 
+@JsonSerializable()
 class WalletLock extends Object {
   @JsonKey(name: 'isEnabled')
   bool isEnabled;

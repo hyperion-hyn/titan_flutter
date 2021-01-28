@@ -308,15 +308,15 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                                         return InkWell(
                                           onTap: () {
                                             if ((widget.coinVo.symbol ==
-                                                    SupportedTokens
+                                                    DefaultTokenDefine
                                                         .HYN_Atlas.symbol) ||
                                                 (widget.coinVo.symbol ==
-                                                    SupportedTokens
+                                                    DefaultTokenDefine
                                                         .HYN_RP_HRC30.symbol)) {
                                               var base = 'USDT';
                                               var quote = 'HYN';
                                               if (widget.coinVo.symbol ==
-                                                  SupportedTokens
+                                                  DefaultTokenDefine
                                                       .HYN_RP_HRC30.symbol) {
                                                 base = 'HYN';
                                                 quote = 'RP';

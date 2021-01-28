@@ -531,10 +531,10 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
     var hynBalanceStr = '--';
 
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-      SupportedTokens.HYN_RP_HRC30.symbol,
+      DefaultTokenDefine.HYN_RP_HRC30.symbol,
     );
     var hynToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-      SupportedTokens.HYN_Atlas.symbol,
+      DefaultTokenDefine.HYN_Atlas.symbol,
     );
     try {
       rpBalanceStr = FormatUtil.coinBalanceHumanReadFormat(

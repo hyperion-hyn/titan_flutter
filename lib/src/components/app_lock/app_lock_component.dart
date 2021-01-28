@@ -98,7 +98,10 @@ class _AppLockManagerState extends BaseState<_AppLockManager> {
     var jsonStr = await AppCache.secureGetValue(
       SecurePrefsKey.APP_LOCK_CONFIG,
     );
-    return AppLockConfig.fromJson(json.decode(jsonStr));
+    if(jsonStr != null && jsonStr != '') {
+      return AppLockConfig.fromJson(json.decode(jsonStr));
+    }
+    return null;
   }
 }
 

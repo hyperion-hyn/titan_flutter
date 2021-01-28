@@ -5,37 +5,38 @@ import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 
 class Tokens {
-  static AssetToken getTokenByContractAddress(String contractAddress) {
-    List<AssetToken> tokens = allTokens();
+  static AssetToken getDefaultTokenByContractAddress(String contractAddress) {
+    List<AssetToken> tokens = defaultTokens();
     for (var token in tokens) {
-      if (token.contractAddress != null && token.contractAddress.toLowerCase() == contractAddress?.toLowerCase()) {
+      if (token.contractAddress != null &&
+          token.contractAddress.toLowerCase() == contractAddress?.toLowerCase()) {
         return token;
       }
     }
     return null;
   }
 
-  static List<AssetToken> contractTokensByCoinType(int coinType) {
+  static List<AssetToken> defaultContractTokensByCoinType(int coinType) {
     List<AssetToken> tokens = [];
     if (coinType == CoinType.HYN_ATLAS) {
       switch (HyperionConfig.chainType) {
         case HyperionChainType.mainnet:
-          tokens.add(SupportedTokens.HYN_RP_HRC30);
+          tokens.add(DefaultTokenDefine.HYN_RP_HRC30);
           break;
         case HyperionChainType.test:
-          tokens.add(SupportedTokens.HYN_RP_HRC30_TEST);
+          tokens.add(DefaultTokenDefine.HYN_RP_HRC30_TEST);
           break;
         case HyperionChainType.local:
-          tokens.add(SupportedTokens.HYN_RP_HRC30_LOCAL);
+          tokens.add(DefaultTokenDefine.HYN_RP_HRC30_LOCAL);
           break;
       }
     } else if (coinType == CoinType.ETHEREUM) {
       switch (EthereumConfig.chainType) {
         case EthereumChainType.mainnet:
-          tokens.add(SupportedTokens.USDT_ERC20);
+          tokens.add(DefaultTokenDefine.USDT_ERC20);
           break;
         case EthereumChainType.ropsten:
-          tokens.add(SupportedTokens.USDT_ERC20_ROPSTEN);
+          tokens.add(DefaultTokenDefine.USDT_ERC20_ROPSTEN);
           break;
         case EthereumChainType.rinkeby:
           break;
@@ -45,39 +46,39 @@ class Tokens {
     } else if (coinType == CoinType.HB_HT) {
       switch (HecoConfig.chainType) {
         case HecoChainType.mainnet:
-          tokens.add(SupportedTokens.HUSD);
+          tokens.add(DefaultTokenDefine.HUSD);
           break;
         case HecoChainType.test:
-          tokens.add(SupportedTokens.HUSD_TEST);
+          tokens.add(DefaultTokenDefine.HUSD_TEST);
           break;
       }
     }
     return tokens;
   }
 
-  static List<AssetToken> allTokens() {
+  static List<AssetToken> defaultTokens() {
     List<AssetToken> tokens = [];
     // hyperion
-    tokens.add(SupportedTokens.HYN_Atlas);
-    tokens.addAll(contractTokensByCoinType(CoinType.HYN_ATLAS));
+    tokens.add(DefaultTokenDefine.HYN_Atlas);
+    tokens.addAll(defaultContractTokensByCoinType(CoinType.HYN_ATLAS));
 
     // ethereum
-    tokens.add(SupportedTokens.ETHEREUM);
-    tokens.addAll(contractTokensByCoinType(CoinType.ETHEREUM));
+    tokens.add(DefaultTokenDefine.ETHEREUM);
+    tokens.addAll(defaultContractTokensByCoinType(CoinType.ETHEREUM));
 
     // bitcoin
-    tokens.add(SupportedTokens.BTC);
+    tokens.add(DefaultTokenDefine.BTC);
 
     // huobi heco
-    tokens.add(SupportedTokens.HT);
-    tokens.addAll(contractTokensByCoinType(CoinType.HB_HT));
+    tokens.add(DefaultTokenDefine.HT);
+    tokens.addAll(defaultContractTokensByCoinType(CoinType.HB_HT));
 
     return tokens;
   }
 }
 
 ///available tokens
-class SupportedTokens {
+class DefaultTokenDefine {
   /// bitcoin
   static const BTC = const AssetToken(
     name: 'BITCOIN',

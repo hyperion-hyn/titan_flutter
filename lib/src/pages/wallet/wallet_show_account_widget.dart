@@ -311,8 +311,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                       builder: (BuildContext context) {
                                         return InkWell(
                                           onTap: () {
-                                            if (widget.coinVo.symbol == SupportedTokens.USDT_ERC20.symbol ||
-                                                widget.coinVo.symbol == SupportedTokens.USDT_ERC20_ROPSTEN.symbol) {
+                                            if (widget.coinVo.symbol == DefaultTokenDefine.USDT_ERC20.symbol ||
+                                                widget.coinVo.symbol == DefaultTokenDefine.USDT_ERC20_ROPSTEN.symbol) {
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(

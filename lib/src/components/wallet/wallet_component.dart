@@ -240,7 +240,7 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
   String activatedHynAddress() {
     if (this.activatedWallet != null) {
       for (var coin in this.activatedWallet.coins) {
-        if (coin.symbol == SupportedTokens.ETHEREUM.symbol) {
+        if (coin.symbol == DefaultTokenDefine.ETHEREUM.symbol) {
           return coin.address;
         }
       }
@@ -273,7 +273,7 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
   CoinViewVo getCoinVoOfHyn() {
     if (this.activatedWallet != null) {
       for (var coin in this.activatedWallet.coins) {
-        if (coin.symbol == SupportedTokens.HYN_ERC20.symbol) {
+        if (coin.symbol == DefaultTokenDefine.HYN_ERC20.symbol) {
           return coin;
         }
       }

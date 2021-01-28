@@ -25,21 +25,21 @@ class Account {
     this.extendedPublicKey,
   });
 
-  factory Account.fromJsonWithNet(Map<dynamic, dynamic> json) {
+  factory Account.mainAccountFromJson(Map<dynamic, dynamic> json) {
     AssetToken token;
-    var erc20Tokens = <AssetToken>[];
+    // var erc20Tokens = <AssetToken>[];
     int coinType = json['coinType'];
     if (coinType == CoinType.ETHEREUM) {
-      token = SupportedTokens.ETHEREUM;
+      token = DefaultTokenDefine.ETHEREUM;
     } else if (coinType == CoinType.BITCOIN) {
-      token = SupportedTokens.BTC;
+      token = DefaultTokenDefine.BTC;
     } else if (coinType == CoinType.HYN_ATLAS) {
-      token = SupportedTokens.HYN_Atlas;
+      token = DefaultTokenDefine.HYN_Atlas;
     } else if (coinType == CoinType.HB_HT) {
-      token = SupportedTokens.HT;
+      token = DefaultTokenDefine.HT;
     }
 
-    erc20Tokens.addAll(Tokens.contractTokensByCoinType(coinType));
+    // erc20Tokens.addAll(Tokens.contractTokensByCoinType(coinType));
 
     return Account(
       address: json['address'],
@@ -47,7 +47,7 @@ class Account {
       coinType: coinType,
       extendedPublicKey: json['extendedPublicKey'],
       token: token,
-      contractAssetTokens: erc20Tokens,
+      // contractAssetTokens: erc20Tokens,
     );
   }
 

@@ -782,7 +782,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                     }
 
                     var hynToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-                      SupportedTokens.HYN_Atlas.symbol,
+                      DefaultTokenDefine.HYN_Atlas.symbol,
                     );
                     var hynTokenBalance = Decimal.parse(hynToken.balance.toString());
                     var amount = int.tryParse(value) ?? 0;
