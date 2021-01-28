@@ -5,8 +5,10 @@ import 'package:decimal/decimal.dart';
 import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -654,11 +656,16 @@ class AtlasApi {
 
   // 上传图片
   Future<String> postUploadImageFile(
-      String address, String path, ProgressCallback onSendProgress) async {
+      String address, String path, ProgressCallback onSendProgress, {bool isFromAsset = false}) async {
     try {
       Map<String, dynamic> params = {};
       params["address"] = address;
-      params["file"] = MultipartFile.fromFileSync(path);
+      if(isFromAsset){
+        File assetFile = await getImageFileFromAssets(path);
+        params["file"] = MultipartFile.fromFileSync(assetFile.path);
+      }else{
+        params["file"] = MultipartFile.fromFileSync(path);
+      }
       FormData formData = FormData.fromMap(params);
 
       var res = await AtlasHttpCore.instance.post(
@@ -687,6 +694,15 @@ class AtlasApi {
       LogUtil.uploadException("[Atlas] upload image", 'post upload fail');
       return null;
     }
+  }
+
+  Future<File> getImageFileFromAssets(String path) async {
+    final byteData = await rootBundle.load('assets/$path');
+
+    final file = File('${(await getTemporaryDirectory()).path}/$path');
+    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+    return file;
   }
 
   // 获取节点创建的推荐抵押量
