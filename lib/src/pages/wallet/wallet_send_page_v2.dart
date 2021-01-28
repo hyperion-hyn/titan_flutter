@@ -228,7 +228,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
 
     // 1.BTC
     if (CoinType.BITCOIN == coinType) {
-      gasLimit = Decimal.fromInt(78);
+      gasLimit = 78;
       // gasLimit = BitcoinGasPrice.BTC_RAWTX_SIZE;
     }
     // 2.ETH
