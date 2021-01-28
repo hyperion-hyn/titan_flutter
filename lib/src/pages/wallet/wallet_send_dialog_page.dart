@@ -26,7 +26,10 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
     Widget widget1 = Container();
     Widget widget2 = Container();
 
-    if ((widget.entity.value ?? 0) > 0 && (widget.entity.value1 ?? 0) > 0) {
+    var gasValue = double?.tryParse(widget?.entity?.gas ?? '0') ?? 0;
+    var gasValue1 = double?.tryParse(widget?.entity?.gas1 ?? '0') ?? 0;
+
+    if (gasValue > 0 && gasValue1 > 0) {
       widget1 = _rowText(
         title: S.of(context).transfer_gas_fee,
         content: '${widget.entity.gas} ${widget.entity.gasUnit}',
@@ -41,7 +44,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
         showLine: false,
       );
     } else {
-      if ((widget.entity.value ?? 0) > 0) {
+      if (gasValue > 0) {
         widget1 = _rowText(
           title: S.of(context).transfer_gas_fee,
           content: '${widget.entity.gas} ${widget.entity.gasUnit}',
@@ -152,6 +155,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                           _rowText(
                             title: '交易信息',
                             content: widget.entity.title,
+                            subContent: widget.entity.titleDesc,
                           ),
                           _rowText(
                             title: S.of(context).exchange_from,
@@ -307,6 +311,7 @@ class WalletSendDialogEntity {
   final String valueUnit;
   final String value1Unit;
   final String title;
+  final String titleDesc;
   final String fromName;
   final String fromAddress;
   final String toName;
@@ -327,6 +332,7 @@ class WalletSendDialogEntity {
     this.valueUnit,
     this.value1Unit,
     this.title,
+    this.titleDesc,
     this.fromName,
     this.fromAddress,
     this.toName,
