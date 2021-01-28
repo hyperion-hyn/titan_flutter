@@ -45,6 +45,12 @@ class WalletRepository {
     var keystoreFileName = await getActivatedWalletFileName();
     if (keystoreFileName != null) {
       return await WalletUtil.loadWallet(keystoreFileName);
+    } else {
+      var walletList = await WalletUtil.scanWallets();
+      if (walletList.length > 0) {
+        await saveActivatedWalletFileName(walletList[0].keystore.fileName);
+        return walletList[0];
+      }
     }
     return null;
   }
@@ -158,42 +164,61 @@ class WalletRepository {
     if (jsonStr != null && jsonStr != '') {
       var localVo = WalletViewVo.fromJson(json.decode(jsonStr));
       localVo.wallet = wallet;
-      return localVo;
-    } else {
-      List<CoinViewVo> coins = [];
-      for (var account in wallet.accounts) {
-        // add public chain coin
-        CoinViewVo coin = CoinViewVo(
-          name: account.token.name,
-          symbol: account.token.symbol,
-          coinType: account.coinType,
-          address: account.address,
-          decimals: account.token.decimals,
-          logo: account.token.logo,
-          contractAddress: null,
-          extendedPublicKey: account.extendedPublicKey,
-          balance: BigInt.from(0),
-        );
-        coins.add(coin);
 
-        //add contract coin by the chain
-        var defaultVos = Tokens.defaultContractTokensByCoinType(account.coinType);
-        for (var asset in defaultVos) {
-          CoinViewVo contractCoin = CoinViewVo(
-            name: asset.name,
-            symbol: asset.symbol,
-            coinType: account.coinType,
-            address: account.address,
-            decimals: asset.decimals,
-            contractAddress: asset.contractAddress,
-            logo: asset.logo,
-            balance: BigInt.from(0),
-          );
-          coins.add(contractCoin);
+      // 暂时都用默认的tokens， 以后就用local的
+      // 这里只是更新余额
+      List<CoinViewVo> coins = _defaultCoins(wallet);
+      for (var coin in coins) {
+        for (var localCoin in localVo.coins) {
+          if (coin.symbol == localCoin.symbol &&
+              coin.contractAddress == localCoin.contractAddress) {
+            coin.balance = localCoin.balance;
+          }
         }
       }
+      localVo.coins = coins;
+
+      return localVo;
+    } else {
+      List<CoinViewVo> coins = _defaultCoins(wallet);
       return WalletViewVo(wallet: wallet, coins: coins, balance: 0);
     }
+  }
+
+  List<CoinViewVo> _defaultCoins(Wallet wallet) {
+    List<CoinViewVo> coins = [];
+    for (var account in wallet.accounts) {
+      // add public chain coin
+      CoinViewVo coin = CoinViewVo(
+        name: account.token.name,
+        symbol: account.token.symbol,
+        coinType: account.coinType,
+        address: account.address,
+        decimals: account.token.decimals,
+        logo: account.token.logo,
+        contractAddress: null,
+        extendedPublicKey: account.extendedPublicKey,
+        balance: BigInt.from(0),
+      );
+      coins.add(coin);
+
+      //add contract coin by the chain
+      var defaultVos = Tokens.defaultContractTokensByCoinType(account.coinType);
+      for (var asset in defaultVos) {
+        CoinViewVo contractCoin = CoinViewVo(
+          name: asset.name,
+          symbol: asset.symbol,
+          coinType: account.coinType,
+          address: account.address,
+          decimals: asset.decimals,
+          contractAddress: asset.contractAddress,
+          logo: asset.logo,
+          balance: BigInt.from(0),
+        );
+        coins.add(contractCoin);
+      }
+    }
+    return coins;
   }
 
   Future requestEthGasPrice() async {

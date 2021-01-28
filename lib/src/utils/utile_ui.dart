@@ -15,6 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:r_scan/r_scan.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
@@ -81,8 +82,7 @@ class UiUtil {
       ),
       flushbarStyle: FlushbarStyle.GROUNDED,
       flushbarPosition: FlushbarPosition.TOP,
-      duration:
-          errorHintType == ErrorHintType.ERROR ? Duration(seconds: 5) : null,
+      duration: errorHintType == ErrorHintType.ERROR ? Duration(seconds: 5) : null,
     ).show(context);
   }
 
@@ -150,8 +150,7 @@ class UiUtil {
       context: context,
       // 构建 Dialog 的视图
       builder: (_) => AnimatedPadding(
-        padding: MediaQuery.of(context).viewInsets +
-            const EdgeInsets.symmetric(horizontal: 36.0),
+        padding: MediaQuery.of(context).viewInsets + const EdgeInsets.symmetric(horizontal: 36.0),
         duration: const Duration(milliseconds: 100),
         curve: Curves.decelerate,
         child: Column(
@@ -160,8 +159,8 @@ class UiUtil {
           children: <Widget>[
             Container(
               //alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              decoration:
+                  BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
               child: Stack(
                 children: <Widget>[
                   isShowCloseIcon
@@ -196,31 +195,23 @@ class UiUtil {
                             top: 16,
                             left: 24,
                             right: 24,
-                            bottom: (contentItem != null || detail.isNotEmpty)
-                                ? 0
-                                : 18),
+                            bottom: (contentItem != null || detail.isNotEmpty) ? 0 : 18),
                         child: RichText(
                             text: TextSpan(
                                 text: content,
                                 style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor("#333333"),
-                                    height: 1.8),
+                                    fontSize: 14, color: HexColor("#333333"), height: 1.8),
                                 children: [
                               TextSpan(
                                 text: boldContent,
                                 style: boldStyle ??
                                     TextStyle(
-                                        fontSize: 14,
-                                        color: HexColor("#FF4C3B"),
-                                        height: 1.8),
+                                        fontSize: 14, color: HexColor("#FF4C3B"), height: 1.8),
                               ),
                               TextSpan(
                                 text: suffixContent,
                                 style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor("#333333"),
-                                    height: 1.8),
+                                    fontSize: 14, color: HexColor("#333333"), height: 1.8),
                               ),
                             ])),
                       ),
@@ -275,13 +266,11 @@ class UiUtil {
       context: context,
       // 构建 Dialog 的视图
       builder: (_) => AnimatedPadding(
-        padding: MediaQuery.of(context).viewInsets +
-            const EdgeInsets.symmetric(horizontal: 36.0),
+        padding: MediaQuery.of(context).viewInsets + const EdgeInsets.symmetric(horizontal: 36.0),
         duration: const Duration(milliseconds: 100),
         curve: Curves.decelerate,
         child: Column(
-          mainAxisAlignment:
-              isShowBottom ? MainAxisAlignment.end : MainAxisAlignment.center,
+          mainAxisAlignment: isShowBottom ? MainAxisAlignment.end : MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Container(
@@ -319,13 +308,14 @@ class UiUtil {
                   Column(
                     children: <Widget>[
                       contentWidget,
-                      Padding(
-                        padding: EdgeInsets.only(top: 18, bottom: 18),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: actions,
-                        ),
-                      )
+                      if (actions != null)
+                        Padding(
+                          padding: EdgeInsets.only(top: 18, bottom: 18),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: actions,
+                          ),
+                        )
                     ],
                   ),
                 ],
@@ -335,6 +325,103 @@ class UiUtil {
         ),
       ),
     );
+  }
+
+  static Future<T> showBottomDialogView<T>(
+    BuildContext context, {
+    double dialogHeight = 288,
+    Widget customWidget,
+    String imagePath,
+    double imageHeight,
+    String dialogTitle,
+    String dialogSubTitle,
+    bool showCloseBtn = true,
+    bool enableDrag = true,
+    bool isScrollControlled = false,
+    List<Widget> actions,
+  }) {
+    return showModalBottomSheet<T>(
+        context: context,
+        enableDrag: enableDrag,
+        isScrollControlled: isScrollControlled,
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        ),
+        builder: (BuildContext context) {
+          return Container(
+            height: dialogHeight,
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (customWidget != null) customWidget,
+                    if (imagePath != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 24.0),
+                        child: Image.asset(
+                          imagePath,
+                          height: imageHeight,
+                        ),
+                      ),
+                    if (dialogTitle != null)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 19,
+                          left: 49,
+                          right: 49,
+                        ),
+                        child: Text(
+                          dialogTitle,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: DefaultColors.color333,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    if (dialogSubTitle != null)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 16,
+                          left: 49,
+                          right: 49,
+                        ),
+                        child: Text(
+                          dialogSubTitle,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 14, color: HexColor('#666666')),
+                        ),
+                      ),
+                    if (actions != null)
+                      Padding(
+                        padding: EdgeInsets.only(top: 26, bottom: 26),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: actions,
+                        ),
+                      )
+                  ],
+                ),
+                if (showCloseBtn)
+                  InkWell(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Image.asset(
+                        'res/drawable/ic_close.png',
+                        width: 16,
+                        height: 16,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+              ],
+            ),
+          );
+        });
   }
 
   static Future<T> showDialogWidget<T>(
@@ -568,14 +655,14 @@ class UiUtil {
       );
     };
 
-    var authConfig = await AuthUtil.getAuthConfigByWallet(
+    var authConfig = await BioAuthUtil.getAuthConfig(
       wallet,
       authType: authType,
     );
 
-    if (AuthUtil.bioAuthEnabled(authConfig)) {
+    if (BioAuthUtil.bioAuthEnabled(authConfig)) {
       ///Bio-auth is expired, ask for pwd with password dialog.
-      if (AuthUtil.bioAuthExpired(authConfig)) {
+      if (BioAuthUtil.bioAuthExpired(authConfig)) {
         Fluttertoast.showToast(msg: S.of(context).bio_auth_expired_hint);
         var pwd = await showPasswordDialog(
           context,
@@ -588,7 +675,7 @@ class UiUtil {
           ///Update last bio-auth time if pwd is correct
           if (await onCheckPwdValid(pwd)) {
             authConfig.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
-            AuthUtil.saveAuthConfig(
+            BioAuthUtil.saveAuthConfig(
               authConfig,
               wallet,
               authType: authType,
@@ -599,9 +686,9 @@ class UiUtil {
         }
       } else {
         ////BioAuth is not expired, check the password from disk is correct
-        var bioAuthResult = await AuthUtil.bioAuth(
+        var bioAuthResult = await BioAuthUtil.auth(
           context,
-          AuthUtil.currentBioMetricType(authConfig),
+          BioAuthUtil.currentBioMetricType(authConfig),
         );
 
         if (bioAuthResult != null && bioAuthResult) {
@@ -635,11 +722,14 @@ class UiUtil {
     @required CheckPwdValid onCheckPwdValid,
     bool isShowBioAuthIcon = true,
     String dialogTitle,
+    String remindStr,
     AuthType authType = AuthType.pay,
   }) async {
-    var useDigits = await WalletUtil.checkUseDigitsPwd(
-      wallet,
-    );
+    ///新版取消数字密码输入框
+    // var useDigits = await WalletUtil.checkUseDigitsPwd(
+    //   wallet,
+    // );
+    var useDigits = false;
 
     if (useDigits) {
       return showDialog(
@@ -653,7 +743,56 @@ class UiUtil {
             authType: authType,
           ));
     } else {
-      var pwd = await showModalBottomSheet(
+      return showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return Builder(
+            builder: (BuildContext buildContext) {
+              return EnterWalletPasswordWidget(
+                isShowBioAuthIcon: isShowBioAuthIcon,
+                wallet: wallet,
+                authType: authType,
+                onPwdSubmitted: onCheckPwdValid,
+                remindStr: remindStr,
+              );
+            },
+          );
+        },
+      );
+      return showAlertViewNew(context,
+          contentWidget: Material(
+            child: EnterWalletPasswordWidget(
+              isShowBioAuthIcon: isShowBioAuthIcon,
+              wallet: wallet,
+              authType: authType,
+              onPwdSubmitted: onCheckPwdValid,
+            ),
+          ),
+          isShowCloseIcon: false);
+      /*return await showDialog(
+          context: context,
+          barrierDismissible: false,
+          child: AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            backgroundColor: Colors.transparent,
+            content: EnterWalletPasswordWidget(
+              isShowBioAuthIcon: isShowBioAuthIcon,
+              wallet: wallet,
+              authType: authType,
+              onPwdSubmitted: onCheckPwdValid,
+            ),
+          ));*/
+      /*return await showDialog(
+          context: context,
+          barrierDismissible: false,
+          child: EnterWalletPasswordWidget(
+            isShowBioAuthIcon: isShowBioAuthIcon,
+            wallet: wallet,
+            authType: authType,
+            onPwdSubmitted: onCheckPwdValid,
+          ));*/
+      /*var pwd = await showModalBottomSheet(
           isScrollControlled: true,
           context: context,
           shape: RoundedRectangleBorder(
@@ -672,7 +811,7 @@ class UiUtil {
         return pwd;
       } else {
         return null;
-      }
+      }*/
     }
   }
 
@@ -773,10 +912,7 @@ class UiUtil {
               ),
               Text(
                 msg,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.white),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
               ),
               Spacer()
             ],
@@ -791,8 +927,7 @@ class UiUtil {
     );
   }
 
-  static Future showLoadingDialog(
-      BuildContext context, msg, Function createContext) async {
+  static Future showLoadingDialog(BuildContext context, msg, Function createContext) async {
     Widget widget = Center(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),
@@ -867,16 +1002,14 @@ class UiUtil {
             Navigator.pop(context);
 
             ///
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
           },
         ),
       ],
     );
   }
 
-  static Future<T> showDialogsNoCallback<T>(
-      BuildContext context, String title, String content,
+  static Future<T> showDialogsNoCallback<T>(BuildContext context, String title, String content,
       {String confirm = ""}) {
     return showDialogWidget<T>(
       context,
@@ -903,8 +1036,7 @@ class UiUtil {
           return Wrap(
             children: <Widget>[
               ListTile(
-                title: Text(S.of(context).camera_scan,
-                    textAlign: TextAlign.center),
+                title: Text(S.of(context).camera_scan, textAlign: TextAlign.center),
                 onTap: () async {
                   Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext, true);
@@ -915,8 +1047,7 @@ class UiUtil {
                 },
               ),
               ListTile(
-                title: Text(S.of(context).import_from_album,
-                    textAlign: TextAlign.center),
+                title: Text(S.of(context).import_from_album, textAlign: TextAlign.center),
                 onTap: () async {
                   Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext, true);
@@ -930,8 +1061,11 @@ class UiUtil {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
-                  if (tempListImagePaths != null &&
-                      tempListImagePaths.length == 1) {
+
+                  ///turn off app-lock
+                  AppLockUtil.appLockSwitch(context, false);
+
+                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
                     RScanResult mnemonicWords =
                         await RScan.scanImagePath(tempListImagePaths[0].path);
                     String mnemonicWord = mnemonicWords?.message;
@@ -968,8 +1102,7 @@ class UiUtil {
                 },
               ),
               ListTile(
-                title: Text(S.of(context).import_from_album,
-                    textAlign: TextAlign.center),
+                title: Text(S.of(context).import_from_album, textAlign: TextAlign.center),
                 onTap: () async {
                   Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext, true);
@@ -983,8 +1116,11 @@ class UiUtil {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
-                  if (tempListImagePaths != null &&
-                      tempListImagePaths.length == 1) {
+
+                  ///turn off app-lock
+                  AppLockUtil.appLockSwitch(context, false);
+
+                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
                     var path = tempListImagePaths[0].path;
                     callback(path);
                   }

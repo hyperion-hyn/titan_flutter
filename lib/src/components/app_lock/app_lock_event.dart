@@ -23,6 +23,19 @@ class SetWalletLockBioAuthEvent extends AppLockEvent {
   SetWalletLockBioAuthEvent(this.isEnabled);
 }
 
-class LockWalletEvent extends AppLockEvent {}
+class SetAppLockCountDownEvent extends AppLockEvent {
+  final bool isAway;
 
-class UnLockWalletEvent extends AppLockEvent {}
+  SetAppLockCountDownEvent(this.isAway);
+}
+
+class SetAppLockPwdEvent extends AppLockEvent {
+  final String pwd;
+  final String hint;
+
+  SetAppLockPwdEvent(this.pwd, this.hint);
+}
+
+class LockAppEvent extends AppLockEvent {}
+
+class UnLockAppEvent extends AppLockEvent {}

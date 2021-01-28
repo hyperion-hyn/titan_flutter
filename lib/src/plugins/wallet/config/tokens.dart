@@ -16,6 +16,16 @@ class Tokens {
     return null;
   }
 
+  static String getCoinIconPathBySymbol(String symbol) {
+    List<AssetToken> tokens = defaultTokens();
+    for (var token in tokens) {
+      if (token.symbol == symbol) {
+        return token.logo;
+      }
+    }
+    return "";
+  }
+
   static List<AssetToken> defaultContractTokensByCoinType(int coinType) {
     List<AssetToken> tokens = [];
     if (coinType == CoinType.HYN_ATLAS) {
@@ -196,7 +206,7 @@ class DefaultTokenDefine {
   static final HUSD_TEST = AssetToken(
     name: 'Huobi HUSD',
     decimals: 18,
-    contractAddress: '0x8dd66eefef4b503eb556b1f50880cc04416b916b',
+    contractAddress: '0x8Dd66eefEF4B503EB556b1f50880Cc04416B916B',
     logo: "res/drawable/ic_hb_logo_husd.png",
     symbol: 'HUSD',
   );

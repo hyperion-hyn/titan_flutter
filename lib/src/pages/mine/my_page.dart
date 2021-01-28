@@ -7,6 +7,7 @@ import 'package:titan/env.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/updater/bloc/bloc.dart';
 import 'package:titan/src/components/updater/bloc/update_event.dart';
@@ -250,14 +251,15 @@ class _MyPageState extends BaseState<MyPage> {
                     color: Colors.cyan[300],
                   ),
                   _buildMenuBar(
-                    '安全锁设置',
+                    '安全锁',
                     Icons.account_balance_wallet,
                     () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => AppLockPreferencesPage()));
                     },
-                    imageName: "ic_me_page_manage_wallet",
+                    imageName: "ic_me_page_safe_lock",
                     color: Colors.cyan[300],
+                    subText: AppLockInheritedModel.of(context).isLockEnable ? '已开启' : '',
                   ),
                   _lineWidget(),
                   _buildMenuBar(

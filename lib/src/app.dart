@@ -5,7 +5,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/components/account/account_component.dart';
 import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
@@ -37,6 +36,8 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     Application.router = router;
   }
 
+  int _appLockAwayTime = 0;
+
   @override
   void initState() {
     super.initState();
@@ -53,27 +54,31 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.inactive:
-        //print('-----[App] inactive');
+       // print('-----[App] inactive');
         break;
       case AppLifecycleState.paused:
-        print('-----[App] paused');
-        _setUpAppLock();
+        //print('-----[App] paused');
+        _setAppLockCountDown(true);
+        //_appLockAwayTime = await AppLockUtil.getAwayTime();
         break;
       case AppLifecycleState.detached:
         //print('-----[App] detached');
         break;
       case AppLifecycleState.resumed:
         //print('-----[App] resumed');
+        _setAppLockCountDown(false);
+        //print('appLockAwayTime $_appLockAwayTime');
+        //if (mounted) setState(() {});
         break;
     }
   }
 
-  _setUpAppLock() {
-    if (AppLockInheritedModel.of(context).isWalletLockEnable) {
-      BlocProvider.of<AppLockBloc>(
-        Keys.rootKey.currentContext,
-      ).add(LockWalletEvent());
-    }
+  _setAppLockCountDown(bool isAway) {
+    BlocProvider.of<AppLockBloc>(
+      Keys.rootKey.currentContext,
+    ).add(
+      SetAppLockCountDownEvent(isAway),
+    );
   }
 
   @override
@@ -111,24 +116,27 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                 enableLoadingWhenFailed: false,
                 hideFooterWhenNotFull: true,
                 enableBallisticLoad: true,
-                child: MaterialApp(
-                  key: Keys.materialAppKey,
-                  debugShowCheckedModeBanner: false,
-                  locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
-                      .languageModel
-                      ?.locale,
-                  title: 'titan',
-                  theme: appTheme,
-                  localizationsDelegates: [
-                    S.delegate,
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                    RefreshLocalizations.delegate,
-                  ],
-                  supportedLocales: S.delegate.supportedLocales,
-                  navigatorObservers: [Application.routeObserver],
-                  onGenerateRoute: Application.router.generator,
+                child: Container(
+                  color: Colors.white,
+                  child: MaterialApp(
+                    key: Keys.materialAppKey,
+                    debugShowCheckedModeBanner: false,
+                    locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
+                        .languageModel
+                        ?.locale,
+                    title: 'titan',
+                    theme: appTheme,
+                    localizationsDelegates: [
+                      S.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalCupertinoLocalizations.delegate,
+                      RefreshLocalizations.delegate,
+                    ],
+                    supportedLocales: S.delegate.supportedLocales,
+                    navigatorObservers: [Application.routeObserver],
+                    onGenerateRoute: Application.router.generator,
+                  ),
                 ),
               );
             },
@@ -136,69 +144,5 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         ),
       ),
     );
-
-    /*
-    return OKToast(
-      child: AuthComponent(
-        child: SettingComponent(
-          child: ExchangeComponent(
-            child: WalletComponent(
-              child: SocketComponent(
-                child: AtlasComponent(
-                  child: RedPocketComponent(
-                    child: AccountComponent(
-                      child: MultiBlocProvider(
-                        providers: [
-                          BlocProvider<UpdateBloc>(create: (context) => UpdateBloc(context: context)),
-                          BlocProvider<RootPageControlBloc>(create: (context) => RootPageControlBloc()),
-                        ],
-                        child: Builder(
-                          builder: (context) {
-                            return RefreshConfiguration(
-                              //pull to refresh config
-                              dragSpeedRatio: 0.91,
-                              headerTriggerDistance: 80,
-                              footerTriggerDistance: 80,
-                              maxOverScrollExtent: 100,
-                              maxUnderScrollExtent: 0,
-                              headerBuilder: () => WaterDropMaterialHeader(),
-                              footerBuilder: () => ClassicFooter(),
-                              autoLoad: true,
-                              enableLoadingWhenFailed: false,
-                              hideFooterWhenNotFull: true,
-                              enableBallisticLoad: true,
-                              child: MaterialApp(
-                                key: Keys.materialAppKey,
-                                debugShowCheckedModeBanner: false,
-                                locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
-                                    .languageModel
-                                    ?.locale,
-                                title: 'titan',
-                                theme: appTheme,
-                                localizationsDelegates: [
-                                  S.delegate,
-                                  GlobalMaterialLocalizations.delegate,
-                                  GlobalWidgetsLocalizations.delegate,
-                                  GlobalCupertinoLocalizations.delegate,
-                                  RefreshLocalizations.delegate,
-                                ],
-                                supportedLocales: S.delegate.supportedLocales,
-                                navigatorObservers: [Application.routeObserver],
-                                onGenerateRoute: Application.router.generator,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-    */
   }
 }

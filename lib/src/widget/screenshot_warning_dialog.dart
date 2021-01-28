@@ -95,7 +95,7 @@ class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
                       Padding(
                         padding: const EdgeInsets.only(top: 16.0, bottom: 24.0),
                         child: ClickOvalButton(
-                          S.of(context).cancel,
+                          S.of(context).got_it,
                           () {
                             Navigator.of(context).pop();
                             widget.onConfirm();

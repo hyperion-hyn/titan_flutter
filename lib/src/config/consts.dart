@@ -164,8 +164,6 @@ class PrefsKey {
 
   static const WALLET_USE_DIGITS_PWD_PREFIX = 'digits_pwd';
 
-  static const WALLET_MNEMONIC_BACK_UP_PREFIX = 'mnemonic_backup';
-
   static const WALLET_SAFE_LOCK_IS_ENABLE_PREFIX = 'wallet_safe_lock_is_enable__';
   static const WALLET_SAFE_LOCK_PWD_PREFIX = 'wallet_safe_pwd_';
   static const WALLET_EXPAND_INFO_PREFIX = 'wallet_expand_info_';
@@ -202,6 +200,16 @@ class PrefsKey {
   static const String IS_CONFIRM_DEX_POLICY = 'dex_policy_confirmed';
 
   static const String WALLET_ICON_LAST_KEY = "wallet_icon_last_key";
+
+  /// GAS
+  /// BTC
+  static const String WALLET_GAS_SAT_KEY = "wallet_gas_sat_key";
+  static const String WALLET_GAS_SAT_CUSTOM_KEY = "wallet_gas_sat_custom_key";
+
+  /// ETH
+  static const String WALLET_GAS_PRICE_KEY = "wallet_gas_price_key";
+  static const String WALLET_GAS_LIMIT_KEY = "wallet_gas_limit_key";
+  static const String WALLET_GAS_PRICE_CUSTOM_KEY = "wallet_gas_price_custom_key";
 }
 
 class SecurePrefsKey {

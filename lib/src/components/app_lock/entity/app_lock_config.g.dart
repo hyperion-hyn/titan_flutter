@@ -24,6 +24,7 @@ WalletLock _$WalletLockFromJson(Map<String, dynamic> json) {
     json['isEnabled'] as bool,
     json['isOn'] as bool,
     json['pwd'] as String,
+    json['pwdHint'] as String,
     json['awayTime'] as int,
     json['isBioAuthEnabled'] as bool,
   );
@@ -34,6 +35,7 @@ Map<String, dynamic> _$WalletLockToJson(WalletLock instance) =>
       'isEnabled': instance.isEnabled,
       'isOn': instance.isOn,
       'pwd': instance.pwd,
+      'pwdHint': instance.pwdHint,
       'awayTime': instance.awayTime,
       'isBioAuthEnabled': instance.isBioAuthEnabled,
     };

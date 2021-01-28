@@ -12,12 +12,14 @@ import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_send_success_location_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_send_success_page.dart';
+import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
+/*
 class RpShareSendDialogPage extends StatefulWidget {
   final RpShareReqEntity reqEntity;
   RpShareSendDialogPage({this.reqEntity});
@@ -103,6 +105,7 @@ class _RpShareSendDialogState extends BaseState<RpShareSendDialogPage> {
                       controller: _scrollController,
                       child: Column(
                         children: [
+                          // SizedBox(height: 200,),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -364,7 +367,7 @@ class _RpShareSendDialogState extends BaseState<RpShareSendDialogPage> {
   }
 }
 
-Future<bool> showShareRpSendDialog<T>(
+Future<bool> showShareRpSendDialogOld<T>(
   BuildContext context,
   RpShareReqEntity reqEntity,
 ) {
@@ -377,14 +380,97 @@ Future<bool> showShareRpSendDialog<T>(
           reqEntity: reqEntity,
         );
       });
+}
+*/
 
-/*  return showDialog<bool>(
-    barrierDismissible: true,
-    context: context,
-    builder: (context) {
-      return RpShareSendDialogPage(
-        reqEntity: reqEntity,
-      );
+Future<bool> showShareRpSendDialog<T>(
+  BuildContext context,
+  RpShareReqEntity reqEntity,
+) {
+  var walletVo = WalletInheritedModel.of(context).activatedWallet;
+  var wallet = walletVo.wallet;
+
+  var walletName = wallet.keystore.name;
+
+  var address = wallet.getAtlasAccount().address;
+  var fromAddressHyn = WalletUtil.ethAddressToBech32Address(address);
+  var fromAddress = shortBlockChainAddress(fromAddressHyn);
+
+  var rpShareConfig = RedPocketInheritedModel.of(context).rpShareConfig;
+  var receiveAddr = rpShareConfig?.receiveAddr ?? '';
+  var toAddress;
+  if (receiveAddr.isEmpty) {
+    Fluttertoast.showToast(msg: '网络异常，请稍后重试!');
+  } else {
+    // var toAddressHyn = WalletUtil.ethAddressToBech32Address(receiveAddr);
+    // toAddress = shortBlockChainAddress(toAddressHyn);
+  }
+
+  WalletSendDialogEntity entity = WalletSendDialogEntity(
+    type: 'tx_send_share_rp',
+    value: reqEntity.hynAmount,
+    value1: reqEntity.rpAmount,
+    valueUnit: 'HYN',
+    value1Unit: 'RP',
+    title: '发红包',
+    fromName: walletName,
+    fromAddress: fromAddress,
+    toName: S.of(context).rp_red_pocket,
+    toAddress: toAddress,
+    gas: '0.0001',
+    gas1: '0.0001',
+    gasDesc: 'HYN 产生',
+    gas1Desc: 'RP 产生',
+    gasUnit: 'HYN',
+    action: () async {
+      try {
+        var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
+        if (password == null) {
+          return false;
+        }
+
+        var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('RP');
+
+        RpShareReqEntity result = await RPApi().postSendShareRp(
+          password: password,
+          activeWallet: walletVo,
+          reqEntity: reqEntity,
+          toAddress: receiveAddr,
+          coinVo: coinVo,
+        );
+        reqEntity.id = result.id;
+        return result.id.isNotEmpty;
+      } catch (e) {
+        LogUtil.toastException(e);
+
+        // Fluttertoast.showToast(msg: '发送红包失败, 请稍后重试!');
+      }
+      return false;
     },
-  );*/
+    finished: () async {
+      if (reqEntity.rpType == RpShareType.normal) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RpShareSendSuccessPage(
+              reqEntity: reqEntity,
+            ),
+          ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RpShareSendSuccessLocationPage(),
+          ),
+        );
+      }
+      return true;
+    },
+  );
+
+  return showWalletSendDialog(
+    context: context,
+    entity: entity,
+  );
 }

@@ -40,6 +40,7 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -193,7 +194,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "≈ ${activeQuoteVoAndSign?.legal?.legal ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(widget.coinVo) * (activeQuoteVoAndSign?.price ?? 0))}",
+                                "≈ ${activeQuoteVoAndSign?.legal?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(widget.coinVo) * (activeQuoteVoAndSign?.price ?? 0))}",
                                 style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
                               ),
                             ),
@@ -311,20 +312,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                       builder: (BuildContext context) {
                                         return InkWell(
                                           onTap: () {
-                                            if (widget.coinVo.symbol == DefaultTokenDefine.USDT_ERC20.symbol ||
-                                                widget.coinVo.symbol == DefaultTokenDefine.USDT_ERC20_ROPSTEN.symbol) {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) => ExchangeDetailPage(
-                                                          quote: 'HYN', base: 'USDT', exchangeType: ExchangeType.BUY)));
-                                            } else {
-                                              Fluttertoast.showToast(
-                                                  msg: S.of(context).exchange_is_not_yet_open(widget.coinVo.symbol));
-                                            }
-                                            /*Clipboard.setData(ClipboardData(text: coinVo.address));
-                                            Scaffold.of(context)
-                                                .showSnackBar(SnackBar(content: Text(S.of(context).address_copied)));*/
+                                            Fluttertoast.showToast(
+                                                msg: S.of(context).exchange_is_not_yet_open(widget.coinVo.symbol));
                                           },
                                           child: Row(
                                             children: <Widget>[
@@ -762,8 +751,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       retList.addAll(transferList);
     } catch (e, stacktrace) {
       retList.add('header');
-      print(stacktrace);
-      logger.e(e);
+      LogUtil.toastException(e);
     }
     return retList;
   }

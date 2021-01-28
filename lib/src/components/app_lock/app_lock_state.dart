@@ -25,6 +25,19 @@ class SetWalletLockBioAuthState extends AppLockState {
   SetWalletLockBioAuthState(this.isEnabled);
 }
 
-class LockWalletState extends AppLockState {}
+class SetWalletLockCountDownState extends AppLockState {
+  final bool isAway;
 
-class UnlockWalletState extends AppLockState {}
+  SetWalletLockCountDownState(this.isAway);
+}
+
+class SetAppLockPwdState extends AppLockState {
+  final String pwd;
+  final String hint;
+
+  SetAppLockPwdState(this.pwd, this.hint);
+}
+
+class LockAppState extends AppLockState {}
+
+class UnlockAppState extends AppLockState {}

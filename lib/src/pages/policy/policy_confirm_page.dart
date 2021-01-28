@@ -268,6 +268,7 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
             ],
             fontSize: 16,
             fontColor: DefaultColors.color333,
+            fontWeight: FontWeight.w600,
             isDisable: !_checked,
           ),
           SizedBox(

@@ -1,8 +1,10 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
 
 abstract class WalletCmpState {
   const WalletCmpState();
@@ -57,7 +59,7 @@ class BalanceState extends WalletCmpState {
   final String symbol;
   final WalletViewVo walletVo;
 
-  BalanceState({this.walletVo, this.status, this.symbol});
+  BalanceState({@required this.walletVo, this.status, this.symbol});
 }
 
 /// 法币行情计价
@@ -85,4 +87,10 @@ class GasPriceState extends WalletCmpState with EquatableMixin {
 
   @override
   List<Object> get props => [status, ethGasPriceRecommend, btcGasPriceRecommend];
+}
+
+class UpdateWalletExpandState extends WalletCmpState {
+  final WalletExpandInfoEntity walletExpandInfoEntity;
+
+  UpdateWalletExpandState(this.walletExpandInfoEntity);
 }

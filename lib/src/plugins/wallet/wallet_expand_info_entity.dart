@@ -15,7 +15,12 @@ class WalletExpandInfoEntity extends Object {
   @JsonKey(name: 'pswRemind')
   String pswRemind;
 
-  WalletExpandInfoEntity(this.localHeadImg,this.netHeadImg,this.pswRemind,);
+  @JsonKey(name: 'isBackup')
+  bool isBackup = false;
+
+  WalletExpandInfoEntity(this.localHeadImg,this.netHeadImg,this.pswRemind,this.isBackup);
+
+  WalletExpandInfoEntity.defaultEntity();
 
   factory WalletExpandInfoEntity.fromJson(Map<String, dynamic> srcJson) => _$WalletExpandInfoEntityFromJson(srcJson);
 

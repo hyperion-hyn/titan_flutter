@@ -20,24 +20,27 @@ class RoundBorderTextField extends StatefulWidget {
   final int maxLength;
   final List<TextInputFormatter> inputFormatters;
   final String errorText;
+  final double borderRadius;
+  final bool obscureText;
 
-  RoundBorderTextField({
-    this.keyboardType,
-    this.validator,
-    this.controller,
-    this.hintText,
-    this.onChanged,
-    this.suffixIcon,
-    this.focusNode,
-    this.suffix,
-    this.suffixText,
-    this.suffixStyle,
-    this.isDense = true,
-    this.bgColor,
-    this.maxLength,
-    this.inputFormatters,
-    this.errorText,
-  });
+  RoundBorderTextField(
+      {this.keyboardType,
+      this.validator,
+      this.controller,
+      this.hintText,
+      this.onChanged,
+      this.suffixIcon,
+      this.focusNode,
+      this.suffix,
+      this.suffixText,
+      this.suffixStyle,
+      this.isDense = true,
+      this.bgColor,
+      this.maxLength,
+      this.inputFormatters,
+      this.errorText,
+      this.borderRadius,
+      this.obscureText});
 
   @override
   State<StatefulWidget> createState() {
@@ -57,6 +60,7 @@ class _RoundBorderTextFieldState extends State<RoundBorderTextField> {
         inputFormatters: widget.inputFormatters,
         focusNode: widget.focusNode,
         maxLength: widget.maxLength,
+        obscureText: widget.obscureText ?? false,
         decoration: InputDecoration(
           counterText: "",
           isDense: widget.isDense,
@@ -73,28 +77,28 @@ class _RoundBorderTextFieldState extends State<RoundBorderTextField> {
             fontSize: 13,
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(widget.borderRadius ?? 30),
             borderSide: BorderSide(
               color: HexColor('#FFF2F2F2'),
               width: 0.5,
             ),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(widget.borderRadius ?? 30),
             borderSide: BorderSide(
               color: HexColor('#FFF2F2F2'),
               width: 0.5,
             ),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(widget.borderRadius ?? 30),
             borderSide: BorderSide(
               color: HexColor('#FFF2F2F2'),
               width: 0.5,
             ),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(widget.borderRadius ?? 30),
             borderSide: BorderSide(
               color: HexColor('#FF4C3B'),
               width: 0.5,

@@ -33,6 +33,7 @@ import 'package:titan/src/pages/wallet/wallet_receive_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 
@@ -156,7 +157,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "≈ ${activeQuoteVoAndSign?.legal?.legal ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(widget.coinVo) * (activeQuoteVoAndSign?.price ?? 0))}",
+                                "≈ ${activeQuoteVoAndSign?.legal?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(widget.coinVo) * (activeQuoteVoAndSign?.price ?? 0))}",
                                 style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
                               ),
                             ),
@@ -241,20 +242,8 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                                       builder: (BuildContext context) {
                                         return InkWell(
                                           onTap: () {
-                                            if (widget.coinVo.symbol == DefaultTokenDefine.USDT_ERC20.symbol ||
-                                                widget.coinVo.symbol == DefaultTokenDefine.USDT_ERC20_ROPSTEN.symbol) {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) => ExchangeDetailPage(
-                                                          quote: 'HYN', base: 'USDT', exchangeType: ExchangeType.BUY)));
-                                            } else {
-                                              Fluttertoast.showToast(
-                                                  msg: S.of(context).exchange_is_not_yet_open(widget.coinVo.symbol));
-                                            }
-                                            /*Clipboard.setData(ClipboardData(text: coinVo.address));
-                                            Scaffold.of(context)
-                                                .showSnackBar(SnackBar(content: Text(S.of(context).address_copied)));*/
+                                            Fluttertoast.showToast(
+                                                msg: S.of(context).exchange_is_not_yet_open(widget.coinVo.symbol));
                                           },
                                           child: Row(
                                             children: <Widget>[
@@ -363,6 +352,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
     if ((transactionDetail.state == null) ||
         (transactionDetail.state != null &&
             transactionDetail.state == 0 &&
+            transactionDetail.gasUsed == "0" &&
             widget.coinVo.coinType == CoinType.HB_HT)) {
       title = S.of(context).pending;
     } else if ((widget.coinVo.coinType == CoinType.HB_HT) && transactionDetail.state == 1) {
@@ -372,7 +362,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
         title = S.of(context).contract_call;
         iconPath = "res/drawable/ic_hyn_wallet_contract.png";
       }
-    } else if ((widget.coinVo.coinType == CoinType.HB_HT && transactionDetail.state == -1)) {
+    } else if ((widget.coinVo.coinType == CoinType.HB_HT && transactionDetail.state == 0 && transactionDetail.gasUsed != "0")) {
       title = S.of(context).wallet_fail_title;
       titleColor = DefaultColors.colorf23524;
     }
@@ -520,8 +510,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
       retList.addAll(transferList);
     } catch (e, stacktrace) {
       retList.add('header');
-      print(stacktrace);
-      logger.e(e);
+      LogUtil.toastException(e);
     }
     return retList;
   }

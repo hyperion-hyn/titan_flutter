@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
+import 'package:titan/src/components/auth/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
@@ -11,6 +12,7 @@ import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 import 'bloc/bloc.dart';
@@ -119,10 +121,8 @@ class _WalletManagerState extends State<_WalletManager> {
             }
           }
         } else if (state is BalanceState) {
-          if (state.walletVo != null) {
-            var balance = _calculateTotalBalance(state.walletVo);
-            _activatedWallet = state.walletVo.copyWith(WalletViewVo(balance: balance));
-          }
+          var balance = _calculateTotalBalance(state.walletVo);
+          _activatedWallet = state.walletVo.copyWith(WalletViewVo(balance: balance));
         } else if (state is ActivatedWalletState) {
           _activatedWallet = state.walletVo;
           if (_activatedWallet != null) {
@@ -135,7 +135,18 @@ class _WalletManagerState extends State<_WalletManager> {
               }
             }
             _activatedWallet = _activatedWallet.copyWith(WalletViewVo(balance: balance));
+
+            ///Refresh bio-auth config
+            BlocProvider.of<AuthBloc>(context).add(RefreshBioAuthConfigEvent(
+              _activatedWallet.wallet,
+            ));
           }
+        } else if (state is UpdateWalletExpandState) {
+          if(_activatedWallet != null) {
+            var newWallet = _activatedWallet.wallet.copyWith(Wallet(walletExpandInfoEntity: state.walletExpandInfoEntity));
+            _activatedWallet = _activatedWallet.copyWith(WalletViewVo(wallet: newWallet));
+          }
+          _activatedWallet.wallet.walletExpandInfoEntity = state.walletExpandInfoEntity;
         }
       },
       child: BlocBuilder<WalletCmpBloc, WalletCmpState>(
@@ -257,17 +268,6 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
       }
     }
     return null;
-  }
-
-  String getCoinIconPathBySymbol(String symbol) {
-    if (this.activatedWallet != null) {
-      for (var coin in this.activatedWallet.coins) {
-        if (coin.symbol == symbol) {
-          return coin.logo;
-        }
-      }
-    }
-    return '';
   }
 
   CoinViewVo getCoinVoOfHyn() {

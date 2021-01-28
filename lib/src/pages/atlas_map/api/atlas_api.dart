@@ -49,8 +49,7 @@ import '../../../../env.dart';
 import 'package:detect_testflight/detect_testflight.dart';
 
 class AtlasApi {
-  Future<List<HynTransferHistory>> queryHYNHistory(
-      String address, int page) async {
+  Future<List<HynTransferHistory>> queryHYNHistory(String address, int page) async {
     Map result = await AtlasHttpCore.instance.post(
       "v1/wallet/account_txs_all",
       data: "{\"address\": \"$address\",\"page\": $page,\"size\": 20}",
@@ -62,9 +61,7 @@ class AtlasApi {
         return [];
       }
       List resultList = dataList as List;
-      return resultList
-          .map((json) => HynTransferHistory.fromJson(json))
-          .toList();
+      return resultList.map((json) => HynTransferHistory.fromJson(json)).toList();
     } else {
       throw new Exception();
     }
@@ -84,9 +81,7 @@ class AtlasApi {
         return [];
       }
       List resultList = dataList as List;
-      return resultList
-          .map((json) => InternalTransactions.fromJson(json))
-          .toList();
+      return resultList.map((json) => InternalTransactions.fromJson(json)).toList();
     } else {
       throw new Exception();
     }
@@ -132,10 +127,9 @@ class AtlasApi {
 
   static goToAtlasMap3HelpPage(BuildContext context) {
     String webUrl = FluroConvertUtils.fluroCnParamsEncode(Const.HELP_PAGE);
-    String webTitle = FluroConvertUtils.fluroCnParamsEncode(
-        S.of(Keys.rootKey.currentContext).help);
-    Application.router.navigateTo(context,
-        Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+    String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(Keys.rootKey.currentContext).help);
+    Application.router
+        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
   }
 
   static goToHynScanPage(BuildContext context, String walletAddress) {
@@ -157,12 +151,11 @@ class AtlasApi {
           "https://hynscan.io/address/$walletAddress/transactions");
     }
     String webTitle = FluroConvertUtils.fluroCnParamsEncode("");
-    Application.router.navigateTo(context,
-        Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+    Application.router
+        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
   }
 
-  Map<String, dynamic> getOptionHeader(
-      {hasLang = false, hasAddress = false, hasSign = false}) {
+  Map<String, dynamic> getOptionHeader({hasLang = false, hasAddress = false, hasSign = false}) {
     if (!hasLang && !hasAddress && !hasSign) {
       return null;
     }
@@ -170,16 +163,13 @@ class AtlasApi {
 
     headMap.putIfAbsent("appSource", () => Config.APP_SOURCE);
 
-    var activeWalletVo =
-        WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var activeWalletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
     if (hasAddress && activeWalletVo != null) {
-      headMap.putIfAbsent(
-          "Address", () => activeWalletVo.wallet.getEthAccount().address);
+      headMap.putIfAbsent("Address", () => activeWalletVo.wallet.getEthAccount().address);
     }
 
     if (hasLang) {
-      var language =
-          SettingInheritedModel.of(Keys.rootKey.currentContext).netLanguageCode;
+      var language = SettingInheritedModel.of(Keys.rootKey.currentContext).netLanguageCode;
       headMap.putIfAbsent("Lang", () => language);
     }
 
@@ -227,8 +217,8 @@ class AtlasApi {
   }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/burn_list",
-        EntityFactory<List<BurnHistory>>((list) =>
-            (list as List).map((item) => BurnHistory.fromJson(item)).toList()),
+        EntityFactory<List<BurnHistory>>(
+            (list) => (list as List).map((item) => BurnHistory.fromJson(item)).toList()),
         params: {
           "status": status,
           "page": page,
@@ -278,9 +268,8 @@ class AtlasApi {
       {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/map3_list",
-        EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
-            .map((item) => Map3InfoEntity.fromJson(item))
-            .toList()),
+        EntityFactory<List<Map3InfoEntity>>(
+            (list) => (list as List).map((item) => Map3InfoEntity.fromJson(item)).toList()),
         params: {
           "node_id": nodeId,
           "page": page,
@@ -294,9 +283,8 @@ class AtlasApi {
       {int page = 1, int size = 0}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/node_list",
-        EntityFactory<List<AtlasInfoEntity>>((list) => (list as List)
-            .map((item) => AtlasInfoEntity.fromJson(item))
-            .toList()),
+        EntityFactory<List<AtlasInfoEntity>>(
+            (list) => (list as List).map((item) => AtlasInfoEntity.fromJson(item)).toList()),
         params: {
           "address": address,
           "page": page,
@@ -316,9 +304,8 @@ class AtlasApi {
         nodeJoinType == NodeJoinType.CREATOR
             ? "/v1/atlas/node_list_i_create"
             : "/v1/atlas/node_list_i_join",
-        EntityFactory<List<AtlasInfoEntity>>((list) => (list as List)
-            .map((item) => AtlasInfoEntity.fromJson(item))
-            .toList()),
+        EntityFactory<List<AtlasInfoEntity>>(
+            (list) => (list as List).map((item) => AtlasInfoEntity.fromJson(item)).toList()),
         params: {
           "address": address,
           "page": page,
@@ -331,9 +318,8 @@ class AtlasApi {
       {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/tx_log",
-        EntityFactory<List<HynTransferHistory>>((list) => (list as List)
-            .map((item) => HynTransferHistory.fromJson(item))
-            .toList()),
+        EntityFactory<List<HynTransferHistory>>(
+            (list) => (list as List).map((item) => HynTransferHistory.fromJson(item)).toList()),
         params: {
           "node_address": nodeAddress,
           "page": page,
@@ -416,9 +402,7 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/reward_history",
         EntityFactory<List<RewardHistoryEntity>>((list) =>
-            (list['data'] as List)
-                .map((item) => RewardHistoryEntity.fromJson(item))
-                .toList()),
+            (list['data'] as List).map((item) => RewardHistoryEntity.fromJson(item)).toList()),
         params: {
           "node_address": nodeAddress,
           "page": page,
@@ -450,8 +434,7 @@ class AtlasApi {
   }
 
   // 查询map3节点详情
-  Future<Map3InfoEntity> getMap3Info1(
-      String address, String nodeAddress) async {
+  Future<Map3InfoEntity> getMap3Info1(String address, String nodeAddress) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/info",
         EntityFactory<Map3InfoEntity>(
@@ -465,8 +448,7 @@ class AtlasApi {
   }
 
   Future<Map3InfoEntity> getMap3Info(String address, String nodeId) async {
-    return AtlasHttpCore.instance.postEntity("/v1/map3/info",
-        EntityFactory<Map3InfoEntity>(
+    return AtlasHttpCore.instance.postEntity("/v1/map3/info", EntityFactory<Map3InfoEntity>(
       (json) {
         if (json != null) {
           return Map3InfoEntity.fromJson(json);
@@ -488,9 +470,8 @@ class AtlasApi {
   }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/node_list_i_create",
-        EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
-            .map((item) => Map3InfoEntity.fromJson(item))
-            .toList()),
+        EntityFactory<List<Map3InfoEntity>>(
+            (list) => (list as List).map((item) => Map3InfoEntity.fromJson(item)).toList()),
         params: {
           "address": address,
           "page": page,
@@ -509,9 +490,8 @@ class AtlasApi {
   }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/node_list_i_join",
-        EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
-            .map((item) => Map3InfoEntity.fromJson(item))
-            .toList()),
+        EntityFactory<List<Map3InfoEntity>>(
+            (list) => (list as List).map((item) => Map3InfoEntity.fromJson(item)).toList()),
         params: {
           "address": address,
           "page": page,
@@ -529,9 +509,8 @@ class AtlasApi {
   }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/node_list_started",
-        EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
-            .map((item) => Map3InfoEntity.fromJson(item))
-            .toList()),
+        EntityFactory<List<Map3InfoEntity>>(
+            (list) => (list as List).map((item) => Map3InfoEntity.fromJson(item)).toList()),
         params: {
           "address": address,
           "page": page,
@@ -548,9 +527,8 @@ class AtlasApi {
   }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/node_list",
-        EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
-            .map((item) => Map3InfoEntity.fromJson(item))
-            .toList()),
+        EntityFactory<List<Map3InfoEntity>>(
+            (list) => (list as List).map((item) => Map3InfoEntity.fromJson(item)).toList()),
         params: {
           "address": address,
           "page": page,
@@ -565,10 +543,8 @@ class AtlasApi {
     int page = 1,
     int size = 0,
   }) async {
-    return AtlasHttpCore.instance.postEntity(
-        "/v1/map3/node_list",
-        EntityFactory<Map3StakingEntity>(
-            (json) => Map3StakingEntity.fromJson(json)),
+    return AtlasHttpCore.instance.postEntity("/v1/map3/node_list",
+        EntityFactory<Map3StakingEntity>((json) => Map3StakingEntity.fromJson(json)),
         params: {
           "address": address,
           "page": page,
@@ -637,9 +613,8 @@ class AtlasApi {
       {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/tx_log",
-        EntityFactory<List<HynTransferHistory>>((list) => (list as List)
-            .map((item) => HynTransferHistory.fromJson(item))
-            .toList()),
+        EntityFactory<List<HynTransferHistory>>(
+            (list) => (list as List).map((item) => HynTransferHistory.fromJson(item)).toList()),
         params: {
           "node_address": nodeAddress,
           "page": page,
@@ -653,9 +628,8 @@ class AtlasApi {
       {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/tx_log_all",
-        EntityFactory<List<HynTransferHistory>>((list) => (list as List)
-            .map((item) => HynTransferHistory.fromJson(item))
-            .toList()),
+        EntityFactory<List<HynTransferHistory>>(
+            (list) => (list as List).map((item) => HynTransferHistory.fromJson(item)).toList()),
         params: {
           "node_address": nodeAddress,
           "page": page,
@@ -665,13 +639,11 @@ class AtlasApi {
   }
 
   // 获取节点的抵押人地址列表
-  Future<List<Map3UserEntity>> getMap3UserList(String nodeId,
-      {int page = 1, int size = 10}) async {
+  Future<List<Map3UserEntity>> getMap3UserList(String nodeId, {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/user_list",
-        EntityFactory<List<Map3UserEntity>>((list) => (list as List)
-            .map((item) => Map3UserEntity.fromJson(item))
-            .toList()),
+        EntityFactory<List<Map3UserEntity>>(
+            (list) => (list as List).map((item) => Map3UserEntity.fromJson(item)).toList()),
         params: {
           "node_id": nodeId,
           "page": page,
@@ -719,28 +691,22 @@ class AtlasApi {
 
   // 获取节点创建的推荐抵押量
   Future<List<String>> getMap3RecCreate() async {
-    return AtlasHttpCore.instance.postEntity(
-        "/v1/map3/rec_create",
-        EntityFactory<List<String>>(
-            (list) => (list as List).map((item) => "$item").toList()),
+    return AtlasHttpCore.instance.postEntity("/v1/map3/rec_create",
+        EntityFactory<List<String>>((list) => (list as List).map((item) => "$item").toList()),
         options: RequestOptions(contentType: "application/json"));
   }
 
   // 获取节点推荐抵押量
   Future<List<String>> getMapRecStaking() async {
-    return AtlasHttpCore.instance.postEntity(
-        "/v1/map3/rec_staking",
-        EntityFactory<List<String>>(
-            (list) => (list as List).map((item) => "$item").toList()),
+    return AtlasHttpCore.instance.postEntity("/v1/map3/rec_staking",
+        EntityFactory<List<String>>((list) => (list as List).map((item) => "$item").toList()),
         options: RequestOptions(contentType: "application/json"));
   }
 
   // 获取节点推荐抵押量
   Future<List<String>> getBiboxWhiteList() async {
-    return AtlasHttpCore.instance.postEntity(
-        "/v1/wallet/bibox",
-        EntityFactory<List<String>>(
-            (list) => (list as List).map((item) => "$item").toList()),
+    return AtlasHttpCore.instance.postEntity("/v1/wallet/bibox",
+        EntityFactory<List<String>>((list) => (list as List).map((item) => "$item").toList()),
         options: RequestOptions(contentType: "application/json"));
   }
 
@@ -749,9 +715,8 @@ class AtlasApi {
       {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/wallet/reward_txs",
-        EntityFactory<List<HynTransferHistory>>((json) => (json['data'] as List)
-            .map((item) => HynTransferHistory.fromJson(item))
-            .toList()),
+        EntityFactory<List<HynTransferHistory>>((json) =>
+            (json['data'] as List).map((item) => HynTransferHistory.fromJson(item)).toList()),
         params: {
           "address": walletAddress,
           "page": page,
@@ -776,8 +741,7 @@ class AtlasApi {
   // 同步用户信息
   static Future postUserSync(UserPayloadWithAddressEntity userPayload) async {
     return AtlasHttpCore.instance.post("/v1/wallet/user_sync",
-        data: userPayload.toJson(),
-        options: RequestOptions(contentType: "application/json"));
+        data: userPayload.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
   // 获取交易列表
@@ -795,9 +759,8 @@ class AtlasApi {
   }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/wallet/txs",
-        EntityFactory<List<HynTransferHistory>>((json) => (json as List)
-            .map((item) => HynTransferHistory.fromJson(item))
-            .toList()),
+        EntityFactory<List<HynTransferHistory>>(
+            (json) => (json as List).map((item) => HynTransferHistory.fromJson(item)).toList()),
         params: {
           "address": walletAddress,
           "atlas_address": atlasAddress,
@@ -816,17 +779,13 @@ class AtlasApi {
     String atlasAddress = '',
   }) async {
     try {
-      var activatedWallet =
-          WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+      var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
       var _wallet = activatedWallet?.wallet;
       var _walletAddress = _wallet?.getEthAccount()?.address ?? "";
 
       List<HynTransferHistory> list = await AtlasApi().getTxsList(
         _walletAddress,
-        status: [
-          TransactionStatus.pending,
-          TransactionStatus.pending_for_receipt
-        ],
+        status: [TransactionStatus.pending, TransactionStatus.pending_for_receipt],
         type: [type],
         map3Address: map3Address,
         atlasAddress: atlasAddress,
@@ -925,8 +884,7 @@ class AtlasApi {
     var amountStr = (Decimal.parse(hynTransferHistory.payload.amount) +
             Decimal.parse(hynTransferHistory.payload.reward))
         .toString();
-    return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(amountStr))
-        .toDouble();
+    return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(amountStr)).toDouble();
   }
 
   static bool isTransferMap3Atlas(int type) {
@@ -946,8 +904,7 @@ class AtlasApi {
 
   static Future<bool> checkIsExit({String map3Address = ''}) async {
     try {
-      var activatedWallet =
-          WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+      var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
       var _wallet = activatedWallet?.wallet;
       var _walletAddress = _wallet?.getEthAccount()?.address ?? "";
 

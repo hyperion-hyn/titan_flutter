@@ -9,6 +9,8 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import '../coin_market_api.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
@@ -84,6 +86,14 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
     } else if (event is UpdateGasPriceEvent) {
       // 更新当前矿工费用
       yield* handleUpdateGasPrice(event);
+    } else if (event is UpdateWalletExpandEvent) {
+      // 更新钱包配置信息
+      await WalletUtil.setWalletExpandInfo(event.address, event.walletExpandInfoEntity);
+      if (_activatedWalletVo != null &&
+          _activatedWalletVo.wallet.getEthAccount().address == event.address) {
+        _activatedWalletVo.wallet.walletExpandInfoEntity = event.walletExpandInfoEntity;
+        yield UpdateWalletExpandState(event.walletExpandInfoEntity);
+      }
     } else if (event is TurnOffTokensEvent) {
       // TODO
     } else if (event is TurnOnTokensEvent) {

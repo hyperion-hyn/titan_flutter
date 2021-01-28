@@ -181,7 +181,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
               ),
             ),
           ),
-          if ((_shareEntity?.info?.rpType ?? "") == RpShareType.normal)
+          if ((_shareEntity?.info?.rpType ?? "") == RpShareType.normal && (_shareEntity?.info?.state ?? "") != RpShareState.refunded)
             Positioned(
               top: 40,
               right: 16,

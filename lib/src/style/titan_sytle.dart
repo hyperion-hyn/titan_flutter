@@ -138,4 +138,5 @@ class DefaultColors {
   static Color colorcc5858 = HexColor("#cc5858");
   static Color colorf8f8f8 = HexColor("#f8f8f8");
   static Color colorf23524 = HexColor("#f23524");
+  static Color colore7bb00 = HexColor("#E7BB00");//黄色 新主题色
 }
