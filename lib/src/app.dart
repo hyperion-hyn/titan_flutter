@@ -12,6 +12,7 @@ import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/components/style/theme.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'components/app_lock/app_lock_component.dart';
 import 'components/root_page_control_component/bloc/bloc.dart';
 import 'components/setting/setting_component.dart';
@@ -118,7 +119,8 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                 enableBallisticLoad: true,
                 child: Container(
                   color: Colors.white,
-                  child: AppLockInheritedModel.of(context).isWalletLockActive
+                  child: false
+                  // child: AppLockInheritedModel.of(context).isWalletLockActive
                       ? MaterialApp(
                           locale: SettingInheritedModel.of(context, aspect: SettingAspect.language)
                               .languageModel
@@ -136,7 +138,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                               color: Colors.white,
                               child: AppLockScreen(
                                 onUnlock: () {
-                                  BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
+                                  // BlocProvider.of<AppLockBloc>(context).add(UnLockWalletEvent());
                                 },
                               ),
                             ),
