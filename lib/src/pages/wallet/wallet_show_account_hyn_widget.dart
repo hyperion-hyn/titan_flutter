@@ -635,7 +635,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
       retList.addAll(transferList);
     } catch (e, stacktrace) {
       retList.add('header');
-      LogUtil.toastException(e);
+      LogUtil.toastException("$e  $stacktrace");
     }
     return retList;
   }

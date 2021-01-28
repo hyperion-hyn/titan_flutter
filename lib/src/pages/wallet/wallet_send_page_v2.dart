@@ -10,21 +10,29 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/wallet/wallet_gas_setting_page.dart';
+import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import '../../global.dart';
@@ -43,24 +51,212 @@ class WalletSendPageV2 extends StatefulWidget {
   }
 }
 
-class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
+class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _toController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _nonceController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController();
 
   final _toKey = GlobalKey<FormState>();
   final _amountKey = GlobalKey<FormState>();
   final _nonceKey = GlobalKey<FormState>();
-  final _dateKey = GlobalKey<FormState>();
+
+  int get _nonce {
+    return int.tryParse(_nonceController.text) ?? null;
+  }
+
+  bool get _isCustom => _selectedIndex == -1;
+
+  bool get _isBTC => (widget.coinVo.coinType == CoinType.BITCOIN);
+
+  int get _defaultGasLimit {
+    var defaultValue = widget.coinVo.symbol == "ETH"
+        ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
+        : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
+
+    defaultValue = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20ApproveGasLimit;
+
+    return defaultValue;
+  }
+
+  int get _coinType => widget.coinVo.coinType;
+
+  bool get _isBbcOrEth => (CoinType.BITCOIN == _coinType || CoinType.ETHEREUM == _coinType);
+
+  String get _baseUnit {
+    var baseUnit = widget.coinVo.symbol;
+
+    // 1.BTC
+    if (CoinType.BITCOIN == _coinType) {
+      baseUnit = 'BTC';
+    }
+    // 2.ETH
+    else if (CoinType.ETHEREUM == _coinType) {
+      baseUnit = 'ETH';
+    }
+    // 3.ATLAS
+    else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+      baseUnit = 'HYN';
+    }
+    // 3.HB
+    else if (widget.coinVo.coinType == CoinType.HB_HT) {
+      baseUnit = 'HT';
+    }
+
+    return baseUnit;
+  }
+
+  Decimal get _selectedGasPrice => _dataList[_isCustom ? 0 : _selectedIndex].gas;
+
+  String get _quoteSign => _activatedQuoteSign?.legal?.sign ?? '';
+
+  Decimal get _gasPrice {
+    var gasPrice = _selectedGasPrice;
+
+    // 1.BTC
+    if (CoinType.BITCOIN == _coinType) {
+      gasPrice =
+          _isCustom ? Decimal?.tryParse(_lastGasSat ?? '0') ?? Decimal.zero : _selectedGasPrice;
+    }
+    // 2.ETH
+    else if (CoinType.ETHEREUM == _coinType) {
+      var initGasPrice = _selectedGasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI);
+      gasPrice = _isCustom ? Decimal?.tryParse(_lastGasPrice ?? '0') ?? initGasPrice : initGasPrice;
+    }
+    // 3.ATLAS
+    else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+      gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+    }
+    // 3.HB
+    else if (widget.coinVo.coinType == CoinType.HB_HT) {
+      gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+    }
+
+    return gasPrice;
+  }
+
+  int get _gasLimit {
+    var gasLimit;
+
+    // 1.BTC
+    if (CoinType.BITCOIN == _coinType) {
+      gasLimit = 78;
+      // gasLimit = BitcoinGasPrice.BTC_RAWTX_SIZE;
+    }
+    // 2.ETH
+    else if (CoinType.ETHEREUM == _coinType) {
+      var initGasLimit = _defaultGasLimit;
+      gasLimit = _isCustom ? int?.tryParse(_lastGasLimit ?? '0') ?? initGasLimit : initGasLimit;
+    }
+    // 3.ATLAS
+    else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+      gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+    }
+    // 3.HB
+    else if (widget.coinVo.coinType == CoinType.HB_HT) {
+      gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+    }
+
+    return gasLimit;
+  }
+
+  Decimal get _gasFees {
+    var fees;
+
+    // 1.BTC
+    if (CoinType.BITCOIN == _coinType) {
+      fees = ConvertTokenUnit.weiToDecimal(
+          BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toString()), 8);
+    }
+    // 2.ETH
+    else if (CoinType.ETHEREUM == _coinType) {
+      fees = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse(
+              (_gasPrice * Decimal.fromInt(_gasLimit) * Decimal.fromInt(EthereumUnitValue.G_WEI))
+                  .toStringAsFixed(0)));
+    }
+    // 3.ATLAS
+    else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+      fees = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toStringAsFixed(0)));
+    }
+    // 3.HB
+    else if (widget.coinVo.coinType == CoinType.HB_HT) {
+      fees = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toStringAsFixed(0)));
+    }
+
+    return fees;
+  }
+
+  String get _gasFeesStr => FormatUtil.formatNumDecimal(_gasFees.toDouble(), decimal: 6);
+
+  String get _gasPriceEstimateStr {
+    var gasPriceEstimateStr = '';
+
+    // 1.BTC
+    if (CoinType.BITCOIN == _coinType) {
+      var feesDecimalValue = ConvertTokenUnit.weiToDecimal(
+          BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toString()), 8);
+
+      var btcQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('BTC')?.price ?? 0;
+      var gasPriceEstimate = feesDecimalValue * Decimal.parse(btcQuotePrice.toString());
+      gasPriceEstimateStr = "$_quoteSign ${FormatUtil.formatPrice(gasPriceEstimate.toDouble())}";
+    }
+    // 2.ETH
+    else if (CoinType.ETHEREUM == _coinType) {
+      var feesDecimalValue = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse(
+              (_gasPrice * Decimal.fromInt(_gasLimit) * Decimal.fromInt(EthereumUnitValue.G_WEI))
+                  .toStringAsFixed(0)));
+
+      var ethQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('ETH')?.price ?? 0;
+      var gasPriceEstimate = feesDecimalValue * Decimal.parse(ethQuotePrice.toString());
+      gasPriceEstimateStr =
+          "${_quoteSign ?? ""}${FormatUtil.formatPrice(gasPriceEstimate.toDouble())}";
+    }
+    // 3.ATLAS
+    else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+      var feesDecimalValue = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toStringAsFixed(0)));
+
+      var hynQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('HYN')?.price ?? 0;
+      var gasPriceEstimate = feesDecimalValue * Decimal.parse(hynQuotePrice.toString());
+      gasPriceEstimateStr =
+          '${_quoteSign ?? ""} ${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())}';
+    }
+    // 3.HB
+    else if (widget.coinVo.coinType == CoinType.HB_HT) {
+      var feesDecimalValue = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toStringAsFixed(0)));
+
+      var htQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('HT')?.price ?? 0;
+      var gasPriceEstimate = feesDecimalValue * Decimal.parse(htQuotePrice.toString());
+      gasPriceEstimateStr =
+          '${_quoteSign ?? ""} ${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())}';
+    }
+
+    return gasPriceEstimateStr;
+  }
 
   double _notionalValue = 0;
   bool _isHighLevel = false;
+  double _amountFontSize = 30;
+
+  int _selectedIndex = 0;
+  List<GasPriceRecommendModel> _dataList = [];
+
+  TokenPriceViewVo _activatedQuoteSign;
+  var _gasPriceRecommend;
+
+  String _lastGasSat;
+  String _lastGasPrice;
+  String _lastGasLimit;
 
   @override
   void initState() {
     super.initState();
+
     _amountController.addListener(() {
       if (_amountController.text.trim() != null && _amountController.text.trim().length > 0) {
         var inputAmount = _amountController.text.trim();
@@ -72,6 +268,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
         });
       }
     });
+
     if (widget.toAddress != null) {
       _toController.text = widget.toAddress;
     }
@@ -79,11 +276,114 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
 
   @override
   void onCreated() {
+    _setupDataList();
+
+    _initLastData();
+
+    Application.routeObserver.subscribe(this, ModalRoute.of(context));
+
     BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
   }
 
   @override
+  void didPopNext() {
+    _initLastData();
+
+    super.didPopNext();
+  }
+
+  void _setupDataList() {
+    _activatedQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
+
+    // if (!isBbcOrEth) return;
+
+    if (_isBTC) {
+      _gasPriceRecommend =
+          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).btcGasPriceRecommend;
+    } else {
+      _gasPriceRecommend =
+          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).ethGasPriceRecommend;
+    }
+
+    if (_gasPriceRecommend != null) {
+      for (int index = 0; index < 3; index++) {
+        String title;
+        String time;
+        Decimal gas;
+
+        switch (index) {
+          case 0:
+            title = '快速';
+            time = S.of(context).wait_min(_gasPriceRecommend.fastWait.toString());
+            gas = _gasPriceRecommend.fast;
+            break;
+
+          case 1:
+            title = '一般';
+            time = S.of(context).wait_min(_gasPriceRecommend.avgWait.toString());
+            gas = _gasPriceRecommend.average;
+            break;
+
+          case 2:
+            title = '缓慢';
+            time = S.of(context).wait_min(_gasPriceRecommend.safeLowWait.toString());
+            gas = _gasPriceRecommend.safeLow;
+            break;
+        }
+        GasPriceRecommendModel model = GasPriceRecommendModel(
+          title: title,
+          time: time,
+          gas: gas,
+          index: index,
+        );
+        _dataList.add(model);
+      }
+    }
+  }
+
+  void _initLastData() async {
+    if (!_isBbcOrEth) return;
+
+    if (_isBTC) {
+      String custom = await AppCache.getValue(
+        PrefsKey.WALLET_GAS_SAT_CUSTOM_KEY,
+      );
+      _selectedIndex = int?.tryParse(custom) ?? 0;
+
+      if (_isCustom) {
+        _lastGasSat = await AppCache.getValue(
+          PrefsKey.WALLET_GAS_SAT_KEY,
+        );
+
+        //print("[$runtimeType] _selectedIndex:$_selectedIndex, _lastGasSat:$_lastGasSat");
+      }
+    } else {
+      String custom = await AppCache.getValue(
+        PrefsKey.WALLET_GAS_PRICE_CUSTOM_KEY,
+      );
+      _selectedIndex = int?.tryParse(custom ?? '0') ?? 0;
+
+      if (_isCustom) {
+        _lastGasPrice = await AppCache.getValue(
+          PrefsKey.WALLET_GAS_PRICE_KEY,
+        );
+
+        _lastGasLimit = await AppCache.getValue(
+          PrefsKey.WALLET_GAS_LIMIT_KEY,
+        );
+        // print(
+        //     "[$runtimeType] _selectedIndex:$_selectedIndex, _lastGasLimit:$_lastGasLimit, _lastGasPrice:$_lastGasPrice");
+      }
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
   void dispose() {
+    Application.routeObserver.unsubscribe(this);
     _amountController.dispose();
     super.dispose();
   }
@@ -106,7 +406,21 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
         Expanded(
           child: SingleChildScrollView(
             controller: _scrollController,
-            child: _contentWidget(),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 24,
+                top: 18,
+              ),
+              child: Column(
+                children: <Widget>[
+                  _toWidget(),
+                  _amountWidget(),
+                  _gasWidget(),
+                  _highWidget(),
+                ],
+              ),
+            ),
           ),
         ),
         _confirmButtonWidget(),
@@ -114,36 +428,10 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
     );
   }
 
-  Widget _contentWidget() {
-    var activatedQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var quotePrice = activatedQuoteSign?.price ?? 0;
-    var quoteSign = activatedQuoteSign?.legal?.legal;
-
-    var addressHint = "";
-    RegExp _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
-    String addressErrorHint = "";
-    if (widget.coinVo.coinType == CoinType.BITCOIN) {
-      _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
-      addressHint = S.of(context).example + ': bc1q7fhqwluhcrs2ek...';
-      addressErrorHint = S.of(context).legal_address_starting_1_or_bc_or_3;
-    } else {
-      _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
-      var addressExample = widget.coinVo.coinType == CoinType.HYN_ATLAS
-          ? 'hyn1ntjklkvx9jlkrz9'
-          : '0x81e7A0529AC1726e';
-      addressHint = S.of(context).example + ': $addressExample...';
-      addressErrorHint = S.of(context).input_valid_address;
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 16,
-        right: 24,
-        top: 18,
-      ),
+  Widget _toWidget() {
+    return Container(
       child: Column(
-        children: <Widget>[
+        children: [
           Row(
             children: <Widget>[
               Text(
@@ -160,6 +448,15 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
             child: _toEditWidget(),
             paddingV: 4,
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _amountWidget() {
+    return Container(
+      child: Column(
+        children: [
           SizedBox(
             height: 12,
           ),
@@ -190,66 +487,85 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
             child: _amountEditWidget(),
             paddingV: 12,
           ),
-          _clipRectWidget(
-            paddingH: 16,
-            paddingV: 10,
-            marginV: 0,
-            child: InkWell(
-              onTap: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => WalletGasSettingPage(
-                      FluroConvertUtils.object2string(widget.coinVo.toJson()),
-                    ),
-                  ),
-                );
-              },
-              child: Row(
-                children: [
-                  Text(
-                    S.of(context).transfer_gas_fee,
-                    style: TextStyle(
-                      color: HexColor('#333333'),
-                      fontSize: 14,
-                    ),
-                  ),
-                  Spacer(),
-                  // todo: 读取最新设置
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '0.006 HYN',
-                        style: TextStyle(
-                          color: HexColor('#333333'),
-                          fontSize: 12,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
-                      Text(
-                        '¥ 0.03',
-                        style: TextStyle(
-                          color: HexColor('#999999'),
-                          fontSize: 10,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    width: 12,
-                  ),
-                  Image.asset(
-                    'res/drawable/wallet_gas_right.png',
-                    width: 8,
-                    height: 8,
-                  ),
-                ],
+        ],
+      ),
+    );
+  }
+
+  Widget _gasWidget() {
+    var totalFee = '$_gasFeesStr $_baseUnit';
+
+    return _clipRectWidget(
+      paddingH: 16,
+      paddingV: 10,
+      marginV: 0,
+      child: InkWell(
+        onTap: () {
+          if (_isBbcOrEth) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => WalletGasSettingPage(
+                  FluroConvertUtils.object2string(widget.coinVo.toJson()),
+                ),
+              ),
+            );
+          }
+        },
+        child: Row(
+          children: [
+            Text(
+              S.of(context).transfer_gas_fee,
+              style: TextStyle(
+                color: HexColor('#333333'),
+                fontSize: 14,
               ),
             ),
-          ),
+            Spacer(),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  totalFee,
+                  style: TextStyle(
+                    color: HexColor('#333333'),
+                    fontSize: 12,
+                  ),
+                ),
+                SizedBox(
+                  height: 2,
+                ),
+                Text(
+                  _gasPriceEstimateStr,
+                  style: TextStyle(
+                    color: HexColor('#999999'),
+                    fontSize: 10,
+                  ),
+                ),
+              ],
+            ),
+            if (_isBbcOrEth)
+              SizedBox(
+                width: 12,
+              ),
+            if (_isBbcOrEth)
+              Image.asset(
+                'res/drawable/wallet_gas_right.png',
+                width: 8,
+                height: 8,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _highWidget() {
+    if (_isBTC) return Container();
+
+    return Container(
+      child: Column(
+        children: [
           SizedBox(
             height: 30,
           ),
@@ -315,15 +631,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
                 color: HexColor('#999999'),
               ),
             ),
-            Spacer(),
-            Text(
-              '当前确认数 1',
-              style: TextStyle(
-                color: Color(0xFF999999),
-                fontSize: 12,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
           ],
         ),
         _clipRectWidget(
@@ -332,31 +639,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
         ),
         SizedBox(
           height: 8,
-        ),
-        Row(
-          children: <Widget>[
-            Text(
-              'Date',
-              style: TextStyle(
-                color: Color(0xFF999999),
-                fontSize: 12,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Image.asset(
-                'res/drawable/wallet_gas_info.png',
-                height: 12,
-                width: 12,
-                color: HexColor('#999999'),
-              ),
-            ),
-          ],
-        ),
-        _clipRectWidget(
-          child: _dateEditWidget(),
-          paddingV: 4,
         ),
       ],
     );
@@ -387,24 +669,18 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
   }
 
   Widget _toEditWidget() {
-    var activatedQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var quotePrice = activatedQuoteSign?.price ?? 0;
-    var quoteSign = activatedQuoteSign?.legal?.legal;
+    var quotePrice = _activatedQuoteSign?.price ?? 0;
 
-    var addressHint = "";
     RegExp _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
     String addressErrorHint = "";
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
       _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
-      addressHint = S.of(context).example + ': bc1q7fhqwluhcrs2ek...';
+
       addressErrorHint = S.of(context).legal_address_starting_1_or_bc_or_3;
     } else {
       _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
-      var addressExample = widget.coinVo.coinType == CoinType.HYN_ATLAS
-          ? 'hyn1ntjklkvx9jlkrz9'
-          : '0x81e7A0529AC1726e';
-      addressHint = S.of(context).example + ': $addressExample...';
+
       addressErrorHint = S.of(context).input_valid_address;
     }
 
@@ -481,30 +757,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
     );
   }
 
-  double _amountFontSize = 30;
-
   Widget _amountEditWidget() {
-    var activatedQuoteSign = WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var quotePrice = activatedQuoteSign?.price ?? 0;
-    var quoteSign = activatedQuoteSign?.legal?.sign;
-
-    var addressHint = "";
-    RegExp _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
-    String addressErrorHint = "";
-    if (widget.coinVo.coinType == CoinType.BITCOIN) {
-      _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
-      addressHint = S.of(context).example + ': bc1q7fhqwluhcrs2ek...';
-      addressErrorHint = S.of(context).legal_address_starting_1_or_bc_or_3;
-    } else {
-      _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
-      var addressExample = widget.coinVo.coinType == CoinType.HYN_ATLAS
-          ? 'hyn1ntjklkvx9jlkrz9'
-          : '0x81e7A0529AC1726e';
-      addressHint = S.of(context).example + ': $addressExample...';
-      addressErrorHint = S.of(context).input_valid_address;
-    }
-
     return Form(
       key: _amountKey,
       child: Column(
@@ -582,7 +835,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
                     bottom: 8,
                   ),
                   child: Text(
-                    "${quoteSign ?? ""} ${FormatUtil.formatPrice(_notionalValue)}",
+                    "${_quoteSign ?? ""} ${FormatUtil.formatPrice(_notionalValue)}",
                     style: TextStyle(
                       color: Color(0xFFc1c1c1),
                       fontWeight: FontWeight.normal,
@@ -635,53 +888,11 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          keyboardType: TextInputType.numberWithOptions(decimal: true),
-        ),
-      ),
-    );
-  }
-
-  Widget _dateEditWidget() {
-    return Form(
-      key: _dateKey,
-      child: Container(
-        child: TextFormField(
-          controller: _dateController,
-          textAlign: TextAlign.start,
-          maxLines: 3,
-          validator: (value) {
-            value = value.trim();
-            if (value == "0") {
-              return S.of(context).input_corrent_count_hint;
-            }
-            return null;
-          },
-          onChanged: (String inputValue) {},
-          onFieldSubmitted: (String inputText) {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.normal,
-            color: HexColor('#333333'),
-          ),
-          cursorColor: Theme.of(context).primaryColor,
-          //光标圆角
-          cursorRadius: Radius.circular(5),
-          //光标宽度
-          cursorWidth: 1.8,
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-            border: InputBorder.none,
-            hintText: '十六进制字符',
-            errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
-            hintStyle: TextStyle(
-              fontSize: 16,
-              color: HexColor('#C1C1C1'),
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-          keyboardType: TextInputType.text,
+          inputFormatters: [
+            LengthLimitingTextInputFormatter(18),
+            FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+          ],
+          keyboardType: TextInputType.numberWithOptions(decimal: false),
         ),
       ),
     );
@@ -720,8 +931,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
     }
     if (toValidate && amountValidate && highLevel) {
       var amountTrim = _amountController.text.trim();
-      var count = double.parse(amountTrim);
-      if (count <= 0) {
+      var value = double?.tryParse(amountTrim) ?? 0;
+      if (value <= 0) {
         Fluttertoast.showToast(msg: S.of(context).transfer_num_bigger_zero);
         return;
       }
@@ -747,11 +958,15 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
         }
       }
 
-      var voStr = FluroConvertUtils.object2string(widget.coinVo.toJson());
-      Application.router.navigateTo(
-          context,
-          Routes.wallet_transfer_token_confirm +
-              "?coinVo=$voStr&transferAmount=$amountTrim&receiverAddress=${widget.coinVo.coinType == CoinType.HYN_ATLAS ? WalletUtil.bech32ToEthAddress(_toController.text) : _toController.text}");
+      showSendDialog(
+        context: context,
+        to: _toController.text,
+        value: value,
+        valueUnit: widget.coinVo.symbol,
+        gasValue: _gasFees.toDouble(),
+        gasUnit: _baseUnit,
+        gasPrice: _gasPrice,
+      );
     }
   }
 
@@ -801,14 +1016,169 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> {
     }
   }
 
-  /*
-  Future _onPasteAction() async {
-    var text = await Clipboard.getData(Clipboard.kTextPlain);
-    if (text == null) {
-      return;
+  Future<bool> showSendDialog<T>({
+    BuildContext context,
+    String to,
+    double value,
+    String valueUnit,
+    double gasValue,
+    String gasUnit,
+    Decimal gasPrice,
+  }) async {
+    if (to?.isEmpty ?? true) {
+      Fluttertoast.showToast(msg: '网络异常，请稍后重试!');
+      return false;
     }
-    _toController.text = text.text;
-  }
-  */
 
+    var walletVo = WalletInheritedModel.of(context).activatedWallet;
+    var wallet = walletVo.wallet;
+
+    var walletName = wallet.keystore.name;
+
+    var from = wallet.getAtlasAccount().address;
+    var fromAddressHyn = WalletUtil.ethAddressToBech32Address(from);
+    var fromAddress = shortBlockChainAddress(fromAddressHyn);
+
+    var toAddress = to;
+    if (_coinType == CoinType.HYN_ATLAS) {
+      toAddress = WalletUtil.bech32ToEthAddress(to);
+    } else {
+      toAddress = to;
+    }
+
+    WalletSendDialogEntity entity = WalletSendDialogEntity(
+      type: 'tx_send_normal',
+      value: value,
+      valueUnit: valueUnit,
+      title: '转账',
+      fromName: walletName,
+      fromAddress: fromAddress,
+      toName: shortBlockChainAddress(to),
+      toAddress: '',
+      gas: gasValue.toString(),
+      gasDesc: '',
+      gasUnit: gasUnit,
+      action: () async {
+        try {
+          var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
+          if (password == null) {
+            return false;
+          }
+          print("1111");
+
+          // 1.Bitcoin
+          if (_isBTC) {
+            var transResult = await wallet.sendBitcoinTransaction(
+                password,
+                wallet.getBitcoinZPub(),
+                toAddress,
+                gasPrice.toInt(),
+                ConvertTokenUnit.strToBigInt(value.toString(), 8).toInt());
+            if (transResult["code"] != 0) {
+              LogUtil.uploadException(transResult, "bitcoin upload");
+              Fluttertoast.showToast(
+                  msg: "${transResult.toString()}", toastLength: Toast.LENGTH_LONG);
+              return false;
+            }
+          } else {
+            // 2. Hyperion, Ethereum, Heco
+            if (widget.coinVo.contractAddress != null) {
+              // erc20 token
+              var txHash = await _transferErc20(
+                widget.coinVo.coinType,
+                password,
+                ConvertTokenUnit.strToBigInt(value.toString(), widget.coinVo.decimals),
+                toAddress,
+                wallet,
+                gasPrice,
+              );
+              if (txHash == null) {
+                return false;
+              }
+            } else {
+              await _transferEth(
+                widget.coinVo.coinType,
+                password,
+                ConvertTokenUnit.strToBigInt(value.toString(), widget.coinVo.decimals),
+                toAddress,
+                wallet,
+                gasPrice,
+              );
+            }
+          }
+          print("2222");
+
+          return true;
+        } catch (e) {
+          LogUtil.toastException(e);
+        }
+        return false;
+      },
+      finished: () async {
+        var msg;
+        if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+          msg = S.of(context).transfer_message_broadcast_wait_six_seconds;
+        } else {
+          msg = S.of(context).transfer_broadcase_success_description;
+        }
+        msg = FluroConvertUtils.fluroCnParamsEncode(msg);
+        Application.router.navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
+        print("3333");
+
+        return true;
+      },
+    );
+
+    return showWalletSendDialog(
+      context: context,
+      entity: entity,
+    );
+  }
+
+  Future _transferEth(
+    int coinType,
+    String password,
+    BigInt amount,
+    String toAddress,
+    Wallet wallet,
+    Decimal gasPrice,
+  ) async {
+    print('[HYN] _transferErc20，_gasPrice $gasPrice,  _nonce:$_nonce');
+
+    final txHash = await wallet.sendTransaction(
+      coinType,
+      password: password,
+      gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
+      value: amount,
+      toAddress: toAddress,
+      nonce: _nonce,
+    );
+
+    logger.i('ETH transaction committed，txhash $txHash');
+  }
+
+  Future<String> _transferErc20(
+    int coinType,
+    String password,
+    BigInt amount,
+    String toAddress,
+    Wallet wallet,
+    Decimal gasPrice,
+  ) async {
+    var contractAddress = widget.coinVo.contractAddress;
+    print('[HYN] _transferErc20，_gasPrice $gasPrice,  _nonce:$_nonce');
+
+    final txHash = await wallet.sendErc20Transaction(
+      coinType,
+      contractAddress: contractAddress,
+      password: password,
+      gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
+      value: amount,
+      toAddress: toAddress,
+      nonce: _nonce,
+    );
+
+    logger.i('HYN transaction committed，txhash $txHash ');
+    return txHash;
+  }
 }

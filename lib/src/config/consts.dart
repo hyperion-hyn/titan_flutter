@@ -199,6 +199,16 @@ class PrefsKey {
   static const String IS_CONFIRM_DEX_POLICY = 'dex_policy_confirmed';
 
   static const String WALLET_ICON_LAST_KEY = "wallet_icon_last_key";
+
+  /// GAS
+  /// BTC
+  static const String WALLET_GAS_SAT_KEY = "wallet_gas_sat_key";
+  static const String WALLET_GAS_SAT_CUSTOM_KEY = "wallet_gas_sat_custom_key";
+
+  /// ETH
+  static const String WALLET_GAS_PRICE_KEY = "wallet_gas_price_key";
+  static const String WALLET_GAS_LIMIT_KEY = "wallet_gas_limit_key";
+  static const String WALLET_GAS_PRICE_CUSTOM_KEY = "wallet_gas_price_custom_key";
 }
 
 class SecurePrefsKey {
