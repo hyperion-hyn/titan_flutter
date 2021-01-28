@@ -14,9 +14,17 @@ class UpdateEntity {
   @JsonKey(name: 'download_url')
   final String downloadUrl;
 
-  UpdateEntity({this.build, this.versionName, this.content, this.forceUpdate, this.md5, this.downloadUrl});
+  UpdateEntity({
+    this.build,
+    this.versionName,
+    this.content,
+    this.forceUpdate,
+    this.md5,
+    this.downloadUrl,
+  });
 
-  factory UpdateEntity.fromJson(Map<String, dynamic> json) => _$UpdateEntityFromJson(json);
+  factory UpdateEntity.fromJson(Map<String, dynamic> json) =>
+      _$UpdateEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$UpdateEntityToJson(this);
 
