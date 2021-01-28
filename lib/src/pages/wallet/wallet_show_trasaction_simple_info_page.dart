@@ -98,7 +98,7 @@ class WalletShowTransactionSimpleInfoPageState extends BaseState<WalletShowTrans
     isBillPage = (transactionDetail.hynType == MessageType.typeUnMicrostakingReturn ||
         transactionDetail.hynType == MessageType.typeTerminateMap3Return);
 
-    isToken = widget.symbol == SupportedTokens.HYN_RP_HRC30.symbol;
+    isToken = widget.symbol == DefaultTokenDefine.HYN_RP_HRC30.symbol;
     var fromAddressTitle = HYNApi.toAddressHint(transactionDetail.hynType, true);
     var toAddressTitle = HYNApi.toAddressHint(transactionDetail.hynType, false);
 

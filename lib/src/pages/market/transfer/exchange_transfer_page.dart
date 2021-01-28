@@ -351,11 +351,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _getTokenNameBySymbol(String symbol) {
-    if (symbol == SupportedTokens.HYN_Atlas.symbol) {
+    if (symbol == DefaultTokenDefine.HYN_Atlas.symbol) {
       return 'HYN';
-    } else if (symbol == SupportedTokens.USDT_ERC20.symbol) {
+    } else if (symbol == DefaultTokenDefine.USDT_ERC20.symbol) {
       return 'USDT';
-    } else if (symbol == SupportedTokens.HYN_RP_HRC30.symbol) {
+    } else if (symbol == DefaultTokenDefine.HYN_RP_HRC30.symbol) {
       return 'RP';
     } else {
       return '';
@@ -713,8 +713,8 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         _withdraw();
       } else {
         ///HYN-Atlas and HYN-ERC20 both use symbol [HYN]
-        var symbol = _selectedCoinSymbol == SupportedTokens.HYN_ERC20.symbol
-            ? SupportedTokens.HYN_Atlas.symbol
+        var symbol = _selectedCoinSymbol == DefaultTokenDefine.HYN_ERC20.symbol
+            ? DefaultTokenDefine.HYN_Atlas.symbol
             : _selectedCoinSymbol;
         var ret = await _exchangeApi.getAddress(symbol);
         var exchangeAddress = ret['address'];

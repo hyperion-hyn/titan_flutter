@@ -19,6 +19,7 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
@@ -202,39 +203,37 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                             ),
                             GestureDetector(
                               onTap: () async {
-                                var tempListImagePaths = await ImagePickers.pickerPaths(
-                                  galleryMode: GalleryMode.image,
-                                  selectCount: 1,
-                                  showCamera: true,
-                                  cropConfig: null,
-                                  compressSize: 500,
-                                  uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
-                                );
+                                ///Ignore AppLock
+                                await AppLockUtil.ignoreAppLock(context, true);
 
-                                ///turn off app-lock
-                                AppLockUtil.appLockSwitch(context, false);
+                                editIconSheet(context, (tempListImagePath) async {
+                                  if (tempListImagePath != null) {
+                                    ///turn off app-lock
+                                    AppLockUtil.appLockSwitch(context, false);
 
-                                if (tempListImagePaths != null && tempListImagePaths.length == 1) {
-                                  UiUtil.showLoadingDialog(context, "头像上传中...", (context) {
-                                    dialogContext = context;
-                                  });
+                                    if (tempListImagePath != null) {
+                                      UiUtil.showLoadingDialog(context, "头像上传中...", (context) {
+                                        dialogContext = context;
+                                      });
 
-                                  var netImagePath = await _atlasApi.postUploadImageFile(
-                                    "0x",
-                                    tempListImagePaths[0].path,
-                                    (count, total) {},
-                                  );
-                                  if (netImagePath != null && netImagePath.isNotEmpty) {
-                                    userImageLocalPath = tempListImagePaths[0].path;
-                                    userImagePath = netImagePath;
-                                    setState(() {});
-                                  } else {
-                                    Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
+                                      var netImagePath = await _atlasApi.postUploadImageFile(
+                                        "0x",
+                                        tempListImagePath,
+                                            (count, total) {},
+                                      );
+                                      if (netImagePath != null && netImagePath.isNotEmpty) {
+                                        userImageLocalPath = tempListImagePath;
+                                        userImagePath = netImagePath;
+                                        setState(() {});
+                                      } else {
+                                        Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
+                                      }
+                                      if (dialogContext != null) {
+                                        Navigator.pop(dialogContext);
+                                      }
+                                    }
                                   }
-                                  if (dialogContext != null) {
-                                    Navigator.pop(dialogContext);
-                                  }
-                                }
+                                });
                               },
                               child: SizedBox(
                                 width: 60,
@@ -399,8 +398,8 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
       await Future.delayed(Duration(milliseconds: 500)); //延时确保激活成功
 
       ///save expand info
-      WalletExpandInfoEntity walletExpandInfoEntity = WalletExpandInfoEntity(
-          userImageLocalPath, userImagePath, _walletPswHintController.text.trim(), !widget.isCreateWallet);
+      WalletExpandInfoEntity walletExpandInfoEntity = WalletExpandInfoEntity(userImageLocalPath,
+          userImagePath, _walletPswHintController.text.trim(), !widget.isCreateWallet);
       BlocProvider.of<WalletCmpBloc>(context)
           .add(UpdateWalletExpandEvent(wallet.getEthAccount().address, walletExpandInfoEntity));
 

@@ -311,15 +311,15 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                                         return InkWell(
                                           onTap: () {
                                             if ((widget.coinVo.symbol ==
-                                                    SupportedTokens
+                                                    DefaultTokenDefine
                                                         .HYN_Atlas.symbol) ||
                                                 (widget.coinVo.symbol ==
-                                                    SupportedTokens
+                                                    DefaultTokenDefine
                                                         .HYN_RP_HRC30.symbol)) {
                                               var base = 'USDT';
                                               var quote = 'HYN';
                                               if (widget.coinVo.symbol ==
-                                                  SupportedTokens
+                                                  DefaultTokenDefine
                                                       .HYN_RP_HRC30.symbol) {
                                                 base = 'USDT';
                                                 quote = 'RP';
@@ -640,7 +640,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
       retList.addAll(transferList);
     } catch (e, stacktrace) {
       retList.add('header');
-      LogUtil.toastException(e);
+      LogUtil.toastException("$e  $stacktrace");
     }
     return retList;
   }

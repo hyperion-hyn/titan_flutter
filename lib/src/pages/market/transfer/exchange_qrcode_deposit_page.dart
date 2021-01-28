@@ -39,12 +39,12 @@ class ExchangeQrcodeDepositPage extends StatefulWidget {
 
 class ExchangeQrcodeDepositPageState
     extends BaseState<ExchangeQrcodeDepositPage> {
-  String _selectedCoinSymbol = SupportedTokens.HYN_Atlas.symbol;
+  String _selectedCoinSymbol = DefaultTokenDefine.HYN_Atlas.symbol;
   Map symbolToChain = {
-    SupportedTokens.HYN_Atlas.symbol:
+    DefaultTokenDefine.HYN_Atlas.symbol:
         S.of(Keys.rootKey.currentContext).atlas_main_chain,
-    SupportedTokens.USDT_ERC20.symbol: "ERC20",
-    SupportedTokens.HYN_RP_HRC30.symbol: "HRC30"
+    DefaultTokenDefine.USDT_ERC20.symbol: "ERC20",
+    DefaultTokenDefine.HYN_RP_HRC30.symbol: "HRC30"
   };
   GlobalKey _qrImageBoundaryKey = GlobalKey();
   AllPageState _currentState = LoadingState();
@@ -53,7 +53,7 @@ class ExchangeQrcodeDepositPageState
 
   @override
   void initState() {
-    _selectedCoinSymbol = widget.coinSymbol ?? SupportedTokens.HYN_Atlas.symbol;
+    _selectedCoinSymbol = widget.coinSymbol ?? DefaultTokenDefine.HYN_Atlas.symbol;
     super.initState();
   }
 
@@ -119,7 +119,7 @@ class ExchangeQrcodeDepositPageState
       );
     }
 
-    var changeAddress = _selectedCoinSymbol == SupportedTokens.USDT_ERC20.symbol
+    var changeAddress = _selectedCoinSymbol == DefaultTokenDefine.USDT_ERC20.symbol
         ? exchangeAddress
         : WalletUtil.ethAddressToBech32Address(exchangeAddress);
 
@@ -334,17 +334,17 @@ class ExchangeQrcodeDepositPageState
 
     if (activeAssets.contains("HYN")) {
       activeCoinItemList.add(
-        _coinItem(SupportedTokens.HYN_Atlas.symbol),
+        _coinItem(DefaultTokenDefine.HYN_Atlas.symbol),
       );
     }
     if (activeAssets.contains('USDT')) {
       activeCoinItemList.add(
-        _coinItem(SupportedTokens.USDT_ERC20.symbol),
+        _coinItem(DefaultTokenDefine.USDT_ERC20.symbol),
       );
     }
     if (activeAssets.contains('RP')) {
       activeCoinItemList.add(
-        _coinItem(SupportedTokens.HYN_RP_HRC30.symbol),
+        _coinItem(DefaultTokenDefine.HYN_RP_HRC30.symbol),
       );
     }
 
@@ -432,7 +432,7 @@ class ExchangeQrcodeDepositPageState
     var minUsdt = assetList?.USDT?.rechargeMin ?? '0';
     var minRp = assetList?.RP?.rechargeMin ?? '0';
 
-    if (tokenSymbol == SupportedTokens.HYN_Atlas.symbol) {
+    if (tokenSymbol == DefaultTokenDefine.HYN_Atlas.symbol) {
       return RichText(
         text: TextSpan(
           children: [
@@ -471,7 +471,7 @@ class ExchangeQrcodeDepositPageState
           ],
         ),
       );
-    } else if (tokenSymbol == SupportedTokens.USDT_ERC20.symbol) {
+    } else if (tokenSymbol == DefaultTokenDefine.USDT_ERC20.symbol) {
       return RichText(
         text: TextSpan(
           children: [
@@ -511,7 +511,7 @@ class ExchangeQrcodeDepositPageState
           ],
         ),
       );
-    } else if (tokenSymbol == SupportedTokens.HYN_RP_HRC30.symbol) {
+    } else if (tokenSymbol == DefaultTokenDefine.HYN_RP_HRC30.symbol) {
       return RichText(
         text: TextSpan(
           children: [

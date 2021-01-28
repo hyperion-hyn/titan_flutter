@@ -62,11 +62,11 @@ class Wallet {
     return null;
   }
 
-  String getHeadImg(){
-    if((walletExpandInfoEntity?.localHeadImg ?? "").isNotEmpty){
+  String getHeadImg() {
+    if ((walletExpandInfoEntity?.localHeadImg ?? "").isNotEmpty) {
       return walletExpandInfoEntity.localHeadImg;
     }
-    if((walletExpandInfoEntity?.netHeadImg ?? "").isNotEmpty){
+    if ((walletExpandInfoEntity?.netHeadImg ?? "").isNotEmpty) {
       return walletExpandInfoEntity.netHeadImg;
     }
     return null;
@@ -251,7 +251,13 @@ class Wallet {
       // 本地记录ethereum pending
       if (coinType == CoinType.ETHEREUM) {
         await Injector.of(Keys.rootKey.currentContext).transactionInteractor.insertTransactionDB(
-            responseMap['result'], toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce,
+            responseMap['result'],
+            toAddress,
+            value,
+            gasPrice,
+            gasLimit,
+            LocalTransferType.LOCAL_TRANSFER_ETH,
+            nonce,
             optType: optType);
       }
     }
@@ -315,13 +321,13 @@ class Wallet {
       type = MessageType.typeNormal;
     }
 
- 
     //var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
 
     final client = WalletUtil.getWeb3Client(coinType);
     var credentials = cred;
     if (credentials == null) {
-      var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+      var privateKey =
+          await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
       credentials = await client.credentialsFromPrivateKey(privateKey);
     }
     var chainId = _getChainId(coinType);
@@ -396,8 +402,15 @@ class Wallet {
       // 本地记录ethereum erc20 pending
       if (coinType == CoinType.ETHEREUM) {
         await Injector.of(Keys.rootKey.currentContext).transactionInteractor.insertTransactionDB(
-            responseMap['result'], toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ERC20, nonce,
-            optType: optType, contractAddress: contractAddress);
+            responseMap['result'],
+            toAddress,
+            value,
+            gasPrice,
+            gasLimit,
+            LocalTransferType.LOCAL_TRANSFER_ERC20,
+            nonce,
+            optType: optType,
+            contractAddress: contractAddress);
       }
     }
 
@@ -440,13 +453,13 @@ class Wallet {
       throw Exception('${baseCoinVo.symbol}余额不足以支付网络费用');
     }
 
- 
     var privateKey =
         await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client(coinType);
     var credentials = cred;
     if (credentials == null) {
-      var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+      var privateKey =
+          await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
       credentials = await client.credentialsFromPrivateKey(privateKey);
     }
     final contract = WalletUtil.getErc20Contract(contractAddress, 'HYN');
@@ -741,6 +754,14 @@ class Wallet {
   factory Wallet.fromJson(Map<String, dynamic> json) => _$WalletFromJson(json);
 
   Map<String, dynamic> toJson() => _$WalletToJson(this);
+
+  Wallet copyWith([Wallet target]) {
+    return Wallet(
+      accounts: target?.accounts ?? this.accounts,
+      keystore: target?.keystore ?? this.keystore,
+      walletExpandInfoEntity: target?.walletExpandInfoEntity ?? this.walletExpandInfoEntity,
+    );
+  }
 
   @override
   String toString() {

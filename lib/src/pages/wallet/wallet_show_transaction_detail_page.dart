@@ -135,7 +135,7 @@ class WalletShowTransactionDetailPageState
       TokenPriceViewVo hynQuote;
       var quotesSign = WalletInheritedModel.of(context).activeLegal;
       for (var quoteItem in quotes) {
-        if (quoteItem.symbol == SupportedTokens.HYN_Atlas.symbol &&
+        if (quoteItem.symbol == DefaultTokenDefine.HYN_Atlas.symbol &&
             quoteItem.legal == quotesSign.legal) {
           hynQuote = quoteItem;
         }

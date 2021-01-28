@@ -13,6 +13,7 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/bloc/redpocket_bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
@@ -22,10 +23,16 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
+import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textField.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -71,10 +78,6 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
     return current;
   }
 
-  CoinViewVo _coinVo;
-  WalletViewVo _activatedWallet;
-  String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
-
   bool _isLoading = false;
 
   Decimal get _inputValue =>
@@ -100,11 +103,17 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
     var level = _currentLevel;
 
     // 1.先和当前量级需持币比较
-    if ((needHolding > Decimal.zero) && (remainHolding > Decimal.zero) && (remainHolding >= needHolding)) {
+    if ((needHolding > Decimal.zero) &&
+        (remainHolding > Decimal.zero) &&
+        (remainHolding >= needHolding)) {
       level = _currentLevel;
     } else {
       // 2.不然，从筛选出对应下降量级
-      var filterDataList = _staticDataList.where((element) => element.level < _currentLevel).toList().reversed.toList();
+      var filterDataList = _staticDataList
+          .where((element) => element.level < _currentLevel)
+          .toList()
+          .reversed
+          .toList();
       if ((filterDataList?.isNotEmpty ?? false) && remainHolding > Decimal.zero) {
         var firstObj = filterDataList?.firstWhere((levelRule) {
           var holding = Decimal.tryParse(
@@ -128,15 +137,10 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
   @override
   void initState() {
     super.initState();
-
-    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext);
-    _coinVo = wallet.getCoinVoBySymbol('RP');
-    _activatedWallet = wallet.activatedWallet;
   }
 
   @override
   void onCreated() {
-
     super.onCreated();
   }
 
@@ -160,7 +164,6 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
 
   @override
   Widget build(BuildContext context) {
-
     var holdingStr = _currentLevelRule?.holdingStr ?? '0';
     var holdingStrTips = S.of(context).rp_withdraw_tips_func(holdingStr);
 
@@ -189,7 +192,8 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                       child: Column(
                         children: <Widget>[
                           rpRowText(
-                            title: '${S.of(context).rp_current_level}${levelValueToLevelName(_currentLevel)}${S.of(context).rp_hold_need_amount}',
+                            title:
+                                '${S.of(context).rp_current_level}${levelValueToLevelName(_currentLevel)}${S.of(context).rp_hold_need_amount}',
                             amount: '${_currentLevelRule?.holdingStr ?? '0'} RP',
                             width: 110,
                           ),
@@ -214,7 +218,11 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                                   width: 5,
                                 ),
                                 Text(
-                                    '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
+                                    '${S.of(context).mortgage_wallet_balance(
+                                          WalletModelUtil.walletName,
+                                          FormatUtil.coinBalanceHumanReadFormat(
+                                              WalletModelUtil.rpCoinVo),
+                                        )}',
                                     style: TextStyle(
                                       fontWeight: FontWeight.normal,
                                       fontSize: 12,
@@ -257,7 +265,8 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
 
                                         var holding = _currentHoldValue;
 
-                                        if (textStr.length == 0 || inputValue == Decimal.fromInt(0)) {
+                                        if (textStr.length == 0 ||
+                                            inputValue == Decimal.fromInt(0)) {
                                           return S.of(context).input_valid_withdraw_amount;
                                         }
                                         if (inputValue > holding) {
@@ -449,8 +458,8 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
           //btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
         ),
       ],
-      content:
-          S.of(context).rp_retrive_detail(_inputValue, levelValueToLevelName(_currentLevel), levelValueToLevelName(_toLevel)),
+      content: S.of(context).rp_retrive_detail(
+          _inputValue, levelValueToLevelName(_currentLevel), levelValueToLevelName(_toLevel)),
       isInputValue: false,
     );
   }
@@ -468,48 +477,78 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
       return;
     }
 
-    var _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var value = _inputValue.toDouble();
 
-    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
-    if (password == null) {
-      return;
-    }
+    showSendDialog(
+      context: context,
+      value: value,
+    );
+  }
 
-    if (mounted) {
-      setState(() {
-        _isLoading = true;
-      });
-    }
+  Future<bool> showSendDialog<T>({
+    BuildContext context,
+    double value,
+  }) async {
+    var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+    var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+    var gasValue = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)))
+        .toDouble();
 
-    var withdrawAmount = ConvertTokenUnit.strToBigInt(inputText);
-    try {
-      await _rpApi.postRpWithdraw(
-        withdrawAmount: withdrawAmount,
-        activeWallet: _activeWallet,
-        password: password,
-        from: _currentLevel,
-        to: _toLevel,
-      );
-      Navigator.pop(context, true);
+    var toAddressHyn =
+        WalletUtil.ethAddressToBech32Address(HyperionConfig.rpHoldingContractAddress);
+    var toAddress = shortBlockChainAddress(toAddressHyn);
+    WalletSendDialogEntity entity = WalletSendDialogEntity(
+      type: 'tx_rp_level_withdraw',
+      value: value,
+      valueUnit: 'RP',
+      valueDirection: '+',
+      title: '智能合约调用',
+      titleDesc: '申请取回持币',
+      fromName: 'RP合约',
+      fromAddress: toAddress,
+      toName: WalletModelUtil.walletName,
+      toAddress: WalletModelUtil.walletHynShortAddress,
+      gas: gasValue.toString(),
+      gasDesc: '',
+      gasUnit: 'HYN',
+      action: () async {
+        try {
+          var password = await UiUtil.showWalletPasswordDialogV2(context, WalletModelUtil.wallet);
+          if (password == null) {
+            return false;
+          }
 
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        LogUtil.toastException(e);
+          var amount = ConvertTokenUnit.strToBigInt(value.toString());
 
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
+          await _rpApi.postRpWithdraw(
+            withdrawAmount: amount,
+            activeWallet: WalletModelUtil.activatedWallet,
+            password: password,
+            from: _currentLevel,
+            to: _toLevel,
+          );
+
+          return true;
+        } catch (e) {
+          LogUtil.toastException(e);
+        }
+        return false;
+      },
+      finished: () async {
+        Navigator.pop(context, true);
+
+        return true;
+      },
+    );
+
+    return showWalletSendDialog(
+      context: context,
+      entity: entity,
+    );
   }
 
   Future getNetworkData() async {
-
     if (context != null) {
       BlocProvider.of<RedPocketBloc>(context).add(UpdateMyLevelInfoEvent());
     }
@@ -522,8 +561,6 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
       BlocProvider.of<RedPocketBloc>(context).add(UpdatePromotionRuleEvent());
     }
 
-    //if (mounted) {
-      _loadDataBloc.add(RefreshSuccessEvent());
-    //}
+    _loadDataBloc.add(RefreshSuccessEvent());
   }
 }

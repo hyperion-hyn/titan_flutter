@@ -853,7 +853,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
     WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
       context,
       txHash,
-      SupportedTokens.HYN_RP_HRC30.symbol,
+      DefaultTokenDefine.HYN_RP_HRC30.symbol,
     );
   }
 

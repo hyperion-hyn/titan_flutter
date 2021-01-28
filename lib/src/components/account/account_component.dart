@@ -6,6 +6,7 @@ import 'package:titan/src/pages/contribution/signal_scan/vo/check_in_model.dart'
 import 'package:titan/src/pages/mine/model/user_info.dart';
 import 'package:nested/nested.dart';
 
+@deprecated
 class AccountComponent extends SingleChildStatelessWidget {
 
   AccountComponent({Key key, Widget child}): super(key: key, child: child);

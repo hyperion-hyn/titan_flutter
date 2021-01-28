@@ -14,6 +14,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
@@ -23,9 +24,15 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
+import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textField.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -51,11 +58,10 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   RpMyLevelInfo _myLevelInfo;
-  CoinViewVo _coinVo;
-  WalletViewVo _activatedWallet;
-  String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
 
-  Decimal get _balanceValue => Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
+  Decimal get _balanceValue =>
+      Decimal.tryParse(FormatUtil.coinBalanceHumanRead(WalletModelUtil.rpCoinVo)) ??
+      Decimal.zero;
 
   Decimal get _inputValue {
     var zeroValue = Decimal.zero;
@@ -92,7 +98,11 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
   int get _toLevel {
     var level = _currentLevel;
 
-    var filterDataList = _dynamicDataList.where((element) => element.level > _currentLevel).toList().reversed.toList();
+    var filterDataList = _dynamicDataList
+        .where((element) => element.level > _currentLevel)
+        .toList()
+        .reversed
+        .toList();
     if (filterDataList?.isNotEmpty ?? false) {
       var firstObj = filterDataList?.firstWhere((levelRule) {
         var holding = Decimal.tryParse(
@@ -120,10 +130,6 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
   @override
   void initState() {
     super.initState();
-
-    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext);
-    _coinVo = wallet.getCoinVoBySymbol('RP');
-    _activatedWallet = wallet.activatedWallet;
   }
 
   @override
@@ -222,7 +228,11 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                                     width: 5,
                                   ),
                                   Text(
-                                      '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
+                                      '${S.of(context).mortgage_wallet_balance(
+                                            WalletModelUtil.walletName,
+                                            FormatUtil.coinBalanceHumanReadFormat(
+                                                WalletModelUtil.rpCoinVo),
+                                          )}',
                                       style: TextStyle(
                                         fontWeight: FontWeight.normal,
                                         fontSize: 12,
@@ -250,7 +260,8 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                                           _inputController.add(text);
                                         },
                                         controller: _textEditingController,
-                                        keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(decimal: true),
                                         inputFormatters: [
                                           LengthLimitingTextInputFormatter(18),
                                           FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
@@ -266,9 +277,10 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                                             return S.of(context).please_enter_correct_amount;
                                           }
 
-                                          var balanceValue =
-                                              Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ??
-                                                  Decimal.fromInt(0);
+                                          var balanceValue = Decimal.tryParse(
+                                                  FormatUtil.coinBalanceHumanRead(
+                                                      WalletModelUtil.rpCoinVo)) ??
+                                              Decimal.fromInt(0);
                                           //print("inputValue:$inputValue, balanceValue:$balanceValue");
 
                                           if (inputValue > balanceValue) {
@@ -281,7 +293,8 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                                   StreamBuilder<Object>(
                                       stream: _inputController.stream,
                                       builder: (context, snapshot) {
-                                        bool isShowUp = (_balanceValue > _inputValue && _inputValue > Decimal.zero);
+                                        bool isShowUp = (_balanceValue > _inputValue &&
+                                            _inputValue > Decimal.zero);
                                         return isShowUp
                                             ? Row(
                                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -354,7 +367,9 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
                                   Text(
                                     ' Y',
                                     style: TextStyle(
-                                        color: HexColor('#333333'), fontSize: 12, fontWeight: FontWeight.w600),
+                                        color: HexColor('#333333'),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600),
                                   ),
                                   Text(
                                     S.of(context).rp_add_holding_prevent_level_drop_2,
@@ -422,31 +437,71 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
       return;
     }
 
-    var password = await UiUtil.showWalletPasswordDialogV2(context, _activatedWallet.wallet);
-    if (password == null) {
-      return;
-    }
+    Future.delayed(Duration(milliseconds: 111)).then((_) {
+      var value = _inputValue.toDouble();
 
-    var burningAmount = ConvertTokenUnit.strToBigInt('0');
-    var depositAmount = ConvertTokenUnit.strToBigInt(inputText);
+      showSendDialog(
+        context: context,
+        value: value,
+      );
+    });
+  }
 
-    if (mounted) {
-      setState(() {
-        _isLoading = true;
-      });
-    }
+  Future<bool> showSendDialog<T>({
+    BuildContext context,
+    double value,
+  }) async {
+    var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+    var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+    gasLimit = 100000;
+    var gasValue = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)))
+        .toDouble();
 
-    Future.delayed(Duration(milliseconds: 111)).then((_) async {
-      try {
-        await _rpApi.postRpDepositAndBurn(
-          from: _myLevelInfo?.currentLevel ?? 0,
-          to: _toLevel, // 累积燃烧 > 当前燃烧；累积持币 > 当前持币；
-          depositAmount: depositAmount,
-          burningAmount: burningAmount,
-          activeWallet: _activatedWallet,
-          password: password,
-        );
+    var toAddressHyn =
+        WalletUtil.ethAddressToBech32Address(HyperionConfig.rpHoldingContractAddress);
+    var toAddress = shortBlockChainAddress(toAddressHyn);
+    WalletSendDialogEntity entity = WalletSendDialogEntity(
+      type: 'tx_rp_level_deposit',
+      value: value,
+      valueUnit: 'RP',
+      title: '智能合约调用',
+      titleDesc: '增加持币',
+      fromName: WalletModelUtil.walletName,
+      fromAddress: WalletModelUtil.walletHynShortAddress,
+      toName: 'RP合约',
+      toAddress: toAddress,
+      gas: gasValue.toString(),
+      gasDesc: '',
+      gasUnit: 'HYN',
+      action: () async {
+        try {
+          var password = await UiUtil.showWalletPasswordDialogV2(
+            context,
+            WalletModelUtil.wallet,
+          );
+          if (password == null) {
+            return false;
+          }
 
+          var amount = ConvertTokenUnit.strToBigInt(value.toString());
+
+          await _rpApi.postRpDepositAndBurn(
+            from: _myLevelInfo?.currentLevel ?? 0,
+            to: _toLevel, // 累积燃烧 > 当前燃烧；累积持币 > 当前持币；
+            depositAmount: amount,
+            burningAmount: ConvertTokenUnit.strToBigInt('0'),
+            activeWallet: WalletModelUtil.activatedWallet,
+            password: password,
+          );
+
+          return true;
+        } catch (e) {
+          LogUtil.toastException(e);
+        }
+        return false;
+      },
+      finished: () async {
         Fluttertoast.showToast(
           msg: '${S.of(context).rp_add_holding_brocast_sent}！',
           gravity: ToastGravity.CENTER,
@@ -454,20 +509,13 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
 
         Navigator.of(context)..pop()..pop();
 
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      } catch (e) {
-        if (mounted) {
-          LogUtil.toastException(e);
+        return true;
+      },
+    );
 
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      }
-    });
+    return showWalletSendDialog(
+      context: context,
+      entity: entity,
+    );
   }
 }

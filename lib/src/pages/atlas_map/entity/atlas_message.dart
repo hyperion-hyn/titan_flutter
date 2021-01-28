@@ -51,6 +51,7 @@ get _walletAddressAndName {
   return "$walletName ($address)";
 }
 
+
 //==================================Atlas Message Begin==============================================
 
 class ConfirmCreateAtlasNodeMessage implements AtlasMessage {

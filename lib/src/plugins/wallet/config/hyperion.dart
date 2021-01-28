@@ -75,11 +75,11 @@ class HyperionConfig {
   static String get hynRPHrc30Address {
     switch (chainType) {
       case HyperionChainType.mainnet:
-        return SupportedTokens.HYN_RP_HRC30.contractAddress;
+        return DefaultTokenDefine.HYN_RP_HRC30.contractAddress;
       case HyperionChainType.test:
-        return SupportedTokens.HYN_RP_HRC30_TEST.contractAddress;
+        return DefaultTokenDefine.HYN_RP_HRC30_TEST.contractAddress;
       case HyperionChainType.local:
-        return SupportedTokens.HYN_RP_HRC30_LOCAL.contractAddress;
+        return DefaultTokenDefine.HYN_RP_HRC30_LOCAL.contractAddress;
     }
     return '';
   }

@@ -183,7 +183,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
     var quotes = await _coinMarketApi.quotes(widget._burnHistory.timestamp);
     var legalSign = WalletInheritedModel.of(context).activeLegal;
     for (var quoteItem in quotes) {
-      if (quoteItem.symbol == SupportedTokens.HYN_Atlas.symbol && quoteItem.legal.legal == legalSign?.legal) {
+      if (quoteItem.symbol == DefaultTokenDefine.HYN_Atlas.symbol && quoteItem.legal.legal == legalSign?.legal) {
         hynQuote = quoteItem;
       }
     }

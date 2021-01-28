@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,10 +17,8 @@ import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_options_page.dart';
-import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_modify_psw_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -32,7 +28,6 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:titan/src/widget/wallet_widget.dart';
 
 typedef TextChangeCallback = void Function(String text);
 
@@ -117,6 +112,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
           children: [
             InkWell(
               onTap: () {
+
                 editIconSheet(context, (path) async {
                   if (path != null) {
                     UiUtil.showLoadingDialog(context, "头像上传中...", (context) {
@@ -456,7 +452,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
       print("del result ${widget.wallet.keystore.fileName} $result");
       if (result) {
         await AppCache.remove(widget.wallet.getBitcoinAccount()?.address ?? "");
-        WalletUtil.setWalletExpandInfo(widget.wallet.getEthAccount()?.address, null);
+        await WalletUtil.setWalletExpandInfo(widget.wallet.getEthAccount()?.address, null);
         List<Wallet> walletList = await WalletUtil.scanWallets();
         var activatedWalletVo =
             WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet);

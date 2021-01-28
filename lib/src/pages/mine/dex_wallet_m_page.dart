@@ -537,7 +537,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                     var nonce = await wallet.getCurrentWalletNonce(CoinType.HYN_ATLAS,
                                         atBlock: web3.BlockNum.current());
 
-                                    var decimals = SupportedTokens.HYN_RP_HRC30.decimals;
+                                    var decimals = DefaultTokenDefine.HYN_RP_HRC30.decimals;
                                     var amount = ConvertTokenUnit.decimalToWei(_amount, decimals);
                                     txhash = await wallet.sendErc20Transaction(CoinType.HYN_ATLAS,
                                         contractAddress: HyperionConfig.hynRPHrc30Address,
@@ -565,7 +565,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                     var decimals;
                                     var amount;
                                     if (tokenType == TokenType.USDT_ERC20) {
-                                      decimals = SupportedTokens.USDT_ERC20.decimals;
+                                      decimals = DefaultTokenDefine.USDT_ERC20.decimals;
                                       amount = ConvertTokenUnit.decimalToWei(_amount, decimals);
                                       txhash = await wallet.sendErc20Transaction(CoinType.ETHEREUM,
                                           cred: credentials,
@@ -684,7 +684,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
 
     addressData.ethBalance = ConvertTokenUnit.weiToDecimal(ethBalance);
     addressData.hynBanlance = ConvertTokenUnit.weiToDecimal(hynBalance);
-    addressData.usdtBalance = ConvertTokenUnit.weiToDecimal(usdtBalance, SupportedTokens.USDT_ERC20.decimals);
+    addressData.usdtBalance = ConvertTokenUnit.weiToDecimal(usdtBalance, DefaultTokenDefine.USDT_ERC20.decimals);
     addressData.rpBanlance = ConvertTokenUnit.weiToDecimal(rpBalance);
 
     print("'mm-$address', '$ethBalance,$hynBalance,$usdtBalance,$rpBalance'");
@@ -705,7 +705,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
       if (ary.length >= 3) {
         ethBalance = ConvertTokenUnit.weiToDecimal(BigInt.parse(ary[0]));
         hynBalance = ConvertTokenUnit.weiToDecimal(BigInt.parse(ary[1]));
-        usdtBalance = ConvertTokenUnit.weiToDecimal(BigInt.parse(ary[2]), SupportedTokens.USDT_ERC20.decimals);
+        usdtBalance = ConvertTokenUnit.weiToDecimal(BigInt.parse(ary[2]), DefaultTokenDefine.USDT_ERC20.decimals);
         if (ary.length >= 4) {
           rpBalance = ConvertTokenUnit.weiToDecimal(BigInt.parse(ary[3]));
         }

@@ -150,7 +150,9 @@ class PrefsKey {
 
   //wallet
   static const String ACTIVATED_WALLET_FILE_NAME = 'default_wallet_file_name';
+  static const String ACTIVATED_WALLET_VIEW_VO = 'activated_wallet_view_vo';
   static const String SETTING_LEGAL_SIGN = 'setting_legal_sign';
+  static const String QUOTE_PRICE = 'quote_price';
   static final walletBalance = 'wallet_balance';
   static final walletBitcoinCreate = 'wallet_bitcoin_create';
 
@@ -192,7 +194,8 @@ class PrefsKey {
   static const String EXCHANGE_ACCOUNT_LAST_AUTH_TIME = 'exchange_account_last_auth_time';
 
   // static const String PENDING_TRANSFER_KEY_PREFIX = 'pending_transfer_key_';
-  static const String PENDING_TRANSACTIONS_KEY_PREFIX = 'pending_transactions_key_';
+  static const String PENDING_TRANSACTIONS_KEY_PREFIX =
+      'pending_transactions_key_';
 
   static const String EXCHANGE_ACCOUNT_ABNORMAL = 'exchange_account_abnormal_';
 

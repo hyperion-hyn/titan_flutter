@@ -7,5 +7,8 @@ class CheckUpdate extends UpdateEvent {
   final String lang;
   final bool isManual;
 
-  CheckUpdate({this.lang, this.isManual = false});
+  CheckUpdate({
+    this.lang,
+    this.isManual = false,
+  });
 }
