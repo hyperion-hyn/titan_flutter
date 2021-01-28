@@ -50,7 +50,6 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
 
   ExchangeApi _exchangeApi = ExchangeApi();
   bool _isExchangeAccountAbnormal = false;
-  bool _isSafeLockUnlock = false;
   bool _isShowBalances = true;
   LegalSign activeQuotesSign;
 
@@ -194,11 +193,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   Widget build(BuildContext context) {
     super.build(context);
 
-    if (_isSafeLockUnlock) {
-      Future.delayed(Duration(milliseconds: 1000), () {
-        _showBackupDialog();
-      });
-    }
+    Future.delayed(Duration(milliseconds: 1000), () {
+      _showBackupDialog();
+    });
 
     return Scaffold(
       body: Container(

@@ -47,6 +47,8 @@ class WalletManagerPage extends StatefulWidget {
       Routes.wallet_manager,
     );
     if (wallet != null) {
+      Application.hasShowBackupWalletDialog = false;
+
       if (hasWalletUpdate != null) {
         hasWalletUpdate(wallet);
       }
