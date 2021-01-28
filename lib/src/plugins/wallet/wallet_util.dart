@@ -353,7 +353,7 @@ class WalletUtil {
 
     var walletExpandInfoEntity = WalletExpandInfoEntity.defaultEntity();
     if (ethAddress != null && ethAddress != '') {
-      walletExpandInfoEntity = await WalletUtil.getWalletExpandInfo(ethAddress);
+      walletExpandInfoEntity = ((await WalletUtil.getWalletExpandInfo(ethAddress)) ?? WalletExpandInfoEntity.defaultEntity());
     }
 
     var accounts = List<Account>.from(

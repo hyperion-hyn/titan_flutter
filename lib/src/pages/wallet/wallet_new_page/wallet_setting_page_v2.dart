@@ -185,6 +185,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                     UiUtil.toast(S.of(context).update_success);
                     postUserSync();
                   }
+                  widget.wallet?.keystore?.name = text;
 
                   setState(() {});
                 }
