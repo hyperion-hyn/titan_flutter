@@ -17,6 +17,7 @@ import 'package:titan/src/data/entity/app_update_info.dart';
 import 'package:titan/src/data/entity/update.dart';
 import 'package:titan/src/pages/app_lock/app_lock_preferences_page.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/dex_wallet_m_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
@@ -429,8 +430,7 @@ class _MyPageState extends BaseState<MyPage> {
           alignment: Alignment.center,
           width: 52,
           height: 52,
-          decoration: BoxDecoration(
-              shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
           child: InkWell(
             onTap: () {},
             child: Stack(
@@ -469,8 +469,7 @@ class _MyPageState extends BaseState<MyPage> {
   Widget _buildWalletDetailRow(Wallet wallet) {
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
-    String walletName =
-        walletKeyStore.name[0].toUpperCase() + walletKeyStore.name.substring(1);
+    String walletName = walletKeyStore.name[0].toUpperCase() + walletKeyStore.name.substring(1);
 
     return Row(
       children: <Widget>[
@@ -478,8 +477,7 @@ class _MyPageState extends BaseState<MyPage> {
           alignment: Alignment.center,
 //          width: 52,
 //          height: 52,
-          decoration: BoxDecoration(
-              shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
           child: InkWell(
             onTap: () {
               goSetWallet(wallet);
@@ -488,21 +486,13 @@ class _MyPageState extends BaseState<MyPage> {
               children: <Widget>[
                 Align(
                   alignment: Alignment.center,
-                  child: walletHeaderWidget(
-                    walletName.characters.first,
-                    size: 60,
-                    fontSize: 20,
-                    address: ethAccount.address,
-                    isShowShape: false,
-                  ),
+                  child: iconWalletWidget(_wallet, isCircle: true, size: 60),
                 ),
               ],
             ),
           ),
         ),
-        SizedBox(
-          width: 12,
-        ),
+        SizedBox(width: 12),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
@@ -514,10 +504,7 @@ class _MyPageState extends BaseState<MyPage> {
               children: <Widget>[
                 Text(
                   walletName,
-                  style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 SizedBox(
                   height: 4,
@@ -555,23 +542,20 @@ class _MyPageState extends BaseState<MyPage> {
       opacity: 0.8,
       child: Row(
         children: <Widget>[
-          //Image.asset('res/drawable/ic_logo.png', width: 40.0),
           Image.asset(
             'res/drawable/logo_title.png',
             width: 72.0,
             height: 36,
           ),
           SizedBox(width: 16),
-          Text(S.of(context).titan_encrypted_map_ecology,
-              style: TextStyle(color: Colors.white70))
+          Text(S.of(context).titan_encrypted_map_ecology, style: TextStyle(color: Colors.white70))
         ],
       ),
     );
   }
 
   void shareApp() async {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => PromoteQrCodePage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => PromoteQrCodePage()));
     /*
     return;
 
@@ -627,8 +611,7 @@ class _MyPageState extends BaseState<MyPage> {
                                 height: 88,
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 15.0, bottom: 15),
+                                padding: const EdgeInsets.only(top: 15.0, bottom: 15),
                                 child: Text(
                                   title,
                                   style: TextStyles.textC333S18,
@@ -637,8 +620,7 @@ class _MyPageState extends BaseState<MyPage> {
                               Container(
                                 height: 104,
                                 width: double.infinity,
-                                padding: const EdgeInsets.only(
-                                    left: 24.0, right: 24),
+                                padding: const EdgeInsets.only(left: 24.0, right: 24),
                                 child: SingleChildScrollView(
                                   child: Text(
                                     message,
