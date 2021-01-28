@@ -28,6 +28,7 @@ import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_banner.dart';
+import 'package:titan/src/pages/market/exchange/exchange_quote_list_page.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
@@ -585,140 +586,28 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
     );
   }
 
-  _quoteListItem(MarketItemEntity marketItemEntity) {
-    var base = marketItemEntity?.base;
-    var quote = marketItemEntity?.quote;
-
-    // price
-    var _latestPrice = '--';
-    var _latestPercentBgColor = HexColor('#FF53AE86');
-
-    try {
-      var _latestClose = Decimal.tryParse('${marketItemEntity.kLineEntity?.close}');
-
-      if (_latestClose != null) {
-        _latestPrice = FormatUtil.truncateDecimalNum(_latestClose, 4);
-      }
-    } catch (e) {}
-
-    return Column(
-      children: <Widget>[
-        InkWell(
-            onTap: () async {
-              Navigator.of(context).pop();
-              if (await _checkShowConfirmPolicy()) {
-                _showConfirmDexPolicy();
-              } else {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ExchangeDetailPage(
-                              exchangeType: ExchangeType.BUY,
-                              base: marketItemEntity.base,
-                              quote: marketItemEntity.quote,
-                            )));
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 16.0,
-              ),
+  _showQuoteListDialog() async {
+    if (await _checkShowConfirmPolicy()) {
+      _showConfirmDexPolicy();
+    } else {
+      UiUtil.showBottomDialogView(context,
+          dialogHeight: MediaQuery.of(context).size.height - 80,
+          isScrollControlled: true,
+          customWidget: Expanded(
               child: Column(
-                children: <Widget>[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text.rich(TextSpan(children: [
-                        TextSpan(
-                            text: quote,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
-                              fontSize: 16,
-                            )),
-                        TextSpan(
-                            text: '/',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey,
-                              fontSize: 12,
-                            )),
-                        TextSpan(
-                            text: base,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey,
-                              fontSize: 12,
-                            )),
-                      ])),
-                      Spacer(),
-                      Text(
-                        _latestPrice,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: _latestPercentBgColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            )),
-      ],
-    );
-  }
-
-  _showQuoteListDialog() {
-    var quoteList = MarketInheritedModel.of(
-      context,
-      aspect: SocketAspect.marketItemList,
-    ).getFilterMarketItemList();
-
-    UiUtil.showBottomDialogView(context,
-        dialogHeight: MediaQuery.of(context).size.height - 80,
-        isScrollControlled: true,
-        customWidget: Expanded(
-            child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: Center(
-                child: Text('选择币对', style: TextStyles.textC333S14bold),
-              ),
-            ),
-            Expanded(
-                child: CustomScrollView(
-              semanticChildCount: quoteList.length,
-              slivers: <Widget>[
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      final int itemIndex = index ~/ 2;
-                      if (index.isEven) {
-                        return _quoteListItem(quoteList[itemIndex]);
-                      }
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Divider(
-                          height: 1,
-                        ),
-                      );
-                    },
-                    semanticIndexCallback: (Widget widget, int localIndex) {
-                      if (localIndex.isEven) {
-                        return localIndex ~/ 2;
-                      }
-                      return null;
-                    },
-                    childCount: math.max(0, quoteList.length * 2 - 1),
-                  ),
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Center(
+                  child: Text('选择币对', style: TextStyles.textC333S14bold),
                 ),
-              ],
-            )),
-          ],
-        )));
+              ),
+              Expanded(
+                child: ExchangeQuoteListPage(),
+              ),
+            ],
+          )));
+    }
   }
 
   _showConfirmDexPolicy() {
