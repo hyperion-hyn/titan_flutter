@@ -235,7 +235,7 @@ class _MyPageState extends BaseState<MyPage> {
                     color: Colors.cyan[300],
                   ),
                   _buildMenuBar(
-                    '安全锁',
+                    '应用锁',
                     Icons.account_balance_wallet,
                     () {
                       Navigator.push(context,
