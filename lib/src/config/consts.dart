@@ -18,7 +18,7 @@ class Const {
 
   static String get NODE_DOMAIN {
     if (env.buildType == BuildType.DEV) {
-      return Config.NODE_API_URL_TEST;
+      return Config.NODE_API_URL;
     } else {
       return Config.NODE_API_URL;
     }
