@@ -409,7 +409,8 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
                   padding: const EdgeInsets.only(top: 6),
                   child: ClipRRect(
                     child:
-                        Image.asset("res/drawable/ic_map3_node_item_2.png", width: 80, height: 80, fit: BoxFit.cover),
+                        // todo: old: ic_map3_node_item_2, new: map3_logo_new
+                        Image.asset("res/drawable/map3_logo_new.png", width: 80, height: 80, fit: BoxFit.cover),
                     borderRadius: BorderRadius.circular(4.0),
                   ),
                 ),

@@ -206,7 +206,8 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               ClipRRect(
-                child: Image.asset("res/drawable/ic_atlas_node_item.png",
+                // todo: old: ic_atlas_node_item, new: atlas_logo_new
+              child: Image.asset("res/drawable/atlas_logo_new.png",
                     width: 80, height: 80, fit: BoxFit.cover),
                 borderRadius: BorderRadius.circular(4.0),
               ),

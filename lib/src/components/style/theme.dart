@@ -20,4 +20,5 @@ ThemeData appThemeDeepRed = ThemeData.light().copyWith(
 ThemeData appThemeDeepYellow = ThemeData.light().copyWith(
     primaryColor: Color(0xffedc313),
     backgroundColor: Color(0xfff9f9f9),
-    appBarTheme: AppBarTheme(brightness: Brightness.light));
+    appBarTheme: AppBarTheme(brightness: Brightness.light),
+);

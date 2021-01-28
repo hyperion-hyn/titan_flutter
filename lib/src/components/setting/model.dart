@@ -135,6 +135,10 @@ class SupportedTheme {
 
   static List<ThemeModel> all = themeList;
 
+  // static Color get textColor => Theme.of(Keys.rootKey.currentContext).textTheme.apply().bodyText1.color;
+  static Color get textColorBlack => Color(0xff333333);
+  static Color get textColorWhite => Color(0xffffffff);
+
   static List<Color> defaultBtnColors(BuildContext context) {
     return SettingInheritedModel.of(context, aspect: SettingAspect.theme).themeModel?.btnColors ??
         <Color>[Color(0xff15B2D2), Color(0xff1097B4)];
@@ -188,7 +192,7 @@ class SupportedTheme {
           themeName = '黄色';
           themeData = appThemeDeepYellow;
           color = Colors.yellow;
-          btnColors = <Color>[Color(0xffedc313), Color(0xfff7d33d)];
+          btnColors = <Color>[ Color(0xfff7d33d),Color(0xffedc313),];
           break;
       }
       var model = ThemeModel(

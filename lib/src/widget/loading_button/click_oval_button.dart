@@ -78,7 +78,7 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
         color = DefaultColors.color999;
       } else {
         title = widget.text;
-        color = widget?.fontColor ?? Colors.white;
+        color = widget?.fontColor ?? Theme.of(context).textTheme.apply().bodyText1.color;
       }
     }
     return FlatButton(

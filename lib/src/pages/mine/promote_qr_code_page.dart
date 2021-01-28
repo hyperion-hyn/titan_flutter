@@ -63,7 +63,7 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
   }
 
   Widget _body(BuildContext context) {
-    var hynAddress = WalletUtil.ethAddressToBech32Address(walletVo.wallet.getAtlasAccount().address);
+    var hynAddress = WalletUtil.ethAddressToBech32Address(walletVo?.wallet?.getAtlasAccount()?.address??'');
     return Column(
       children: <Widget>[
         Expanded(
@@ -113,7 +113,7 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
                               padding: const EdgeInsets.only(top: 3, bottom: 5.0, left: 15, right: 15),
                               child: RichText(
                                 text: TextSpan(
-                                    text: "${walletVo.wallet.keystore.name}  ",
+                                    text: "${walletVo?.wallet?.keystore?.name??''}  ",
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -142,7 +142,7 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
                               height: 58,
                               child: QrImage(
                                 data: "${PromoteQrCodePage.downloadDomain}?from=$hynAddress"
-                                    "&name=${walletVo.wallet.keystore.name}",
+                                    "&name=${walletVo?.wallet?.keystore?.name??''}",
                                 padding: EdgeInsets.all(2),
                                 backgroundColor: Colors.white,
                                 foregroundColor: Colors.black,

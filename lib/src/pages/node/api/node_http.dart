@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:titan/config.dart';
 import 'package:titan/env.dart';
 import 'package:titan/src/basic/http/base_http.dart';
 import 'package:titan/src/config/consts.dart';
@@ -24,7 +25,7 @@ class NodeHttpCore extends BaseHttpCore {
   }
 
   static var _dio = new Dio(BaseOptions(
-    baseUrl: Const.NODE_DOMAIN,
+    baseUrl: Config.NODE_API_URL,
     connectTimeout: 5000,
     receiveTimeout: 5000,
 //    headers: {"user-agent": "dio", "api": "1.0.0"},

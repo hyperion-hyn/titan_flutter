@@ -439,11 +439,11 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    tabItem(Icons.home, S.of(context).home_page, 0),
-                    tabItem(Icons.account_balance_wallet, S.of(context).wallet, 1),
-                    tabItem(Icons.explore, S.of(context).node, 2),
-                    tabItem(Icons.description, S.of(context).information, 3),
-                    tabItem(Icons.person, S.of(context).my_page, 4),
+                    tabItem(Icons.home, S.of(context).home_page, 0, name: 'home'),
+                    tabItem(Icons.account_balance_wallet, S.of(context).wallet, 1, name: 'wallet'),
+                    tabItem(Icons.explore, S.of(context).node, 2, name: 'node'),
+                    tabItem(Icons.description, S.of(context).information, 3, name: 'information'),
+                    tabItem(Icons.person, S.of(context).my_page, 4, name: 'person'),
                   ],
                 ),
               ),
@@ -454,8 +454,12 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     );
   }
 
-  Widget tabItem(IconData iconData, String text, int index) {
+  Widget tabItem(IconData iconData, String text, int index, {String name}) {
     bool selected = index == this._currentTabIndex;
+    var imageName = 'res/drawable/tabbar_$name.png';
+    if (selected) {
+      imageName = 'res/drawable/tabbar_$name${'_select'}.png';
+    }
     return Expanded(
       child: Material(
         color: Colors.transparent,
@@ -474,15 +478,25 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Icon(
-                      iconData,
-                      color: selected ? Theme.of(context).primaryColor : Colors.black38,
+                    Image.asset(
+                      imageName,
+                      fit: BoxFit.cover,
+                      width: 20,
+                      height: 20,
+                      // color: selected ? Theme.of(context).primaryColor : HexColor('#C8C8C8'),
                     ),
+                    /*Icon(
+                      iconData,
+                      color: selected ? Theme.of(context).primaryColor : HexColor('#C8C8C8'),
+                    ),*/
+                    SizedBox(height: 2,),
                     Text(
                       text,
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: selected ? Theme.of(context).primaryColor : Colors.black38),
+                      style:
+                           TextStyle(
+                              fontSize: 12,
+                              color: selected?Theme.of(context).textTheme.apply().bodyText1.color:HexColor('#C8C8C8'),
+                            ),
                     ),
                   ],
                 ),

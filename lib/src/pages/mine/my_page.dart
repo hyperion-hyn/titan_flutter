@@ -9,6 +9,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/inject/injector.dart';
+import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/updater/bloc/bloc.dart';
 import 'package:titan/src/components/updater/bloc/update_event.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -145,7 +146,7 @@ class _MyPageState extends BaseState<MyPage> {
                 child: Stack(
                   alignment: Alignment.bottomCenter,
                   children: <Widget>[
-                    Container(
+                    /*Container(
                       margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                       width: 216,
                       //color: HexColor("#D8D8D8").withOpacity(0.1),
@@ -167,7 +168,7 @@ class _MyPageState extends BaseState<MyPage> {
                         borderRadius:
                             BorderRadius.only(topRight: Radius.circular(289.39)), // 也可控件一边圆角大小
                       ),
-                    ),
+                    ),*/
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -410,6 +411,7 @@ class _MyPageState extends BaseState<MyPage> {
                       "res/drawable/ic_logo.png",
                       width: 80,
                       height: 80,
+                      color: SupportedTheme.textColorBlack,
                     )),
               ],
             ),
@@ -428,7 +430,7 @@ class _MyPageState extends BaseState<MyPage> {
                 // Application.router.navigateTo(context, Routes.wallet_manager);
               },
               child: Text(S.of(context).create_import_wallet_account,
-                  style: TextStyle(color: Colors.white70, fontSize: 20))),
+                  style: TextStyle(color: SupportedTheme.textColorBlack, fontSize: 20))),
         ),
         Spacer(),
       ],
@@ -457,7 +459,7 @@ class _MyPageState extends BaseState<MyPage> {
                   alignment: Alignment.center,
                   child: walletHeaderWidget(
                     walletName.characters.first,
-                    size: 60,
+                    size: 44,
                     fontSize: 20,
                     address: ethAccount.address,
                     isShowShape: false,
@@ -481,7 +483,7 @@ class _MyPageState extends BaseState<MyPage> {
               children: <Widget>[
                 Text(
                   walletName,
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: Theme.of(context).textTheme.apply().bodyText1,
                 ),
                 SizedBox(
                   height: 4,
@@ -494,7 +496,7 @@ class _MyPageState extends BaseState<MyPage> {
                           ethAccount.address,
                         ),
                         limitCharsLength: 13),
-                    style: TextStyle(fontSize: 14, color: Colors.white70),
+                    style: Theme.of(context).textTheme.apply().overline,
                   ),
                 ),
               ],
@@ -524,9 +526,13 @@ class _MyPageState extends BaseState<MyPage> {
             'res/drawable/logo_title.png',
             width: 72.0,
             height: 36,
+            color: SupportedTheme.textColorBlack,
           ),
           SizedBox(width: 16),
-          Text(S.of(context).titan_encrypted_map_ecology, style: TextStyle(color: Colors.white70)),
+          Text(
+            S.of(context).titan_encrypted_map_ecology,
+            style: Theme.of(context).textTheme.apply().bodyText1,
+          ),
           Spacer(),
           InkWell(
             onTap: shareApp,
@@ -534,10 +540,7 @@ class _MyPageState extends BaseState<MyPage> {
               children: [
                 Text(
                   S.of(context).share_app,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
+                  style: Theme.of(context).textTheme.apply().bodyText1,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -550,14 +553,20 @@ class _MyPageState extends BaseState<MyPage> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       //color: Colors.greenAccent,
-                      color: Theme.of(context).primaryColor,
+                      // color: Theme.of(context).primaryColor,
                       // border: Border.all(width: 0.5, color: Colors.white,),
                     ),
-                    child: Icon(
+                    child: Image.asset(
+                      'res/drawable/tabbar_person_share.png',
+                      // color: Color(0xffffffff),
+                      width: 16,
+                      height: 16,
+                    ),
+                    /*child: Icon(
                       Icons.share,
                       color: Color(0xffffffff),
                       size: 16,
-                    ),
+                    ),*/
                   ),
                 ),
               ],

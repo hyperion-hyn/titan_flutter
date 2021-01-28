@@ -131,13 +131,13 @@ class HomePanelState extends State<HomePanel> {
                               children: <Widget>[
                                 Text(
                                   S.of(context).global_nodes,
-                                  style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+                                  style: TextStyle(fontWeight: FontWeight.w600, color: SupportedTheme.textColorBlack),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4.0, right: 4),
                                   child: Text(
                                     S.of(context).global_map_server_nodes,
-                                    style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12),
+                                    style: TextStyle(color: SupportedTheme.textColorBlack.withOpacity(0.8), fontSize: 12),
                                   ),
                                 )
                               ],
@@ -150,7 +150,7 @@ class HomePanelState extends State<HomePanel> {
                                 'res/drawable/global.png',
                                 width: 32,
                                 height: 32,
-                                color: Colors.white,
+                                color: SupportedTheme.textColorBlack,
                               )),
                         ],
                       ),
@@ -199,7 +199,7 @@ class HomePanelState extends State<HomePanel> {
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           fontWeight: FontWeight.w600,
-                                          color: Colors.white,
+                                          color: SupportedTheme.textColorBlack,
                                         ),
                                       ),
                                     ),
@@ -207,7 +207,7 @@ class HomePanelState extends State<HomePanel> {
                                       padding: const EdgeInsets.only(top: 8.0),
                                       child: Text(
                                         S.of(context).project_introduction,
-                                        style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12),
+                                        style: TextStyle(color: SupportedTheme.textColorBlack.withOpacity(0.8), fontSize: 12),
                                       ),
                                     )
                                   ],
@@ -219,7 +219,7 @@ class HomePanelState extends State<HomePanel> {
                                     'res/drawable/ic_hyperion.png',
                                     width: 40,
                                     height: 40,
-                                    color: Colors.white,
+                                    color: SupportedTheme.textColorBlack,
                                   ),
                                 )
                               ],
@@ -262,13 +262,13 @@ class HomePanelState extends State<HomePanel> {
                         children: <Widget>[
                           Text(
                             S.of(context).data_contribute,
-                            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+                            style: TextStyle(fontWeight: FontWeight.w600, color: SupportedTheme.textColorBlack),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Text(
                               S.of(context).data_contribute_reward,
-                              style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12),
+                              style: TextStyle(color: SupportedTheme.textColorBlack.withOpacity(0.8), fontSize: 12),
                             ),
                           ),
                         ],
@@ -281,7 +281,7 @@ class HomePanelState extends State<HomePanel> {
                           'res/drawable/data.png',
                           width: 32,
                           height: 32,
-                          color: Colors.white,
+                          color: SupportedTheme.textColorBlack,
                         )),
                     /*
                     if ((userInfo?.effectiveAcceleration ?? 0) > 0)
@@ -428,7 +428,9 @@ class HomePanelState extends State<HomePanel> {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
-              color: HexColor('#FFEDFCFF'),
+              color: HexColor('#FFFCE4'),
+              // todo:
+              // color: HexColor('#FFEDFCFF'),
             ),
             padding: EdgeInsets.all(16.0),
             child: Column(
@@ -550,7 +552,7 @@ class HomePanelState extends State<HomePanel> {
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration:
-                          BoxDecoration(color: HexColor("#EFFBFD"), borderRadius: BorderRadius.all(Radius.circular(8))),
+                          BoxDecoration(color: HexColor("#FFFCE4"), borderRadius: BorderRadius.all(Radius.circular(8))),
                       child: Row(
                         children: <Widget>[
                           Image.asset(
@@ -603,7 +605,7 @@ class HomePanelState extends State<HomePanel> {
                     child: Container(
                       padding: const EdgeInsets.fromLTRB(16, 16, 6, 8),
                       decoration:
-                          BoxDecoration(color: HexColor("#EFFBFD"), borderRadius: BorderRadius.all(Radius.circular(8))),
+                          BoxDecoration(color: HexColor("#FFFCE4"), borderRadius: BorderRadius.all(Radius.circular(8))),
                       child: Row(
                         children: <Widget>[
                           Image.asset(
