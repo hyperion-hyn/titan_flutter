@@ -48,7 +48,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
     return Scaffold(
       appBar: BaseAppBar(
         backgroundColor: Colors.white,
-        baseTitle: '应用安全锁',
+        baseTitle: '应用锁',
       ),
       body: Container(
         color: DefaultColors.colorf2f2f2,
@@ -74,7 +74,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
               children: [
                 Expanded(
                   child: Text(
-                    '安全锁',
+                    '应用锁',
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -166,7 +166,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    '离开钱包界面一定时间后安全锁将自动锁定钱包，继续使用钱包功能需要先解锁钱包。',
+                    '离开钱包界面一定时间后应用锁将自动锁定钱包，继续使用钱包功能需要先解锁钱包。',
                     style: TextStyle(
                       color: DefaultColors.color999,
                       fontSize: 12,

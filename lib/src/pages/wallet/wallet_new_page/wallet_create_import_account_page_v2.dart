@@ -74,6 +74,8 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
       _pswLevel = PasswordStrengthUtil.getPasswordLevel(pswStr, limitLength: 8);
       setState(() {});
     });
+
+    userImagePath = WalletUtil.getRandomAvatarUrl();
   }
 
   @override

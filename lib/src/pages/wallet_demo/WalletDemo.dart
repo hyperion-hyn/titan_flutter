@@ -575,6 +575,12 @@ class _WalletDemoState extends State<WalletDemo> {
                           )));
             },
             child: Text('Wallet bio-auth options'),
+          ),
+          RaisedButton(
+            onPressed: () {
+              print(WalletUtil.getRandomAvatarUrl());
+            },
+            child: Text('print random avatar url'),
           )
         ],
       ),

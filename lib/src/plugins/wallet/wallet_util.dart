@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -524,5 +525,18 @@ class WalletUtil {
     } catch (e) {
       return bech32Address;
     }
+  }
+
+  static String getRandomAvatarUrl() {
+    List<String> fileNameList = ['what', 'sign'];
+
+    String letters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var letterList = letters.split('');
+
+    fileNameList.addAll(letterList);
+    var fileName = fileNameList[Random().nextInt(fileNameList.length)];
+
+    var url = 'https://static-hk.hyn.mobi/static/avatar/$fileName.png';
+    return url;
   }
 }

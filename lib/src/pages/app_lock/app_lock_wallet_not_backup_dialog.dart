@@ -53,7 +53,7 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
               height: 80,
             ),
             Text(
-              '设置安全锁',
+              '设置应用锁',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -65,7 +65,7 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
                 vertical: 14,
               ),
               child: Text(
-                '安全锁密码忘记后只有助记词可恢复钱包身份，请务必确保所有钱包助记词已备份！',
+                '应用锁密码忘记后只有助记词可恢复钱包身份，请务必确保所有钱包助记词已备份！',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: HexColor('#666666'),
