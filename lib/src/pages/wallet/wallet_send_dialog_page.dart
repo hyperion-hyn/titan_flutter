@@ -84,7 +84,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                                   top: 14,
                                 ),
                                 child: Text(
-                                  '转账确认',
+                                  widget.entity.valueDirection == '-'?'转账确认':'提取确认',
                                   style: TextStyle(
                                     color: HexColor('#999999'),
                                     fontWeight: FontWeight.w500,
@@ -120,7 +120,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                                     top: 16,
                                   ),
                                   child: Text(
-                                    '${widget.entity?.value ?? '0'} ${widget.entity.valueUnit}',
+                                    '${widget.entity?.valueDirection} ${widget.entity?.value ?? '0'} ${widget.entity.valueUnit}',
                                     style: TextStyle(
                                       color: HexColor('#333333'),
                                       fontWeight: FontWeight.w600,
@@ -139,7 +139,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                                     top: 16,
                                   ),
                                   child: Text(
-                                    '${widget.entity?.value1 ?? '0'} ${widget.entity.value1Unit}',
+                                    '${widget.entity?.valueDirection} ${widget.entity?.value1 ?? '0'} ${widget.entity.value1Unit}',
                                     style: TextStyle(
                                       color: HexColor('#333333'),
                                       fontWeight: FontWeight.w600,
@@ -310,6 +310,7 @@ class WalletSendDialogEntity {
   final double value1;
   final String valueUnit;
   final String value1Unit;
+  final String valueDirection;
   final String title;
   final String titleDesc;
   final String fromName;
@@ -331,26 +332,20 @@ class WalletSendDialogEntity {
     this.value1,
     this.valueUnit,
     this.value1Unit,
+    this.valueDirection = '-',
     this.title,
-    this.titleDesc,
+    this.titleDesc = '',
     this.fromName,
     this.fromAddress,
     this.toName,
     this.toAddress,
     this.gas,
     this.gas1,
-    this.gasDesc,
-    this.gas1Desc,
+    this.gasDesc = '',
+    this.gas1Desc = '',
     this.gasUnit,
     this.action,
     this.finished,
   });
 }
 
-/*
-
-交易信息：
-1、转账 （完成）
-2、节点调用(创建共识节点，编辑共识节点，复抵押，撤销复抵押，代领出块奖励； 创建Map3节点，编辑Map3节点，终止Map3节点，微抵押，撤销微抵押，提取Map3奖励，变更自动续约)
-3、智能合约调用（提升量级，抵押传导，发红包。。。）
-*/

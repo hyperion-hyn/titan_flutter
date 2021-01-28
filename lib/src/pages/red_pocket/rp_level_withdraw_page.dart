@@ -23,6 +23,7 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_upgrade_page.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/hyperion.dart';
@@ -76,10 +77,6 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
     }
     return current;
   }
-
-  CoinViewVo _coinVo;
-  WalletViewVo _activatedWallet;
-  String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
 
   bool _isLoading = false;
 
@@ -140,10 +137,6 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
   @override
   void initState() {
     super.initState();
-
-    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext);
-    _coinVo = wallet.getCoinVoBySymbol('RP');
-    _activatedWallet = wallet.activatedWallet;
   }
 
   @override
@@ -225,7 +218,11 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
                                   width: 5,
                                 ),
                                 Text(
-                                    '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
+                                    '${S.of(context).mortgage_wallet_balance(
+                                          WalletModelUtil.walletName,
+                                          FormatUtil.coinBalanceHumanReadFormat(
+                                              WalletModelUtil.rpCoinVo),
+                                        )}',
                                     style: TextStyle(
                                       fontWeight: FontWeight.normal,
                                       fontSize: 12,
@@ -492,39 +489,32 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
     BuildContext context,
     double value,
   }) async {
-    var walletVo = WalletInheritedModel.of(context).activatedWallet;
-    var wallet = walletVo.wallet;
-
-    var fromName = wallet.keystore.name;
-    var from = wallet.getAtlasAccount().address;
-    var fromAddressHyn = WalletUtil.ethAddressToBech32Address(from);
-    var fromAddress = shortBlockChainAddress(fromAddressHyn);
-
     var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
     var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
     var gasValue = ConvertTokenUnit.weiToEther(
             weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)))
         .toDouble();
 
-    var toAddress = HyperionConfig.rpHoldingContractAddress;
-    var toAddressHyn = WalletUtil.ethAddressToBech32Address(toAddress);
-    var toName = shortBlockChainAddress(toAddressHyn);
+    var toAddressHyn =
+        WalletUtil.ethAddressToBech32Address(HyperionConfig.rpHoldingContractAddress);
+    var toAddress = shortBlockChainAddress(toAddressHyn);
     WalletSendDialogEntity entity = WalletSendDialogEntity(
       type: 'tx_rp_level_withdraw',
-      value: 0,
+      value: value,
       valueUnit: 'RP',
+      valueDirection: '+',
       title: '智能合约调用',
       titleDesc: '申请取回持币',
-      fromName: fromName,
-      fromAddress: fromAddress,
-      toName: toName,
-      toAddress: '',
+      fromName: 'RP合约',
+      fromAddress: toAddress,
+      toName: WalletModelUtil.walletName,
+      toAddress: WalletModelUtil.walletHynShortAddress,
       gas: gasValue.toString(),
       gasDesc: '',
       gasUnit: 'HYN',
       action: () async {
         try {
-          var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
+          var password = await UiUtil.showWalletPasswordDialogV2(context, WalletModelUtil.wallet);
           if (password == null) {
             return false;
           }
@@ -533,7 +523,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
 
           await _rpApi.postRpWithdraw(
             withdrawAmount: amount,
-            activeWallet: walletVo,
+            activeWallet: WalletModelUtil.activatedWallet,
             password: password,
             from: _currentLevel,
             to: _toLevel,
@@ -571,8 +561,6 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
       BlocProvider.of<RedPocketBloc>(context).add(UpdatePromotionRuleEvent());
     }
 
-    //if (mounted) {
     _loadDataBloc.add(RefreshSuccessEvent());
-    //}
   }
 }

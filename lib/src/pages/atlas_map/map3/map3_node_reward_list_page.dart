@@ -18,6 +18,8 @@ import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
+import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -27,6 +29,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart';
@@ -84,8 +87,7 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
   @override
   void initState() {
     super.initState();
-    var activatedWallet =
-        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getAtlasAccount()?.address ?? "";
     _walletName = activatedWallet?.wallet?.keystore?.name ?? "";
 
@@ -191,16 +193,14 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
   Widget build(BuildContext context) {
     var _lastCurrentBlockHeight = _currentBlockHeight;
 
-    _currentBlockHeight =
-        AtlasInheritedModel.of(context).committeeInfo?.blockNum ?? 0;
+    _currentBlockHeight = AtlasInheritedModel.of(context).committeeInfo?.blockNum ?? 0;
     if (_lastCurrentBlockHeight == 0) {
       _lastCurrentBlockHeight = _currentBlockHeight;
     }
 
     //LogUtil.printMessage("[${widget.runtimeType}]   _currentBlockHeight:$_currentBlockHeight");
 
-    if ((_lastPendingTx != null) &&
-        (_currentBlockHeight > _lastCurrentBlockHeight)) {
+    if ((_lastPendingTx != null) && (_currentBlockHeight > _lastCurrentBlockHeight)) {
       _getData();
     }
 
@@ -421,9 +421,15 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
             var message = ConfirmCollectMap3NodeMessage(
               entity: entity,
               amount: _totalAmount.toString(),
-              addressList:
-                  _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
+              addressList: _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
             );
+            /*
+            showSendDialog(
+              context: context,
+              message: message,
+              value: _totalAmount.toDouble(),
+            );
+            */
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -451,15 +457,60 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
     );
   }
 
+  Future<bool> showSendDialog<T>({
+    BuildContext context,
+    AtlasMessage message,
+    double value,
+  }) async {
+    WalletSendDialogEntity entity = WalletSendDialogEntity(
+      type: 'tx_mpa3_collect_reward',
+      valueUnit: 'HYN',
+      title: '智能合约调用',
+      value: value,
+      valueDirection: '+',
+      titleDesc: message.description.title,
+      fromName: message.description.fromName,
+      fromAddress: '',
+      toName: WalletModelUtil.walletName,
+      toAddress: WalletModelUtil.walletHynShortAddress,
+      gas: message.description.fee,
+      gasUnit: 'HYN',
+      action: () async {
+        try {
+          var password = await UiUtil.showWalletPasswordDialogV2(context, WalletModelUtil.wallet);
+          if (password == null) {
+            return false;
+          }
+
+          var result = await message.action(password);
+
+          return result != null;
+        } catch (e) {
+          LogUtil.toastException(e);
+        }
+        return false;
+      },
+      finished: () async {
+        Application.router.navigateTo(
+            context, Routes.map3node_broadcast_success_page + "?actionEvent=${message.type}");
+
+        return true;
+      },
+    );
+
+    return showWalletSendDialog(
+      context: context,
+      entity: entity,
+    );
+  }
+
   _refreshData() async {
     _currentPage = 1;
     try {
-      var _list = await _atlasApi.getMap3NodeListByMyJoin(_address,
-          page: _currentPage,
-          size: _pageSize,
-          status: [
-            Map3InfoStatus.CONTRACT_HAS_STARTED.index,
-          ]);
+      var _list = await _atlasApi
+          .getMap3NodeListByMyJoin(_address, page: _currentPage, size: _pageSize, status: [
+        Map3InfoStatus.CONTRACT_HAS_STARTED.index,
+      ]);
 
       if (_list != null) {
         _joinNodeList.clear();
@@ -474,12 +525,10 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
 
   _loadMoreData() async {
     try {
-      var _list = await _atlasApi.getMap3NodeListByMyJoin(_address,
-          page: _currentPage + 1,
-          size: _pageSize,
-          status: [
-            Map3InfoStatus.CONTRACT_HAS_STARTED.index,
-          ]);
+      var _list = await _atlasApi
+          .getMap3NodeListByMyJoin(_address, page: _currentPage + 1, size: _pageSize, status: [
+        Map3InfoStatus.CONTRACT_HAS_STARTED.index,
+      ]);
 
       if (_list != null && _list.isNotEmpty) {
         _joinNodeList.addAll(_list);
@@ -504,10 +553,9 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
       WalletUtil.ethAddressToBech32Address(map3infoEntity?.address ?? ""),
       limitLength: 8,
     )}';
-    var valueInRewardMap =
-        _rewardMap?.containsKey(map3infoEntity.address?.toLowerCase()) ?? false
-            ? _rewardMap[map3infoEntity.address?.toLowerCase()]
-            : '0';
+    var valueInRewardMap = _rewardMap?.containsKey(map3infoEntity.address?.toLowerCase()) ?? false
+        ? _rewardMap[map3infoEntity.address?.toLowerCase()]
+        : '0';
     var bigIntValue = BigInt.tryParse(valueInRewardMap) ?? BigInt.from(0);
     var _collectible = ConvertTokenUnit.weiToEther(
       weiBigInt: bigIntValue,
@@ -520,7 +568,8 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
         }
         Application.router.navigateTo(
           context,
-          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}',
+          Routes.map3node_contract_detail_page +
+              '?info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}',
         );
       },
       child: Column(
@@ -554,8 +603,7 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
                         children: <Widget>[
                           Text(
                             '${S.of(context).node_addrees}: ${nodeAddress}',
-                            style: TextStyle(
-                                color: DefaultColors.color999, fontSize: 11),
+                            style: TextStyle(color: DefaultColors.color999, fontSize: 11),
                           )
                         ],
                       )

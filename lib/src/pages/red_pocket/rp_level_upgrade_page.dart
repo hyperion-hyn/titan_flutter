@@ -24,6 +24,7 @@ import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/hyperion.dart';
@@ -69,20 +70,13 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   RpMinerInfo _inviter;
 
-  CoinViewVo _coinVo;
-  WalletViewVo _activatedWallet;
-
-  String get _address => _activatedWallet?.wallet?.getEthAccount()?.address ?? "";
-
-  String get _walletName => _activatedWallet?.wallet?.keystore?.name ?? "";
-
   Decimal get _inputValue {
     var inputValue = Decimal.tryParse(_textEditingController?.text ?? '0') ?? Decimal.zero;
     return inputValue > Decimal.zero ? inputValue : Decimal.zero;
   }
 
   Decimal get _balanceValue =>
-      Decimal.tryParse(FormatUtil.coinBalanceHumanRead(_coinVo)) ?? Decimal.zero;
+      Decimal.tryParse(FormatUtil.coinBalanceHumanRead(WalletModelUtil.rpCoinVo)) ?? Decimal.zero;
 
   //Decimal get _currentHoldValue => Decimal.tryParse(_myLevelInfo?.currentHoldingStr ?? '0') ?? Decimal.zero;
   Decimal get _holdingValue =>
@@ -90,18 +84,15 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
   Decimal get _needHoldMinValue {
     var zeroValue = Decimal.zero;
-    // var remainHoldValue = (_holdingValue - _currentHoldValue);
     var remainHoldValue = (_holdingValue);
 
     return remainHoldValue > zeroValue ? remainHoldValue : zeroValue;
   }
 
-  //Decimal get _currentBurnValue => Decimal.tryParse(_myLevelInfo?.currBurningStr ?? '0') ?? Decimal.zero;
   Decimal get _burningValue => Decimal.tryParse(widget?.levelRule?.burnStr ?? '0') ?? Decimal.zero;
 
   Decimal get _needBurnValue {
     var zeroValue = Decimal.zero;
-    // var remainBurnValue = (_burningValue - _currentBurnValue);
     var remainBurnValue = (_burningValue);
 
     return remainBurnValue > zeroValue ? remainBurnValue : zeroValue;
@@ -130,10 +121,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   @override
   void initState() {
     super.initState();
-
-    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext);
-    _coinVo = wallet.getCoinVoBySymbol('RP');
-    _activatedWallet = wallet.activatedWallet;
   }
 
   @override
@@ -257,7 +244,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
                                   width: 5,
                                 ),
                                 Text(
-                                    '${S.of(context).mortgage_wallet_balance(_walletName, FormatUtil.coinBalanceHumanReadFormat(_coinVo))}',
+                                    '${S.of(context).mortgage_wallet_balance(WalletModelUtil.walletName, FormatUtil.coinBalanceHumanReadFormat(WalletModelUtil.rpCoinVo))}',
                                     style: TextStyle(
                                       fontWeight: FontWeight.normal,
                                       fontSize: 12,
@@ -538,7 +525,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   void getRPMinerList() async {
     try {
       var netData = await _rpApi.getRPMinerList(
-        _address,
+        WalletModelUtil.walletEthAddress,
         page: 1,
       );
 
@@ -638,7 +625,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
               var inviteAddress = _addressEditController?.text ?? '';
 
               String inviteResult =
-                  await _rpApi.postRpInviter(inviteAddress, _activatedWallet?.wallet);
+                  await _rpApi.postRpInviter(inviteAddress, WalletModelUtil.wallet);
               if (inviteResult?.isNotEmpty ?? false) {
                 Fluttertoast.showToast(msg: S.of(context).rp_upgrade_continue_toast);
 
@@ -780,14 +767,6 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
     BuildContext context,
     double value,
   }) async {
-    var walletVo = WalletInheritedModel.of(context).activatedWallet;
-    var wallet = walletVo.wallet;
-
-    var fromName = wallet.keystore.name;
-    var from = wallet.getAtlasAccount().address;
-    var fromAddressHyn = WalletUtil.ethAddressToBech32Address(from);
-    var fromAddress = shortBlockChainAddress(fromAddressHyn);
-
     var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
     var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
     gasLimit = 100000;
@@ -795,25 +774,25 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
             weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)))
         .toDouble();
 
-    var toAddress = HyperionConfig.rpHoldingContractAddress;
-    var toAddressHyn = WalletUtil.ethAddressToBech32Address(toAddress);
-    var toName = shortBlockChainAddress(toAddressHyn);
+    var toAddressHyn =
+        WalletUtil.ethAddressToBech32Address(HyperionConfig.rpHoldingContractAddress);
+    var toAddress = shortBlockChainAddress(toAddressHyn);
     WalletSendDialogEntity entity = WalletSendDialogEntity(
       type: 'tx_rp_level_upgrade',
       value: value,
       valueUnit: 'RP',
       title: '智能合约调用',
       titleDesc: '提升量级',
-      fromName: fromName,
-      fromAddress: fromAddress,
-      toName: toName,
-      toAddress: '',
+      fromName: WalletModelUtil.walletName,
+      fromAddress: WalletModelUtil.walletHynShortAddress,
+      toName: 'RP合约',
+      toAddress: toAddress,
       gas: gasValue.toString(),
       gasDesc: '',
       gasUnit: 'HYN',
       action: () async {
         try {
-          var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
+          var password = await UiUtil.showWalletPasswordDialogV2(context, WalletModelUtil.wallet);
           if (password == null) {
             return false;
           }
@@ -829,7 +808,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
             to: widget.levelRule.level,
             depositAmount: holdingAmount,
             burningAmount: burningAmount,
-            activeWallet: walletVo,
+            activeWallet: WalletModelUtil.activatedWallet,
             password: password,
           );
 
