@@ -896,7 +896,7 @@ class UiUtil {
     );
   }
 
-  static showStateHint(BuildContext context, bool value, msg) {
+  static showStateHint(BuildContext context, bool value, String msg) {
     Widget widget = Center(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),
