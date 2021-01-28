@@ -128,92 +128,62 @@ class _MyPageState extends BaseState<MyPage> {
           children: <Widget>[
             Container(
               alignment: Alignment.centerLeft,
-              height: 200.0 + MediaQuery.of(context).padding.top,
+              height: 180.0 + MediaQuery.of(context).padding.top,
               child: Container(
-                color: Theme.of(context).primaryColor,
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Stack(
-                    children: <Widget>[
-                      Container(
-                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                        width: 216,
-                        //color: HexColor("#D8D8D8").withOpacity(0.1),
-                        decoration: BoxDecoration(
-                          color: HexColor("#D8D8D8").withOpacity(0.1),
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(216),
-                              bottomRight: Radius.circular(216)), // 也可控件一边圆角大小
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        width: 289.39,
-                        //color: HexColor("#D8D8D8").withOpacity(0.1),
-                        decoration: BoxDecoration(
-                          color: HexColor("#D8D8D8").withOpacity(0.1),
-                          shape: BoxShape.rectangle,
-                          borderRadius:
-                              BorderRadius.only(topRight: Radius.circular(289.39)), // 也可控件一边圆角大小
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            SizedBox(height: 16),
-                            _wallet == null
-                                ? _buildWalletCreateRow()
-                                : _buildWalletDetailRow(_wallet),
-                            SizedBox(height: 16),
-                            _buildSloganRow(),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        right: 16,
-                        bottom: 16,
-                        child: InkWell(
-                          onTap: shareApp,
-                          child: Row(
-                            children: [
-                              Text(
-                                S.of(context).share_app,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 6,
-                                ),
-                                child: Container(
-                                  padding: const EdgeInsets.all(
-                                    4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    //color: Colors.greenAccent,
-                                    color: Theme.of(context).primaryColor,
-                                    // border: Border.all(width: 0.5, color: Colors.white,),
-                                  ),
-                                  child: Icon(
-                                    Icons.share,
-                                    color: Color(0xffffffff),
-                                    size: 16,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                // color: Theme.of(context).primaryColor,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: <Color>[
+                      Color(0xffE7C01A),
+                      Color(0xffEDC82B),
+                      Color(0xffEDC82B),
                     ],
                   ),
+                ),
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: <Widget>[
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      width: 216,
+                      //color: HexColor("#D8D8D8").withOpacity(0.1),
+                      decoration: BoxDecoration(
+                        color: HexColor("#D8D8D8").withOpacity(0.1),
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(216),
+                            bottomRight: Radius.circular(216)), // 也可控件一边圆角大小
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      width: 289.39,
+                      //color: HexColor("#D8D8D8").withOpacity(0.1),
+                      decoration: BoxDecoration(
+                        color: HexColor("#D8D8D8").withOpacity(0.1),
+                        shape: BoxShape.rectangle,
+                        borderRadius:
+                            BorderRadius.only(topRight: Radius.circular(289.39)), // 也可控件一边圆角大小
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          SizedBox(height: 16),
+                          _wallet == null
+                              ? _buildWalletCreateRow()
+                              : _buildWalletDetailRow(_wallet),
+                          SizedBox(height: 24),
+                          _buildSloganRow(),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -429,8 +399,7 @@ class _MyPageState extends BaseState<MyPage> {
           alignment: Alignment.center,
           width: 52,
           height: 52,
-          decoration: BoxDecoration(
-              shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
           child: InkWell(
             onTap: () {},
             child: Stack(
@@ -469,8 +438,7 @@ class _MyPageState extends BaseState<MyPage> {
   Widget _buildWalletDetailRow(Wallet wallet) {
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
-    String walletName =
-        walletKeyStore.name[0].toUpperCase() + walletKeyStore.name.substring(1);
+    String walletName = walletKeyStore.name[0].toUpperCase() + walletKeyStore.name.substring(1);
 
     return Row(
       children: <Widget>[
@@ -478,8 +446,7 @@ class _MyPageState extends BaseState<MyPage> {
           alignment: Alignment.center,
 //          width: 52,
 //          height: 52,
-          decoration: BoxDecoration(
-              shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
           child: InkWell(
             onTap: () {
               goSetWallet(wallet);
@@ -514,10 +481,7 @@ class _MyPageState extends BaseState<MyPage> {
               children: <Widget>[
                 Text(
                   walletName,
-                  style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 SizedBox(
                   height: 4,
@@ -562,16 +526,50 @@ class _MyPageState extends BaseState<MyPage> {
             height: 36,
           ),
           SizedBox(width: 16),
-          Text(S.of(context).titan_encrypted_map_ecology,
-              style: TextStyle(color: Colors.white70))
+          Text(S.of(context).titan_encrypted_map_ecology, style: TextStyle(color: Colors.white70)),
+          Spacer(),
+          InkWell(
+            onTap: shareApp,
+            child: Row(
+              children: [
+                Text(
+                  S.of(context).share_app,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 6,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(
+                      4,
+                    ),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      //color: Colors.greenAccent,
+                      color: Theme.of(context).primaryColor,
+                      // border: Border.all(width: 0.5, color: Colors.white,),
+                    ),
+                    child: Icon(
+                      Icons.share,
+                      color: Color(0xffffffff),
+                      size: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
   void shareApp() async {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => PromoteQrCodePage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => PromoteQrCodePage()));
     /*
     return;
 
@@ -627,8 +625,7 @@ class _MyPageState extends BaseState<MyPage> {
                                 height: 88,
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 15.0, bottom: 15),
+                                padding: const EdgeInsets.only(top: 15.0, bottom: 15),
                                 child: Text(
                                   title,
                                   style: TextStyles.textC333S18,
@@ -637,8 +634,7 @@ class _MyPageState extends BaseState<MyPage> {
                               Container(
                                 height: 104,
                                 width: double.infinity,
-                                padding: const EdgeInsets.only(
-                                    left: 24.0, right: 24),
+                                padding: const EdgeInsets.only(left: 24.0, right: 24),
                                 child: SingleChildScrollView(
                                   child: Text(
                                     message,
