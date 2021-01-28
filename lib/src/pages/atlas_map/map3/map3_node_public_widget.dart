@@ -77,7 +77,7 @@ Widget iconWalletWidget(
 }) {
   if (walletEntity == null) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(isCircle ? 100 : 4.0),
+      borderRadius: BorderRadius.circular(isCircle ? size : 4.0),
       child: FadeInImage.assetNetwork(
         image: "",
         placeholder: 'res/drawable/img_placeholder.jpg',
@@ -104,14 +104,23 @@ Widget iconWidget(
   double size = 42,
 }) {
   if ((picture?.isNotEmpty ?? false) && picture.contains("http")) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(isCircle ? 21 : 4.0),
-      child: FadeInImage.assetNetwork(
-        image: picture,
-        placeholder: 'res/drawable/img_placeholder.jpg',
-        width: size,
-        height: size,
-        fit: BoxFit.cover,
+    return Container(
+      padding: const EdgeInsets.all(0.5),
+      decoration: BoxDecoration(
+        border: Border.all(width: 0.5,color: DefaultColors.colordedede),
+        borderRadius: BorderRadius.all(
+          Radius.circular(isCircle ? size : 4.0),
+        ), //设置四周圆角 角度
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(isCircle ? size : 4.0),
+        child: FadeInImage.assetNetwork(
+          image: picture,
+          placeholder: 'res/drawable/img_placeholder.jpg',
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
