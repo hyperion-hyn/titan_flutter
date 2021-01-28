@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -10,6 +11,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -193,11 +195,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
 
   _createWallet() async {
     if (await _checkConfirmWalletPolicy()) {
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => PolicyConfirmPage(
-          PolicyType.WALLET,
-        ),
-      ));
+      UiUtil.showConfirmPolicyDialog(context, PolicyType.WALLET);
     } else {
       var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
       Application.router.navigateTo(
@@ -207,11 +205,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
 
   _importWallet() async {
     if (await _checkConfirmWalletPolicy()) {
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => PolicyConfirmPage(
-          PolicyType.WALLET,
-        ),
-      ));
+      UiUtil.showConfirmPolicyDialog(context, PolicyType.WALLET);
     } else {
       var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
       Application.router
@@ -398,7 +392,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 16,
+            horizontal: 12,
             vertical: 8,
           ),
           child: Row(
@@ -417,24 +411,13 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                       Padding(
                         padding: const EdgeInsets.all(4.0),
                         child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Theme.of(context).primaryColor,
-                          ),
                           width: 45,
                           height: 45,
                           child: Stack(
                             children: <Widget>[
                               Align(
                                 alignment: Alignment.center,
-                                child: walletHeaderWidget(
-                                  walletKeyStore.name.isEmpty
-                                      ? "Name is empty"
-                                      : walletKeyStore.name.characters.first,
-                                  address: ethAccount.address,
-                                  size: 52,
-                                  fontSize: 20,
-                                ),
+                                child: iconWalletWidget(wallet, isCircle: true),
                               ),
                               if (isSelected)
                                 Align(
@@ -492,22 +475,22 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                         child: isBackup
                             ? SizedBox()
                             : Row(
-                          children: [
-                            Image.asset(
-                              'res/drawable/ic_warning_triangle_v2.png',
-                              width: 16,
-                              height: 16,
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              '未备份',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: HexColor('#E7BB00'),
+                                children: [
+                                  Image.asset(
+                                    'res/drawable/ic_warning_triangle_v2.png',
+                                    width: 14,
+                                    height: 14,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    '未备份',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: HexColor('#E7BB00'),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
                       ),
                     ],
                   ),
