@@ -60,9 +60,9 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
 
   @override
   void didPopNext() async {
-    widget.wallet.walletExpandInfoEntity =
-        await WalletUtil.getWalletExpandInfo(widget.wallet.getEthAccount().address);
-    isBackup = widget.wallet.walletExpandInfoEntity?.isBackup ?? false;
+    var walletExpandInfoEntity = await WalletUtil.getWalletExpandInfo(widget.wallet.getEthAccount().address);
+    widget.wallet.walletExpandInfoEntity?.isBackup = walletExpandInfoEntity.isBackup;
+    isBackup = walletExpandInfoEntity.isBackup;
     setState(() {});
   }
 
