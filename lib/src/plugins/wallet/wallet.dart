@@ -63,9 +63,9 @@ class Wallet {
   }
 
   String getHeadImg() {
-    if ((walletExpandInfoEntity?.localHeadImg ?? "").isNotEmpty) {
+    /*if ((walletExpandInfoEntity?.localHeadImg ?? "").isNotEmpty) {
       return walletExpandInfoEntity.localHeadImg;
-    }
+    }*/
     if ((walletExpandInfoEntity?.netHeadImg ?? "").isNotEmpty) {
       return walletExpandInfoEntity.netHeadImg;
     }
