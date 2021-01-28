@@ -127,6 +127,11 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
                     child: ExchangeBannerWidget(),
                   ),
                   SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 12,
+                    ),
+                  ),
+                  SliverToBoxAdapter(
                     child: _account(),
                   ),
                   SliverToBoxAdapter(
@@ -186,7 +191,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 8,
+                      height: 4,
                     ),
                     Row(children: [_asset()]),
                     SizedBox(height: 4.0),
@@ -318,9 +323,10 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
 
   _quotesTabs() {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 16.0,
-        horizontal: 16.0,
+      padding: const EdgeInsets.only(
+        top: 16.0,
+        left: 16.0,
+        right: 16.0,
       ),
       child: Row(
         children: <Widget>[
@@ -329,7 +335,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
               S.of(context).exchange_name,
               style: TextStyle(
                 color: Colors.grey,
-                fontSize: 14,
+                fontSize: 12,
               ),
             ),
           ),
@@ -343,7 +349,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
                     S.of(context).exchange_latest_quote,
                     style: TextStyle(
                       color: Colors.grey,
-                      fontSize: 14,
+                      fontSize: 12,
                     ),
                   ),
                 ),
@@ -361,7 +367,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
                       S.of(context).exchange_change_percentage,
                       style: TextStyle(
                         color: Colors.grey,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                   ),
@@ -461,7 +467,10 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
               }
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16.0,
+              ),
               child: Column(
                 children: <Widget>[
                   Row(
@@ -542,8 +551,8 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
                           children: <Widget>[
                             Spacer(),
                             Container(
-                              width: 80,
-                              height: 39,
+                              width: 70,
+                              height: 30,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4.0),
                                 color: _latestPercentBgColor,
