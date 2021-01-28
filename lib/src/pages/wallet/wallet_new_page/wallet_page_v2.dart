@@ -9,13 +9,10 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
-import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
-import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
-import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -27,21 +24,14 @@ import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_page.dart';
-import 'package:titan/src/pages/policy/policy_confirm_page.dart';
-import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
-import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
-import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/image_util.dart';
-import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
@@ -767,11 +757,11 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                                       builder: (context) => WalletReceivePage(coinVo)));
                               break;
                             case WalletPageJump.PAGE_EXCHANGE:
-                              if ((coinVo.symbol == SupportedTokens.HYN_Atlas.symbol) ||
-                                  (coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol)) {
+                              if ((coinVo.symbol == DefaultTokenDefine.HYN_Atlas.symbol) ||
+                                  (coinVo.symbol == DefaultTokenDefine.HYN_RP_HRC30.symbol)) {
                                 var base = 'USDT';
                                 var quote = 'HYN';
-                                if (coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol) {
+                                if (coinVo.symbol == DefaultTokenDefine.HYN_RP_HRC30.symbol) {
                                   base = 'HYN';
                                   quote = 'RP';
                                 }

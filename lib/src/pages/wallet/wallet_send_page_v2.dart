@@ -941,7 +941,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
 
       // todo: HRC30不需要预留币
       if (widget.coinVo.coinType == CoinType.HYN_ATLAS &&
-          symbol == SupportedTokens.HYN_Atlas.symbol) {
+          symbol == DefaultTokenDefine.HYN_Atlas.symbol) {
         var balance = Decimal.parse(
           FormatUtil.coinBalanceDouble(
             widget.coinVo,

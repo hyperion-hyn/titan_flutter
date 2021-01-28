@@ -640,7 +640,7 @@ class HYNApi {
   }
 
   static bool isContractTokenAddress(String contractAddress) {
-    return Tokens.getTokenByContractAddress(contractAddress) != null;
+    return Tokens.getDefaultTokenByContractAddress(contractAddress) != null;
   }
 
   static bool isHynHrc30ContractAddress(String contractAddress) {
@@ -655,7 +655,7 @@ class HYNApi {
 
   static bool isGasFeeEnough(BigInt gasPrice, int gasLimit, {BigInt stakingAmount}) {
     var hynCoin =
-        WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol(SupportedTokens.HYN_Atlas.symbol);
+        WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol(DefaultTokenDefine.HYN_Atlas.symbol);
     var gasFees = gasPrice * BigInt.from(gasLimit);
     if (stakingAmount == null) {
       stakingAmount = BigInt.from(0);
@@ -670,9 +670,9 @@ class HYNApi {
   static String getHynSymbol(String contractAddress) {
     contractAddress = contractAddress?.toLowerCase() ?? '';
     if (contractAddress == HyperionConfig.hynRPHrc30Address.toLowerCase()) {
-      return SupportedTokens.HYN_RP_HRC30.symbol;
+      return DefaultTokenDefine.HYN_RP_HRC30.symbol;
     } else {
-      return SupportedTokens.HYN_Atlas.symbol;
+      return DefaultTokenDefine.HYN_Atlas.symbol;
     }
   }
 

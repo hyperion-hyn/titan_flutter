@@ -88,14 +88,14 @@ class WalletUtil {
     );
   }
 
-  static setWalletExpandInfo(
+  static Future<bool> setWalletExpandInfo(
     String walletAddress,
     WalletExpandInfoEntity walletExpandInfoEntity,
   ) async {
     if (walletExpandInfoEntity == null) {
-      await AppCache.remove("${PrefsKey.WALLET_EXPAND_INFO_PREFIX}$walletAddress");
+      return AppCache.remove("${PrefsKey.WALLET_EXPAND_INFO_PREFIX}$walletAddress");
     } else {
-      await AppCache.saveValue(
+      return AppCache.saveValue(
         "${PrefsKey.WALLET_EXPAND_INFO_PREFIX}$walletAddress",
         "${json.encode(walletExpandInfoEntity.toJson())}",
       );
@@ -108,7 +108,7 @@ class WalletUtil {
     String entityStr = await AppCache.getValue(
       '${PrefsKey.WALLET_EXPAND_INFO_PREFIX}$walletAddress',
     );
-    if(entityStr == null){
+    if (entityStr == null) {
       return null;
     }
     return WalletExpandInfoEntity.fromJson(json.decode(entityStr));
@@ -121,11 +121,11 @@ class WalletUtil {
     var keyStoreMaps = await WalletChannel.scanKeyStores();
     for (var map in keyStoreMaps) {
 //      logger.i(map);
-      var wallet = _parseWalletJson(map);
+      var wallet = await _parseWalletJson(map);
       if (wallet != null) {
-        wallet.walletExpandInfoEntity =
-            await WalletUtil.getWalletExpandInfo(wallet.getEthAccount().address) ??
-                WalletExpandInfoEntity.defaultEntity();
+        // wallet.walletExpandInfoEntity =
+        //     await WalletUtil.getWalletExpandInfo(wallet.getEthAccount().address) ??
+        //         WalletExpandInfoEntity.defaultEntity();
         wallets.add(wallet);
       }
     }
@@ -276,7 +276,7 @@ class WalletUtil {
   ///load wallet
   static Future<Wallet> loadWallet(String fileName) async {
     var map = await WalletChannel.loadKeyStore(fileName);
-    var wallet = _parseWalletJson(map);
+    var wallet = await _parseWalletJson(map);
     return wallet;
   }
 
@@ -320,9 +320,10 @@ class WalletUtil {
     return bytesToHex(abi, include0x: include0x, padToEvenLength: padToEvenLength);
   }
 
-  static Wallet _parseWalletJson(dynamic map) {
+  static Future<Wallet> _parseWalletJson(dynamic map) async {
     var keystore = KeyStore.fromDynamicMap(map);
     var backAccounts = [];
+    var ethAddress;
     for (var account in map['accounts']) {
       if (account['coinType'] == CoinType.ETHEREUM) {
         // add hyperion tokens
@@ -331,8 +332,11 @@ class WalletUtil {
           "derivationPath": account['derivationPath'],
           'coinType': CoinType.HYN_ATLAS,
         });
+
+        ethAddress = account["address"];
       }
 
+      // add ethereum tokens
       backAccounts.add(account);
 
       // add Huobi ECO Chain tokens
@@ -346,15 +350,21 @@ class WalletUtil {
       }
     }
 
-    var accounts =
-        List<Account>.from(backAccounts.map((accountMap) => Account.fromJsonWithNet(accountMap)));
+    var walletExpandInfoEntity = WalletExpandInfoEntity.defaultEntity();
+    if (ethAddress != null && ethAddress != '') {
+      walletExpandInfoEntity = await WalletUtil.getWalletExpandInfo(ethAddress);
+    }
+
+    var accounts = List<Account>.from(
+        backAccounts.map((accountMap) => Account.mainAccountFromJson(accountMap)));
 
     //filter only ETHEREUM
 //    accounts = accounts.where((account) {
 //      return account.coinType == CoinType.ETHEREUM;
 //    }).toList();
 
-    var wallet = Wallet(keystore: keystore, accounts: accounts);
+    var wallet = Wallet(
+        keystore: keystore, accounts: accounts, walletExpandInfoEntity: walletExpandInfoEntity);
     return wallet;
   }
 

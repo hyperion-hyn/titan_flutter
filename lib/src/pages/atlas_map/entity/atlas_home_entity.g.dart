@@ -8,9 +8,13 @@ part of 'atlas_home_entity.dart';
 
 AtlasHomeEntity _$AtlasHomeEntityFromJson(Map<String, dynamic> json) {
   return AtlasHomeEntity(
-    json['info'] == null ? null : CommitteeInfoEntity.fromJson(json['info'] as Map<String, dynamic>),
+    json['info'] == null
+        ? null
+        : CommitteeInfoEntity.fromJson(json['info'] as Map<String, dynamic>),
     (json['my_nodes'] as List)
-        ?.map((e) => e == null ? null : AtlasHomeNode.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : AtlasHomeNode.fromJson(e as Map<String, dynamic>))
         ?.toList(),
     json['points'] as String,
     json['map3_num'] as int,
@@ -61,7 +65,8 @@ AtlasHomeNode _$AtlasHomeNodeFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$AtlasHomeNodeToJson(AtlasHomeNode instance) => <String, dynamic>{
+Map<String, dynamic> _$AtlasHomeNodeToJson(AtlasHomeNode instance) =>
+    <String, dynamic>{
       'address': instance.address,
       'block_num': instance.blockNum,
       'bls_key': instance.blsKey,

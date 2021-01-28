@@ -13,6 +13,7 @@ AssetToken _$AssetTokenFromJson(Map<String, dynamic> json) {
     contractAddress: json['contractAddress'] as String,
     symbol: json['symbol'] as String,
     logo: json['logo'] as String,
+    hideable: json['hideable'] as bool,
   );
 }
 
@@ -23,4 +24,5 @@ Map<String, dynamic> _$AssetTokenToJson(AssetToken instance) =>
       'symbol': instance.symbol,
       'logo': instance.logo,
       'contractAddress': instance.contractAddress,
+      'hideable': instance.hideable,
     };

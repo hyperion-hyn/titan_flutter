@@ -287,14 +287,11 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
   }
 
   _confirmBackUp() async {
-    var walletExpandInfoEntity = await WalletUtil.getWalletExpandInfo(
-      widget.wallet.getEthAccount()?.address,
-    );
-    walletExpandInfoEntity.isBackup = true;
+    widget.wallet.walletExpandInfoEntity.isBackup = true;
 
     BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletExpandEvent(
       widget.wallet.getEthAccount()?.address,
-      walletExpandInfoEntity,
+      widget.wallet.walletExpandInfoEntity,
     ));
     await Future.delayed(
       Duration(milliseconds: 1000),

@@ -124,13 +124,13 @@ class EthereumConfig {
   static String get getHynErc20Address {
     switch (chainType) {
       case EthereumChainType.mainnet:
-        return SupportedTokens.HYN_ERC20.contractAddress;
+        return DefaultTokenDefine.HYN_ERC20.contractAddress;
       case EthereumChainType.ropsten:
-        return SupportedTokens.HYN_ROPSTEN.contractAddress;
+        return DefaultTokenDefine.HYN_ROPSTEN.contractAddress;
       case EthereumChainType.rinkeby:
-        return SupportedTokens.HYN_RINKEBY.contractAddress;
+        return DefaultTokenDefine.HYN_RINKEBY.contractAddress;
       case EthereumChainType.local:
-        return SupportedTokens.HYN_LOCAL.contractAddress;
+        return DefaultTokenDefine.HYN_LOCAL.contractAddress;
     }
     return '';
   }
@@ -139,15 +139,15 @@ class EthereumConfig {
   static String getUsdtErc20Address() {
     switch (EthereumConfig.chainType) {
       case EthereumChainType.mainnet:
-        return SupportedTokens.USDT_ERC20.contractAddress;
+        return DefaultTokenDefine.USDT_ERC20.contractAddress;
       case EthereumChainType.ropsten:
-        return SupportedTokens.USDT_ERC20_ROPSTEN.contractAddress;
+        return DefaultTokenDefine.USDT_ERC20_ROPSTEN.contractAddress;
       case EthereumChainType.rinkeby:
         //have not deployed
-        return SupportedTokens.USDT_ERC20.contractAddress;
+        return DefaultTokenDefine.USDT_ERC20.contractAddress;
       case EthereumChainType.local:
         //have not deployed
-        return SupportedTokens.USDT_ERC20.contractAddress;
+        return DefaultTokenDefine.USDT_ERC20.contractAddress;
     }
     return '';
   }
