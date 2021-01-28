@@ -406,6 +406,7 @@ class UiUtil {
                 ),
                 if (showCloseBtn)
                   InkWell(
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
                     child: Padding(
                       padding: const EdgeInsets.all(24.0),
                       child: Image.asset(
