@@ -105,7 +105,7 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
 //                                  LengthLimitingTextInputFormatter(6),
                                   ],
                                   controller: passwordEditingController,
-                                  keyboardType: TextInputType.emailAddress,
+                                  keyboardType: TextInputType.visiblePassword,
                                   errorText: walletEditErrorMsg != null ? walletEditErrorMsg : null,
                                 ),
                                 Row(
