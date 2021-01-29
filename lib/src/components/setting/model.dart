@@ -65,23 +65,23 @@ class LanguageModel extends Equatable {
   Map<String, Object> toJson() {
     return <String, dynamic>{
       'name': name,
-      'local': {'languageCode': (locale?.languageCode??'zh'), 'countryCode': locale?.countryCode}
+      'local': {'languageCode': (locale?.languageCode ?? 'zh'), 'countryCode': locale?.countryCode}
     };
   }
 
   bool isKo() {
-    return (locale?.languageCode??'zh') == 'ko';
+    return (locale?.languageCode ?? 'zh') == 'ko';
   }
 
   bool isZh() {
-    return (locale?.languageCode??'zh') == 'zh';
+    return (locale?.languageCode ?? 'zh') == 'zh';
   }
 
-  String getLocaleName(){
-    if(isZh()){
-      return "${(locale?.languageCode??'zh')}_${locale.countryCode}";
-    }else{
-      return "${(locale?.languageCode??'zh')}";
+  String getLocaleName() {
+    if (isZh()) {
+      return "${(locale?.languageCode ?? 'zh')}_${locale.countryCode}";
+    } else {
+      return "${(locale?.languageCode ?? 'zh')}";
     }
   }
 
@@ -132,7 +132,6 @@ class SupportedLanguage {
 }
 
 class SupportedTheme {
-
   static List<ThemeModel> all = themeList;
 
   // static Color get textColor => Theme.of(Keys.rootKey.currentContext).textTheme.apply().bodyText1.color;
@@ -141,7 +140,10 @@ class SupportedTheme {
 
   static List<Color> defaultBtnColors(BuildContext context) {
     return SettingInheritedModel.of(context, aspect: SettingAspect.theme).themeModel?.btnColors ??
-        <Color>[Color(0xff15B2D2), Color(0xff1097B4)];
+        <Color>[
+          Color(0xfff7d33d),
+          Color(0xffedc313),
+        ];
   }
 
   static Future<ThemeModel> defaultModel() async {
@@ -167,14 +169,15 @@ class SupportedTheme {
     List<Color> btnColors;
     for (int i = 0; i < 4; i++) {
       switch (i) {
-
         case 0:
           themeName = '默认';
           themeData = appThemeDeepYellow;
           color = Colors.yellow;
-          btnColors = <Color>[ Color(0xfff7d33d),Color(0xffedc313),];
+          btnColors = <Color>[
+            Color(0xfff7d33d),
+            Color(0xffedc313),
+          ];
           break;
-
 
         case 1:
           themeName = '深蓝';

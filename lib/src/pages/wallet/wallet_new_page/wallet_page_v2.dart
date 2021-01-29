@@ -511,15 +511,20 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                 if (_isRefreshBalances)
                   Align(
                     alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top:3.0,bottom: 3,right: 10),
-                      child: SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          backgroundColor: Colors.transparent,
-                          valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
-                          strokeWidth: 1,
+                    child: InkWell(
+                      onTap: (){
+                        listLoadingData();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(top:3.0,bottom: 3,right: 10),
+                        child: SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.transparent,
+                            valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
+                            strokeWidth: 1,
+                          ),
                         ),
                       ),
                     ),
@@ -674,9 +679,15 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            "加载失败",
-                            style: TextStyle(color: HexColor("#FF1A1A"), fontSize: 12),
+                          InkWell(
+                            onTap: () {
+                              BlocProvider.of<WalletCmpBloc>(context)
+                                  .add(UpdateActivatedWalletBalanceEvent(symbol: symbol));
+                            },
+                            child: Text(
+                              "加载失败",
+                              style: TextStyle(color: HexColor("#FF1A1A"), fontSize: 12),
+                            ),
                           ),
                           SizedBox(
                             width: 10,
@@ -731,7 +742,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         break;
     }
     UiUtil.showBottomDialogView(context,
-        dialogHeight: MediaQuery.of(context).size.height - 80,
+        dialogHeight: MediaQuery.of(context).size.height - 90,
         isScrollControlled: true,
         customWidget: Expanded(
             child: Column(

@@ -349,7 +349,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                 return Stack(
                   children: <Widget>[
                     ScaffoldMap(key: Keys.scaffoldMap),
-                    if (!_isDMap) userLocationBar(),
+                    userLocationBar(showClearBtn: (!_isDMap)),
                     Padding(
                       padding: EdgeInsets.only(
                           bottom:
@@ -373,7 +373,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     );
   }
 
-  Widget userLocationBar() {
+  Widget userLocationBar({bool showClearBtn = true}) {
     return LayoutBuilder(
       builder: (context, constraints) {
         var additionalBottomPadding = MediaQuery.of(context).padding.bottom;
@@ -395,7 +395,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                 rect: barAnimationRect,
                 child: BottomFabsWidget(
                   key: _bottomBarKey,
-                  showBurnBtn: true,
+                  showClearBtn: showClearBtn,
                 )),
           ],
         );
@@ -457,9 +457,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
   Widget tabItem(IconData iconData, String text, int index, {String name}) {
     bool selected = index == this._currentTabIndex;
     var imageName = 'res/drawable/tabbar_$name.png';
-    if (selected) {
-      imageName = 'res/drawable/tabbar_$name${'_select'}.png';
-    }
+    // if (selected) {
+    //   imageName = 'res/drawable/tabbar_$name${'_select'}.png';
+    // }
     return Expanded(
       child: Material(
         color: Colors.transparent,
@@ -483,7 +483,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                       fit: BoxFit.cover,
                       width: 20,
                       height: 20,
-                      // color: selected ? Theme.of(context).primaryColor : HexColor('#C8C8C8'),
+                      color: selected ? Theme.of(context).primaryColor : HexColor('#C8C8C8'),
                     ),
                     /*Icon(
                       iconData,

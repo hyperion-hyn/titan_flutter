@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
@@ -208,7 +209,9 @@ class Map3NodeUtil {
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        _map3StatusColor = HexColor("#CBF6FF");
+        // _map3StatusColor = HexColor("#CBF6FF");
+        _map3StatusColor = HexColor("#FAF8EA");
+
         break;
 
       case Map3InfoStatus.CONTRACT_IS_END:
