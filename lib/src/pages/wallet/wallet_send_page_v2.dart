@@ -688,7 +688,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     return Form(
       key: _toKey,
       child: Container(
-        // color: Colors.redAccent,
         child: TextFormField(
           controller: _toController,
           textAlign: TextAlign.start,
@@ -730,7 +729,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             border: InputBorder.none,
             hintText: '请输入收款地址',
-            errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
+            //errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
             hintStyle: TextStyle(
               fontSize: 16,
               color: HexColor('#C1C1C1'),
@@ -817,7 +816,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
                 contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                 border: InputBorder.none,
                 hintText: '0',
-                errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
+                // errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
                 hintStyle: TextStyle(
                   fontSize: 30,
                   color: HexColor('#C1C1C1'),
@@ -882,7 +881,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
             border: InputBorder.none,
             hintText: '0',
-            errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
+            // errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
             hintStyle: TextStyle(
               fontSize: 16,
               color: HexColor('#999999'),

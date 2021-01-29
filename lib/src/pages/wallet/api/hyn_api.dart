@@ -360,8 +360,6 @@ class HYNApi {
   ) async {
 
     var stakingDecimalValue = Decimal.tryParse(staking)??Decimal.zero;
-    print("[hyn_api] stakingDecimalValue:${stakingDecimalValue.runtimeType}");
-
     var amount = ConvertTokenUnit.decimalToWeiNew(stakingDecimalValue);
     print("[hyn_api] amount:${amount}");
 
