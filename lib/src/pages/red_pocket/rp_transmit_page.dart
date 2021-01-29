@@ -443,6 +443,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                         width: 120,
                         height: 32,
                         fontSize: 12,
+                        fontColor: Colors.white,
                         btnColor: [HexColor('#00B97C')],
                       ),
                       SizedBox(
@@ -458,6 +459,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                               height: 32,
                               fontSize: 12,
                               btnColor: [HexColor('#107EDC')],
+                              fontColor: Colors.white,
                             ),
                             padding: const EdgeInsets.all(
                               16,
