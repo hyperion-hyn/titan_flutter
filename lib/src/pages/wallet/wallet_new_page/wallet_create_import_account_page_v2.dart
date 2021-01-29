@@ -240,15 +240,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                                   }
                                 });
                               },
-                              child: SizedBox(
-                                width: 60,
-                                height: 60,
-                                child: ImageUtil.getCoinImage(
-                                    userImagePath != null
-                                        ? userImagePath
-                                        : "res/drawable/ic_user_avatar_default.png",
-                                    placeholder: "res/drawable/ic_user_avatar_default.png"),
-                              ),
+                              child: iconWidget(userImagePath, null,null,isCircle: true,size: 60),
                             )
                           ],
                         ),

@@ -225,9 +225,13 @@ class Wallet {
 
     // 检查基础币是否足够
     if (gasLimit == null || gasLimit < 21000) {
-      gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
-          .systemConfigEntity
-          .ethTransferGasLimit;
+      if(message != null){
+        gasLimit = HyperionGasLimit.NODE_OPT;
+      }else{
+        gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+            .systemConfigEntity
+            .ethTransferGasLimit;
+      }
     }
 
     final signedRawHex = await signTransaction(
