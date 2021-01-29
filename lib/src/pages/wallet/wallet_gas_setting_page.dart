@@ -76,7 +76,6 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
 
   int get _coinType => widget.coinVo.coinType;
 
-
   @override
   void initState() {
     super.initState();
@@ -163,7 +162,6 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
       child: StreamBuilder<Object>(
           stream: _inputController.stream,
           builder: (context, snapshot) {
-
             var gasPriceEstimateStr = '';
             var quotePrice = _activatedQuoteSign?.price ?? 0;
             var quoteSign = _activatedQuoteSign?.legal?.sign ?? '';
@@ -435,7 +433,6 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
             onTap: () {
               if (mounted && _selectedIndex != -1) {
                 setState(() {
-
                   if (CoinType.BITCOIN == _coinType) {
                     _gasSatController.text = '';
                   } else if (CoinType.ETHEREUM == _coinType) {
@@ -876,7 +873,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
       }
     }
   }
-  
+
   void _initLastData() async {
     if (_isBTC) {
       String custom = await AppCache.getValue(
@@ -908,7 +905,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
       String custom = await AppCache.getValue(
         PrefsKey.WALLET_GAS_PRICE_CUSTOM_KEY,
       );
-      _selectedIndex = int?.tryParse(custom??'0') ?? 0;
+      _selectedIndex = int?.tryParse(custom ?? '0') ?? 0;
       _selectedIndexInit = _selectedIndex;
 
       if (_isCustom) {

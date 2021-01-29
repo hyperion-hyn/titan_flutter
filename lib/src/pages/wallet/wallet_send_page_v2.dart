@@ -617,7 +617,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       children: <Widget>[
         Row(
           children: <Widget>[
-            // todo: 随机数
             Text(
               '随机数（Nonce）',
               style: TextStyle(
@@ -688,7 +687,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       addressErrorHint = S.of(context).input_valid_address;
     }
 
-    // todo: 区分各种币种
     return Form(
       key: _toKey,
       child: Container(
