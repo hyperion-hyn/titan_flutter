@@ -63,7 +63,7 @@ class _MeSettingState extends State<MeSettingPage> {
             _buildMenuBar(S.of(context).app_area_setting, area, () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => MeAreaPage()));
             }),
-            _lineWidget(height: 10),
+            /*_lineWidget(height: 10),
             _buildMenuBar(
               '主题',
               '',
@@ -71,7 +71,7 @@ class _MeSettingState extends State<MeSettingPage> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => MeThemePage()));
               },
               color: theme?.primaryColor ?? Theme.of(context).primaryColor,
-            ),
+            ),*/
           ],
         ));
   }

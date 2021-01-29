@@ -12,9 +12,9 @@ import 'package:titan/src/routes/routes.dart';
 import 'burning_dialog.dart';
 
 class BottomFabsWidget extends StatefulWidget {
-  final bool showBurnBtn;
+  final bool showClearBtn;
 
-  BottomFabsWidget({this.showBurnBtn, Key key}) : super(key: key);
+  BottomFabsWidget({this.showClearBtn, Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -179,7 +179,7 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    if (widget.showBurnBtn == true)
+                    if (widget.showClearBtn == true)
                       FloatingActionButton(
                         onPressed: () => _showFireModalBottomSheet(context),
                         mini: true,

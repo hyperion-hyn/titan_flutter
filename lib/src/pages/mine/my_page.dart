@@ -462,6 +462,10 @@ class _MyPageState extends BaseState<MyPage> {
               children: <Widget>[
                 Align(
                   alignment: Alignment.center,
+                  child: iconWalletWidget(wallet, isCircle: true),
+                ),
+               /* Align(
+                  alignment: Alignment.center,
                   child: walletHeaderWidget(
                     walletName.characters.first,
                     size: 44,
@@ -469,7 +473,7 @@ class _MyPageState extends BaseState<MyPage> {
                     address: ethAccount.address,
                     isShowShape: false,
                   ),
-                ),
+                ),*/
               ],
             ),
           ),

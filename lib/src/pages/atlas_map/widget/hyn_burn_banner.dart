@@ -54,7 +54,7 @@ class _HynBurnBannerState extends State<HynBurnBanner> {
         Application.router.navigateTo(context, Routes.map3node_burn_history_page);
       },
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 16.0),
+        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16,),
         child: Container(
           height: 50,
           child: Stack(
