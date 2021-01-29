@@ -135,216 +135,212 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
   }
 
   Widget _pageWidget(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: SingleChildScrollView(
-            child: BaseGestureDetector(
-              context: context,
-              child: Form(
-                key: _formKey,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 10.0, bottom: 10, left: 16, right: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+    return SingleChildScrollView(
+      child: BaseGestureDetector(
+        context: context,
+        child: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10.0, bottom: 10, left: 16, right: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.isCreateWallet ? "创建身份" : "恢复身份",
+                  style: TextStyles.textC333S14bold,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 6.0, bottom: 20),
+                  child: Text(
+                      widget.isCreateWallet
+                          ? "你将会拥有身份下的多链钱包：HYN，ETH，\nUSDT(ERC 20)，BTC。"
+                          : "使用助记词导入的同时可以修改钱包密码",
+                      style: TextStyles.textC999S14),
+                ),
+                if (!widget.isCreateWallet)
+                  Container(
+                    constraints: BoxConstraints.expand(height: 120),
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.only(left: 8.0, right: 8),
+                    decoration: BoxDecoration(
+                      color: DefaultColors.colorf6f6f6,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return S.of(context).please_input_mnemonic;
+                        } else {
+                          return null;
+                        }
+                      },
+                      controller: _mnemonicController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        hintText: "输入助记词，并使用空格分隔",
+                        hintStyle: TextStyles.textCaaaS14,
+                        filled: true,
+                        fillColor: Colors.transparent,
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
+                      Spacer(),
                       Text(
-                        widget.isCreateWallet ? "创建身份" : "恢复身份",
-                        style: TextStyles.textC333S14bold,
+                        "头像",
+                        style: TextStyles.textC333S14,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 6.0, bottom: 20),
+                        padding: const EdgeInsets.only(left: 2, right: 20),
                         child: Text(
-                            widget.isCreateWallet
-                                ? "你将会拥有身份下的多链钱包：HYN，ETH，\nUSDT(ERC 20)，BTC。"
-                                : "使用助记词导入的同时可以修改钱包密码",
-                            style: TextStyles.textC999S14),
-                      ),
-                      if (!widget.isCreateWallet)
-                        Container(
-                          constraints: BoxConstraints.expand(height: 120),
-                          margin: const EdgeInsets.only(bottom: 10),
-                          padding: const EdgeInsets.only(left: 8.0, right: 8),
-                          decoration: BoxDecoration(
-                            color: DefaultColors.colorf6f6f6,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: TextFormField(
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return S.of(context).please_input_mnemonic;
-                              } else {
-                                return null;
-                              }
-                            },
-                            controller: _mnemonicController,
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null,
-                            decoration: InputDecoration(
-                              hintText: "输入助记词，并使用空格分隔",
-                              hintStyle: TextStyles.textCaaaS14,
-                              filled: true,
-                              fillColor: Colors.transparent,
-                              border: InputBorder.none,
-                            ),
-                          ),
+                          "(可选)",
+                          style: TextStyles.textC999S12,
                         ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Spacer(),
-                            Text(
-                              "头像",
-                              style: TextStyles.textC333S14,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 2, right: 20),
-                              child: Text(
-                                "(可选)",
-                                style: TextStyles.textC999S12,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () async {
-                                ///Ignore AppLock
-                                await AppLockUtil.ignoreAppLock(context, true);
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          ///Ignore AppLock
+                          await AppLockUtil.ignoreAppLock(context, true);
 
-                                editIconSheet(context, (tempListImagePath) async {
-                                  if (tempListImagePath != null) {
-                                    ///turn off app-lock
-                                    AppLockUtil.appLockSwitch(context, false);
+                          editIconSheet(context, (tempListImagePath) async {
+                            if (tempListImagePath != null) {
+                              ///turn off app-lock
+                              AppLockUtil.appLockSwitch(context, false);
 
-                                    if (tempListImagePath != null) {
-                                      UiUtil.showLoadingDialog(context, "头像上传中...", (context) {
-                                        dialogContext = context;
-                                      });
-
-                                      var netImagePath = await _atlasApi.postUploadImageFile(
-                                        "0x",
-                                        tempListImagePath,
-                                            (count, total) {},
-                                      );
-                                      if (netImagePath != null && netImagePath.isNotEmpty) {
-                                        userImageLocalPath = tempListImagePath;
-                                        userImagePath = netImagePath;
-                                        setState(() {});
-                                      } else {
-                                        Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
-                                      }
-                                      if (dialogContext != null) {
-                                        Navigator.pop(dialogContext);
-                                      }
-                                    }
-                                  }
+                              if (tempListImagePath != null) {
+                                UiUtil.showLoadingDialog(context, "头像上传中...", (context) {
+                                  dialogContext = context;
                                 });
-                              },
-                              child: iconWidget(userImagePath, null,null,isCircle: true,size: 60),
-                            )
-                          ],
-                        ),
-                      ),
-                      Stack(
-                        children: [
-                          Container(
-                            height: 50,
-                            margin: const EdgeInsets.only(top: 20, bottom: 12),
-                            decoration: BoxDecoration(
-                              color: DefaultColors.colorf6f6f6,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(top: 20, bottom: 12),
-                            child: TextFormField(
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(8),
-                              ],
-                              keyboardType: TextInputType.text,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return S.of(context).input_wallet_name_hint;
+
+                                var netImagePath = await _atlasApi.postUploadImageFile(
+                                  "0x",
+                                  tempListImagePath,
+                                      (count, total) {},
+                                );
+                                if (netImagePath != null && netImagePath.isNotEmpty) {
+                                  userImageLocalPath = tempListImagePath;
+                                  userImagePath = netImagePath;
+                                  setState(() {});
                                 } else {
-                                  return null;
+                                  Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
                                 }
-                              },
-                              controller: _walletNameController,
-                              decoration: InputDecoration(
-                                hintText: "身份名称",
-                                hintStyle: TextStyles.textCaaaS14,
-                                filled: true,
-                                fillColor: Colors.transparent,
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 10,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: pswListWidget(
-                            isShowPsw,
-                            (value) {
-                              if (value.isEmpty) {
-                                setState(() {
-                                  isShowRemind = false;
-                                });
-                                return "请输入密码";
-                              } else if (value.length < 8) {
-                                setState(() {
-                                  isShowRemind = false;
-                                });
-                                return "密码小于8位";
-                              } else {
-                                setState(() {
-                                  isShowRemind = true;
-                                });
-                                return null;
+                                if (dialogContext != null) {
+                                  Navigator.pop(dialogContext);
+                                }
                               }
-                            },
-                            _walletPswController,
-                            _focusNode,
-                            pswLevelLabel(_pswLevel),
-                            pswLevelImage(_pswLevel),
-                            isShowRemind,
-                            _walletRePswController,
-                            () {
-                              setState(() {
-                                isShowPsw = !isShowPsw;
-                              });
-                            },
-                            _walletPswHintController),
-                      ),
+                            }
+                          });
+                        },
+                        child: iconWidget(userImagePath, null,null,isCircle: true,size: 60),
+                      )
                     ],
                   ),
                 ),
-              ),
+                Stack(
+                  children: [
+                    Container(
+                      height: 50,
+                      margin: const EdgeInsets.only(top: 20, bottom: 12),
+                      decoration: BoxDecoration(
+                        color: DefaultColors.colorf6f6f6,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 20, bottom: 12),
+                      child: TextFormField(
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(8),
+                        ],
+                        keyboardType: TextInputType.text,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return S.of(context).input_wallet_name_hint;
+                          } else {
+                            return null;
+                          }
+                        },
+                        controller: _walletNameController,
+                        decoration: InputDecoration(
+                          hintText: "身份名称",
+                          hintStyle: TextStyles.textCaaaS14,
+                          filled: true,
+                          fillColor: Colors.transparent,
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: pswListWidget(
+                      isShowPsw,
+                      (value) {
+                        if (value.isEmpty) {
+                          setState(() {
+                            isShowRemind = false;
+                          });
+                          return "请输入密码";
+                        } else if (value.length < 8) {
+                          setState(() {
+                            isShowRemind = false;
+                          });
+                          return "密码小于8位";
+                        } else {
+                          setState(() {
+                            isShowRemind = true;
+                          });
+                          return null;
+                        }
+                      },
+                      _walletPswController,
+                      _focusNode,
+                      pswLevelLabel(_pswLevel),
+                      pswLevelImage(_pswLevel),
+                      isShowRemind,
+                      _walletRePswController,
+                      () {
+                        setState(() {
+                          isShowPsw = !isShowPsw;
+                        });
+                      },
+                      _walletPswHintController),
+                ),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 36.0, top: 22),
+                    child: ClickOvalButton(
+                      widget.isCreateWallet ? "创建" : "恢复身份",
+                          () async {
+                        await submitAction();
+                      },
+                      width: 300,
+                      height: 46,
+                      btnColor: [
+                        HexColor("#F7D33D"),
+                        HexColor("#E7C01A"),
+                      ],
+                      fontSize: 16,
+                      fontColor: DefaultColors.color333,
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 36.0, top: 22),
-          child: ClickOvalButton(
-            widget.isCreateWallet ? "创建" : "恢复身份",
-            () async {
-              await submitAction();
-            },
-            width: 300,
-            height: 46,
-            btnColor: [
-              HexColor("#F7D33D"),
-              HexColor("#E7C01A"),
-            ],
-            fontSize: 16,
-            fontColor: DefaultColors.color333,
-          ),
-        )
-      ],
+      ),
     );
   }
 

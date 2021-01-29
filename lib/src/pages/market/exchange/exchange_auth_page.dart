@@ -157,13 +157,14 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   _checkIsAuthAlready() async {
     var _wallet = WalletInheritedModel.of(context)?.activatedWallet?.wallet;
     if (_wallet != null) {
-      bool _isAuthAlready =
+      _startLogin();
+      /*bool _isAuthAlready =
           await AppCache.getValue('exchange_auth_already_${_wallet.getEthAccount().address}') ??
               false;
       var _bioAuthEnabled = await BioAuthUtil.bioAuthEnabledByWallet(_wallet, AuthType.exchange);
       if (_isAuthAlready && _bioAuthEnabled) {
         _startLogin();
-      }
+      }*/
     }
   }
 

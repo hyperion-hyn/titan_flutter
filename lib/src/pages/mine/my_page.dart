@@ -462,13 +462,14 @@ class _MyPageState extends BaseState<MyPage> {
               children: <Widget>[
                 Align(
                   alignment: Alignment.center,
-                  child: walletHeaderWidget(
+                  child: iconWalletWidget(wallet, isCircle: true,size: 44),
+                  /*child: walletHeaderWidget(
                     walletName.characters.first,
                     size: 44,
                     fontSize: 20,
                     address: ethAccount.address,
                     isShowShape: false,
-                  ),
+                  ),*/
                 ),
               ],
             ),

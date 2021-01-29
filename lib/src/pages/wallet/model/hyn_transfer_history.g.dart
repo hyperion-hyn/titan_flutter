@@ -7,7 +7,6 @@ part of 'hyn_transfer_history.dart';
 // **************************************************************************
 
 HynTransferHistory _$HynTransferHistoryFromJson(Map<String, dynamic> jsonMap) {
-  print("!!!!!! ${jsonMap['payload']}");
   return HynTransferHistory(
     jsonMap['atlas_address'] as String,
     jsonMap['block_hash'] as String,
@@ -154,8 +153,8 @@ TransferPayload _$TransferPayloadFromJson(Map<String, dynamic> json) {
   return TransferPayload(
     json['Delegator'] as String,
     json['Map3Node'] as String,
-    json['Amount'] as String,
-    json['Reward'] as String,
+    json['Amount'].toString(),
+    json['Reward'].toString(),
   );
 }
 

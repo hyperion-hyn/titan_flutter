@@ -186,7 +186,6 @@ class WalletShowTransactionSimpleInfoPageState extends BaseState<WalletShowTrans
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: BaseAppBar(baseTitle: S.of(context).detail),
       body: _pageView(),
     );
@@ -194,81 +193,89 @@ class WalletShowTransactionSimpleInfoPageState extends BaseState<WalletShowTrans
 
   Widget accountInfoItem(AccountInfoItemView accountInfoItemView,
       {String bottomText, bool normalLine = true, bool isBillItem = false, bool hasCopy = false}) {
-    return Container(
-      color: Colors.white,
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 18.0, bottom: 18, left: 15, right: 15),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  accountInfoItemView.leftStr,
-                  style: TextStyles.textC999S13,
-                ),
-                SizedBox(width: 30,),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Text(
-                        accountInfoItemView.rightStr ?? "",
-                        style: TextStyles.textC333S13,
-                        textAlign: TextAlign.end,
-                      ),
-                      if (bottomText != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2.0),
-                          child: Text(bottomText, style: TextStyles.textC999S11, textAlign: TextAlign.end),
-                        ),
-                      if (isBillItem)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2.0),
-                          child: Text("${S.of(context).staking} ${transactionDetail.getBillDelegate()} HYN",
-                              style: TextStyles.textC999S11, textAlign: TextAlign.end),
-                        ),
-                      if (isBillItem)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2.0),
-                          child: Text("${S.of(context).reward} ${transactionDetail.getBillReward()} HYN",
-                              style: TextStyles.textC999S11, textAlign: TextAlign.end),
-                        ),
-                      if (hasCopy)
-                        InkWell(
-                          onTap: () {
-                            Clipboard.setData(ClipboardData(text: accountInfoItemView.rightStr ?? ""));
-                            UiUtil.toast(S.of(context).copyed);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 7.0, left: 7, bottom: 7),
-                            child: Image.asset(
-                              "res/drawable/ic_copy.png",
-                              width: 18,
-                              height: 17,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        ),
-                    ],
+    return InkWell(
+      onTap:(){
+        if(!hasCopy){
+          return;
+        }
+        Clipboard.setData(ClipboardData(text: accountInfoItemView.rightStr ?? ""));
+        UiUtil.toast(S.of(context).copyed);
+      },
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 18.0, bottom: 18, left: 15, right: 15),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    accountInfoItemView.leftStr,
+                    style: TextStyles.textC999S13,
                   ),
-                ),
-              ],
+                  SizedBox(width: 30,),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          accountInfoItemView.rightStr ?? "",
+                          style: TextStyles.textC333S13,
+                          textAlign: TextAlign.end,
+                        ),
+                        if (bottomText != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2.0),
+                            child: Text(bottomText, style: TextStyles.textC999S11, textAlign: TextAlign.end),
+                          ),
+                        if (isBillItem)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2.0),
+                            child: Text("${S.of(context).staking} ${transactionDetail.getBillDelegate()} HYN",
+                                style: TextStyles.textC999S11, textAlign: TextAlign.end),
+                          ),
+                        if (isBillItem)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2.0),
+                            child: Text("${S.of(context).reward} ${transactionDetail.getBillReward()} HYN",
+                                style: TextStyles.textC999S11, textAlign: TextAlign.end),
+                          ),
+                        /*if (hasCopy)
+                          InkWell(
+                            onTap: () {
+                              Clipboard.setData(ClipboardData(text: accountInfoItemView.rightStr ?? ""));
+                              UiUtil.toast(S.of(context).copyed);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 7.0, left: 7, bottom: 7),
+                              child: Image.asset(
+                                "res/drawable/ic_copy.png",
+                                width: 18,
+                                height: 17,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ),*/
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          if (normalLine)
-            Divider(
-              color: DefaultColors.colorf2f2f2,
-              indent: 15,
-              endIndent: 15,
-              height: 1,
-            ),
-          if (!normalLine)
-            Container(
-              height: 11,
-              color: DefaultColors.colorf2f2f2,
-            )
-        ],
+            if (normalLine)
+              Divider(
+                color: DefaultColors.colorf2f2f2,
+                indent: 15,
+                endIndent: 15,
+                height: 1,
+              ),
+            if (!normalLine)
+              Container(
+                height: 11,
+                color: DefaultColors.colorf2f2f2,
+              )
+          ],
+        ),
       ),
     );
   }
@@ -294,12 +301,10 @@ class WalletShowTransactionSimpleInfoPageState extends BaseState<WalletShowTrans
     });
 
     return Container(
-      color: DefaultColors.colorf2f2f2,
       child: CustomScrollView(
         slivers: <Widget>[
           SliverToBoxAdapter(
             child: Container(
-              color: Colors.white,
               child: Column(
                 children: <Widget>[
                   Padding(
