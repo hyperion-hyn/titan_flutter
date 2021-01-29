@@ -47,8 +47,8 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
     showModalBottomSheet(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+            borderRadius:
+                BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))),
         context: context,
         builder: (ctx) {
           return Container(
@@ -82,8 +82,7 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
                       ),
                       Text(
                         S.of(context).Clean,
-                        style:
-                            TextStyle(fontSize: 15, color: HexColor("#333333")),
+                        style: TextStyle(fontSize: 15, color: HexColor("#333333")),
                       ),
                     ]),
                   ),
@@ -109,8 +108,7 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
                         ),
                         Text(
                           S.of(context).cancel,
-                          style: TextStyle(
-                              fontSize: 15, color: HexColor("#333333")),
+                          style: TextStyle(fontSize: 15, color: HexColor("#333333")),
                         ),
                       ],
                     ),
@@ -146,29 +144,31 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
     if (_isShow == true) {
       return Column(
         children: [
-          Row(
-            children: [
-              Spacer(),
-              Container(
-                width: 80,
-                height: 80,
-                padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                child: InkWell(
-                  child: Image.asset('res/drawable/red_pocket.png'),
-                  onTap: () {
-                    //print("dddd---1111");
+          (widget.showClearBtn == false)
+              ? SizedBox(
+                  height: 80,
+                )
+              : Row(
+                  children: [
+                    Spacer(),
+                    Container(
+                      width: 80,
+                      height: 80,
+                      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                      child: InkWell(
+                        child: Image.asset('res/drawable/red_pocket.png'),
+                        onTap: () {
+                          //print("dddd---1111");
 
-                    var entryRouteName = Uri.encodeComponent(Routes.red_pocket_page);
+                          var entryRouteName = Uri.encodeComponent(Routes.red_pocket_page);
 
-                    Application.router.navigateTo(
-                        context,
-                        Routes.red_pocket_page +
-                            "?entryRouteName=$entryRouteName");
-                  },
+                          Application.router.navigateTo(
+                              context, Routes.red_pocket_page + "?entryRouteName=$entryRouteName");
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: Column(
@@ -194,7 +194,6 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
                     Spacer(),
                     FloatingActionButton(
                       onPressed: () {
-
                         Application.eventBus.fire(ToMyLocationEvent());
                         //BlocProvider.of<MapBloc>(context).add(MyLocationEvent());
                       },
