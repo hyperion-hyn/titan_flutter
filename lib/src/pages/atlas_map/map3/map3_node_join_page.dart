@@ -82,10 +82,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    if (context != null) {
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateActivatedWalletBalanceEvent());
-    }
+
   }
 
   @override
@@ -101,6 +98,10 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   void onCreated() {
     getNetworkData();
 
+    if (context != null) {
+      BlocProvider.of<WalletCmpBloc>(context)
+          .add(UpdateActivatedWalletBalanceEvent());
+    }
     super.onCreated();
   }
 

@@ -761,10 +761,10 @@ Widget getHoldInNum(
                         }
                         return InkWell(
                           child: Container(
-                            color: HexColor("#1FB9C7").withOpacity(0.08),
+                            color: HexColor("#FFFCE4"),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             child: Text(suggestList[value],
-                                style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
+                                style: TextStyle(fontSize: 12, color: HexColor("#333333"))),
                           ),
                           onTap: () {
                             textEditingController.text = suggestList[value];

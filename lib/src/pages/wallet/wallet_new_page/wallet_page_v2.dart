@@ -549,7 +549,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
             Application.router
                 .navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
           },
-          child: _buildAccountItem(context, coinVo, hasPrice: hasPrice));
+          child: _buildAccountItem(context, coinVo, hasPrice: hasPrice, isLastIndex: activatedWalletVo.coins.length == (index+1)));
     }, childCount: activatedWalletVo.coins.length));
   }
 
@@ -566,7 +566,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     );
   }
 
-  Widget _buildAccountItem(BuildContext context, CoinViewVo coin, {bool hasPrice = true}) {
+  Widget _buildAccountItem(BuildContext context, CoinViewVo coin, {bool hasPrice = true, bool isLastIndex=false}) {
     var symbol = coin.symbol;
     var symbolQuote = WalletInheritedModel.of(context).tokenLegalPrice(symbol);
     var subSymbol = "";
@@ -719,8 +719,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
             ],
           ),
         ),
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: 16,),
+        if (!isLastIndex)Container(
+          margin: EdgeInsets.only(left: 24, right: 32,),
           height: 0.5,
           color: HexColor('#F2F2F2'),
         )
@@ -798,7 +798,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                               break;
                           }
                         },
-                        child: _buildAccountItem(context, coinVo, hasPrice: hasPrice));
+                        child: _buildAccountItem(context, coinVo, hasPrice: hasPrice, isLastIndex: activatedWalletVo.coins.length == (index+1)));
                   }, childCount: activatedWalletVo.coins.length)),
                 ],
               ),

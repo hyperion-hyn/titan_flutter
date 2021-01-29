@@ -341,10 +341,11 @@ Widget stakeHeaderInfo(
                 ),
                 Spacer(),
                 Container(
-                    padding: EdgeInsets.only(left: 6.0, right: 6),
-                    color: HexColor("#e3fafb"),
+                    padding:
+                    EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    color: HexColor("#FFFCE4"),
                     child: Text("${getAtlasNodeType(atlasInfoEntity.type)}",
-                        style: TextStyles.textC333S12)),
+                        style: TextStyles.textC333S10)),
               ],
             )
           ],

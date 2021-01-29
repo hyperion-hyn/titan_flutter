@@ -525,18 +525,22 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
 
   @override
   Future<dynamic> action(String password) async {
+    LogUtil.printMessage("[Confirm] this.amount:${this.amount}");
+
     try {
       var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
       var rawTx = await HYNApi.transMicroMap3Node(this.amount, password, this.map3NodeAddress, wallet);
+      LogUtil.printMessage("[Confirm] rawTx:${rawTx}");
 
       this.entity.rawTx = rawTx;
       TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
       LogUtil.printMessage("[Confirm] txHashEntity:${txHashEntity.txHash}");
 
       return [amount, pendingAmount];
-    } catch (e) {
+    } catch (e, stack) {
       LogUtil.printMessage(e);
       LogUtil.toastException(e);
+      print(stack);
       ///  "code":-10000,"msg":"Unknown error","data":null,"subMsg":"-32000 | delegation amount too small"}
     }
 

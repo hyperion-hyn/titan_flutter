@@ -1110,6 +1110,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
           return true;
         } catch (e) {
           LogUtil.toastException(e);
+          return false;
         }
         return false;
       },

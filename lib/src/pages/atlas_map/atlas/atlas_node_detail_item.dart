@@ -101,13 +101,13 @@ class AtlasNodeDetailItem extends StatelessWidget {
                           height: 8,
                         ),
                         Container(
-                          color: HexColor("#1FB9C7").withOpacity(0.08),
+                          color: HexColor("#FFFCE4"),
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           child: Text('${getAtlasNodeType(_atlasInfo.type)}',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: HexColor("#5C4304"),
+                                color: HexColor("#333333"),
                               )),
                         ),
                       ],
@@ -194,6 +194,22 @@ class AtlasNodeDetailItem extends StatelessWidget {
                 Row(children: [
                   Spacer(),
                   Container(
+                    width: 8,
+                    height: 8,
+                    margin: EdgeInsets.symmetric(
+                      vertical: 0.0,
+                      horizontal: 8.0,
+                    ),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context).primaryColor,
+                      border: Border.all(
+                        color: HexColor("#FAF8EA"),
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                  /*Container(
                     margin: EdgeInsets.symmetric(
                       vertical: 0.0,
                       horizontal: 8.0,
@@ -201,12 +217,13 @@ class AtlasNodeDetailItem extends StatelessWidget {
                     width: 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: HexColor('#FF00E4A1'),
+                      // color: HexColor('#FF00E4A1'),
+                      color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(
                         16.0,
                       ),
                     ),
-                  ),
+                  ),*/
                 ]),
               ],
             ),

@@ -283,7 +283,7 @@ class HYNApi {
     var payload = entity.payload;
     print(payload.toJson());
 
-    var amount = ConvertTokenUnit.decimalToWei(Decimal.parse(payload.staking));
+    var amount = ConvertTokenUnit.decimalToWeiNew(Decimal.parse(payload.staking));
     var feeRate = ConvertTokenUnit.strToBigInt(entity.payload.feeRate) / BigInt.parse('100');
     var message = CreateMap3NodeMessage(
       amount: amount,
@@ -358,12 +358,19 @@ class HYNApi {
     String map3NodeAddress,
     localWallet.Wallet wallet,
   ) async {
-    var amount = ConvertTokenUnit.decimalToWei(Decimal.parse(staking));
+
+    var stakingDecimalValue = Decimal.tryParse(staking)??Decimal.zero;
+    print("[hyn_api] stakingDecimalValue:${stakingDecimalValue.runtimeType}");
+
+    var amount = ConvertTokenUnit.decimalToWeiNew(stakingDecimalValue);
+    print("[hyn_api] amount:${amount}");
+
     var message = MicroDelegateMessage(
       amount: amount,
       map3NodeAddress: map3NodeAddress,
       delegatorAddress: wallet.getAtlasAccount().address,
     );
+
     print(message);
 
     return await wallet.signTransaction(CoinType.HYN_ATLAS,
@@ -376,7 +383,7 @@ class HYNApi {
     String map3NodeAddress,
     localWallet.Wallet wallet,
   ) async {
-    var amount = ConvertTokenUnit.decimalToWei(Decimal.parse(staking));
+    var amount = ConvertTokenUnit.decimalToWeiNew(Decimal.parse(staking));
     var message = UnMicroDelegateMessage(
       amount: amount,
       map3NodeAddress: map3NodeAddress,
