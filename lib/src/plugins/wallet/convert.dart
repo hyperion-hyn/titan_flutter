@@ -9,7 +9,7 @@ class ConvertTokenUnit {
   }
 
   static BigInt decimalToWei(Decimal num, [int decimals = 18]) {
-    var dstr = FormatUtil.truncateDecimalNumNew(num * Decimal.fromInt(10).pow(decimals), 0);
+    var dstr = FormatUtil.truncateDecimalNum(num * Decimal.fromInt(10).pow(decimals), 0);
     return BigInt.tryParse(dstr) ?? BigInt.zero;
   }
 
