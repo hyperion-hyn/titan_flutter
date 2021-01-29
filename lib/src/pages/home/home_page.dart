@@ -245,7 +245,7 @@ class HomePageState extends BaseState<HomePage> {
   Widget buildMainSheetPanel(context, boxConstraints) {
     double maxHeight = boxConstraints.biggest.height;
     double anchorSize = 0.5;
-    double minChildSize = 88.0 / maxHeight;
+    double minChildSize = 80.0 / maxHeight;
     double initSize = widget.homePageFirst ? 0.5 : minChildSize;
     EdgeInsets mediaPadding = MediaQuery.of(context).padding;
     double maxChildSize = (maxHeight - mediaPadding.top) / maxHeight;

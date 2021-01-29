@@ -315,7 +315,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
 
               var shouldShow = (notification.extent <= notification.anchorExtent) ?? false;
               SchedulerBinding.instance.addPostFrameCallback((_) {
-                (_bottomBarKey.currentState as BottomFabsWidgetState).setVisible(shouldShow);
+                (_bottomBarKey.currentState as BottomFabsWidgetState)?.setVisible(shouldShow);
               });
 
               return true;

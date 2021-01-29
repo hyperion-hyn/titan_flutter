@@ -585,125 +585,135 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
           : '${symbolQuote?.legal?.sign ?? ''} *****';
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 22.0, right: 22, top: 16, bottom: 16),
-      child: Column(
-        children: [
-          Row(
-            children: <Widget>[
-              Container(
-                alignment: Alignment.center,
-                width: 48,
-                height: 48,
-                child: ImageUtil.getCoinImage(coin.logo),
-              ),
-              SizedBox(
-                width: 12,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          symbol,
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 22.0, right: 22, top: 12, bottom: 12),
+          child: Column(
+            children: [
+              Row(
+                children: <Widget>[
+                  Container(
+                    alignment: Alignment.center,
+                    width: 48,
+                    height: 48,
+                    child: ImageUtil.getCoinImage(coin.logo),
+                  ),
+                  SizedBox(
+                    width: 12,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              symbol,
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Text(
+                              subSymbol,
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ],
                         ),
                         SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          subSymbol,
-                          style: TextStyle(fontSize: 12),
+                          height: 4,
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 4,
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Text(
-                        _isShowBalances
-                            ? "${FormatUtil.coinBalanceHumanReadFormat(coin)}"
-                            : '*****',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(color: Color(0xFF252525), fontSize: 16),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Text(
-                          balancePrice,
-                          style: TextStyles.textC9b9b9bS12,
-                        ),
-                      ),
-                    ],
                   ),
-                ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            _isShowBalances
+                                ? "${FormatUtil.coinBalanceHumanReadFormat(coin)}"
+                                : '*****',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(color: Color(0xFF252525), fontSize: 16),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Text(
+                              balancePrice,
+                              style: TextStyles.textC9b9b9bS12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Spacer(),
+                  if (coin.refreshStatus == Status.failed)
+                    InkWell(
+                      onTap: () {
+                        BlocProvider.of<WalletCmpBloc>(context)
+                            .add(UpdateActivatedWalletBalanceEvent(symbol: symbol));
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "加载失败",
+                            style: TextStyle(color: HexColor("#FF1A1A"), fontSize: 12),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3.0),
+                            child: Icon(
+                              Icons.refresh,
+                              size: 16,
+                              color: HexColor("#AAAAAA"),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  if (coin.refreshStatus == Status.loading && !_isRefreshBalances)
+                    SizedBox(
+                      height: 19,
+                      width: 19,
+                      child: CircularProgressIndicator(
+                        backgroundColor: Colors.transparent,
+                        valueColor: new AlwaysStoppedAnimation<Color>(DefaultColors.colore7bb00),
+                        strokeWidth: 1,
+                      ),
+                    )
+                ],
+              ),
+
             ],
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Spacer(),
-              if (coin.refreshStatus == Status.failed)
-                InkWell(
-                  onTap: () {
-                    BlocProvider.of<WalletCmpBloc>(context)
-                        .add(UpdateActivatedWalletBalanceEvent(symbol: symbol));
-                  },
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "加载失败",
-                        style: TextStyle(color: HexColor("#FF1A1A"), fontSize: 12),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 3.0),
-                        child: Icon(
-                          Icons.refresh,
-                          size: 16,
-                          color: HexColor("#AAAAAA"),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              if (coin.refreshStatus == Status.loading && !_isRefreshBalances)
-                SizedBox(
-                  height: 19,
-                  width: 19,
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.transparent,
-                    valueColor: new AlwaysStoppedAnimation<Color>(DefaultColors.colore7bb00),
-                    strokeWidth: 1,
-                  ),
-                )
-            ],
-          )
-        ],
-      ),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 16,),
+          height: 0.5,
+          color: HexColor('#F2F2F2'),
+        )
+      ],
     );
   }
 

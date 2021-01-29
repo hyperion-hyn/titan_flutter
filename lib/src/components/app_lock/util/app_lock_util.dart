@@ -25,7 +25,10 @@ class AppLockUtil {
     var jsonStr = await AppCache.secureGetValue(
       SecurePrefsKey.APP_LOCK_CONFIG,
     );
-    var config = AppLockConfig.fromJson(json.decode(jsonStr??''));
+    var config;
+    if (jsonStr != null) {
+      config = AppLockConfig.fromJson(json.decode(jsonStr));
+    }
     if (config != null) {
       return config.walletLock.isEnabled;
     } else {

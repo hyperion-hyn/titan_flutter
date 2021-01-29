@@ -837,8 +837,8 @@ class HomePanelState extends State<HomePanel> {
 
   Widget _category() {
     return Container(
-      padding: const EdgeInsets.only(top: 3),
-      height: 55,
+      padding: const EdgeInsets.only(top: 4, left: 12, right: 12,),
+      height: 46,
       //color: Colors.red,
       child: ListView.builder(
         itemBuilder: (context, index) {
@@ -856,16 +856,16 @@ class HomePanelState extends State<HomePanel> {
               }
             },
             child: Padding(
-              padding: const EdgeInsets.all(14.0),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8,),
               child: Container(
-                height: 20,
+                // height: 20,
                 alignment: Alignment.center,
-                padding: const EdgeInsets.fromLTRB(14, 0, 14, 2),
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 2),
                 decoration: BoxDecoration(
                   border: Border.all(color: HexColor("#dedede")),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(model.title, style: TextStyle(fontSize: 15, color: HexColor("#999999"))),
+                child: Text(model.title, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
               ),
             ),
           );

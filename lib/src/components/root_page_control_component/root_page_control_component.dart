@@ -69,7 +69,8 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
     }
 
     ///show app-lock if enabled
-    if (await AppLockUtil.checkEnable()) {
+    bool enable = await AppLockUtil?.checkEnable()??false;
+    if (enable) {
       Application.router.navigateTo(Keys.rootKey.currentContext, Routes.app_lock);
       BlocProvider.of<AppLockBloc>(Keys.rootKey.currentContext).add(LockAppEvent());
     }
