@@ -124,6 +124,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   }
 
   _showBackupDialog() async {
+    if(context == null){
+      return;
+    }
     var activatedWalletVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
