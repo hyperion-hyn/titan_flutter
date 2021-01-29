@@ -96,7 +96,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   String get _gasPriceEstimateStr {
     var gasPriceEstimateStr = '';
     var quotePrice = activatedQuoteSign?.price ?? 0;
-    var quoteSign = activatedQuoteSign?.legal?.legal;
+    var quoteSign = activatedQuoteSign?.legal?.sign;
 
     // BTC
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
@@ -197,7 +197,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Widget _totalWidget() {
-    var quoteSign = activatedQuoteSign?.legal?.legal;
+    var quoteSign = activatedQuoteSign?.legal?.sign;
     var quotePrice = activatedQuoteSign?.price ?? 0;
 
     return Row(

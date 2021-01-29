@@ -167,12 +167,14 @@ class SupportedTheme {
     List<Color> btnColors;
     for (int i = 0; i < 4; i++) {
       switch (i) {
+
         case 0:
           themeName = '默认';
-          themeData = appThemeDefault;
-          color = Colors.blue;
-          btnColors = <Color>[Color(0xff96CBFF), Color(0xff3B8BFF)];
+          themeData = appThemeDeepYellow;
+          color = Colors.yellow;
+          btnColors = <Color>[ Color(0xfff7d33d),Color(0xffedc313),];
           break;
+
 
         case 1:
           themeName = '深蓝';
@@ -189,10 +191,10 @@ class SupportedTheme {
           break;
 
         case 3:
-          themeName = '黄色';
-          themeData = appThemeDeepYellow;
-          color = Colors.yellow;
-          btnColors = <Color>[ Color(0xfff7d33d),Color(0xffedc313),];
+          themeName = '蓝色';
+          themeData = appThemeDefault;
+          color = Colors.blue;
+          btnColors = <Color>[Color(0xff96CBFF), Color(0xff3B8BFF)];
           break;
       }
       var model = ThemeModel(

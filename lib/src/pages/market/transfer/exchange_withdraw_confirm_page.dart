@@ -69,7 +69,7 @@ class _ExchangeWithdrawConfirmPageState extends BaseState<ExchangeWithdrawConfir
   }
 
   String get quoteSign {
-    return WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol)?.legal?.legal ??
+    return WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol)?.legal?.sign ??
         '';
   }
 
