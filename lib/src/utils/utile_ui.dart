@@ -348,6 +348,7 @@ class UiUtil {
           borderRadius:
               BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
         ),
+        clipBehavior: Clip.antiAlias,
         builder: (BuildContext context) {
           return Container(
             height: dialogHeight,
@@ -356,7 +357,7 @@ class UiUtil {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    if (customWidget != null) customWidget,
+                    if (customWidget != null) Expanded(child: customWidget),
                     if (imagePath != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 24.0),

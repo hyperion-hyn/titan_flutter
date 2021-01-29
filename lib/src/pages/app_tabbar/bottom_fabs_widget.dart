@@ -9,6 +9,7 @@ import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'burning_dialog.dart';
 
 class BottomFabsWidget extends StatefulWidget {
@@ -43,100 +44,77 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
     }
   }
 
-  void _showFireModalBottomSheet(context) {
-    showModalBottomSheet(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))),
-        context: context,
-        builder: (ctx) {
-          return Container(
-//            decoration: BoxDecoration(
-//            borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),),
-            margin: EdgeInsets.only(top: 12, bottom: 31),
-            child: new Wrap(
-              children: <Widget>[
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return BurningDialog();
-                        });
-                    _clean(context);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Row(children: <Widget>[
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Image.asset(
-                        'res/drawable/ic_home_clear.png',
-                        width: 15,
-                      ),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      Text(
-                        S.of(context).Clean,
-                        style: TextStyle(fontSize: 15, color: HexColor("#333333")),
-                      ),
-                    ]),
+  void _showFireModalBottomSheet(BuildContext context) {
+    UiUtil.showBottomDialogView(
+      context,
+      dialogHeight: 110,
+      isScrollControlled: true,
+      showCloseBtn: false,
+      customWidget: Container(
+        margin: EdgeInsets.only(top: 12, bottom: 31),
+        child: new Wrap(
+          children: <Widget>[
+            InkWell(
+              onTap: () {
+                Navigator.pop(context);
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return BurningDialog();
+                    });
+                _clean(context);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(children: <Widget>[
+                  SizedBox(
+                    width: 20,
                   ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(ctx);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-//                    padding: const EdgeInsets.only(top:5,bottom: 10,left: 10,right: 10),
-                    child: Row(
-                      children: <Widget>[
-                        SizedBox(
-                          width: 21,
-                        ),
-                        Image.asset(
-                          'res/drawable/ic_close.png',
-                          width: 12,
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Text(
-                          S.of(context).cancel,
-                          style: TextStyle(fontSize: 15, color: HexColor("#333333")),
-                        ),
-                      ],
-                    ),
+                  Image.asset(
+                    'res/drawable/ic_home_clear.png',
+                    width: 15,
                   ),
-                )
-                /*new ListTile(
-                    leading: new Icon(Icons.vertical_align_bottom),
-                    title: new Text(S.of(context).Clean,
-                        style: TextStyle(color: Color(0xffac2229), fontWeight: FontWeight.w500)),
-                    onTap: () {
-                      Navigator.pop(ctx);
-//                      Navigator.push(context, MaterialPageRoute(builder: (context) => BurningDialog()));
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return BurningDialog();
-                          });
-                      _clean(context);
-                    }),
-                new ListTile(
-                  leading: new Icon(Icons.close),
-                  title: new Text(S.of(context).cancel),
-                  onTap: () => Navigator.pop(ctx),
-                ),*/
-              ],
+                  SizedBox(
+                    width: 12,
+                  ),
+                  Text(
+                    S.of(context).Clean,
+                    style: TextStyle(fontSize: 15, color: HexColor("#333333")),
+                  ),
+                ]),
+              ),
             ),
-          );
-        });
+            InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+//                    padding: const EdgeInsets.only(top:5,bottom: 10,left: 10,right: 10),
+                child: Row(
+                  children: <Widget>[
+                    SizedBox(
+                      width: 21,
+                    ),
+                    Image.asset(
+                      'res/drawable/ic_close.png',
+                      width: 12,
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Text(
+                      S.of(context).cancel,
+                      style: TextStyle(fontSize: 15, color: HexColor("#333333")),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   @override

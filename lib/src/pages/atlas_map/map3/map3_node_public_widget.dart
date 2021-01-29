@@ -107,7 +107,7 @@ Widget iconWidget(
     return Container(
       padding: const EdgeInsets.all(0.5),
       decoration: BoxDecoration(
-        border: Border.all(width: 0.5,color: DefaultColors.colordedede),
+        border: Border.all(width: 0.5, color: DefaultColors.colordedede),
         borderRadius: BorderRadius.all(
           Radius.circular(isCircle ? size : 4.0),
         ), //设置四周圆角 角度
@@ -1069,94 +1069,86 @@ Widget _profitListWidget(List<Map> list, {double horizontal = 10, ProfitBuildFun
 typedef EditIconCallback = void Function(String path);
 
 Future editIconSheet(BuildContext context, EditIconCallback callback) async {
-  showModalBottomSheet(
-    context: context,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(20.0),
-        topRight: Radius.circular(20.0),
-      ),
-    ),
-    builder: (BuildContext dialogContext) {
-      return Container(
-        height: 199,
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 54,
-              child: ListTile(
-                title: Text(
-                  S.of(context).take_picture,
-                  textAlign: TextAlign.center,
-                  style: TextStyles.textC333S18,
-                ),
-                onTap: () async {
-                  Future.delayed(Duration(milliseconds: 500), () {
-                    Navigator.pop(dialogContext);
-                  });
-
-                  ///Ignore App Lock
-                  AppLockUtil.ignoreAppLock(context, true);
-
-                  var tempListImagePaths = await ImagePickers.openCamera(
-                    compressSize: 500,
-                  );
-                  if (tempListImagePaths != null) {
-                    callback(tempListImagePaths.path);
-                  }
-                },
-              ),
+  UiUtil.showBottomDialogView(
+    context,
+    dialogHeight: 200,
+    isScrollControlled: true,
+    showCloseBtn: false,
+    customWidget: Column(
+      children: <Widget>[
+        SizedBox(
+          height: 54,
+          child: ListTile(
+            title: Text(
+              S.of(context).take_picture,
+              textAlign: TextAlign.center,
+              style: TextStyles.textC333S18,
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10),
-              child: Divider(height: 1, color: DefaultColors.colorf2f2f2),
-            ),
-            SizedBox(
-              height: 54,
-              child: ListTile(
-                title: Text(S.of(context).import_from_album,
-                    textAlign: TextAlign.center, style: TextStyles.textC333S18),
-                onTap: () async {
-                  Future.delayed(Duration(milliseconds: 500), () {
-                    Navigator.pop(dialogContext);
-                  });
-
-                  ///Ignore AppLock
-                  await AppLockUtil.ignoreAppLock(context, true);
-
-                  var tempListImagePaths = await ImagePickers.pickerPaths(
-                    galleryMode: GalleryMode.image,
-                    selectCount: 1,
-                    showCamera: true,
-                    cropConfig: null,
-                    compressSize: 500,
-                    uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
-                  );
-                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
-                    callback(tempListImagePaths[0].path);
-                  }
-                },
-              ),
-            ),
-            Container(
-              height: 10,
-              color: DefaultColors.colorf4f4f4,
-            ),
-            ListTile(
-              title: Text(S.of(context).cancel,
-                  textAlign: TextAlign.center, style: TextStyles.textC333S18),
-              onTap: () {
+            onTap: () async {
+              Future.delayed(Duration(milliseconds: 500), () {
                 Navigator.pop(context);
-              },
-            ),
-            Expanded(
-                child: Container(
-              color: DefaultColors.colorf4f4f4,
-            )),
-          ],
+              });
+
+              ///Ignore App Lock
+              AppLockUtil.ignoreAppLock(context, true);
+
+              var tempListImagePaths = await ImagePickers.openCamera(
+                compressSize: 500,
+              );
+              if (tempListImagePaths != null) {
+                callback(tempListImagePaths.path);
+              }
+            },
+          ),
         ),
-      );
-    },
+        Padding(
+          padding: const EdgeInsets.only(left: 10.0, right: 10),
+          child: Divider(height: 1, color: DefaultColors.colorf2f2f2),
+        ),
+        SizedBox(
+          height: 54,
+          child: ListTile(
+            title: Text(S.of(context).import_from_album,
+                textAlign: TextAlign.center, style: TextStyles.textC333S18),
+            onTap: () async {
+              Future.delayed(Duration(milliseconds: 500), () {
+                Navigator.pop(context);
+              });
+
+              ///Ignore AppLock
+              await AppLockUtil.ignoreAppLock(context, true);
+
+              var tempListImagePaths = await ImagePickers.pickerPaths(
+                galleryMode: GalleryMode.image,
+                selectCount: 1,
+                showCamera: true,
+                cropConfig: null,
+                compressSize: 500,
+                uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
+              );
+              if (tempListImagePaths != null && tempListImagePaths.length == 1) {
+                callback(tempListImagePaths[0].path);
+              }
+            },
+          ),
+        ),
+        Container(
+          height: 10,
+          color: DefaultColors.colorf4f4f4,
+        ),
+        ListTile(
+          title: Text(S.of(context).cancel,
+              textAlign: TextAlign.center, style: TextStyles.textC333S18),
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
+        Expanded(
+            child: Container(
+          color: DefaultColors.colorf4f4f4,
+        )),
+      ],
+    ),
   );
 }
 

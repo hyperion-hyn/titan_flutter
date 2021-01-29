@@ -590,23 +590,24 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
     if (await _checkShowConfirmPolicy()) {
       _showConfirmDexPolicy();
     } else {
-      UiUtil.showBottomDialogView(context,
-          dialogHeight: MediaQuery.of(context).size.height - 80,
-          isScrollControlled: true,
-          customWidget: Expanded(
-              child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: Center(
-                  child: Text('选择币对', style: TextStyles.textC333S14bold),
-                ),
+      UiUtil.showBottomDialogView(
+        context,
+        dialogHeight: MediaQuery.of(context).size.height - 80,
+        isScrollControlled: true,
+        customWidget: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Center(
+                child: Text('选择币对', style: TextStyles.textC333S14bold),
               ),
-              Expanded(
-                child: ExchangeQuoteListPage(),
-              ),
-            ],
-          )));
+            ),
+            Expanded(
+              child: ExchangeQuoteListPage(),
+            ),
+          ],
+        ),
+      );
     }
   }
 

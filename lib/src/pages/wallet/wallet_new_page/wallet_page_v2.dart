@@ -124,7 +124,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   }
 
   _showBackupDialog() async {
-    if(context == null){
+    if (context == null) {
       return;
     }
     var activatedWalletVo = WalletInheritedModel.of(
@@ -334,7 +334,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   _headerWidget(WalletViewVo activatedWalletVo) {
     return SliverToBoxAdapter(
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical:20,horizontal:16),
+        margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           gradient: LinearGradient(
@@ -393,14 +393,16 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                 ],
               ),
             ),*/
-            SizedBox(height: 15,),
+            SizedBox(
+              height: 15,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 16, right: 16),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                      "${activatedWalletVo?.wallet?.keystore?.name ?? ""} 总资产",
+                    "${activatedWalletVo?.wallet?.keystore?.name ?? ""} 总资产",
                     style: TextStyle(
                       fontSize: 14,
                       color: DefaultColors.color333,
@@ -413,7 +415,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                         });
                       },
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0, top: 5, right:10,bottom: 5),
+                        padding: const EdgeInsets.only(left: 10.0, top: 5, right: 10, bottom: 5),
                         child: Image.asset(
                           _isShowBalances
                               ? "res/drawable/ic_input_psw_show.png"
@@ -425,18 +427,16 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16,top: 2),
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 2),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom:3.0),
-                    child: Text('${activeQuotesSign?.sign ?? ''}',
+                    padding: const EdgeInsets.only(bottom: 3.0),
+                    child: Text(
+                      '${activeQuotesSign?.sign ?? ''}',
                       style: TextStyle(
-                        fontSize: 12,
-                        color: DefaultColors.color333,
-                        fontWeight: FontWeight.bold
-                      ),
+                          fontSize: 12, color: DefaultColors.color333, fontWeight: FontWeight.bold),
                     ),
                   ),
                   Text(
@@ -444,22 +444,22 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                         ? ' ${FormatUtil.formatPrice(activatedWalletVo.balance)}'
                         : ' *******',
                     style: TextStyle(
-                      fontSize: 22,
-                      color: DefaultColors.color333,
-                      fontWeight: FontWeight.bold
-                    ),
+                        fontSize: 22, color: DefaultColors.color333, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 24,),
+            SizedBox(
+              height: 24,
+            ),
             Stack(
               alignment: Alignment.center,
               children: [
                 Container(
                   height: 40,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8),bottomRight: Radius.circular(8)),
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8)),
                     color: HexColor("#8000000"),
                   ),
                 ),
@@ -472,14 +472,17 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                           _showActionDialog(WalletPageJump.PAGE_SEND, activatedWalletVo);
                         },
                         child: Padding(
-                          padding: const EdgeInsets.only(left:27,bottom:11,top:12.0,right: 11),
+                          padding:
+                              const EdgeInsets.only(left: 27, bottom: 11, top: 12.0, right: 11),
                           child: Row(
                             children: [
                               Image.asset(
                                 "res/drawable/ic_wallet_account_list_send_v3.png",
                                 width: 16,
                               ),
-                              SizedBox(width: 7,),
+                              SizedBox(
+                                width: 7,
+                              ),
                               Text(
                                 "发送",
                                 style: TextStyles.textC333S12,
@@ -500,7 +503,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                               "res/drawable/ic_wallet_account_list_receiver_v3.png",
                               width: 18,
                             ),
-                            SizedBox(width: 7,),
+                            SizedBox(
+                              width: 7,
+                            ),
                             Text(
                               "接收",
                               style: TextStyles.textC333S12,
@@ -515,11 +520,11 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                   Align(
                     alignment: Alignment.centerRight,
                     child: InkWell(
-                      onTap: (){
+                      onTap: () {
                         listLoadingData();
                       },
                       child: Padding(
-                        padding: const EdgeInsets.only(top:3.0,bottom: 3,right: 10),
+                        padding: const EdgeInsets.only(top: 3.0, bottom: 3, right: 10),
                         child: SizedBox(
                           height: 20,
                           width: 20,
@@ -552,7 +557,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
             Application.router
                 .navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
           },
-          child: _buildAccountItem(context, coinVo, hasPrice: hasPrice, isLastIndex: activatedWalletVo.coins.length == (index+1)));
+          child: _buildAccountItem(context, coinVo,
+              hasPrice: hasPrice, isLastIndex: activatedWalletVo.coins.length == (index + 1)));
     }, childCount: activatedWalletVo.coins.length));
   }
 
@@ -569,7 +575,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     );
   }
 
-  Widget _buildAccountItem(BuildContext context, CoinViewVo coin, {bool hasPrice = true, bool isLastIndex=false}) {
+  Widget _buildAccountItem(BuildContext context, CoinViewVo coin,
+      {bool hasPrice = true, bool isLastIndex = false}) {
     var symbol = coin.symbol;
     var symbolQuote = WalletInheritedModel.of(context).tokenLegalPrice(symbol);
     var subSymbol = "";
@@ -621,7 +628,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                             Text(
                               symbol,
                               style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF252525)),
                             ),
                             SizedBox(
                               width: 4,
@@ -718,15 +727,18 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                     )
                 ],
               ),
-
             ],
           ),
         ),
-        if (!isLastIndex)Container(
-          margin: EdgeInsets.only(left: 24, right: 32,),
-          height: 0.5,
-          color: HexColor('#F2F2F2'),
-        )
+        if (!isLastIndex)
+          Container(
+            margin: EdgeInsets.only(
+              left: 24,
+              right: 32,
+            ),
+            height: 0.5,
+            color: HexColor('#F2F2F2'),
+          )
       ],
     );
   }
@@ -744,70 +756,73 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         titleStr = "交易";
         break;
     }
-    UiUtil.showBottomDialogView(context,
-        dialogHeight: MediaQuery.of(context).size.height - 90,
-        isScrollControlled: true,
-        customWidget: Expanded(
-            child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(14.0),
-              child: Center(child: Text(titleStr, style: TextStyles.textC999S14medium)),
-            ),
-            Expanded(
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                    var coinVo = activatedWalletVo.coins[index];
-                    var hasPrice = true;
-                    return InkWell(
-                        onTap: () {
-                          var coinVo = activatedWalletVo.coins[index];
-                          switch (jumpType) {
-                            case WalletPageJump.PAGE_SEND:
-                              Application.router.navigateTo(
-                                  context,
-                                  Routes.wallet_account_send_transaction +
-                                      '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
-                              break;
-                            case WalletPageJump.PAGE_RECEIVER:
+    UiUtil.showBottomDialogView(
+      context,
+      dialogHeight: MediaQuery.of(context).size.height - 90,
+      isScrollControlled: true,
+      customWidget: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: Center(child: Text(titleStr, style: TextStyles.textC999S14medium)),
+          ),
+          Expanded(
+            child: CustomScrollView(
+              slivers: <Widget>[
+                SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                  var coinVo = activatedWalletVo.coins[index];
+                  var hasPrice = true;
+                  return InkWell(
+                      onTap: () {
+                        var coinVo = activatedWalletVo.coins[index];
+                        switch (jumpType) {
+                          case WalletPageJump.PAGE_SEND:
+                            Application.router.navigateTo(
+                                context,
+                                Routes.wallet_account_send_transaction +
+                                    '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
+                            break;
+                          case WalletPageJump.PAGE_RECEIVER:
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => WalletReceivePage(coinVo)));
+                            break;
+                          case WalletPageJump.PAGE_EXCHANGE:
+                            if ((coinVo.symbol == DefaultTokenDefine.HYN_Atlas.symbol) ||
+                                (coinVo.symbol == DefaultTokenDefine.HYN_RP_HRC30.symbol)) {
+                              var base = 'USDT';
+                              var quote = 'HYN';
+                              if (coinVo.symbol == DefaultTokenDefine.HYN_RP_HRC30.symbol) {
+                                base = 'HYN';
+                                quote = 'RP';
+                              }
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => WalletReceivePage(coinVo)));
-                              break;
-                            case WalletPageJump.PAGE_EXCHANGE:
-                              if ((coinVo.symbol == DefaultTokenDefine.HYN_Atlas.symbol) ||
-                                  (coinVo.symbol == DefaultTokenDefine.HYN_RP_HRC30.symbol)) {
-                                var base = 'USDT';
-                                var quote = 'HYN';
-                                if (coinVo.symbol == DefaultTokenDefine.HYN_RP_HRC30.symbol) {
-                                  base = 'HYN';
-                                  quote = 'RP';
-                                }
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ExchangeDetailPage(
-                                              base: base,
-                                              quote: quote,
-                                              exchangeType: ExchangeType.BUY,
-                                            )));
-                              } else {
-                                Fluttertoast.showToast(
-                                    msg: S.of(context).exchange_is_not_yet_open(coinVo.symbol));
-                              }
-                              break;
-                          }
-                        },
-                        child: _buildAccountItem(context, coinVo, hasPrice: hasPrice, isLastIndex: activatedWalletVo.coins.length == (index+1)));
-                  }, childCount: activatedWalletVo.coins.length)),
-                ],
-              ),
+                                      builder: (context) => ExchangeDetailPage(
+                                            base: base,
+                                            quote: quote,
+                                            exchangeType: ExchangeType.BUY,
+                                          )));
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg: S.of(context).exchange_is_not_yet_open(coinVo.symbol));
+                            }
+                            break;
+                        }
+                      },
+                      child: _buildAccountItem(context, coinVo,
+                          hasPrice: hasPrice,
+                          isLastIndex: activatedWalletVo.coins.length == (index + 1)));
+                }, childCount: activatedWalletVo.coins.length)),
+              ],
             ),
-          ],
-        )));
+          ),
+        ],
+      ),
+    );
   }
 
   Future listLoadingData() async {

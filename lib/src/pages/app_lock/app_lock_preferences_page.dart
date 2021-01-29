@@ -236,18 +236,13 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
     if (value) {
       var notBackUpWalletList = await WalletUtil.getNotBackUpWalletList();
       if (notBackUpWalletList.isNotEmpty) {
-        showModalBottomSheet(
-            context: context,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-              ),
-            ),
-            enableDrag: false,
-            builder: (BuildContext context) {
-              return AppLockWalletNotBackUpDialog(notBackUpWalletList);
-            });
+        UiUtil.showBottomDialogView(
+          context,
+          dialogHeight: MediaQuery.of(context).size.height - 90,
+          isScrollControlled: true,
+          showCloseBtn: false,
+          customWidget: AppLockWalletNotBackUpDialog(notBackUpWalletList),
+        );
       } else {
         _showSetPwdDialog(() {
           BlocProvider.of<AppLockBloc>(context).add(
@@ -318,26 +313,12 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
   }
 
   _showSetPwdDialog(Function onPwdSet) {
-    var height = MediaQuery.of(context).size.height - 80;
-    showDialog(
-      context: context,
-      builder: (_) => Material(
-        type: MaterialType.transparency,
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            height: height,
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-              ),
-              child: AppLockSetPwdPage(
-                onPwdSet: onPwdSet,
-              ),
-            ),
-          ),
-        ),
+    UiUtil.showBottomDialogView(
+      context,
+      dialogHeight: MediaQuery.of(context).size.height - 90,
+      isScrollControlled: true,
+      customWidget: AppLockSetPwdPage(
+        onPwdSet: onPwdSet,
       ),
     );
   }

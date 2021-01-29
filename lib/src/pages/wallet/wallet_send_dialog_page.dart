@@ -60,150 +60,124 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
     return Material(
       color: Colors.transparent,
       child: SafeArea(
-        child: Container(
-          margin: const EdgeInsets.only(top: 100),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
-            ),
-          ),
-          child: Stack(
-            children: [
-              Column(
-                children: <Widget>[
-                  Expanded(
-                    child: SingleChildScrollView(
-                      controller: _scrollController,
-                      child: Column(
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  children: [
+                    // SizedBox(height: 200,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 14,
+                          ),
+                          child: Text(
+                            widget.entity.valueDirection == '-' ? '转账确认' : '提取确认',
+                            style: TextStyle(
+                              color: HexColor('#999999'),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 32,
+                          ),
+                          child: Image.asset(
+                            'res/drawable/wallet_send_dialog.png',
+                            width: 44,
+                            height: 44,
+                            fit: BoxFit.cover,
+                            // color: HexColor('#E7C01A'),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if ((widget.entity?.value ?? 0) > 0)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // SizedBox(height: 200,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 14,
-                                ),
-                                child: Text(
-                                  widget.entity.valueDirection == '-' ? '转账确认' : '提取确认',
-                                  style: TextStyle(
-                                    color: HexColor('#999999'),
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 32,
-                                ),
-                                child: Image.asset(
-                                  'res/drawable/wallet_send_dialog.png',
-                                  width: 44,
-                                  height: 44,
-                                  fit: BoxFit.cover,
-                                  // color: HexColor('#E7C01A'),
-                                ),
-                              ),
-                            ],
-                          ),
-                          if ((widget.entity?.value ?? 0) > 0)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 16,
-                                  ),
-                                  child: Text(
-                                    '${widget.entity?.valueDirection} ${widget.entity?.value ?? '0'} ${widget.entity.valueUnit}',
-                                    style: TextStyle(
-                                      color: HexColor('#333333'),
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 16,
                             ),
-                          if ((widget.entity?.value1 ?? 0) > 0)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 16,
-                                  ),
-                                  child: Text(
-                                    '${widget.entity?.valueDirection} ${widget.entity?.value1 ?? '0'} ${widget.entity.value1Unit}',
-                                    style: TextStyle(
-                                      color: HexColor('#333333'),
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            child: Text(
+                              '${widget.entity?.valueDirection} ${widget.entity?.value ?? '0'} ${widget.entity.valueUnit}',
+                              style: TextStyle(
+                                color: HexColor('#333333'),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                              ),
                             ),
-                          SizedBox(
-                            height: 40,
                           ),
-                          _rowText(
-                            title: '交易信息',
-                            content: widget.entity.title,
-                            subContent: widget.entity.titleDesc,
-                          ),
-                          _rowText(
-                            title: S.of(context).exchange_from,
-                            content: widget.entity.fromName,
-                            subContent: widget.entity.fromAddress,
-                          ),
-                          _rowText(
-                            title: S.of(context).exchange_to,
-                            content: widget.entity.toName,
-                            subContent: widget.entity.toAddress,
-                          ),
-                          widget1,
-                          widget2,
                         ],
                       ),
+                    if ((widget.entity?.value1 ?? 0) > 0)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 16,
+                            ),
+                            child: Text(
+                              '${widget.entity?.valueDirection} ${widget.entity?.value1 ?? '0'} ${widget.entity.value1Unit}',
+                              style: TextStyle(
+                                color: HexColor('#333333'),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    SizedBox(
+                      height: 40,
                     ),
-                  ),
-                  ClickOvalButton(
-                    S.of(context).send,
-                    _sendAction,
-                    btnColor: [HexColor("#E7C01A"), HexColor("#F7D33D")],
-                    fontSize: 16,
-                    width: 260,
-                    height: 42,
-                    isLoading: _isLoading,
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                ],
-              ),
-              IconButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                icon: Image.asset(
-                  'res/drawable/rp_share_close.png',
-                  width: 12,
-                  height: 12,
-                  fit: BoxFit.cover,
-                  // color: HexColor('#FF1F81FF'),
+                    _rowText(
+                      title: '交易信息',
+                      content: widget.entity.title,
+                      subContent: widget.entity.titleDesc,
+                    ),
+                    _rowText(
+                      title: S.of(context).exchange_from,
+                      content: widget.entity.fromName,
+                      subContent: widget.entity.fromAddress,
+                    ),
+                    _rowText(
+                      title: S.of(context).exchange_to,
+                      content: widget.entity.toName,
+                      subContent: widget.entity.toAddress,
+                    ),
+                    widget1,
+                    widget2,
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+            ClickOvalButton(
+              S.of(context).send,
+              _sendAction,
+              btnColor: [HexColor("#E7C01A"), HexColor("#F7D33D")],
+              fontSize: 16,
+              width: 260,
+              height: 42,
+              isLoading: _isLoading,
+            ),
+            SizedBox(
+              height: 40,
+            ),
+          ],
         ),
       ),
     );
@@ -316,15 +290,14 @@ Future<bool> showWalletSendDialog<T>({
   @required BuildContext context,
   @required WalletSendDialogEntity entity,
 }) {
-  return showModalBottomSheet(
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      context: context,
-      builder: (BuildContext context) {
-        return WalletSendDialogPage(
-          entity: entity,
-        );
-      });
+  return UiUtil.showBottomDialogView(
+    context,
+    dialogHeight: MediaQuery.of(context).size.height - 90,
+    isScrollControlled: true,
+    customWidget: WalletSendDialogPage(
+      entity: entity,
+    ),
+  );
 }
 
 typedef WalletSendEntityCallBack = Future<bool> Function(String psw);

@@ -39,56 +39,38 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 24,
-            ),
-            Image.asset(
-              'res/drawable/img_safe_lock_edit.png',
-              width: 80,
-              height: 80,
-            ),
-            Text(
-              '设置应用锁',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 14,
-              ),
-              child: Text(
-                '应用锁密码忘记后只有助记词可恢复钱包身份，请务必确保所有钱包助记词已备份！',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: HexColor('#666666'),
-                ),
-              ),
-            ),
-            _walletList(),
-          ],
+        SizedBox(
+          height: 24,
         ),
-        Positioned(
-          child: InkWell(
-            child: Image.asset(
-              'res/drawable/ic_close.png',
-              width: 16,
-              height: 16,
-            ),
-            onTap: () {
-              Navigator.of(context).pop();
-            },
+        Image.asset(
+          'res/drawable/img_safe_lock_edit.png',
+          width: 80,
+          height: 80,
+        ),
+        Text(
+          '设置应用锁',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
           ),
-          left: 24,
-          top: 24,
-        )
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24.0,
+            vertical: 14,
+          ),
+          child: Text(
+            '应用锁密码忘记后只有助记词可恢复钱包身份，请务必确保所有钱包助记词已备份！',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: HexColor('#666666'),
+            ),
+          ),
+        ),
+        _walletList(),
       ],
     );
   }
