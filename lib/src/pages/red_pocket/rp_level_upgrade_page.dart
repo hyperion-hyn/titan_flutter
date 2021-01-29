@@ -494,6 +494,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
             height: 42,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
+            fontColor: Colors.white,
             btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
             isLoading: _isLoading,
           ),

@@ -74,6 +74,7 @@ class _RpShareSendSuccessLocationState extends State<RpShareSendSuccessLocationP
                   () {
                     _pop(context);
                   },
+                  fontColor: Colors.white,
                   btnColor: [
                     HexColor("#FF0527"),
                     HexColor("#FF4D4D"),

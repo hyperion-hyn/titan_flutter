@@ -454,6 +454,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
           height: 38,
           fontSize: 16,
           fontWeight: FontWeight.normal,
+          fontColor: Colors.white,
           btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
         ),
       ],

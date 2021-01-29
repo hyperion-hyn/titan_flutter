@@ -13,14 +13,13 @@ import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_level_airdrop_info.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_list_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_tab_page.dart';
-import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_select_type_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_airdrop_widget.dart';
@@ -29,7 +28,6 @@ import 'package:titan/src/pages/red_pocket/widget/rp_level_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -295,7 +293,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    iconWalletWidget(activeWallet.wallet, isCircle: true,size: 44),
+                    /*SizedBox(
                       width: 42,
                       height: 42,
                       child: walletHeaderWidget(
@@ -304,7 +303,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         address: walletAddress,
                         isCircle: true,
                       ),
-                    ),
+                    ),*/
                     SizedBox(
                       width: 16.0,
                     ),
@@ -578,6 +577,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     width: 140,
                     height: 32,
                     fontSize: 13,
+                    fontColor: Colors.white,
                     btnColor: [
                       HexColor('#FFFF4D4D'),
                       HexColor('#FFFF0829'),

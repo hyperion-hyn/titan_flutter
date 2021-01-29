@@ -501,6 +501,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
                 height: 34,
                 width: 120,
                 fontSize: 14,
+                fontColor: Colors.white,
                 btnColor: [HexColor('#2D99FF'), HexColor('#107EDC')],
               ),
               SizedBox(
@@ -512,6 +513,7 @@ class _RpLevelRulesState extends BaseState<RpLevelRulesPage> {
                 height: 34,
                 width: 120,
                 fontSize: 14,
+                fontColor: Colors.white,
                 btnColor: [HexColor('#FF0527'), HexColor('#FF4D4D')],
               ),
             ],

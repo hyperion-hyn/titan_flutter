@@ -215,6 +215,7 @@ class _RpFriendInvitePageState extends BaseState<RpFriendInvitePage> {
                                           await _shareQr(context);
                                         });
                                       },
+                                      fontColor: Colors.white,
                                       btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
                                       fontSize: 16,
                                       width: 200,
@@ -378,6 +379,7 @@ void showInviteDialog(BuildContext context, String inviterAddress, String wallet
               LogUtil.toastException(error);
             }
           },
+          fontColor: Colors.white,
           btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
           fontSize: 16,
         )

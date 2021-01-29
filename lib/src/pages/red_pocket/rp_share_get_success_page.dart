@@ -443,6 +443,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
           height: 30,
           fontSize: 12,
           fontWeight: FontWeight.normal,
+          fontColor: Colors.white,
           btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
         ),
       ],

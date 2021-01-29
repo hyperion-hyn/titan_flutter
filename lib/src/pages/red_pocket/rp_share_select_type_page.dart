@@ -100,6 +100,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
           ),
         );
       },
+      fontColor: Colors.white,
       btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
       fontSize: 16,
       width: 260,

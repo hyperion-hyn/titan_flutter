@@ -8,14 +8,12 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/app_lock/app_lock_component.dart';
-import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/updater/bloc/bloc.dart';
 import 'package:titan/src/components/updater/bloc/update_event.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/entity/app_update_info.dart';
-import 'package:titan/src/data/entity/update.dart';
 import 'package:titan/src/pages/app_lock/app_lock_preferences_page.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
@@ -35,9 +33,7 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:titan/src/widget/wallet_widget.dart';
 import '../../global.dart';
-import 'package:characters/characters.dart';
 
 class MyPage extends StatefulWidget {
   @override

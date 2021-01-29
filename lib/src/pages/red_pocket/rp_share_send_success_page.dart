@@ -137,6 +137,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
               await _shareQr(context);
             });
           },
+          fontColor: Colors.white,
           btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
           fontSize: 16,
           width: 260,
