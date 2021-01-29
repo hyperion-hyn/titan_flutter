@@ -179,13 +179,17 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                           maxLength: 8,
                         )));
                 if (text != null && text.isNotEmpty) {
+                  widget.wallet?.keystore?.name = text;
                   var success = await WalletUtil.updateWallet(
                       wallet: widget.wallet, password: password, name: text);
                   if (success == true) {
+                    var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                    if(wallet.getEthAccount().address == widget.wallet.getEthAccount().address){
+                      BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: widget.wallet));
+                    }
                     UiUtil.toast(S.of(context).update_success);
                     postUserSync();
                   }
-                  widget.wallet?.keystore?.name = text;
 
                   setState(() {});
                 }
@@ -338,13 +342,29 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             _optionItem(
               imagePath: "res/drawable/ic_wallet_setting_psw_remind.png",
               title: '密码提示',
-              editHint: widget.wallet?.walletExpandInfoEntity?.pswRemind == null ? "未设置" : "",
-              isCanEdit: true,
-              content: widget.wallet.walletExpandInfoEntity?.pswRemind,
-              editCallback: (text) {
-                widget.wallet.walletExpandInfoEntity.pswRemind = text;
-                BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletExpandEvent(
-                    widget.wallet.getEthAccount().address, widget.wallet.walletExpandInfoEntity));
+              editFunc: () async {
+                var password = await UiUtil.showWalletPasswordDialogV2(context, widget.wallet);
+                if (password == null) {
+                  return;
+                }
+
+                String text = await Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) => OptionEditPage(
+                      title: '密码提示',
+                      content: widget.wallet.walletExpandInfoEntity?.pswRemind,
+                      hint: widget.wallet?.walletExpandInfoEntity?.pswRemind == null ? "未设置" : "",
+                      keyboardType: TextInputType.text,
+                      maxLength: 8,
+                    )));
+                if (text != null && text.isNotEmpty) {
+                  widget.wallet.walletExpandInfoEntity.pswRemind = text;
+                  BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletExpandEvent(
+                  widget.wallet.getEthAccount().address, widget.wallet.walletExpandInfoEntity));
+                  setState(() {
+                  });
+                }
+                return;
+
               },
             ),
           ],

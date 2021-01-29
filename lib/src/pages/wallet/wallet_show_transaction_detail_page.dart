@@ -509,7 +509,6 @@ class WalletShowTransactionDetailPageState
       bool isTime = false,
       bool hasSubTitle = false}) {
     return Container(
-      color: Colors.white,
       child: Column(
         children: <Widget>[
           Padding(
@@ -520,16 +519,16 @@ class WalletShowTransactionDetailPageState
               children: <Widget>[
                 hasCopy
                     ? Expanded(
-                        flex: 2,
-                        child: Text(
-                          accountDetailItemView.leftStr,
-                          style: TextStyles.textC333S13,
-                        ),
-                      )
+                  flex: 2,
+                  child: Text(
+                    accountDetailItemView.leftStr,
+                    style: TextStyles.textC333S13,
+                  ),
+                )
                     : Text(
-                        accountDetailItemView.leftStr,
-                        style: TextStyles.textC333S13,
-                      ),
+                  accountDetailItemView.leftStr,
+                  style: TextStyles.textC333S13,
+                ),
                 if (hasSubTitle)
                   Padding(
                     padding: const EdgeInsets.only(left: 6.0),
@@ -571,13 +570,23 @@ class WalletShowTransactionDetailPageState
                         Row(
                           children: <Widget>[
                             Expanded(
-                              child: Text(
-                                accountDetailItemView.rightStr ?? "",
-                                style: TextStyle(
-                                    color: DefaultColors.color333,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.end,
+                              child: InkWell(
+                                onTap: () {
+                                  if(!hasCopy){
+                                    return;
+                                  }
+                                  Clipboard.setData(ClipboardData(
+                                      text: accountDetailItemView.rightStr));
+                                  UiUtil.toast(S.of(context).copyed);
+                                },
+                                child: Text(
+                                  accountDetailItemView.rightStr ?? "",
+                                  style: TextStyle(
+                                      color: DefaultColors.color333,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.end,
+                                ),
                               ),
                             ),
                             if (hasSubTitle)
@@ -590,7 +599,7 @@ class WalletShowTransactionDetailPageState
                               ),
                           ],
                         ),
-                      if (hasCopy)
+                      /*if (hasCopy)
                         InkWell(
                           onTap: () {
                             Clipboard.setData(ClipboardData(
@@ -607,7 +616,7 @@ class WalletShowTransactionDetailPageState
                               color: Theme.of(context).primaryColor,
                             ),
                           ),
-                        ),
+                        ),*/
                       if (bottomText != null)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
@@ -702,7 +711,7 @@ class WalletShowTransactionDetailPageState
             margin: const EdgeInsets.only(top: 13.0, bottom: 11),
             padding: const EdgeInsets.only(
                 top: 11.0, bottom: 11, left: 15, right: 15),
-            height: 145,
+            height: 96,
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(6)),

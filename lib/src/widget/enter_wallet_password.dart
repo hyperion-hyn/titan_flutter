@@ -100,6 +100,7 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                                   ),
                                 SizedBox(height: 12,),
                                 RoundBorderTextField(
+                                  obscureText: true,
                                   inputFormatters: [
 //                                if (widget.useDigits)
 //                                  LengthLimitingTextInputFormatter(6),
@@ -175,9 +176,9 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                                 )
                               ])),
                     ),
-                    GestureDetector(
+                    InkWell(
                       child: Padding(
-                        padding: const EdgeInsets.all(17.0),
+                        padding: const EdgeInsets.only(top:17.0,left: 17,right: 20,bottom: 20),
                         child: Image.asset(
                           'res/drawable/rp_share_close.png',
                           width: 13,
