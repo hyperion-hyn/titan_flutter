@@ -125,7 +125,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
         level = 0;
       }
     }
-    print('[_getLevelByHolding] inputValue: $_inputValue， level：$level');
+    // print('[_getLevelByHolding] inputValue: $_inputValue， level：$level');
 
     return level;
   }

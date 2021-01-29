@@ -331,7 +331,8 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                           child: profitListBigLightWidget(
                             [
                               {
-                                S.of(context).node_total_staking:
+                                S.of(context).map3_create_min_staking:
+                                // S.of(context).node_total_staking:
                                     '${FormatUtil.formatPrice(double.parse(_nodeCreateMin()))}'
                               },
                               {S.of(context).my_staking: '${_myStakingAmount()}'},

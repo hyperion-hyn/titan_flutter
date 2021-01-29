@@ -23,7 +23,6 @@ import 'package:titan/src/pages/red_pocket/rp_level_rules_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_level_withdraw_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -460,6 +459,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
                               width: 120,
                               height: 32,
                               fontSize: 12,
+                              fontColor: Colors.white,
                               btnColor: [
                                 HexColor('#00B97C'),
                               ],
@@ -486,6 +486,7 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
                         width: 120,
                         height: 32,
                         fontSize: 12,
+                        fontColor: Colors.white,
                         btnColor: [
                           HexColor('#107EDC'),
                         ],

@@ -566,10 +566,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     return Container(
       child: Column(
         children: [
-          SizedBox(
-            height: 30,
-          ),
-          InkWell(
+
+          GestureDetector(
             onTap: () {
               if (mounted) {
                 setState(() {
@@ -577,26 +575,32 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
                 });
               }
             },
-            child: Row(
-              children: <Widget>[
-                Text(
-                  '高级模式',
-                  style: TextStyle(
-                    color: Color(0xFF999999),
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal,
-                  ),
+            child: Container(
+              // color: Colors.redAccent,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 30, bottom: 4,),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      '高级模式',
+                      style: TextStyle(
+                        color: Color(0xFF999999),
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Image.asset(
+                        'res/drawable/wallet_gas_${!_isHighLevel ? 'down' : 'up'}.png',
+                        height: 8,
+                        width: 12,
+                        color: HexColor('#999999'),
+                      ),
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Image.asset(
-                    'res/drawable/wallet_gas_${!_isHighLevel ? 'down' : 'up'}.png',
-                    height: 8,
-                    width: 12,
-                    color: HexColor('#999999'),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
           SizedBox(
