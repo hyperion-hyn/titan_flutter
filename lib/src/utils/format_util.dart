@@ -325,7 +325,7 @@ class FormatUtil {
   }
 
   static String truncateDecimalNumNew(Decimal decNum, int decimal) {
-    print('[Format] truncateDecimalNum, 0, decNum:$decNum, decimal:$decimal');
+    // print('[Format] truncateDecimalNum, 0, decNum:$decNum, decimal:$decimal');
 
     var number = decNum.toDouble();
     if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
@@ -335,7 +335,7 @@ class FormatUtil {
           .toString();
 
       result = FormatUtil.strClearZero(result);
-      print('[Format] truncateDecimalNum, 1, number:$number, result:$result');
+      // print('[Format] truncateDecimalNum, 1, number:$number, result:$result');
 
       return result;
     } else {
@@ -347,7 +347,7 @@ class FormatUtil {
             .substring(0, decNumStr.lastIndexOf(".") + decimal + 1);
       }
 
-      print('[Format] truncateDecimalNum, 2, number:$number, result:$result');
+      // print('[Format] truncateDecimalNum, 2, number:$number, result:$result');
 
       result = FormatUtil.strClearZero(result);
       return result;

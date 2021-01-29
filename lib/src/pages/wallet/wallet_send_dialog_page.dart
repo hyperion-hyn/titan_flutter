@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
+import 'package:titan/src/utils/log_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class WalletSendDialogPage extends StatefulWidget {
@@ -84,7 +87,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                                   top: 14,
                                 ),
                                 child: Text(
-                                  widget.entity.valueDirection == '-'?'转账确认':'提取确认',
+                                  widget.entity.valueDirection == '-' ? '转账确认' : '提取确认',
                                   style: TextStyle(
                                     color: HexColor('#999999'),
                                     fontWeight: FontWeight.w500,
@@ -270,13 +273,35 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
       });
     }
 
-    bool isFinish = await widget.entity.action();
+    bool isFinish;
+    try {
+      var password = await UiUtil.showWalletPasswordDialogV2(
+        context,
+        WalletModelUtil.wallet,
+      );
+
+      if (password == null) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+        return;
+      }
+
+      isFinish = await widget.entity.action(password);
+    } catch (e) {
+      LogUtil.toastException(e);
+
+      isFinish = false;
+    }
+
     print("[$runtimeType] _sendAction, isFinish:$isFinish");
 
     if (isFinish) {
       Navigator.of(context).pop();
 
-      widget.entity.finished();
+      widget.entity.finished('');
     }
 
     if (mounted) {
@@ -302,7 +327,7 @@ Future<bool> showWalletSendDialog<T>({
       });
 }
 
-typedef WalletSendEntityCallBack = Future<bool> Function();
+typedef WalletSendEntityCallBack = Future<bool> Function(String psw);
 
 class WalletSendDialogEntity {
   final String type;
@@ -348,4 +373,3 @@ class WalletSendDialogEntity {
     this.finished,
   });
 }
-

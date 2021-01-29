@@ -1059,62 +1059,52 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       gas: gasValue.toString(),
       gasDesc: '',
       gasUnit: gasUnit,
-      action: () async {
-        try {
-          var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
-          if (password == null) {
+      action: (String password) async {
+
+        // 1.Bitcoin
+        if (_isBTC) {
+          var transResult = await wallet.sendBitcoinTransaction(
+              password,
+              wallet.getBitcoinZPub(),
+              toAddress,
+              gasPrice.toInt(),
+              ConvertTokenUnit.strToBigInt(value.toString(), 8).toInt());
+          if (transResult["code"] != 0) {
+            LogUtil.uploadException(transResult, "bitcoin upload");
+            Fluttertoast.showToast(
+                msg: "${transResult.toString()}", toastLength: Toast.LENGTH_LONG);
             return false;
           }
-
-          // 1.Bitcoin
-          if (_isBTC) {
-            var transResult = await wallet.sendBitcoinTransaction(
-                password,
-                wallet.getBitcoinZPub(),
-                toAddress,
-                gasPrice.toInt(),
-                ConvertTokenUnit.strToBigInt(value.toString(), 8).toInt());
-            if (transResult["code"] != 0) {
-              LogUtil.uploadException(transResult, "bitcoin upload");
-              Fluttertoast.showToast(
-                  msg: "${transResult.toString()}", toastLength: Toast.LENGTH_LONG);
+        } else {
+          // 2. Hyperion, Ethereum, Heco
+          if (widget.coinVo.contractAddress != null) {
+            // erc20 token
+            var txHash = await _transferErc20(
+              widget.coinVo.coinType,
+              password,
+              ConvertTokenUnit.strToBigInt(value.toString(), widget.coinVo.decimals),
+              toAddress,
+              wallet,
+              gasPrice,
+            );
+            if (txHash == null) {
               return false;
             }
           } else {
-            // 2. Hyperion, Ethereum, Heco
-            if (widget.coinVo.contractAddress != null) {
-              // erc20 token
-              var txHash = await _transferErc20(
-                widget.coinVo.coinType,
-                password,
-                ConvertTokenUnit.strToBigInt(value.toString(), widget.coinVo.decimals),
-                toAddress,
-                wallet,
-                gasPrice,
-              );
-              if (txHash == null) {
-                return false;
-              }
-            } else {
-              await _transferEth(
-                widget.coinVo.coinType,
-                password,
-                ConvertTokenUnit.strToBigInt(value.toString(), widget.coinVo.decimals),
-                toAddress,
-                wallet,
-                gasPrice,
-              );
-            }
+            await _transferEth(
+              widget.coinVo.coinType,
+              password,
+              ConvertTokenUnit.strToBigInt(value.toString(), widget.coinVo.decimals),
+              toAddress,
+              wallet,
+              gasPrice,
+            );
           }
-
-          return true;
-        } catch (e) {
-          LogUtil.toastException(e);
-          return false;
         }
-        return false;
+
+        return true;
       },
-      finished: () async {
+      finished: (String _) async {
         var msg;
         if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
           msg = S.of(context).transfer_message_broadcast_wait_six_seconds;

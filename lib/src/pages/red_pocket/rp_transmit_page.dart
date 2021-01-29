@@ -986,39 +986,22 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       gas: gasValue.toString(),
       gasDesc: '',
       gasUnit: 'HYN',
-      action: () async {
-        try {
-          print("1111");
+      action: (String password) async {
+        var amount = ConvertTokenUnit.strToBigInt(value.toString());
 
-          var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
-          if (password == null) {
-            Fluttertoast.showToast(msg: '请输入密码!');
-            return false;
-          }
+        await _rpApi.postStakingRp(
+          amount: amount,
+          activeWallet: walletVo,
+          password: password,
+          gasLimit: gasLimit,
+        );
 
-          var amount = ConvertTokenUnit.strToBigInt(value.toString());
-
-          await _rpApi.postStakingRp(
-            amount: amount,
-            activeWallet: walletVo,
-            password: password,
-            gasLimit: gasLimit,
-          );
-
-          print("2222");
-
-          return true;
-        } catch (e) {
-          LogUtil.toastException(e);
-        }
-        return false;
+        return true;
       },
-      finished: () async {
+      finished: (String _) async {
         getNetworkData();
 
         Navigator.pop(context, true);
-
-        print("3333");
 
         return true;
       },

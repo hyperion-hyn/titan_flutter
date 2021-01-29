@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -14,10 +12,7 @@ import 'package:titan/src/pages/red_pocket/rp_share_send_success_location_page.d
 import 'package:titan/src/pages/red_pocket/rp_share_send_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
-import 'package:titan/src/utils/log_util.dart';
-import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 /*
 class RpShareSendDialogPage extends StatefulWidget {
@@ -422,32 +417,20 @@ Future<bool> showShareRpSendDialog<T>(
     gasDesc: 'HYN 产生',
     gas1Desc: 'RP 产生',
     gasUnit: 'HYN',
-    action: () async {
-      try {
-        var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
-        if (password == null) {
-          return false;
-        }
+    action: (String password) async {
+      var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('RP');
 
-        var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('RP');
-
-        RpShareReqEntity result = await RPApi().postSendShareRp(
-          password: password,
-          activeWallet: walletVo,
-          reqEntity: reqEntity,
-          toAddress: receiveAddr,
-          coinVo: coinVo,
-        );
-        reqEntity.id = result.id;
-        return result.id.isNotEmpty;
-      } catch (e) {
-        LogUtil.toastException(e);
-
-        // Fluttertoast.showToast(msg: '发送红包失败, 请稍后重试!');
-      }
-      return false;
+      RpShareReqEntity result = await RPApi().postSendShareRp(
+        password: password,
+        activeWallet: walletVo,
+        reqEntity: reqEntity,
+        toAddress: receiveAddr,
+        coinVo: coinVo,
+      );
+      reqEntity.id = result.id;
+      return result.id.isNotEmpty;
     },
-    finished: () async {
+    finished: (String _) async {
       if (reqEntity.rpType == RpShareType.normal) {
         Navigator.push(
           context,

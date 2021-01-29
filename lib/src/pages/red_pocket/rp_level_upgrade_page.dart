@@ -14,10 +14,6 @@ import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
-import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
@@ -790,35 +786,25 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       gas: gasValue.toString(),
       gasDesc: '',
       gasUnit: 'HYN',
-      action: () async {
-        try {
-          var password = await UiUtil.showWalletPasswordDialogV2(context, WalletModelUtil.wallet);
-          if (password == null) {
-            return false;
-          }
+      action: (String password) async {
+        var burningAmount = ConvertTokenUnit.strToBigInt(widget.levelRule.burnStr);
 
-          var burningAmount = ConvertTokenUnit.strToBigInt(widget.levelRule.burnStr);
+        var inputHoldValue = (_inputValue - _needBurnValue);
+        inputHoldValue = inputHoldValue > Decimal.zero ? inputHoldValue : Decimal.zero;
+        var holdingAmount = ConvertTokenUnit.strToBigInt(inputHoldValue?.toString() ?? '0');
 
-          var inputHoldValue = (_inputValue - _needBurnValue);
-          inputHoldValue = inputHoldValue > Decimal.zero ? inputHoldValue : Decimal.zero;
-          var holdingAmount = ConvertTokenUnit.strToBigInt(inputHoldValue?.toString() ?? '0');
+        await _rpApi.postRpDepositAndBurn(
+          from: _myLevelInfo?.currentLevel ?? 0,
+          to: widget.levelRule.level,
+          depositAmount: holdingAmount,
+          burningAmount: burningAmount,
+          activeWallet: WalletModelUtil.activatedWallet,
+          password: password,
+        );
 
-          await _rpApi.postRpDepositAndBurn(
-            from: _myLevelInfo?.currentLevel ?? 0,
-            to: widget.levelRule.level,
-            depositAmount: holdingAmount,
-            burningAmount: burningAmount,
-            activeWallet: WalletModelUtil.activatedWallet,
-            password: password,
-          );
-
-          return true;
-        } catch (e) {
-          LogUtil.toastException(e);
-        }
-        return false;
+        return true;
       },
-      finished: () async {
+      finished: (String _) async {
         Fluttertoast.showToast(
           msg: S.of(context).rp_level_up_broadcast_sent,
           gravity: ToastGravity.CENTER,

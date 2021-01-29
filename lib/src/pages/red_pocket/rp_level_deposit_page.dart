@@ -16,10 +16,6 @@ import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
-import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
@@ -60,8 +56,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
   RpMyLevelInfo _myLevelInfo;
 
   Decimal get _balanceValue =>
-      Decimal.tryParse(FormatUtil.coinBalanceHumanRead(WalletModelUtil.rpCoinVo)) ??
-      Decimal.zero;
+      Decimal.tryParse(FormatUtil.coinBalanceHumanRead(WalletModelUtil.rpCoinVo)) ?? Decimal.zero;
 
   Decimal get _inputValue {
     var zeroValue = Decimal.zero;
@@ -474,16 +469,8 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
       gas: gasValue.toString(),
       gasDesc: '',
       gasUnit: 'HYN',
-      action: () async {
+      action: (String password) async {
         try {
-          var password = await UiUtil.showWalletPasswordDialogV2(
-            context,
-            WalletModelUtil.wallet,
-          );
-          if (password == null) {
-            return false;
-          }
-
           var amount = ConvertTokenUnit.strToBigInt(value.toString());
 
           await _rpApi.postRpDepositAndBurn(
@@ -501,7 +488,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
         }
         return false;
       },
-      finished: () async {
+      finished: (String _) async {
         Fluttertoast.showToast(
           msg: '${S.of(context).rp_add_holding_brocast_sent}！',
           gravity: ToastGravity.CENTER,

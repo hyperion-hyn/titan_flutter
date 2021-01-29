@@ -29,7 +29,6 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart';
@@ -475,22 +474,11 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
       toAddress: WalletModelUtil.walletHynShortAddress,
       gas: message.description.fee,
       gasUnit: 'HYN',
-      action: () async {
-        try {
-          var password = await UiUtil.showWalletPasswordDialogV2(context, WalletModelUtil.wallet);
-          if (password == null) {
-            return false;
-          }
-
-          var result = await message.action(password);
-
-          return result != null;
-        } catch (e) {
-          LogUtil.toastException(e);
-        }
-        return false;
+      action: (String password) async {
+        var result = await message.action(password);
+        return result != null;
       },
-      finished: () async {
+      finished: (String _) async {
         Application.router.navigateTo(
             context, Routes.map3node_broadcast_success_page + "?actionEvent=${message.type}");
 
