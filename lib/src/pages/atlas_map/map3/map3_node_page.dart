@@ -54,7 +54,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   Map3IntroduceEntity _map3introduceEntity;
   var _address = "";
 
-  get _isNoWallet => _address.isEmpty;
+  get _isNoWallet => _address?.isEmpty ?? true;
   int _currentEpoch = 0;
 
   @override
@@ -206,7 +206,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   }
 
   Widget _myNodeListWidget() {
-    if (_myList.isEmpty) {
+    if (_myList?.isEmpty ?? true) {
       return emptyListWidget(
           title: _address.isEmpty
               ? S.of(context).check_after_has_wallet
@@ -223,7 +223,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   }
 
   Widget _lastActiveWidget() {
-    if (_lastActiveList.isEmpty) {
+    if (_lastActiveList?.isEmpty ?? true) {
       return emptyListWidget(title: S.of(context).no_lastest_active_nodes);
     }
 
@@ -235,7 +235,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   }
 
   Widget _pendingListWidget() {
-    if (_pendingList.isEmpty) {
+    if (_pendingList?.isEmpty ?? true) {
       return emptyListWidget(title: S.of(context).no_pengding_node_contract_hint);
     }
 
@@ -463,7 +463,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   }
 
   Future _pushCreateContractAction() async {
-    if (_address.isEmpty) {
+    if (_address?.isEmpty ?? true) {
       Application.router.navigateTo(
           context,
           Routes.map3node_create_wallet +
