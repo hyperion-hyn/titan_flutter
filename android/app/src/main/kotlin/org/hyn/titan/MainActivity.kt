@@ -165,7 +165,11 @@ class MainActivity : FlutterFragmentActivity() {
                         result.success(blueadapter.isEnabled)
                     }
                     "jumpToBioAuthSetting" -> {
-                        startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS))
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            startActivity(Intent(Settings.ACTION_FINGERPRINT_ENROLL))
+                        } else {
+                            startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS))
+                        }
                     }
                     else -> {
                         result.notImplemented()
