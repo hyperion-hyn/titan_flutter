@@ -409,25 +409,32 @@ class _MyPageState extends BaseState<MyPage> {
           alignment: Alignment.center,
           width: 52,
           height: 52,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white,),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+          ),
           child: InkWell(
             onTap: () {},
             child: Stack(
               children: <Widget>[
-
                 Align(
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      "res/drawable/ic_user_avatar_default.png",
-                      width: 80,
-                      height: 80,
-                      color: SupportedTheme.textColorBlack,
-                    ),),
-                Positioned(bottom: 8,right: 4,child: Image.asset(
-                  "res/drawable/my_edit_tag.png",
-                  width: 10,
-                  height: 12,
-                ),),
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    "res/drawable/ic_user_avatar_default.png",
+                    width: 80,
+                    height: 80,
+                    color: SupportedTheme.textColorBlack,
+                  ),
+                ),
+                Positioned(
+                  bottom: 8,
+                  right: 4,
+                  child: Image.asset(
+                    "res/drawable/my_edit_tag.png",
+                    width: 10,
+                    height: 12,
+                  ),
+                ),
               ],
             ),
           ),
@@ -480,13 +487,15 @@ class _MyPageState extends BaseState<MyPage> {
                 Align(
                   alignment: Alignment.center,
                   child: iconWalletWidget(wallet, isCircle: true, size: 44),
-                  /*child: walletHeaderWidget(
-                    walletName.characters.first,
-                    size: 44,
-                    fontSize: 20,
-                    address: ethAccount.address,
-                    isShowShape: false,
-                  ),*/
+                ),
+                Positioned(
+                  bottom: 8,
+                  right: 4,
+                  child: Image.asset(
+                    "res/drawable/my_edit_tag.png",
+                    width: 10,
+                    height: 12,
+                  ),
                 ),
               ],
             ),
