@@ -4,17 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/auth_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -52,7 +48,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
           setState(() {
             isLoggingIn = false;
           });
-          _setAuthAlready();
+          _setAuthByBioAuth();
           Navigator.of(context).pop();
           Fluttertoast.showToast(msg: S.of(context).exchange_login_success);
         } else if (state is LoginFailState) {
@@ -157,18 +153,17 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   _checkIsAuthAlready() async {
     var _wallet = WalletInheritedModel.of(context)?.activatedWallet?.wallet;
     if (_wallet != null) {
-      _startLogin();
-      /*bool _isAuthAlready =
+      bool _isAuthAlready =
           await AppCache.getValue('exchange_auth_already_${_wallet.getEthAccount().address}') ??
               false;
       var _bioAuthEnabled = await BioAuthUtil.bioAuthEnabledByWallet(_wallet, AuthType.exchange);
       if (_isAuthAlready && _bioAuthEnabled) {
         _startLogin();
-      }*/
+      }
     }
   }
 
-  _setAuthAlready() {
+  _setAuthByBioAuth() {
     var _wallet = WalletInheritedModel.of(context)?.activatedWallet?.wallet;
     AppCache.saveValue(
       'exchange_auth_already_${_wallet.getEthAccount().address}',
@@ -180,28 +175,25 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
     var _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
     if (_wallet != null) {
       if (await checkConfirmWalletPolicy()) {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (BuildContext context) => PolicyConfirmPage(
-            PolicyType.WALLET,
-          ),
-        ));
-      } else {
-        var address = _wallet.getEthAccount().address;
-        var walletPassword = await UiUtil.showWalletPasswordDialogV2(
-          context,
+        bool result = await UiUtil.showConfirmPolicyDialog(context, PolicyType.WALLET);
+        if (!result) return;
+      }
+
+      var address = _wallet.getEthAccount().address;
+      var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+        context,
+        _wallet,
+        authType: AuthType.exchange,
+      );
+      if (walletPassword != null) {
+        BlocProvider.of<ExchangeCmpBloc>(context).add(LoginEvent(
           _wallet,
-          authType: AuthType.exchange,
-        );
-        if (walletPassword != null) {
-          BlocProvider.of<ExchangeCmpBloc>(context).add(LoginEvent(
-            _wallet,
-            walletPassword,
-            address,
-          ));
-          setState(() {
-            isLoggingIn = true;
-          });
-        }
+          walletPassword,
+          address,
+        ));
+        setState(() {
+          isLoggingIn = true;
+        });
       }
     } else {
       Fluttertoast.showToast(msg: 'Wallet is null');

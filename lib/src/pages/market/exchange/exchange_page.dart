@@ -175,17 +175,18 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
               child: InkWell(
                 onTap: () async {
                   if (await _checkShowConfirmPolicy()) {
-                    _showConfirmDexPolicy();
+                    bool result = await UiUtil.showConfirmPolicyDialog(context, PolicyType.DEX);
+                    if (!result) return;
+                  }
+
+                  if (hasExchangeAuth) {
+                    Application.router.navigateTo(
+                        context,
+                        Routes.exchange_assets_page +
+                            '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
                   } else {
-                    if (hasExchangeAuth) {
-                      Application.router.navigateTo(
-                          context,
-                          Routes.exchange_assets_page +
-                              '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
-                    } else {
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
-                    }
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
                   }
                 },
                 child: Column(
@@ -447,25 +448,26 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
         InkWell(
             onTap: () async {
               if (await _checkShowConfirmPolicy()) {
-                _showConfirmDexPolicy();
-              } else {
-                var prefs = await SharedPreferences.getInstance();
-                int index = prefs.getInt(PrefsKey.PERIOD_CURRENT_INDEX);
-                var periodCurrentIndex = 0;
-                if (index != null && index < 4) {
-                  periodCurrentIndex = index;
-                }
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => KLineDetailPage(
-                              symbol: marketItemEntity.symbol,
-                              isPop: false,
-                              periodCurrentIndex: periodCurrentIndex,
-                              base: marketItemEntity.base,
-                              quote: marketItemEntity.quote,
-                            )));
+                bool result = await UiUtil.showConfirmPolicyDialog(context, PolicyType.DEX);
+                if (!result) return;
               }
+
+              var prefs = await SharedPreferences.getInstance();
+              int index = prefs.getInt(PrefsKey.PERIOD_CURRENT_INDEX);
+              var periodCurrentIndex = 0;
+              if (index != null && index < 4) {
+                periodCurrentIndex = index;
+              }
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => KLineDetailPage(
+                            symbol: marketItemEntity.symbol,
+                            isPop: false,
+                            periodCurrentIndex: periodCurrentIndex,
+                            base: marketItemEntity.base,
+                            quote: marketItemEntity.quote,
+                          )));
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(
@@ -588,31 +590,27 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
 
   _showQuoteListDialog() async {
     if (await _checkShowConfirmPolicy()) {
-      _showConfirmDexPolicy();
-    } else {
-      UiUtil.showBottomDialogView(
-        context,
-        dialogHeight: MediaQuery.of(context).size.height - 80,
-        isScrollControlled: true,
-        customWidget: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: Center(
-                child: Text('选择币对', style: TextStyles.textC333S14bold),
-              ),
-            ),
-            Expanded(
-              child: ExchangeQuoteListPage(),
-            ),
-          ],
-        ),
-      );
+      bool result = await UiUtil.showConfirmPolicyDialog(context, PolicyType.DEX);
+      if (!result) return;
     }
-  }
-
-  _showConfirmDexPolicy() {
-    UiUtil.showConfirmPolicyDialog(context, PolicyType.DEX);
+    UiUtil.showBottomDialogView(
+      context,
+      dialogHeight: MediaQuery.of(context).size.height - 80,
+      isScrollControlled: true,
+      customWidget: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Center(
+              child: Text('选择币对', style: TextStyles.textC333S14bold),
+            ),
+          ),
+          Expanded(
+            child: ExchangeQuoteListPage(),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<bool> _checkShowConfirmPolicy() async {

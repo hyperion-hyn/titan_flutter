@@ -197,22 +197,22 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
 
   _createWallet() async {
     if (await _checkConfirmWalletPolicy()) {
-      UiUtil.showConfirmPolicyDialog(context, PolicyType.WALLET);
-    } else {
-      var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
-      Application.router.navigateTo(
-          context, Routes.wallet_create + '?entryRouteName=$currentRouteName&isCreate=1');
+      bool result = await UiUtil.showConfirmPolicyDialog(context, PolicyType.DEX);
+      if (!result) return;
     }
+    var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
+    Application.router
+        .navigateTo(context, Routes.wallet_create + '?entryRouteName=$currentRouteName&isCreate=1');
   }
 
   _importWallet() async {
     if (await _checkConfirmWalletPolicy()) {
-      UiUtil.showConfirmPolicyDialog(context, PolicyType.WALLET);
-    } else {
-      var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
-      Application.router
-          .navigateTo(context, Routes.wallet_create + '?entryRouteName=$currentRouteName');
+      bool result = await UiUtil.showConfirmPolicyDialog(context, PolicyType.WALLET);
+      if (!result) return;
     }
+    var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
+    Application.router
+        .navigateTo(context, Routes.wallet_create + '?entryRouteName=$currentRouteName');
   }
 
   _showOptionsPopup() {

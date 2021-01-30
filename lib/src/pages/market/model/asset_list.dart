@@ -11,30 +11,30 @@ class AssetList {
   AssetList();
 
   AssetList.fromJson(Map<String, dynamic> json) {
-    if (json.containsKey('USDT')) {
+    if (json.containsKey('USDT') && json['USDT'] != null) {
       USDT = AssetType.fromJson(json['USDT']);
     }
-    if (json.containsKey('HYN')) {
+    if (json.containsKey('HYN') && json['HYN'] != null) {
       HYN = AssetType.fromJson(json['HYN']);
     }
-    if (json.containsKey('ETH')) {
+    if (json.containsKey('RP') && json['RP'] != null) {
+      RP = AssetType.fromJson(json['RP']);
+    }
+    if (json.containsKey('ETH') && json['ETH'] != null) {
       ETH = AssetType.fromJson(json['ETH']);
     }
-    if (json.containsKey('BTC')) {
+    if (json.containsKey('BTC') && json['BTC'] != null) {
       BTC = AssetType.fromJson(json['BTC']);
-    }
-    if (json.containsKey('RP')) {
-      RP = AssetType.fromJson(json['RP']);
     }
   }
 
   Map<String, dynamic> toJson() {
     var ret = Map<String, dynamic>();
-    ret['USDT'] = USDT.toJson();
-    ret['HYN'] = HYN.toJson();
-    ret['ETH'] = ETH.toJson();
-    ret['BTC'] = BTC.toJson();
-    ret['RP'] = RP.toJson();
+    ret['USDT'] = USDT?.toJson();
+    ret['HYN'] = HYN?.toJson();
+    ret['RP'] = RP?.toJson();
+    ret['ETH'] = ETH?.toJson();
+    ret['BTC'] = BTC?.toJson();
     return ret;
   }
 

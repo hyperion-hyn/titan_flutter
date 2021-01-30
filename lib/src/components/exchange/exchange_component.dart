@@ -56,10 +56,9 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
             var sharePref = await SharedPreferences.getInstance();
             var accountJson = sharePref.getString(PrefsKey.EXCHANGE_ACCOUNT);
             var account = ExchangeAccount.fromJson(json.decode(accountJson));
-            var lastAuthTime =
-                sharePref.getInt(PrefsKey.EXCHANGE_ACCOUNT_LAST_AUTH_TIME);
-            bool expired = lastAuthTime + 3 * 24 * 3600 * 1000 <
-                DateTime.now().millisecondsSinceEpoch;
+            var lastAuthTime = sharePref.getInt(PrefsKey.EXCHANGE_ACCOUNT_LAST_AUTH_TIME);
+            bool expired =
+                lastAuthTime + 3 * 24 * 3600 * 1000 < DateTime.now().millisecondsSinceEpoch;
             if (account != null && !expired) {
               exchangeModel.activeAccount = account;
 
@@ -74,9 +73,7 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
             exchangeModel.activeAccount = null;
 
             var ret = await _exchangeApi.walletLogin(
-                wallet: state.wallet,
-                password: state.password,
-                address: state.address);
+                wallet: state.wallet, password: state.password, address: state.address);
             var account = ExchangeAccount.fromJson(ret);
 
             if (account != null) {
@@ -84,23 +81,24 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
               var ret = await _exchangeApi.getAssetsList();
               exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
 
-              BlocProvider.of<ExchangeCmpBloc>(context)
-                  .add(LoginSuccessEvent());
-
-              ///cache
-              var sharePref = await SharedPreferences.getInstance();
-              var accountStr =
-                  json.encode(exchangeModel.activeAccount.toJson());
-              sharePref.setString(PrefsKey.EXCHANGE_ACCOUNT, accountStr);
-
-              sharePref.setInt(PrefsKey.EXCHANGE_ACCOUNT_LAST_AUTH_TIME,
-                  DateTime.now().millisecondsSinceEpoch);
+              BlocProvider.of<ExchangeCmpBloc>(context).add(LoginSuccessEvent());
             } else {
               BlocProvider.of<ExchangeCmpBloc>(context).add(LoginFailEvent());
             }
           } catch (e) {
+            print('--- $e');
             BlocProvider.of<ExchangeCmpBloc>(context).add(LoginFailEvent());
           }
+
+          ///cache exchange account
+          var sharePref = await SharedPreferences.getInstance();
+          var accountStr = json.encode(exchangeModel.activeAccount.toJson());
+          sharePref.setString(PrefsKey.EXCHANGE_ACCOUNT, accountStr);
+
+          sharePref.setInt(
+            PrefsKey.EXCHANGE_ACCOUNT_LAST_AUTH_TIME,
+            DateTime.now().millisecondsSinceEpoch,
+          );
         } else if (state is SetShowBalancesState) {
           exchangeModel.isShowBalances = state.isShow;
         } else if (state is UpdateExchangeAccountState) {
@@ -123,8 +121,7 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
               Fluttertoast.showToast(msg: e.message);
               if (e.code == ERROR_CODE_EXCHANGE_NOT_LOGIN) {
                 ///clear current account if not login
-                BlocProvider.of<ExchangeCmpBloc>(context)
-                    .add(ClearExchangeAccountEvent());
+                BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
               }
             }
           }
@@ -169,7 +166,6 @@ class ExchangeInheritedModel extends InheritedModel<String> {
     ExchangeInheritedModel old,
     Set<String> dependencies,
   ) {
-    return exchangeModel != old.exchangeModel &&
-        dependencies.contains('ExchangeModel');
+    return exchangeModel != old.exchangeModel && dependencies.contains('ExchangeModel');
   }
 }

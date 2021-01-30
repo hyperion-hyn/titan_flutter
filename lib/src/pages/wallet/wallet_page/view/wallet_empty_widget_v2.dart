@@ -73,34 +73,30 @@ class EmptyWalletViewV2 extends StatelessWidget {
                 children: <Widget>[
                   _optionItem(context, S.of(context).create_wallet, '第一次使用钱包', () async {
                     if (await _checkConfirmWalletPolicy()) {
-                      UiUtil.showConfirmPolicyDialog(
-                        context,
-                        PolicyType.WALLET,
-                      );
-                    } else {
-                      var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
-                      await Application.router.navigateTo(
-                        context,
-                        Routes.wallet_create + '?entryRouteName=$currentRouteName&isCreate=1',
-                      );
-                      backAndUpdatePage(context);
+                      bool result =
+                          await UiUtil.showConfirmPolicyDialog(context, PolicyType.WALLET);
+                      if (!result) return;
                     }
+                    var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
+                    await Application.router.navigateTo(
+                      context,
+                      Routes.wallet_create + '?entryRouteName=$currentRouteName&isCreate=1',
+                    );
+                    backAndUpdatePage(context);
                   }),
                   _divider(),
                   _optionItem(context, '恢复身份', '已拥有钱包', () async {
                     if (await _checkConfirmWalletPolicy()) {
-                      UiUtil.showConfirmPolicyDialog(
-                        context,
-                        PolicyType.WALLET,
-                      );
-                    } else {
-                      var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
-                      Application.router.navigateTo(
-                        context,
-                        Routes.wallet_create + '?entryRouteName=$currentRouteName',
-                      );
-                      backAndUpdatePage(context);
+                      bool result =
+                          await UiUtil.showConfirmPolicyDialog(context, PolicyType.WALLET);
+                      if (!result) return;
                     }
+                    var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
+                    Application.router.navigateTo(
+                      context,
+                      Routes.wallet_create + '?entryRouteName=$currentRouteName',
+                    );
+                    backAndUpdatePage(context);
                   })
                 ],
               ),

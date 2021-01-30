@@ -17,11 +17,13 @@ class PolicyConfirmPage extends StatefulWidget {
   final PolicyType policyType;
   final bool isShowConfirm;
   final bool isDialog;
+  final Function onConfirm;
 
   PolicyConfirmPage(
     this.policyType, {
     this.isShowConfirm = true,
     this.isDialog = false,
+    this.onConfirm,
   });
 
   @override
@@ -200,8 +202,7 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
                   children: <Widget>[
                     _checked
                         ? Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Image.asset(
                               'res/drawable/ic_checkbox_checked.png',
                               width: 20,
@@ -209,8 +210,7 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
                             ),
                           )
                         : Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Image.asset(
                               'res/drawable/ic_checkbox_unchecked.png',
                               width: 20,

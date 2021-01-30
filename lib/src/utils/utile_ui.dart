@@ -866,13 +866,14 @@ class UiUtil {
 //    }
 //  }
 
-  static showConfirmPolicyDialog(
+  static Future<bool> showConfirmPolicyDialog(
     BuildContext context,
     PolicyType policyType, {
     bool isShowConfirm = true,
-  }) {
+    Function onConfirm,
+  }) async {
     var height = MediaQuery.of(context).size.height - 80;
-    showDialog(
+    bool result = await showDialog(
       context: context,
       builder: (_) => Material(
         type: MaterialType.transparency,
@@ -889,12 +890,14 @@ class UiUtil {
                 policyType,
                 isShowConfirm: isShowConfirm,
                 isDialog: true,
+                onConfirm: onConfirm,
               ),
             ),
           ),
         ),
       ),
     );
+    return result != null && result;
   }
 
   static showStateHint(BuildContext context, bool value, String msg) {
