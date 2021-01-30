@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:detect_testflight/detect_testflight.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info/package_info.dart';
 import 'package:titan/env.dart';
@@ -201,6 +202,7 @@ class _MyPageState extends BaseState<MyPage> {
                     imageName: "ic_me_page_manage_wallet",
                     color: Colors.cyan[300],
                   ),
+                  _lineWidget(),
                   _buildMenuBar(
                     '应用锁',
                     Icons.account_balance_wallet,
@@ -407,19 +409,25 @@ class _MyPageState extends BaseState<MyPage> {
           alignment: Alignment.center,
           width: 52,
           height: 52,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white,),
           child: InkWell(
             onTap: () {},
             child: Stack(
               children: <Widget>[
+
                 Align(
                     alignment: Alignment.center,
                     child: Image.asset(
-                      "res/drawable/ic_logo.png",
+                      "res/drawable/ic_user_avatar_default.png",
                       width: 80,
                       height: 80,
                       color: SupportedTheme.textColorBlack,
-                    )),
+                    ),),
+                Positioned(bottom: 8,right: 4,child: Image.asset(
+                  "res/drawable/my_edit_tag.png",
+                  width: 10,
+                  height: 12,
+                ),),
               ],
             ),
           ),
@@ -440,8 +448,8 @@ class _MyPageState extends BaseState<MyPage> {
               S.of(context).create_import_wallet_account,
               style: TextStyle(
                 color: HexColor('#0068E4'),
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
               ),
             ),
           ),

@@ -50,32 +50,37 @@ class _WalletTabsPageState extends State<WalletTabsPage>
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: TabBar(
-
                   controller: _tabController,
                   isScrollable: true,
-                  labelColor: DefaultColors.color333,
+                  labelColor: Theme.of(context).primaryColor,
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
                   indicatorSize: TabBarIndicatorSize.label,
-                  indicatorColor: DefaultColors.color333,
+                  indicatorColor: Theme.of(context).primaryColor,
                   indicatorWeight: 2,
-                  indicatorPadding: EdgeInsets.only(bottom: 2),
-                  unselectedLabelStyle: TextStyle(
-                    color: DefaultColors.color333,
+                  indicatorPadding: EdgeInsets.only(
+                    bottom: 2,
+                    right: 6,
+                    left: 6,
                   ),
+                  unselectedLabelColor: HexColor("#FF333333"),
                   tabs: [
                     Tab(
                       child: Text(
                         S.of(context).wallet,
-                        style: TextStyle(),
+                        style: TextStyle(
+                          // color: DefaultColors.color333,
+                        ),
                       ),
                     ),
                     Tab(
                       child: Text(
                         S.of(context).exchange,
-                        style: TextStyle(),
+                        style: TextStyle(
+                          // color: DefaultColors.color333,
+                        ),
                       ),
                     ),
                   ],
