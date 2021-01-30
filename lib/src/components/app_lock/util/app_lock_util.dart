@@ -7,8 +7,23 @@ import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/app_lock/entity/app_lock_config.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 
 class AppLockUtil {
+  static void showAppLockDialog(BuildContext context, Function onUnLock) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AppLockScreen(
+            onUnlock: () {
+              Navigator.of(context).pop();
+              onUnLock.call();
+            },
+            isDialog: true,
+          );
+        });
+  }
+
   static void appLockSwitch(BuildContext context, bool isOn) {
     if (isOn) {
       BlocProvider.of<AppLockBloc>(context).add(LockAppEvent());

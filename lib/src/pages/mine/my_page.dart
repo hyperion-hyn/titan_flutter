@@ -8,6 +8,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/app_lock/app_lock_component.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/updater/bloc/bloc.dart';
 import 'package:titan/src/components/updater/bloc/update_event.dart';
@@ -204,8 +205,19 @@ class _MyPageState extends BaseState<MyPage> {
                     '应用锁',
                     Icons.account_balance_wallet,
                     () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => AppLockPreferencesPage()));
+                      if (AppLockInheritedModel.of(context).isLockEnable) {
+                        AppLockUtil.showAppLockDialog(context, () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AppLockPreferencesPage()),
+                          );
+                        });
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AppLockPreferencesPage()),
+                        );
+                      }
                     },
                     imageName: "ic_me_page_safe_lock",
                     color: Colors.cyan[300],
@@ -418,20 +430,21 @@ class _MyPageState extends BaseState<MyPage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
-              onTap: () {
+            onTap: () {
 //                BlocProvider.of<AppTabBarBloc>(context).add(ChangeTabBarItemEvent(index: 1));
-                WalletManagerPage.jumpWalletManager(context);
+              WalletManagerPage.jumpWalletManager(context);
 
-                // Application.router.navigateTo(context, Routes.wallet_manager);
-              },
-              child: Text(
-                S.of(context).create_import_wallet_account,
-                style: TextStyle(
-                  color: HexColor('#0068E4'),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),),
+              // Application.router.navigateTo(context, Routes.wallet_manager);
+            },
+            child: Text(
+              S.of(context).create_import_wallet_account,
+              style: TextStyle(
+                color: HexColor('#0068E4'),
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
         ),
         Spacer(),
       ],
@@ -458,7 +471,7 @@ class _MyPageState extends BaseState<MyPage> {
               children: <Widget>[
                 Align(
                   alignment: Alignment.center,
-                  child: iconWalletWidget(wallet, isCircle: true,size: 44),
+                  child: iconWalletWidget(wallet, isCircle: true, size: 44),
                   /*child: walletHeaderWidget(
                     walletName.characters.first,
                     size: 44,

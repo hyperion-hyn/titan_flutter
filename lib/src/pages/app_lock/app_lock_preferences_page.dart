@@ -8,6 +8,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/app_lock/app_lock_component.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/app_lock/app_lock_screen.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -251,65 +252,45 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
         });
       }
     } else {
-      _showWalletLockDialog(() {
-        BlocProvider.of<AppLockBloc>(context).add(
-          SetWalletLockEvent(value),
-        );
-      });
+      BlocProvider.of<AppLockBloc>(context).add(
+        SetWalletLockEvent(value),
+      );
     }
   }
 
   _setUpBioAuth(bool value) async {
     if (value) {
-      _showWalletLockDialog(() async {
-        var authConfig = await BioAuthUtil.getAuthConfig(
+      var authConfig = await BioAuthUtil.getAuthConfig(
+        null,
+        authType: AuthType.walletLock,
+      );
+
+      var result = await BioAuthUtil.auth(
+        context,
+        BioAuthUtil.currentBioMetricType(authConfig),
+      );
+
+      if (result) {
+        authConfig.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
+        BioAuthUtil.saveAuthConfig(
+          authConfig,
           null,
           authType: AuthType.walletLock,
         );
 
-        var result = await BioAuthUtil.auth(
-          context,
-          BioAuthUtil.currentBioMetricType(authConfig),
-        );
-
-        if (result) {
-          authConfig.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
-          BioAuthUtil.saveAuthConfig(
-            authConfig,
-            null,
-            authType: AuthType.walletLock,
-          );
-
-          BlocProvider.of<AppLockBloc>(context).add(
-            SetWalletLockBioAuthEvent(value),
-          );
-
-          UiUtil.showStateHint(context, true, S.of(context).set_bio_auth_success);
-        } else {
-          UiUtil.showStateHint(context, false, S.of(context).set_bio_auth_fail);
-        }
-      });
-    } else {
-      _showWalletLockDialog(() {
         BlocProvider.of<AppLockBloc>(context).add(
           SetWalletLockBioAuthEvent(value),
         );
-      });
-    }
-  }
 
-  _showWalletLockDialog(Function onUnlock) async {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AppLockScreen(
-            onUnlock: () {
-              Navigator.of(context).pop();
-              onUnlock.call();
-            },
-            isDialog: true,
-          );
-        });
+        UiUtil.showStateHint(context, true, S.of(context).set_bio_auth_success);
+      } else {
+        UiUtil.showStateHint(context, false, S.of(context).set_bio_auth_fail);
+      }
+    } else {
+      BlocProvider.of<AppLockBloc>(context).add(
+        SetWalletLockBioAuthEvent(value),
+      );
+    }
   }
 
   _showSetPwdDialog(Function onPwdSet) {
