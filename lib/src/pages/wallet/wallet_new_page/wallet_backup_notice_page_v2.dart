@@ -84,7 +84,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
                   Text(
                     S.of(context).backup_notice_label,
                     style: TextStyle(
-                        fontSize: 14, color: Color(0xFF252525), fontWeight: FontWeight.w500),
+                        fontSize: 14, color: Color(0xFF252525), fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 8.0),
                   Text(
