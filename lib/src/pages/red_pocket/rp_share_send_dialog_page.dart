@@ -417,7 +417,7 @@ Future<bool> showShareRpSendDialog<T>(
     gasDesc: 'HYN 产生',
     gas1Desc: 'RP 产生',
     gasUnit: 'HYN',
-    action: (String password) async {
+    action: (Object password) async {
       var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('RP');
 
       RpShareReqEntity result = await RPApi().postSendShareRp(
@@ -430,7 +430,7 @@ Future<bool> showShareRpSendDialog<T>(
       reqEntity.id = result.id;
       return result.id.isNotEmpty;
     },
-    finished: (String _) async {
+    finished: (Object _) async {
       if (reqEntity.rpType == RpShareType.normal) {
         Navigator.push(
           context,

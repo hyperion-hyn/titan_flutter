@@ -787,7 +787,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
       gas: gasValue.toString(),
       gasDesc: '',
       gasUnit: 'HYN',
-      action: (String password) async {
+      action: (Object password) async {
         var burningAmount = ConvertTokenUnit.strToBigInt(widget.levelRule.burnStr);
 
         var inputHoldValue = (_inputValue - _needBurnValue);
@@ -805,7 +805,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
 
         return true;
       },
-      finished: (String _) async {
+      finished: (Object _) async {
         Fluttertoast.showToast(
           msg: S.of(context).rp_level_up_broadcast_sent,
           gravity: ToastGravity.CENTER,

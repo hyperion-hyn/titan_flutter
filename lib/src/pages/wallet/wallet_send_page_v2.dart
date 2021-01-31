@@ -1075,7 +1075,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       gas: gasValue.toString(),
       gasDesc: '',
       gasUnit: gasUnit,
-      action: (String password) async {
+      action: (Object password) async {
 
         // 1.Bitcoin
         if (_isBTC) {
@@ -1120,7 +1120,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
 
         return true;
       },
-      finished: (String _) async {
+      finished: (Object _) async {
         var msg;
         if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
           msg = S.of(context).transfer_message_broadcast_wait_six_seconds;

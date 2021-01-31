@@ -509,7 +509,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
       gas: gasValue.toString(),
       gasDesc: '',
       gasUnit: 'HYN',
-      action: (String password) async {
+      action: (Object password) async {
         var amount = ConvertTokenUnit.strToBigInt(value.toString());
 
         await _rpApi.postRpWithdraw(
@@ -522,7 +522,7 @@ class _RpLevelWithdrawState extends BaseState<RpLevelWithdrawPage> {
 
         return true;
       },
-      finished: (String _) async {
+      finished: (Object _) async {
         Navigator.pop(context, true);
 
         return true;

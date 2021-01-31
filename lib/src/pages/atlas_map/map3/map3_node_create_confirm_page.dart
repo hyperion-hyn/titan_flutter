@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
@@ -8,6 +9,7 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_reward_list_page.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'map3_node_confirm_page.dart';
 
@@ -221,13 +223,23 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
           map3entity.amount = widget.payload.staking;
           message = ConfirmCreateMap3NodeMessage(entity: map3entity);
 
+          Decimal stakingAmount = Decimal.tryParse(widget.payload.staking);
+          map3ShowSendDialog(
+            context: context,
+            message: message,
+            value: stakingAmount.toDouble(),
+          );
+
+          /*
           await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => Map3NodeConfirmPage(
                   message: message,
                 ),
-              ));
+              ),
+          );
+          */
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,

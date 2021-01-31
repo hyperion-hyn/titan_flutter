@@ -39,6 +39,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/wallet_cmp_event.dart';
 
+import 'map3_node_reward_list_page.dart';
+
 class Map3NodeJoinPage extends StatefulWidget {
   final Map3InfoEntity map3infoEntity;
 
@@ -394,13 +396,13 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                     "0",
                 nodeId: widget.map3infoEntity.nodeId,
               );
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Map3NodeConfirmPage(
-                      message: message,
-                    ),
-                  ));
+
+              Decimal stakingAmount = Decimal.tryParse(staking);
+              map3ShowSendDialog(
+                context: context,
+                message: message,
+                value: stakingAmount.toDouble(),
+              );
             },
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,

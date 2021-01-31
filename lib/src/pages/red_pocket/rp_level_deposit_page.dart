@@ -470,7 +470,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
       gas: gasValue.toString(),
       gasDesc: '',
       gasUnit: 'HYN',
-      action: (String password) async {
+      action: (Object password) async {
         try {
           var amount = ConvertTokenUnit.strToBigInt(value.toString());
 
@@ -489,7 +489,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
         }
         return false;
       },
-      finished: (String _) async {
+      finished: (Object _) async {
         Fluttertoast.showToast(
           msg: '${S.of(context).rp_add_holding_brocast_sent}！',
           gravity: ToastGravity.CENTER,

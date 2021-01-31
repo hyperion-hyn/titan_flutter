@@ -15,8 +15,8 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
@@ -422,20 +422,21 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
               amount: _totalAmount.toString(),
               addressList: _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
             );
-            /*
-            showSendDialog(
+
+            map3ShowGetDialog(
               context: context,
               message: message,
               value: _totalAmount.toDouble(),
             );
-            */
+            /*
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Map3NodeConfirmPage(
-                    message: message,
-                  ),
-                ));
+              context,
+              MaterialPageRoute(
+                builder: (context) => Map3NodeConfirmPage(
+                  message: message,
+                ),
+              ),
+            );*/
           },
           width: 160,
           height: 38,
@@ -453,42 +454,6 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
         height: 1.8,
       ),
       suffixContent: " ？",
-    );
-  }
-
-  Future<bool> showSendDialog<T>({
-    BuildContext context,
-    AtlasMessage message,
-    double value,
-  }) async {
-    WalletSendDialogEntity entity = WalletSendDialogEntity(
-      type: 'tx_mpa3_collect_reward',
-      valueUnit: 'HYN',
-      title: '智能合约调用',
-      value: value,
-      valueDirection: '+',
-      titleDesc: message.description.title,
-      fromName: message.description.fromName,
-      fromAddress: '',
-      toName: WalletModelUtil.walletName,
-      toAddress: WalletModelUtil.walletHynShortAddress,
-      gas: message.description.fee,
-      gasUnit: 'HYN',
-      action: (String password) async {
-        var result = await message.action(password);
-        return result != null;
-      },
-      finished: (String _) async {
-        Application.router.navigateTo(
-            context, Routes.map3node_broadcast_success_page + "?actionEvent=${message.type}");
-
-        return true;
-      },
-    );
-
-    return showWalletSendDialog(
-      context: context,
-      entity: entity,
     );
   }
 
@@ -638,4 +603,113 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
       ),
     );
   }
+}
+
+Future<bool> map3ShowSendDialog<T>({
+  BuildContext context,
+  AtlasMessage message,
+  double value,
+}) async {
+  WalletSendDialogEntity entity = WalletSendDialogEntity(
+    type: 'tx_${message.type.toString()}',
+    valueUnit: 'HYN',
+    title: '智能合约调用',
+    value: value,
+    valueDirection: '-',
+    titleDesc: message.description.title,
+    fromName: WalletModelUtil.walletName,
+    fromAddress: WalletModelUtil.walletHynShortAddress,
+    toName: 'Map3节点',
+    toAddress: message.description.toDetail,
+    gas: message.description.fee,
+    gasUnit: 'HYN',
+    action: (Object password) async {
+      var result = await message.action(password);
+      return result != null;
+    },
+    finished: (dynamic result) async {
+
+      if (result is String) {
+        Map3InfoEntity map3infoEntity = Map3InfoEntity.onlyNodeId(result);
+        map3infoEntity.status = 1;
+
+        if (message is ConfirmCreateMap3NodeMessage) {
+          map3infoEntity.address = WalletModelUtil.walletEthAddress;
+
+          var messageEntity = message;
+          var payload = messageEntity.entity.payload;
+
+          map3infoEntity.name = payload.name;
+          map3infoEntity.nodeId = payload.nodeId;
+          map3infoEntity.describe = payload.describe;
+          map3infoEntity.region = payload.region;
+          map3infoEntity.provider = payload.provider;
+          map3infoEntity.staking = ConvertTokenUnit.strToBigInt(payload.staking).toString();
+          map3infoEntity.contact = payload.connect;
+        }
+        Application.router.navigateTo(
+            context,
+            Routes.map3node_broadcast_success_page +
+                "?actionEvent=${message.type}" +
+                "&info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}");
+      } else if (result is List) {
+        Map3InfoEntity map3infoEntity = Map3InfoEntity.onlyStaking(result[0], result[1]);
+
+        Application.router.navigateTo(
+            context,
+            Routes.map3node_broadcast_success_page +
+                "?actionEvent=${message.type}" +
+                "&info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}");
+      } else if (result is bool) {
+        var isOK = result as bool;
+        if (isOK) {
+          Application.router.navigateTo(context,
+              Routes.map3node_broadcast_success_page + "?actionEvent=${message.type}");
+        }
+      }
+
+      return true;
+    },
+  );
+
+  return showWalletSendDialog(
+    context: context,
+    entity: entity,
+  );
+}
+
+Future<bool> map3ShowGetDialog<T>({
+  BuildContext context,
+  AtlasMessage message,
+  double value,
+}) async {
+  WalletSendDialogEntity entity = WalletSendDialogEntity(
+    type: 'tx_${message.type.toString()}',
+    valueUnit: 'HYN',
+    title: '智能合约调用',
+    value: value,
+    valueDirection: '+',
+    titleDesc: message.description.title,
+    fromName: message.description.fromName,
+    fromAddress: '',
+    toName: WalletModelUtil.walletName,
+    toAddress: WalletModelUtil.walletHynShortAddress,
+    gas: message.description.fee,
+    gasUnit: 'HYN',
+    action: (Object password) async {
+      var result = await message.action(password);
+      return result != null;
+    },
+    finished: (Object _) async {
+      Application.router.navigateTo(
+          context, Routes.map3node_broadcast_success_page + "?actionEvent=${message.type}");
+
+      return true;
+    },
+  );
+
+  return showWalletSendDialog(
+    context: context,
+    entity: entity,
+  );
 }

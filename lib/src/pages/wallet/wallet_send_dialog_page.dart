@@ -300,7 +300,7 @@ Future<bool> showWalletSendDialog<T>({
   );
 }
 
-typedef WalletSendEntityCallBack = Future<bool> Function(String psw);
+typedef WalletSendEntityCallBack = Future<bool> Function(dynamic psw);
 
 class WalletSendDialogEntity {
   final String type;

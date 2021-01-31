@@ -12,6 +12,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -212,7 +213,8 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
   }
 
   Widget _headerWidget() {
-    var activatedLegalSign = WalletInheritedModel.of(context).tokenLegalPrice('HYN'); // activatedQuoteVoAndSign("HYN");
+    var activatedLegalSign =
+        WalletInheritedModel.of(context).tokenLegalPrice('HYN'); // activatedQuoteVoAndSign("HYN");
     var quotePrice = activatedLegalSign?.price ?? 1;
     var quoteSign = activatedLegalSign?.legal?.legal ?? "￥";
     var amountValue = double.parse(_amount ?? '0');
@@ -242,7 +244,8 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                     child: Text(
                       "$_amountDirection${FormatUtil.formatPrice(double.parse(_amount ?? "0"))} HYN",
-                      style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
+                      style: TextStyle(
+                          color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                   ),
                 ),
@@ -365,7 +368,6 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
 
       print("[Map3NodeConfirmPage]: password:$password， 1");
 
-
       if (needEditBLS) {
         var editResult = false;
         editResult = await widget.editMessage.action(password);
@@ -408,12 +410,11 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
       map3infoEntity.status = 1;
 
       if (widget.message is ConfirmCreateMap3NodeMessage) {
-        var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-        var address = activatedWallet.wallet.getEthAccount().address;
-        map3infoEntity.address = address;
+        map3infoEntity.address = WalletModelUtil.walletEthAddress;
 
         var messageEntity = widget.message as ConfirmCreateMap3NodeMessage;
         var payload = messageEntity.entity.payload;
+
         map3infoEntity.name = payload.name;
         map3infoEntity.nodeId = payload.nodeId;
         map3infoEntity.describe = payload.describe;
@@ -438,8 +439,8 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
     } else if (result is bool) {
       var isOK = result;
       if (isOK) {
-        Application.router
-            .navigateTo(context, Routes.map3node_broadcast_success_page + "?actionEvent=${widget.message.type}");
+        Application.router.navigateTo(context,
+            Routes.map3node_broadcast_success_page + "?actionEvent=${widget.message.type}");
       } else {
         setState(() {
           _isTransferring = false;
@@ -450,5 +451,6 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
         _isTransferring = false;
       });
     }
+
   }
 }

@@ -988,7 +988,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       gas: gasValue.toString(),
       gasDesc: '',
       gasUnit: 'HYN',
-      action: (String password) async {
+      action: (Object password) async {
         var amount = ConvertTokenUnit.strToBigInt(value.toString());
 
         await _rpApi.postStakingRp(
@@ -1000,7 +1000,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
         return true;
       },
-      finished: (String _) async {
+      finished: (Object _) async {
         getNetworkData();
 
         Navigator.pop(context, true);

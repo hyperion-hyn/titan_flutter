@@ -170,12 +170,14 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     });
   }
 
+  bool _haveRequest = false;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    if (context != null) {
+    if (context != null && !_haveRequest) {
       BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+      _haveRequest = true;
     }
   }
 
