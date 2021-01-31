@@ -407,15 +407,16 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
             mnemonic: mnemonic);
       }
 
+      ///save expand info
+      WalletExpandInfoEntity walletExpandInfoEntity = WalletExpandInfoEntity(userImageLocalPath,
+          userImagePath, _walletPswHintController.text.trim(), !widget.isCreateWallet);
+      wallet.walletExpandInfoEntity = walletExpandInfoEntity;
       BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
 
       ///Clear exchange account when switch wallet
       BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
       await Future.delayed(Duration(milliseconds: 500)); //延时确保激活成功
 
-      ///save expand info
-      WalletExpandInfoEntity walletExpandInfoEntity = WalletExpandInfoEntity(userImageLocalPath,
-          userImagePath, _walletPswHintController.text.trim(), !widget.isCreateWallet);
       BlocProvider.of<WalletCmpBloc>(context)
           .add(UpdateWalletExpandEvent(wallet.getEthAccount().address, walletExpandInfoEntity));
 
