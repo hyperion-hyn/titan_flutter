@@ -355,25 +355,20 @@ class FormatUtil {
   }
 
   static String truncateDecimalNum(Decimal decNum, int decimal) {
-    var number = decNum.toDouble();
-
-    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
-      var result = number
+    var number = decNum.toString();
+    if ((number.length - number.lastIndexOf(".") - 1) <
+        decimal) {
+      var result = decNum
           .toStringAsFixed(decimal)
-          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
+          .substring(0, number.lastIndexOf(".") + decimal + 1)
           .toString();
-
       result = FormatUtil.strClearZero(result);
-
       return result;
     } else {
       var result = number
-          .toString()
-          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
+          .substring(0, number.lastIndexOf(".") + decimal + 1)
           .toString();
-
       result = FormatUtil.strClearZero(result);
-
       return result;
     }
   }
