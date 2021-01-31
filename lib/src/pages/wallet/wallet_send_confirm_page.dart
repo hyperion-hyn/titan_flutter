@@ -31,6 +31,7 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class WalletSendConfirmPage extends StatefulWidget {
   final CoinViewVo coinVo;
@@ -72,8 +73,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Decimal get _gasPrice {
-    if (widget.coinVo.coinType == CoinType.HYN_ATLAS
-      || widget.coinVo.coinType == CoinType.HB_HT) {
+    if (widget.coinVo.coinType == CoinType.HYN_ATLAS || widget.coinVo.coinType == CoinType.HB_HT) {
       return Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
     }
 
@@ -101,9 +101,11 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     // BTC
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
       var fees = ConvertTokenUnit.weiToDecimal(
-          BigInt.parse((_gasPrice * Decimal.fromInt(BitcoinGasPrice.BTC_RAWTX_SIZE)).toString()), 8);
+          BigInt.parse((_gasPrice * Decimal.fromInt(BitcoinGasPrice.BTC_RAWTX_SIZE)).toString()),
+          8);
       var gasPriceEstimate = fees * Decimal.parse(quotePrice.toString());
-      gasPriceEstimateStr = "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
+      gasPriceEstimateStr =
+          "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
     }
     // 2.ETH
     else if (widget.coinVo.coinType == CoinType.ETHEREUM) {
@@ -135,7 +137,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
       var gasPriceEstimate = gasEstimate * Decimal.parse(htQuotePrice.toString());
       gasPriceEstimateStr =
-      '${(_gasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI)).toStringAsFixed(1)} GWEI (≈ ${quoteSign ?? ""}${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())})';
+          '${(_gasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI)).toStringAsFixed(1)} GWEI (≈ ${quoteSign ?? ""}${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())})';
     }
 
     return gasPriceEstimateStr;
@@ -164,9 +166,11 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
-      gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).btcGasPriceRecommend;
+      gasPriceRecommend =
+          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).btcGasPriceRecommend;
     } else {
-      gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).ethGasPriceRecommend;
+      gasPriceRecommend =
+          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).ethGasPriceRecommend;
     }
 
     _speedOnTap(1);
@@ -182,15 +186,22 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       ),
       body: BaseGestureDetector(
         context: context,
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              _totalWidget(),
-              _transferWidget(),
-              _gasWidget(),
-              _sendWidget(),
-            ],
-          ),
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    _totalWidget(),
+                    _transferWidget(),
+                    _gasWidget(),
+
+                  ],
+                ),
+              ),
+            ),
+            _sendWidget(),
+          ],
         ),
       ),
     );
@@ -218,7 +229,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                   child: Text(
                     "-${widget.transferAmount} ${widget.coinVo.symbol}",
-                    style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
+                    style: TextStyle(
+                        color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                 ),
                 Text(
@@ -260,7 +272,10 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                         children: <Widget>[
                           Text(
                             "${activatedWallet.wallet.keystore.name}",
-                            style: TextStyle(fontSize: 14, color: Color(0xFF333333), fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Color(0xFF333333),
+                                fontWeight: FontWeight.bold),
                             overflow: TextOverflow.ellipsis,
                             softWrap: true,
                           ),
@@ -269,7 +284,10 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                               widget.coinVo,
                               widget.coinVo.address,
                             ))})",
-                            style: TextStyle(fontSize: 14, color: Color(0xFF999999), fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Color(0xFF999999),
+                                fontWeight: FontWeight.bold),
                             overflow: TextOverflow.ellipsis,
                             softWrap: true,
                           )
@@ -335,6 +353,19 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Widget _sendWidget() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ClickOvalButton(
+        isTransferring ? S.of(context).please_waiting : S.of(context).send,
+        _transferAction,
+        height: 46,
+        width: 300,
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        btnColor: [HexColor("#F7D33D"), HexColor("#E7C01A")],
+        isLoading: isTransferring,
+      ),
+    );
     return Container(
       margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
       constraints: BoxConstraints.expand(height: 48),
@@ -381,7 +412,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               children: <Widget>[
                 Text(
                   title,
-                  style: TextStyle(color: selectedPriceLevel == index ? Colors.white : Colors.black, fontSize: 12),
+                  style: TextStyle(
+                      color: selectedPriceLevel == index ? Colors.white : Colors.black,
+                      fontSize: 12),
                 ),
                 Text(
                   waite,
@@ -408,7 +441,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           index: 0,
           title: S.of(context).speed_slow,
           waite: S.of(context).wait_min(gasPriceRecommend.safeLowWait.toString()),
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30)),
+          borderRadius:
+              BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30)),
         ),
         _divider(),
         _item(
@@ -422,7 +456,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           index: 2,
           title: S.of(context).speed_fast,
           waite: S.of(context).wait_min(gasPriceRecommend.fastWait.toString()),
-          borderRadius: BorderRadius.only(topRight: Radius.circular(30), bottomRight: Radius.circular(30)),
+          borderRadius:
+              BorderRadius.only(topRight: Radius.circular(30), bottomRight: Radius.circular(30)),
         ),
       ];
     }
@@ -433,7 +468,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           index: 0,
           title: S.of(context).speed_slow,
           waite: S.of(context).wait_min(gasPriceRecommend.safeLowWait.toString()),
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30)),
+          borderRadius:
+              BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30)),
         ),
         _divider(),
         _item(
@@ -454,7 +490,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           index: 3,
           title: S.of(context).customize,
           waite: '',
-          borderRadius: BorderRadius.only(topRight: Radius.circular(30), bottomRight: Radius.circular(30)),
+          borderRadius:
+              BorderRadius.only(topRight: Radius.circular(30), bottomRight: Radius.circular(30)),
         ),
       ];
     }
@@ -505,7 +542,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               ],
             ),
           ),
-          if (widget.coinVo.coinType == CoinType.ETHEREUM || widget.coinVo.coinType == CoinType.BITCOIN)
+          if (widget.coinVo.coinType == CoinType.ETHEREUM ||
+              widget.coinVo.coinType == CoinType.BITCOIN)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
               child: Row(
@@ -516,13 +554,13 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _textField(
-                    _gasPriceController, S.of(context).please_input_gas_price, "GWEI", _gasPriceFormKey, 'Gas Price'),
+                _textField(_gasPriceController, S.of(context).please_input_gas_price, "GWEI",
+                    _gasPriceFormKey, 'Gas Price'),
                 SizedBox(
                   height: 8,
                 ),
-                _textField(_nonceController, S.of(context).please_enter_nonce_optional, "", _nonceFormKey,
-                    S.of(context).nonce_value),
+                _textField(_nonceController, S.of(context).please_enter_nonce_optional, "",
+                    _nonceFormKey, S.of(context).nonce_value),
               ],
             ),
         ],
@@ -605,17 +643,24 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                   errorStyle: TextStyle(fontSize: 14, color: Colors.blue[300]),
                   hintStyle: TextStyle(fontSize: 14, color: Colors.grey[300]),
                   errorBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
+                      borderSide:
+                          BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
                   focusedErrorBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
+                      borderSide:
+                          BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
+                      borderSide:
+                          BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
                   // //输入框启用时，下划线的样式
                   disabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
+                      borderSide:
+                          BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)),
                   //输入框启用时，下划线的样式
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)), //输入框启用时，下划线的样式
+                      borderSide: BorderSide(
+                          width: 0.5,
+                          color: Colors.blue,
+                          style: BorderStyle.solid)), //输入框启用时，下划线的样式
                 ),
                 // keyboardType: TextInputType.number,
                 keyboardType: TextInputType.numberWithOptions(decimal: false),

@@ -30,6 +30,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class ExchangeWithdrawConfirmPage extends StatefulWidget {
   final CoinViewVo coinVo;
@@ -198,47 +199,37 @@ class _ExchangeWithdrawConfirmPageState extends BaseState<ExchangeWithdrawConfir
                 style: TextStyle(color: Colors.black),
               ),
             ),
-            body: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  info(),
-                  detail(),
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
-                    constraints: BoxConstraints.expand(height: 48),
-                    child: RaisedButton(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                      disabledColor: Colors.grey[600],
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      disabledTextColor: Colors.white,
-                      onPressed: isTransferring || !isGasFeeLoadingSuccess
-                          ? null
-                          : () async {
-                              await _transfer(
-                                _actualAmount.toString(),
-                                '$_gasFeeByToken',
-                              );
-                            },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              isTransferring ? S.of(context).please_waiting : S.of(context).send,
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+            body: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        info(),
+                        detail(),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ClickOvalButton(
+                    isTransferring ? S.of(context).please_waiting : S.of(context).send,
+                    () async {
+                      await _transfer(
+                        _actualAmount.toString(),
+                        '$_gasFeeByToken',
+                      );
+                    },
+                    height: 46,
+                    width: 300,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    btnColor: [HexColor("#F7D33D"), HexColor("#E7C01A")],
+                    isLoading: isTransferring || !isGasFeeLoadingSuccess,
+                  ),
+                )
+              ],
             ),
           );
         },

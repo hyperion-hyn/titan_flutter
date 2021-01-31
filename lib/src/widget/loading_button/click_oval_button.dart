@@ -17,6 +17,7 @@ class ClickOvalButton extends StatefulWidget {
   String loadingText = S.of(Keys.rootKey.currentContext).submitting_request;
   FontWeight fontWeight = FontWeight.w500;
   bool isDisable;
+  Widget prefixIcon;
 
   ClickOvalButton(
     this.text,
@@ -31,6 +32,7 @@ class ClickOvalButton extends StatefulWidget {
     String loadingTextStr,
     this.fontWeight,
     this.isDisable = false,
+    this.prefixIcon,
   }) {
     if (loadingTextStr != null) {
       this.loadingText = loadingTextStr;
@@ -50,7 +52,8 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
       height: widget.height,
       width: widget.width,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
+        borderRadius: BorderRadius.all(
+            Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
         gradient: getGradient(),
       ),
       child: (widget.isLoading && !widget.isDisable)
@@ -83,18 +86,25 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
     }
     return FlatButton(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
+          borderRadius: BorderRadius.all(
+              Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
         ),
         padding: const EdgeInsets.all(0.0),
         child: Center(
-          child: Text(
-            title,
-            style: TextStyle(
-              fontWeight: widget.fontWeight,
-              fontSize: widget.fontSize,
-              color: color,
-            ),
-            textAlign: TextAlign.center,
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              if (widget.prefixIcon != null) widget.prefixIcon,
+              Text(
+                title,
+                style: TextStyle(
+                  fontWeight: widget.fontWeight,
+                  fontSize: widget.fontSize,
+                  color: color,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
         onPressed: (widget.onTap == null || widget.isLoading || widget.isDisable)

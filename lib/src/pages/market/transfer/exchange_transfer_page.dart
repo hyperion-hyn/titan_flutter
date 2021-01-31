@@ -92,6 +92,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                               child: ListView(
                                 children: <Widget>[
                                   _transferTypeSelection(),
+                                  SizedBox(height: 16.0),
                                   _coinTypeSelection(),
                                   _amount(),
                                   //_transferHint(),
@@ -164,7 +165,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   _transferTypeItem(bool _isExchange) {
     if (_isExchange) {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
         child: Text(
           S.of(context).exchange_account,
           style: TextStyle(
@@ -175,7 +176,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       );
     } else {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical:8),
         child: Row(
           children: <Widget>[
             Text(
@@ -292,7 +293,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                   'res/drawable/ic_btn_transfer.png',
                   width: 50,
                   height: 50,
-                  color: Theme.of(context).primaryColor,
                 ),
                 onTap: () {
                   setState(() {
@@ -413,23 +413,19 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _confirm() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 48.0, right: 48, bottom: 32),
-      child: ClickOvalButton(
-        _fromExchangeToWallet
-            ? S.of(context).exchange_withdraw
-            : S.of(context).exchange_deposit,
-        () async {
-          FocusScope.of(context).requestFocus(FocusNode());
-          if (_formKey.currentState.validate()) {
-            await _transfer();
-          }
-        },
-        height: 51,
-        width: double.infinity,
-        fontSize: 14,
-        btnColor: [Theme.of(context).primaryColor],
-      ),
+    return ClickOvalButton(
+      S.of(context).exchange_transfer,
+      () async {
+        FocusScope.of(context).requestFocus(FocusNode());
+        if (_formKey.currentState.validate()) {
+          await _transfer();
+        }
+      },
+      height: 46,
+      width: 300,
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      btnColor: [HexColor("#F7D33D"), HexColor("#E7C01A")],
     );
   }
 
@@ -507,13 +503,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     var minAndMaxAmountHint = '';
 
     if (_fromExchangeToWallet) {
-      minAndMaxAmountHint =
-          '$_minTransferText $_minTransferAmount $_selectedCoinSymbol' +
-              ',' +
-              '$_maxTransferText $_maxTransferAmount $_selectedCoinSymbol';
+      minAndMaxAmountHint = '$_minTransferText $_minTransferAmount $_selectedCoinSymbol' +
+          ',' +
+          '$_maxTransferText $_maxTransferAmount $_selectedCoinSymbol';
     } else {
-      minAndMaxAmountHint =
-          '$_minTransferText $_minTransferAmount $_selectedCoinSymbol';
+      minAndMaxAmountHint = '$_minTransferText $_minTransferAmount $_selectedCoinSymbol';
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -548,6 +542,9 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                   controller: _amountController,
                   validator: (value) {
                     value = value.trim();
+                    if (value.isEmpty) {
+                      return S.of(context).input_corrent_count_hint;
+                    }
                     if (Decimal.parse(value) <= Decimal.zero) {
                       return S.of(context).input_corrent_count_hint;
                     }
@@ -555,19 +552,16 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                       return S.of(context).input_corrent_count_hint;
                     }
 
-                    if (Decimal.parse(value) >
-                        Decimal.parse(_availableAmount())) {
+                    if (Decimal.parse(value) > Decimal.parse(_availableAmount())) {
                       return S.of(context).input_count_over_balance;
                     }
 
-                    if (Decimal.parse(value) >
-                            Decimal.parse(_maxTransferAmount) &&
+                    if (Decimal.parse(value) > Decimal.parse(_maxTransferAmount) &&
                         _fromExchangeToWallet) {
                       return S.of(context).exchange_withdraw_over_than_max;
                     }
 
-                    if (Decimal.parse(value) <
-                        Decimal.parse(_minTransferAmount)) {
+                    if (Decimal.parse(value) < Decimal.parse(_minTransferAmount)) {
                       return _fromExchangeToWallet
                           ? S.of(context).exchange_withdraw_less_than_min
                           : S.of(context).exchange_deposit_less_than_min;
@@ -691,8 +685,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           ?.getAsset(_selectedCoinSymbol)
           ?.exchangeAvailable;
       if (_exchangeAvailable != null) {
-        return FormatUtil.truncateDecimalNum(
-            Decimal.parse(_exchangeAvailable), 6);
+        return FormatUtil.truncateDecimalNum(Decimal.parse(_exchangeAvailable), 6);
       } else {
         return '0';
       }

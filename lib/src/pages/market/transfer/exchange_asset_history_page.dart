@@ -26,6 +26,7 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class ExchangeAssetHistoryPage extends StatefulWidget {
   final String _symbol;
@@ -128,50 +129,91 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
               ),
               Align(
                 alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: double.infinity,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 64.0, right: 64, bottom: 32),
-                    child: Container(
-                      child: RaisedButton(
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        disabledColor: Colors.grey[600],
-                        color: Theme.of(context).primaryColor,
-                        textColor: Colors.white,
-                        disabledTextColor: Colors.white,
-                        onPressed: () {
-                          if (ExchangeInheritedModel.of(context).exchangeModel.isActiveAccountAndHasAssets()) {
-                            Application.router.navigateTo(
-                              context,
-                              '${Routes.exchange_transfer_page}?coinType=${widget._symbol}',
-                            );
-                          } else {
-                            UiUtil.showExchangeAuthAgainDialog(context);
-                          }
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                S.of(context).exchange_transfer,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: ClickOvalButton(
+                    S.of(context).exchange_transfer,
+                    () {
+                      if (ExchangeInheritedModel.of(context)
+                          .exchangeModel
+                          .isActiveAccountAndHasAssets()) {
+                        Application.router.navigateTo(
+                          context,
+                          '${Routes.exchange_transfer_page}?coinType=${widget._symbol}',
+                        );
+                      } else {
+                        UiUtil.showExchangeAuthAgainDialog(context);
+                      }
+                    },
+                    width: 200,
+                    height: 40,
+                    btnColor: [HexColor("#F7D33D"), HexColor("#E7C01A")],
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    fontColor: DefaultColors.color333,
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Image.asset(
+                        'res/drawable/ic_arrow_up.png',
+                        width: 12,
+                        height: 12,
                       ),
                     ),
                   ),
                 ),
               ),
+              // Align(
+              //   alignment: Alignment.bottomCenter,
+              //   child: Container(
+              //     width: double.infinity,
+              //     child: Padding(
+              //       padding: EdgeInsets.only(
+              //         left: 64.0,
+              //         right: 64,
+              //         bottom: 32,
+              //       ),
+              //       child: Container(
+              //         child: RaisedButton(
+              //           elevation: 5,
+              //           shape: RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.circular(30),
+              //           ),
+              //           disabledColor: Colors.grey[600],
+              //           color: Theme.of(context).primaryColor,
+              //           textColor: Colors.black,
+              //           disabledTextColor: Colors.white,
+              //           onPressed: () {
+              //             if (ExchangeInheritedModel.of(context)
+              //                 .exchangeModel
+              //                 .isActiveAccountAndHasAssets()) {
+              //               Application.router.navigateTo(
+              //                 context,
+              //                 '${Routes.exchange_transfer_page}?coinType=${widget._symbol}',
+              //               );
+              //             } else {
+              //               UiUtil.showExchangeAuthAgainDialog(context);
+              //             }
+              //           },
+              //           child: Padding(
+              //             padding: const EdgeInsets.all(0.0),
+              //             child: Row(
+              //               mainAxisAlignment: MainAxisAlignment.center,
+              //               children: <Widget>[
+              //                 Text(
+              //                   S.of(context).exchange_transfer,
+              //                   style: TextStyle(
+              //                     fontWeight: FontWeight.normal,
+              //                     fontSize: 14,
+              //                   ),
+              //                 ),
+              //               ],
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -309,8 +351,8 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      WalletShowTransactionSimpleInfoPage(transactionDetailVo.hash, transactionDetailVo.symbol)));
+                  builder: (context) => WalletShowTransactionSimpleInfoPage(
+                      transactionDetailVo.hash, transactionDetailVo.symbol)));
         } else {
           var url = EtherscanApi.getTxDetailUrl(assetHistory.txId);
           if (url != null) {
@@ -364,8 +406,10 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
                             ),
                             Text(
                               "${Decimal.parse(assetHistory.balance)}",
-                              style:
-                                  TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w500, fontSize: 12),
+                              style: TextStyle(
+                                  color: DefaultColors.color333,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12),
                             ),
                           ],
                         ),
@@ -597,9 +641,7 @@ class AssetItemState extends State<AssetItem> {
                       fontSize: 12,
                     ),
                   ),
-                  SizedBox(
-                    height: 8.0,
-                  ),
+                  SizedBox(height: 8.0),
                   Text(
                     exchangeFreeze,
                     style: TextStyle(
@@ -616,17 +658,6 @@ class AssetItemState extends State<AssetItem> {
           height: 4.0,
         ),
       ],
-    );
-  }
-
-  _divider() {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.0,
-      ),
-      child: Divider(
-        height: 2,
-      ),
     );
   }
 }

@@ -226,9 +226,6 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
               borderRadius: BorderRadius.circular(6.0),
             ),
             child: Container(
-              // constraints: BoxConstraints(
-              //   maxWidth: 150,
-              // ),
               width: 135,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,7 +263,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: Wrap(
+                      child: Row(
                         children: [
                           Image.asset(
                             'res/drawable/ic_import_wallet.png',
