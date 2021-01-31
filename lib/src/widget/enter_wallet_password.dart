@@ -121,7 +121,7 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                                         ),
                                       ),
                                       onTap: () {
-                                        Fluttertoast.showToast(msg: "密码提示：${widget.wallet.walletExpandInfoEntity.pswRemind ?? ""}");
+                                        Fluttertoast.showToast(msg: "密码提示：${widget.wallet.walletExpandInfoEntity.pswRemind ?? ""}",gravity: ToastGravity.CENTER);
                                       },
                                     )
                                   ],
