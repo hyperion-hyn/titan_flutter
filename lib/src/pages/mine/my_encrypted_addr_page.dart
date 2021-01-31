@@ -13,6 +13,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -339,10 +340,13 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage>
       final file = await File('${tempDir.path}/$path').create();
       await file.writeAsBytes(pngBytes);
       //print("[my-encrypted] === share, path:$path, file:$file");
+      AppLockUtil.ignoreAppLock(context, true);
+
       if (Platform.isIOS) {
         await Share.file(
             S.of(context).share_qrcode, path, pngBytes, 'image/jpeg');
       } else {
+
         TitanPlugin.shareImage(path, S.of(context).share_qrcode);
       }
     } catch (e) {

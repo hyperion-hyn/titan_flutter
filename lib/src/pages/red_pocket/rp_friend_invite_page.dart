@@ -10,6 +10,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -266,6 +267,8 @@ class _RpFriendInvitePageState extends BaseState<RpFriendInvitePage> {
   }
 
   Future _shareQr(BuildContext context) async {
+    AppLockUtil.ignoreAppLock(context, true);
+
     Uint8List imageByte = await _shotController.makeImageUint8List();
     await Share.file(S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -154,6 +155,8 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
   }
 
   void _shareQr(BuildContext context) async {
+    AppLockUtil.ignoreAppLock(context, true);
+
     Uint8List imageByte = await _shotController.makeImageUint8List();
     await Share.file(S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
   }

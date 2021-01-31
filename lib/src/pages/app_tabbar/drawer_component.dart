@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/app.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_page_v2.dart';
@@ -271,6 +272,8 @@ class _DrawerComponentState extends State<DrawerComponent> {
     } else {
       shareAppImage = "res/drawable/share_app_en_android.jpeg";
     }
+
+    AppLockUtil.ignoreAppLock(context, true);
 
     final ByteData imageByte = await rootBundle.load(shareAppImage);
     await Share.file(S.of(context).nav_share_app, 'app.png',

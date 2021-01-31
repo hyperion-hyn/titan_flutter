@@ -628,6 +628,8 @@ class _MyPageState extends BaseState<MyPage> {
       shareAppImage = "res/drawable/share_app_en_android.jpeg";
     }
 
+    AppLockUtil.ignoreAppLock(context, true);
+
     final ByteData imageByte = await rootBundle.load(shareAppImage);
     await Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg');
     */

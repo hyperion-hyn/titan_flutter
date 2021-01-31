@@ -6,6 +6,7 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
@@ -185,6 +186,8 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
   Future _shareQr(BuildContext context) async {
 //    print('_shareQr --> action, _shotController: ${_shotController.hashCode}');
 //    print('_shareQr --> action, globalKey:${_shotController.globalKey.currentContext}, context:${context}');
+
+    AppLockUtil.ignoreAppLock(context, true);
 
     Uint8List imageByte = await _shotController.makeImageUint8List();
     await Share.file(

@@ -3,6 +3,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/widget/widget_shot.dart';
 
 class InAppWebViewContainer extends StatefulWidget {
@@ -181,6 +182,8 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
       webView.takeScreenshot().then((imageByte) async {
         var len = imageByte.lengthInBytes;
         //debugPrint("screenshot taken bytes $len");
+
+        AppLockUtil.ignoreAppLock(context, true);
 
         await Share.file(S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
       });
