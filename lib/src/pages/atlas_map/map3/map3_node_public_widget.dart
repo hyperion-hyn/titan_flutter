@@ -41,7 +41,7 @@ Widget iconEmptyDefault() {
     borderRadius: BorderRadius.circular(4.0),
     child: FadeInImage.assetNetwork(
       image: "",
-      placeholder: 'res/drawable/img_placeholder.jpg',
+      placeholder: 'res/drawable/ic_user_avatar_default.png',
       width: 42,
       height: 42,
       fit: BoxFit.cover,
@@ -80,7 +80,7 @@ Widget iconWalletWidget(
       borderRadius: BorderRadius.circular(isCircle ? size : 4.0),
       child: FadeInImage.assetNetwork(
         image: "",
-        placeholder: 'res/drawable/img_placeholder.jpg',
+        placeholder: 'res/drawable/ic_user_avatar_default.png',
         width: size,
         height: size,
         fit: BoxFit.cover,
@@ -103,6 +103,81 @@ Widget iconWidget(
   bool isCircle = false,
   double size = 42,
 }) {
+  if ((picture?.isNotEmpty ?? false) && picture.contains("http")) {
+    return Container(
+      padding: const EdgeInsets.all(0.5),
+      decoration: BoxDecoration(
+        border: Border.all(width: 0.5, color: DefaultColors.colordedede),
+        borderRadius: BorderRadius.all(
+          Radius.circular(isCircle ? size : 4.0),
+        ), //设置四周圆角 角度
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(isCircle ? size : 4.0),
+        child: FadeInImage.assetNetwork(
+          image: picture,
+          placeholder: 'res/drawable/ic_user_avatar_default.png',
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  if ((picture?.isNotEmpty ?? false)) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(isCircle ? 21 : 4.0),
+      child: Image.asset(
+        picture,
+        width: 42,
+        height: 42,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+
+  return SizedBox(
+    width: 42,
+    height: 42,
+    child: walletHeaderWidget(
+      name,
+      isShowShape: true,
+      address: address,
+      isCircle: isCircle,
+    ),
+  );
+}
+
+Widget iconWidgetNew(
+    String picture,
+    {
+      String name,
+      String address,
+      bool isCircle = true,
+      double size = 42,
+    }) {
+  return Container(
+    padding: const EdgeInsets.all(0.5),
+    decoration: BoxDecoration(
+      border: Border.all(width: 0.5, color: DefaultColors.colordedede),
+      borderRadius: BorderRadius.all(
+        Radius.circular(isCircle ? size : 4.0),
+      ), //设置四周圆角 角度
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(isCircle ? size : 4.0),
+      child: FadeInImage.assetNetwork(
+        image: picture,
+        placeholder: 'res/drawable/ic_user_avatar_default.png',
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+      ),
+    ),
+  );
+
   if ((picture?.isNotEmpty ?? false) && picture.contains("http")) {
     return Container(
       padding: const EdgeInsets.all(0.5),
@@ -1237,11 +1312,7 @@ Widget delegateRecordItemWidget(HynTransferHistory item,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                SizedBox(
-                  height: 40,
-                  width: 40,
-                  child: iconWidget("", item.name, item.from, isCircle: true),
-                ),
+                iconWidgetNew(item.pic, size: 40),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8.0),

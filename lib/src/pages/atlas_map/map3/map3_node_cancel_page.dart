@@ -17,6 +17,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -277,12 +278,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                               SizedBox(
                                 width: 42,
                                 height: 42,
-                                child: walletHeaderWidget(
-                                  _walletName,
-                                  isShowShape: false,
-                                  address: _walletAddress,
-                                  isCircle: true,
-                                ),
+                                child: iconWalletWidget(WalletModelUtil.wallet,),
                               ),
                               SizedBox(
                                 width: 6,

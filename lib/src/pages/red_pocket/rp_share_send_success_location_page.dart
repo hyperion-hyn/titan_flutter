@@ -5,6 +5,9 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class RpShareSendSuccessLocationPage extends StatefulWidget {
+  final int type;
+  RpShareSendSuccessLocationPage({this.type=0});
+
   @override
   State<StatefulWidget> createState() {
     return _RpShareSendSuccessLocationState();
@@ -19,7 +22,7 @@ class _RpShareSendSuccessLocationState extends State<RpShareSendSuccessLocationP
 
   @override
   Widget build(BuildContext context) {
-    String action = "请等待交易确认后就可以在泰坦地图上找到你的红包啦～";
+    String action = widget.type==0?"请等待交易确认后就可以在泰坦地图上找到你的红包啦～":'请等待交易确认后就可以在【我的传导】查看抵押情况啦～';
 
     return WillPopScope(
       onWillPop: () async {

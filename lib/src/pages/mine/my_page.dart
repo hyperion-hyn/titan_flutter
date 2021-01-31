@@ -186,11 +186,11 @@ class _MyPageState extends BaseState<MyPage> {
               ),
             ),
             Container(
-//              padding: EdgeInsets.symmetric(horizontal: 16),
               color: Colors.white,
               child: Column(
                 children: <Widget>[
                   _lineWidget(),
+
                   _buildMenuBar(
                     S.of(context).wallet_manage,
                     Icons.account_balance_wallet,
@@ -202,7 +202,8 @@ class _MyPageState extends BaseState<MyPage> {
                     imageName: "ic_me_page_manage_wallet",
                     color: Colors.cyan[300],
                   ),
-                  _lineWidget(),
+                  _lineWidget2(),
+
                   _buildMenuBar(
                     '应用锁',
                     Icons.account_balance_wallet,
@@ -226,6 +227,7 @@ class _MyPageState extends BaseState<MyPage> {
                     subText: AppLockInheritedModel.of(context).isLockEnable ? '已开启' : '',
                   ),
                   _lineWidget(),
+
                   _buildMenuBar(
                     S.of(context).preferences,
                     Icons.settings,
@@ -235,6 +237,7 @@ class _MyPageState extends BaseState<MyPage> {
                     color: Colors.cyan[400],
                   ),
                   _lineWidget(),
+
                   _buildMenuBar(
                     S.of(context).user_policy,
                     Icons.assignment,
@@ -248,10 +251,8 @@ class _MyPageState extends BaseState<MyPage> {
                     imageName: "ic_me_page_user_protocol",
                     color: Colors.cyan[300],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 56.0),
-                    child: Divider(height: 0),
-                  ),
+                  _lineWidget2(),
+
                   _buildMenuBar(
                     S.of(context).help,
                     Icons.help,
@@ -259,10 +260,8 @@ class _MyPageState extends BaseState<MyPage> {
                     imageName: "ic_me_page_use_guide",
                     color: Colors.cyan[400],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 56.0),
-                    child: Divider(height: 0),
-                  ),
+                  _lineWidget2(),
+
                   _buildMenuBar(
                     S.of(context).about_us,
                     Icons.info,
@@ -271,10 +270,8 @@ class _MyPageState extends BaseState<MyPage> {
                     imageName: "ic_me_page_about_us",
                     color: Colors.cyan[300],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 56.0),
-                    child: Divider(height: 0),
-                  ),
+                  _lineWidget2(),
+
                   _buildMenuBar(
                     S.of(context).version_update,
                     Icons.batch_prediction,
@@ -325,6 +322,16 @@ class _MyPageState extends BaseState<MyPage> {
     return Container(
       height: 5,
       color: HexColor('#F1EFF2'),
+    );
+  }
+
+  Widget _lineWidget2() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 56.0,
+        right: 16,
+      ),
+      child: Divider(height: 0),
     );
   }
 
@@ -414,7 +421,9 @@ class _MyPageState extends BaseState<MyPage> {
             color: Colors.white,
           ),
           child: InkWell(
-            onTap: () {},
+            onTap: () {
+              WalletManagerPage.jumpWalletManager(context);
+            },
             child: Stack(
               children: <Widget>[
                 Align(
@@ -452,7 +461,7 @@ class _MyPageState extends BaseState<MyPage> {
               // Application.router.navigateTo(context, Routes.wallet_manager);
             },
             child: Text(
-              S.of(context).create_import_wallet_account,
+              '创建/导入钱包',
               style: TextStyle(
                 color: HexColor('#0068E4'),
                 fontSize: 14,
@@ -511,9 +520,29 @@ class _MyPageState extends BaseState<MyPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  walletName,
-                  style: Theme.of(context).textTheme.apply().bodyText1,
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 8,
+                      ),
+                      child: Text(
+                        '钱包身份',
+                        style: TextStyle(
+                          color: HexColor('#333333'),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      walletName,
+                      style: TextStyle(
+                        color: HexColor('#333333'),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(
                   height: 4,
@@ -561,7 +590,7 @@ class _MyPageState extends BaseState<MyPage> {
           Text(
             S.of(context).titan_encrypted_map_ecology,
             style: TextStyle(
-              color: SupportedTheme.textColorBlack,
+              color: HexColor('#333333'),
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
@@ -574,9 +603,9 @@ class _MyPageState extends BaseState<MyPage> {
                 Text(
                   S.of(context).share_app,
                   style: TextStyle(
-                    color: SupportedTheme.textColorBlack,
+                    color: HexColor('#333333'),
                     fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 Padding(

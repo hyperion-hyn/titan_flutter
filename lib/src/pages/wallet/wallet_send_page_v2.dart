@@ -1181,6 +1181,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       value: amount,
       toAddress: toAddress,
       nonce: _nonce,
+      gasLimit: _gasLimit,
     );
 
     logger.i('HYN transaction committed，txhash $txHash ');

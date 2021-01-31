@@ -13,6 +13,7 @@ import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
@@ -47,8 +48,10 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   Map3NodeInformationEntity _map3nodeInformationEntity;
   AtlasApi _atlasApi = AtlasApi();
 
-  String get _nodeId => _map3infoEntity?.nodeId ?? _map3nodeInformationEntity?.map3Node?.description?.identity ?? '';
-  String get _nodeAddress => _map3infoEntity?.address ?? _map3nodeInformationEntity?.map3Node?.map3Address ?? '';
+  String get _nodeId =>
+      _map3infoEntity?.nodeId ?? _map3nodeInformationEntity?.map3Node?.description?.identity ?? '';
+  String get _nodeAddress =>
+      _map3infoEntity?.address ?? _map3nodeInformationEntity?.map3Node?.map3Address ?? '';
 
   var _walletName = "";
   var _walletAddress = "";
@@ -56,8 +59,8 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   final _client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
   List<Map3UserEntity> _map3UserList = [];
 
-
-  double get _unlockEpoch => double.tryParse(_microDelegationsJoiner?.pendingDelegation?.unlockedEpoch ?? '0') ?? 0;
+  double get _unlockEpoch =>
+      double.tryParse(_microDelegationsJoiner?.pendingDelegation?.unlockedEpoch ?? '0') ?? 0;
   int _currentEpoch = 0;
 
   int get _remainEpochInt {
@@ -194,8 +197,6 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
     var nodeAddress =
         "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_nodeAddress) ?? "***", limitLength: 9)}";
 
-
-
     return Scaffold(
       appBar: BaseAppBar(
         baseTitle: S.of(context).terminate_node,
@@ -216,150 +217,158 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
                 enablePullUp: false,
                 onRefresh: getNetworkData,
                 child: SingleChildScrollView(
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Container(
-                    color: Colors.white,
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18),
-                          child: Row(
-                            children: <Widget>[
-                              SizedBox(
-                                width: 42,
-                                height: 42,
-                                child: walletHeaderWidget(
-                                  _map3infoEntity?.name ?? '',
-                                  isShowShape: false,
-                                  address: _map3infoEntity?.address ?? '',
-                                  isCircle: false,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        color: Colors.white,
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18),
+                              child: Row(
                                 children: <Widget>[
-                                  Text.rich(TextSpan(children: [
-                                    TextSpan(
-                                        text: nodeName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                                    TextSpan(
-                                        text: oldYearValue, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
-                                  ])),
-                                  Container(
-                                    height: 4,
+                                  SizedBox(
+                                    width: 42,
+                                    height: 42,
+                                    child: walletHeaderWidget(
+                                      _map3infoEntity?.name ?? '',
+                                      isShowShape: false,
+                                      address: _map3infoEntity?.address ?? '',
+                                      isCircle: false,
+                                    ),
                                   ),
-                                  Text(nodeAddress, style: TextStyles.textC9b9b9bS12),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text.rich(TextSpan(children: [
+                                        TextSpan(
+                                            text: nodeName,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600, fontSize: 16)),
+                                        TextSpan(
+                                            text: oldYearValue,
+                                            style: TextStyle(
+                                                fontSize: 12, color: HexColor("#999999"))),
+                                      ])),
+                                      Container(
+                                        height: 4,
+                                      ),
+                                      Text(nodeAddress, style: TextStyles.textC9b9b9bS12),
+                                    ],
+                                  ),
                                 ],
                               ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
-                          child: Container(
-                            color: HexColor("#F2F2F2"),
-                            height: 0.5,
-                          ),
-                        ),
-                        _nodeServerWidget(),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                    child: Container(
-                      color: HexColor("#F4F4F4"),
-                    ),
-                  ),
-                  Container(
-                    color: Colors.white,
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0, top: 18),
-                          child: Row(
-                            children: <Widget>[
-                              Text(S.of(context).receive_wallet,
-                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0, top: 16, right: 8, bottom: 18),
-                          child: Row(
-                            children: <Widget>[
-                              SizedBox(
-                                width: 42,
-                                height: 42,
-                                child: walletHeaderWidget(
-                                  _walletName,
-                                  isShowShape: false,
-                                  address: _walletAddress,
-                                  isCircle: true,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 6,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text.rich(TextSpan(children: [
-                                    TextSpan(
-                                        text: _walletName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                                    TextSpan(text: "", style: TextStyles.textC333S14bold),
-                                  ])),
-                                  Container(
-                                    height: 4,
-                                  ),
-                                  Text(walletAddressStr, style: TextStyles.textC9b9b9bS12),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                    child: Container(
-                      color: HexColor("#F4F4F4"),
-                    ),
-                  ),
-                  Container(
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 12, bottom: 12, right: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(top: 3),
-                            child: Text(
-                              "*",
-                              style: TextStyle(fontSize: 22, color: HexColor("#FF4C3B")),
                             ),
-                          ),
-                          SizedBox(
-                            width: 12,
-                          ),
-                          Expanded(
-                            child: Text(
-                              S.of(context).cant_active_node_after_terminate,
-//                            "撤销抵押将会影响节点进度，剩余抵押不足20%节点将会被取消",
-                              style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.5),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
+                              child: Container(
+                                color: HexColor("#F2F2F2"),
+                                height: 0.5,
+                              ),
                             ),
-                          ),
-                        ],
+                            _nodeServerWidget(),
+                          ],
+                        ),
                       ),
-                    ),
+                      SizedBox(
+                        height: 10,
+                        child: Container(
+                          color: HexColor("#F4F4F4"),
+                        ),
+                      ),
+                      Container(
+                        color: Colors.white,
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16.0, top: 18),
+                              child: Row(
+                                children: <Widget>[
+                                  Text(S.of(context).receive_wallet,
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 16.0, top: 16, right: 8, bottom: 18),
+                              child: Row(
+                                children: <Widget>[
+                                  SizedBox(
+                                    width: 42,
+                                    height: 42,
+                                    child: iconWalletWidget(WalletModelUtil.wallet,),
+                                  ),
+                                  SizedBox(
+                                    width: 6,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text.rich(TextSpan(children: [
+                                        TextSpan(
+                                            text: _walletName,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600, fontSize: 16)),
+                                        TextSpan(text: "", style: TextStyles.textC333S14bold),
+                                      ])),
+                                      Container(
+                                        height: 4,
+                                      ),
+                                      Text(walletAddressStr, style: TextStyles.textC9b9b9bS12),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                        child: Container(
+                          color: HexColor("#F4F4F4"),
+                        ),
+                      ),
+                      Container(
+                        color: Colors.white,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.only(left: 16.0, top: 12, bottom: 12, right: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(top: 3),
+                                child: Text(
+                                  "*",
+                                  style: TextStyle(fontSize: 22, color: HexColor("#FF4C3B")),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 12,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  S.of(context).cant_active_node_after_terminate,
+//                            "撤销抵押将会影响节点进度，剩余抵押不足20%节点将会被取消",
+                                  style: TextStyle(
+                                      fontSize: 14, color: HexColor("#333333"), height: 1.5),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      _epochHint(),
+                    ],
                   ),
-                  _epochHint(),
-                ])),
+                ),
               ),
             ),
             _confirmButtonWidget(),
@@ -476,7 +485,8 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
               var myAmount = isStart ? activeAmount : pendingAmount;
 
               detail = ConvertTokenUnit.weiToEther(
-                      weiBigInt: BigInt.parse('${FormatUtil.clearScientificCounting(myAmount?.toDouble() ?? 0)}'))
+                      weiBigInt: BigInt.parse(
+                          '${FormatUtil.clearScientificCounting(myAmount?.toDouble() ?? 0)}'))
                   .toString();
               break;
 

@@ -81,10 +81,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   // 当前键盘是否是激活状态
   bool _isKeyboardActive = false;
 
-  // var _localImagePath = "";
-  // var _titleList = ["图标", "名称", "节点号", "网址", "安全联系", "描述"];
-  // List<String> _detailList = ["", "", "", "", "", ""];
-  // List<String> _hintList = ["请选择节点图标", "请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
+  bool _isHaveRequest = false;
 
   var _titleList = [
     S.of(Keys.rootKey.currentContext).name,
@@ -174,7 +171,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    if (context != null) {
+    if (context != null && !_isHaveRequest) {
+      _isHaveRequest = true;
       BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
     }
   }

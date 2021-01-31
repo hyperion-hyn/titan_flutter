@@ -9,6 +9,7 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:characters/characters.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -192,11 +193,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(
-                      child: walletHeaderWidget(
-                        showName,
-                        isShowShape: false,
-                        address: entity.address,
-                      ),
+                      child: iconWalletWidget(WalletModelUtil.wallet,),
                     ),
                     SizedBox(
                       height: 8,

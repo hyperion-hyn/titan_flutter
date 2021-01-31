@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:characters/characters.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 
 Widget walletHeaderWidget(
   String shortName, {
@@ -13,6 +15,7 @@ Widget walletHeaderWidget(
   bool isShowImage = false,
   String imageSource = '',
 }) {
+
   if (shortName.isNotEmpty) {
     shortName = shortName.characters.first;
   } else {

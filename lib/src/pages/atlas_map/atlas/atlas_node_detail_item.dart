@@ -9,7 +9,7 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'package:titan/src/widget/wallet_widget.dart';
+
 
 class AtlasNodeDetailItem extends StatelessWidget {
   final AtlasInfoEntity _atlasInfo;
@@ -193,6 +193,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
                 ),
                 Row(children: [
                   Spacer(),
+                  /*
                   Container(
                     width: 8,
                     height: 8,
@@ -208,8 +209,8 @@ class AtlasNodeDetailItem extends StatelessWidget {
                         width: 1.0,
                       ),
                     ),
-                  ),
-                  /*Container(
+                  ),*/
+                  Container(
                     margin: EdgeInsets.symmetric(
                       vertical: 0.0,
                       horizontal: 8.0,
@@ -217,13 +218,12 @@ class AtlasNodeDetailItem extends StatelessWidget {
                     width: 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      // color: HexColor('#FF00E4A1'),
-                      color: Theme.of(context).primaryColor,
+                      color: HexColor('#00E4A1'),
                       borderRadius: BorderRadius.circular(
                         16.0,
                       ),
                     ),
-                  ),*/
+                  ),
                 ]),
               ],
             ),

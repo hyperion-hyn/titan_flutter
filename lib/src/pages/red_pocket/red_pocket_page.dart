@@ -35,7 +35,6 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:titan/src/widget/wallet_widget.dart';
 import 'entity/rp_airdrop_round_info.dart';
 import 'entity/rp_statistics.dart';
 
@@ -154,39 +153,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     return const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0);
   }
 
-  Widget _contentColumn(
-    String content,
-    String subContent, {
-    double contentFontSize = 14,
-    double subContentFontSize = 10,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            '$content',
-            style: TextStyle(
-              fontSize: contentFontSize,
-              color: Colors.black,
-            ),
-          ),
-          SizedBox(
-            height: 4.0,
-          ),
-          Text(
-            subContent,
-            style: TextStyle(
-              fontSize: subContentFontSize,
-              color: DefaultColors.color999,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   _myRPInfo() {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
 
@@ -294,16 +260,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     iconWalletWidget(activeWallet.wallet, isCircle: true,size: 44),
-                    /*SizedBox(
-                      width: 42,
-                      height: 42,
-                      child: walletHeaderWidget(
-                        userName,
-                        isShowShape: false,
-                        address: walletAddress,
-                        isCircle: true,
-                      ),
-                    ),*/
                     SizedBox(
                       width: 16.0,
                     ),

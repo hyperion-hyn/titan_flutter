@@ -16,21 +16,17 @@ import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_send_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
-import 'package:titan/src/widget/common_page_view/empty_view.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'api/rp_api.dart';
 import 'entity/rp_share_entity.dart';
 import 'entity/rp_util.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart' as allPage;
+
 
 class RpShareGetSuccessPage extends StatefulWidget {
   final String id;
@@ -490,7 +486,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                       padding: const EdgeInsets.only(
                         right: 10,
                       ),
-                      child: iconWidget("", item.username, item.address, isCircle: true),
+                      child: iconWidgetNew(item.avatar, size: 40),
                     ),
                     Expanded(
                       child: Column(

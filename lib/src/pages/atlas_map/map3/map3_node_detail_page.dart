@@ -84,8 +84,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   var _walletAddress = "";
 
-  String get _nodeId => _map3infoEntity?.nodeId ?? _map3nodeInformationEntity?.map3Node?.description?.identity ?? '';
-  String get _nodeAddress => _map3infoEntity?.address ?? _map3nodeInformationEntity?.map3Node?.map3Address ?? '';
+  String get _nodeId =>
+      _map3infoEntity?.nodeId ?? _map3nodeInformationEntity?.map3Node?.description?.identity ?? '';
+  String get _nodeAddress =>
+      _map3infoEntity?.address ?? _map3nodeInformationEntity?.map3Node?.map3Address ?? '';
   String get _nodeCreatorAddress =>
       _map3infoEntity?.creator ?? _map3nodeInformationEntity?.map3Node?.operatorAddress ?? '';
 
@@ -98,7 +100,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   get _isRunning => _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
   get _isPending => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
-  get _isTerminal => _map3Status == Map3InfoStatus.CANCEL_NODE_SUCCESS;
+  //get _isTerminal => _map3Status == Map3InfoStatus.CANCEL_NODE_SUCCESS;
 
   get _statusCreator => _microDelegationsCreator?.renewal?.status ?? 0;
   get _statusJoiner => _microDelegationsJoiner?.renewal?.status ?? 0;
@@ -122,10 +124,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
         if (_isFullDelegate) {
-          var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
+          var startMinValue =
+              FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
           return S.of(Keys.rootKey.currentContext).map3_pending_delegate_full(startMinValue);
         } else {
-          if (_lastPendingTx != null) {
+          if (_lastPendingTx != null && TransactionStatus.success != _lastPendingTx.status) {
             var type = _lastPendingTx.type;
             switch (type) {
               case MessageType.typeTerminateMap3:
@@ -165,7 +168,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         if (_isDelegate) {
-          if (_lastPendingTx != null) {
+          if (_lastPendingTx != null && TransactionStatus.success != _lastPendingTx.status) {
             var type = _lastPendingTx.type;
             switch (type) {
               case MessageType.typeCollectMicroStakingRewards:
@@ -195,6 +198,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           }
 
           if (_map3infoEntity.atlas == null) {
+            if (_lastPendingTx != null && TransactionStatus.success == _lastPendingTx.status) {
+              return '';
+            }
+
             return S.of(Keys.rootKey.currentContext).map3_notification_redelegate;
           }
 
@@ -249,8 +256,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   // 到期纪元
   get _releaseEpoch =>
-      _map3infoEntity?.endEpoch ?? double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
-  get _activeEpoch => _map3infoEntity?.startEpoch ?? _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
+      _map3infoEntity?.endEpoch ??
+      double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
+  get _activeEpoch =>
+      _map3infoEntity?.startEpoch ?? _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
   get _pendingEpoch => _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
   // get _pendingUnlockEpoch =>
   //     double.tryParse(_microDelegationsCreator?.pendingDelegation?.unlockedEpoch ?? '0')?.toInt() ?? 0;
@@ -272,7 +281,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
     //  创建者
     if (_isCreator) {
-      var isInActionPeriodCreator = (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
+      var isInActionPeriodCreator =
+          (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
       //LogUtil.printMessage("【isCreator】statusCreator:$statusCreator, isInActionPeriodCreator:$isInActionPeriodCreator");
 
       if (isInActionPeriodCreator && _statusCreator == 0) {
@@ -302,7 +312,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   // 0.募集中
   // 1.纪元已经过7天；
   // get _canExit => _isCreator && _isPending && _isOver7Epoch;
-  get _canExit => _isCreator && (_isPending || _isTerminal);
+  get _canExit => _isCreator && (_isPending);
 
   //get _isOver7Epoch => (_currentEpoch - _pendingUnlockEpoch) > 0 && (_pendingUnlockEpoch > 0) && (_currentEpoch > 0);
 
@@ -437,12 +447,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         value = 0.5;
 
-        var left = (_currentEpoch - _activeEpoch).toDouble() / (_releaseEpoch - _activeEpoch).toDouble();
+        var left =
+            (_currentEpoch - _activeEpoch).toDouble() / (_releaseEpoch - _activeEpoch).toDouble();
 
         if (_currentStep == 2) {
-          left = (_currentEpoch - _renewEpoch).toDouble() / (_releaseEpoch - _renewEpoch).toDouble();
+          left =
+              (_currentEpoch - _renewEpoch).toDouble() / (_releaseEpoch - _renewEpoch).toDouble();
         } else {
-          left = (_currentEpoch - _activeEpoch).toDouble() / (_renewEpoch - _activeEpoch).toDouble();
+          left =
+              (_currentEpoch - _activeEpoch).toDouble() / (_renewEpoch - _activeEpoch).toDouble();
         }
 
         if (left.isNaN) {
@@ -513,8 +526,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         var _endRemainEpochValue = _endRemainEpoch.toInt();
         if (_endRemainEpochValue > 0) {
-          _map3StatusDesc =
-              S.of(Keys.rootKey.currentContext).map3_notification_expired_left_epoch(_endRemainEpochValue);
+          _map3StatusDesc = S
+              .of(Keys.rootKey.currentContext)
+              .map3_notification_expired_left_epoch(_endRemainEpochValue);
         } else {
           //_map3StatusDesc = "距离到期仅剩1个纪元";
           _map3StatusDesc = "";
@@ -545,8 +559,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         } else {
           var remain = startMin - staking;
           var remainDelegation = FormatUtil.formatPrice(remain);
-          _map3StatusDesc =
-              S.of(Keys.rootKey.currentContext).remain + remainDelegation + S.of(Keys.rootKey.currentContext).active;
+          _map3StatusDesc = S.of(Keys.rootKey.currentContext).remain +
+              remainDelegation +
+              S.of(Keys.rootKey.currentContext).active;
         }
 
         break;
@@ -636,29 +651,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             fontSize: 16,
           ),
         ],
-        content: _isCreator ? S.of(context).map3_renew_content_creator : S.of(context).map3_renew_content_joiner,
+        content: _isCreator
+            ? S.of(context).map3_renew_content_creator
+            : S.of(context).map3_renew_content_joiner,
       );
     }
   }
-
-  /*
-  void _afterLayout(_) {
-    _getMorePosition();
-  }
-
-  _getMorePosition() {
-    final RenderBox renderBox = _moreKey?.currentContext?.findRenderObject();
-    if (renderBox == null) return;
-
-    //final positions = renderBox.localToGlobal(Offset(0, 0));
-    //_moreOffsetLeft = positions.dx - _moreSizeWidth * 0.75;
-    //_moreOffsetTop = positions.dy + 18 * 2.0 + 10;
-    //LogUtil.printMessage("positions of more:$positions, left:$_moreOffsetLeft, top:$_moreOffsetTop");
-  }
-
-  //  left: 246,
-  //  top: 76,
-  */
 
   @override
   void dispose() {
@@ -1027,19 +1025,27 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   Widget _map3NodeInfoItem(BuildContext context) {
     if (_map3infoEntity == null) return Container();
 
-    var nodeName = _map3nodeInformationEntity?.map3Node?.description?.name ?? _map3infoEntity?.name ?? "***";
+    var nodeName =
+        _map3nodeInformationEntity?.map3Node?.description?.name ?? _map3infoEntity?.name ?? "***";
     var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
-    var oldYearValue = oldYear > 0 ? "${S.of(context).node_age}：${FormatUtil.formatPrice(oldYear.toDouble())}" : "";
+    var oldYearValue = oldYear > 0
+        ? "${S.of(context).node_age}：${FormatUtil.formatPrice(oldYear.toDouble())}"
+        : "";
 
     var nodeAddress =
         "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_nodeAddress) ?? "***", limitLength: 8)}";
     var nodeIdPre = "${S.of(context).node_num} ";
 
     var descPre = S.of(context).map3_node_notification;
-    var describe = _map3nodeInformationEntity?.map3Node?.description?.details ?? _map3infoEntity?.describe ?? "";
+    var describe = _map3nodeInformationEntity?.map3Node?.description?.details ??
+        _map3infoEntity?.describe ??
+        "";
     var desc = describe.isEmpty ?? false ? S.of(context).map3_node_notification_default : describe;
-    var home = _map3nodeInformationEntity?.map3Node?.description?.website ?? _map3infoEntity?.home ?? '';
-    var contact = _map3nodeInformationEntity?.map3Node?.description?.securityContact ?? _map3infoEntity?.contact ?? '';
+    var home =
+        _map3nodeInformationEntity?.map3Node?.description?.website ?? _map3infoEntity?.home ?? '';
+    var contact = _map3nodeInformationEntity?.map3Node?.description?.securityContact ??
+        _map3infoEntity?.contact ??
+        '';
 
     return Container(
       decoration: BoxDecoration(
@@ -1271,7 +1277,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     }
 
     var lastFeeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity?.getFeeRate() ?? "0"));
-    var rateForNextPeriod = _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod ?? "0";
+    var rateForNextPeriod =
+        _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod ?? "0";
     var newFeeRate = FormatUtil.formatPercent(double.parse(rateForNextPeriod));
 
     var statusDesc = S.of(context).map3_renew_open;
@@ -1317,7 +1324,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             alertColor = _canRenewNextPeriod ? HexColor('#FF5041') : HexColor('#FEC500');
           }
 
-          alertContent = "（${S.of(context).map_renew_setting_date_func(periodEpoch14 + 1, periodEpoch7)}）";
+          alertContent =
+              "（${S.of(context).map_renew_setting_date_func(periodEpoch14 + 1, periodEpoch7)}）";
 
           if (_canRenewNextPeriod) {
             _renewRemainEpoch = periodEpoch7 - _currentEpoch + 1;
@@ -1339,7 +1347,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
           var periodEpoch7Add = periodEpoch7 + 1;
           var releaseEpoch = _releaseEpoch;
-          alertContent = "（${S.of(context).map_renew_setting_date_func(periodEpoch7Add, releaseEpoch)}）";
+          alertContent =
+              "（${S.of(context).map_renew_setting_date_func(periodEpoch7Add, releaseEpoch)}）";
 
           if (_canRenewNextPeriod) {
             _renewRemainEpoch = _releaseEpoch - _currentEpoch + 1;
@@ -1423,7 +1432,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                   ),
                 ),
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: alertContent, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
+                  TextSpan(
+                      text: alertContent,
+                      style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
                 ])),
                 Spacer(),
                 Visibility(
@@ -1467,7 +1478,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                       children: <Widget>[
                         Expanded(
                           child: Text(
-                            _isCreator ? S.of(context).map3_renew_auto : S.of(context).map3_renew_join,
+                            _isCreator
+                                ? S.of(context).map3_renew_auto
+                                : S.of(context).map3_renew_join,
                             style: TextStyle(
                               color: HexColor("#999999"),
                               fontSize: 14,
@@ -1565,7 +1578,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.w600,
                       )),
-                  TextSpan(text: ' ${S.of(context).epoch}', style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
+                  TextSpan(
+                      text: ' ${S.of(context).epoch}',
+                      style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
                 ])),
               ),
           ],
@@ -1650,8 +1665,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     Widget _item(String title, String detail) {
       return Text.rich(TextSpan(children: [
         TextSpan(
-            text: title, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor("#999999"))),
-        TextSpan(text: detail, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
+            text: title,
+            style:
+                TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor("#999999"))),
+        TextSpan(
+            text: detail,
+            style:
+                TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
       ]));
     }
 
@@ -1715,7 +1735,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                                   Text.rich(TextSpan(children: [
                                     TextSpan(
                                         text: atlasEntity?.name ?? "",
-                                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                        style:
+                                            TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                                   ])),
                                   Container(
                                     height: 4,
@@ -1871,22 +1892,25 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     var totalDelegation = FormatUtil.stringFormatCoinNum(_map3infoEntity?.getStaking() ?? "0");
     var feeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity?.getFeeRate() ?? "0"));
 
-    var totalReward =
-        FormatUtil.clearScientificCounting(_map3nodeInformationEntity?.accumulatedReward?.toDouble() ?? 0);
-    var totalRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(totalReward)).toDouble();
+    var totalReward = FormatUtil.clearScientificCounting(
+        _map3nodeInformationEntity?.accumulatedReward?.toDouble() ?? 0);
+    var totalRewardValue =
+        ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(totalReward)).toDouble();
     var totalRewardString = FormatUtil.formatPrice(totalRewardValue);
 
     var myDelegationString = "0";
     var myRewardString = "0";
 
-    Microdelegations _microDelegations = _isCreator ? _microDelegationsCreator : _microDelegationsJoiner;
+    Microdelegations _microDelegations =
+        _isCreator ? _microDelegationsCreator : _microDelegationsJoiner;
     if (_microDelegations != null) {
       var pendingAmount = _microDelegations?.pendingDelegation?.amount;
       var activeAmount = _microDelegations?.amount;
       var myAmount = _isRunning ? activeAmount : pendingAmount;
 
       var myDelegation = FormatUtil.clearScientificCounting(myAmount?.toDouble() ?? 0);
-      var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
+      var myDelegationValue =
+          ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
       myDelegationString = FormatUtil.formatPrice(myDelegationValue);
 
       var myReward = FormatUtil.clearScientificCounting(_microDelegations?.reward?.toDouble() ?? 0);
@@ -1906,7 +1930,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(left: 18, top: 16),
-                child: Text(S.of(context).node_amount, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                child: Text(S.of(context).node_amount,
+                    style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
               ),
             ],
           ),
@@ -1919,14 +1944,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                     padding: const EdgeInsets.only(top: 24),
                     child: Text(
                       totalDelegation,
-                      style: TextStyle(fontSize: 22, color: HexColor("#228BA1"), fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                          fontSize: 22, color: HexColor("#228BA1"), fontWeight: FontWeight.w600),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
                       S.of(context).total_staking,
-                      style: TextStyle(fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                      style: TextStyle(
+                          fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.normal),
                     ),
                   ),
                 ],
@@ -1940,14 +1967,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                     padding: const EdgeInsets.only(top: 24),
                     child: Text(
                       myRewardString,
-                      style: TextStyle(fontSize: 22, color: HexColor("#BF8D2A"), fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                          fontSize: 22, color: HexColor("#BF8D2A"), fontWeight: FontWeight.w600),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
                       S.of(context).map3_current_reward,
-                      style: TextStyle(fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                      style: TextStyle(
+                          fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.normal),
                     ),
                   ),
                 ],
@@ -1994,7 +2023,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
             child: Row(
               children: <Widget>[
-                Text(S.of(context).map3_node_progress, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                Text(S.of(context).map3_node_progress,
+                    style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 Spacer(),
                 Text.rich(
                   TextSpan(children: [
@@ -2098,7 +2128,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           var index = titles.indexOf(title);
           var subtitle = subtitles[index];
           var date = progressHints[index];
-          var textColor = _currentStep != index ? HexColor("#A7A7A7") : Theme.of(context).primaryColor;
+          var textColor =
+              _currentStep != index ? HexColor("#A7A7A7") : Theme.of(context).primaryColor;
 
           return CustomStep(
             title: Text(
@@ -2107,7 +2138,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             ),
             progressHint: Text(
               date,
-              style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
+              style: TextStyle(
+                  fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
             ),
             subtitle: Text(
               subtitle,
@@ -2190,11 +2222,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                           print("[$runtimeType] _loadUserListFinished:$_loadUserListFinished");
 
                           if (_currentPageUserList > 1) {
-                            print("[$runtimeType] _loadUserListFinished:$_loadUserListFinished, >1");
+                            print(
+                                "[$runtimeType] _loadUserListFinished:$_loadUserListFinished, >1");
 
                             _loadDataBloc.add(LoadingMoreSuccessEvent());
                           } else {
-                            print("[$runtimeType] _loadUserListFinished:$_loadUserListFinished, >2");
+                            print(
+                                "[$runtimeType] _loadUserListFinished:$_loadUserListFinished, >2");
 
                             _loadDataBloc.add(RefreshSuccessEvent());
                           }
@@ -2345,11 +2379,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          SizedBox(
-                            height: 40,
-                            width: 40,
-                            child: iconWidget("", item.name, item.address, isCircle: true),
-                          ),
+                          iconWidgetNew(item.pic, size: 40),
+                          // SizedBox(
+                          //   height: 40,
+                          //   width: 40,
+                          //   child: iconWidget("", item.name, item.address, isCircle: true),
+                          // ),
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(left: 8.0),
@@ -2390,7 +2425,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                                   Row(
                                     children: <Widget>[
                                       Text(
-                                        shortBlockChainAddress("${WalletUtil.ethAddressToBech32Address(itemAddress)}",
+                                        shortBlockChainAddress(
+                                            "${WalletUtil.ethAddressToBech32Address(itemAddress)}",
                                             limitCharsLength: 8),
                                         style: TextStyle(fontSize: 12, color: HexColor("#999999")),
                                       ),
@@ -2621,8 +2657,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     List<HynTransferHistory> pendingList = await AtlasApi().getTxsList(
       _walletAddress,
       map3Address: _nodeAddress,
-      // status: [TransactionStatus.success],
-      status: [TransactionStatus.pending, TransactionStatus.pending_for_receipt],
+      status: [
+        TransactionStatus.pending,
+        TransactionStatus.pending_for_receipt,
+        TransactionStatus.success,
+      ],
       size: 1,
     );
 
@@ -2748,7 +2787,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   void _pushWalletManagerAction() {
     Application.router.navigateTo(
-        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+        context,
+        Routes.map3node_create_wallet +
+            "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
   void _cancelAction() async {
@@ -2772,7 +2813,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   void _shareAction() {
     Application.router.navigateTo(
-        context, Routes.map3node_share_page + "?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
+        context,
+        Routes.map3node_share_page +
+            "?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
   }
 
   /*
@@ -2821,8 +2864,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
       var encodeEntity = FluroConvertUtils.object2string(_map3infoEntity.toJson());
 
-      await Application.router
-          .navigateTo(context, Routes.map3node_edit_page + "?entryRouteName=$entryRouteName&entity=$encodeEntity");
+      await Application.router.navigateTo(context,
+          Routes.map3node_edit_page + "?entryRouteName=$entryRouteName&entity=$encodeEntity");
       _nextAction();
     }
   }
@@ -2853,7 +2896,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     }
 
     if (_map3nodeInformationEntity != null) {
-      var uploadInfoAtlas = 'currentEpoch:$_currentEpoch, infoFromAtlas:${_map3nodeInformationEntity.toJson()}';
+      var uploadInfoAtlas =
+          'currentEpoch:$_currentEpoch, infoFromAtlas:${_map3nodeInformationEntity.toJson()}';
       print(uploadInfoAtlas);
       LogUtil.uploadException("[Map3NodeDetail] _preNextAction, uploadInfoAtlas", uploadInfoAtlas);
     }
@@ -2862,14 +2906,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       var uploadMicroCreator =
           'currentEpoch:$_currentEpoch, _microDelegationsCreator:${_microDelegationsCreator.renewal.toJson()}';
       print(uploadMicroCreator);
-      LogUtil.uploadException("[Map3NodeDetail] _preNextAction, uploadMicroCreator", uploadMicroCreator);
+      LogUtil.uploadException(
+          "[Map3NodeDetail] _preNextAction, uploadMicroCreator", uploadMicroCreator);
     }
 
     if (_microDelegationsJoiner != null) {
       var uploadMicroJoiner =
           'currentEpoch:$_currentEpoch, _microDelegationsJoiner:${_microDelegationsJoiner.renewal.toJson()}';
       print(uploadMicroJoiner);
-      LogUtil.uploadException("[Map3NodeDetail] _preNextAction, uploadMicroJoiner", uploadMicroJoiner);
+      LogUtil.uploadException(
+          "[Map3NodeDetail] _preNextAction, uploadMicroJoiner", uploadMicroJoiner);
     }
 
     if (_map3infoEntity != null) {

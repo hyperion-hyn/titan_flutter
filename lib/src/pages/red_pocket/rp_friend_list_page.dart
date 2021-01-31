@@ -10,6 +10,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_miners_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -216,12 +217,7 @@ class _RpFriendListState extends BaseState<RpFriendListPage> {
               padding: const EdgeInsets.only(
                 right: 10,
               ),
-              child: SizedBox(
-                width: 40,
-                height: 40,
-                child: walletHeaderWidget(inviterName,
-                    isShowShape: false, address: _inviter?.address, isCircle: true, size: 32),
-              ),
+              child:iconWidgetNew(_inviter?.avatar??'', size: 40),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -329,17 +325,7 @@ class _RpFriendListState extends BaseState<RpFriendListPage> {
                 padding: const EdgeInsets.only(
                   right: 10,
                 ),
-                child: SizedBox(
-                  height: 40,
-                  width: 40,
-                  child: walletHeaderWidget(
-                    name,
-                    address: info?.address ?? '',
-                    isCircle: true,
-                    isShowShape: false,
-                    size: 32,
-                  ),
-                ),
+                child: iconWidgetNew(info?.avatar??'', size: 40),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

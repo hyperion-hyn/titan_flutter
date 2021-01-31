@@ -24,10 +24,13 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
+import 'package:titan/src/pages/red_pocket/rp_share_send_success_location_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_detail_page.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -962,16 +965,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     BuildContext context,
     double value,
   }) async {
-    var walletVo = WalletInheritedModel.of(context).activatedWallet;
-    var wallet = walletVo.wallet;
-
-    var fromName = wallet.keystore.name;
-    var from = wallet.getAtlasAccount().address;
-    var fromAddressHyn = WalletUtil.ethAddressToBech32Address(from);
-    var fromAddress = shortBlockChainAddress(fromAddressHyn);
-
     var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
-    var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+    var gasLimit = HyperionGasLimit.HRC30_APPROVE;
     var gasValue = ConvertTokenUnit.weiToEther(
             weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)))
         .toDouble();
@@ -981,8 +976,8 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       value: value,
       valueUnit: 'HYN',
       title: '抵押传导',
-      fromName: fromName,
-      fromAddress: fromAddress,
+      fromName: WalletModelUtil.walletName,
+      fromAddress: WalletModelUtil.walletHynShortAddress,
       toName: '传导池',
       toAddress: '',
       gas: gasValue.toString(),
@@ -993,7 +988,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
         await _rpApi.postStakingRp(
           amount: amount,
-          activeWallet: walletVo,
+          activeWallet: WalletModelUtil.activatedWallet,
           password: password,
           gasLimit: gasLimit,
         );
@@ -1001,9 +996,17 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
         return true;
       },
       finished: (String _) async {
-        getNetworkData();
-
+        // getNetworkData();
         Navigator.pop(context, true);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RpShareSendSuccessLocationPage(
+              type: 1,
+            ),
+          ),
+        );
 
         return true;
       },
