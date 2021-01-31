@@ -101,11 +101,12 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
     }
 
     return SafeArea(
+      top: false,
       child: Container(
         child: Column(
           children: <Widget>[
             SizedBox(
-              height: 8,
+              height: 32,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),

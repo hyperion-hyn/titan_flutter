@@ -22,6 +22,7 @@ import 'package:titan/src/pages/wallet/wallet_gas_setting_page.dart';
 import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -135,6 +136,12 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     return gasPrice;
   }
 
+  // class HyperionGasLimit {
+  // static const int TRANSFER = 21000;
+  // static const int NODE_OPT = 100000;
+  // static const int HRC30_TRANSFER = 60000;
+  // static const int HRC30_APPROVE = 50000;
+  // }
   int get _gasLimit {
     var gasLimit;
 
@@ -150,11 +157,19 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     }
     // 3.ATLAS
     else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+      gasLimit = HyperionGasLimit.TRANSFER;
+
+      if (widget.coinVo.symbol == 'RP') {
+        gasLimit = HyperionGasLimit.HRC30_TRANSFER;
+      }
     }
     // 3.HB
     else if (widget.coinVo.coinType == CoinType.HB_HT) {
-      gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+      gasLimit = HyperionGasLimit.TRANSFER;
+
+      if (widget.coinVo.symbol == 'HUSD') {
+        gasLimit = HyperionGasLimit.HRC30_TRANSFER;
+      }
     }
 
     return gasLimit;
