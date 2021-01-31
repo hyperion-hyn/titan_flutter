@@ -67,6 +67,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
   String userImageLocalPath;
   AtlasApi _atlasApi = AtlasApi();
   FocusNode _focusNode = FocusNode();
+  bool isSubmitLoading = false;
 
   @override
   void initState() {
@@ -323,6 +324,9 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                     child: ClickOvalButton(
                       widget.isCreateWallet ? "创建" : "恢复身份",
                           () async {
+                        if(isSubmitLoading){
+                          return;
+                        }
                         await submitAction();
                       },
                       width: 300,
@@ -333,6 +337,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                       ],
                       fontSize: 16,
                       fontColor: DefaultColors.color333,
+                      isDisable: isSubmitLoading,
                     ),
                   ),
                 )
@@ -356,6 +361,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
 
   Future submitAction() async {
     try {
+      isSubmitLoading = true;
       if (!_formKey.currentState.validate()) {
         return;
       }
@@ -429,9 +435,12 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
       AtlasApi.postUserSync(userPayload);
 
       Fluttertoast.showToast(msg: widget.isCreateWallet ? "创建成功" : "导入成功");
+      isSubmitLoading = false;
       Routes.popUntilCachedEntryRouteName(context, wallet);
     } catch (error,stack) {
-      LogUtil.toastException("$error $stack");
+      isSubmitLoading = false;
+      print("!!!! $error $stack");
+      LogUtil.toastException("$error");
     }
   }
 }

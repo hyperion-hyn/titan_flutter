@@ -373,7 +373,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
     int index = 0,
   }) {
     var walletFileName =
-        selectWallet?.keystore?.fileName ?? beforeActiveWallet.keystore.fileName ?? "";
+        selectWallet?.keystore?.fileName ?? beforeActiveWallet?.keystore?.fileName ?? "";
     bool isSelected = (wallet.keystore.fileName == walletFileName);
     bool isBackup = wallet.walletExpandInfoEntity?.isBackup ?? false;
     KeyStore walletKeyStore = wallet.keystore;
