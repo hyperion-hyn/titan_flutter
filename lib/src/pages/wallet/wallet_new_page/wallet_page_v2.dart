@@ -74,6 +74,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   Future<void> onCreated() async {
     _walletCmpBloc = BlocProvider.of<WalletCmpBloc>(context);
     _walletCmpBloc.listen((state) {
+      //除了加载余额中，其它加载成功，加载失败，都走这个判断
       if (state is BalanceState && state.symbol == null && state.status != Status.loading) {
         if (mounted) {
           setState(() {
@@ -177,7 +178,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         ),
         actions: [
           ClickOvalButton(
-            "立即备份",
+            S.of(context).backup_now,
             () async {
               Navigator.pop(context);
               var walletStr = FluroConvertUtils.object2string(activatedWalletVo.wallet.toJson());
@@ -199,9 +200,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   Widget build(BuildContext context) {
     super.build(context);
 
-    Future.delayed(Duration(milliseconds: 1000), () {
+    /*Future.delayed(Duration(milliseconds: 1000), () {
       _showBackupDialog();
-    });
+    });*/
 
     return Scaffold(
       body: Container(
@@ -308,24 +309,119 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
       //       ),
       //     ],
       //   );
-
-      return LoadDataContainer(
-        bloc: loadDataBloc,
-        enablePullUp: false,
-        showLoadingWidget: false,
-        onLoadData: () {
-          // listLoadingData();
-        },
-        onRefresh: () async {
-          listLoadingData();
-        },
-        child: CustomScrollView(
-          slivers: <Widget>[
-            _headerWidget(activatedWalletVo),
-            _coinListWidget(activatedWalletVo),
-            _hynBurnWidget(),
-          ],
-        ),
+      var _hasBackupWallet = activatedWalletVo.wallet?.walletExpandInfoEntity?.isBackup ?? false;
+      return Stack(
+        children: [
+          LoadDataContainer(
+            bloc: loadDataBloc,
+            enablePullUp: false,
+            showLoadingWidget: false,
+            onLoadData: () {
+              // listLoadingData();
+            },
+            onRefresh: () async {
+              listLoadingData();
+            },
+            child: CustomScrollView(
+              slivers: <Widget>[
+                _headerWidget(activatedWalletVo),
+                _coinListWidget(activatedWalletVo),
+                _hynBurnWidget(),
+              ],
+            ),
+          ),
+          if (!_hasBackupWallet && !Application.hasShowBackupWalletDialog)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 16,
+              child: Container(
+                margin: EdgeInsets.only(left: 16,right: 16),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey[500],
+                        blurRadius: 20.0,
+                      ),
+                    ],
+                  ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(width: 38,height: 38,),
+                        Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.only(top:20.0),
+                          child: Image.asset(
+                            "res/drawable/ic_wallet_account_backup_remind.png",
+                            width: 16,
+                            height: 16,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 6,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top:20.0),
+                          child: Text("安全提醒",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: HexColor("#333333"),
+                                  decoration: TextDecoration.none)),
+                        ),
+                        Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              Application.hasShowBackupWalletDialog = true;
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Image.asset(
+                              "res/drawable/map3_node_close.png",
+                              width: 18,
+                              height: 18,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 13, bottom: 21.0, left: 20, right: 20),
+                      child: Text("你的身份助记词未备份，请务必备份助记词\n助记词可用于恢复身份钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失。",
+                          style: TextStyle(
+                              fontSize: 14, color: HexColor("#666666"), decoration: TextDecoration.none)),
+                    ),
+                    ClickOvalButton(
+                      S.of(context).backup_now,
+                          () async {
+                            setState(() {
+                              Application.hasShowBackupWalletDialog = true;
+                            });
+                        var walletStr = FluroConvertUtils.object2string(activatedWalletVo.wallet.toJson());
+                        Application.router.navigateTo(
+                            context,
+                            Routes.wallet_setting_wallet_backup_notice +
+                                '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
+                      },
+                      btnColor: [HexColor("#E7C01A"), HexColor("#F7D33D")],
+                      fontSize: 16,
+                      fontColor: DefaultColors.color333,
+                      width: 200,
+                      height: 38,
+                    ),
+                    SizedBox(height: 16,)
+                  ],
+                ),
+              ),
+            )
+        ]
       );
     } else {
       return EmptyWalletViewV2(
@@ -829,7 +925,6 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   }
 
   Future listLoadingData() async {
-    _isRefreshBalances = true;
     _checkDexAccount();
     BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
     await Future.delayed(Duration(milliseconds: 100), () {});

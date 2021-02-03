@@ -84,7 +84,7 @@ class _AppLockSetPwdState extends BaseState<AppLockSetPwdPage> {
                         SizedBox(height: 32),
                         RoundBorderTextField(
                             keyboardType: TextInputType.number,
-                            hintText: S.of(context).pwd_shorter_than_six,
+                            hintText: S.of(context).please_input_app_lock_pwd,
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(6),
                               FilteringTextInputFormatter.allow(RegExp("[0-9]"))

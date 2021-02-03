@@ -6,7 +6,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/env.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/basic/http/my_client.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
@@ -353,7 +355,8 @@ class WalletUtil {
 
     var walletExpandInfoEntity = WalletExpandInfoEntity.defaultEntity();
     if (ethAddress != null && ethAddress != '') {
-      walletExpandInfoEntity = ((await WalletUtil.getWalletExpandInfo(ethAddress)) ?? WalletExpandInfoEntity.defaultEntity());
+      walletExpandInfoEntity = ((await WalletUtil.getWalletExpandInfo(ethAddress)) ??
+          WalletExpandInfoEntity.defaultEntity());
     }
 
     var accounts = List<Account>.from(
@@ -370,7 +373,7 @@ class WalletUtil {
   }
 
   static web3.Web3Client _newWeb3Client(String api) {
-    return web3.Web3Client(api, Client());
+    return web3.Web3Client(api, MyClient(isPrintLog: env.buildType != BuildType.PROD));
   }
 
   static web3.DeployedContract _newErc20Contract(String contractAddress, String name) {
