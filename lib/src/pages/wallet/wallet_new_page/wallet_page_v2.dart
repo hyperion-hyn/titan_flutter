@@ -925,7 +925,6 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   }
 
   Future listLoadingData() async {
-    _isRefreshBalances = true;
     _checkDexAccount();
     BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
     await Future.delayed(Duration(milliseconds: 100), () {});

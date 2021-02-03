@@ -437,6 +437,11 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
         }
       }
 
+      await Future.delayed(Duration(milliseconds: 100), () {});
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+      await Future.delayed(Duration(milliseconds: 100), () {});
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesEvent());
+
       var userPayload = UserPayloadWithAddressEntity(
         Payload(userName: wallet.keystore.name, userPic: userImagePath),
         wallet.getAtlasAccount().address,
