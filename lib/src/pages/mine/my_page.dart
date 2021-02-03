@@ -205,7 +205,7 @@ class _MyPageState extends BaseState<MyPage> {
                   _lineWidget2(),
 
                   _buildMenuBar(
-                    '应用锁',
+                    S.of(context).my_app_lock,
                     Icons.account_balance_wallet,
                     () {
                       if (AppLockInheritedModel.of(context).isLockEnable) {
@@ -224,7 +224,7 @@ class _MyPageState extends BaseState<MyPage> {
                     },
                     imageName: "ic_me_page_safe_lock",
                     color: Colors.cyan[300],
-                    subText: AppLockInheritedModel.of(context).isLockEnable ? '已开启' : '',
+                    subText: AppLockInheritedModel.of(context).isLockEnable ? S.of(context).open : '',
                   ),
                   _lineWidget(),
 
@@ -527,7 +527,7 @@ class _MyPageState extends BaseState<MyPage> {
                         right: 8,
                       ),
                       child: Text(
-                        '钱包身份',
+                        S.of(context).my_wallet_id,
                         style: TextStyle(
                           color: HexColor('#333333'),
                           fontSize: 14,

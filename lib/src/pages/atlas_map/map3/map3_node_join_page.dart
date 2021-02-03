@@ -297,7 +297,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   Widget _delegateCountWidget() {
     var totalPendingDelegation =
         _map3nodeInformationEntity?.totalPendingDelegation?.toDouble() ?? 0;
-    print("totalPendingDelegation: $totalPendingDelegation");
+    //print("totalPendingDelegation: $totalPendingDelegation");
 
     var totalPendingDelegationValue = ConvertTokenUnit.weiToEther(
             weiBigInt: BigInt.parse(

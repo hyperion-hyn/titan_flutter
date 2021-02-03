@@ -107,7 +107,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
       child: Scaffold(
         backgroundColor: HexColor('#F6F6F6'),
         appBar: BaseAppBar(
-          baseTitle: '矿工费设置',
+          baseTitle: S.of(context).gas_setting,
           backgroundColor: HexColor('#F6F6F6'),
           leading: Builder(
             builder: (BuildContext context) {
@@ -169,7 +169,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
             var baseUnit = widget.coinVo.symbol;
             var fees;
             var format = '';
-            var gasTitle = '矿工费率';
+            var gasTitle = S.of(context).gas_rate;
 
             var selectedGasPrice = _dataList[_isCustom ? 0 : _selectedIndex].gas;
             var gasPrice = selectedGasPrice;
@@ -183,7 +183,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
               gasLimit = 78;
 
               gasUnit = 'sat/b';
-              gasTitle = '矿工费率';
+              gasTitle = S.of(context).gas_rate;
               format = '$gasPrice $gasUnit * $gasLimit bytes  ';
 
               fees = ConvertTokenUnit.weiToDecimal(
@@ -304,7 +304,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
                       ),
                       Spacer(),
                       Text(
-                        '预计交易时间',
+                        S.of(context).pre_transaction_time,
                         style: TextStyle(
                           color: Color(0xFF999999),
                           fontSize: 12,
@@ -472,7 +472,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
                           ),
                   ),
                   Text(
-                    '自定义',
+                    S.of(context).customize,
                     style: TextStyle(
                       color: HexColor('#333333'),
                       fontSize: 14,
@@ -495,7 +495,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
     ];
     if (_isBTC) {
       var sat = _customItem(
-        title: '矿工费率',
+        title: S.of(context).gas_rate,
         key: _gasSatKey,
         controller: _gasSatController,
         validator: (String inputText) {
@@ -512,11 +512,11 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
 
             if (_gasPriceRecommend.safeLow > inputDecimalValue &&
                 inputDecimalValue > Decimal.zero) {
-              validStr = '矿工费率过低，将会影响交易确认时间';
+              validStr = S.of(context).gas_hint_rate_effect_too_low;
             }
 
             if (inputDecimalValue > _gasPriceRecommend.fast) {
-              validStr = '矿工费率过高，将会造成矿工费浪费';
+              validStr = S.of(context).gas_hint_rate_effect_too_high;
             }
           }
 
@@ -574,11 +574,11 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
             var fast = Decimal.fromInt(erc20TransferGasLimit);
 
             if (safeLow > inputDecimalValue && inputDecimalValue > Decimal.zero) {
-              validStr = 'Gas 过低，$validStr';
+              validStr = '${S.of(context).gas_hint_too_low}，$validStr';
             }
 
             if (inputDecimalValue > fast) {
-              validStr = 'Gas 过高，$validStr';
+              validStr = '${S.of(context).gas_hint_too_low}，$validStr';
             }
           }
 
@@ -784,7 +784,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
         gasSat = _gasSatController.text;
         var value = Decimal?.tryParse(gasSat) ?? Decimal.zero;
         if (gasSat.isEmpty || value <= Decimal.zero) {
-          var validStr = '请输入有效的矿工费率';
+          var validStr = S.of(context).gas_hint_input_effect_gas_rate;
           Fluttertoast.showToast(msg: validStr);
           return;
         }
@@ -810,7 +810,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
         gasLimit = _gasLimitController.text;
         var gasLimitValue = Decimal?.tryParse(gasPrice) ?? Decimal.zero;
         if (gasLimit.isEmpty || gasLimitValue <= Decimal.zero) {
-          var validStr = '请输入有效的 Gas';
+          var validStr = S.of(context).gas_hint_input_effect_gas_rate;
           Fluttertoast.showToast(msg: validStr);
           return;
         }
@@ -846,19 +846,19 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
 
         switch (index) {
           case 0:
-            title = '快速';
+            title = S.of(context).wallet_setting_fast;
             time = S.of(context).wait_min(_gasPriceRecommend.fastWait.toString());
             gas = _gasPriceRecommend.fast;
             break;
 
           case 1:
-            title = '一般';
+            title = S.of(context).wallet_setting_normal;
             time = S.of(context).wait_min(_gasPriceRecommend.avgWait.toString());
             gas = _gasPriceRecommend.average;
             break;
 
           case 2:
-            title = '缓慢';
+            title = S.of(context).wallet_setting_slow;
             time = S.of(context).wait_min(_gasPriceRecommend.safeLowWait.toString());
             gas = _gasPriceRecommend.safeLow;
             break;
@@ -973,7 +973,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
           fontWeight: FontWeight.normal,
         ),
       ],
-      content: '矿工费设置未确认，确认要离开此页？',
+      content: S.of(context).gas_setting_cancel_dialog,
     );
   }
 }

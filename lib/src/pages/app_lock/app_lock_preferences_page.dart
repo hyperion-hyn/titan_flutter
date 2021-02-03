@@ -49,7 +49,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
     return Scaffold(
       appBar: BaseAppBar(
         backgroundColor: Colors.white,
-        baseTitle: '应用锁',
+        baseTitle: S.of(context).my_app_lock,
       ),
       body: Container(
         color: DefaultColors.colorf2f2f2,
@@ -75,7 +75,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
               children: [
                 Expanded(
                   child: Text(
-                    '应用锁',
+                    S.of(context).my_app_lock,
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ),

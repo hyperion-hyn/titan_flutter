@@ -328,19 +328,19 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
 
         switch (index) {
           case 0:
-            title = '快速';
+            title = S.of(context).wallet_setting_fast;
             time = S.of(context).wait_min(_gasPriceRecommend.fastWait.toString());
             gas = _gasPriceRecommend.fast;
             break;
 
           case 1:
-            title = '一般';
+            title = S.of(context).wallet_setting_normal;
             time = S.of(context).wait_min(_gasPriceRecommend.avgWait.toString());
             gas = _gasPriceRecommend.average;
             break;
 
           case 2:
-            title = '缓慢';
+            title = S.of(context).wallet_setting_slow;
             time = S.of(context).wait_min(_gasPriceRecommend.safeLowWait.toString());
             gas = _gasPriceRecommend.safeLow;
             break;
@@ -408,7 +408,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     return Scaffold(
       backgroundColor: HexColor('#F6F6F6'),
       appBar: BaseAppBar(
-        baseTitle: '${widget.coinVo.symbol}转账',
+        baseTitle: '${widget.coinVo.symbol} ${S.of(context).transfer}',
         backgroundColor: HexColor('#F6F6F6'),
       ),
       body: _body(context),
@@ -450,7 +450,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
           Row(
             children: <Widget>[
               Text(
-                '收款地址',
+                S.of(context).from_address,
                 style: TextStyle(
                   color: Color(0xFF333333),
                   fontSize: 14,
@@ -478,7 +478,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
           Row(
             children: <Widget>[
               Text(
-                '金额',
+                S.of(context).amount,
                 style: TextStyle(
                   color: Color(0xFF333333),
                   fontSize: 14,
@@ -487,7 +487,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
               ),
               Spacer(),
               Text(
-                '可用 ' +
+                '${S.of(context).available} ' +
                     FormatUtil.coinBalanceHumanReadFormat(widget.coinVo) +
                     ' ${widget.coinVo.symbol.toUpperCase()}',
                 style: TextStyle(
@@ -597,7 +597,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      '高级模式',
+                      S.of(context).advanced_mode,
                       style: TextStyle(
                         color: Color(0xFF999999),
                         fontSize: 14,
@@ -633,7 +633,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         Row(
           children: <Widget>[
             Text(
-              '随机数（Nonce）',
+              '${S.of(context).random_number}（Nonce）',
               style: TextStyle(
                 color: Color(0xFF999999),
                 fontSize: 12,
@@ -745,7 +745,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
           decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             border: InputBorder.none,
-            hintText: '请输入收款地址',
+            hintText: S.of(context).input_valid_address,
             //errorStyle: TextStyle(fontSize: 14, color: Colors.blue),
             hintStyle: TextStyle(
               fontSize: 16,
@@ -796,7 +796,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
                   return S.of(context).input_count_over_balance;
                 }
                 if (value.contains(".") && value.split(".")[1].length > widget.coinVo.decimals) {
-                  return "超过${widget.coinVo.decimals}位最大小数位";
+                  return S.of(context).input_hint_over_big_bits(widget.coinVo.decimals);
                 }
                 return null;
               },
@@ -1043,7 +1043,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     Decimal gasPrice,
   }) async {
     if (to?.isEmpty ?? true) {
-      Fluttertoast.showToast(msg: '网络异常，请稍后重试!');
+      Fluttertoast.showToast(msg: S.of(context).net_error_please_again);
       return false;
     }
 
@@ -1067,7 +1067,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       type: 'tx_send_normal',
       value: value,
       valueUnit: valueUnit,
-      title: '转账',
+      title: S.of(context).transfer,
       fromName: walletName,
       fromAddress: fromAddress,
       toName: shortBlockChainAddress(to),
