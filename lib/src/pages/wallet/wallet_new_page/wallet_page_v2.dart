@@ -74,6 +74,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   Future<void> onCreated() async {
     _walletCmpBloc = BlocProvider.of<WalletCmpBloc>(context);
     _walletCmpBloc.listen((state) {
+      //除了加载余额中，其它加载成功，加载失败，都走这个判断
       if (state is BalanceState && state.symbol == null && state.status != Status.loading) {
         if (mounted) {
           setState(() {

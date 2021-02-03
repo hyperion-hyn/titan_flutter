@@ -11,8 +11,11 @@ import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/components/setting/bloc/bloc.dart';
+import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/app_tabbar_bloc.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
@@ -36,23 +39,36 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
     launchRootPage();
   }
 
-//  @override
-//  void onCreated() {
-//    //init global setting
-//    _initSetting();
-//  }
+ @override
+ void onCreated() {
+   //init global setting
+   _initSetting();
+ }
 
-  // _initSetting() async {
-  //   // 恢复历史设置
-  //   BlocProvider.of<SettingBloc>(context).add(RestoreSettingEvent());
-  //   //同步remote配置
-  //   Future.delayed(Duration(milliseconds: 1000), () {
-  //     BlocProvider.of<SettingBloc>(context).add(SyncRemoteConfigEvent());
-  //   });
-  //
-  //   //faster show wallet
-  //   BlocProvider.of<WalletCmpBloc>(context).add(LoadLocalDiskWalletAndActiveEvent());
-  // }
+  _initSetting() async {
+    var languageStr =
+    await AppCache.getValue<String>(PrefsKey.SETTING_LANGUAGE);
+    LanguageModel languageModel = languageStr != null
+        ? LanguageModel.fromJson(json.decode(languageStr))
+        : SupportedLanguage.defaultModel(context);
+    var areaModelStr = await AppCache.getValue<String>(PrefsKey.SETTING_AREA);
+    AreaModel areaModel = areaModelStr != null
+        ? AreaModel.fromJson(json.decode(areaModelStr))
+        : SupportedArea.defaultModel();
+    BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(
+        areaModel: areaModel,
+        languageModel: languageModel));
+
+    // 恢复历史设置
+    // BlocProvider.of<SettingBloc>(context).add(RestoreSettingEvent());
+    //同步remote配置
+    // Future.delayed(Duration(milliseconds: 1000), () {
+    //   BlocProvider.of<SettingBloc>(context).add(SyncRemoteConfigEvent());
+    // });
+
+    //faster show wallet
+    // BlocProvider.of<WalletCmpBloc>(context).add(LoadLocalDiskWalletAndActiveEvent());
+  }
 
   void launchRootPage() async {
     var prefs = await SharedPreferences.getInstance();
