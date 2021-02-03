@@ -16,7 +16,8 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
-import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -95,19 +96,7 @@ class _RpFriendInvitePageState extends BaseState<RpFriendInvitePage> {
                                   SizedBox(
                                     height: 25,
                                   ),
-                                  Container(
-                                      width: 60,
-                                      height: 60,
-                                      decoration: BoxDecoration(
-                                          gradient: LinearGradient(colors: [
-                                            HexColor("#ffd985"),
-                                            HexColor("#ffa73f"),
-                                          ]),
-                                          shape: BoxShape.circle,
-                                          border: Border.all(width: 2, color: Colors.transparent)),
-                                      child: walletHeaderWidget(walletName,
-                                          address: ethWalletAddress, isShowShape: false)),
-
+                                  iconWalletWidget(WalletModelUtil.wallet, isCircle: true, size: 60),
                                   Padding(
                                     padding: const EdgeInsets.only(
                                       top: 2,

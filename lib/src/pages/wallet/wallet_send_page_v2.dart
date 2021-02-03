@@ -157,18 +157,17 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     }
     // 3.ATLAS
     else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      gasLimit = HyperionGasLimit.TRANSFER;
+      gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
 
       if (widget.coinVo.symbol == 'RP') {
-        gasLimit = HyperionGasLimit.HRC30_TRANSFER;
+        gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
       }
     }
     // 3.HB
     else if (widget.coinVo.coinType == CoinType.HB_HT) {
-      gasLimit = HyperionGasLimit.TRANSFER;
-
+      gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
       if (widget.coinVo.symbol == 'HUSD') {
-        gasLimit = HyperionGasLimit.HRC30_TRANSFER;
+        gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
       }
     }
 

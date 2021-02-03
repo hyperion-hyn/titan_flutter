@@ -14,9 +14,11 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -255,18 +257,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
                   SizedBox(
                     height: 34,
                   ),
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(width: 2, color: Colors.transparent),
-                        image: DecorationImage(
-                          image: AssetImage("res/drawable/app_invite_default_icon.png"),
-                          fit: BoxFit.cover,
-                        )),
-                  ),
+                  iconWalletWidget(WalletModelUtil.wallet, isCircle: true, size: 44),
                   Padding(
                     padding: EdgeInsets.only(
                       top: 16,
