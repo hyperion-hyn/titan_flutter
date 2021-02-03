@@ -314,6 +314,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         enablePullUp: false,
         showLoadingWidget: false,
         onLoadData: () {
+          print('xxx onload');
           // listLoadingData();
         },
         onRefresh: () async {

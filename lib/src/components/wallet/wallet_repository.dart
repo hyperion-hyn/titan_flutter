@@ -23,6 +23,7 @@ class WalletRepository {
   }
 
   Future safeUpdateCoinBalance(Wallet wallet, CoinViewVo coin) async {
+    print('balance update begin: ${coin.symbol}');
     var balance = coin.balance ?? BigInt.zero;
     try {
       coin.refreshStatus = Status.loading;
@@ -33,10 +34,12 @@ class WalletRepository {
             coin.coinType, coin.address, coin.contractAddress);
       }
       coin.refreshStatus = Status.success;
+      print('balance update success: ${coin.symbol}, $balance');
     } catch (e) {
+      print('balance update fail: ${coin.symbol}');
       coin.refreshStatus = Status.failed;
-      LogUtil.uploadException(e, 'balance update error');
-      throw e;
+      LogUtil.uploadException(e, '${coin.symbol} balance update error');
+      // throw e;
     }
     coin.balance = balance;
 //    coin.balance = (Decimal.parse(balance.toString()) / Decimal.parse(pow(10, coin.decimals).toString())).toDouble();
