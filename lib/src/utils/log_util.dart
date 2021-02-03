@@ -121,10 +121,14 @@ class LogUtil {
             message: "[$errorPrefix]: ${exception.stackTrace}", detail: "[$errorPrefix]: ${exception.stackTrace}");
       } else {
         FlutterBugly.uploadException(
-            message: "[$errorPrefix]: ${exception.toString()}", detail: "[$errorPrefix]: ${exception.toString()}");
+            message: "[$errorPrefix]: ${exception?.toString()}", detail: "[$errorPrefix]: ${exception?.toString()}");
       }
     }
-    logger.e(exception);
+    if (exception is Error) {
+      logger.e("[$errorPrefix]: ${exception.stackTrace}");
+    } else {
+      logger.e("[$errorPrefix]: ${exception?.toString()}");
+    }
   }
 
   static uploadExceptionStr(String exceptionStr, [String errorPrefix]) {
