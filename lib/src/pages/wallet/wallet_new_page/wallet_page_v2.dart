@@ -178,7 +178,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         ),
         actions: [
           ClickOvalButton(
-            "立即备份",
+            S.of(context).backup_now,
             () async {
               Navigator.pop(context);
               var walletStr = FluroConvertUtils.object2string(activatedWalletVo.wallet.toJson());

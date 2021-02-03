@@ -442,7 +442,7 @@ class _ExchangeWithdrawConfirmPageState extends BaseState<ExchangeWithdrawConfir
                                             color: Colors.blue,
                                           ),
                                           Text(
-                                            '点击刷新',
+                                            S.of(context).click_refresh,
                                             style: TextStyle(
                                               color: Colors.blue,
                                               fontSize: 12,

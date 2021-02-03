@@ -602,7 +602,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
           Padding(
             padding: const EdgeInsets.all(18.0),
             child: Center(
-              child: Text('选择币对', style: TextStyles.textC333S14bold),
+              child: Text(S.of(context).select_quote, style: TextStyles.textC333S14bold),
             ),
           ),
           Expanded(
