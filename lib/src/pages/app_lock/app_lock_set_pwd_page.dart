@@ -60,7 +60,7 @@ class _AppLockSetPwdState extends BaseState<AppLockSetPwdPage> {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 16.0, bottom: 8),
                     child: Text(
-                      '设置应用锁密码',
+                      S.of(context).set_app_lock_pwd,
                       style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     ),
                   ),
@@ -128,7 +128,7 @@ class _AppLockSetPwdState extends BaseState<AppLockSetPwdPage> {
                         ),
                         RoundBorderTextField(
                             keyboardType: TextInputType.number,
-                            hintText: '再次输入密码',
+                            hintText: S.of(context).input_password_again_hint,
                             onChanged: (text) {
                               setState(() {});
                             },
