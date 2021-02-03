@@ -124,7 +124,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                   child: Row(
                     children: [
                       Text(
-                        '自动锁定时间',
+                        S.of(context).auto_lock_time,
                         style: TextStyle(
                           fontSize: 12,
                           color: DefaultColors.color999,
@@ -137,7 +137,8 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                   width: double.infinity,
                   child: Column(
                     children: List.generate(timeValueList.length, (index) {
-                      var timeShow = index == 0 ? '立即' : '如果离开${timeShowList[index]}';
+                      var timeShow =
+                          index == 0 ? S.of(context).immediate : '${S.of(context).if_away}${timeShowList[index]}';
                       var selected =
                           timeValueList[index] == AppLockInheritedModel.of(context).lockAwayTime;
                       return InkWell(
@@ -173,7 +174,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    '离开应用一定时间后应用锁将自动锁定应用，继续使用应用需要先解锁。',
+                    S.of(context).app_away_hint,
                     style: TextStyle(
                       color: DefaultColors.color999,
                       fontSize: 12,

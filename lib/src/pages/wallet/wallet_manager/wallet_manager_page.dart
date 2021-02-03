@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -104,7 +106,8 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
     _walletManagerBloc.add(ScanWalletEvent());
 
     var currentActiveWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
-    if (currentActiveWallet?.keystore?.fileName != beforeActiveWallet?.keystore?.fileName) {
+    if (currentActiveWallet?.keystore?.fileName != beforeActiveWallet?.keystore?.fileName
+    || json.encode(currentActiveWallet?.walletExpandInfoEntity?.toJson()) != json.encode(beforeActiveWallet?.walletExpandInfoEntity?.toJson())) {
       //激活钱包发生变化，切换激活钱包
       beforeActiveWallet = currentActiveWallet;
       //将变化钱包作为选中钱包

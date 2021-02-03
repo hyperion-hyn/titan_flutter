@@ -19,7 +19,7 @@ class WalletBackupNoticePageV2 extends StatefulWidget {
   final Wallet wallet;
   final bool hasLater;
 
-  WalletBackupNoticePageV2(this.wallet,this.hasLater);
+  WalletBackupNoticePageV2(this.wallet, this.hasLater);
 
   @override
   State<StatefulWidget> createState() {
@@ -49,9 +49,9 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
                     children: <Widget>[
                       _header(),
                       _divider(),
-                      _reminder('助记词由英文单词组成，请抄写并妥善保管。'),
+                      _reminder(S.of(context).seed_phrase_reminder_1),
                       SizedBox(height: 16),
-                      _reminder('助记词丢失，无法找回，请务必备份助记词。'),
+                      _reminder(S.of(context).seed_phrase_reminder_2),
                     ],
                   ),
                 ),
@@ -150,9 +150,11 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 22,),
+          padding: EdgeInsets.only(
+            top: 22,
+          ),
           child: ClickOvalButton(
-            widget.hasLater ? "立即备份" : S.of(context).next_step,
+            widget.hasLater ? S.of(context).backup_now : S.of(context).next_step,
             () async {
               _showScreenshotWarningDialog();
             },
@@ -167,20 +169,22 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        if(widget.hasLater)
+        if (widget.hasLater)
           InkWell(
-            onTap: (){
+            onTap: () {
               Navigator.of(context).pop();
             },
             child: Padding(
               padding: const EdgeInsets.only(top: 10),
-              child: Text("稍后备份",style: TextStyle(
-                color:Theme.of(context).primaryColor,
-                fontSize: 14
-              ),),
+              child: Text(
+                S.of(context).backup_later,
+                style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 14),
+              ),
             ),
           ),
-        SizedBox(height: 36,)
+        SizedBox(
+          height: 36,
+        )
       ],
     );
   }

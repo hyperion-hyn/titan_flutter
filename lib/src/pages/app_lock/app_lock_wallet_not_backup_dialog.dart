@@ -64,7 +64,7 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
             vertical: 14,
           ),
           child: Text(
-            '应用锁密码忘记后只有助记词可恢复钱包身份，请务必确保所有钱包助记词已备份！',
+            S.of(context).wallet_not_back_up_hint,
             textAlign: TextAlign.center,
             style: TextStyle(
               color: HexColor('#666666'),
