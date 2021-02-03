@@ -330,6 +330,9 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                           return;
                         }
                         await submitAction();
+                        setState(() {
+                          isSubmitLoading = false;
+                        });
                       },
                       width: 300,
                       height: 46,
@@ -365,6 +368,9 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
     try {
       isSubmitLoading = true;
       if (!_formKey.currentState.validate()) {
+        // setState(() {
+        //   isSubmitLoading = false;
+        // });
         return;
       }
 
@@ -438,9 +444,9 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
       AtlasApi.postUserSync(userPayload);
 
       await Future.delayed(Duration(milliseconds: 3000),(){
-        setState(() {
-          isSubmitLoading = false;
-        });
+        // setState(() {
+        //   isSubmitLoading = false;
+        // });
         Fluttertoast.showToast(msg: widget.isCreateWallet ? "创建成功" : "导入成功");
         Routes.popUntilCachedEntryRouteName(context, wallet);
         if(widget.isCreateWallet){
@@ -452,9 +458,9 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
         }
       }); //延时确保激活成功
     } catch (error,stack) {
-      setState(() {
-        isSubmitLoading = false;
-      });
+      // setState(() {
+      //   isSubmitLoading = false;
+      // });
       print("!!!! $error $stack");
       LogUtil.toastException("$error");
     }
