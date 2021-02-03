@@ -16,6 +16,7 @@ import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
@@ -26,6 +27,7 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/image_util.dart';
@@ -111,7 +113,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
         backgroundColor: Colors.white,
         appBar: BaseAppBar(
           baseTitle: "",
-          actions: [
+          actions: widget.isCreateWallet ? null : [
             InkWell(
               onTap: () async {
                 UiUtil.showScanImagePickerSheet(context, callback: (String text) {
@@ -154,7 +156,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                   padding: const EdgeInsets.only(top: 6.0, bottom: 20),
                   child: Text(
                       widget.isCreateWallet
-                          ? "你将会拥有身份下的多链钱包：HYN，ETH，\nUSDT(ERC 20)，BTC。"
+                          ? "你将会拥有身份下的多链钱包：HYN、ETH、\nBTC和HT"
                           : "使用助记词导入的同时可以修改钱包密码",
                       style: TextStyles.textC999S14),
                 ),
@@ -435,11 +437,24 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
       );
       AtlasApi.postUserSync(userPayload);
 
-      Fluttertoast.showToast(msg: widget.isCreateWallet ? "创建成功" : "导入成功");
-      isSubmitLoading = false;
-      Routes.popUntilCachedEntryRouteName(context, wallet);
+      await Future.delayed(Duration(milliseconds: 3000),(){
+        setState(() {
+          isSubmitLoading = false;
+        });
+        Fluttertoast.showToast(msg: widget.isCreateWallet ? "创建成功" : "导入成功");
+        Routes.popUntilCachedEntryRouteName(context, wallet);
+        if(widget.isCreateWallet){
+          var walletStr = FluroConvertUtils.object2string(wallet.toJson());
+          Application.router.navigateTo(
+              context,
+              Routes.wallet_setting_wallet_backup_notice +
+                  '?walletStr=$walletStr&hasLater=1');
+        }
+      }); //延时确保激活成功
     } catch (error,stack) {
-      isSubmitLoading = false;
+      setState(() {
+        isSubmitLoading = false;
+      });
       print("!!!! $error $stack");
       LogUtil.toastException("$error");
     }

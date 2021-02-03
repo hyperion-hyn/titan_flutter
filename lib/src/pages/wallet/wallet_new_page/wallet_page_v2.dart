@@ -52,6 +52,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   bool _isExchangeAccountAbnormal = false;
   bool _isShowBalances = true;
   LegalSign activeQuotesSign;
+  WalletCmpBloc _walletCmpBloc;
 
   @override
   bool get wantKeepAlive => true;
@@ -71,7 +72,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
 
   @override
   Future<void> onCreated() async {
-    BlocProvider.of<WalletCmpBloc>(context).listen((state) {
+    _walletCmpBloc = BlocProvider.of<WalletCmpBloc>(context);
+    _walletCmpBloc.listen((state) {
       if (state is BalanceState && state.symbol == null && state.status != Status.loading) {
         if (mounted) {
           setState(() {
@@ -90,6 +92,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         }
       }
     });
+    listLoadingData();
   }
 
   _checkDexAccount() async {
@@ -311,7 +314,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         enablePullUp: false,
         showLoadingWidget: false,
         onLoadData: () {
-          listLoadingData();
+          // listLoadingData();
         },
         onRefresh: () async {
           listLoadingData();
@@ -852,6 +855,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
   @override
   void dispose() {
     loadDataBloc.close();
+    // _walletCmpBloc.close();
     super.dispose();
   }
 }
