@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -51,7 +52,7 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
           height: 80,
         ),
         Text(
-          '设置应用锁',
+          S.of(context).set_up_app_lock,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -96,7 +97,7 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
               ),
             )),
             ClickOvalButton(
-              '去备份',
+              S.of(context).go_back_up,
               () {
                 Navigator.pop(context);
                 var walletStr = FluroConvertUtils.object2string(widget.walletList[index].toJson());
@@ -134,7 +135,7 @@ class _AppLockWalletNotBackUpDialogState extends State<AppLockWalletNotBackUpDia
                   bottom: 8.0,
                 ),
                 child: Text(
-                  '未备份钱包:',
+                  '${S.of(context).wallet_not_back_up}:',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
