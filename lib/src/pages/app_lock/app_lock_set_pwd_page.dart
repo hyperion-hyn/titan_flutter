@@ -84,7 +84,7 @@ class _AppLockSetPwdState extends BaseState<AppLockSetPwdPage> {
                         SizedBox(height: 32),
                         RoundBorderTextField(
                             keyboardType: TextInputType.number,
-                            hintText: '输入6位应用锁密码',
+                            hintText: S.of(context).pwd_shorter_than_six,
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(6),
                               FilteringTextInputFormatter.allow(RegExp("[0-9]"))
@@ -119,7 +119,7 @@ class _AppLockSetPwdState extends BaseState<AppLockSetPwdPage> {
                             borderRadius: 6,
                             validator: (inputValue) {
                               if (inputValue.length < 6) {
-                                return "密码小于6位";
+                                return S.of(context).pwd_shorter_than_six;
                               }
                               return null;
                             }),
@@ -142,10 +142,10 @@ class _AppLockSetPwdState extends BaseState<AppLockSetPwdPage> {
                             ],
                             validator: (confrimValue) {
                               if (confrimValue.length < 6) {
-                                return "密码小于6位";
+                                return S.of(context).pwd_shorter_than_six;
                               }
                               if (confrimValue != _pwdController.text) {
-                                return '密码不一致';
+                                return S.of(context).password_not_equal_hint;
                               }
                               return null;
                             }),
@@ -154,7 +154,7 @@ class _AppLockSetPwdState extends BaseState<AppLockSetPwdPage> {
                         ),
                         RoundBorderTextField(
                           keyboardType: TextInputType.text,
-                          hintText: '密码提示(可选)',
+                          hintText: '${S.of(context).pwd_hint}(${S.of(context).optional})',
                           onChanged: (text) {
                             setState(() {});
                           },
