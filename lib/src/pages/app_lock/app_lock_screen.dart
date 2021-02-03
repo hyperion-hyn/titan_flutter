@@ -87,7 +87,7 @@ class _AppLockScreenState extends BaseState<AppLockScreen> {
                             ),
                           ),
                           Text(
-                            '请输入密码',
+                            S.of(context).please_input_pwd,
                             style: TextStyle(
                               fontSize: 14,
                             ),
@@ -118,7 +118,7 @@ class _AppLockScreenState extends BaseState<AppLockScreen> {
                           if (AppLockInheritedModel?.of(context)?.lockPwdHint != null)
                             InkWell(
                               child: Text(
-                                '密码提示',
+                                S.of(context).pwd_hint,
                                 style: TextStyle(
                                   color: HexColor('#E7BB00'),
                                   fontSize: 14,

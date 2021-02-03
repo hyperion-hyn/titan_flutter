@@ -49,7 +49,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
     return Scaffold(
       appBar: BaseAppBar(
         backgroundColor: Colors.white,
-        baseTitle: S.of(context).my_app_lock,
+        baseTitle: S.of(context).app_lock,
       ),
       body: Container(
         color: DefaultColors.colorf2f2f2,
@@ -75,7 +75,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
               children: [
                 Expanded(
                   child: Text(
-                    S.of(context).my_app_lock,
+                    S.of(context).app_lock,
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -102,7 +102,13 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
 
   _awayTimePreference() {
     var timeValueList = [0, 60, 300, 3600, 18000];
-    var timeShowList = ['立即', '1分钟', '5分钟', '1小时', '5小时'];
+    var timeShowList = [
+      S.of(context).immediate,
+      S.of(context).one_minute,
+      S.of(context).five_minutes,
+      S.of(context).one_hour,
+      S.of(context).five_hours
+    ];
     if (AppLockInheritedModel.of(context).isLockEnable) {
       return SliverToBoxAdapter(
         child: Container(
@@ -203,7 +209,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                   children: [
                     Expanded(
                       child: Text(
-                        '快捷解锁',
+                        S.of(context).quick_unlock,
                         style: TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ),
@@ -221,7 +227,7 @@ class _AppLockPreferencesPageState extends State<AppLockPreferencesPage> {
                   ],
                 ),
               ),
-              title: '生物识别',
+              title: S.of(context).bio_auth,
               childPadding: EdgeInsets.symmetric(vertical: 0.0),
             );
           }

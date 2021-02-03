@@ -14,14 +14,8 @@ import 'package:titan/src/utils/log_util.dart';
 
 class BitcoinApi {
   static Future<dynamic> requestBitcoinBalance(String pubString) async {
-    var response;
-    try {
-      //print("balance request $pubString");
-      response = await HttpCore.instance.post(BitcoinRpcProvider.rpcUrl + "balance",
-          data: {"pub": pubString}, options: RequestOptions(contentType: Headers.jsonContentType));
-    } catch (exception) {
-      LogUtil.uploadException(exception, 'bitcoin balance upload');
-    }
+    var response = await HttpCore.instance.post(BitcoinRpcProvider.rpcUrl + "balance",
+        data: {"pub": pubString}, options: RequestOptions(contentType: Headers.jsonContentType));
     return response;
   }
 

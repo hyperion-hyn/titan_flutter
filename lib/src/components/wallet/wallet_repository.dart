@@ -34,8 +34,9 @@ class WalletRepository {
       }
       coin.refreshStatus = Status.success;
     } catch (e) {
-      LogUtil.uploadException(e, 'balance update error');
       coin.refreshStatus = Status.failed;
+      LogUtil.uploadException(e, 'balance update error');
+      throw e;
     }
     coin.balance = balance;
 //    coin.balance = (Decimal.parse(balance.toString()) / Decimal.parse(pow(10, coin.decimals).toString())).toDouble();

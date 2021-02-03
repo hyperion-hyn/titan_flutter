@@ -85,6 +85,7 @@ var appLockHandler = Handler(handlerFunc: (context, params) {
 var createWalletHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   //isCreate 1、创建钱包 2、导入钱包
+  // return WalletCreateAccountPageV2((params['isCreate']?.first ?? "2") == "1");
   return WalletCreateAccountPageV2(params['isCreate']?.first == "1");
 });
 
@@ -154,7 +155,7 @@ var settingWalletHandler = Handler(handlerFunc: (context, params) {
 var settingBackupNoticeWalletHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
-  return WalletBackupNoticePageV2(wallet);
+  return WalletBackupNoticePageV2(wallet,(params['hasLater']?.first ?? "0") == "1");
 });
 
 var confirmSuccessHandler = Handler(handlerFunc: (context, params) {

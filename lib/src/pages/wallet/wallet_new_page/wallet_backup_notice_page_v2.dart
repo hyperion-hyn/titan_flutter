@@ -17,8 +17,9 @@ import 'package:titan/src/widget/screenshot_warning_dialog.dart';
 
 class WalletBackupNoticePageV2 extends StatefulWidget {
   final Wallet wallet;
+  final bool hasLater;
 
-  WalletBackupNoticePageV2(this.wallet);
+  WalletBackupNoticePageV2(this.wallet,this.hasLater);
 
   @override
   State<StatefulWidget> createState() {
@@ -146,23 +147,41 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePageV2> {
   }
 
   _bottomBtn() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 36.0, top: 22),
-      child: ClickOvalButton(
-        S.of(context).next_step,
-        () async {
-          _showScreenshotWarningDialog();
-        },
-        width: 300,
-        height: 46,
-        btnColor: [
-          HexColor("#F7D33D"),
-          HexColor("#E7C01A"),
-        ],
-        fontSize: 16,
-        fontColor: DefaultColors.color333,
-        fontWeight: FontWeight.bold,
-      ),
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: 22,),
+          child: ClickOvalButton(
+            widget.hasLater ? "立即备份" : S.of(context).next_step,
+            () async {
+              _showScreenshotWarningDialog();
+            },
+            width: 300,
+            height: 46,
+            btnColor: [
+              HexColor("#F7D33D"),
+              HexColor("#E7C01A"),
+            ],
+            fontSize: 16,
+            fontColor: DefaultColors.color333,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        if(widget.hasLater)
+          InkWell(
+            onTap: (){
+              Navigator.of(context).pop();
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text("稍后备份",style: TextStyle(
+                color:Theme.of(context).primaryColor,
+                fontSize: 14
+              ),),
+            ),
+          ),
+        SizedBox(height: 36,)
+      ],
     );
   }
 
