@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_backup_confirm_seed_phrase_page_v2.dart';
@@ -64,8 +65,8 @@ class _BackupShowResumeWordState extends State<WalletBackupShowSeedPhrasePageV2>
                       children: <Widget>[
                         _header(),
                         _seedPhraseView(),
-                        _reminder('妥善保管助记词至隔离网络的安全地方。'),
-                        _reminder('请勿将助记词在联网环境下分享和存储，比如邮件、相册、社交应用等。'),
+                        _reminder(S.of(context).seed_phrase_reminder_3),
+                        _reminder(S.of(context).seed_phrase_reminder_4),
                         SizedBox(height: 64),
                       ],
                     ),
@@ -83,7 +84,7 @@ class _BackupShowResumeWordState extends State<WalletBackupShowSeedPhrasePageV2>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '备份助记词',
+          S.of(context).backup_seed_phrase,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
@@ -91,7 +92,7 @@ class _BackupShowResumeWordState extends State<WalletBackupShowSeedPhrasePageV2>
         ),
         SizedBox(height: 8),
         Text(
-          '请按顺序抄写助记词，确保备份正确。',
+          S.of(context).backup_seed_phrase_hint,
           style: TextStyle(
             color: Color(0xFF9B9B9B),
             fontSize: 14,
@@ -206,7 +207,7 @@ class _BackupShowResumeWordState extends State<WalletBackupShowSeedPhrasePageV2>
     return Padding(
       padding: const EdgeInsets.only(bottom: 36.0, top: 22),
       child: ClickOvalButton(
-        '已确认备份',
+        S.of(context).already_backup,
         () async {
           Navigator.push(
               context,

@@ -89,7 +89,7 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '确认助记词',
+          S.of(context).confirm_seed_phrase,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
@@ -97,7 +97,7 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
         ),
         SizedBox(height: 8),
         Text(
-          '请按顺序点击助记词，以确认您正确备份。',
+          S.of(context).confirm_seed_phrase_hint,
           style: TextStyle(
             color: Color(0xFF9B9B9B),
             fontSize: 14,
@@ -282,7 +282,7 @@ class _BackupConfirmResumeWordState extends State<WalletBackupConfirmSeedPhraseP
   _showWrongSeedPhraseHint(BuildContext context) {
     UiUtil.showErrorTopHint(
       context,
-      '助记词顺序不正确，请校对',
+      S.of(context).seed_phrase_wrong_order,
     );
   }
 }
