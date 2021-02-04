@@ -13,3 +13,5 @@ class UpdateAtlasHomeEntityState extends AtlasState {
 
   UpdateAtlasHomeEntityState(this.atlasHomeEntity);
 }
+
+class AtlasEpochUpdateState extends AtlasState {}

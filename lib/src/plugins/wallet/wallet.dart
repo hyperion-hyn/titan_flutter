@@ -622,7 +622,7 @@ class Wallet {
       gasPrice = BigInt.from(1 * EthereumUnitValue.G_WEI);
     }
     if (gasLimit == null) {
-      gasLimit = 300000;
+      gasLimit = HyperionGasLimit.HRC30_APPROVE_RP;
     }
     if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
       return null;

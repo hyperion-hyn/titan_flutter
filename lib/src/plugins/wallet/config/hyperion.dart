@@ -19,6 +19,7 @@ class HyperionGasLimit {
   static const int NODE_OPT = 100000;
   static const int HRC30_TRANSFER = 60000;
   static const int HRC30_APPROVE = 50000;
+  static const int HRC30_APPROVE_RP = 350000;
 }
 
 class HyperionGasPrice {

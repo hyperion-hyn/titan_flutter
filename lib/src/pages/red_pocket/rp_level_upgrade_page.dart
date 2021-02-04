@@ -766,7 +766,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
   }) async {
     var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
     var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
-    gasLimit = 100000;
+    gasLimit = HyperionGasLimit.NODE_OPT;
     var gasValue = ConvertTokenUnit.weiToEther(
             weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)))
         .toDouble();
@@ -801,6 +801,7 @@ class _RpLevelUpgradeState extends BaseState<RpLevelUpgradePage> {
           burningAmount: burningAmount,
           activeWallet: WalletModelUtil.activatedWallet,
           password: password,
+          gasLimit: gasLimit,
         );
 
         return true;

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -1032,8 +1033,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         ? "${S.of(context).node_age}：${FormatUtil.formatPrice(oldYear.toDouble())}"
         : "";
 
-    var nodeAddress =
-        "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_nodeAddress) ?? "***", limitLength: 8)}";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(_nodeAddress);
+    var nodeAddress = "${UiUtil.shortEthAddress(hynAddress ?? "***", limitLength: 8)}";
     var nodeIdPre = "${S.of(context).node_num} ";
 
     var descPre = S.of(context).map3_node_notification;
@@ -1095,7 +1096,25 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                         Container(
                           height: 4,
                         ),
-                        Text(nodeAddress, style: TextStyles.textC9b9b9bS12),
+                        InkWell(
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: hynAddress));
+                            UiUtil.toast(S.of(context).copyed);
+                          },
+                          child: Row(
+                            children: [
+                              Text(nodeAddress, style: TextStyles.textC9b9b9bS12),
+                              Container(
+                                width: 4,
+                              ),
+                              Icon(
+                                Icons.copy,
+                                color: Theme.of(context).primaryColor,
+                                size: 16,
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
