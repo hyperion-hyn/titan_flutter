@@ -39,6 +39,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   NodeApi _nodeApi = NodeApi();
 
   int _lastUpdateBalanceTime = 0;
+  bool _updatingBalance = false;
   int _lastUpdateQuotesTime = 0;
 
   //fix wallet change stop
@@ -127,11 +128,21 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   /// 更新钱包账户余额
   Stream<WalletCmpState> handleUpdateBalance(UpdateActivatedWalletBalanceEvent event) async* {
     if (_activatedWalletVo != null) {
+      if (_updatingBalance && event.symbol == null) {
+        print('update balance in progress...');
+        return;
+      }
+
       var nowTime = DateTime.now().millisecondsSinceEpoch;
-      //10 second cache time
-      bool isTimeExpired = nowTime - _lastUpdateBalanceTime > 10000;
-      // if (_activatedWalletVo != null && isTimeExpired) {
-      _lastUpdateBalanceTime = nowTime;
+      //5 second cache time
+      bool isTimeExpired = nowTime - _lastUpdateBalanceTime > 5000;
+      if (event.symbol == null && !isTimeExpired) {
+        print('update balance too often, ignore request');
+        return;
+      }
+      if (event.symbol == null) {
+        _updatingBalance = true;
+      }
 
       for (var vo in _activatedWalletVo.coins) {
         if (event.symbol == null || event.symbol == vo.symbol) {
@@ -147,11 +158,16 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         walletRepository.saveWalletViewVo(_activatedWalletVo);
         yield BalanceState(
             walletVo: _activatedWalletVo, status: Status.success, symbol: event.symbol);
+
+        if (event.symbol == null) {
+          _lastUpdateBalanceTime = DateTime.now().millisecondsSinceEpoch;
+        }
       } catch (e) {
         LogUtil.uploadException(e, 'UpdateWalletBalance Error');
         yield BalanceState(
             walletVo: _activatedWalletVo, status: Status.failed, symbol: event.symbol);
       }
+      _updatingBalance = false;
     }
   }
 

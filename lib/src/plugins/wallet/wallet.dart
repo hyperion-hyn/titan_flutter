@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -225,9 +227,9 @@ class Wallet {
 
     // 检查基础币是否足够
     if (gasLimit == null || gasLimit < 21000) {
-      if(message != null){
+      if (message != null) {
         gasLimit = HyperionGasLimit.NODE_OPT;
-      }else{
+      } else {
         gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
             .systemConfigEntity
             .ethTransferGasLimit;
@@ -283,6 +285,7 @@ class Wallet {
     int nonce,
     int gasLimit,
     web3.IMessage message,
+    Uint8List data,
   }) async {
     // assert(password == null && cred == null, '密码/密钥不能为空');
     assert(password == null || cred == null, '密码/密钥不能为空');
@@ -345,6 +348,7 @@ class Wallet {
         nonce: nonce,
         type: type,
         message: message,
+        data: data,
       ),
       chainId: chainId,
       fetchChainIdFromNetworkId: chainId == null,
