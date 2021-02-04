@@ -96,6 +96,24 @@ Widget iconWalletWidget(
   );
 }
 
+Widget iconRpWidget(String picture,
+    {String name,
+    String address,
+    bool isCircle = true,
+    double size = 42,
+    bool christmasHead = false}) {
+  if ((picture?.isEmpty ?? true) || !picture.contains("http")) {
+    if (name != null && address != null && name.isNotEmpty && address.isNotEmpty) {
+      return iconWidget(null, name, address, isCircle: isCircle);
+    } else {
+      picture = christmasHead
+          ? "res/drawable/ic_rp_invite_friend_head_img_no_border.png"
+          : "res/drawable/ic_user_avatar_default.png";
+    }
+  }
+  return iconWidget(picture, name, address, isCircle: isCircle);
+}
+
 Widget iconWidget(
   String picture,
   String name,
@@ -137,7 +155,6 @@ Widget iconWidget(
     );
   }
 
-
   return SizedBox(
     width: 42,
     height: 42,
@@ -151,13 +168,12 @@ Widget iconWidget(
 }
 
 Widget iconWidgetNew(
-    String picture,
-    {
-      String name,
-      String address,
-      bool isCircle = true,
-      double size = 42,
-    }) {
+  String picture, {
+  String name,
+  String address,
+  bool isCircle = true,
+  double size = 42,
+}) {
   return Container(
     padding: const EdgeInsets.all(0.5),
     decoration: BoxDecoration(

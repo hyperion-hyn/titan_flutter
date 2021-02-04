@@ -242,6 +242,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
 
     var hynValueMy = double?.tryParse(myRpOpenEntity?.hynAmount ?? "0") ?? 0;
     var rpValueMy = double?.tryParse(myRpOpenEntity?.rpAmount ?? "0") ?? 0;
+    var wallet = WalletInheritedModel.of(context).activatedWallet;
 
     return SliverToBoxAdapter(
       child: Column(
@@ -257,7 +258,11 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
+                    Padding(
+                      padding: const EdgeInsets.only(right:12.0),
+                      child: iconRpWidget(_shareEntity?.info?.avatar, size: 30,christmasHead: true),
+                    ),
+                    /*Container(
                       width: 30,
                       height: 30,
                       margin: const EdgeInsets.only(right: 12.0),
@@ -268,7 +273,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                             image: AssetImage("res/drawable/ic_rp_invite_friend_head_img_no_border.png"),
                             fit: BoxFit.cover,
                           )),
-                    ),
+                    ),*/
                     Text(
                       "${_shareEntity?.info?.owner ?? ""}发的${(_shareEntity?.info?.rpType ?? "") == RpShareType.location ? "位置" : "新人"}红包",
                       style: TextStyle(fontSize: 18, color: HexColor("#333333"), fontWeight: FontWeight.bold),
@@ -486,7 +491,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                       padding: const EdgeInsets.only(
                         right: 10,
                       ),
-                      child: iconWidgetNew(item.avatar, size: 40),
+                      child: iconRpWidget(item?.avatar, name: item?.username,address:item?.address,size: 40),
                     ),
                     Expanded(
                       child: Column(

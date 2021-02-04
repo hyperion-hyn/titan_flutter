@@ -48,6 +48,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
   bool _isSharing = false;
   String get _address => _walletVo.wallet.getAtlasAccount().address;
   String get _walletName => _walletVo.wallet.keystore.name;
+  String get _headImg => _walletVo.wallet?.walletExpandInfoEntity?.netHeadImg ?? "";
   RpShareTypeEntity get _shareTypeEntity => (widget.reqEntity?.rpType ?? RpShareType.normal) == RpShareType.normal
       ? SupportedShareType.NORMAL
       : SupportedShareType.LOCATION;
@@ -202,7 +203,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
     // var qrData = "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$_walletName";
     var greeting = (widget.reqEntity?.greeting?.isNotEmpty ?? false) ? widget.reqEntity?.greeting : '恭喜发财，大吉大利!';
     var qrData = RpShareGetDialogPage.shareDomain +
-        '?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&msg=$greeting';
+        '?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&msg=$greeting&headImg=$_headImg';
     return WidgetShot(
       controller: _shotController,
       child: Container(

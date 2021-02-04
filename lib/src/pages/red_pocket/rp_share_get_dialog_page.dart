@@ -10,6 +10,7 @@ import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
@@ -192,7 +193,8 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                             SizedBox(
                               height: 36,
                             ),
-                            Container(
+                            iconRpWidget(_shareEntity?.info?.avatar, isCircle: true,size: 50,christmasHead: true),
+                            /*Container(
                               width: 50,
                               height: 50,
                               decoration: BoxDecoration(
@@ -203,7 +205,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                                     image: AssetImage("res/drawable/app_invite_default_icon.png"),
                                     fit: BoxFit.cover,
                                   )),
-                            ),
+                            ),*/
                             Padding(
                               padding: EdgeInsets.only(
                                 top: 16,
