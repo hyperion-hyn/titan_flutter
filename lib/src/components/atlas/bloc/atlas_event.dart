@@ -5,8 +5,9 @@ import 'package:titan/src/plugins/wallet/wallet.dart';
 @immutable
 abstract class AtlasEvent {}
 
-class UpdateAtlasHomeEntityEvent extends AtlasEvent {
+class UpdateAtlasHomeEntityEvent extends AtlasEvent {}
 
-}
+class AtlasEpochUpdateEvent extends AtlasEvent {}
+
 
 

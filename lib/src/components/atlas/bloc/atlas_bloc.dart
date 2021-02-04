@@ -12,5 +12,9 @@ class AtlasBloc extends Bloc<AtlasEvent, AtlasState> {
   @override
   Stream<AtlasState> mapEventToState(
     AtlasEvent event,
-  ) async* {}
+  ) async* {
+    if (event is AtlasEpochUpdateEvent) {
+      yield AtlasEpochUpdateState();
+    }
+  }
 }

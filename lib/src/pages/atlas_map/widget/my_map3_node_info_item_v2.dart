@@ -1,31 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
+import 'package:titan/src/components/atlas/bloc/atlas_bloc.dart';
+import 'package:titan/src/components/atlas/bloc/atlas_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_reward_tabs_page.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
-import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/utils/image_util.dart';
-import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web3dart/credentials.dart';
-import 'package:titan/src/utils/log_util.dart';
 
 class MyMap3NodeInfoItemV2 extends StatefulWidget {
   final Map3InfoEntity _map3infoEntity;
@@ -38,7 +33,8 @@ class MyMap3NodeInfoItemV2 extends StatefulWidget {
   }
 }
 
-class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> with AutomaticKeepAliveClientMixin {
+class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
+    with AutomaticKeepAliveClientMixin {
   bool _isLoading = true;
   Map3NodeInformationEntity _map3nodeInformationEntity;
   var nodeName = '';
@@ -61,6 +57,15 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> with Automa
   void initState() {
     super.initState();
     _initData();
+    _initBlocListener();
+  }
+
+  _initBlocListener() {
+    BlocProvider.of<AtlasBloc>(context).listen((state) {
+      if (state is AtlasEpochUpdateState) {
+        _initData();
+      }
+    });
   }
 
   _initData() async {
@@ -84,8 +89,9 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> with Automa
         map3Address,
       );
 
-      String _nodeCreatorAddress =
-          widget._map3infoEntity?.creator ?? _map3nodeInformationEntity?.map3Node?.operatorAddress ?? '';
+      String _nodeCreatorAddress = widget._map3infoEntity?.creator ??
+          _map3nodeInformationEntity?.map3Node?.operatorAddress ??
+          '';
 
       _isNodeCreator = _nodeCreatorAddress == wallet?.getAtlasAccount()?.address ?? '';
 
@@ -111,7 +117,7 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> with Automa
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _initData();
+   // _initData();
   }
 
   @override
@@ -260,14 +266,15 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> with Automa
     var _creatorCanEditEpoch = _releaseEpoch - 14 + 1;
     var _joinerCanEditEpoch = _releaseEpoch - 7 + 1;
 
-    bool _creatorCanEdit = (_currentEpoch >= _creatorCanEditEpoch) && (_currentEpoch < _joinerCanEditEpoch);
+    bool _creatorCanEdit =
+        (_currentEpoch >= _creatorCanEditEpoch) && (_currentEpoch < _joinerCanEditEpoch);
 
     bool _joinerCanEdit = (_currentEpoch >= _joinerCanEditEpoch) && (_currentEpoch < _releaseEpoch);
 
     bool _hasRenew = (_microDelegations?.renewal?.status ?? 0) != 0;
 
-    var _hasReDelegation =
-        (_map3nodeInformationEntity?.redelegationReference ?? '') != '0x0000000000000000000000000000000000000000';
+    var _hasReDelegation = (_map3nodeInformationEntity?.redelegationReference ?? '') !=
+        '0x0000000000000000000000000000000000000000';
 
     setState(() {
       _isLoading = false;
@@ -293,7 +300,8 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> with Automa
 
     ///creator edit hint
     if (_isNodeCreator && _currentEpoch < _creatorCanEditEpoch) {
-      _content = S.of(context).num_era_before_next_renewal_set(_creatorCanEditEpoch - _currentEpoch);
+      _content =
+          S.of(context).num_era_before_next_renewal_set(_creatorCanEditEpoch - _currentEpoch);
     }
 
     if (!_hasRenew && _isNodeCreator && _creatorCanEdit) {
@@ -313,7 +321,9 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> with Automa
 
     if (!_hasReDelegation) {
       _isShowBorderHint = true;
-      _content = _isNodeCreator ? S.of(context).atlas_node_not_reinvested : S.of(context).map3_notification_redelegate;
+      _content = _isNodeCreator
+          ? S.of(context).atlas_node_not_reinvested
+          : S.of(context).map3_notification_redelegate;
     }
 
     if (_content.isNotEmpty) {

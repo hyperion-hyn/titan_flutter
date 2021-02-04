@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/atlas/bloc/atlas_event.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -11,14 +12,15 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:nested/nested.dart';
 
-class AtlasComponent extends SingleChildStatelessWidget {
+import 'bloc/atlas_bloc.dart';
 
-  AtlasComponent({Key key, Widget child}): super(key: key, child: child);
+class AtlasComponent extends SingleChildStatelessWidget {
+  AtlasComponent({Key key, Widget child}) : super(key: key, child: child);
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
-    return BlocProvider<AuthBloc>(
-      create: (ctx) => AuthBloc(),
+    return BlocProvider<AtlasBloc>(
+      create: (ctx) => AtlasBloc(),
       child: _AtlasManager(child: child),
     );
   }
@@ -81,15 +83,12 @@ class _AtlasManagerState extends BaseState<_AtlasManager> {
   _updateAtlasHome() async {
     try {
       _atlasHomeEntity = await _atlasApi.postAtlasHome(
-        WalletInheritedModel.of(context)
-                ?.activatedWallet
-                ?.wallet
-                ?.getAtlasAccount()
-                ?.address ??
-            '',
+        WalletInheritedModel.of(context)?.activatedWallet?.wallet?.getAtlasAccount()?.address ?? '',
       );
-      //print('[AtlasComponent] ${_atlasHomeEntity.toJson()}');
       setState(() {});
+
+      ///update epoch
+      BlocProvider.of<AtlasBloc>(context).add(AtlasEpochUpdateEvent());
     } catch (e) {}
   }
 }
@@ -130,8 +129,7 @@ class AtlasInheritedModel extends InheritedModel<AtlasAspect> {
     ///remain time: remainBlockCount * secPerBlock
     ///remainBlockCount = blocksPerEpoch - (currentBlockNum - startBlockNum)
     ///
-    var _remainTime = _secPerBlock *
-        (_blocksPerEpoch - (_currentBlockNum - _epochStartBlockNum));
+    var _remainTime = _secPerBlock * (_blocksPerEpoch - (_currentBlockNum - _epochStartBlockNum));
     return _remainTime;
   }
 
@@ -157,9 +155,7 @@ class AtlasInheritedModel extends InheritedModel<AtlasAspect> {
   }
 
   @override
-  bool updateShouldNotifyDependent(
-      AtlasInheritedModel oldWidget, Set<AtlasAspect> dependencies) {
-    return atlasHomeEntity != oldWidget.atlasHomeEntity &&
-        dependencies.contains(AtlasAspect.home);
+  bool updateShouldNotifyDependent(AtlasInheritedModel oldWidget, Set<AtlasAspect> dependencies) {
+    return atlasHomeEntity != oldWidget.atlasHomeEntity && dependencies.contains(AtlasAspect.home);
   }
 }
