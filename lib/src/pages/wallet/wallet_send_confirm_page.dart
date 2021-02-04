@@ -325,10 +325,11 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                   Padding(
                       padding: const EdgeInsets.only(top: 4.0),
                       child: Text(
-                        '${shortBlockChainAddress(WalletUtil.formatToHynAddrIfAtlasChain(
-                          widget.coinVo,
-                          widget.receiverAddress,
-                        ))}',
+                        S.of(context).exchange_account,
+                        // '${shortBlockChainAddress(WalletUtil.formatToHynAddrIfAtlasChain(
+                        //   widget.coinVo,
+                        //   widget.receiverAddress,
+                        // ))}',
                         style: TextStyle(
                           fontSize: 14,
                           color: Color(0xFF333333),

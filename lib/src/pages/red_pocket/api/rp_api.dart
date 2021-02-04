@@ -764,7 +764,7 @@ class RPApi {
         password: password,
         toAddress: toAddress,
         value: ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
-        gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+        // gasPrice: HyperionGasPrice.getRecommend().averageBigInt, // null，则是实时gasPrice
         nonce: rpNonce,
       );
       if (rpSignedTX == null) {
@@ -812,7 +812,7 @@ class RPApi {
           password: password,
           toAddress: toAddress,
           value: ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
-          gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+          // gasPrice: HyperionGasPrice.getRecommend().averageBigInt, // null，则是实时gasPrice
           nonce: rpNonce,
         );
         print(

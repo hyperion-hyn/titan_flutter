@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
@@ -506,6 +507,12 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                 }
 
                                 var txhash = '';
+                                try {
+                                  _toAddress = web3.bech32ToEthAddress(_toAddress);
+                                } catch(e) {
+                                  logger.e(e);
+                                  print('地址错误');
+                                }
 
                                 if (tokenType == TokenType.ETH || tokenType == TokenType.HYN_MAIN) {
                                   //转主链币
@@ -515,17 +522,22 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                     final credentials =
                                         await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
                                     var gasPrice = coinType == CoinType.HYN_ATLAS ? BigInt.one : null;
-                                    var nonce =
-                                        await wallet.getCurrentWalletNonce(coinType, atBlock: web3.BlockNum.current());
+                                    var fromAddress = await credentials.extractAddress();
+                                    var nonce = await WalletUtil.getWeb3Client(coinType)
+                                        .getTransactionCount(fromAddress, atBlock: web3.BlockNum.current());
+                                    // var nonce =
+                                    //     await wallet.getCurrentWalletNonce(coinType, atBlock: web3.BlockNum.current());
 
                                     txhash = await wallet.sendTransaction(coinType,
                                         cred: credentials,
                                         toAddress: _toAddress,
-                                        value: ConvertTokenUnit.decimalToWei(_amount),
+                                        value: ConvertTokenUnit.decimalToWeiNew(_amount),
                                         nonce: nonce,
                                         gasPrice: gasPrice);
+
+                                    UiUtil.toast('转账$_amount，请等待成功后再执行其他转账');
                                   } catch (e) {
-                                    print(e);
+                                    logger.e(e);
                                     UiUtil.toast('转账异常 ${e.message}');
                                   }
                                 } else if (tokenType == TokenType.RP_HRC30) {
@@ -534,11 +546,14 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                     final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
                                     final credentials =
                                         await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
-                                    var nonce = await wallet.getCurrentWalletNonce(CoinType.HYN_ATLAS,
-                                        atBlock: web3.BlockNum.current());
+                                    var fromAddress = await credentials.extractAddress();
+                                    var nonce = await WalletUtil.getWeb3Client(CoinType.HYN_ATLAS)
+                                        .getTransactionCount(fromAddress, atBlock: web3.BlockNum.current());
+                                    // var nonce = await wallet.getCurrentWalletNonce(CoinType.HYN_ATLAS,
+                                    //     atBlock: web3.BlockNum.current());
 
                                     var decimals = DefaultTokenDefine.HYN_RP_HRC30.decimals;
-                                    var amount = ConvertTokenUnit.decimalToWei(_amount, decimals);
+                                    var amount = ConvertTokenUnit.decimalToWeiNew(_amount, decimals);
                                     txhash = await wallet.sendErc20Transaction(CoinType.HYN_ATLAS,
                                         contractAddress: HyperionConfig.hynRPHrc30Address,
                                         toAddress: _toAddress,
@@ -547,10 +562,10 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                         nonce: nonce,
                                         value: amount);
 
-                                    print('txhash $txhash');
+                                    print('$amount txhash $txhash');
                                     UiUtil.toast('转账$_amount，请等待成功后再执行其他转账');
                                   } catch (e) {
-                                    print(e);
+                                    logger.e(e);
                                     UiUtil.toast('转账异常, ${e.message}');
                                   }
                                 } else {
@@ -559,14 +574,17 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                     final client = WalletUtil.getWeb3Client(CoinType.ETHEREUM);
                                     final credentials =
                                         await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
-                                    var nonce = await wallet.getCurrentWalletNonce(CoinType.ETHEREUM,
-                                        atBlock: web3.BlockNum.current());
+                                    var fromAddress = await credentials.extractAddress();
+                                    var nonce = await WalletUtil.getWeb3Client(CoinType.ETHEREUM)
+                                        .getTransactionCount(fromAddress, atBlock: web3.BlockNum.current());
+                                    // var nonce = await wallet.getCurrentWalletNonce(CoinType.ETHEREUM,
+                                    //     atBlock: web3.BlockNum.current());
 
                                     var decimals;
                                     var amount;
                                     if (tokenType == TokenType.USDT_ERC20) {
                                       decimals = DefaultTokenDefine.USDT_ERC20.decimals;
-                                      amount = ConvertTokenUnit.decimalToWei(_amount, decimals);
+                                      amount = ConvertTokenUnit.decimalToWeiNew(_amount, decimals);
                                       txhash = await wallet.sendErc20Transaction(CoinType.ETHEREUM,
                                           cred: credentials,
                                           contractAddress: EthereumConfig.getUsdtErc20Address(),
@@ -580,7 +598,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                       return;
                                     }
                                   } catch (e) {
-                                    print(e);
+                                    logger.e(e);
                                     UiUtil.toast('转账异常, ${e.message}');
                                   }
                                 }

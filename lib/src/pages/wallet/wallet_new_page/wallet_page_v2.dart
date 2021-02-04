@@ -407,7 +407,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "${activatedWalletVo?.wallet?.keystore?.name ?? ""} 总资产",
+                    "${activatedWalletVo?.wallet?.keystore?.name ?? ""}",
                     style: TextStyle(
                       fontSize: 14,
                       color: DefaultColors.color333,
@@ -834,7 +834,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     _isRefreshBalances = true;
     _checkDexAccount();
     BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
-    await Future.delayed(Duration(milliseconds: 100), () {});
+    await Future.delayed(Duration(milliseconds: 50), () {});
     BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesEvent());
 
     if (mounted) {

@@ -45,6 +45,6 @@ class AppBlocDelegate extends BlocDelegate {
       LogUtil.uploadExceptionStr("${error?.toString() ?? ""} ${stacktrace?.toString() ?? ""}","bloc delegate error");
       // FlutterBugly.uploadException(message: error.toString(), detail: stacktrace?.toString() ?? error.toString());
     }
-    logger.e(error);
+    logger.e('$error: $stacktrace');
   }
 }

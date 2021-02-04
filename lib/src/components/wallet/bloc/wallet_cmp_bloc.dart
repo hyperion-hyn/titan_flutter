@@ -126,30 +126,33 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
   /// 更新钱包账户余额
   Stream<WalletCmpState> handleUpdateBalance(UpdateActivatedWalletBalanceEvent event) async* {
-    var nowTime = DateTime.now().millisecondsSinceEpoch;
-    //10 second cache time
-    bool isTimeExpired = nowTime - _lastUpdateBalanceTime > 10000;
-    // if (_activatedWalletVo != null && isTimeExpired) {
-    _lastUpdateBalanceTime = nowTime;
+    if (_activatedWalletVo != null) {
+      var nowTime = DateTime.now().millisecondsSinceEpoch;
+      //10 second cache time
+      bool isTimeExpired = nowTime - _lastUpdateBalanceTime > 10000;
+      // if (_activatedWalletVo != null && isTimeExpired) {
+      _lastUpdateBalanceTime = nowTime;
 
-    for (var vo in _activatedWalletVo.coins) {
-      if (event.symbol == null || event.symbol == vo.symbol) {
-        vo.refreshStatus = Status.loading;
+      for (var vo in _activatedWalletVo.coins) {
+        if (event.symbol == null || event.symbol == vo.symbol) {
+          vo.refreshStatus = Status.loading;
+        }
+      }
+      yield BalanceState(
+          walletVo: _activatedWalletVo, status: Status.loading, symbol: event.symbol);
+
+      try {
+        await walletRepository.updateWalletVoBalance(_activatedWalletVo, event.symbol);
+        //save balance data to disk;
+        walletRepository.saveWalletViewVo(_activatedWalletVo);
+        yield BalanceState(
+            walletVo: _activatedWalletVo, status: Status.success, symbol: event.symbol);
+      } catch (e) {
+        LogUtil.uploadException(e, 'UpdateWalletBalance Error');
+        yield BalanceState(
+            walletVo: _activatedWalletVo, status: Status.failed, symbol: event.symbol);
       }
     }
-    yield BalanceState(walletVo: _activatedWalletVo, status: Status.loading, symbol: event.symbol);
-
-    try {
-      await walletRepository.updateWalletVoBalance(_activatedWalletVo, event.symbol);
-      //save balance data to disk;
-      walletRepository.saveWalletViewVo(_activatedWalletVo);
-      yield BalanceState(
-          walletVo: _activatedWalletVo, status: Status.success, symbol: event.symbol);
-    } catch (e) {
-      LogUtil.uploadException(e, 'UpdateWalletBalance Error');
-      yield BalanceState(walletVo: _activatedWalletVo, status: Status.failed, symbol: event.symbol);
-    }
-    // }
   }
 
   /// 激活/清除 当前活跃钱包
