@@ -112,7 +112,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
             _myNodeListWidget(),
             _sectionTitleWidget(
                 title: S.of(context).lastest_launched_nodes, hasMore: _lastActiveList.isNotEmpty),
-            _lastActiveWidget(),
+            _latestActiveWidget(),
             _sectionTitleWidget(title: S.of(context).wait_start_node_contract, hasMore: false),
             _pendingListWidget(),
           ],
@@ -220,7 +220,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
     ));
   }
 
-  Widget _lastActiveWidget() {
+  Widget _latestActiveWidget() {
     if (_lastActiveList?.isEmpty ?? true) {
       return emptyListWidget(title: S.of(context).no_lastest_active_nodes);
     }
