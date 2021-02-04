@@ -169,7 +169,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
               Navigator.of(context).pop();
             },
             child: Padding(
-              padding: const EdgeInsets.only(top: 40, left: 16.0, right: 16, bottom: 16),
+              padding: const EdgeInsets.only(top: 50, left: 16.0, right: 16, bottom: 16),
               child: Image.asset(
                 "res/drawable/rp_receiver_success_arraw_back.png",
                 width: 17,
@@ -179,7 +179,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
           ),
           if ((_shareEntity?.info?.rpType ?? "") == RpShareType.normal && (_shareEntity?.info?.state ?? "") != RpShareState.refunded)
             Positioned(
-              top: 40,
+              top: 50,
               right: 16,
               child: InkWell(
                 onTap: () {
