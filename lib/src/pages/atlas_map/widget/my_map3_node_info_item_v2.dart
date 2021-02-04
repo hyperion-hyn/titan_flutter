@@ -61,11 +61,12 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
   }
 
   _initBlocListener() {
-    BlocProvider.of<AtlasBloc>(context).listen((state) {
-      if (state is AtlasEpochUpdateState) {
-        _initData();
-      }
-    });
+    BlocProvider.of<AtlasBloc>(context)
+      ..listen((state) {
+        if (state is AtlasEpochUpdateState) {
+          if (mounted) _initData();
+        }
+      });
   }
 
   _initData() async {
@@ -117,7 +118,7 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-   // _initData();
+    // _initData();
   }
 
   @override

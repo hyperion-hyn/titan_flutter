@@ -154,6 +154,8 @@
   "@application_class": {},
   "app_lock": "App lock",
   "@app_lock": {},
+  "app_lock_open": "On",
+  "@app_lock_open": {},
   "apply_cancelled": "Application cancelled",
   "@apply_cancelled": {},
   "apply_main_account_is_not_recommended_account": "The main account you're about to connect is not a recommended one.",
