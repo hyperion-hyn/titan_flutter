@@ -217,7 +217,7 @@ class _RpFriendListState extends BaseState<RpFriendListPage> {
               padding: const EdgeInsets.only(
                 right: 10,
               ),
-              child:iconRpWidget(_inviter?.avatar??'', name: _inviter?.name, address: _inviter?.address ?? '',size: 40),
+              child:iconWidget(_inviter?.avatar??'', _inviter?.name, _inviter?.address ?? '', isCircle: true, size: 40),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,7 +325,7 @@ class _RpFriendListState extends BaseState<RpFriendListPage> {
                 padding: const EdgeInsets.only(
                   right: 10,
                 ),
-                child: iconRpWidget(info?.avatar??'', name: name, address: info?.address ?? '',size: 40),
+                child: iconWidget(info?.avatar??'', name, info?.address ?? '', isCircle:true, size: 40),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

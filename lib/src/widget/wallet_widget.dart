@@ -16,7 +16,7 @@ Widget walletHeaderWidget(
   String imageSource = '',
 }) {
 
-  if (shortName.isNotEmpty) {
+  if (shortName?.isNotEmpty ?? false) {
     shortName = shortName.characters.first;
   } else {
     return Image.asset(

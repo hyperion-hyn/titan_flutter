@@ -193,7 +193,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                             SizedBox(
                               height: 36,
                             ),
-                            iconRpWidget(_shareEntity?.info?.avatar, isCircle: true,size: 50,christmasHead: true),
+                            iconWidget(_shareEntity?.info?.avatar, _shareEntity?.info?.owner, _shareEntity?.info?.address, isCircle: true,size: 50),
                             /*Container(
                               width: 50,
                               height: 50,

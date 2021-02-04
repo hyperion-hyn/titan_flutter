@@ -260,7 +260,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(right:12.0),
-                      child: iconRpWidget(_shareEntity?.info?.avatar, size: 30,christmasHead: true),
+                      child: iconWidget(_shareEntity?.info?.avatar, _shareEntity?.info?.owner,_shareEntity?.info?.address, isCircle:true, size: 30),
                     ),
                     /*Container(
                       width: 30,
@@ -491,7 +491,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                       padding: const EdgeInsets.only(
                         right: 10,
                       ),
-                      child: iconRpWidget(item?.avatar, name: item?.username,address:item?.address,size: 40),
+                      child: iconWidget(item?.avatar, item?.username, item?.address, isCircle:true, size: 40),
                     ),
                     Expanded(
                       child: Column(

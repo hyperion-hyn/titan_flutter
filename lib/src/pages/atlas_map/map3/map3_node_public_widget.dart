@@ -96,24 +96,6 @@ Widget iconWalletWidget(
   );
 }
 
-Widget iconRpWidget(String picture,
-    {String name,
-    String address,
-    bool isCircle = true,
-    double size = 42,
-    bool christmasHead = false}) {
-  if ((picture?.isEmpty ?? true) || !picture.contains("http")) {
-    if (name != null && address != null && name.isNotEmpty && address.isNotEmpty) {
-      return iconWidget(null, name, address, isCircle: isCircle);
-    } else {
-      picture = christmasHead
-          ? "res/drawable/ic_rp_invite_friend_head_img_no_border.png"
-          : "res/drawable/ic_user_avatar_default.png";
-    }
-  }
-  return iconWidget(picture, name, address, isCircle: isCircle);
-}
-
 Widget iconWidget(
   String picture,
   String name,
@@ -135,79 +117,6 @@ Widget iconWidget(
         child: FadeInImage.assetNetwork(
           image: picture,
           placeholder: 'res/drawable/ic_user_avatar_default.png',
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
-  if ((picture?.isNotEmpty ?? false)) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(isCircle ? 21 : 4.0),
-      child: Image.asset(
-        picture,
-        width: 42,
-        height: 42,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-
-  return SizedBox(
-    width: 42,
-    height: 42,
-    child: walletHeaderWidget(
-      name,
-      isShowShape: true,
-      address: address,
-      isCircle: isCircle,
-    ),
-  );
-}
-
-Widget iconWidgetNew(
-  String picture, {
-  String name,
-  String address,
-  bool isCircle = true,
-  double size = 42,
-}) {
-  return Container(
-    padding: const EdgeInsets.all(0.5),
-    decoration: BoxDecoration(
-      border: Border.all(width: 0.5, color: DefaultColors.colordedede),
-      borderRadius: BorderRadius.all(
-        Radius.circular(isCircle ? size : 4.0),
-      ), //设置四周圆角 角度
-    ),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(isCircle ? size : 4.0),
-      child: FadeInImage.assetNetwork(
-        image: picture,
-        placeholder: 'res/drawable/ic_user_avatar_default.png',
-        width: size,
-        height: size,
-        fit: BoxFit.cover,
-      ),
-    ),
-  );
-
-  if ((picture?.isNotEmpty ?? false) && picture.contains("http")) {
-    return Container(
-      padding: const EdgeInsets.all(0.5),
-      decoration: BoxDecoration(
-        border: Border.all(width: 0.5, color: DefaultColors.colordedede),
-        borderRadius: BorderRadius.all(
-          Radius.circular(isCircle ? size : 4.0),
-        ), //设置四周圆角 角度
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(isCircle ? size : 4.0),
-        child: FadeInImage.assetNetwork(
-          image: picture,
-          placeholder: 'res/drawable/img_placeholder.jpg',
           width: size,
           height: size,
           fit: BoxFit.cover,
@@ -1328,7 +1237,7 @@ Widget delegateRecordItemWidget(HynTransferHistory item,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                iconWidgetNew(item.pic, size: 40),
+                iconWidget(item?.pic, item?.name, item?.from, isCircle:true, size: 40),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8.0),
