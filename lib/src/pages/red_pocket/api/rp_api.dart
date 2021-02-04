@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:k_chart/utils/date_format_util.dart';
 import 'package:package_info/package_info.dart';
-import 'package:titan/generated/l10n.dart';
+import 'package:titan/generated/l10n.dart' as Transfer;
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/http/signer.dart';
@@ -255,7 +255,7 @@ class RPApi {
     }
     inviterAddress = WalletUtil.bech32ToEthAddress(inviterAddress);
     if (myAddress.toLowerCase() == inviterAddress.toLowerCase()) {
-      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).can_not_invite_myself);
+      Fluttertoast.showToast(msg: Transfer.S.of(Keys.rootKey.currentContext).can_not_invite_myself);
       return null;
     }
     var result = await RPHttpCore.instance
@@ -480,7 +480,7 @@ class RPApi {
     );
     if (approveHex?.isEmpty ?? true) {
       throw HttpResponseCodeNotSuccess(
-          -30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
+          -30011, Transfer.S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
     }
     print('[rp_api] postRpDepositAndBurn, approveHex: $approveHex');
 
@@ -498,7 +498,7 @@ class RPApi {
     print("[Rp_api] postRpDepositAndBurn, sendRpHolding, address:$address, txHash:$rawTxHash");
     if (rawTxHash == null) {
       throw HttpResponseCodeNotSuccess(
-          -30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
+          -30012, Transfer.S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
     }
 
     return await RPHttpCore.instance
@@ -532,7 +532,7 @@ class RPApi {
     print("[Rp_api] postRpWithdraw, sendRpHolding, address:$address, rawTxHash:$rawTxHash");
     if (rawTxHash == null) {
       throw HttpResponseCodeNotSuccess(
-          -30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
+          -30012, Transfer.S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
     }
 
     return await RPHttpCore.instance
@@ -686,7 +686,7 @@ class RPApi {
       );
       if (rpSignedTX == null) {
         throw HttpResponseCodeNotSuccess(
-            -30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
+            -30012, Transfer.S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
       }
       print('[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
 
@@ -703,7 +703,7 @@ class RPApi {
       );
       if (hynSignedTX?.isEmpty ?? true) {
         throw HttpResponseCodeNotSuccess(
-            -30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
+            -30011, Transfer.S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
       }
       print(
           '[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');
@@ -724,7 +724,7 @@ class RPApi {
 
         if (rpSignedTX == null) {
           throw HttpResponseCodeNotSuccess(
-              -30012, S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
+              -30012, Transfer.S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh);
         }
       }
 
@@ -743,7 +743,7 @@ class RPApi {
 
         if (hynSignedTX?.isEmpty ?? true) {
           throw HttpResponseCodeNotSuccess(
-              -30011, S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
+              -30011, Transfer.S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee);
         }
       }
     }
