@@ -82,7 +82,7 @@ class EmptyWalletViewV2 extends StatelessWidget {
                       context,
                       Routes.wallet_create + '?entryRouteName=$currentRouteName&isCreate=1',
                     );
-                    backAndUpdatePage(context);
+                    // backAndUpdatePage(context);
                   }),
                   _divider(),
                   _optionItem(context, '恢复身份', '已拥有钱包', () async {
@@ -92,11 +92,11 @@ class EmptyWalletViewV2 extends StatelessWidget {
                       if (!result) return;
                     }
                     var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
-                    Application.router.navigateTo(
+                    await Application.router.navigateTo(
                       context,
                       Routes.wallet_create + '?entryRouteName=$currentRouteName',
                     );
-                    backAndUpdatePage(context);
+                    // backAndUpdatePage(context);
                   })
                 ],
               ),
@@ -173,6 +173,9 @@ class EmptyWalletViewV2 extends StatelessWidget {
   }
 
   backAndUpdatePage(BuildContext context) {
+    if(context == null){
+      return;
+    }
     var activatedWalletVo =
         WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)?.activatedWallet;
     if (activatedWalletVo != null && loadDataBloc != null) {

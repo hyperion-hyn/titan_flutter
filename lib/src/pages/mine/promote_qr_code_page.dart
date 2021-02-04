@@ -9,7 +9,9 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -94,22 +96,7 @@ class _PromoteQrCodePageState extends BaseState<PromoteQrCodePage> {
                             SizedBox(
                               height: 28,
                             ),
-                            Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-//                                    gradient: LinearGradient(colors: [
-//                                      HexColor("#ffd985"),
-//                                      HexColor("#ffa73f"),
-//                                    ]),
-                                  shape: BoxShape.circle,
-                                  border: Border.all(width: 2, color: Colors.transparent),
-                                  image: DecorationImage(
-                                    image: AssetImage("res/drawable/app_invite_default_icon.png"),
-                                    fit: BoxFit.cover,
-                                  )),
-                            ),
+                            iconWalletWidget(WalletModelUtil.wallet, isCircle: true, size: 60),
                             Padding(
                               padding: const EdgeInsets.only(top: 3, bottom: 5.0, left: 15, right: 15),
                               child: RichText(
