@@ -224,7 +224,7 @@ class _MyPageState extends BaseState<MyPage> {
                     },
                     imageName: "ic_me_page_safe_lock",
                     color: Colors.cyan[300],
-                    subText: AppLockInheritedModel.of(context).isLockEnable ? S.of(context).open : '',
+                    subText: AppLockInheritedModel.of(context).isLockEnable ? S.of(context).app_lock_open : '',
                   ),
                   _lineWidget(),
 
