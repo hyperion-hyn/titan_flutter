@@ -77,7 +77,7 @@ class MyClient implements Client {
   @override
   Future<Response> post(url, {Map<String, String> headers, body, Encoding encoding}) async {
     if (_isPrintLog) {
-      logger.i('Request begin [post] $url');
+      logger.i('Request begin [post] $url, body $body');
     }
 
     var resp = await _delegate
@@ -92,7 +92,7 @@ class MyClient implements Client {
   @override
   Future<Response> put(url, {Map<String, String> headers, body, Encoding encoding}) async {
     if (_isPrintLog) {
-      logger.i('Request begin [put] $url');
+      logger.i('Request begin [put] $url, body $body');
     }
     var resp = await _delegate
         .put(url, headers: headers, body: body, encoding: encoding)

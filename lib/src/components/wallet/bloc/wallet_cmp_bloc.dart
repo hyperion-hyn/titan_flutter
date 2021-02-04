@@ -128,7 +128,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   /// 更新钱包账户余额
   Stream<WalletCmpState> handleUpdateBalance(UpdateActivatedWalletBalanceEvent event) async* {
     if (_activatedWalletVo != null) {
-      if (_updatingBalance && event.symbol == null) {
+      if (_updatingBalance) {
         print('update balance in progress...');
         return;
       }
