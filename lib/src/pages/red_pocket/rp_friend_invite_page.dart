@@ -226,31 +226,6 @@ class _RpFriendInvitePageState extends BaseState<RpFriendInvitePage> {
                 ],
               ),
             ),
-            /*
-            Container(
-              height: 60,
-              child: Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  Image.asset(
-                    "res/drawable/bg_rp_invite_friend_bottom.png",
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
-                  ),
-                  /*Padding(
-                    padding: const EdgeInsets.only(left:58.0,right: 58,top: 20),
-                    child: Text(
-                      "提示：如果你还没有推荐人，当你的好友接收你的邀请，那么系统也会为你设定一个推荐人",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )*/
-                ],
-              ),
-            ),*/
           ],
         ));
   }

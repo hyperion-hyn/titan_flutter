@@ -25,28 +25,6 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
         appBar: BaseAppBar(
           baseTitle: S.of(context).my_redpocket,
           backgroundColor: Colors.white,
-          /*
-          actions: <Widget>[
-            FlatButton(
-              onPressed: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RpRecordStatisticsPage(),
-                  ),
-                );
-              },
-              child: Text(
-                '每日统计',
-                style: TextStyle(
-                  color: HexColor("#1F81FF"),
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-            ),
-          ],
-          */
         ),
         body: Scaffold(
           appBar: new PreferredSize(
