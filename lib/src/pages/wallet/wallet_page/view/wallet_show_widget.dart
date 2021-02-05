@@ -193,7 +193,7 @@ class _ShowWalletViewState extends BaseState<ShowWalletView> {
                               ),
                             ),
                           if(_isRefreshFail)
-                            Text("刷新失败", style: TextStyle(
+                            Text(S.of(context).refresh_failed, style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.white,
                                 ))

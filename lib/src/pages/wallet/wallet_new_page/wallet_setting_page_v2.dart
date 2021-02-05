@@ -83,7 +83,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
     return Scaffold(
       appBar: BaseAppBar(
         backgroundColor: Colors.white,
-        baseTitle: '钱包身份',
+        baseTitle: S.of(context).my_wallet_id,
       ),
       body: Container(
         color: DefaultColors.colorf2f2f2,
@@ -115,7 +115,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
 
                 editIconSheet(context, (path) async {
                   if (path != null) {
-                    UiUtil.showLoadingDialog(context, "头像上传中...", (context) {
+                    UiUtil.showLoadingDialog(context, S.of(context).avatar_uploading, (context) {
                       dialogContext = context;
                     });
 
@@ -147,7 +147,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                 child: Row(
                   children: [
                     Text(
-                      "头像",
+                      S.of(context).avatar,
                       style: TextStyles.textC333S14,
                     ),
                     Spacer(),
@@ -174,7 +174,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                 }
                 String text = await Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context) => OptionEditPage(
-                          title: "名称",
+                          title: S.of(context).name,
                           content: widget.wallet?.keystore?.name,
                           maxLength: 8,
                         )));
@@ -199,7 +199,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                 child: Row(
                   children: [
                     Text(
-                      "名称",
+                      S.of(context).name,
                       style: TextStyles.textC333S14,
                     ),
                     Spacer(),
@@ -287,7 +287,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
           children: [
             _optionItem(
                 imagePath: "res/drawable/ic_wallet_setting_show_mnemonic.png",
-                title: '显示助记词',
+                title: S.of(context).show_mnemonic_label,
                 editFunc: () {
                   var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
                   Application.router.navigateTo(
@@ -296,7 +296,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                           '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
                 },
                 subContent: '钱包私密数据只存在你的设备上，一旦你的【助记词】被人知晓，那么资产将无法找回！请在安全的地方开始手抄备份你的【助记词】',
-                warning: !isBackup ? '未备份' : ""),
+                warning: !isBackup ? S.of(context).not_backup : ""),
             Divider(
               height: 0.5,
             ),
@@ -325,7 +325,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             ),
             _optionItem(
                 imagePath: "res/drawable/ic_wallet_setting_modify_pws.png",
-                title: '修改密码',
+                title: S.of(context).change_password,
                 editCallback: (text) {},
                 editFunc: () async {
                   String pswRemind = await Navigator.of(context).push(MaterialPageRoute(
@@ -341,7 +341,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             ),
             _optionItem(
               imagePath: "res/drawable/ic_wallet_setting_psw_remind.png",
-              title: '密码提示',
+              title: S.of(context).pwd_hint,
               editFunc: () async {
                 var password = await UiUtil.showWalletPasswordDialogV2(context, widget.wallet);
                 if (password == null) {
@@ -350,7 +350,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
 
                 String text = await Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context) => OptionEditPage(
-                      title: '密码提示',
+                      title: S.of(context).pwd_hint,
                       content: widget.wallet.walletExpandInfoEntity?.pswRemind,
                       hint: widget.wallet?.walletExpandInfoEntity?.pswRemind == null ? "未设置" : "",
                       keyboardType: TextInputType.text,
@@ -397,7 +397,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                     ),
                   if (!isBackup)
                     ClickOvalButton(
-                      "取消",
+                      S.of(context).cancel,
                       () async {
                         Navigator.pop(context);
                       },

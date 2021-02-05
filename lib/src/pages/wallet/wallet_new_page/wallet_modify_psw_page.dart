@@ -84,7 +84,7 @@ class _WalletModifyPswPageState extends State<WalletModifyPswPage> {
                                 Fluttertoast.showToast(msg: "密码提示：${widget.wallet.walletExpandInfoEntity.pswRemind ?? ""}");
                               },
                               child: Text(
-                                "忘记密码？",
+                                "${S.of(context).forgot_password}？",
                                 style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
                               )),
                         ],
@@ -99,12 +99,12 @@ class _WalletModifyPswPageState extends State<WalletModifyPswPage> {
                               setState(() {
                                 isShowRemind = false;
                               });
-                              return "请输入密码";
+                              return S.of(context).please_input_pwd;
                             } else if (value.length < 8) {
                               setState(() {
                                 isShowRemind = false;
                               });
-                              return "密码小于8位";
+                              return S.of(context).password_less_than_eight;
                             } else {
                               setState(() {
                                 isShowRemind = true;
@@ -201,9 +201,9 @@ class _WalletModifyPswPageState extends State<WalletModifyPswPage> {
                   keyboardType: TextInputType.visiblePassword,
                   validator: (value) {
                     if (value.isEmpty) {
-                      return "请输入密码";
+                      return S.of(context).please_input_pwd;
                     } else if (value.length < 8) {
-                      return "密码小于8位";
+                      return S.of(context).password_less_than_eight;
                     } else {
                       return null;
                     }

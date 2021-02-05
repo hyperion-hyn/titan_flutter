@@ -485,7 +485,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                                   ),
                                   SizedBox(width: 4),
                                   Text(
-                                    '未备份',
+                                    S.of(context).not_backup,
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: HexColor('#E7BB00'),

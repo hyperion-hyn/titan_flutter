@@ -149,7 +149,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.isCreateWallet ? "创建身份" : "恢复身份",
+                  widget.isCreateWallet ? "创建身份" : S.of(context).restore_identity,
                   style: TextStyles.textC333S14bold,
                 ),
                 Padding(
@@ -202,7 +202,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                       Padding(
                         padding: const EdgeInsets.only(left: 2, right: 20),
                         child: Text(
-                          "(可选)",
+                          "(${S.of(context).optional})",
                           style: TextStyles.textC999S12,
                         ),
                       ),
@@ -294,7 +294,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                           setState(() {
                             isShowRemind = false;
                           });
-                          return "请输入密码";
+                          return S.of(context).please_input_pwd;
                         } else if (value.length < 8) {
                           setState(() {
                             isShowRemind = false;
@@ -324,7 +324,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 36.0, top: 22),
                     child: ClickOvalButton(
-                      widget.isCreateWallet ? "创建" : "恢复身份",
+                      widget.isCreateWallet ? S.of(context).create : S.of(context).restore_identity,
                           () async {
                         if(isSubmitLoading){
                           return;
@@ -432,7 +432,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
         RPApi _rpApi = RPApi();
         String inviteResult = await _rpApi.postRpInviter(MemoryCache.rpInviteKey, wallet);
         if (inviteResult != null) {
-          Fluttertoast.showToast(msg: "邀请成功");
+          Fluttertoast.showToast(msg: S.of(context).invitation_success);
           MemoryCache.rpInviteKey = null;
         }
       }
@@ -597,11 +597,11 @@ List<Widget> pswListWidget(
                   keyboardType: TextInputType.visiblePassword,
                   validator: (value) {
                     if (value.isEmpty) {
-                      return "请输入密码";
+                      return S.of(Keys.rootKey.currentContext).please_input_pwd;
                     } else if (value.length < 8) {
-                      return "密码小于8位";
+                      return S.of(Keys.rootKey.currentContext).password_less_than_eight;
                     } else if (_walletPswController.text != _walletRePswController.text) {
-                      return "密码不一致";
+                      return S.of(Keys.rootKey.currentContext).password_not_equal_hint;
                     } else {
                       return null;
                     }
@@ -683,7 +683,7 @@ String pswLevelLabel(int _pswLevel) {
     case 1:
       return "弱";
     case 2:
-      return "一般";
+      return S.of(Keys.rootKey.currentContext).wallet_setting_normal;
     case 3:
       return "强";
     case 4:
