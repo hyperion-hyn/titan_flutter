@@ -117,7 +117,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
 
   Widget _bottomImageList() {
     return Padding(
-      padding: EdgeInsets.only(left: 16.0, bottom: 23, right: 16, top: 20),
+      padding: EdgeInsets.only(left: 8.0, bottom: 23, right: 8, top: 20),
       child: Container(
         // height: 125,
         child: Row(
@@ -292,6 +292,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
                     fontSize: fontSize,
                     color: Colors.white,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 Spacer(),
               ],
