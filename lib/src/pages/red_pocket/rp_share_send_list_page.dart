@@ -141,6 +141,8 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
     var refunded = model.state == RpShareState.refunded;
     refunded = false;
 
+    var totalDesc = S.of(context).rp_send_total_desc(model.total, model.gotCount);
+
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -184,34 +186,6 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            /*
-                            Container(
-                              margin: const EdgeInsets.only(
-                                right: 8,
-                                // top: 16,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    HexColor('#FF0527'),
-                                    HexColor('#FF4D4D'),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.all(Radius.circular(2)),
-                              ),
-                              child: Text(
-                                shareTypeEntity.nameZh,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ),
-                            */
                             Padding(
                               padding: const EdgeInsets.only(
                                 right: 6,
@@ -245,28 +219,6 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            if (refunded)
-                              InkWell(
-                                onTap: () {
-                                  if (!refunded) return;
-                                  if ((model?.hynRefundHash ?? '').isEmpty) return;
-
-                                  WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(context,
-                                      model?.hynRefundHash ?? '', DefaultTokenDefine.HYN_Atlas.symbol);
-                                },
-                                child: Text(
-                                  ',查看转账详情',
-                                  style: TextStyle(
-                                    color: HexColor("#1F81FF"),
-                                    // color: HexColor("#999999"),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                  maxLines: 2,
-                                  textAlign: TextAlign.right,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
                           ],
                         ),
                         SizedBox(
@@ -298,7 +250,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          '总${model.total}个，已领取${model.gotCount}个',
+                          totalDesc,
                           style: TextStyle(
                             color: HexColor("#333333"),
                             fontSize: 12,

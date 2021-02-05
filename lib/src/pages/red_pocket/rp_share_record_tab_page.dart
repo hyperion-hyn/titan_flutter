@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_list_page.dart';
@@ -51,12 +52,12 @@ class _RpShareRecordTabState extends BaseState<RpShareRecordTabPage> {
                     tabs: [
                       Tab(
                         child: Text(
-                          '我收到的',
+                          S.of(context).rp_record_my_get,
                         ),
                       ),
                       Tab(
                         child: Text(
-                          '我发出的',
+                          S.of(context).rp_record_my_send,
                         ),
                       ),
                     ],

@@ -174,40 +174,12 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                     children: <Widget>[
                       Row(
                         children: <Widget>[
-                          /*
-                          Container(
-                            margin: const EdgeInsets.only(
-                              right: 8,
-                              // top: 16,
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  HexColor('#FF0527'),
-                                  HexColor('#FF4D4D'),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.all(Radius.circular(2)),
-                            ),
-                            child: Text(
-                              shareTypeEntity.nameZh,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                              ),
-                            ),
-                          ),
-                          */
                           Padding(
                             padding: const EdgeInsets.only(
                               right: 6,
                             ),
                             child: Text(
-                              '${model.username} 的红包',
+                              S.of(context).rp_share_get_list_nickname(model.username),
                               style: TextStyle(
                                 color: HexColor("#333333"),
                                 fontSize: 14,

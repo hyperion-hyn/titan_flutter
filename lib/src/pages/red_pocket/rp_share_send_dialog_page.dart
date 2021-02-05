@@ -43,15 +43,15 @@ Future<bool> showShareRpSendDialog<T>(
     value1: reqEntity.rpAmount,
     valueUnit: 'HYN',
     value1Unit: 'RP',
-    title: '发红包',
+    title: S.of(context).send_red_pocket,
     fromName: walletName,
     fromAddress: fromAddress,
     toName: S.of(context).rp_red_pocket,
     toAddress: toAddress,
     gas: '0.0001',
     gas1: '0.0001',
-    gasDesc: 'HYN 产生',
-    gas1Desc: 'RP 产生',
+    gasDesc: 'HYN ${S.of(context).rp_send_dialog_gas_create}',
+    gas1Desc: 'RP ${S.of(context).rp_send_dialog_gas_create}',
     gasUnit: 'HYN',
     action: (String password) async {
       var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('RP');

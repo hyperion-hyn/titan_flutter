@@ -95,7 +95,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
       whoSendRpText = "";
     } else {
       isNormal = _shareEntity.info.rpType == RpShareType.normal;
-      whoSendRpText = S.of(context).rp_share_get_list_nickname_type(_shareEntity?.info?.owner ?? '--',isNormal ? '新人' : '位置');
+      whoSendRpText = S.of(context).rp_share_get_list_nickname_type(_shareEntity?.info?.owner ?? '--',isNormal ? S.of(context).newbee : S.of(context).position);
 
       greeting = _shareEntity?.info?.greeting ?? '';
       if (_shareEntity != null && greeting.isEmpty) {
@@ -268,10 +268,6 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                             if (_shareEntity.info.alreadyGot) {
                               return;
                             }
-
-                            // todo: test
-                            //latlng = LatLng(22.29679699999997, 114.17090000000002);
-                            //lat: 26.4407743201789, lng: 111.61888177114565
 
                             if (_shareEntity.info.rpType == RpShareType.location && latlng == null) {
                               Fluttertoast.showToast(msg: S.of(context).failed_location_locate_current);
@@ -493,7 +489,6 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
     );
   }
 
-  // todo:-40013
   _showWarningDialog() {
     UiUtil.showAlertView(
       context,
