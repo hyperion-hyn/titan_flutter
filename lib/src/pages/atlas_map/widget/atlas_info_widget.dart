@@ -61,15 +61,15 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
 
       switch (i) {
         case 0:
-          title = '运行中: ';
+          title = '${S.of(context).map3_status_running}: ';
           count = '$map3CountActive';
           break;
         case 1:
-          title = '待启动: ';
+          title = '${S.of(context).pending}: ';
           count = '$map3CountIdle';
           break;
         case 2:
-          title = '终止: ';
+          title = '${S.of(context).map3_node_exit}: ';
           count = '$map3CountDead';
           break;
       }
