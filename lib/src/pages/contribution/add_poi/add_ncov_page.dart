@@ -902,27 +902,6 @@ class _AddNcovState extends BaseState<AddNcovPage> {
       return;
     }
 
-    /*{
-      "location":{"lat":23.1208435,"lon":113.32207890000001},
-    "name":"嘉德公管",
-    "country":"China",
-    "county":"广州",
-    "state":"广东省",
-    "city":"天河区",
-    "road":"花城大道环球都会广场",
-    "house_number":"3楼",
-    "postcode":"510066",
-    "confirmed_count":5,
-    "confirmed_type":"本地人",
-    "isolation":"是",
-    "isolation_house_type":"居家自主",
-    "symptoms":["发热","呼吸轻困难"],
-    "symptoms_detail":"全身无力，呼吸轻困难，头疼",
-    "trip":"1月20号从武汉出差回来，先回去天河科韵路公司开会，下班后乘坐地铁3号回家，休息两日后出现症状",
-    "security_measures":"居家隔离，所有楼全栋消毒",
-    "contact_records":"地铁3号线大概6: 50分去番禺广场"
-    }*/
-
     var id = "";
     Location location = Location([widget.userPosition.latitude, widget.userPosition.longitude], "ncov");
     var name = _maxLengthLimit(_addressNameController);

@@ -164,14 +164,6 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
               onTap(S.of(context).reward_detailed_introduction);
             },
           ),
-          //rowTipsItem(rateTips),
-          /*rowTipsItem(
-            "如果节点总抵押金额过大，你可以裂变节点以获得更优的收益方案，查看",
-            subTitle: "扩容详细介绍",
-            onTap: () {
-              onTap("扩容详细介绍");
-            },
-          ),*/
         ],
       ),
     );

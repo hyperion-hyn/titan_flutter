@@ -53,7 +53,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '选择红包类型',
+        baseTitle: S.of(context).rp_type_title,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
       body: _body(context),
@@ -186,19 +186,6 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
                 color: HexColor('#333333'),
               ),
             ),
-            /* SizedBox(width: 4),
-            Tooltip(
-              verticalOffset: 16,
-              margin: EdgeInsets.symmetric(horizontal: 32.0),
-              padding: EdgeInsets.all(16.0),
-              message: entity.fullNameZh,
-              child: Image.asset(
-                'res/drawable/ic_tooltip.png',
-                width: 10,
-                height: 10,
-                color: HexColor('#1F81FF'),
-              ),
-            ),*/
           ],
         ),
         Padding(
@@ -300,7 +287,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
                   ),
                 ),
                 Text(
-                  '发的${entity.fullNameZh}',
+                  S.of(context).rp_type_nickname(entity.fullNameZh),
                   style: TextStyle(
                     fontSize: fontSize,
                     color: Colors.white,

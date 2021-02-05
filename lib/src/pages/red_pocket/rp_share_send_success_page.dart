@@ -342,7 +342,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
     AppLockUtil.ignoreAppLock(context, true);
 
     Uint8List imageByte = await _shotController.makeImageUint8List();
-    await Share.file('分享${_shareTypeEntity.fullNameZh}', 'app.png', imageByte, 'image/png');
+    await Share.file('${S.of(context).share} ${_shareTypeEntity.fullNameZh}', 'app.png', imageByte, 'image/png');
 
     if (mounted) {
       setState(() {

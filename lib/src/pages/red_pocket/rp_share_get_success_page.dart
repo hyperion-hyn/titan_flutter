@@ -218,7 +218,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
               top: 64,
               right: 16,
               child: Text(
-                "${_shareEntity?.info?.range ?? ""}千米内可领取",
+                S.of(context).rp_share_get_list_range(_shareEntity?.info?.range ?? ""),
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.black.withOpacity(0.5),
@@ -237,13 +237,14 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
       );
     }
 
-    var total = '总${_shareEntity?.info?.total ?? ""}个红包； ';
+    var total = S.of(context).rp_share_get_list_total_count(_shareEntity?.info?.total ?? "");
     var amount = total + amountValueToString(hyn: _shareEntity?.info?.hynAmount, rp: _shareEntity?.info?.rpAmount);
 
     var hynValueMy = double?.tryParse(myRpOpenEntity?.hynAmount ?? "0") ?? 0;
     var rpValueMy = double?.tryParse(myRpOpenEntity?.rpAmount ?? "0") ?? 0;
-    var wallet = WalletInheritedModel.of(context).activatedWallet;
 
+    var owner = _shareEntity?.info?.owner ?? "";
+    var type = (_shareEntity?.info?.rpType ?? "") == RpShareType.location ? S.of(context).position : S.of(context).newbee;
     return SliverToBoxAdapter(
       child: Column(
         children: [
@@ -262,25 +263,13 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                       padding: const EdgeInsets.only(right:12.0),
                       child: iconWidget(_shareEntity?.info?.avatar, _shareEntity?.info?.owner,_shareEntity?.info?.address, isCircle:true, size: 30),
                     ),
-                    /*Container(
-                      width: 30,
-                      height: 30,
-                      margin: const EdgeInsets.only(right: 12.0),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: AssetImage("res/drawable/ic_rp_invite_friend_head_img_no_border.png"),
-                            fit: BoxFit.cover,
-                          )),
-                    ),*/
                     Text(
-                      "${_shareEntity?.info?.owner ?? ""}发的${(_shareEntity?.info?.rpType ?? "") == RpShareType.location ? "位置" : "新人"}红包",
+                      S.of(context).rp_share_get_list_nickname_type(owner, type),
                       style: TextStyle(fontSize: 18, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                     ),
                     if (_isShowPwdBtn)
                       IconButton(
-                        tooltip: '点击可获取红包口令',
+                        tooltip: S.of(context).rp_share_get_list_tips_hint,
                         icon: const Icon(
                           Icons.info,
                           size: 16,
@@ -312,7 +301,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                 ),
               ),
               Text(
-                ((_shareEntity?.info?.greeting ?? '')?.isNotEmpty ?? false) ? _shareEntity.info.greeting : '恭喜发财，大吉大利！',
+                ((_shareEntity?.info?.greeting ?? '')?.isNotEmpty ?? false) ? _shareEntity.info.greeting : S.of(context).good_luck_and_get_rich,
                 style: TextStyles.textC999S14,
               ),
               if ((_shareEntity?.info?.rpType ?? "") == RpShareType.location)
@@ -398,7 +387,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                         padding: const EdgeInsets.only(
                           top: 2.0,
                         ),
-                        child: Text("已领取红包，请稍后查看钱包记录", style: TextStyles.textC333S12),
+                        child: Text(S.of(context).rp_share_get_list_check_wallet, style: TextStyles.textC333S12),
                       ),
                     Container(
                       margin: const EdgeInsets.only(top: 50.0),
@@ -433,7 +422,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
   _showPwdDialog({String password = ''}) {
     UiUtil.showAlertView(
       context,
-      title: '口令',
+      title: S.of(context).rp_edit_pwd_title,
       actions: [
         ClickOvalButton(
           S.of(context).confirm,
@@ -462,7 +451,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
     var childCount = _shareEntity?.details?.length ?? 0;
     if (childCount == 0) {
       return emptyListWidget(
-        title: '暂无人认领',
+        title: S.of(context).rp_share_get_list_empty_hint,
         paddingTop: 100,
       );
     }
@@ -506,7 +495,6 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                                 ),
                               ),
                               Spacer(),
-                              //todo
                               if (rpValue > 0)
                                 GestureDetector(
                                   onTap: () {
@@ -575,7 +563,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                                 Spacer(),
                                 if (item.isBest)
                                   Text(
-                                    "最佳",
+                                    S.of(context).rp_share_get_list_most,
                                     style: TextStyle(fontSize: 12, color: HexColor('#E8AC13')),
                                     textAlign: TextAlign.right,
                                   ),

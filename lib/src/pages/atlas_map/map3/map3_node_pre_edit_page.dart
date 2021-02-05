@@ -579,10 +579,6 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       }
     } catch (e) {
       print(e);
-      // Fluttertoast.showToast(
-      //   msg: '未知错误，请稍后重试！',
-      //   gravity: ToastGravity.CENTER,
-      // );
       return;
     }
 

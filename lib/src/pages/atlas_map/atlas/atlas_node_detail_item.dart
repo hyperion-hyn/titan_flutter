@@ -173,20 +173,6 @@ class AtlasNodeDetailItem extends StatelessWidget {
                                 ))
                           ])),
                         ),
-//                        Expanded(
-//                          child: Text.rich(TextSpan(children: [
-//                            TextSpan(
-//                                text: '状态: ',
-//                                style: TextStyle(
-//                                    color: Colors.grey, fontSize: 12)),
-//                            TextSpan(text: ' '),
-//                            TextSpan(
-//                                text: '正常',
-//                                style: TextStyle(
-//                                  fontSize: 12,
-//                                ))
-//                          ])),
-//                        )
                       ],
                     )
                   ],
