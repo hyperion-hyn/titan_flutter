@@ -170,7 +170,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                                     width: 6,
                                   ),
                                   Text(
-                                    "${_shareEntity?.info?.range ?? ""}千米",
+                                    "${_shareEntity?.info?.range ?? ""}${S.of(context).rp_edit_range_unit}",
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.white,
@@ -403,7 +403,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                               },
                               child: Center(
                                   child: Text(
-                                "点击重试",
+                                S.of(context).click_retry,
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.blue,
