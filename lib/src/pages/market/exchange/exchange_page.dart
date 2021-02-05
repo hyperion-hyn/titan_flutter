@@ -248,7 +248,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
               ),
               SizedBox(width: 6),
               Text(
-                '兑换',
+                S.of(context).exchange,
                 style: TextStyle(
                   fontSize: 12,
                 ),

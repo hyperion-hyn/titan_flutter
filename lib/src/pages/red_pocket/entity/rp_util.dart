@@ -310,31 +310,31 @@ String shareStateToName(String state) {
   String name = '';
   switch (state) {
     case RpShareState.waitForTX:
-      name = '请求中...';
+      name = '${S.of(Keys.rootKey.currentContext).rp_share_state_wait_for_tx}...';
       break;
 
     case RpShareState.pending:
-      name = '确认中...';
+      name = '${S.of(Keys.rootKey.currentContext).rp_share_state_pending}...';
       break;
 
     case RpShareState.expires:
-      name = '已过期';
+      name = '${S.of(Keys.rootKey.currentContext).rp_share_state_expires}';
       break;
 
     case RpShareState.ongoing:
-      name = '派发中...';
+      name = '${S.of(Keys.rootKey.currentContext).rp_share_state_ongoing}...';
       break;
 
     case RpShareState.allGot:
-      name = '已领完';
+      name = '${S.of(Keys.rootKey.currentContext).rp_share_state_all_got}';
       break;
 
     case RpShareState.refunded:
-      name = '已退回';
+      name = '${S.of(Keys.rootKey.currentContext).rp_share_state_refunded}';
       break;
 
     case RpShareState.refundOngoing:
-      name = '退回中...';
+      name = '${S.of(Keys.rootKey.currentContext).rp_share_state_refund_ongoing}...';
       break;
 
     default:
@@ -377,6 +377,17 @@ class SupportedShareType {
     fullDesc: '只有新人才能领取，领取后他将成为你的好友',
   );
 
+  static RpShareTypeEntity normal() {
+    return RpShareTypeEntity(
+      index: 0,
+      nameZh: S.of(Keys.rootKey.currentContext).newbee,
+      nameEn: RpShareType.normal,
+      desc: S.of(Keys.rootKey.currentContext).collect_friends,
+      fullNameZh: S.of(Keys.rootKey.currentContext).newbee_red_pocket,
+      fullDesc: S.of(Keys.rootKey.currentContext).only_newbee_can_collect,
+    );
+  }
+
   static const LOCATION = const RpShareTypeEntity(
     index: 1,
     nameZh: '位置',
@@ -385,8 +396,18 @@ class SupportedShareType {
     fullNameZh: '位置红包',
     fullDesc: '只有在红包投放的位置附近才可以拼手气领取',
   );
-}
 
+  static RpShareTypeEntity location() {
+    return RpShareTypeEntity(
+      index: 1,
+      nameZh: S.of(Keys.rootKey.currentContext).position,
+      nameEn: RpShareType.location,
+      desc: S.of(Keys.rootKey.currentContext).collect_red_pocket_nearby,
+      fullNameZh: S.of(Keys.rootKey.currentContext).position_red_pocket,
+      fullDesc: S.of(Keys.rootKey.currentContext).only_can_collect_red_pocket_nearby,
+    );
+  }
+}
 
 enum RedPocketShareActionType {
   SEND,

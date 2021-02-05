@@ -109,7 +109,7 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> with SingleTick
                 //crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    '攒好友',
+                    S.of(context).collect_friends,
                     style: TextStyle(
                       color: HexColor('#FFFFFF'),
                       fontWeight: FontWeight.w500,
@@ -117,7 +117,7 @@ class _RpFloatingWidgetState extends BaseState<RpFloatingWidget> with SingleTick
                     ),
                   ),
                   Text(
-                    widget.actionType == -1 ? '开红包' : '发红包',
+                    widget.actionType == -1 ? S.of(context).open_red_pocket : S.of(context).send_red_pocket,
                     style: TextStyle(
                       color: HexColor('#FFFFFF'),
                       fontWeight: FontWeight.w500,

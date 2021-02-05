@@ -288,7 +288,7 @@ class Wallet {
     Uint8List data,
   }) async {
     // assert(password == null && cred == null, '密码/密钥不能为空');
-    assert(password == null || cred == null, '密码/密钥不能为空');
+    assert(password == null || cred == null, S.of(Keys.rootKey.currentContext).pwd_or_private_key_can_not_be_empty);
 
     if (gasPrice == null) {
       gasPrice = await WalletUtil.ethGasPrice(coinType);
@@ -319,7 +319,7 @@ class Wallet {
 
     if (value != null) {
       if ((gasFees + value) > balance) {
-        throw Exception('转账数量加矿工费超过余额');
+        throw Exception(S.of(Keys.rootKey.currentContext).transaction_amount_over_than_balance);
       }
     }
 
@@ -436,10 +436,10 @@ class Wallet {
     int nonce,
     int gasLimit,
   }) async {
-    assert(contractAddress != null, '合约地址不能为空');
-    assert((password == null || cred == null), '密码/密钥不能为空');
-    assert(toAddress != null, '接收人不能为空');
-    assert(value != null, '转账数量不能为空');
+    assert(contractAddress != null, S.of(Keys.rootKey.currentContext).contract_address_can_not_be_empty);
+    assert((password == null || cred == null), );
+    assert(toAddress != null, S.of(Keys.rootKey.currentContext).receiver_can_not_be_empty);
+    assert(value != null, S.of(Keys.rootKey.currentContext).transaction_amount_can_not_be_empty);
 
     if (gasPrice == null) {
       gasPrice = await WalletUtil.ethGasPrice(coinType);
@@ -458,7 +458,7 @@ class Wallet {
     }
     var gasFees = BigInt.from(gasLimit) * gasPrice;
     if (gasFees > balance) {
-      throw Exception('${baseCoinVo.symbol}余额不足以支付网络费用');
+      throw Exception('${baseCoinVo.symbol}${S.of(Keys.rootKey.currentContext).balance_not_enough_for_network_fee}');
     }
 
     final client = WalletUtil.getWeb3Client(coinType);

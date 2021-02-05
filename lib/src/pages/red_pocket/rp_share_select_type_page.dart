@@ -89,8 +89,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
   Widget _confirmButtonWidget() {
     return ClickOvalButton(
       S.of(context).next_step,
-          () async{
-
+      () async {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -109,8 +108,9 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
   }
 
   Future<LatLng> getLatlng() async {
-    var latlng =
-    await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
+    var latlng = await (Keys.mapContainerKey.currentState as MapContainerState)
+        ?.mapboxMapController
+        ?.lastKnownLocation();
     return latlng;
   }
 
@@ -185,7 +185,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
                 color: HexColor('#333333'),
               ),
             ),
-           /* SizedBox(width: 4),
+            /* SizedBox(width: 4),
             Tooltip(
               verticalOffset: 16,
               margin: EdgeInsets.symmetric(horizontal: 32.0),
@@ -201,7 +201,9 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
           ],
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 4,),
+          padding: const EdgeInsets.only(
+            top: 4,
+          ),
           child: Text(
             entity.desc,
             style: TextStyle(
@@ -243,7 +245,6 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
     double padding = 0,
     RpShareTypeEntity entity,
   }) {
-
     var language = SettingInheritedModel.of(context).languageCode;
     var suffix = language == 'zh' ? 'zh' : 'en';
     var typeName = entity.nameEn;

@@ -464,7 +464,7 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
     WalletSendDialogEntity entity = WalletSendDialogEntity(
       type: 'tx_mpa3_collect_reward',
       valueUnit: 'HYN',
-      title: '智能合约调用',
+      title: S.of(context).contract_call,
       value: value,
       valueDirection: '+',
       titleDesc: message.description.title,

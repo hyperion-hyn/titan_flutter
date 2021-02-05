@@ -163,14 +163,14 @@ class SupportedTheme {
 
   static List<ThemeModel> get themeList {
     List<ThemeModel> themes = [];
-    var themeName = '默认';
+    var themeName = S.of(Keys.rootKey.currentContext).theme_default;
     ThemeData themeData;
     Color color;
     List<Color> btnColors;
     for (int i = 0; i < 4; i++) {
       switch (i) {
         case 0:
-          themeName = '默认';
+          themeName = S.of(Keys.rootKey.currentContext).theme_default;
           themeData = appThemeDeepYellow;
           color = Colors.yellow;
           btnColors = <Color>[
@@ -180,21 +180,21 @@ class SupportedTheme {
           break;
 
         case 1:
-          themeName = '深蓝';
+          themeName = S.of(Keys.rootKey.currentContext).theme_dark_blue;
           themeData = appThemeDeepBlue;
           color = Color(0xff1097B4);
           btnColors = <Color>[Color(0xff15B2D2), Color(0xff1097B4)];
           break;
 
         case 2:
-          themeName = '深红';
+          themeName = S.of(Keys.rootKey.currentContext).theme_dark_red;
           themeData = appThemeDeepRed;
           color = Color(0xffcc5858);
           btnColors = <Color>[Color(0xffEB8686), Color(0xffcc5858)];
           break;
 
         case 3:
-          themeName = '蓝色';
+          themeName = S.of(Keys.rootKey.currentContext).theme_blue;
           themeData = appThemeDefault;
           color = Colors.blue;
           btnColors = <Color>[Color(0xff96CBFF), Color(0xff3B8BFF)];
