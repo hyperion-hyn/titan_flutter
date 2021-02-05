@@ -90,7 +90,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
       if (_focusNode.hasFocus) {
         showErrorHint = true;
         UiUtil.showErrorTopHint(
-            context, "该密码作为身份下多链钱包的交易密码。钱包密码只存于手机设备山，永远不离开设备，如果忘记将无法找回，请务必妥善保管密码。",
+            context, S.of(context).password_stored_phone_forget_not_retrieve,
             errorHintType: ErrorHintType.REMIND);
       } else {
         if (showErrorHint) {
@@ -149,15 +149,15 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.isCreateWallet ? "创建身份" : S.of(context).restore_identity,
+                  widget.isCreateWallet ? S.of(context).create_identity : S.of(context).restore_identity,
                   style: TextStyles.textC333S14bold,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 6.0, bottom: 20),
                   child: Text(
                       widget.isCreateWallet
-                          ? "你将会拥有身份下的多链钱包：HYN、ETH、\nBTC和HT"
-                          : "使用助记词导入的同时可以修改钱包密码",
+                          ? S.of(context).will_have_wallet_under
+                          : S.of(context).modify_password_importing_mnemonic,
                       style: TextStyles.textC999S14),
                 ),
                 if (!widget.isCreateWallet)
@@ -181,7 +181,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       decoration: InputDecoration(
-                        hintText: "输入助记词，并使用空格分隔",
+                        hintText: S.of(context).enter_mnemonic_by_spaces,
                         hintStyle: TextStyles.textCaaaS14,
                         filled: true,
                         fillColor: Colors.transparent,
@@ -196,7 +196,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                     children: [
                       Spacer(),
                       Text(
-                        "头像",
+                        S.of(context).avatar,
                         style: TextStyles.textC333S14,
                       ),
                       Padding(
@@ -217,7 +217,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                               AppLockUtil.appLockSwitch(context, false);
 
                               if (tempListImagePath != null) {
-                                UiUtil.showLoadingDialog(context, "头像上传中...", (context) {
+                                UiUtil.showLoadingDialog(context, S.of(context).avatar_uploading, (context) {
                                   dialogContext = context;
                                 });
 
@@ -271,7 +271,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                         },
                         controller: _walletNameController,
                         decoration: InputDecoration(
-                          hintText: "身份名称",
+                          hintText: S.of(context).identity_name,
                           hintStyle: TextStyles.textCaaaS14,
                           filled: true,
                           fillColor: Colors.transparent,
@@ -299,7 +299,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                           setState(() {
                             isShowRemind = false;
                           });
-                          return "密码小于8位";
+                          return S.of(context).password_less_than_eight;
                         } else {
                           setState(() {
                             isShowRemind = true;
@@ -384,7 +384,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
               password: _walletPswController.text,
               mnemonic: mnemonic);
         } else {
-          Fluttertoast.showToast(msg: "钱包身份创建失败");
+          Fluttertoast.showToast(msg: S.of(context).wallet_identity_creation_failed);
         }
       } else {
         mnemonic = _mnemonicController.text.trim();
@@ -401,7 +401,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
         bool hasSame = false;
         walletList.forEach((element) {
           if(element.getEthAccount().address == address){
-            Fluttertoast.showToast(msg: "该钱包已存在");
+            Fluttertoast.showToast(msg: S.of(context).wallet_already_exists);
             hasSame = true;
           }
         });
@@ -452,7 +452,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
         // setState(() {
         //   isSubmitLoading = false;
         // });
-        Fluttertoast.showToast(msg: widget.isCreateWallet ? "创建成功" : "导入成功");
+        Fluttertoast.showToast(msg: widget.isCreateWallet ? S.of(context).create_success : S.of(context).import_success);
         Routes.popUntilCachedEntryRouteName(context, wallet);
         if(widget.isCreateWallet){
           var walletStr = FluroConvertUtils.object2string(wallet.toJson());
@@ -523,7 +523,7 @@ List<Widget> pswListWidget(
                 controller: _walletPswController,
                 focusNode: _focusNode,
                 decoration: InputDecoration(
-                  hintText: "密码",
+                  hintText: S.of(Keys.rootKey.currentContext).password,
                   hintStyle: TextStyles.textCaaaS14,
                   filled: true,
                   fillColor: Colors.transparent,
@@ -567,7 +567,7 @@ List<Widget> pswListWidget(
       Padding(
         padding: const EdgeInsets.only(left: 10.0, right: 10, top: 4),
         child: Text(
-          "不少于8位字符，建议混合大小写字母、数字、符号",
+          S.of(Keys.rootKey.currentContext).no_less_eight_recommend_mix,
           style: TextStyle(
               color: HexColor(
                 "#E7BB00",
@@ -608,7 +608,7 @@ List<Widget> pswListWidget(
                   },
                   controller: _walletRePswController,
                   decoration: InputDecoration(
-                    hintText: "重复输入密码",
+                    hintText: S.of(Keys.rootKey.currentContext).repeat_password,
                     hintStyle: TextStyles.textCaaaS14,
                     filled: true,
                     fillColor: Colors.transparent,
@@ -660,7 +660,7 @@ List<Widget> pswListWidget(
             keyboardType: TextInputType.text,
             controller: _walletPswHintController,
             decoration: InputDecoration(
-              hintText: "密码提示(可选)",
+              hintText: S.of(Keys.rootKey.currentContext).password_reminder_optional,
               hintStyle: TextStyles.textCaaaS14,
               filled: true,
               fillColor: Colors.transparent,
@@ -681,15 +681,15 @@ String pswLevelLabel(int _pswLevel) {
   switch (_pswLevel) {
     case 0:
     case 1:
-      return "弱";
+      return S.of(Keys.rootKey.currentContext).weak;
     case 2:
       return S.of(Keys.rootKey.currentContext).wallet_setting_normal;
     case 3:
-      return "强";
+      return S.of(Keys.rootKey.currentContext).strong;
     case 4:
-      return "很好";
+      return S.of(Keys.rootKey.currentContext).well;
     default:
-      return "弱";
+      return S.of(Keys.rootKey.currentContext).weak;
   }
 }
 

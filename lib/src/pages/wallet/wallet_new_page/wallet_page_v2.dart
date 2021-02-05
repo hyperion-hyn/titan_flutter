@@ -90,7 +90,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         }
       } else if (state is QuotesState && state.status == Status.failed) {
         if (mounted) {
-          Fluttertoast.showToast(msg: "刷新行情失败");
+          Fluttertoast.showToast(msg: S.of(context).failed_refresh_market);
         }
       }
     });
@@ -295,7 +295,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top:20.0),
-                          child: Text("安全提醒",
+                          child: Text(S.of(context).safety_reminder,
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -322,7 +322,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 13, bottom: 21.0, left: 20, right: 20),
-                      child: Text("你的身份助记词未备份，请务必备份助记词\n助记词可用于恢复身份钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失。",
+                      child: Text(S.of(context).mnemonic_not_backed_up_loss,
                           style: TextStyle(
                               fontSize: 14, color: HexColor("#666666"), decoration: TextDecoration.none)),
                     ),
@@ -780,7 +780,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         titleStr = S.of(context).receiver;
         break;
       case WalletPageJump.PAGE_EXCHANGE:
-        titleStr = "交易";
+        titleStr = S.of(context).transaction;
         break;
     }
     UiUtil.showBottomDialogView(

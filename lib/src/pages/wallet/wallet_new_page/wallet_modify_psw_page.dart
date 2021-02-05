@@ -58,7 +58,7 @@ class _WalletModifyPswPageState extends State<WalletModifyPswPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: BaseAppBar(baseTitle: "修改密码"),
+        appBar: BaseAppBar(baseTitle: S.of(context).change_password),
         body: _pageWidget(context));
   }
 
@@ -145,7 +145,7 @@ class _WalletModifyPswPageState extends State<WalletModifyPswPage> {
                 _walletOrignPswController.text,
               );
               if(!isPswRight){
-                Fluttertoast.showToast(msg: "原密码错误");
+                Fluttertoast.showToast(msg: S.of(context).original_password_wrong);
                 return;
               }
 
@@ -210,7 +210,7 @@ class _WalletModifyPswPageState extends State<WalletModifyPswPage> {
                   },
                   controller: _walletOrignPswController,
                   decoration: InputDecoration(
-                    hintText: "输入原密码",
+                    hintText: S.of(context).enter_original_password,
                     hintStyle: TextStyles.textCaaaS14,
                     filled: true,
                     fillColor: Colors.transparent,
