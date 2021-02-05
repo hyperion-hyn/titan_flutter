@@ -538,8 +538,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
             key: _rpAmountKey,
             controller: _rpAmountController,
             hintText: '0.00',
-            defaultErrorText: '请输入RP金额',
-            title: 'RP金额',
+            defaultErrorText: S.of(context).rp_edit_amount_error,
+            title: S.of(context).rp_edit_amount_title,
             unit: 'RP',
             showLeft: true,
             leftTitle: widget.shareTypeEntity.nameZh,
@@ -560,11 +560,11 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
               var count = int?.tryParse(_countController.text ?? '1') ?? 1;
               var multiMinRp = Decimal.parse(minRp) * Decimal.fromInt(count);
               if (inputValue > Decimal.zero && inputValue < multiMinRp) {
-                errorText = '至少$multiMinRp RP（人均$minRp）';
+                errorText = S.of(context).rp_edit_amount_error_less_than(multiMinRp, minRp);
               }
 
               if (rpBalance >= Decimal.zero && inputValue > rpBalance) {
-                errorText = 'RP余额不足';
+                errorText = S.of(context).rp_edit_amount_error_rp_unfull;
               }
 
               _isInvalidRpAmount = errorText.isNotEmpty;
@@ -587,8 +587,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
             key: _hynAmountKey,
             controller: _hynAmountController,
             hintText: '0.00',
-            defaultErrorText: '请输入HYN金额',
-            title: 'HYN金额',
+            defaultErrorText: S.of(context).rp_edit_amount_error_hyn,
+            title: S.of(context).rp_edit_amount_title_hyn,
             unit: 'HYN',
             showLeft: true,
             validator: (String inputText) {
@@ -609,7 +609,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
               var count = int?.tryParse(_countController.text ?? '1') ?? 1;
               var multiMinHyn = Decimal.parse(minHyn) * Decimal.fromInt(count);
               if (inputValue > Decimal.zero && inputValue < multiMinHyn) {
-                errorText = '至少$multiMinHyn HYN（人均$minHyn）';
+                errorText = S.of(context).rp_edit_amount_error_less_than_hyn(multiMinHyn, minHyn);
               }
 
               if (hynBalance >= Decimal.zero && inputValue > hynBalance) {
@@ -629,13 +629,13 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
   Widget _buildZoneCell() {
     return _clipRectWidget(
       vertical: 4,
-      desc: '最大距离100千米',
+      desc: S.of(context).rp_edit_range_desc,
       child: _rowInputWidget(
         key: _rangeKey,
         controller: _rangeController,
-        hintText: '填写附近可领取距离',
-        title: '领取范围',
-        unit: '千米',
+        hintText: S.of(context).rp_edit_range_hint,
+        title: S.of(context).rp_edit_range_title,
+        unit: S.of(context).rp_edit_range_unit,
         validator: (String inputText) {
           if (inputText.isEmpty || inputText == null) {
             return '';
@@ -646,7 +646,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
           var errorText = '';
 
           if (inputValue > 0 && inputValue > 100) {
-            errorText = '最大距离100千米';
+            errorText = S.of(context).rp_edit_range_error_more_than;
           }
 
           _isInvalidRange = errorText.isNotEmpty;
@@ -663,11 +663,11 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
       child: _rowInputWidget(
         key: _countKey,
         controller: _countController,
-        hintText: '填写个数',
-        defaultErrorText: '请填写红包个数',
+        hintText: S.of(context).rp_edit_count_hint,
+        defaultErrorText: S.of(context).rp_edit_count_error,
         keyboardType: TextInputType.numberWithOptions(decimal: true),
-        title: '红包个数',
-        unit: '个',
+        title: S.of(context).rp_edit_count_title,
+        unit: S.of(context).rp_edit_count_unit,
         validator: (String inputText) {
           if (inputText.isEmpty || inputText == null) {
             return '';
@@ -677,12 +677,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
 
           var errorText = '';
 
-          // if (inputValue > 0 && inputValue > 100) {
-          //   errorText = '一次最多发100个红包';
-          // }
-
           if (inputValue < 0) {
-            errorText = '至少1个红包';
+            errorText = S.of(context).rp_edit_count_error_less_than;
           }
 
           _isInvalidCount = errorText.isNotEmpty;
@@ -700,8 +696,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
           key: _greetingKey,
           controller: _greetingController,
           hintText: S.of(context).good_luck_and_get_rich,
-          defaultErrorText: '请填写祝福语',
-          title: '祝福语',
+          defaultErrorText: S.of(context).rp_edit_greeting_error,
+          title: S.of(context).rp_edit_greeting_title,
           unit: '',
           keyboardType: TextInputType.text,
           isOptional: true,
@@ -711,13 +707,12 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
   Widget _buildPasswordCell() {
     return _clipRectWidget(
         vertical: 4,
-        // desc: '新人正确输入口令才能拆解红包 (可选)',
         child: _rowInputWidget(
           key: _passwordKey,
           controller: _passwordController,
-          hintText: '选填',
-          defaultErrorText: '请填写红包口令',
-          title: '口令',
+          hintText: S.of(context).rp_edit_pwd_hint,
+          defaultErrorText: S.of(context).rp_edit_pwd_error,
+          title: S.of(context).rp_edit_pwd_title,
           unit: '',
           keyboardType: TextInputType.text,
           isOptional: true,
@@ -725,15 +720,14 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
   }
 
   Widget _buildSwitchCell() {
-    var hynMin = _rpShareConfig?.hynMin ?? '0.01';
+    //var hynMin = _rpShareConfig?.hynMin ?? '0.01';
 
     return _clipRectWidget(
-        // desc: '如果只允许新人领取，你要为每个新人至少要塞 $hynMin HYN 作为他之后矿工费所用',
         vertical: 4,
         child: Row(
           children: [
             Text(
-              '只允许新人领取',
+              S.of(context).rp_edit_switch_title,
               style: TextStyle(
                 color: HexColor('#333333'),
                 fontSize: 14,
@@ -782,7 +776,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                   onTap: _pushPosition,
                   child: RichText(
                     text: TextSpan(
-                      text: '投放位置',
+                      text: S.of(context).rp_edit_position_title,
                       style: TextStyle(
                         color: HexColor('#333333'),
                         fontSize: 14,
@@ -857,7 +851,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                             child: Padding(
                               padding: const EdgeInsets.only(top: 60, left: 20),
                               child: Text(
-                                _isLoadingOpenCage ? "" : '点击编辑投放位置',
+                                _isLoadingOpenCage ? "" : S.of(context).rp_edit_click_position_title,
                                 style: TextStyle(color: Colors.white, fontSize: 14),
                               ),
                             ),
@@ -951,9 +945,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                   fontSize: 16,
                 )),
           ),
-          rowTipsItem('如果开启新人才能领取，领取后他将成为你的好友；\n但你要为每个新人至少要塞 $minHyn HYN作为他之后矿工费所用；'),
-          // rowTipsItem('你要为每个新人至少要塞 $minHyn HYN作为他之后矿工费所用；'),
-          rowTipsItem('24小时候后，如果还剩红包没领取，将自动退回你的钱包；'),
+          rowTipsItem(S.of(context).rp_edit_tips_1),
+          rowTipsItem(S.of(context).rp_edit_tips_2),
         ],
       ),
     );
@@ -1041,7 +1034,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
 
     if (_isNewBee) {
       if (rpValue <= Decimal.zero) {
-        Fluttertoast.showToast(msg: '请输入RP金额！');
+        Fluttertoast.showToast(msg: S.of(context).rp_edit_amount_rp_toast);
         _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
         return;
@@ -1050,12 +1043,12 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
 
       var hynMin = _rpShareConfig?.hynMin ?? '0.01';
       if (hynValue <= Decimal.zero) {
-        Fluttertoast.showToast(msg: '请输入HYN金额！');
+        Fluttertoast.showToast(msg: S.of(context).rp_edit_amount_hyn_toast);
         _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
         return;
       } else if (hynValue > Decimal.zero && hynValue < Decimal.parse(hynMin)) {
-        Fluttertoast.showToast(msg: '你要为每个新人至少要塞 $hynMin HYN作为他之后矿工费所用');
+        Fluttertoast.showToast(msg: S.of(context).rp_edit_amount_toast_less_than(hynMin));
         _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
         return;
@@ -1063,7 +1056,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
       reqEntity.hynAmount = hynValue.toDouble();
     } else {
       if (rpValue <= Decimal.zero && hynValue <= Decimal.zero) {
-        Fluttertoast.showToast(msg: '请输入RP金额 或 输入HYN金额！');
+        Fluttertoast.showToast(msg: S.of(context).rp_edit_amount_toast);
         _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
         return;
       }
@@ -1097,7 +1090,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
     // amount
     var count = int.tryParse(_countController.text ?? '0') ?? 0;
     if (count <= 0) {
-      Fluttertoast.showToast(msg: '请填写红包个数！');
+      Fluttertoast.showToast(msg: S.of(context).rp_edit_count_toast);
       _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
       return;
@@ -1143,11 +1136,11 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
       // range
       var rangeValue = Decimal.tryParse(_rangeController?.text ?? '0') ?? Decimal.zero;
       if (rangeValue <= Decimal.zero) {
-        Fluttertoast.showToast(msg: '请填写可领取的距离！');
+        Fluttertoast.showToast(msg: S.of(context).rp_edit_range_toast);
 
         return;
       } else if (rangeValue > Decimal.zero && rangeValue > Decimal.parse('100')) {
-        Fluttertoast.showToast(msg: '最大距离不能超过100千米');
+        Fluttertoast.showToast(msg: S.of(context).rp_edit_range_error_more_than);
         return;
       }
       reqEntity.range = rangeValue.toDouble();
