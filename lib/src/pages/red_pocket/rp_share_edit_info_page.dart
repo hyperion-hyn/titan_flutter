@@ -720,7 +720,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
         child: _rowInputWidget(
           key: _greetingKey,
           controller: _greetingController,
-          hintText: '恭喜发财，大吉大利',
+          hintText: S.of(context).good_luck_and_get_rich,
           defaultErrorText: '请填写祝福语',
           title: '祝福语',
           unit: '',

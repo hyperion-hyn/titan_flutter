@@ -227,7 +227,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                       ),
                       Text(
                         // '恭喜发财，新年大吉！',
-                        ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，大吉大利！',
+                        ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : S.of(context).good_luck_and_get_rich,
                         style: TextStyle(
                           fontSize: 12,
                           color: HexColor('#999999'),

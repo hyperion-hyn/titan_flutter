@@ -99,7 +99,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
 
       greeting = _shareEntity?.info?.greeting ?? '';
       if (_shareEntity != null && greeting.isEmpty) {
-        greeting = "恭喜发财，大吉大利";
+        greeting = S.of(context).good_luck_and_get_rich;
       }
       if (((_shareEntity?.info?.state ?? "") == RpShareState.waitForTX ||
           ((_shareEntity?.info?.state ?? "") == RpShareState.pending))) {
