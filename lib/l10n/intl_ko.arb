@@ -3186,7 +3186,7 @@
   "@rp_share_get_list_most": {},
   "rp_share_get_list_nickname": "{username} 's RP",
   "@rp_share_get_list_nickname": {},
-  "rp_share_get_list_nickname_type": "{owner}发的{type}红包",
+  "rp_share_get_list_nickname_type": "{owner} send an {type}  RP",
   "@rp_share_get_list_nickname_type": {},
   "rp_share_get_list_range": "Available within {range} km",
   "@rp_share_get_list_range": {},
