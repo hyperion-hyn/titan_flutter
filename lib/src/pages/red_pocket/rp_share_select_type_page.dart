@@ -25,7 +25,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
   final ScrollController _scrollController = ScrollController();
   WalletViewVo _walletVo;
 
-  RpShareTypeEntity _selectedEntity = SupportedShareType.NORMAL;
+  RpShareTypeEntity _selectedEntity;
 
   @override
   void initState() {
@@ -46,6 +46,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
 
   _setupData() {
     _walletVo = WalletInheritedModel.of(context).activatedWallet;
+    _selectedEntity = _selectedEntity = SupportedShareType.normal();
   }
 
   @override
@@ -89,8 +90,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
   Widget _confirmButtonWidget() {
     return ClickOvalButton(
       S.of(context).next_step,
-          () async{
-
+      () async {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -109,8 +109,9 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
   }
 
   Future<LatLng> getLatlng() async {
-    var latlng =
-    await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
+    var latlng = await (Keys.mapContainerKey.currentState as MapContainerState)
+        ?.mapboxMapController
+        ?.lastKnownLocation();
     return latlng;
   }
 
@@ -122,11 +123,11 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _createChildWidget(entity: SupportedShareType.NORMAL),
+            _createChildWidget(entity: SupportedShareType.normal()),
             SizedBox(
               width: 36,
             ),
-            _createChildWidget(entity: SupportedShareType.LOCATION),
+            _createChildWidget(entity: SupportedShareType.location()),
           ],
         ),
       ),
@@ -185,7 +186,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
                 color: HexColor('#333333'),
               ),
             ),
-           /* SizedBox(width: 4),
+            /* SizedBox(width: 4),
             Tooltip(
               verticalOffset: 16,
               margin: EdgeInsets.symmetric(horizontal: 32.0),
@@ -201,7 +202,9 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
           ],
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 4,),
+          padding: const EdgeInsets.only(
+            top: 4,
+          ),
           child: Text(
             entity.desc,
             style: TextStyle(
@@ -243,7 +246,6 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
     double padding = 0,
     RpShareTypeEntity entity,
   }) {
-
     var language = SettingInheritedModel.of(context).languageCode;
     var suffix = language == 'zh' ? 'zh' : 'en';
     var typeName = entity.nameEn;

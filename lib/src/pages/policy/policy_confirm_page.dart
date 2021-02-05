@@ -98,7 +98,7 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 16.0, bottom: 8),
                       child: Text(
-                        '服务条款',
+                        S.of(context).terms_of_service,
                         style: TextStyle(
                           fontSize: 14,
                           color: DefaultColors.color999,

@@ -50,7 +50,7 @@ class _MeThemeState extends BaseState<MeThemePage> {
 
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '主题',
+        baseTitle: S.of(context).theme,
         backgroundColor: Colors.white,
         showBottom: true,
         actions: <Widget>[

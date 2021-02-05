@@ -35,11 +35,11 @@ import 'entity/rp_util.dart';
 
 class RpShareEditInfoPage extends StatefulWidget {
   final LatLng userPosition;
-  final RpShareTypeEntity shareTypeEntity;
+  RpShareTypeEntity shareTypeEntity;
 
   RpShareEditInfoPage({
     this.userPosition,
-    this.shareTypeEntity = SupportedShareType.NORMAL,
+    this.shareTypeEntity,
   });
 
   @override
@@ -193,28 +193,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
           String countryCode = _openCageData["country_code"] ?? "CN";
           _saveCountryCode(countryCode: countryCode.toUpperCase());
 
-          /*
-          "components": {
-          "ISO_3166-1_alpha-2": "CN",
-          "ISO_3166-1_alpha-3": "CHN",
-          "_type": "building",
-          "building": "东区181",
-          "city": "海珠区",
-          "continent": "Asia",
-          "country": "中国",
-          "country_code": "cn",
-          "county": "",
-          "postcode": "510275",
-          "road": "园东路",
-          "state": "广东省"
-          },
-          "confidence": 10,
-          "formatted": "东区181, 181 园东路, 新港街道, 510275 广东省, 中国",
-        */
           setState(() {
-            //_addressText = country + " " + provinces + " " + city + " " + county;
-            //_addressText = county + "，" + city + "，" + provinces + "，" + country;
-            //_addressText = "中国 广东省 广州市 天河区 中山大道 环球都会广场 2601楼";
             if (country == '中国') {
               _addressText = provinces + city + road + building;
             } else {
@@ -720,7 +699,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
         child: _rowInputWidget(
           key: _greetingKey,
           controller: _greetingController,
-          hintText: '恭喜发财，大吉大利',
+          hintText: S.of(context).good_luck_and_get_rich,
           defaultErrorText: '请填写祝福语',
           title: '祝福语',
           unit: '',

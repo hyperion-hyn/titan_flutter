@@ -125,7 +125,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
     var isNormal = (model.rpType ?? RpShareType.normal) == RpShareType.normal;
     //print("[$runtimeType] model.rpType:${model.rpType}, isNormal:$isNormal");
 
-    RpShareTypeEntity shareTypeEntity = isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
+    // RpShareTypeEntity shareTypeEntity = isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
 
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
@@ -227,7 +227,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                       ),
                       Text(
                         // '恭喜发财，新年大吉！',
-                        ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，大吉大利！',
+                        ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : S.of(context).good_luck_and_get_rich,
                         style: TextStyle(
                           fontSize: 12,
                           color: HexColor('#999999'),
@@ -307,17 +307,6 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                           Row(
                             children: [
                               Spacer(),
-                              // Text(
-                              //   model.isBest?'最佳':'',
-                              //   style: TextStyle(
-                              //     color: HexColor("#E8AC13"),
-                              //     fontSize: 12,
-                              //     fontWeight: FontWeight.normal,
-                              //   ),
-                              //   maxLines: 2,
-                              //   textAlign: TextAlign.right,
-                              //   overflow: TextOverflow.ellipsis,
-                              // ),
                               SizedBox(width: 10,),
                               Text(
                                 createdAtStr,

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
@@ -126,8 +127,8 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
     var isNormal = (model.rpType ?? RpShareType.normal) == RpShareType.normal;
     //print("[$runtimeType] model.rpType:${model.rpType}, isNormal:$isNormal");
 
-    RpShareTypeEntity shareTypeEntity =
-        isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
+    // RpShareTypeEntity shareTypeEntity =
+    //     isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
 
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
@@ -234,7 +235,6 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                               },
                               child: Text(
                                 shareStateToName(model.state),
-                                //onGoing ? '派发中...' : '已过期',
                                 style: TextStyle(
                                   color: onGoing ? HexColor("#E8AC13") : HexColor("#999999"),
                                   fontSize: 12,
@@ -275,7 +275,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                         Text(
                           ((model?.greeting ?? '')?.isNotEmpty ?? false)
                               ? model.greeting
-                              : '恭喜发财，大吉大利！',
+                              : S.of(context).good_luck_and_get_rich,
                           style: TextStyle(
                             fontSize: 12,
                             color: HexColor('#999999'),
