@@ -242,8 +242,9 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
 
     var hynValueMy = double?.tryParse(myRpOpenEntity?.hynAmount ?? "0") ?? 0;
     var rpValueMy = double?.tryParse(myRpOpenEntity?.rpAmount ?? "0") ?? 0;
-    var wallet = WalletInheritedModel.of(context).activatedWallet;
 
+    var owner = _shareEntity?.info?.owner ?? "";
+    var type = (_shareEntity?.info?.rpType ?? "") == RpShareType.location ? S.of(context).position : S.of(context).newbee;
     return SliverToBoxAdapter(
       child: Column(
         children: [
@@ -262,20 +263,8 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                       padding: const EdgeInsets.only(right:12.0),
                       child: iconWidget(_shareEntity?.info?.avatar, _shareEntity?.info?.owner,_shareEntity?.info?.address, isCircle:true, size: 30),
                     ),
-                    /*Container(
-                      width: 30,
-                      height: 30,
-                      margin: const EdgeInsets.only(right: 12.0),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: AssetImage("res/drawable/ic_rp_invite_friend_head_img_no_border.png"),
-                            fit: BoxFit.cover,
-                          )),
-                    ),*/
                     Text(
-                      "${_shareEntity?.info?.owner ?? ""}发的${(_shareEntity?.info?.rpType ?? "") == RpShareType.location ? "位置" : "新人"}红包",
+                      "${owner}发的${type}红包",
                       style: TextStyle(fontSize: 18, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                     ),
                     if (_isShowPwdBtn)
@@ -312,7 +301,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
                 ),
               ),
               Text(
-                ((_shareEntity?.info?.greeting ?? '')?.isNotEmpty ?? false) ? _shareEntity.info.greeting : '恭喜发财，大吉大利！',
+                ((_shareEntity?.info?.greeting ?? '')?.isNotEmpty ?? false) ? _shareEntity.info.greeting : S.of(context).good_luck_and_get_rich,
                 style: TextStyles.textC999S14,
               ),
               if ((_shareEntity?.info?.rpType ?? "") == RpShareType.location)
@@ -433,7 +422,7 @@ class _RpShareGetSuccessPageState extends BaseState<RpShareGetSuccessPage> {
   _showPwdDialog({String password = ''}) {
     UiUtil.showAlertView(
       context,
-      title: '口令',
+      title: S.of(context).rp_edit_pwd_title,
       actions: [
         ClickOvalButton(
           S.of(context).confirm,

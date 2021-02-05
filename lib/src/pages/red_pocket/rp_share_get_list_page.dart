@@ -123,15 +123,11 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
 
   Widget _itemBuilder(RpShareOpenEntity model) {
     var isNormal = (model.rpType ?? RpShareType.normal) == RpShareType.normal;
-    //print("[$runtimeType] model.rpType:${model.rpType}, isNormal:$isNormal");
-
-    // RpShareTypeEntity shareTypeEntity = isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
 
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
 
     var location = (model?.location ?? '').isNotEmpty ? '${model.location}' : '';
-    //var range = '${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取';
     var locationRange = '$location';
 
     var total = '+ ';
@@ -226,7 +222,6 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                         height: 6,
                       ),
                       Text(
-                        // '恭喜发财，新年大吉！',
                         ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : S.of(context).good_luck_and_get_rich,
                         style: TextStyle(
                           fontSize: 12,
