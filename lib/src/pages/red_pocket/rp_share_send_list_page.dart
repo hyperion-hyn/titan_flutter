@@ -127,8 +127,8 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
     var isNormal = (model.rpType ?? RpShareType.normal) == RpShareType.normal;
     //print("[$runtimeType] model.rpType:${model.rpType}, isNormal:$isNormal");
 
-    RpShareTypeEntity shareTypeEntity =
-        isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
+    // RpShareTypeEntity shareTypeEntity =
+    //     isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
 
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);

@@ -368,14 +368,14 @@ class RpShareTypeEntity {
 }
 
 class SupportedShareType {
-  static const NORMAL = const RpShareTypeEntity(
-    index: 0,
-    nameZh: '新人',
-    nameEn: RpShareType.normal,
-    desc: '赞好友',
-    fullNameZh: '新人红包',
-    fullDesc: '只有新人才能领取，领取后他将成为你的好友',
-  );
+  // static const NORMAL = const RpShareTypeEntity(
+  //   index: 0,
+  //   nameZh: '新人',
+  //   nameEn: RpShareType.normal,
+  //   desc: '赞好友',
+  //   fullNameZh: '新人红包',
+  //   fullDesc: '只有新人才能领取，领取后他将成为你的好友',
+  // );
 
   static RpShareTypeEntity normal() {
     return RpShareTypeEntity(
@@ -388,14 +388,14 @@ class SupportedShareType {
     );
   }
 
-  static const LOCATION = const RpShareTypeEntity(
-    index: 1,
-    nameZh: '位置',
-    nameEn: RpShareType.location,
-    desc: '在附近可领取',
-    fullNameZh: '位置红包',
-    fullDesc: '只有在红包投放的位置附近才可以拼手气领取',
-  );
+  // static const LOCATION = const RpShareTypeEntity(
+  //   index: 1,
+  //   nameZh: '位置',
+  //   nameEn: RpShareType.location,
+  //   desc: '在附近可领取',
+  //   fullNameZh: '位置红包',
+  //   fullDesc: '只有在红包投放的位置附近才可以拼手气领取',
+  // );
 
   static RpShareTypeEntity location() {
     return RpShareTypeEntity(

@@ -50,8 +50,8 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
   String get _walletName => _walletVo.wallet.keystore.name;
   String get _headImg => _walletVo.wallet?.walletExpandInfoEntity?.netHeadImg ?? "";
   RpShareTypeEntity get _shareTypeEntity => (widget.reqEntity?.rpType ?? RpShareType.normal) == RpShareType.normal
-      ? SupportedShareType.NORMAL
-      : SupportedShareType.LOCATION;
+      ? SupportedShareType.normal()
+      : SupportedShareType.location();
 
   @override
   void initState() {

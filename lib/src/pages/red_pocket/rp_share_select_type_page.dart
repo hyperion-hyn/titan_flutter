@@ -25,7 +25,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
   final ScrollController _scrollController = ScrollController();
   WalletViewVo _walletVo;
 
-  RpShareTypeEntity _selectedEntity = SupportedShareType.NORMAL;
+  RpShareTypeEntity _selectedEntity;
 
   @override
   void initState() {
@@ -46,6 +46,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
 
   _setupData() {
     _walletVo = WalletInheritedModel.of(context).activatedWallet;
+    _selectedEntity = _selectedEntity = SupportedShareType.normal();
   }
 
   @override
@@ -122,11 +123,11 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _createChildWidget(entity: SupportedShareType.NORMAL),
+            _createChildWidget(entity: SupportedShareType.normal()),
             SizedBox(
               width: 36,
             ),
-            _createChildWidget(entity: SupportedShareType.LOCATION),
+            _createChildWidget(entity: SupportedShareType.location()),
           ],
         ),
       ),
