@@ -268,9 +268,6 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                 delegateMin,
               )),
           rowTipsItem(S.of(context).map3_pre_edit_next_epoch),
-          /*rowTipsItem("如果节点主扩容节点，你的抵押也会分布在扩容的节点里面。", subTitle: "关于扩容", onTap: () {
-            AtlasApi.goToAtlasMap3HelpPage(context);
-          }),*/
         ],
       ),
     );

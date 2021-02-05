@@ -1337,29 +1337,6 @@ Widget delegateRecordItemWidget(HynTransferHistory item,
 void _pushTransactionDetailAction(HynTransferHistory item) {
   TransactionDetailVo transactionDetail =
       TransactionDetailVo.fromHynTransferHistory(item, 0, "HYN");
-  /*TransactionDetailVo transactionDetail = TransactionDetailVo(
-    id: item.id,
-    contractAddress: item.contractAddress,
-    state: item.status,
-    //1 success, 0 pending, -1 failed
-    amount: ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0")).toDouble(),
-    symbol: "HYN",
-    fromAddress: item.from,
-    toAddress: item.to,
-    time: item.timestamp,
-    nonce: item.nonce.toString(),
-    gasPrice: item.gasPrice,
-    gas: item.gasLimit.toString(),
-    gasUsed: item.gasUsed.toString(),
-    describe: item?.dataDecoded?.description?.details ?? "",
-    data: item?.data ?? "很棒",
-    dataDecoded: item.dataDecoded,
-    blockHash: item.blockHash,
-    blockNum: item.blockNum,
-    epoch: item.epoch,
-    transactionIndex: item.transactionIndex,
-    type: item.type, //1、转出 2、转入
-  );*/
 
   Navigator.push(
     Keys.rootKey.currentContext,

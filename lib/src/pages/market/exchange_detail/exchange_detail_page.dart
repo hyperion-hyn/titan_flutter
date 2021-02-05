@@ -799,39 +799,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                       Expanded(
                         flex: 4,
                         child: SizedBox(),
-                        /*child: Container(
-                            height: 28,
-                            padding: const EdgeInsets.only(left: 10, right: 10),
-                            decoration: BoxDecoration(
-                                border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
-                                borderRadius: BorderRadius.all(Radius.circular(3))),
-                            child: new DropdownButtonHideUnderline(
-                                child: new DropdownButton(
-                              icon: Image.asset(
-                                "res/drawable/ic_exchange_down_triangle.png",
-                                width: 10,
-                              ),
-                              items: [
-                                new DropdownMenuItem(
-                                  child: new Text('限价委托'),
-                                  value: contrOptionsTypeLimit,
-                                ),
-                                new DropdownMenuItem(
-                                  child: new Text('市价委托'),
-                                  value: contrOptionsTypeMarket,
-                                ),
-                              ],
-                              hint: new Text('请选择'),
-                              onChanged: (value) {
-                                optionsController.add(value);
-                              },
-                              isExpanded: true,
-                              value: isLimit ? contrOptionsTypeLimit : contrOptionsTypeMarket,
-                              style: new TextStyle(
-                                color: DefaultColors.color333,
-                                fontSize: 14,
-                              ),
-                            ))),*/
                       ),
                     ],
                   ),
