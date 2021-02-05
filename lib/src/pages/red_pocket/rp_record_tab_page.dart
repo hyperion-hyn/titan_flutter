@@ -41,7 +41,7 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
                       labelColor: HexColor('#FF001B'),
                       labelStyle: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                       indicatorSize: TabBarIndicatorSize.label,
                       indicatorColor: HexColor('#FF001B'),
