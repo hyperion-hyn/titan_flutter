@@ -213,7 +213,7 @@ class BioAuthUtil {
       return BiometricType.fingerprint;
     } else {
       ///Default
-      return BiometricType.face;
+      return BiometricType.fingerprint;
     }
   }
 }
