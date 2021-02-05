@@ -90,7 +90,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         }
       } else if (state is QuotesState && state.status == Status.failed) {
         if (mounted) {
-          Fluttertoast.showToast(msg: "刷新行情失败");
+          Fluttertoast.showToast(msg: S.of(context).failed_refresh_market);
         }
       }
     });
@@ -128,82 +128,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     } catch (e) {}
   }
 
-  _showBackupDialog() async {
-    if (context == null) {
-      return;
-    }
-    var activatedWalletVo = WalletInheritedModel.of(
-      context,
-      aspect: WalletAspect.activatedWallet,
-    ).activatedWallet;
-    var _hasBackupWallet = activatedWalletVo?.wallet?.walletExpandInfoEntity?.isBackup ?? false;
-    if (activatedWalletVo == null || _hasBackupWallet || Application.hasShowBackupWalletDialog) {
-      return;
-    }
-    Application.hasShowBackupWalletDialog = true;
-    await UiUtil.showAlertViewNew(context,
-        barrierDismissible: false,
-        barrierColor: Colors.transparent,
-        isShowBottom: true,
-        contentWidget: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    "res/drawable/ic_wallet_account_backup_remind.png",
-                    width: 16,
-                    height: 16,
-                  ),
-                  SizedBox(
-                    width: 6,
-                  ),
-                  Text("安全提醒",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: HexColor("#333333"),
-                          decoration: TextDecoration.none)),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 13, bottom: 21.0, left: 20, right: 20),
-              child: Text("你的身份助记词未备份，请务必备份助记词\n助记词可用于恢复身份钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失。",
-                  style: TextStyle(
-                      fontSize: 14, color: HexColor("#666666"), decoration: TextDecoration.none)),
-            ),
-          ],
-        ),
-        actions: [
-          ClickOvalButton(
-            S.of(context).backup_now,
-            () async {
-              Navigator.pop(context);
-              var walletStr = FluroConvertUtils.object2string(activatedWalletVo.wallet.toJson());
-              Application.router.navigateTo(
-                  context,
-                  Routes.wallet_setting_wallet_backup_notice +
-                      '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
-            },
-            btnColor: [HexColor("#E7C01A"), HexColor("#F7D33D")],
-            fontSize: 16,
-            fontColor: DefaultColors.color333,
-            width: 200,
-            height: 38,
-          )
-        ]);
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
-    /*Future.delayed(Duration(milliseconds: 1000), () {
-      _showBackupDialog();
-    });*/
 
     return Scaffold(
       body: Container(
@@ -368,7 +295,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top:20.0),
-                          child: Text("安全提醒",
+                          child: Text(S.of(context).safety_reminder,
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -395,7 +322,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 13, bottom: 21.0, left: 20, right: 20),
-                      child: Text("你的身份助记词未备份，请务必备份助记词\n助记词可用于恢复身份钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失。",
+                      child: Text(S.of(context).mnemonic_not_backed_up_loss,
                           style: TextStyle(
                               fontSize: 14, color: HexColor("#666666"), decoration: TextDecoration.none)),
                     ),
@@ -584,7 +511,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                                 width: 7,
                               ),
                               Text(
-                                "发送",
+                                S.of(context).send,
                                 style: TextStyles.textC333S12,
                               ),
                             ],
@@ -607,7 +534,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                               width: 7,
                             ),
                             Text(
-                              "接收",
+                              S.of(context).receiver,
                               style: TextStyles.textC333S12,
                             ),
                           ],
@@ -797,7 +724,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                                   .add(UpdateActivatedWalletBalanceEvent(symbol: symbol));
                             },
                             child: Text(
-                              "加载失败",
+                              S.of(context).failed_to_load,
                               style: TextStyle(color: HexColor("#FF1A1A"), fontSize: 12),
                             ),
                           ),
@@ -847,13 +774,13 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     String titleStr = "";
     switch (jumpType) {
       case WalletPageJump.PAGE_SEND:
-        titleStr = "发送";
+        titleStr = S.of(context).send;
         break;
       case WalletPageJump.PAGE_RECEIVER:
-        titleStr = "接收";
+        titleStr = S.of(context).receiver;
         break;
       case WalletPageJump.PAGE_EXCHANGE:
-        titleStr = "交易";
+        titleStr = S.of(context).transaction;
         break;
     }
     UiUtil.showBottomDialogView(

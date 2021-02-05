@@ -83,7 +83,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
     return Scaffold(
       appBar: BaseAppBar(
         backgroundColor: Colors.white,
-        baseTitle: '钱包身份',
+        baseTitle: S.of(context).my_wallet_id,
       ),
       body: Container(
         color: DefaultColors.colorf2f2f2,
@@ -107,7 +107,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
 
   _basicInfoOptions() {
     return _section(
-        '身份信息',
+        S.of(context).identity_information,
         Column(
           children: [
             InkWell(
@@ -115,7 +115,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
 
                 editIconSheet(context, (path) async {
                   if (path != null) {
-                    UiUtil.showLoadingDialog(context, "头像上传中...", (context) {
+                    UiUtil.showLoadingDialog(context, S.of(context).avatar_uploading, (context) {
                       dialogContext = context;
                     });
 
@@ -147,7 +147,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                 child: Row(
                   children: [
                     Text(
-                      "头像",
+                      S.of(context).avatar,
                       style: TextStyles.textC333S14,
                     ),
                     Spacer(),
@@ -174,7 +174,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                 }
                 String text = await Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context) => OptionEditPage(
-                          title: "名称",
+                          title: S.of(context).name,
                           content: widget.wallet?.keystore?.name,
                           maxLength: 8,
                         )));
@@ -199,7 +199,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                 child: Row(
                   children: [
                     Text(
-                      "名称",
+                      S.of(context).name,
                       style: TextStyles.textC333S14,
                     ),
                     Spacer(),
@@ -256,7 +256,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
     };
 
     return _section(
-        '钱包主链',
+        S.of(context).wallet_main_chain,
         Column(
           children: [
             addressItem(
@@ -282,12 +282,12 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
 
   _securityOptions() {
     return _section(
-        '安全',
+        S.of(context).safety,
         Column(
           children: [
             _optionItem(
                 imagePath: "res/drawable/ic_wallet_setting_show_mnemonic.png",
-                title: '显示助记词',
+                title: S.of(context).show_mnemonic_label,
                 editFunc: () {
                   var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
                   Application.router.navigateTo(
@@ -295,8 +295,8 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                       Routes.wallet_setting_wallet_backup_notice +
                           '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
                 },
-                subContent: '钱包私密数据只存在你的设备上，一旦你的【助记词】被人知晓，那么资产将无法找回！请在安全的地方开始手抄备份你的【助记词】',
-                warning: !isBackup ? '未备份' : ""),
+                subContent: S.of(context).private_data_stored_device_not_retrieved,
+                warning: !isBackup ? S.of(context).not_backup : ""),
             Divider(
               height: 0.5,
             ),
@@ -308,7 +308,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                     if (isBioAuthAvailable) {
                       return _optionItem(
                         imagePath: "res/drawable/ic_wallet_setting_bio_auth.png",
-                        title: '生物验证',
+                        title: S.of(context).biometric_verification,
                         editFunc: () {
                           Navigator.push(
                               context,
@@ -325,7 +325,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             ),
             _optionItem(
                 imagePath: "res/drawable/ic_wallet_setting_modify_pws.png",
-                title: '修改密码',
+                title: S.of(context).change_password,
                 editCallback: (text) {},
                 editFunc: () async {
                   String pswRemind = await Navigator.of(context).push(MaterialPageRoute(
@@ -341,7 +341,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             ),
             _optionItem(
               imagePath: "res/drawable/ic_wallet_setting_psw_remind.png",
-              title: '密码提示',
+              title: S.of(context).pwd_hint,
               editFunc: () async {
                 var password = await UiUtil.showWalletPasswordDialogV2(context, widget.wallet);
                 if (password == null) {
@@ -350,9 +350,9 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
 
                 String text = await Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context) => OptionEditPage(
-                      title: '密码提示',
+                      title: S.of(context).pwd_hint,
                       content: widget.wallet.walletExpandInfoEntity?.pswRemind,
-                      hint: widget.wallet?.walletExpandInfoEntity?.pswRemind == null ? "未设置" : "",
+                      hint: widget.wallet?.walletExpandInfoEntity?.pswRemind == null ? S.of(context).not_set : "",
                       keyboardType: TextInputType.text,
                       maxLength: 8,
                     )));
@@ -378,14 +378,14 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
           onTap: () {
             UiUtil.showBottomDialogView(context,
                 imagePath: "res/drawable/ic_wallet_setting_delete_account.png",
-                dialogTitle: "退出身份",
-                dialogSubTitle: "退出身份后将删除所有钱包数据，请务必确保助记词已经备份",
+                dialogTitle: S.of(context).exit_identity,
+                dialogSubTitle: S.of(context).wallet_deleted_after_out_backup,
                 imageHeight: 66,
                 showCloseBtn: isBackup,
                 actions: [
                   if (isBackup)
                     ClickOvalButton(
-                      "确认退出",
+                      S.of(context).confirm_exit,
                       () async {
                         Navigator.pop(context);
                         deleteWallet();
@@ -397,7 +397,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                     ),
                   if (!isBackup)
                     ClickOvalButton(
-                      "取消",
+                      S.of(context).cancel,
                       () async {
                         Navigator.pop(context);
                       },
@@ -411,7 +411,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                     Padding(
                       padding: const EdgeInsets.only(left: 12.0),
                       child: ClickOvalButton(
-                        "前往备份",
+                        S.of(context).go_to_backup,
                         () async {
                           Navigator.pop(context);
                           var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
@@ -436,7 +436,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
             padding: const EdgeInsets.only(top: 15, bottom: 15),
             child: Center(
               child: Text(
-                '退出',
+                S.of(context).exit,
                 style: TextStyle(
                   color: HexColor('#FF001B'),
                 ),
@@ -457,7 +457,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
     var walletPassword = await UiUtil.showPasswordDialog(context, widget.wallet,
         isShowBioAuthIcon: false,
         onCheckPwdValid: onCheckPwdValid,
-        remindStr: "警告：若无妥善备份，删除钱包后将无法找回钱包，请慎重处理该操作");
+        remindStr: S.of(context).warning_no_backup_cannot_retrieved);
     if (walletPassword == null) {
       return;
     }

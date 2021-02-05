@@ -367,7 +367,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
           ],
         ),
       ],
-      content: "你将要切换${wallet.keystore.name}为当前钱包，继续切换吗？",
+      content: S.of(context).switch_current_wallet_continue(wallet.keystore.name),
     );
   }
 
@@ -485,7 +485,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                                   ),
                                   SizedBox(width: 4),
                                   Text(
-                                    '未备份',
+                                    S.of(context).not_backup,
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: HexColor('#E7BB00'),

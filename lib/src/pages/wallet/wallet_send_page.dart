@@ -259,7 +259,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                               return S.of(context).input_count_over_balance;
                             }
                             if (value.contains(".") && value.split(".")[1].length > widget.coinVo.decimals) {
-                              return "超过${widget.coinVo.decimals}位最大小数位";
+                              return S.of(context).more_than_num_decimal(widget.coinVo.decimals);
                             }
                             return null;
                           },
