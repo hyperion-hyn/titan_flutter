@@ -93,7 +93,7 @@ class _RpRecordTabState extends BaseState<RpRecordTabPage> {
                         ),
                         Tab(
                           child: Text(
-                            '分享红包',
+                            S.of(context).share_rp,
                           ),
                         ),
                       ],
