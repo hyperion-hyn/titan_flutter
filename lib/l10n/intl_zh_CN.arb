@@ -2986,8 +2986,6 @@
   "@rp_edit_count_title": {},
   "rp_edit_count_toast": "请填写红包个数！",
   "@rp_edit_count_toast": {},
-  "rp_edit_count_unit": "个",
-  "@rp_edit_count_unit": {},
   "rp_edit_greeting_error": "请填写祝福语",
   "@rp_edit_greeting_error": {},
   "rp_edit_greeting_title": "祝福语",

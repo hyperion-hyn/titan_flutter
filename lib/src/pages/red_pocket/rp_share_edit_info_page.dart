@@ -667,7 +667,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
         defaultErrorText: S.of(context).rp_edit_count_error,
         keyboardType: TextInputType.numberWithOptions(decimal: true),
         title: S.of(context).rp_edit_count_title,
-        unit: S.of(context).rp_edit_count_unit,
+        unit: S.of(context).rp_unit,
         validator: (String inputText) {
           if (inputText.isEmpty || inputText == null) {
             return '';
