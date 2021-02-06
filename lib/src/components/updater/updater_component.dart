@@ -72,13 +72,13 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
     var packageStr = "";
     switch(env.packageType){
       case "":
-        packageStr = "(正式版)";
+        packageStr = "(${S.of(context).official_version})";
         break;
       case "ab":
-        packageStr = "(公测版)";
+        packageStr = "(${S.of(context).public_version})";
         break;
       case "test":
-        packageStr = "(测试版)";
+        packageStr = "(${S.of(context).beta_version})";
         break;
     }
 
@@ -117,57 +117,66 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
                                 width: 300,
                                 height: 88,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 15.0, bottom: 15,left:15, right: 15),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(packageStr,style: TextStyle(fontSize: 14,color: Colors.transparent),),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left:5, right: 5),
-                                      child: Text(
-                                        title,
-                                        style: TextStyle(fontSize: 18,color: DefaultColors.color333,fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    Text(packageStr,style: TextStyle(fontSize: 14,color: DefaultColors.color333),),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                height: 104,
-                                width: double.infinity,
-                                padding: const EdgeInsets.only(
-                                  left: 24.0,
-                                  right: 24,
-                                ),
+                              Expanded(
                                 child: SingleChildScrollView(
-                                  child: Text(
-                                    message,
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: DefaultColors.color333,
-                                        fontWeight: FontWeight.normal,
-                                        decoration: TextDecoration.none),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 15.0, bottom: 15,left:15, right: 15),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            Flexible(child: Text(packageStr,style: TextStyle(fontSize: 14,color: Colors.transparent),)),
+                                            Padding(
+                                              padding: const EdgeInsets.only(left:5, right: 5),
+                                              child: Text(
+                                                title,
+                                                style: TextStyle(fontSize: 18,color: DefaultColors.color333,fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                            Flexible(child: Text(packageStr,style: TextStyle(fontSize: 14,color: DefaultColors.color333),)),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.only(left: 24.0,
+                                          right: 24,),
+                                        constraints: BoxConstraints(
+                                          minHeight: 90,
+                                        ),
+                                        child: Text(
+                                          message,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: DefaultColors.color333,
+                                              fontWeight: FontWeight.normal,
+                                              decoration: TextDecoration.none),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 26.0,left: 24.0,
+                                          right: 24,bottom: 20),
+                                        child: Center(
+                                          child: ClickOvalButton(
+                                            S.of(context).experience_now,
+                                                () {
+                                              _launch(appUpdateInfo);
+                                            },
+                                            fontColor: Colors.white,
+                                            btnColor: [HexColor("#E6A927"),HexColor("#CD941E"),],
+                                            width: 200,
+                                            height: 38,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 26.0),
-                                child: ClickOvalButton(
-                                  S.of(context).experience_now,
-                                  () {
-                                    _launch(appUpdateInfo);
-                                  },
-                                  fontColor: Colors.white,
-                                  btnColor: [HexColor("#E6A927"),HexColor("#CD941E"),],
-                                  width: 200,
-                                  height: 38,
-                                  fontSize: 16,
-                                ),
-                              )
                             ],
                           ),
                         ),
