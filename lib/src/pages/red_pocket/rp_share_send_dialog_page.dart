@@ -42,7 +42,7 @@ Future<bool> showShareRpSendDialog<T>(
   }
 
   var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
-  
+
   var gas = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
       .systemConfigEntity
       .ethTransferGasLimit;
