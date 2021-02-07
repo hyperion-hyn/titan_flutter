@@ -3022,7 +3022,7 @@
   "@rp_edit_range_unit": {},
   "rp_edit_switch_title": "Only available for new participants",
   "@rp_edit_switch_title": {},
-  "rp_edit_tips_1": "You will be their inviter if you set up \"only available for new participants\"",
+  "rp_edit_tips_1": "If you enable newcomer to receive it, he will become your friend after receiving it; but you must at least fortify {minHyn} HYN for each newcomer as his future miner fee;",
   "@rp_edit_tips_1": {},
   "rp_edit_tips_2": "If your red pocket is not open after 24 hours, the funds in it will returen to your wallet",
   "@rp_edit_tips_2": {},

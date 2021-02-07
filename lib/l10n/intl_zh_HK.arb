@@ -3022,7 +3022,7 @@
   "@rp_edit_range_unit": {},
   "rp_edit_switch_title": "只允許新人領取",
   "@rp_edit_switch_title": {},
-  "rp_edit_tips_1": "如果開啟新人才能領取，領取後他將成為妳的好友；\\n但妳要為每個新人至少要塞 $minHyn HYN作為他之後礦工費所用；",
+  "rp_edit_tips_1": "如果開啟新人才能領取，領取後他將成為妳的好友；但妳要為每個新人至少要塞 {minHyn}HYN作為他之後礦工費所用；",
   "@rp_edit_tips_1": {},
   "rp_edit_tips_2": "24小時候後，如果還剩紅包沒領取，將自動退回妳的錢包；",
   "@rp_edit_tips_2": {},

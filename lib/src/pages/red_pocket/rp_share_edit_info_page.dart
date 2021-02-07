@@ -945,7 +945,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                   fontSize: 16,
                 )),
           ),
-          rowTipsItem(S.of(context).rp_edit_tips_1),
+          rowTipsItem(S.of(context).rp_edit_tips_1(minHyn)),
           rowTipsItem(S.of(context).rp_edit_tips_2),
         ],
       ),
