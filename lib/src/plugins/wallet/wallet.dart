@@ -622,7 +622,7 @@ class Wallet {
       gasPrice = BigInt.from(1 * EthereumUnitValue.G_WEI);
     }
     if (gasLimit == null) {
-      gasLimit = HyperionGasLimit.HRC30_APPROVE_RP;
+      gasLimit = HyperionGasLimit.RP_CALL;
     }
     if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
       return null;
@@ -663,7 +663,7 @@ class Wallet {
       gasPrice = BigInt.from(1 * EthereumUnitValue.G_WEI);
     }
     if (gasLimit == null) {
-      gasLimit = 300000;
+      gasLimit = HyperionGasLimit.RP_CALL;
     }
     BigInt stakingAmount;
     if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
@@ -714,7 +714,7 @@ class Wallet {
       gasPrice = BigInt.from(1 * EthereumUnitValue.G_WEI);
     }
     if (gasLimit == null) {
-      gasLimit = 300000;
+      gasLimit = HyperionGasLimit.RP_CALL;
     }
     BigInt stakingAmount;
     if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {

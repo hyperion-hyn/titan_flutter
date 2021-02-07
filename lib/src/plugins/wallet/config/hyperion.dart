@@ -15,11 +15,12 @@ class HyperionUnitValue {
 }
 
 class HyperionGasLimit {
-  static const int TRANSFER = 21000;
+  // static const int TRANSFER = 21000;
   static const int NODE_OPT = 100000;
-  static const int HRC30_TRANSFER = 60000;
-  static const int HRC30_APPROVE = 50000;
-  static const int HRC30_APPROVE_RP = 350000;
+
+  // static const int HRC30_TRANSFER = 60000;
+  // static const int HRC30_APPROVE = 50000;
+  static const int RP_CALL = 300000; //如果不清楚填什么，就先用这个limit
 }
 
 class HyperionGasPrice {

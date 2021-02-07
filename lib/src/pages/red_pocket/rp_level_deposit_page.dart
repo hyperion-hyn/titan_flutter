@@ -16,6 +16,7 @@ import 'package:titan/src/components/rp/bloc/bloc.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_promotion_rule_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
@@ -448,10 +449,13 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
     double value,
   }) async {
     var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
-    var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
-    gasLimit = HyperionGasLimit.NODE_OPT;
+    // var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+    // gasLimit = HyperionGasLimit.NODE_OPT;
+    var approveGasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+        .systemConfigEntity
+        .erc20ApproveGasLimit;
     var gasValue = ConvertTokenUnit.weiToEther(
-            weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)))
+            weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(approveGasLimit + HyperionGasLimit.RP_CALL)).toStringAsFixed(0)))
         .toDouble();
 
     var toAddressHyn =
@@ -481,7 +485,7 @@ class _RpLevelDepositState extends BaseState<RpLevelDepositPage> {
             burningAmount: ConvertTokenUnit.strToBigInt('0'),
             activeWallet: WalletModelUtil.activatedWallet,
             password: password,
-            gasLimit: gasLimit,
+            // gasLimit: gasLimit,
           );
 
           return true;

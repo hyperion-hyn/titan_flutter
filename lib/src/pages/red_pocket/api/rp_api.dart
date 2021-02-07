@@ -7,6 +7,7 @@ import 'package:titan/generated/l10n.dart' as Transfer;
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/http/signer.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -43,7 +44,7 @@ class RPApi {
     BigInt amount,
     String password = '',
     WalletViewVo activeWallet,
-    int gasLimit = HyperionGasLimit.HRC30_APPROVE_RP,
+    int gasLimit = HyperionGasLimit.RP_CALL,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(
@@ -71,7 +72,7 @@ class RPApi {
   Future<dynamic> postRetrieveHyn({
     String password = '',
     WalletViewVo activeWallet,
-    int gasLimit = HyperionGasLimit.NODE_OPT,
+    int gasLimit = HyperionGasLimit.RP_CALL,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(
@@ -464,7 +465,7 @@ class RPApi {
     BigInt burningAmount,
     String password = '',
     WalletViewVo activeWallet,
-    int gasLimit = HyperionGasLimit.NODE_OPT,
+    // int gasLimit = HyperionGasLimit.NODE_OPT,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
@@ -476,7 +477,7 @@ class RPApi {
       activeWallet: activeWallet,
       amount: amount,
       nonce: nonce,
-      gasLimit: gasLimit,
+      // gasLimit: gasLimit,
     );
     if (approveHex?.isEmpty ?? true) {
       throw HttpResponseCodeNotSuccess(
@@ -493,7 +494,7 @@ class RPApi {
       depositAmount: depositAmount,
       burningAmount: burningAmount,
       nonce: nonce,
-      gasLimit: gasLimit,
+      gasLimit: HyperionGasLimit.RP_CALL,
     );
     print("[Rp_api] postRpDepositAndBurn, sendRpHolding, address:$address, txHash:$rawTxHash");
     if (rawTxHash == null) {
@@ -553,11 +554,14 @@ class RPApi {
     BigInt amount,
     WalletViewVo activeWallet,
     int nonce,
-    int gasLimit = HyperionGasLimit.NODE_OPT,
+    // int gasLimit = HyperionGasLimit.HRC30_APPROVE,
   }) async {
     var wallet = activeWallet?.wallet;
     var context = Keys.rootKey.currentContext;
     var address = wallet?.getEthAccount()?.address ?? "";
+    var gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+        .systemConfigEntity
+        .erc20ApproveGasLimit;
 
     var gasPrice = BigInt.from(WalletInheritedModel.of(context).ethGasPriceRecommend.fast.toInt());
     print(
@@ -659,7 +663,6 @@ class RPApi {
     String password = '',
     String toAddress,
     CoinViewVo coinVo,
-    int gasLimit = HyperionGasLimit.NODE_OPT,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
@@ -682,7 +685,9 @@ class RPApi {
         value: ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
         // gasPrice: HyperionGasPrice.getRecommend().averageBigInt, // null，则是实时gasPrice
         nonce: rpNonce,
-        gasLimit: gasLimit,
+        gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+            .systemConfigEntity
+            .erc20TransferGasLimit,
       );
       if (rpSignedTX == null) {
         throw HttpResponseCodeNotSuccess(
@@ -699,7 +704,9 @@ class RPApi {
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
         value: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
         nonce: hynNonce,
-        gasLimit: gasLimit,
+        gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+            .systemConfigEntity
+            .ethTransferGasLimit,
       );
       if (hynSignedTX?.isEmpty ?? true) {
         throw HttpResponseCodeNotSuccess(
@@ -717,7 +724,9 @@ class RPApi {
           value: ConvertTokenUnit.strToBigInt(reqEntity.rpAmount.toString(), coinVo.decimals),
           // gasPrice: HyperionGasPrice.getRecommend().averageBigInt, // null，则是实时gasPrice
           nonce: rpNonce,
-          gasLimit: gasLimit,
+          gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+              .systemConfigEntity
+              .erc20TransferGasLimit,
         );
         print(
             '[rp_api] postSendShareRp, toAddress:$toAddress, nonce:$rpNonce, rawTxRp: $rpSignedTX');
@@ -736,7 +745,9 @@ class RPApi {
           gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
           value: ConvertTokenUnit.strToBigInt(reqEntity.hynAmount.toString(), coinVo.decimals),
           nonce: hynNonce,
-          gasLimit: gasLimit,
+          gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+              .systemConfigEntity
+              .ethTransferGasLimit,
         );
         print(
             '[rp_api] postSendShareRp, toAddress:$toAddress, hynNonce:$hynNonce, rawTxHyn: $hynSignedTX');

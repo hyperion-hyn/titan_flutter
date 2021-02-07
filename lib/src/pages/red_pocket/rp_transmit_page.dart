@@ -966,7 +966,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     double value,
   }) async {
     var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
-    var gasLimit = HyperionGasLimit.HRC30_APPROVE_RP;
+    var gasLimit = HyperionGasLimit.RP_CALL;
     var gasValue = ConvertTokenUnit.weiToEther(
             weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)))
         .toDouble();

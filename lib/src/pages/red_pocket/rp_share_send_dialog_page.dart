@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/rp/redpocket_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
@@ -11,6 +12,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_send_success_location_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_send_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/utils.dart';
 
@@ -48,8 +50,12 @@ Future<bool> showShareRpSendDialog<T>(
     fromAddress: fromAddress,
     toName: S.of(context).rp_red_pocket,
     toAddress: toAddress,
-    gas: '0.0001',
-    gas1: '0.0001',
+    gas: ConvertTokenUnit.weiToEther(weiInt: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+        .systemConfigEntity
+        .ethTransferGasLimit).toString(),
+    gas1: ConvertTokenUnit.weiToEther(weiInt: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+        .systemConfigEntity
+        .erc20TransferGasLimit).toString(),
     gasDesc: 'HYN ${S.of(context).rp_send_dialog_gas_create}',
     gas1Desc: 'RP ${S.of(context).rp_send_dialog_gas_create}',
     gasUnit: 'HYN',
