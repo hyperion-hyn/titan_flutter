@@ -419,7 +419,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                                     )
                                   : null,
                             ),
-                            keyboardType: keyboardType ?? TextInputType.numberWithOptions(decimal: false),
+                            keyboardType: keyboardType ?? TextInputType.numberWithOptions(decimal: true),
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(maxLength),
                             ],

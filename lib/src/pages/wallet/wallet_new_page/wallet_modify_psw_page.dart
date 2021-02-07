@@ -100,7 +100,7 @@ class _WalletModifyPswPageState extends State<WalletModifyPswPage> {
                                 isShowRemind = false;
                               });
                               return S.of(context).please_input_pwd;
-                            } else if (value.length < 8) {
+                            } else if (value.length < 6) {
                               setState(() {
                                 isShowRemind = false;
                               });
@@ -202,8 +202,8 @@ class _WalletModifyPswPageState extends State<WalletModifyPswPage> {
                   validator: (value) {
                     if (value.isEmpty) {
                       return S.of(context).please_input_pwd;
-                    } else if (value.length < 8) {
-                      return S.of(context).password_less_than_eight;
+                    } else if (value.length < 6) {
+                      return S.of(context).password_less_than_six;
                     } else {
                       return null;
                     }

@@ -2480,6 +2480,8 @@
   "@password_incorrect": {},
   "password_less_than_eight": "Your password is less than 8 digits",
   "@password_less_than_eight": {},
+  "password_less_than_six": "Your password is less than 6 digits",
+  "@password_less_than_six": {},
   "password_not_equal_hint": "비밀번호 상이",
   "@password_not_equal_hint": {},
   "password_reminder_optional": "Reminder (optional)",

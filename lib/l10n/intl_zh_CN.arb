@@ -2480,6 +2480,8 @@
   "@password_incorrect": {},
   "password_less_than_eight": "密码小于8位",
   "@password_less_than_eight": {},
+  "password_less_than_six": "密码小于6位",
+  "@password_less_than_six": {},
   "password_not_equal_hint": "密码不一致",
   "@password_not_equal_hint": {},
   "password_reminder_optional": "密码提示(可选)",
