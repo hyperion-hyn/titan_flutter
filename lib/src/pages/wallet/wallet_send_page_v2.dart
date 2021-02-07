@@ -75,7 +75,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
         : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
 
-    defaultValue = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20ApproveGasLimit;
+    // defaultValue = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20ApproveGasLimit;
 
     return defaultValue;
   }

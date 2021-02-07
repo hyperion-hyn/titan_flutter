@@ -69,7 +69,7 @@ class _WalletGasSettingState extends BaseState<WalletGasSettingPage> {
         ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
         : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
 
-    defaultValue = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20ApproveGasLimit;
+    // defaultValue = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20ApproveGasLimit;
 
     return defaultValue;
   }
