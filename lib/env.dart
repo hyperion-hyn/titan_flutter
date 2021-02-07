@@ -13,10 +13,11 @@ bool get showLog => env.buildType == BuildType.DEV;
 class BuildEnvironment {
   final BuildType buildType;
   final BuildChannel channel;
+  final String packageType;
 
-  BuildEnvironment._init({this.channel, this.buildType});
+  BuildEnvironment._init({this.channel, this.buildType, this.packageType});
 
   /// Sets up the top-level [env] getter on the first call only.
-  static void init({@required channel, @required buildType}) =>
-      _env ??= BuildEnvironment._init(channel: channel, buildType: buildType);
+  static void init({@required channel, @required buildType, @required packageType}) =>
+      _env ??= BuildEnvironment._init(channel: channel, buildType: buildType, packageType: packageType);
 }

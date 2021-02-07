@@ -141,43 +141,43 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
   ),
   HttpResponseCodeNotSuccess(
     -40001,
-    "红包还没准备好",
+    S.of(Keys.rootKey.currentContext).red_pocket_not_ready,
   ),
   HttpResponseCodeNotSuccess(
     -40002,
-    "红包已过期",
+    S.of(Keys.rootKey.currentContext).red_pocket_expired,
   ),
   HttpResponseCodeNotSuccess(
     -40003,
-    "红包领完了",
+    S.of(Keys.rootKey.currentContext).red_pocket_run_out,
   ),
   HttpResponseCodeNotSuccess(
     -40004,
-    "你不是新人",
+    S.of(Keys.rootKey.currentContext).not_new_user,
   ),
   HttpResponseCodeNotSuccess(
     -40005,
-    "距离红包位置太远了",
+    S.of(Keys.rootKey.currentContext).too_far_from_red_pocket,
   ),
   HttpResponseCodeNotSuccess(
     -40006,
-    "口令不正确",
+    S.of(Keys.rootKey.currentContext).key_word_not_corrct,
   ),
   HttpResponseCodeNotSuccess(
     -40007,
-    "RP数量低于最小值",
+    S.of(Keys.rootKey.currentContext).rp_amount_less_than_min,
   ),
   HttpResponseCodeNotSuccess(
     -40008,
-    "HYN数量低于最小值",
+    S.of(Keys.rootKey.currentContext).hyn_amount_less_than_min,
   ),
   HttpResponseCodeNotSuccess(
     -40009,
-    "红包已领取过了",
+    S.of(Keys.rootKey.currentContext).red_pocket_already_token,
   ),
   HttpResponseCodeNotSuccess(
     -40012,
-    "不能领取自己的新人红包",
+    S.of(Keys.rootKey.currentContext).can_not_collect_your_own_new_red_pocket,
   ),
   ERROR_FUND_PASSWORD
 ];

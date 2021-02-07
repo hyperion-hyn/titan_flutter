@@ -10,6 +10,7 @@ import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
@@ -94,30 +95,30 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
       whoSendRpText = "";
     } else {
       isNormal = _shareEntity.info.rpType == RpShareType.normal;
-      whoSendRpText = "${_shareEntity?.info?.owner ?? '--'} 发的${isNormal ? '新人' : '位置'}红包";
+      whoSendRpText = S.of(context).rp_share_get_list_nickname_type(_shareEntity?.info?.owner ?? '--',isNormal ? S.of(context).newbee : S.of(context).position);
 
       greeting = _shareEntity?.info?.greeting ?? '';
       if (_shareEntity != null && greeting.isEmpty) {
-        greeting = "恭喜发财，大吉大利";
+        greeting = S.of(context).good_luck_and_get_rich;
       }
       if (((_shareEntity?.info?.state ?? "") == RpShareState.waitForTX ||
           ((_shareEntity?.info?.state ?? "") == RpShareState.pending))) {
-        greeting = "红包正在准备中";
+        greeting = S.of(context).rp_being_prepared;
       }
       if (((_shareEntity?.info?.state ?? "") == RpShareState.allGot)) {
-        greeting = "手慢了，红包派完了";
+        greeting = S.of(context).hand_slow_rp_finished;
       }
       if (_shareEntity?.info?.alreadyGot ?? false) {
-        greeting = "你已领取过了";
+        greeting = S.of(context).have_already_received;
       }
 
       if ((_shareEntity.info.rpType == RpShareType.location && (_shareEntity?.info?.isNewBee ?? false)) ||
           ((_shareEntity?.info?.rpType ?? RpShareType.normal) != RpShareType.location)) {
         typeName = RpShareType.normal;
-        getRemindHint = "新人均分领取，并成为好友";
+        getRemindHint = S.of(context).receive_equal_become_friends;
       } else {
         typeName = RpShareType.location;
-        getRemindHint = "拼手气领取";
+        getRemindHint = S.of(context).get_lucky;
       }
 
       state = ((_shareEntity?.info?.state ?? RpShareState.allGot) == RpShareState.ongoing)
@@ -169,7 +170,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                                     width: 6,
                                   ),
                                   Text(
-                                    "${_shareEntity?.info?.range ?? ""}千米",
+                                    "${_shareEntity?.info?.range ?? ""}${S.of(context).rp_edit_range_unit}",
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.white,
@@ -192,7 +193,8 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                             SizedBox(
                               height: 36,
                             ),
-                            Container(
+                            iconWidget(_shareEntity?.info?.avatar, _shareEntity?.info?.owner, _shareEntity?.info?.address, isCircle: true,size: 50),
+                            /*Container(
                               width: 50,
                               height: 50,
                               decoration: BoxDecoration(
@@ -203,7 +205,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                                     image: AssetImage("res/drawable/app_invite_default_icon.png"),
                                     fit: BoxFit.cover,
                                   )),
-                            ),
+                            ),*/
                             Padding(
                               padding: EdgeInsets.only(
                                 top: 16,
@@ -267,17 +269,13 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                               return;
                             }
 
-                            // todo: test
-                            //latlng = LatLng(22.29679699999997, 114.17090000000002);
-                            //lat: 26.4407743201789, lng: 111.61888177114565
-
                             if (_shareEntity.info.rpType == RpShareType.location && latlng == null) {
-                              Fluttertoast.showToast(msg: "获取位置失败，请先定位当前位置");
+                              Fluttertoast.showToast(msg: S.of(context).failed_location_locate_current);
                               return;
                             }
 
                             if (_shareEntity.info.isNewBee && !_shareEntity.info.userIsNewBee) {
-                              Fluttertoast.showToast(msg: "该红包只有新用户可领取");
+                              Fluttertoast.showToast(msg: S.of(context).rp_only_available_new);
                               return;
                             }
 
@@ -361,7 +359,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  '看看大家的手气',
+                                  S.of(context).look_everyone_luck,
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.normal,
@@ -401,7 +399,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                               },
                               child: Center(
                                   child: Text(
-                                "点击重试",
+                                S.of(context).click_retry,
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.blue,
@@ -462,7 +460,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 19, bottom: 32.0),
-            child: Text("输入红包口令",
+            child: Text(S.of(context).enter_rp_password,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -481,7 +479,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(20),
                   ],
-                  hintText: "请输入口令",
+                  hintText: S.of(context).please_enter_password,
                 ),
               ),
             ),
@@ -491,11 +489,10 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
     );
   }
 
-  // todo:-40013
   _showWarningDialog() {
     UiUtil.showAlertView(
       context,
-      title: '警告',
+      title: S.of(context).warning,
       actions: [
         ClickOvalButton(
           S.of(context).confirm,
@@ -508,7 +505,7 @@ class _RpShareGetDialogState extends BaseState<RpShareGetDialogPage> {
           fontWeight: FontWeight.normal,
         ),
       ],
-      content: '检测到你位置异常，存在作恶行为，系统会自动记录不诚信用户，如果再次作恶，后续将无法领取任何RP红包',
+      content: S.of(context).location_abnormal_system_record,
       // contentColor: HexColor("#FF0527"),
     );
   }
@@ -520,7 +517,7 @@ Future<bool> showShareRpOpenDialog(
 }) {
   var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
   if (activeWallet == null) {
-    Fluttertoast.showToast(msg: "请先导入钱包");
+    Fluttertoast.showToast(msg: S.of(context).import_wallet_first);
   }
   var _address = activeWallet.wallet.getAtlasAccount().address;
   var _walletName = activeWallet.wallet.keystore.name;

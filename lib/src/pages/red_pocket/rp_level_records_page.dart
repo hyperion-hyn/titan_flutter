@@ -243,25 +243,6 @@ class _RpLevelRecordsState extends BaseState<RpLevelRecordsPage>
     );
   }
 
-  /*
-  _notificationWidget() {
-    return SliverToBoxAdapter(
-      child: Container(
-        color: HexColor('#F8F8F8'),
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: 10,
-          ),
-          child: topNotifyWidget(
-            notification: '新的燃烧25RP，抵押25.5RP交易确认中…',
-            isWarning: false,
-          ),
-        ),
-      ),
-    );
-  }
-  */
-
   _myLevelInfoWidget() {
     int currentLevel = _myLevelInfo?.currentLevel ?? 0;
     int highestLevel = _myLevelInfo?.highestLevel ?? 0;

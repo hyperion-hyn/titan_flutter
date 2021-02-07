@@ -356,6 +356,9 @@ class FormatUtil {
 
   static String truncateDecimalNum(Decimal decNum, int decimal) {
     var number = decNum.toString();
+    if(!number.contains(".")){
+      return number;
+    }
     if ((number.length - number.lastIndexOf(".") - 1) <
         decimal) {
       var result = decNum

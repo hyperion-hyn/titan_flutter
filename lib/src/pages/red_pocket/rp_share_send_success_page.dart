@@ -48,9 +48,10 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
   bool _isSharing = false;
   String get _address => _walletVo.wallet.getAtlasAccount().address;
   String get _walletName => _walletVo.wallet.keystore.name;
+  String get _headImg => _walletVo.wallet?.walletExpandInfoEntity?.netHeadImg ?? "";
   RpShareTypeEntity get _shareTypeEntity => (widget.reqEntity?.rpType ?? RpShareType.normal) == RpShareType.normal
-      ? SupportedShareType.NORMAL
-      : SupportedShareType.LOCATION;
+      ? SupportedShareType.normal()
+      : SupportedShareType.location();
 
   @override
   void initState() {
@@ -81,7 +82,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
       },
       child: Scaffold(
         appBar: BaseAppBar(
-          baseTitle: widget.actionType == 0 ? '广播成功' : '分享',
+          baseTitle: widget.actionType == 0 ? S.of(context).broadcase_success : S.of(context).share,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           leading: Builder(
             builder: (BuildContext context) {
@@ -127,7 +128,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
           height: 20,
         ),
         ClickOvalButton(
-          (widget.reqEntity.isNewBee) ? '分享给新人' : '分享',
+          (widget.reqEntity.isNewBee) ? S.of(context).rp_share_for_newbee : S.of(context).share,
           () async {
             if (mounted) {
               setState(() {
@@ -162,7 +163,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
         20,
       ),
       child: Text(
-        '请等待交易确认后开始分享红包给好友吧～',
+        S.of(context).rp_saved_album_hint,
         textAlign: TextAlign.center,
         style: TextStyle(
           color: HexColor('#333333'),
@@ -187,7 +188,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
           color: HexColor('#F2F2F2'),
         ),
         child: Text(
-          '保存到相册',
+          S.of(context).rp_saved_album,
           style: TextStyle(
             color: HexColor('#333333'),
             fontSize: 14,
@@ -200,9 +201,9 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
   Widget _contentWidget() {
     String walletAddress = WalletUtil.ethAddressToBech32Address(_address);
     // var qrData = "${RpFriendInvitePage.shareDomain}?from=$walletAddress&name=$_walletName";
-    var greeting = (widget.reqEntity?.greeting?.isNotEmpty ?? false) ? widget.reqEntity?.greeting : '恭喜发财，大吉大利!';
+    var greeting = (widget.reqEntity?.greeting?.isNotEmpty ?? false) ? widget.reqEntity?.greeting : S.of(context).good_luck_and_get_rich;
     var qrData = RpShareGetDialogPage.shareDomain +
-        '?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&msg=$greeting';
+        '?rpId=${widget.reqEntity.id}&from=$walletAddress&name=$_walletName&msg=$greeting&headImg=$_headImg';
     return WidgetShot(
       controller: _shotController,
       child: Container(
@@ -341,7 +342,7 @@ class _RpShareSendSuccessPageState extends BaseState<RpShareSendSuccessPage> {
     AppLockUtil.ignoreAppLock(context, true);
 
     Uint8List imageByte = await _shotController.makeImageUint8List();
-    await Share.file('分享${_shareTypeEntity.fullNameZh}', 'app.png', imageByte, 'image/png');
+    await Share.file('${S.of(context).share} ${_shareTypeEntity.fullNameZh}', 'app.png', imageByte, 'image/png');
 
     if (mounted) {
       setState(() {

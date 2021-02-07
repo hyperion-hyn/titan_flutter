@@ -158,10 +158,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
       child: Container(
         decoration: new BoxDecoration(
           gradient: LinearGradient(
-            colors: <Color>[
-              HexColor('#FF91A0'),
-              HexColor('#FF9EAC'),
-            ],
+            colors: <Color>[Color(0xffE7C01A), Color(0xffF7D33D)],
           ),
           borderRadius: BorderRadius.circular(8.0),
         ),
@@ -251,7 +248,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
               ),
               SizedBox(width: 6),
               Text(
-                '兑换',
+                S.of(context).exchange,
                 style: TextStyle(
                   fontSize: 12,
                 ),

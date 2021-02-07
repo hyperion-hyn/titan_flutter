@@ -1740,9 +1740,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           iconWidget(
-                            atlasEntity.pic,
-                            atlasEntity.name,
-                            atlasEntity.address,
+                            atlasEntity?.pic,
+                            atlasEntity?.name,
+                            atlasEntity?.address,
                           ),
                           Expanded(
                             flex: 2,
@@ -2398,7 +2398,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          iconWidgetNew(item.pic, size: 40),
+                          iconWidget(item?.pic, item?.name,item?.address, isCircle:true, size: 40),
                           // SizedBox(
                           //   height: 40,
                           //   width: 40,

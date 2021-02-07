@@ -123,15 +123,11 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
 
   Widget _itemBuilder(RpShareOpenEntity model) {
     var isNormal = (model.rpType ?? RpShareType.normal) == RpShareType.normal;
-    //print("[$runtimeType] model.rpType:${model.rpType}, isNormal:$isNormal");
-
-    RpShareTypeEntity shareTypeEntity = isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
 
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
 
     var location = (model?.location ?? '').isNotEmpty ? '${model.location}' : '';
-    //var range = '${(model?.range ?? 0) > 0 ? model.range : 10}千米内可领取';
     var locationRange = '$location';
 
     var total = '+ ';
@@ -178,40 +174,12 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                     children: <Widget>[
                       Row(
                         children: <Widget>[
-                          /*
-                          Container(
-                            margin: const EdgeInsets.only(
-                              right: 8,
-                              // top: 16,
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  HexColor('#FF0527'),
-                                  HexColor('#FF4D4D'),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.all(Radius.circular(2)),
-                            ),
-                            child: Text(
-                              shareTypeEntity.nameZh,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                              ),
-                            ),
-                          ),
-                          */
                           Padding(
                             padding: const EdgeInsets.only(
                               right: 6,
                             ),
                             child: Text(
-                              '${model.username} 的红包',
+                              S.of(context).rp_share_get_list_nickname(model.username),
                               style: TextStyle(
                                 color: HexColor("#333333"),
                                 fontSize: 14,
@@ -226,8 +194,7 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                         height: 6,
                       ),
                       Text(
-                        // '恭喜发财，新年大吉！',
-                        ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，大吉大利！',
+                        ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : S.of(context).good_luck_and_get_rich,
                         style: TextStyle(
                           fontSize: 12,
                           color: HexColor('#999999'),
@@ -307,17 +274,6 @@ class _RpShareGetListState extends BaseState<RpShareGetListPage> with AutomaticK
                           Row(
                             children: [
                               Spacer(),
-                              // Text(
-                              //   model.isBest?'最佳':'',
-                              //   style: TextStyle(
-                              //     color: HexColor("#E8AC13"),
-                              //     fontSize: 12,
-                              //     fontWeight: FontWeight.normal,
-                              //   ),
-                              //   maxLines: 2,
-                              //   textAlign: TextAlign.right,
-                              //   overflow: TextOverflow.ellipsis,
-                              // ),
                               SizedBox(width: 10,),
                               Text(
                                 createdAtStr,

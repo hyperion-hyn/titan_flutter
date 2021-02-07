@@ -1021,11 +1021,11 @@ class AtlasApi {
 
     var versionName = packageInfo?.version ?? '';
     var versionCode = packageInfo?.buildNumber ?? '';
-    var versionType = '';
+    var versionType = env.packageType;
 
-    if (env.buildType == BuildType.DEV) {
-      versionType = 'test';
-    }
+    // if (env.buildType == BuildType.DEV) {
+    //   versionType = 'test';
+    // }
 
     var lang = Localizations.localeOf(Keys.rootKey.currentContext).languageCode;
 

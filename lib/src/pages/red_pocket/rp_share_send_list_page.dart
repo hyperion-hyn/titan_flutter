@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
@@ -126,8 +127,8 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
     var isNormal = (model.rpType ?? RpShareType.normal) == RpShareType.normal;
     //print("[$runtimeType] model.rpType:${model.rpType}, isNormal:$isNormal");
 
-    RpShareTypeEntity shareTypeEntity =
-        isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
+    // RpShareTypeEntity shareTypeEntity =
+    //     isNormal ? SupportedShareType.NORMAL : SupportedShareType.LOCATION;
 
     var createdAt = DateTime.fromMillisecondsSinceEpoch(model.createdAt * 1000);
     var createdAtStr = DateFormat("HH:mm").format(createdAt);
@@ -139,6 +140,8 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
     var onGoing = model.state == RpShareState.ongoing;
     var refunded = model.state == RpShareState.refunded;
     refunded = false;
+
+    var totalDesc = S.of(context).rp_send_total_desc(model.total, model.gotCount);
 
     return InkWell(
       onTap: () {
@@ -183,34 +186,6 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            /*
-                            Container(
-                              margin: const EdgeInsets.only(
-                                right: 8,
-                                // top: 16,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    HexColor('#FF0527'),
-                                    HexColor('#FF4D4D'),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.all(Radius.circular(2)),
-                              ),
-                              child: Text(
-                                shareTypeEntity.nameZh,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ),
-                            */
                             Padding(
                               padding: const EdgeInsets.only(
                                 right: 6,
@@ -234,7 +209,6 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                               },
                               child: Text(
                                 shareStateToName(model.state),
-                                //onGoing ? '派发中...' : '已过期',
                                 style: TextStyle(
                                   color: onGoing ? HexColor("#E8AC13") : HexColor("#999999"),
                                   fontSize: 12,
@@ -245,28 +219,6 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            if (refunded)
-                              InkWell(
-                                onTap: () {
-                                  if (!refunded) return;
-                                  if ((model?.hynRefundHash ?? '').isEmpty) return;
-
-                                  WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(context,
-                                      model?.hynRefundHash ?? '', DefaultTokenDefine.HYN_Atlas.symbol);
-                                },
-                                child: Text(
-                                  ',查看转账详情',
-                                  style: TextStyle(
-                                    color: HexColor("#1F81FF"),
-                                    // color: HexColor("#999999"),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                  maxLines: 2,
-                                  textAlign: TextAlign.right,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
                           ],
                         ),
                         SizedBox(
@@ -275,7 +227,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                         Text(
                           ((model?.greeting ?? '')?.isNotEmpty ?? false)
                               ? model.greeting
-                              : '恭喜发财，大吉大利！',
+                              : S.of(context).good_luck_and_get_rich,
                           style: TextStyle(
                             fontSize: 12,
                             color: HexColor('#999999'),
@@ -298,7 +250,7 @@ class _RpShareSendListState extends BaseState<RpShareSendListPage>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          '总${model.total}个，已领取${model.gotCount}个',
+                          totalDesc,
                           style: TextStyle(
                             color: HexColor("#333333"),
                             fontSize: 12,

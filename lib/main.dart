@@ -20,7 +20,7 @@ import 'src/plugins/titan_plugin.dart';
 
 void main() {
   if (env == null) {
-    BuildEnvironment.init(channel: BuildChannel.OFFICIAL, buildType: BuildType.DEV);
+    BuildEnvironment.init(channel: BuildChannel.OFFICIAL, buildType: BuildType.DEV, packageType: "test");
   }
 
   WidgetsFlutterBinding.ensureInitialized();

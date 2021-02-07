@@ -76,7 +76,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                             top: 14,
                           ),
                           child: Text(
-                            widget.entity.valueDirection == '-' ? '转账确认' : '提取确认',
+                            widget.entity.valueDirection == '-' ? S.of(context).transfer_confirm : S.of(context).extract_confirmation,
                             style: TextStyle(
                               color: HexColor('#999999'),
                               fontWeight: FontWeight.w500,
@@ -145,7 +145,7 @@ class _WalletSendDialogState extends BaseState<WalletSendDialogPage> {
                       height: 40,
                     ),
                     _rowText(
-                      title: '交易信息',
+                      title: S.of(context).trading_information,
                       content: widget.entity.title,
                       subContent: widget.entity.titleDesc,
                     ),

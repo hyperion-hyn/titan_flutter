@@ -25,7 +25,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
   final ScrollController _scrollController = ScrollController();
   WalletViewVo _walletVo;
 
-  RpShareTypeEntity _selectedEntity = SupportedShareType.NORMAL;
+  RpShareTypeEntity _selectedEntity;
 
   @override
   void initState() {
@@ -46,13 +46,14 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
 
   _setupData() {
     _walletVo = WalletInheritedModel.of(context).activatedWallet;
+    _selectedEntity = _selectedEntity = SupportedShareType.normal();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '选择红包类型',
+        baseTitle: S.of(context).rp_type_title,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
       body: _body(context),
@@ -89,8 +90,7 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
   Widget _confirmButtonWidget() {
     return ClickOvalButton(
       S.of(context).next_step,
-          () async{
-
+      () async {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -109,24 +109,25 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
   }
 
   Future<LatLng> getLatlng() async {
-    var latlng =
-    await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
+    var latlng = await (Keys.mapContainerKey.currentState as MapContainerState)
+        ?.mapboxMapController
+        ?.lastKnownLocation();
     return latlng;
   }
 
   Widget _bottomImageList() {
     return Padding(
-      padding: EdgeInsets.only(left: 16.0, bottom: 23, right: 16, top: 20),
+      padding: EdgeInsets.only(left: 8.0, bottom: 23, right: 8, top: 20),
       child: Container(
         // height: 125,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _createChildWidget(entity: SupportedShareType.NORMAL),
+            _createChildWidget(entity: SupportedShareType.normal()),
             SizedBox(
               width: 36,
             ),
-            _createChildWidget(entity: SupportedShareType.LOCATION),
+            _createChildWidget(entity: SupportedShareType.location()),
           ],
         ),
       ),
@@ -185,23 +186,12 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
                 color: HexColor('#333333'),
               ),
             ),
-           /* SizedBox(width: 4),
-            Tooltip(
-              verticalOffset: 16,
-              margin: EdgeInsets.symmetric(horizontal: 32.0),
-              padding: EdgeInsets.all(16.0),
-              message: entity.fullNameZh,
-              child: Image.asset(
-                'res/drawable/ic_tooltip.png',
-                width: 10,
-                height: 10,
-                color: HexColor('#1F81FF'),
-              ),
-            ),*/
           ],
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 4,),
+          padding: const EdgeInsets.only(
+            top: 4,
+          ),
           child: Text(
             entity.desc,
             style: TextStyle(
@@ -243,7 +233,6 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
     double padding = 0,
     RpShareTypeEntity entity,
   }) {
-
     var language = SettingInheritedModel.of(context).languageCode;
     var suffix = language == 'zh' ? 'zh' : 'en';
     var typeName = entity.nameEn;
@@ -298,11 +287,12 @@ class _RpShareSelectTypePageState extends BaseState<RpShareSelectTypePage> {
                   ),
                 ),
                 Text(
-                  '发的${entity.fullNameZh}',
+                  S.of(context).rp_type_nickname(entity.fullNameZh),
                   style: TextStyle(
                     fontSize: fontSize,
                     color: Colors.white,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 Spacer(),
               ],

@@ -71,7 +71,7 @@ class EmptyWalletViewV2 extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  _optionItem(context, S.of(context).create_wallet, '第一次使用钱包', () async {
+                  _optionItem(context, S.of(context).create_wallet, S.of(context).using_wallet_first_time, () async {
                     if (await _checkConfirmWalletPolicy()) {
                       bool result =
                           await UiUtil.showConfirmPolicyDialog(context, PolicyType.WALLET);
@@ -85,7 +85,7 @@ class EmptyWalletViewV2 extends StatelessWidget {
                     // backAndUpdatePage(context);
                   }),
                   _divider(),
-                  _optionItem(context, '恢复身份', '已拥有钱包', () async {
+                  _optionItem(context, S.of(context).restore_identity, S.of(context).already_have_wallet, () async {
                     if (await _checkConfirmWalletPolicy()) {
                       bool result =
                           await UiUtil.showConfirmPolicyDialog(context, PolicyType.WALLET);

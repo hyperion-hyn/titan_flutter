@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
@@ -99,7 +100,7 @@ class HomePageState extends BaseState<HomePage> {
                       items: _shareLatestList.map(
                         (model) {
                           var name = '${model?.owner ?? '--'}：';
-                          var greeting = ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : '恭喜发财，大吉大利！';
+                          var greeting = ((model?.greeting ?? '')?.isNotEmpty ?? false) ? model.greeting : S.of(context).good_luck_and_get_rich;
 
                           var location = model?.location ?? '';
                           var isLocation = (model.rpType == RpShareType.location) && (location.isNotEmpty);
