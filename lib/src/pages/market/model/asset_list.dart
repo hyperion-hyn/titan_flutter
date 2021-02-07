@@ -1,4 +1,5 @@
 import 'package:decimal/decimal.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
 
 class AssetList {
@@ -73,7 +74,9 @@ class AssetList {
       Decimal rpToHyn = Decimal.parse(RP.hyn);
       Decimal hyn = Decimal.parse(HYN.hyn);
       total = usdtToHyn + rpToHyn + hyn;
-    } catch (e) {}
+    } catch (e) {
+      logger.e(e);
+    }
     return total;
   }
 

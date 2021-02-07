@@ -734,7 +734,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                   ethAddress, localTransferType, widget.coinVo.contractAddress, txCount);
               localPendingTxs = await transactionInteractor.getLocalPendingTransactions(
                   ethAddress, localTransferType, widget.coinVo.contractAddress);
-              print('xxx $txCount, ${localPendingTxs.length}');
               for (var tx in localPendingTxs) {
                 if (int.parse(tx.nonce) == txCount) {
                   isHaveNearestPendingTx = true;

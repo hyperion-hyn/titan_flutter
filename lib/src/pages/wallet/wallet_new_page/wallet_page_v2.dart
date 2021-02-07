@@ -24,6 +24,7 @@ import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_page.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
@@ -428,11 +429,16 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    "${activatedWalletVo?.wallet?.keystore?.name ?? ""}",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: DefaultColors.color333,
+                  InkWell(
+                    onTap: () {
+                      WalletManagerPage.jumpWalletManager(context);
+                    },
+                    child: Text(
+                      "${activatedWalletVo?.wallet?.keystore?.name ?? ""}",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: DefaultColors.color333,
+                      ),
                     ),
                   ),
                   InkWell(

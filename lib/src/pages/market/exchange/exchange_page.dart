@@ -21,6 +21,7 @@ import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/exchange_coin_list.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
@@ -390,7 +391,9 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
       if (_latestVol != null) {
         _vol24h = FormatUtil.truncateDecimalNum(_latestVol, 2) ?? '--';
       }
-    } catch (e) {}
+    } catch (e) {
+      logger.e(e);
+    }
 
     // 24hour
     var _volStr = '${S.of(context).exchange_24h_vol} $_vol24h';
@@ -438,7 +441,9 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
       }
 
       _latestQuotePriceStr = '${_quote?.legal?.sign ?? ''} ${_latestQuotePrice ?? '--'}';
-    } catch (e) {}
+    } catch (e) {
+      logger.e(e);
+    }
 
     return Column(
       children: <Widget>[
