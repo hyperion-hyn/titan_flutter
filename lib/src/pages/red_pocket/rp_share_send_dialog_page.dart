@@ -43,19 +43,34 @@ Future<bool> showShareRpSendDialog<T>(
 
   var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
 
+  // hyn
   var gas = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
       .systemConfigEntity
       .ethTransferGasLimit;
   var gasValue = ConvertTokenUnit.weiToEther(
-      weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gas)).toStringAsFixed(0)))
+          weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gas)).toStringAsFixed(0)))
       .toDouble();
 
+  // rp
   var gas1 = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
       .systemConfigEntity
       .erc20TransferGasLimit;
   var gasValue1 = ConvertTokenUnit.weiToEther(
-      weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gas1)).toStringAsFixed(0)))
+          weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gas1)).toStringAsFixed(0)))
       .toDouble();
+
+  if ((reqEntity.hynAmount > 0 && reqEntity.rpAmount <= 0) ||
+      (reqEntity.hynAmount <= 0 && reqEntity.rpAmount > 0)) {
+    if (reqEntity.hynAmount > 0 && reqEntity.rpAmount <= 0) {
+      gasValue = gasValue;
+      gasValue1 = 0;
+    }
+
+    if (reqEntity.hynAmount <= 0 && reqEntity.rpAmount > 0) {
+      gasValue = gasValue1;
+      gasValue1 = 0;
+    }
+  }
 
   WalletSendDialogEntity entity = WalletSendDialogEntity(
     type: 'tx_send_share_rp',
