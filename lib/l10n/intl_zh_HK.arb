@@ -3208,7 +3208,7 @@
   "@rp_share_state_all_got": {},
   "rp_share_state_expires": "已過期",
   "@rp_share_state_expires": {},
-  "rp_share_state_ongoing": "ongoing",
+  "rp_share_state_ongoing": "进行中",
   "@rp_share_state_ongoing": {},
   "rp_share_state_pending": "確認中",
   "@rp_share_state_pending": {},
