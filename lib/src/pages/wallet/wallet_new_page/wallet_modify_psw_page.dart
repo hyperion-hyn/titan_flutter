@@ -142,7 +142,7 @@ class _WalletModifyPswPageState extends State<WalletModifyPswPage> {
               bool isPswRight = await WalletUtil.checkPwdValid(
                 context,
                 widget.wallet,
-                _walletOrignPswController.text,
+                _walletOrignPswController.text.trim(),
               );
               if(!isPswRight){
                 Fluttertoast.showToast(msg: S.of(context).original_password_wrong);

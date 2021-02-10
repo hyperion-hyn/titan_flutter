@@ -411,14 +411,19 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                     Padding(
                       padding: const EdgeInsets.only(left: 12.0),
                       child: ClickOvalButton(
-                        S.of(context).go_to_backup,
-                        () async {
+                        //S.of(context).go_to_backup,
+                        // todo: jison
+                        S.of(context).confirm_exit,
+                      () async {
                           Navigator.pop(context);
-                          var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
-                          Application.router.navigateTo(
-                              context,
-                              Routes.wallet_setting_wallet_backup_notice +
-                                  '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
+
+                          deleteWallet();
+
+                          // var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
+                          // Application.router.navigateTo(
+                          //     context,
+                          //     Routes.wallet_setting_wallet_backup_notice +
+                          //         '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
                         },
                         width: 140,
                         height: 40,
@@ -447,7 +452,10 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
   }
 
   Future<void> deleteWallet() async {
-    CheckPwdValid onCheckPwdValid = (walletPwd) {
+    CheckPwdValid onCheckPwdValid = (walletPwd) async{
+      // todo: jison
+      return true;
+
       return WalletUtil.checkPwdValid(
         context,
         widget.wallet,

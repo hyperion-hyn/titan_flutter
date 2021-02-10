@@ -154,6 +154,9 @@ class WalletPluginInterface(): FlutterPlugin {
                     result.error(ErrorCode.PARAMETERS_WRONG, "fileName cannot be null", null)
                     return true
                 }
+
+                // todo: jison
+                /*
                 if (password == null) {
                     result.error(ErrorCode.PARAMETERS_WRONG, "password cannot be null", null)
                     return true
@@ -163,7 +166,7 @@ class WalletPluginInterface(): FlutterPlugin {
                 if (prvKeyHex == null) {
                     result.error(ErrorCode.PASSWORD_WRONG, "password is wrong", null)
                     return true
-                }
+                }*/
 
                 val ret = File(KeyStoreUtil.getKeyStorePath(context!!, fileName)).delete()
                 result.success(ret)
