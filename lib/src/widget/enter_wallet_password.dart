@@ -54,6 +54,7 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
   TextEditingController passwordEditingController = TextEditingController();
 
   bool _isHideLayout = false;
+  bool _isShowPwd = false;
 
   @override
   void onCreated() {
@@ -100,7 +101,6 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                                   ),
                                 SizedBox(height: 12,),
                                 RoundBorderTextField(
-                                  obscureText: true,
                                   inputFormatters: [
 //                                if (widget.useDigits)
 //                                  LengthLimitingTextInputFormatter(6),
@@ -108,6 +108,28 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                                   controller: passwordEditingController,
                                   keyboardType: TextInputType.visiblePassword,
                                   errorText: walletEditErrorMsg != null ? walletEditErrorMsg : null,
+                                  obscureText: !_isShowPwd,
+                                  suffixIcon: Container(
+                                    width: 10,
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: InkWell(
+                                        onTap: () {
+                                          if (mounted)
+                                            setState(() {
+                                              _isShowPwd = !_isShowPwd;
+                                            });
+                                        },
+                                        child: Image.asset(
+                                          _isShowPwd
+                                              ? "res/drawable/ic_input_psw_show.png"
+                                              : "res/drawable/ic_input_psw_hide.png",
+                                          width: 20,
+                                          height: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                                 Row(
                                   children: <Widget>[
