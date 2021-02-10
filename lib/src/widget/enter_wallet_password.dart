@@ -178,7 +178,7 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                                     child: ClickOvalButton(
                                       S.of(context).confirm,
                                           () async {
-                                        var inputText = passwordEditingController.text;
+                                        var inputText = passwordEditingController.text.trim();
                                         var result = await widget.onPwdSubmitted(inputText);
                                         if (result) {
                                           Navigator.of(context).pop(inputText);
