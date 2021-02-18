@@ -34,6 +34,7 @@ import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
+import 'package:titan/src/pages/policy/policy_util.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -172,7 +173,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
               ),
               child: InkWell(
                 onTap: () async {
-                  if (await _checkShowConfirmPolicy()) {
+                  if (await PolicyUtil.checkConfirmExchangePolicy()) {
                     bool result = await UiUtil.showConfirmPolicyDialog(context, PolicyType.DEX);
                     if (!result) return;
                   }
@@ -606,10 +607,4 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
     );
   }
 
-  Future<bool> _checkShowConfirmPolicy() async {
-    var isConfirmDexPolicy = await AppCache.getValue(
-      PrefsKey.IS_CONFIRM_DEX_POLICY,
-    );
-    return isConfirmDexPolicy == null || !isConfirmDexPolicy;
-  }
 }

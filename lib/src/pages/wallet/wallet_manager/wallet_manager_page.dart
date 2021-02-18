@@ -15,6 +15,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
+import 'package:titan/src/pages/policy/policy_util.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/route_util.dart';
@@ -199,7 +200,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
   }
 
   _createWallet() async {
-    if (await _checkConfirmWalletPolicy()) {
+    if (await PolicyUtil.checkConfirmWalletPolicy()) {
       bool result = await UiUtil.showConfirmPolicyDialog(context, PolicyType.DEX);
       if (!result) return;
     }
@@ -209,7 +210,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
   }
 
   _importWallet() async {
-    if (await _checkConfirmWalletPolicy()) {
+    if (await PolicyUtil.checkConfirmWalletPolicy()) {
       bool result = await UiUtil.showConfirmPolicyDialog(context, PolicyType.WALLET);
       if (!result) return;
     }
@@ -525,12 +526,5 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
         ),
       ),
     );
-  }
-
-  Future<bool> _checkConfirmWalletPolicy() async {
-    var isConfirmWalletPolicy = await AppCache.getValue(
-      PrefsKey.IS_CONFIRM_WALLET_POLICY,
-    );
-    return isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
   }
 }

@@ -8,6 +8,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
+import 'package:titan/src/pages/policy/policy_util.dart';
 import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -72,7 +73,7 @@ class EmptyWalletViewV2 extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   _optionItem(context, S.of(context).create_wallet, S.of(context).using_wallet_first_time, () async {
-                    if (await _checkConfirmWalletPolicy()) {
+                    if (await PolicyUtil.checkConfirmWalletPolicy()) {
                       bool result =
                           await UiUtil.showConfirmPolicyDialog(context, PolicyType.WALLET);
                       if (!result) return;
@@ -86,7 +87,7 @@ class EmptyWalletViewV2 extends StatelessWidget {
                   }),
                   _divider(),
                   _optionItem(context, S.of(context).restore_identity, S.of(context).already_have_wallet, () async {
-                    if (await _checkConfirmWalletPolicy()) {
+                    if (await PolicyUtil.checkConfirmWalletPolicy()) {
                       bool result =
                           await UiUtil.showConfirmPolicyDialog(context, PolicyType.WALLET);
                       if (!result) return;
@@ -183,10 +184,5 @@ class EmptyWalletViewV2 extends StatelessWidget {
     }
   }
 
-  Future<bool> _checkConfirmWalletPolicy() async {
-    var isConfirmWalletPolicy = await AppCache.getValue(
-      PrefsKey.IS_CONFIRM_WALLET_POLICY,
-    );
-    return isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
-  }
+
 }

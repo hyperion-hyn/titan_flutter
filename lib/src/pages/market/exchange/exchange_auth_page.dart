@@ -10,6 +10,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
+import 'package:titan/src/pages/policy/policy_util.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/utils/auth_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -174,7 +175,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   _startLogin() async {
     var _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
     if (_wallet != null) {
-      if (await checkConfirmWalletPolicy()) {
+      if (await PolicyUtil.checkConfirmWalletPolicy()) {
         bool result = await UiUtil.showConfirmPolicyDialog(context, PolicyType.WALLET);
         if (!result) return;
       }
@@ -241,11 +242,4 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
       ),
     );
   }
-}
-
-Future<bool> checkConfirmWalletPolicy() async {
-  var isConfirmWalletPolicy = await AppCache.getValue(
-    PrefsKey.IS_CONFIRM_WALLET_POLICY,
-  );
-  return isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
 }
