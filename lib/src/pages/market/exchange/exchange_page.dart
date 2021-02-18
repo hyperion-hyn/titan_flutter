@@ -449,11 +449,6 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
       children: <Widget>[
         InkWell(
             onTap: () async {
-              if (await _checkShowConfirmPolicy()) {
-                bool result = await UiUtil.showConfirmPolicyDialog(context, PolicyType.DEX);
-                if (!result) return;
-              }
-
               var prefs = await SharedPreferences.getInstance();
               int index = prefs.getInt(PrefsKey.PERIOD_CURRENT_INDEX);
               var periodCurrentIndex = 0;
@@ -591,10 +586,6 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
   }
 
   _showQuoteListDialog() async {
-    if (await _checkShowConfirmPolicy()) {
-      bool result = await UiUtil.showConfirmPolicyDialog(context, PolicyType.DEX);
-      if (!result) return;
-    }
     UiUtil.showBottomDialogView(
       context,
       dialogHeight: MediaQuery.of(context).size.height - 80,
