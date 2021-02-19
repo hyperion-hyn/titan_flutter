@@ -15,14 +15,14 @@ Wallet _$WalletFromJson(Map<String, dynamic> json) {
         ?.map((e) =>
             e == null ? null : Account.fromJson(e as Map<String, dynamic>))
         ?.toList(),
-  )..walletExpandInfoEntity = json['walletExpandInfoEntity'] == null
-      ? WalletExpandInfoEntity.defaultEntity()
-      : WalletExpandInfoEntity.fromJson(
-          json['walletExpandInfoEntity'] as Map<String, dynamic>);
+    walletExpandInfoEntity:
+        Wallet.expandInfoFromJson(json['walletExpandInfoEntity']),
+  );
 }
 
 Map<String, dynamic> _$WalletToJson(Wallet instance) => <String, dynamic>{
-      'accounts': instance.accounts,
-      'keystore': instance.keystore,
-      'walletExpandInfoEntity': instance.walletExpandInfoEntity,
+      'accounts': instance.accounts?.map((e) => e?.toJson())?.toList(),
+      'keystore': instance.keystore?.toJson(),
+      'walletExpandInfoEntity':
+          Wallet.expandInfoToJson(instance.walletExpandInfoEntity),
     };

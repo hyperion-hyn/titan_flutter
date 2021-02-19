@@ -42,7 +42,21 @@ class Wallet {
   List<Account> accounts;
   KeyStore keystore;
 
+  @JsonKey(fromJson: expandInfoFromJson, toJson: expandInfoToJson)
   WalletExpandInfoEntity walletExpandInfoEntity;
+
+  static WalletExpandInfoEntity expandInfoFromJson(dynamic json) {
+    if(json == null || json.toString().isEmpty){
+      return WalletExpandInfoEntity.defaultEntity();
+    }else{
+      return WalletExpandInfoEntity.fromJson(
+          json as Map<String, dynamic>);
+    }
+  }
+
+  static Map<String, dynamic> expandInfoToJson(WalletExpandInfoEntity walletExpandInfoEntity) {
+    return walletExpandInfoEntity.toJson();
+  }
 
   Wallet({this.keystore, this.accounts, this.walletExpandInfoEntity});
 

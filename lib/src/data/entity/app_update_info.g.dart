@@ -18,7 +18,7 @@ AppUpdateInfo _$AppUpdateInfoFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$AppUpdateInfoToJson(AppUpdateInfo instance) =>
     <String, dynamic>{
       'need_update': instance.needUpdate,
-      'new_version': instance.newVersion,
+      'new_version': instance.newVersion?.toJson(),
     };
 
 New_version _$New_versionFromJson(Map<String, dynamic> json) {

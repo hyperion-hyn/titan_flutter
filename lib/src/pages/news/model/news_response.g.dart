@@ -26,5 +26,5 @@ Map<String, dynamic> _$NewsResponseToJson(NewsResponse instance) =>
       'title': instance.title,
       'custom_cover': instance.customCover,
       'outlink': instance.outlink,
-      'focus': instance.focus,
+      'focus': instance.focus?.toJson(),
     };

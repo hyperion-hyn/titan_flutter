@@ -41,5 +41,5 @@ Map<String, dynamic> _$ExchangeAccountToJson(ExchangeAccount instance) =>
       'mobile': instance.mobile,
       'gesture_token': instance.gestureToken,
       'beNew': instance.beNew,
-      'assetList': instance.assetList,
+      'assetList': instance.assetList?.toJson(),
     };

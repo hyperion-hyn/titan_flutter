@@ -26,9 +26,9 @@ RpPromotionRuleEntity _$RpPromotionRuleEntityFromJson(
 Map<String, dynamic> _$RpPromotionRuleEntityToJson(
         RpPromotionRuleEntity instance) =>
     <String, dynamic>{
-      'dynamic': instance.dynamicList,
-      'static': instance.static,
-      'supply_info': instance.supplyInfo,
+      'dynamic': instance.dynamicList?.map((e) => e?.toJson())?.toList(),
+      'static': instance.static?.map((e) => e?.toJson())?.toList(),
+      'supply_info': instance.supplyInfo?.toJson(),
     };
 
 LevelRule _$LevelRuleFromJson(Map<String, dynamic> json) {

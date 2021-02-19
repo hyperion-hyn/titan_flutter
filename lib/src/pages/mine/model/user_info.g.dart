@@ -62,7 +62,7 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
       'total_invitations': instance.totalInvitations,
       'level': instance.level,
       'num_of_team_member': instance.numOfTeamMember,
-      'parent_user': instance.parentUser,
+      'parent_user': instance.parentUser?.toJson(),
       'directly_power': instance.directlyPower,
       'level_num': instance.levelNum,
       'can_staking_level': instance.canStakingLevel,

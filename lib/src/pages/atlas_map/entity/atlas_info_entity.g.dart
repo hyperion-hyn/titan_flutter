@@ -60,7 +60,7 @@ Map<String, dynamic> _$AtlasInfoEntityToJson(AtlasInfoEntity instance) =>
       'home': instance.home,
       'id': instance.id,
       'max_staking': instance.maxStaking,
-      'my_map3': instance.myMap3,
+      'my_map3': instance.myMap3?.map((e) => e?.toJson())?.toList(),
       'name': instance.name,
       'node_id': instance.nodeId,
       'pic': instance.pic,

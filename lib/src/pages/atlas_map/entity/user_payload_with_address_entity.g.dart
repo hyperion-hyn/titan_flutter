@@ -19,6 +19,6 @@ UserPayloadWithAddressEntity _$UserPayloadWithAddressEntityFromJson(
 Map<String, dynamic> _$UserPayloadWithAddressEntityToJson(
         UserPayloadWithAddressEntity instance) =>
     <String, dynamic>{
-      'payload': instance.payload,
+      'payload': instance.payload?.toJson(),
       'address': instance.address,
     };

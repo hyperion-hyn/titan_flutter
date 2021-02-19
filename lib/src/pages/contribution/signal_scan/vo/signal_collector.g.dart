@@ -17,6 +17,6 @@ SignalCollector _$SignalCollectorFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$SignalCollectorToJson(SignalCollector instance) =>
     <String, dynamic>{
-      'location': instance.location,
+      'location': instance.location?.toJson(),
       'data': instance.data,
     };

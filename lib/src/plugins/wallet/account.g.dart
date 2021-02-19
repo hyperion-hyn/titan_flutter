@@ -27,6 +27,7 @@ Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
       'derivationPath': instance.derivationPath,
       'coinType': instance.coinType,
       'extendedPublicKey': instance.extendedPublicKey,
-      'token': instance.token,
-      'contractAssetTokens': instance.contractAssetTokens,
+      'token': instance.token?.toJson(),
+      'contractAssetTokens':
+          instance.contractAssetTokens?.map((e) => e?.toJson())?.toList(),
     };

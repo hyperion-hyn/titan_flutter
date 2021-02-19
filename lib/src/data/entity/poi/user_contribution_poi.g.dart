@@ -33,7 +33,7 @@ Map<String, dynamic> _$UserContributionPoiToJson(
       'name': instance.name,
       'address': instance.address,
       'category': instance.category,
-      'location': instance.location,
+      'location': instance.location?.toJson(),
       'ext': instance.ext,
       'state': instance.state,
       'phone': instance.phone,
@@ -72,5 +72,5 @@ Map<String, dynamic> _$UserContributionPoisToJson(
         UserContributionPois instance) =>
     <String, dynamic>{
       'coordinates': instance.coordinates,
-      'pois': instance.pois,
+      'pois': instance.pois?.map((e) => e?.toJson())?.toList(),
     };

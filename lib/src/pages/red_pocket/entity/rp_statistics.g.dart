@@ -34,12 +34,12 @@ RPStatistics _$RPStatisticsFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$RPStatisticsToJson(RPStatistics instance) =>
     <String, dynamic>{
-      'global': instance.global,
-      'self': instance.self,
-      'rp_contract_info': instance.rpContractInfo,
-      'rp_holding_contract_info': instance.rpHoldingContractInfo,
-      'airdrop_info': instance.airdropInfo,
-      'level_counts': instance.levelCounts,
+      'global': instance.global?.toJson(),
+      'self': instance.self?.toJson(),
+      'rp_contract_info': instance.rpContractInfo?.toJson(),
+      'rp_holding_contract_info': instance.rpHoldingContractInfo?.toJson(),
+      'airdrop_info': instance.airdropInfo?.toJson(),
+      'level_counts': instance.levelCounts?.map((e) => e?.toJson())?.toList(),
     };
 
 Global _$GlobalFromJson(Map<String, dynamic> json) {

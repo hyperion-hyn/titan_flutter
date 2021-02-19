@@ -121,8 +121,10 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     }
     // 2.ETH
     else if (CoinType.ETHEREUM == _coinType) {
-      var initGasPrice = _selectedGasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI);
-      gasPrice = _isCustom ? Decimal?.tryParse(_lastGasPrice ?? '0') ?? initGasPrice : initGasPrice;
+      var initGasPrice = _selectedGasPrice;
+      // gasPrice = _isCustom ? Decimal?.tryParse(_lastGasPrice ?? '0') ?? initGasPrice : initGasPrice;
+      var _lastGasPriceGWei = Decimal.tryParse(_lastGasPrice ?? '0') * Decimal.fromInt(EthereumUnitValue.G_WEI);
+      gasPrice = _isCustom ? (_lastGasPriceGWei ?? initGasPrice) : initGasPrice;
     }
     // 3.ATLAS
     else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
@@ -186,7 +188,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     else if (CoinType.ETHEREUM == _coinType) {
       fees = ConvertTokenUnit.weiToEther(
           weiBigInt: BigInt.parse(
-              (_gasPrice * Decimal.fromInt(_gasLimit) * Decimal.fromInt(EthereumUnitValue.G_WEI))
+              (_gasPrice * Decimal.fromInt(_gasLimit))
                   .toStringAsFixed(0)));
     }
     // 3.ATLAS
@@ -221,7 +223,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     else if (CoinType.ETHEREUM == _coinType) {
       var feesDecimalValue = ConvertTokenUnit.weiToEther(
           weiBigInt: BigInt.parse(
-              (_gasPrice * Decimal.fromInt(_gasLimit) * Decimal.fromInt(EthereumUnitValue.G_WEI))
+              (_gasPrice * Decimal.fromInt(_gasLimit))
                   .toStringAsFixed(0)));
 
       var ethQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('ETH')?.price ?? 0;
