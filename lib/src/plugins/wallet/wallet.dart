@@ -306,22 +306,22 @@ class Wallet {
             .ethTransferGasLimit;
       }
     }
-    var baseCoinVo = WalletInheritedModel.of(Keys.rootKey.currentContext)?.getBaseCoinVo(coinType);
-    var balance = baseCoinVo?.balance;
-    if (balance == null) {
-      throw Exception('check balance fail');
-    }
-
-    var gasLimitBigInt = BigInt.from(gasLimit);
-    var gasFees = gasLimitBigInt * gasPrice;
+    // var baseCoinVo = WalletInheritedModel.of(Keys.rootKey.currentContext)?.getBaseCoinVo(coinType);
+    // var balance = baseCoinVo?.balance;
+    // if (balance == null) {
+    //   throw Exception('check balance fail');
+    // }
+    //
+    // var gasLimitBigInt = BigInt.from(gasLimit);
+    // var gasFees = gasLimitBigInt * gasPrice;
     // print(
     //     "gasLimit:${gasLimit.runtimeType}, value:${value.runtimeType}, gasFees:${gasFees.runtimeType}, balance:${balance.runtimeType}");
-
-    if (value != null) {
-      if ((gasFees + value) > balance) {
-        throw Exception(S.of(Keys.rootKey.currentContext).transaction_amount_over_than_balance);
-      }
-    }
+    //
+    // if (value != null) {
+    //   if ((gasFees + value) > balance) {
+    //     throw Exception(S.of(Keys.rootKey.currentContext).transaction_amount_over_than_balance);
+    //   }
+    // }
 
     var type = message?.type;
     if (type == null && coinType == CoinType.HYN_ATLAS) {
@@ -337,6 +337,17 @@ class Wallet {
           await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
       credentials = await client.credentialsFromPrivateKey(privateKey);
     }
+
+    var address = await credentials.extractAddress();
+    var balance = await WalletUtil.getBalanceByCoinTypeAndAddress(coinType, address.hexEip55);
+    var gasLimitBigInt = BigInt.from(gasLimit);
+    var gasFees = gasLimitBigInt * gasPrice;
+    var transferValue = value ?? 0;
+    if ((gasFees + transferValue) > balance) {
+      throw Exception(S.of(Keys.rootKey.currentContext).transaction_amount_over_than_balance);
+    }
+    // print('xxx balance $balance, transferValue $transferValue, gasPrice $gasPrice, gasFees $gasFees');
+
     var chainId = _getChainId(coinType);
     final rawTx = await client.signTransaction(
       credentials,
@@ -451,15 +462,15 @@ class Wallet {
           .systemConfigEntity
           .erc20TransferGasLimit;
     }
-    var baseCoinVo = WalletInheritedModel.of(Keys.rootKey.currentContext)?.getBaseCoinVo(coinType);
-    var balance = baseCoinVo?.balance;
-    if (balance == null) {
-      throw Exception('check balance fail');
-    }
-    var gasFees = BigInt.from(gasLimit) * gasPrice;
-    if (gasFees > balance) {
-      throw Exception('${baseCoinVo.symbol}${S.of(Keys.rootKey.currentContext).balance_not_enough_for_network_fee}');
-    }
+    // var baseCoinVo = WalletInheritedModel.of(Keys.rootKey.currentContext)?.getBaseCoinVo(coinType);
+    // var balance = baseCoinVo?.balance;
+    // if (balance == null) {
+    //   throw Exception('check balance fail');
+    // }
+    // var gasFees = BigInt.from(gasLimit) * gasPrice;
+    // if (gasFees > balance) {
+    //   throw Exception('${baseCoinVo.symbol}${S.of(Keys.rootKey.currentContext).balance_not_enough_for_network_fee}');
+    // }
 
     final client = WalletUtil.getWeb3Client(coinType);
     var credentials = cred;
@@ -468,6 +479,16 @@ class Wallet {
           await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
       credentials = await client.credentialsFromPrivateKey(privateKey);
     }
+
+    var address = await credentials.extractAddress();
+    var balance = await WalletUtil.getBalanceByCoinTypeAndAddress(coinType, address.hexEip55);
+    var gasFees = BigInt.from(gasLimit) * gasPrice;
+    if (gasFees > balance) {
+      var baseCoinVo = WalletInheritedModel.of(Keys.rootKey.currentContext)?.getBaseCoinVo(coinType);
+      throw Exception('${baseCoinVo.symbol}${S.of(Keys.rootKey.currentContext).balance_not_enough_for_network_fee}');
+    }
+    // print('xxx balance $balance, gasPrice $gasPrice, gasFees $gasFees');
+
     final contract = WalletUtil.getErc20Contract(contractAddress, 'HYN');
 
     var chainId = _getChainId(coinType);
