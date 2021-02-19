@@ -522,7 +522,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                     final client = WalletUtil.getWeb3Client(coinType);
                                     final credentials =
                                         await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
-                                    var gasPrice = coinType == CoinType.HYN_ATLAS ? BigInt.one : null;
+                                    var gasPrice = coinType == CoinType.HYN_ATLAS ? BigInt.one : EthereumGasPrice.getRecommend().fastBigInt;
                                     var fromAddress = await credentials.extractAddress();
                                     var nonce = await WalletUtil.getWeb3Client(coinType)
                                         .getTransactionCount(fromAddress, atBlock: web3.BlockNum.current());
@@ -538,7 +538,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
 
                                     UiUtil.toast('转账$_amount，请等待成功后再执行其他转账');
                                   } catch (e) {
-                                    logger.e(e);
+                                    LogUtil.uploadException(e);
                                     UiUtil.toast('转账异常 ${e.message}');
                                   }
                                 } else if (tokenType == TokenType.RP_HRC30) {
@@ -566,7 +566,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                     print('$amount txhash $txhash');
                                     UiUtil.toast('转账$_amount，请等待成功后再执行其他转账');
                                   } catch (e) {
-                                    logger.e(e);
+                                    LogUtil.uploadException(e);
                                     UiUtil.toast('转账异常, ${e.message}');
                                   }
                                 } else {
@@ -591,6 +591,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                           contractAddress: EthereumConfig.getUsdtErc20Address(),
                                           toAddress: _toAddress,
                                           nonce: nonce,
+                                          gasPrice: EthereumGasPrice.getRecommend().fastBigInt,
                                           value: amount);
                                       print('txhash $txhash');
                                       UiUtil.toast('转账$_amount，请等待成功后再执行其他转账');
@@ -599,7 +600,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                       return;
                                     }
                                   } catch (e) {
-                                    logger.e(e);
+                                    LogUtil.uploadException(e);
                                     UiUtil.toast('转账异常, ${e.message}');
                                   }
                                 }
