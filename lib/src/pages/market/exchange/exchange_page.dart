@@ -279,7 +279,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
             .exchangeModel
             .activeAccount
             ?.assetList
-            ?.getTotalUsdt();
+            ?.totalByUSDT();
 
         var _coinQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('USDT')?.price;
 

@@ -37,12 +37,10 @@ class ExchangeQrcodeDepositPage extends StatefulWidget {
   }
 }
 
-class ExchangeQrcodeDepositPageState
-    extends BaseState<ExchangeQrcodeDepositPage> {
+class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage> {
   String _selectedCoinSymbol = DefaultTokenDefine.HYN_Atlas.symbol;
   Map symbolToChain = {
-    DefaultTokenDefine.HYN_Atlas.symbol:
-        S.of(Keys.rootKey.currentContext).atlas_main_chain,
+    DefaultTokenDefine.HYN_Atlas.symbol: S.of(Keys.rootKey.currentContext).atlas_main_chain,
     DefaultTokenDefine.USDT_ERC20.symbol: "ERC20",
     DefaultTokenDefine.HYN_RP_HRC30.symbol: "HRC30"
   };
@@ -190,17 +188,14 @@ class ExchangeQrcodeDepositPageState
               children: [
                 Container(
                     margin: EdgeInsets.only(top: 8, bottom: 12),
-                    padding:
-                        EdgeInsets.only(left: 12, right: 12, top: 3, bottom: 3),
+                    padding: EdgeInsets.only(left: 12, right: 12, top: 3, bottom: 3),
                     decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 0.5, color: Theme.of(context).primaryColor),
+                      border: Border.all(width: 0.5, color: Theme.of(context).primaryColor),
                       borderRadius: BorderRadius.all(Radius.circular(2)),
                     ),
                     child: Text(
                       symbolToChain[_selectedCoinSymbol],
-                      style: TextStyle(
-                          color: Theme.of(context).primaryColor, fontSize: 10),
+                      style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 10),
                     )),
               ],
             ),
@@ -208,8 +203,7 @@ class ExchangeQrcodeDepositPageState
           SliverToBoxAdapter(
             child: Container(
               margin: EdgeInsets.only(bottom: 17),
-              padding:
-                  EdgeInsets.only(left: 10, right: 10, top: 30, bottom: 26),
+              padding: EdgeInsets.only(left: 10, right: 10, top: 30, bottom: 26),
               decoration: BoxDecoration(
                 color: DefaultColors.colorf5f5f5,
                 borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -234,8 +228,7 @@ class ExchangeQrcodeDepositPageState
                       _saveQrImage(changeAddress);
                     },
                     child: Container(
-                      padding: EdgeInsets.only(
-                          left: 15, right: 15, top: 4, bottom: 4),
+                      padding: EdgeInsets.only(left: 15, right: 15, top: 4, bottom: 4),
                       decoration: BoxDecoration(
                         color: HexColor("#e5e5e5"),
                         borderRadius: BorderRadius.all(Radius.circular(2)),
@@ -276,8 +269,7 @@ class ExchangeQrcodeDepositPageState
                     },
                     child: Container(
                       margin: const EdgeInsets.only(top: 10),
-                      padding: EdgeInsets.only(
-                          left: 15, right: 15, top: 4, bottom: 4),
+                      padding: EdgeInsets.only(left: 15, right: 15, top: 4, bottom: 4),
                       decoration: BoxDecoration(
                         color: HexColor("#e5e5e5"),
                         borderRadius: BorderRadius.all(Radius.circular(2)),
@@ -306,20 +298,16 @@ class ExchangeQrcodeDepositPageState
   Future _saveQrImage(String address) async {
     bool result = false;
     try {
-      RenderRepaintBoundary boundary =
-          _qrImageBoundaryKey.currentContext.findRenderObject();
+      RenderRepaintBoundary boundary = _qrImageBoundaryKey.currentContext.findRenderObject();
       var image = await boundary.toImage();
       ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData.buffer.asUint8List();
-      result = await ImageSave.saveImage(pngBytes, "png",
-          albumName: 'exchange_address_$address');
+      result = await ImageSave.saveImage(pngBytes, "png", albumName: 'exchange_address_$address');
     } catch (e) {
       result = false;
     }
     Fluttertoast.showToast(
-      msg: result
-          ? S.of(context).successfully_saved_album
-          : S.of(context).save_fail,
+      msg: result ? S.of(context).successfully_saved_album : S.of(context).save_fail,
     );
   }
 
@@ -423,14 +411,11 @@ class ExchangeQrcodeDepositPageState
   }
 
   _remainders(String tokenSymbol) {
-    var assetList = ExchangeInheritedModel.of(context)
-        .exchangeModel
-        .activeAccount
-        ?.assetList;
+    var assetList = ExchangeInheritedModel.of(context).exchangeModel.activeAccount?.assetList;
 
-    var minHyn = assetList?.HYN?.rechargeMin ?? '0';
-    var minUsdt = assetList?.USDT?.rechargeMin ?? '0';
-    var minRp = assetList?.RP?.rechargeMin ?? '0';
+    var minHyn = assetList?.getTokenAsset('HYN')?.rechargeMin ?? '0';
+    var minUsdt = assetList?.getTokenAsset('USDT')?.rechargeMin ?? '0';
+    var minRp = assetList?.getTokenAsset('RP')?.rechargeMin ?? '0';
 
     if (tokenSymbol == DefaultTokenDefine.HYN_Atlas.symbol) {
       return RichText(
@@ -445,9 +430,7 @@ class ExchangeQrcodeDepositPageState
             TextSpan(
               text: 'Atlas-HYN',
               style: TextStyle(
-                  fontSize: 10,
-                  color: DefaultColors.color333,
-                  fontWeight: FontWeight.bold),
+                  fontSize: 10, color: DefaultColors.color333, fontWeight: FontWeight.bold),
             ),
             TextSpan(
                 text: S.of(context).assets_otherwise_not_recovered_wait_confirm,
@@ -458,9 +441,7 @@ class ExchangeQrcodeDepositPageState
             TextSpan(
               text: '$minHyn',
               style: TextStyle(
-                  fontSize: 10,
-                  color: DefaultColors.color333,
-                  fontWeight: FontWeight.bold),
+                  fontSize: 10, color: DefaultColors.color333, fontWeight: FontWeight.bold),
             ),
             TextSpan(
                 text: S.of(context).hyn_deposits_minimum_amount_not_to_account,
@@ -484,9 +465,7 @@ class ExchangeQrcodeDepositPageState
             TextSpan(
               text: ' ERC20-USDT ',
               style: TextStyle(
-                  fontSize: 10,
-                  color: DefaultColors.color333,
-                  fontWeight: FontWeight.bold),
+                  fontSize: 10, color: DefaultColors.color333, fontWeight: FontWeight.bold),
             ),
             TextSpan(
                 text: S.of(context).assets_otherwise_not_recovered_wait_confirm,
@@ -524,9 +503,7 @@ class ExchangeQrcodeDepositPageState
             TextSpan(
               text: ' HRC30-RP ',
               style: TextStyle(
-                  fontSize: 10,
-                  color: DefaultColors.color333,
-                  fontWeight: FontWeight.bold),
+                  fontSize: 10, color: DefaultColors.color333, fontWeight: FontWeight.bold),
             ),
             TextSpan(
                 text: S.of(context).assets_otherwise_not_recovered_wait_confirm,
@@ -537,9 +514,7 @@ class ExchangeQrcodeDepositPageState
             TextSpan(
               text: '$minRp',
               style: TextStyle(
-                  fontSize: 10,
-                  color: DefaultColors.color333,
-                  fontWeight: FontWeight.bold),
+                  fontSize: 10, color: DefaultColors.color333, fontWeight: FontWeight.bold),
             ),
             TextSpan(
                 text: S.of(context).rp_deposits_minimum_amount_not_to_account,

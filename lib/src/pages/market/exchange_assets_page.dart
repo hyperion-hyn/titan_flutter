@@ -17,6 +17,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/model/asset_list.dart';
 import 'package:titan/src/pages/market/transfer/exchange_asset_history_page.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
@@ -267,24 +268,18 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
 
   _totalBalances() {
     var _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
-
     var _isShowBalances = ExchangeInheritedModel.of(context).exchangeModel.isShowBalances;
-
     var _totalByHyn = '--';
-
     var _totalByUsdt = '--';
-
     var _totalUSDTQuotePrice = '--';
 
     try {
       _totalByHyn = _exchangeModel.isActiveAccountAndHasAssets()
-          ? FormatUtil.truncateDecimalNum(_exchangeModel.activeAccount?.assetList?.getTotalHyn(), 6)
+          ? FormatUtil.truncateDecimalNum(_exchangeModel.activeAccount?.assetList?.totalByHYN(), 6)
           : '--';
       if (_exchangeModel.isActiveAccountAndHasAssets()) {
         _totalUSDTQuotePrice = FormatUtil.truncateDecimalNum(
-          _usdtToCurrency * _exchangeModel.activeAccount?.assetList?.getTotalUsdt(),
-          4,
-        );
+            _usdtToCurrency * _exchangeModel.activeAccount?.assetList?.totalByUSDT(), 4);
       }
     } catch (e) {}
 
@@ -438,42 +433,26 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
         ? _exchangeModel?.activeAccount?.assetList
         : null;
     var _isShowBalances = ExchangeInheritedModel.of(context)?.exchangeModel?.isShowBalances ?? true;
-    var activeAssets = MarketInheritedModel.of(
-          context,
-          aspect: SocketAspect.marketItemList,
-        ).exchangeCoinList?.assets ??
-        ['HYN', 'USDT', 'RP'];
+    var activeTokens = MarketInheritedModel.of(
+      context,
+      aspect: SocketAspect.marketItemList,
+    ).activeTokens();
 
     List<Widget> assetItemList = [Container()];
 
-    if (activeAssets.contains("HYN")) {
-      assetItemList.add(
-        AssetItem(
-          'HYN',
-          _assetList?.HYN,
-          _usdtToCurrency,
-          _isShowBalances,
-        ),
-      );
-    }
-    if (activeAssets.contains('USDT')) {
-      assetItemList.add(
-        AssetItem(
-          'USDT',
-          _assetList?.USDT,
-          _usdtToCurrency,
-          _isShowBalances,
-        ),
-      );
-    }
-    if (activeAssets.contains('RP')) {
-      assetItemList.add(AssetItem(
-        'RP',
-        _assetList?.RP,
-        _usdtToCurrency,
-        _isShowBalances,
-      ));
-    }
+    activeTokens.forEach((tokenName) {
+      var tokenAsset = _assetList.getTokenAsset(tokenName);
+      if (tokenAsset != null) {
+        assetItemList.add(
+          AssetItem(
+            tokenName,
+            tokenAsset,
+            _usdtToCurrency,
+            _isShowBalances,
+          ),
+        );
+      }
+    });
 
     if (_assetList != null) {
       return Container(
