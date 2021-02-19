@@ -30,6 +30,7 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -41,10 +42,14 @@ import '../../global.dart';
 class WalletSendPageV2 extends StatefulWidget {
   final CoinViewVo coinVo;
   final String toAddress;
+  final String amount;
+  final bool canEdit;
 
-  WalletSendPageV2(String coinVo, [String toAddress])
+  WalletSendPageV2(String coinVo, [String toAddress, String amount, bool canEdit])
       : this.coinVo = CoinViewVo.fromJson(FluroConvertUtils.string2map(coinVo)),
-        this.toAddress = toAddress;
+        this.toAddress = toAddress,
+        this.amount = amount,
+        this.canEdit = canEdit;
 
   @override
   State<StatefulWidget> createState() {
@@ -272,16 +277,12 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     super.initState();
 
     _amountController.addListener(() {
-      if (_amountController.text.trim() != null && _amountController.text.trim().length > 0) {
-        var inputAmount = _amountController.text.trim();
-        var activatedQuoteSign =
-            WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
-        var quotePrice = activatedQuoteSign?.price ?? 0;
-        setState(() {
-          _notionalValue = double.parse(inputAmount) * quotePrice;
-        });
-      }
+      _updateValue();
     });
+
+    if (widget.amount != null) {
+      _amountController.text = widget.amount;
+    }
 
     if (widget.toAddress != null) {
       _toController.text = widget.toAddress;
@@ -294,6 +295,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
 
     _initLastData();
 
+    _updateValue();
+
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
     BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
@@ -304,6 +307,18 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     _initLastData();
 
     super.didPopNext();
+  }
+
+  _updateValue() {
+    if (_amountController.text.trim() != null && _amountController.text.trim().length > 0) {
+      var inputAmount = _amountController.text.trim();
+      var activatedQuoteSign =
+          WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
+      var quotePrice = activatedQuoteSign?.price ?? 0;
+      setState(() {
+        _notionalValue = double.parse(inputAmount) * quotePrice;
+      });
+    }
   }
 
   void _setupDataList() {
@@ -580,7 +595,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     return Container(
       child: Column(
         children: [
-
           GestureDetector(
             onTap: () {
               if (mounted) {
@@ -592,7 +606,10 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
             child: Container(
               // color: Colors.redAccent,
               child: Padding(
-                padding: const EdgeInsets.only(top: 30, bottom: 4,),
+                padding: const EdgeInsets.only(
+                  top: 30,
+                  bottom: 4,
+                ),
                 child: Row(
                   children: <Widget>[
                     Text(
@@ -705,6 +722,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       key: _toKey,
       child: Container(
         child: TextFormField(
+          enabled: widget.canEdit,
           controller: _toController,
           textAlign: TextAlign.start,
 
@@ -734,7 +752,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: HexColor('#333333'),
+            color: widget.canEdit ? DefaultColors.color333 : DefaultColors.color999,
           ),
           cursorColor: Theme.of(context).primaryColor,
           //光标圆角
@@ -780,6 +798,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         children: [
           Container(
             child: TextFormField(
+              enabled: widget.canEdit,
               controller: _amountController,
               textAlign: TextAlign.start,
               validator: (value) {
@@ -821,7 +840,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
               style: TextStyle(
                 fontSize: _amountFontSize,
                 fontWeight: FontWeight.w500,
-                color: HexColor('#333333'),
+                color: widget.canEdit ? DefaultColors.color333 : DefaultColors.color999,
               ),
               cursorColor: Theme.of(context).primaryColor,
               //光标圆角
@@ -1075,7 +1094,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       gasDesc: '',
       gasUnit: gasUnit,
       action: (String password) async {
-
         // 1.Bitcoin
         if (_isBTC) {
           var transResult = await wallet.sendBitcoinTransaction(

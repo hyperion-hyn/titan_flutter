@@ -15,8 +15,10 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_history_list_page.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -176,7 +178,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       );
     } else {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical:8),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
         child: Row(
           children: <Widget>[
             Text(
@@ -728,10 +730,15 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       aspect: WalletAspect.activatedWallet,
     ).getCoinVoBySymbol(_selectedCoinSymbol);
 
-    var voStr = FluroConvertUtils.object2string(coinVo.toJson());
+    var toAddress = exchangeAddress;
+    if (coinVo.coinType == CoinType.HYN_ATLAS) {
+      toAddress = WalletUtil.ethAddressToBech32Address(exchangeAddress);
+    }
+
     Application.router.navigateTo(
       context,
-      '${Routes.exchange_deposit_confirm_page}?coinVo=$voStr&transferAmount=${_amountController.text}&exchangeAddress=$exchangeAddress',
+      Routes.wallet_account_send_transaction +
+          '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&toAddress=$toAddress&amount=${_amountController.text}&canEdit=${0}',
     );
   }
 
