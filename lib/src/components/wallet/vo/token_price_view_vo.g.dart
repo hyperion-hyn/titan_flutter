@@ -20,7 +20,7 @@ TokenPriceViewVo _$TokenPriceViewVoFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$TokenPriceViewVoToJson(TokenPriceViewVo instance) =>
     <String, dynamic>{
       'symbol': instance.symbol,
-      'legal': instance.legal,
+      'legal': instance.legal?.toJson(),
       'price': instance.price,
       'percentChange24h': instance.percentChange24h,
     };

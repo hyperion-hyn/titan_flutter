@@ -30,11 +30,11 @@ RpDetailEntity _$RpDetailEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$RpDetailEntityToJson(RpDetailEntity instance) =>
     <String, dynamic>{
-      'level_intro': instance.levelIntro,
-      'lucky_intro': instance.luckyIntro,
-      'promotion_intro': instance.promotionIntro,
-      'records': instance.records,
-      'red_pocket': instance.redPocket,
+      'level_intro': instance.levelIntro?.toJson(),
+      'lucky_intro': instance.luckyIntro?.toJson(),
+      'promotion_intro': instance.promotionIntro?.toJson(),
+      'records': instance.records?.map((e) => e?.toJson())?.toList(),
+      'red_pocket': instance.redPocket?.toJson(),
     };
 
 LevelIntro _$LevelIntroFromJson(Map<String, dynamic> json) {

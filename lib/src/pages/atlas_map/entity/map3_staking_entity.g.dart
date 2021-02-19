@@ -19,6 +19,6 @@ Map3StakingEntity _$Map3StakingEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$Map3StakingEntityToJson(Map3StakingEntity instance) =>
     <String, dynamic>{
-      'map3_nodes': instance.map3Nodes,
+      'map3_nodes': instance.map3Nodes?.map((e) => e?.toJson())?.toList(),
       'can_staking_num': instance.canStakingNum,
     };

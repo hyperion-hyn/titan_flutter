@@ -21,7 +21,7 @@ Map<String, dynamic> _$NodeProviderEntityToJson(NodeProviderEntity instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'regions': instance.regions,
+      'regions': instance.regions?.map((e) => e?.toJson())?.toList(),
     };
 
 Regions _$RegionsFromJson(Map<String, dynamic> json) {
@@ -37,7 +37,7 @@ Regions _$RegionsFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$RegionsToJson(Regions instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'location': instance.location,
+      'location': instance.location?.toJson(),
     };
 
 Location _$LocationFromJson(Map<String, dynamic> json) {

@@ -1,4 +1,5 @@
 
+import 'package:characters/characters.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:titan/env.dart';
 
@@ -13,4 +14,32 @@ void main() {
     expect(result.length, 2);
     print(result);
   });
+
+  test('some as test', () async {
+    var mapEnt = Map();
+    mapEnt["amount"] = 0;
+    var stringEnt = '';
+    // var doubleEnt = double.parse(mapEnt["amount"]);
+    dynamic dynaEnt;
+    String str2Ent = "string";
+    dynaEnt = str2Ent;
+    // print(doubleEnt);
+    print(dynaEnt);
+  });
+
+  test('some trans test', () async {
+    var mapEnt = Map();
+    mapEnt["amount"] = 0;
+    var amountFrom = amountFromJson(mapEnt);
+    var amountTo = amountToJson(null);
+    print("$amountFrom  $amountTo");
+  });
+}
+
+double amountFromJson(dynamic json) {
+return double.parse(json['amount'].toString());
+}
+
+String amountToJson(dynamic amount) {
+return amount.toString();
 }

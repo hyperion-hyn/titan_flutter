@@ -23,7 +23,7 @@ Map<String, dynamic> _$CheckInModelToJson(CheckInModel instance) =>
     <String, dynamic>{
       'day': instance.day,
       'total': instance.total,
-      'detail': instance.detail,
+      'detail': instance.detail?.map((e) => e?.toJson())?.toList(),
       'completed': instance.completed,
     };
 
@@ -39,7 +39,7 @@ CheckInModelDetail _$CheckInModelDetailFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$CheckInModelDetailToJson(CheckInModelDetail instance) =>
     <String, dynamic>{
       'action': instance.action,
-      'state': instance.state,
+      'state': instance.state?.toJson(),
     };
 
 CheckInModelState _$CheckInModelStateFromJson(Map<String, dynamic> json) {
@@ -58,7 +58,7 @@ Map<String, dynamic> _$CheckInModelStateToJson(CheckInModelState instance) =>
     <String, dynamic>{
       'total': instance.total,
       'real': instance.real,
-      'pois': instance.pois,
+      'pois': instance.pois?.map((e) => e?.toJson())?.toList(),
     };
 
 CheckInModelPoi _$CheckInModelPoiFromJson(Map<String, dynamic> json) {
@@ -103,5 +103,5 @@ Map<String, dynamic> _$CheckInModelPoiToJson(CheckInModelPoi instance) =>
       'created_at': instance.createdAt,
       'originalImgs': instance.originalImgs,
       'poiCreatedAt': instance.poiCreatedAt,
-      'detail': instance.detail,
+      'detail': instance.detail?.map((e) => e?.toJson())?.toList(),
     };

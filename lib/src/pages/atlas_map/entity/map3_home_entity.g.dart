@@ -24,7 +24,8 @@ Map3HomeEntity _$Map3HomeEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$Map3HomeEntityToJson(Map3HomeEntity instance) =>
     <String, dynamic>{
-      'my_nodes': instance.myNodes,
-      'new_start_nodes': instance.newStartNodes,
+      'my_nodes': instance.myNodes?.map((e) => e?.toJson())?.toList(),
+      'new_start_nodes':
+          instance.newStartNodes?.map((e) => e?.toJson())?.toList(),
       'points': instance.points,
     };

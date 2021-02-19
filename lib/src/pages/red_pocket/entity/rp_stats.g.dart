@@ -24,10 +24,10 @@ RpStats _$RpStatsFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$RpStatsToJson(RpStats instance) => <String, dynamic>{
-      'global': instance.global,
-      'airdrop': instance.airdrop,
-      'transmit': instance.transmit,
-      'promotion': instance.promotion,
+      'global': instance.global?.toJson(),
+      'airdrop': instance.airdrop?.toJson(),
+      'transmit': instance.transmit?.toJson(),
+      'promotion': instance.promotion?.toJson(),
     };
 
 Global _$GlobalFromJson(Map<String, dynamic> json) {

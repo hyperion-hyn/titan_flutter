@@ -31,7 +31,7 @@ Map<String, dynamic> _$Map3NodeVoToJson(Map3NodeVo instance) =>
       'hynTokenUsers': instance.hynTokenUsers,
       'tileRequests': instance.tileRequests,
       'tileTotalRequests': instance.tileTotalRequests,
-      'tiles': instance.tiles,
+      'tiles': instance.tiles?.map((e) => e?.toJson())?.toList(),
       'totalDmapperDownloads': instance.totalDmapperDownloads,
       'totalDmapperUsers': instance.totalDmapperUsers,
       'totalHynTokenUsers': instance.totalHynTokenUsers,
@@ -46,7 +46,7 @@ Tiles _$TilesFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$TilesToJson(Tiles instance) => <String, dynamic>{
-      'id': instance.id,
+      'id': instance.id?.toJson(),
       'count': instance.count,
     };
 

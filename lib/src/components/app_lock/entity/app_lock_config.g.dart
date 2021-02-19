@@ -16,7 +16,7 @@ AppLockConfig _$AppLockConfigFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$AppLockConfigToJson(AppLockConfig instance) =>
     <String, dynamic>{
-      'walletLock': instance.walletLock,
+      'walletLock': instance.walletLock?.toJson(),
     };
 
 WalletLock _$WalletLockFromJson(Map<String, dynamic> json) {

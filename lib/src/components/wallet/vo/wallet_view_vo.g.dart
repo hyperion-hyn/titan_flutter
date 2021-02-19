@@ -21,7 +21,7 @@ WalletViewVo _$WalletViewVoFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$WalletViewVoToJson(WalletViewVo instance) =>
     <String, dynamic>{
-      'wallet': instance.wallet,
-      'coins': instance.coins,
+      'wallet': instance.wallet?.toJson(),
+      'coins': instance.coins?.map((e) => e?.toJson())?.toList(),
       'balance': instance.balance,
     };
