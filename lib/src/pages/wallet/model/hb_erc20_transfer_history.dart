@@ -1,7 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'hb_erc20_transfer_history.g.dart';
-
 class HbErc20TransferHistory {
   String blockNumber;
   String timeStamp;

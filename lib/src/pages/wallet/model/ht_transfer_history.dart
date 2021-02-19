@@ -1,7 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'ht_transfer_history.g.dart';
-
 class HtTransferHistory {
   String blockNumber;
   String timeStamp;

@@ -64,7 +64,7 @@ dependencies:
   #https://pub.dev/packages/flutter_statusbarcolor#-installing-tab-
   #  flutter_statusbarcolor: ^0.2.3
   #https://github.com/dart-lang/json_serializable
-  #  json_annotation: ^2.4.0
+  json_annotation: ^3.1.1
   #https://pub.dev/packages/esys_flutter_share
   esys_flutter_share: 1.0.2
   #https://pub.dev/packages/uni_links
@@ -187,10 +187,10 @@ dev_dependencies:
     sdk: flutter
 
   build_runner: ^1.7.2
-  json_serializable: ^3.2.5
+  json_serializable: ^3.5.1
   #  floor_generator: ^0.9.0
 
-  #https://github.com/dart-lang/mockito
+  #https://github.com/dart-lang/mockitoc
   mockito: ^4.0.0
 
 

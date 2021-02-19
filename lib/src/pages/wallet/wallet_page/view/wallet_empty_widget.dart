@@ -7,6 +7,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
+import 'package:titan/src/pages/policy/policy_util.dart';
 import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -56,7 +57,7 @@ class EmptyWalletView extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
                   onPressed: () async {
-                    bool isNotAgreePolicy = await _checkConfirmWalletPolicy();
+                    bool isNotAgreePolicy = await PolicyUtil.checkConfirmWalletPolicy();
                     if (isNotAgreePolicy) {
                       isNotAgreePolicy = await Navigator.of(context).push(MaterialPageRoute(
                         builder: (BuildContext context) => PolicyConfirmPage(
@@ -92,7 +93,7 @@ class EmptyWalletView extends StatelessWidget {
                         side: BorderSide(color: Theme.of(context).primaryColor),
                         borderRadius: BorderRadius.circular(36)),
                     onPressed: () async {
-                      if (await _checkConfirmWalletPolicy()) {
+                      if (await PolicyUtil.checkConfirmWalletPolicy()) {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (BuildContext context) => PolicyConfirmPage(
                             PolicyType.WALLET,
@@ -135,10 +136,4 @@ class EmptyWalletView extends StatelessWidget {
     }
   }
 
-  Future<bool> _checkConfirmWalletPolicy() async {
-    var isConfirmWalletPolicy = await AppCache.getValue(
-      PrefsKey.IS_CONFIRM_WALLET_POLICY,
-    );
-    return isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
-  }
 }
