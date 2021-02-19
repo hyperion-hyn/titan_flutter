@@ -20,6 +20,7 @@ import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import "package:convert/convert.dart" show hex;
@@ -761,7 +762,12 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
 
   /// 刷新balance
   void refreshBalanceOfAccount(AddressData addressData) async {
-    await updateBalanceOfAddress(addressData);
+    try {
+      await updateBalanceOfAddress(addressData);
+    } catch(e, st) {
+      print(st);
+      LogUtil.toastException(e);
+    }
     setState(() {
       print('update ${addressData.address} done');
     });

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/env.dart';
+import 'package:titan/src/basic/error/error_code.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/basic/http/my_client.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
@@ -26,6 +27,7 @@ import 'package:titan/src/plugins/wallet/wallet_channel.dart';
 import 'package:http/http.dart';
 import 'package:titan/src/plugins/wallet/wallet_expand_info_entity.dart';
 import 'package:web3dart/crypto.dart';
+import 'package:web3dart/json_rpc.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 import 'package:bip39/bip39.dart' as bip39;
 
@@ -402,12 +404,36 @@ class WalletUtil {
 
   /// https://infura.io/docs/gettingStarted/makeRequests.md
   static Future<dynamic> postToEthereumNetwork(int coinType,
-      {String method, List params, int id = 1}) {
+      {String method, List params, int id = 1}) async {
     //{jsonrpc: 2.0, id: 1, result: 0x4547fdfbf3f1cfd25c0fa7267a97c7832ddda76352456b8e78898e9bd619adb7}
     var rpcApi = _getRpcApiByCoinType(coinType);
-    return HttpCore.instance.post(rpcApi,
+    var data  = await  HttpCore.instance.post(rpcApi,
         params: {"jsonrpc": "2.0", "method": method, "params": params, "id": id},
         options: RequestOptions(contentType: Headers.jsonContentType));
+
+    if (data.containsKey('error') && data['error'] != null) {
+      final error = data['error'];
+      final code = error['code'] as int;
+      final message = error['message'] as String;
+      final errorData = error['data'];
+
+      throw RPCError(code, message, errorData);
+    }
+
+    //亚马逊错误???
+    if(data['result'] == null && data['jsonrpc'] == null) {
+      throw RPCError(0, data.toString(), "");
+    }
+
+    if (data.containsKey('code') && data['code'] != null && data['code'] != 200) {
+      final code = data['code'] as int;
+      final message = data['msg'] as String;
+      final errorData = data['subMsg'];
+
+      throw RPCError(code, message, errorData);
+    }
+
+    return data;
   }
 
   /// address, contractInstance
