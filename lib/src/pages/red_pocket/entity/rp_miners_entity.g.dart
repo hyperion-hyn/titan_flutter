@@ -20,8 +20,8 @@ RpMinersEntity _$RpMinersEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$RpMinersEntityToJson(RpMinersEntity instance) =>
     <String, dynamic>{
-      'inviter': instance.inviter,
-      'miners': instance.miners,
+      'inviter': instance.inviter?.toJson(),
+      'miners': instance.miners?.map((e) => e?.toJson())?.toList(),
     };
 
 RpMinerInfo _$RpMinerInfoFromJson(Map<String, dynamic> json) {

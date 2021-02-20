@@ -29,10 +29,10 @@ SignalDailyVo _$SignalDailyVoFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$SignalDailyVoToJson(SignalDailyVo instance) =>
     <String, dynamic>{
-      'gps': instance.gps,
-      'wifi': instance.wifi,
-      'blue_tooth': instance.blueTooth,
-      'cellular': instance.cellular,
+      'gps': instance.gps?.map((e) => e?.toJson())?.toList(),
+      'wifi': instance.wifi?.map((e) => e?.toJson())?.toList(),
+      'blue_tooth': instance.blueTooth?.map((e) => e?.toJson())?.toList(),
+      'cellular': instance.cellular?.map((e) => e?.toJson())?.toList(),
     };
 
 Signal _$SignalFromJson(Map<String, dynamic> json) {

@@ -48,7 +48,7 @@ Map<String, dynamic> _$Map3TxLogEntityToJson(Map3TxLogEntity instance) =>
       'contract_address': instance.contractAddress,
       'created_at': instance.createdAt,
       'data': instance.data,
-      'dataDecoded': instance.dataDecoded,
+      'dataDecoded': instance.dataDecoded?.toJson(),
       'epoch': instance.epoch,
       'from': instance.from,
       'gas_limit': instance.gasLimit,
@@ -87,7 +87,7 @@ DataDecoded _$DataDecodedFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$DataDecodedToJson(DataDecoded instance) =>
     <String, dynamic>{
       'operatorAddress': instance.operatorAddress,
-      'description': instance.description,
+      'description': instance.description?.toJson(),
       'commission': instance.commission,
       'nodePubKey': instance.nodePubKey,
       'nodeKeySig': instance.nodeKeySig,

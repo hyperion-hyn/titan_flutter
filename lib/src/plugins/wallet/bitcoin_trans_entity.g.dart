@@ -32,8 +32,8 @@ Map<String, dynamic> _$BitcoinTransEntityToJson(BitcoinTransEntity instance) =>
       'toAddress': instance.toAddress,
       'fee': instance.fee,
       'amount': instance.amount,
-      'utxo': instance.utxo,
-      'change': instance.change,
+      'utxo': instance.utxo?.map((e) => e?.toJson())?.toList(),
+      'change': instance.change?.toJson(),
     };
 
 Utxo _$UtxoFromJson(Map<String, dynamic> json) {

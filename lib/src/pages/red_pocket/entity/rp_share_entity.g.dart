@@ -21,8 +21,8 @@ RpShareEntity _$RpShareEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$RpShareEntityToJson(RpShareEntity instance) =>
     <String, dynamic>{
-      'details': instance.details,
-      'info': instance.info,
+      'details': instance.details?.map((e) => e?.toJson())?.toList(),
+      'info': instance.info?.toJson(),
     };
 
 RpShareOpenEntity _$RpShareOpenEntityFromJson(Map<String, dynamic> json) {

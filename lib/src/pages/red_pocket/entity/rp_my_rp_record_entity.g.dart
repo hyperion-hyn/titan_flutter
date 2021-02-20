@@ -19,7 +19,7 @@ RpMyRpRecordEntity _$RpMyRpRecordEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$RpMyRpRecordEntityToJson(RpMyRpRecordEntity instance) =>
     <String, dynamic>{
-      'data': instance.data,
+      'data': instance.data?.map((e) => e?.toJson())?.toList(),
       'paging_key': instance.pagingKey,
     };
 
@@ -38,7 +38,7 @@ RpMyRpSplitRecordEntity _$RpMyRpSplitRecordEntityFromJson(
 Map<String, dynamic> _$RpMyRpSplitRecordEntityToJson(
         RpMyRpSplitRecordEntity instance) =>
     <String, dynamic>{
-      'data': instance.data,
+      'data': instance.data?.map((e) => e?.toJson())?.toList(),
       'paging_key': instance.pagingKey,
     };
 

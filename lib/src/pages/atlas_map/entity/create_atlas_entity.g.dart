@@ -28,7 +28,7 @@ Map<String, dynamic> _$CreateAtlasEntityToJson(CreateAtlasEntity instance) =>
       'from': instance.from,
       'gas_limit': instance.gasLimit,
       'nonce': instance.nonce,
-      'payload': instance.payload,
+      'payload': instance.payload?.toJson(),
       'price': instance.price,
       'raw_tx': instance.rawTx,
       'to': instance.to,

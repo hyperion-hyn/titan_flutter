@@ -43,7 +43,7 @@ Map<String, dynamic> _$NcovPoiEntityToJson(NcovPoiEntity instance) =>
       'county': instance.county,
       'name': instance.name,
       'address': instance.address,
-      'location': instance.location,
+      'location': instance.location?.toJson(),
       'images': instance.images,
       'road': instance.road,
       'house_number': instance.houseNumber,

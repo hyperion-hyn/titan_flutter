@@ -20,7 +20,7 @@ WalletAccountVo _$WalletAccountVoFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$WalletAccountVoToJson(WalletAccountVo instance) =>
     <String, dynamic>{
-      'account': instance.account,
-      'assetToken': instance.assetToken,
+      'account': instance.account?.toJson(),
+      'assetToken': instance.assetToken?.toJson(),
       'balance': instance.balance,
     };

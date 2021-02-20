@@ -32,9 +32,10 @@ Map<String, dynamic> _$AccountBindInfoEntityToJson(
       'isMaster': instance.isMaster,
       'isSub': instance.isSub,
       'master': instance.master,
-      'request': instance.request,
+      'request': instance.request?.toJson(),
       'sub': instance.sub,
-      'subRelationships': instance.subRelationships,
+      'subRelationships':
+          instance.subRelationships?.map((e) => e?.toJson())?.toList(),
     };
 
 Request _$RequestFromJson(Map<String, dynamic> json) {

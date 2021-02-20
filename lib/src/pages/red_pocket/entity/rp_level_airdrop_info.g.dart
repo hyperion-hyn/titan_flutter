@@ -19,7 +19,7 @@ RpLevelAirdropInfo _$RpLevelAirdropInfoFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$RpLevelAirdropInfoToJson(RpLevelAirdropInfo instance) =>
     <String, dynamic>{
       'total_amount': instance.totalAmount,
-      'per_level_amount': instance.perLevelAmount,
+      'per_level_amount': instance.perLevelAmount?.toJson(),
     };
 
 Per_level_amount _$Per_level_amountFromJson(Map<String, dynamic> json) {

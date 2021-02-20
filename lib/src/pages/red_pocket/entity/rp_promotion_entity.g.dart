@@ -23,9 +23,9 @@ RpPromotionEntity _$RpPromotionEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$RpPromotionEntityToJson(RpPromotionEntity instance) =>
     <String, dynamic>{
-      'rp_supply': instance.rpSupply,
-      'rules': instance.rules,
-      'self': instance.self,
+      'rp_supply': instance.rpSupply?.toJson(),
+      'rules': instance.rules?.map((e) => e?.toJson())?.toList(),
+      'self': instance.self?.toJson(),
     };
 
 RpSupply _$RpSupplyFromJson(Map<String, dynamic> json) {

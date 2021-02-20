@@ -23,8 +23,8 @@ Map<String, dynamic> _$ConfirmPoiNetworkItemToJson(
         ConfirmPoiNetworkItem instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'location': instance.location,
-      'Properties': instance.properties,
+      'location': instance.location?.toJson(),
+      'Properties': instance.properties?.toJson(),
     };
 
 Properties _$PropertiesFromJson(Map<String, dynamic> json) {

@@ -28,7 +28,7 @@ Map<String, dynamic> _$PledgeAtlasEntityToJson(PledgeAtlasEntity instance) =>
       'from': instance.from,
       'gas_limit': instance.gasLimit,
       'nonce': instance.nonce,
-      'payload': instance.payload,
+      'payload': instance.payload?.toJson(),
       'gas_price': instance.gasPrice,
       'raw_tx': instance.rawTx,
       'to': instance.to,

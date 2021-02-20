@@ -18,7 +18,7 @@ QuotesModel _$QuotesModelFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$QuotesModelToJson(QuotesModel instance) =>
     <String, dynamic>{
-      'quotes': instance.quotes,
+      'quotes': instance.quotes?.map((e) => e?.toJson())?.toList(),
     };
 
 LegalSign _$LegalSignFromJson(Map<String, dynamic> json) {

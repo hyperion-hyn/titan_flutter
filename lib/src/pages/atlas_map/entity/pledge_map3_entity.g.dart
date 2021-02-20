@@ -17,7 +17,7 @@ PledgeMap3Entity _$PledgeMap3EntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$PledgeMap3EntityToJson(PledgeMap3Entity instance) =>
     <String, dynamic>{
-      'payload': instance.payload,
+      'payload': instance.payload?.toJson(),
       'raw_tx': instance.rawTx,
     };
 

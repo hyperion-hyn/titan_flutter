@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/services.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 
@@ -16,6 +19,7 @@ class TransactionDetailVo {
   int type; //1、转出 2、转入
   String hash;
   int state; //1 success, 0 pending, -1 failed
+  @JsonKey(fromJson: amountFromJson, toJson: amountToJson)
   double amount;
   String symbol;
   String fromAddress;
@@ -94,6 +98,14 @@ class TransactionDetailVo {
     this.cancelTimes,
     this.lastOptType,
   });
+
+  static double amountFromJson(dynamic json) {
+    return double.parse(json.toString());
+  }
+
+  static String amountToJson(dynamic amount) {
+    return amount.toString();
+  }
 
   String getDecodedAmount() {
     if (dataDecoded == null) {
