@@ -356,7 +356,7 @@ class Wallet {
     var balance = await WalletUtil.getBalanceByCoinTypeAndAddress(coinType, address.hexEip55);
     var gasLimitBigInt = BigInt.from(gasLimit);
     var gasFees = gasLimitBigInt * gasPrice;
-    var transferValue = value ?? 0;
+    var transferValue = value ?? BigInt.zero;
     if ((gasFees + transferValue) > balance) {
       throw Exception(S.of(Keys.rootKey.currentContext).transaction_amount_over_than_balance);
     }
