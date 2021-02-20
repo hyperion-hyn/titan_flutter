@@ -499,10 +499,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     if (exchangeModel.isActiveAccountAndHasAssets()) {
       if (isBuy) {
         return Decimal.parse(
-            exchangeModel.activeAccount.assetList.getAsset(widget.base).exchangeAvailable);
+            exchangeModel.activeAccount.assetList.getTokenAsset(widget.base).exchangeAvailable);
       } else {
         return Decimal.parse(
-            exchangeModel.activeAccount?.assetList?.getAsset(widget.quote)?.exchangeAvailable);
+            exchangeModel.activeAccount?.assetList?.getTokenAsset(widget.quote)?.exchangeAvailable);
       }
     } else {
       return Decimal.fromInt(0);

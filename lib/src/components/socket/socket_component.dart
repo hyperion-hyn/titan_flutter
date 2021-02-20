@@ -89,8 +89,7 @@ class _SocketState extends State<_SocketManager> {
         LogUtil.printMessage('[WS]  listen..., data, Socket 连接成功， 发起订阅！');
 
         for (var channel in _channelList) {
-          LogUtil.printMessage(
-              '[WS]  listen..., data, Socket 连接成功， 发起订阅， channel:$channel');
+          LogUtil.printMessage('[WS]  listen..., data, Socket 连接成功， 发起订阅， channel:$channel');
 
           _bloc.add(SubChannelEvent(channel: channel));
         }
@@ -342,6 +341,10 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
     return marketItemEntity;
   }
 
+  List<String> activeTokens() {
+    return exchangeCoinList?.assets ?? ['HYN', 'USDT', 'RP'];
+  }
+
   List<MarketItemEntity> getFilterMarketItemList() {
     if (exchangeCoinList == null) {
       return marketItemList;
@@ -351,8 +354,7 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
       List<MarketItemEntity> filteredList = List();
       exchangeCoinList.activeExchangeMap?.forEach((key, value) {
         marketItemList.forEach((marketItem) {
-          if (marketItem.base == key &&
-              (value as List).contains(marketItem?.quote)) {
+          if (marketItem.base == key && (value as List).contains(marketItem?.quote)) {
             filteredList.add(marketItem);
           }
         });
@@ -404,20 +406,17 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
 
   double get24HourAmount(String symbol) {
     var marketItem = getMarketItem(symbol);
-    var amount =
-        marketItem == null ? 0.0 : (marketItem.kLineEntity?.amount ?? 0.0);
+    var amount = marketItem == null ? 0.0 : (marketItem.kLineEntity?.amount ?? 0.0);
     return amount;
   }
 
   static MarketInheritedModel of(BuildContext context, {SocketAspect aspect}) {
-    return InheritedModel.inheritFrom<MarketInheritedModel>(context,
-        aspect: aspect);
+    return InheritedModel.inheritFrom<MarketInheritedModel>(context, aspect: aspect);
   }
 
   @override
   bool updateShouldNotify(MarketInheritedModel old) {
-    return marketItemList !=
-        old.marketItemList; // || tradeDetailList != old.tradeDetailList;
+    return marketItemList != old.marketItemList; // || tradeDetailList != old.tradeDetailList;
   }
 
   @override

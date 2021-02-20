@@ -305,24 +305,14 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
   }
 
   _assetItem() {
-    if (widget._symbol == 'HYN') {
+    var asset = ExchangeInheritedModel.of(context)
+        ?.exchangeModel
+        ?.activeAccount
+        ?.assetList
+        ?.getTokenAsset(widget._symbol);
+    if (asset != null) {
       return AssetItem(
-        ExchangeInheritedModel.of(context)?.exchangeModel?.activeAccount?.assetList?.HYN,
-        _usdtToCurrency,
-      );
-    } else if (widget._symbol == 'USDT') {
-      return AssetItem(
-        ExchangeInheritedModel.of(context)?.exchangeModel?.activeAccount?.assetList?.USDT,
-        _usdtToCurrency,
-      );
-    } else if (widget._symbol == 'ETH') {
-      return AssetItem(
-        ExchangeInheritedModel.of(context)?.exchangeModel?.activeAccount?.assetList?.ETH,
-        _usdtToCurrency,
-      );
-    } else if (widget._symbol == 'RP') {
-      return AssetItem(
-        ExchangeInheritedModel.of(context)?.exchangeModel?.activeAccount?.assetList?.RP,
+        asset,
         _usdtToCurrency,
       );
     } else {
