@@ -25,6 +25,8 @@ import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
+import 'package:titan/src/utils/log_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/json_rpc.dart';
@@ -501,7 +503,10 @@ class Wallet {
       var baseCoinVo = WalletInheritedModel.of(Keys.rootKey.currentContext)?.getBaseCoinVo(coinType);
       throw Exception('${baseCoinVo.symbol}${S.of(Keys.rootKey.currentContext).balance_not_enough_for_network_fee}');
     }
-    // print('xxx balance $balance, gasPrice $gasPrice, gasFees $gasFees');
+
+    var tip = 'xxx balance $balance, gasPrice $gasPrice, gasFees $gasFees, address ${address.hexEip55}, gasLimit $gasLimit';
+    UiUtil.toast(tip);
+    LogUtil.uploadException(tip);
 
     final contract = WalletUtil.getErc20Contract(contractAddress, 'HYN');
 

@@ -599,8 +599,8 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                       UiUtil.toast('错误的类型 $tokenType');
                                       return;
                                     }
-                                  } catch (e) {
-                                    LogUtil.uploadException(e);
+                                  } catch (e, st) {
+                                    LogUtil.uploadException(st, e.message);
                                     UiUtil.toast('转账异常, ${e.message}');
                                   }
                                 }
