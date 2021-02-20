@@ -57,9 +57,11 @@ class Tokens {
       switch (HecoConfig.chainType) {
         case HecoChainType.mainnet:
           tokens.add(DefaultTokenDefine.HUSD);
+          tokens.add(DefaultTokenDefine.HUSDT);
           break;
         case HecoChainType.test:
           tokens.add(DefaultTokenDefine.HUSD_TEST);
+          tokens.add(DefaultTokenDefine.HUSDT_TEST);
           break;
       }
     }
@@ -209,5 +211,21 @@ class DefaultTokenDefine {
     contractAddress: '0x8Dd66eefEF4B503EB556b1f50880Cc04416B916B',
     logo: "res/drawable/ic_hb_logo_husd.png",
     symbol: 'HUSD',
+  );
+
+  static final HUSDT = AssetToken(
+    name: 'Heco USDT',
+    decimals: 18,
+    contractAddress: '0xa71edc38d189767582c38a3145b5873052c3e47a',
+    logo: 'res/drawable/usdt_logo.png',
+    symbol: 'HUSDT',
+  );
+
+  static final HUSDT_TEST = AssetToken(
+    name: 'Heco USDT',
+    decimals: 6,
+    contractAddress: '0x04F535663110A392A6504839BEeD34E019FdB4E0',
+    logo: 'res/drawable/usdt_logo.png',
+    symbol: 'HUSDT',
   );
 }

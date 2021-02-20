@@ -731,6 +731,10 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       toAddress = WalletUtil.ethAddressToBech32Address(exchangeAddress);
     }
 
+    if (coinVo.coinType == CoinType.HB_HT) {
+
+    }
+
     Application.router.navigateTo(
       context,
       Routes.wallet_account_send_transaction +

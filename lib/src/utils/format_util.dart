@@ -343,8 +343,7 @@ class FormatUtil {
       var result = decNumStr;
 
       if (decNumStr.contains('.')) {
-        result = decNumStr
-            .substring(0, decNumStr.lastIndexOf(".") + decimal + 1);
+        result = decNumStr.substring(0, decNumStr.lastIndexOf(".") + decimal + 1);
       }
 
       // print('[Format] truncateDecimalNum, 2, number:$number, result:$result');
@@ -356,11 +355,10 @@ class FormatUtil {
 
   static String truncateDecimalNum(Decimal decNum, int decimal) {
     var number = decNum.toString();
-    if(!number.contains(".")){
+    if (!number.contains(".")) {
       return number;
     }
-    if ((number.length - number.lastIndexOf(".") - 1) <
-        decimal) {
+    if ((number.length - number.lastIndexOf(".") - 1) < decimal) {
       var result = decNum
           .toStringAsFixed(decimal)
           .substring(0, number.lastIndexOf(".") + decimal + 1)
@@ -368,9 +366,7 @@ class FormatUtil {
       result = FormatUtil.strClearZero(result);
       return result;
     } else {
-      var result = number
-          .substring(0, number.lastIndexOf(".") + decimal + 1)
-          .toString();
+      var result = number.substring(0, number.lastIndexOf(".") + decimal + 1).toString();
       result = FormatUtil.strClearZero(result);
       return result;
     }
