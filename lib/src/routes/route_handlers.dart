@@ -131,7 +131,15 @@ var walletAccountDetailHandler = Handler(handlerFunc: (context, params) {
 
 var walletAccountSendTransactionHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return WalletSendPageV2(params['coinVo']?.first, params['toAddress']?.first);
+
+  bool canEdit = (params['canEdit']?.first ?? 1) == 1;
+
+  return WalletSendPageV2(
+    params['coinVo']?.first,
+    params['toAddress']?.first,
+    params['amount']?.first,
+    canEdit,
+  );
 });
 
 var transferConfirmHandler = Handler(handlerFunc: (context, params) {

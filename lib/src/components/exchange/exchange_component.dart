@@ -64,9 +64,11 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
 
               ///update assets
               var ret = await _exchangeApi.getAssetsList();
-              exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
+              exchangeModel.activeAccount.assetList = AssetListV2.fromJson(ret);
             }
-          } catch (e) {}
+          } catch (e) {
+            //print('-----CheckAccountState $e');
+          }
         } else if (state is LoginState) {
           try {
             ///Clear previous account
@@ -79,26 +81,25 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
             if (account != null) {
               exchangeModel.activeAccount = account;
               var ret = await _exchangeApi.getAssetsList();
-              exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
-
+              exchangeModel.activeAccount.assetList = AssetListV2.fromJson(ret);
               BlocProvider.of<ExchangeCmpBloc>(context).add(LoginSuccessEvent());
             } else {
               BlocProvider.of<ExchangeCmpBloc>(context).add(LoginFailEvent());
             }
           } catch (e) {
-            print('--- $e');
             BlocProvider.of<ExchangeCmpBloc>(context).add(LoginFailEvent());
           }
 
           ///cache exchange account
           var sharePref = await SharedPreferences.getInstance();
-          var accountStr = json.encode(exchangeModel.activeAccount.toJson());
-          sharePref.setString(PrefsKey.EXCHANGE_ACCOUNT, accountStr);
-
-          sharePref.setInt(
-            PrefsKey.EXCHANGE_ACCOUNT_LAST_AUTH_TIME,
-            DateTime.now().millisecondsSinceEpoch,
-          );
+          try {
+            var accountStr = json.encode(exchangeModel.activeAccount.toJson());
+            sharePref.setString(PrefsKey.EXCHANGE_ACCOUNT, accountStr);
+            sharePref.setInt(
+              PrefsKey.EXCHANGE_ACCOUNT_LAST_AUTH_TIME,
+              DateTime.now().millisecondsSinceEpoch,
+            );
+          } catch (e) {}
         } else if (state is SetShowBalancesState) {
           exchangeModel.isShowBalances = state.isShow;
         } else if (state is UpdateExchangeAccountState) {
@@ -114,7 +115,7 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
           try {
             var ret = await _exchangeApi.getAssetsList();
             print("[object] ---> ret:$ret");
-            exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
+            exchangeModel.activeAccount.assetList = AssetListV2.fromJson(ret);
           } catch (e) {
             if (e is HttpResponseCodeNotSuccess) {
               Fluttertoast.showToast(msg: e.message);

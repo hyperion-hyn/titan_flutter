@@ -55,7 +55,7 @@ class AssetList {
     }
   }
 
-  Decimal getTotalUsdt() {
+  Decimal getTotalUSDT() {
     var total;
     try {
       Decimal usdt = Decimal.parse(USDT.usdt);
@@ -67,7 +67,7 @@ class AssetList {
     return total;
   }
 
-  Decimal getTotalHyn() {
+  Decimal getTotalHYN() {
     var total;
     try {
       Decimal usdtToHyn = Decimal.parse(USDT.hyn);
@@ -93,4 +93,49 @@ class AssetList {
       return '';
     }
   }
+}
+
+class AssetListV2 {
+  List<AssetToken> tokenList = List();
+
+  AssetListV2.fromJson(Map<String, dynamic> json) {
+    json.forEach((key, value) {
+      tokenList.add(AssetToken(key, AssetType.fromJson(value)));
+    });
+  }
+
+  AssetType getTokenAsset(String tokenName) {
+    var result;
+    tokenList.forEach((element) {
+      if (element.name == tokenName) {
+        result = element.detail;
+      }
+    });
+
+    return result;
+  }
+
+  Decimal totalByUSDT() {
+    Decimal total = Decimal.zero;
+    tokenList.forEach((token) {
+      total = total + Decimal.parse(token.detail?.usdt) ?? Decimal.zero;
+    });
+    return total;
+  }
+
+  Decimal totalByHYN() {
+    Decimal total = Decimal.zero;
+    tokenList.forEach((token) {
+      total = total + Decimal.parse(token.detail?.hyn) ?? Decimal.zero;
+    });
+    return total;
+  }
+
+}
+
+class AssetToken {
+  String name;
+  AssetType detail;
+
+  AssetToken(this.name, this.detail);
 }

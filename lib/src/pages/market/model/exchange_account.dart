@@ -44,7 +44,7 @@ class ExchangeAccount extends Object {
   @JsonKey(name: 'beNew')
   int beNew;
 
-  AssetList assetList;
+  AssetListV2 assetList;
 
   ExchangeAccount(
     this.id,

@@ -23,11 +23,10 @@ ExchangeAccount _$ExchangeAccountFromJson(Map<String, dynamic> json) {
     json['beNew'] as int,
   )..assetList = json['assetList'] == null
       ? null
-      : AssetList.fromJson(json['assetList'] as Map<String, dynamic>);
+      : AssetListV2.fromJson(json['assetList'] as Map<String, dynamic>);
 }
 
-Map<String, dynamic> _$ExchangeAccountToJson(ExchangeAccount instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ExchangeAccountToJson(ExchangeAccount instance) => <String, dynamic>{
       'id': instance.id,
       'email': instance.email,
       'nickname': instance.nickname,
@@ -41,5 +40,6 @@ Map<String, dynamic> _$ExchangeAccountToJson(ExchangeAccount instance) =>
       'mobile': instance.mobile,
       'gesture_token': instance.gestureToken,
       'beNew': instance.beNew,
-      'assetList': instance.assetList?.toJson(),
+      ///not cache assetList
+      //'assetList': instance.assetList,
     };
