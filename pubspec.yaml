@@ -211,7 +211,7 @@ flutter:
     - res/kline/
     - res/lottie/
     - res/voice/
-
+    - res/web/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

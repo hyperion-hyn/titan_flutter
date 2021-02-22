@@ -22,10 +22,10 @@ import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/pages/webview/webview_browser.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/custom_click_oval_button.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 
@@ -714,9 +714,21 @@ class HomePanelState extends State<HomePanel> {
             ),
             GestureDetector(
               onTap: () {
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => WebViewBrowserContainer(
+                          initUrl: 'https://consenlabs.github.io/dapp-sdk-doc/index.html',
+                          title: '',
+                        )));
+
+                // todo:
+                /*
                 UiUtil.showScanImagePickerSheet(context, callback: (String text) {
                   _parseText(text);
                 });
+                 */
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 24.0, right: 24),

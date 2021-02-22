@@ -78,7 +78,9 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
           child: Column(
             children: <Widget>[
               if (isLoading)
-                SizedBox(height: 2, child: progress < 1.0 ? LinearProgressIndicator(value: progress) : Container()),
+                SizedBox(
+                    height: 2,
+                    child: progress < 1.0 ? LinearProgressIndicator(value: progress) : Container()),
               Expanded(
                 child: _body(),
               ),
@@ -132,7 +134,15 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
         webView = controller;
       },
       onLoadStart: (InAppWebViewController controller, String url) {
-        //print("onLoadStart $url");
+        print("onLoadStart $url");
+
+        controller.evaluateJavascript(source:
+        """
+    // window.flutter_inappwebview.callHandler('test', 'Text from Javascript').then(function(result) {
+    //   console.log(result);
+    // });
+        """
+        );
         setState(() {
           this.url = url;
         });
