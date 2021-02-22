@@ -36,11 +36,13 @@ class ExchangeWithdrawConfirmPage extends StatefulWidget {
   final CoinViewVo coinVo;
   final String amount;
   final String withdrawFeeByGas;
+  final String chain;
 
   ExchangeWithdrawConfirmPage(
     String coinVo,
     this.amount,
     this.withdrawFeeByGas,
+    this.chain,
   ) : coinVo = CoinViewVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
@@ -91,7 +93,10 @@ class _ExchangeWithdrawConfirmPageState extends BaseState<ExchangeWithdrawConfir
   Decimal get gasPrice {
     if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
       return Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+    } else if (widget.coinVo.coinType == CoinType.HB_HT) {
+      return Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
     }
+
     switch (selectedPriceLevel) {
       case 0:
         return gasPriceRecommend.safeLow;
@@ -140,7 +145,27 @@ class _ExchangeWithdrawConfirmPageState extends BaseState<ExchangeWithdrawConfir
 
         _gasPriceEstimateStr =
             " ${(gasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI)).toStringAsFixed(1)} GDUST ($gasPriceEstimate HYN)";
-      } else {
+      } else if(widget.coinVo.coinType == CoinType.HB_HT){
+        var htQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('HT')?.price ?? 0;
+        var gasLimit = widget.coinVo.symbol == "HT"
+            ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
+            : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
+        var gasEstimate = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+
+        var gasFeeQuotePrice = gasEstimate *
+            Decimal.parse(htQuotePrice.toString()) *
+            Decimal.parse(widget.withdrawFeeByGas);
+
+        _gasFeeByToken = Decimal.parse(FormatUtil.truncateDecimalNum(
+          Decimal.parse('$gasFeeQuotePrice') / Decimal.parse('$quotePrice'),
+          8,
+        ));
+
+        _gasPriceEstimateStr =
+        "${(gasPrice / Decimal.fromInt(EthereumUnitValue.G_WEI)).toStringAsFixed(1)} GWEI ($gasEstimate HT) ";
+
+      }else {
         var ethQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('ETH')?.price ?? 0;
         var gasLimit = widget.coinVo.symbol == "ETH"
             ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
@@ -571,6 +596,7 @@ class _ExchangeWithdrawConfirmPageState extends BaseState<ExchangeWithdrawConfir
         widget.coinVo.address,
         actualAmount,
         gasFee,
+        widget.chain,
       );
       print('$ret');
 

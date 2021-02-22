@@ -22,6 +22,7 @@ import 'package:titan/src/pages/market/transfer/exchange_asset_history_page.dart
 import 'package:titan/src/pages/market/model/asset_type.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -127,7 +128,8 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
           if (hasPendingDepositTx)
             InkWell(
               onTap: () {
-                var coinVo = WalletInheritedModel.of(context).getCoinVoBySymbol('USDT');
+                var coinVo = WalletInheritedModel.of(context)
+                    .getCoinVoBySymbolAndCoinType('USDT', CoinType.ETHEREUM);
                 if (coinVo != null) {
                   var coinVoJsonStr = FluroConvertUtils.object2string(coinVo.toJson());
                   Application.router
@@ -241,7 +243,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
 
     // 只显示USDT的pending转账提示
     if (usdtExchangeAddress == null) {
-      var ret = await _exchangeApi.getAddress('USDT');
+      var ret = await _exchangeApi.getAddressV2('USDT', 'erc20');
       usdtExchangeAddress = ret['address'];
     }
     var lastPendingState = hasPendingDepositTx;
@@ -436,12 +438,12 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
     var activeTokens = MarketInheritedModel.of(
       context,
       aspect: SocketAspect.marketItemList,
-    ).activeTokens();
+    ).activeAssets();
 
     List<Widget> assetItemList = [Container()];
 
     activeTokens.forEach((tokenName) {
-      var tokenAsset = _assetList.getTokenAsset(tokenName);
+      var tokenAsset = _assetList?.getTokenAsset(tokenName);
       if (tokenAsset != null) {
         assetItemList.add(
           AssetItem(

@@ -22,6 +22,7 @@ import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -666,7 +667,7 @@ Widget getHoldInNum(
 
   var walletName = activatedWallet?.wallet?.keystore?.name ?? "";
 
-  var coinVo = wallet.getCoinVoBySymbol('HYN');
+  var coinVo = wallet.getCoinVoBySymbolAndCoinType('HYN', CoinType.HYN_ATLAS);
 
   return Container(
     color: Colors.white,

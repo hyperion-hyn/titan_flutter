@@ -9,6 +9,7 @@
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/utils.dart';
 
@@ -16,7 +17,7 @@ class WalletModelUtil {
   static WalletInheritedModel get walletModel =>
       WalletInheritedModel.of(Keys.rootKey.currentContext);
 
-  static CoinViewVo get rpCoinVo => walletModel.getCoinVoBySymbol('RP');
+  static CoinViewVo get rpCoinVo => walletModel.getCoinVoBySymbolAndCoinType('RP', CoinType.HYN_ATLAS);
 
   static get activatedWallet => walletModel.activatedWallet;
 

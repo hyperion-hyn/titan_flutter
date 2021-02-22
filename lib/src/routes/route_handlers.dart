@@ -205,6 +205,7 @@ var exchangeWithdrawConfirmHandler = Handler(handlerFunc: (context, params) {
     params['coinVo']?.first,
     '${params['amount']?.first ?? 0}',
     params['withdrawFeeByGas']?.first,
+    params['chain']?.first
   );
 });
 

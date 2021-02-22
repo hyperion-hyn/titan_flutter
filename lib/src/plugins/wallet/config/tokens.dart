@@ -218,7 +218,7 @@ class DefaultTokenDefine {
     decimals: 18,
     contractAddress: '0xa71edc38d189767582c38a3145b5873052c3e47a',
     logo: 'res/drawable/usdt_logo.png',
-    symbol: 'HUSDT',
+    symbol: 'USDT',
   );
 
   static final HUSDT_TEST = AssetToken(
@@ -226,6 +226,6 @@ class DefaultTokenDefine {
     decimals: 6,
     contractAddress: '0x04F535663110A392A6504839BEeD34E019FdB4E0',
     logo: 'res/drawable/usdt_logo.png',
-    symbol: 'HUSDT',
+    symbol: 'USDT',
   );
 }

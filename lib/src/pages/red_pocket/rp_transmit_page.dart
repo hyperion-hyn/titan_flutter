@@ -29,6 +29,7 @@ import 'package:titan/src/pages/red_pocket/rp_transmit_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_detail_page.dart';
 import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
@@ -796,8 +797,9 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                       return S.of(context).rp_transmit_input_hint;
                     }
 
-                    var hynToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
+                    var hynToken = WalletInheritedModel.of(context).getCoinVoBySymbolAndCoinType(
                       DefaultTokenDefine.HYN_Atlas.symbol,
+                      CoinType.HYN_ATLAS,
                     );
                     var hynTokenBalance = Decimal.parse(hynToken.balance.toString());
                     var amount = int.tryParse(value) ?? 0;

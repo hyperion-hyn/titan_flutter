@@ -356,7 +356,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
               var coinVo = WalletInheritedModel.of(
                 context,
                 aspect: WalletAspect.activatedWallet,
-              ).getCoinVoBySymbol('HYN');
+              ).getCoinVoBySymbolAndCoinType('HYN', CoinType.HYN_ATLAS);
 
               var balance =
                   Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));

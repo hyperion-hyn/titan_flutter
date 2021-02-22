@@ -258,10 +258,10 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
     return null;
   }
 
-  CoinViewVo getCoinVoBySymbol(String symbol) {
+  CoinViewVo getCoinVoBySymbolAndCoinType(String symbol, int coinType) {
     if (this.activatedWallet != null) {
       for (var coin in this.activatedWallet.coins) {
-        if (coin.symbol == symbol) {
+        if (coin.symbol == symbol && coin.coinType == coinType) {
           return coin;
         }
       }

@@ -16,6 +16,8 @@ import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/entity/exchange_coin_list_v2.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -38,7 +40,7 @@ class ExchangeQrcodeDepositPage extends StatefulWidget {
 }
 
 class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage> {
-  String _selectedCoinSymbol = DefaultTokenDefine.HYN_Atlas.symbol;
+  Token _selectedToken = Token('HYN', CoinType.HYN_ATLAS, 'ATLAS');
   Map symbolToChain = {
     DefaultTokenDefine.HYN_Atlas.symbol: S.of(Keys.rootKey.currentContext).atlas_main_chain,
     DefaultTokenDefine.USDT_ERC20.symbol: "ERC20",
@@ -51,7 +53,6 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
 
   @override
   void initState() {
-    _selectedCoinSymbol = widget.coinSymbol ?? DefaultTokenDefine.HYN_Atlas.symbol;
     super.initState();
   }
 
@@ -67,7 +68,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
   }
 
   Future loadData() async {
-    var ret = await _exchangeApi.getAddress(_selectedCoinSymbol);
+    var ret = await _exchangeApi.getAddressV2(_selectedToken.symbol, _selectedToken.chain);
     exchangeAddress = ret['address'];
     setState(() {
       _currentState = null;
@@ -87,7 +88,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
                   context,
                   MaterialPageRoute(
                       builder: (context) => ExchangeTransferHistoryListPage(
-                            _selectedCoinSymbol,
+                            _selectedToken.symbol,
                           )));
             },
             child: Padding(
@@ -117,7 +118,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
       );
     }
 
-    var changeAddress = _selectedCoinSymbol == DefaultTokenDefine.USDT_ERC20.symbol
+    var changeAddress = _selectedToken.symbol == DefaultTokenDefine.USDT_ERC20.symbol
         ? exchangeAddress
         : WalletUtil.ethAddressToBech32Address(exchangeAddress);
 
@@ -143,7 +144,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        _selectedCoinSymbol,
+                        _selectedToken.symbol,
                         style: TextStyle(
                             color: HexColor(
                               '#333333',
@@ -194,7 +195,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
                       borderRadius: BorderRadius.all(Radius.circular(2)),
                     ),
                     child: Text(
-                      symbolToChain[_selectedCoinSymbol],
+                      symbolToChain[_selectedToken.symbol],
                       style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 10),
                     )),
               ],
@@ -288,7 +289,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
             ),
           ),
           SliverToBoxAdapter(
-            child: _remainders(_selectedCoinSymbol),
+            child: _remainders(_selectedToken.symbol),
           )
         ],
       ),
@@ -383,7 +384,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
               child: Text(
                 symbol,
                 style: TextStyle(
-                    color: _selectedCoinSymbol == symbol
+                    color: _selectedToken.symbol == symbol
                         ? Theme.of(context).primaryColor
                         : HexColor('#FF777777')),
               ),
@@ -391,7 +392,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
           ),
           onTap: () {
             setState(() {
-              _selectedCoinSymbol = symbol;
+              _selectedToken.symbol = symbol;
               // _gasFeeFullStrFunc();
             });
             Navigator.of(context).pop();

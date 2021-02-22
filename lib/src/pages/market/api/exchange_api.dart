@@ -13,6 +13,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/market/entity/exchange_banner.dart';
 import 'package:titan/src/pages/market/entity/exchange_coin_list.dart';
+import 'package:titan/src/pages/market/entity/exchange_coin_list_v2.dart';
 import 'package:titan/src/pages/market/entity/market_info_entity.dart';
 import 'package:titan/src/pages/market/model/asset_history.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
@@ -48,8 +49,7 @@ class ExchangeHttp extends BaseHttpCore {
       _instance = ExchangeHttp._internal();
 
       if (showLog) {
-        _instance.dio.interceptors
-            .add(LogInterceptor(responseBody: true, requestBody: true));
+        _instance.dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
       }
     }
     return _instance;
@@ -67,10 +67,8 @@ class ExchangeApi {
     exchangeHttp = ExchangeHttp.instance;
 
     getCookieDir()
-        .then((value) => {
-              exchangeHttp.dio.interceptors
-                  .add(CookieManager(PersistCookieJar(dir: value)))
-            })
+        .then((value) =>
+            {exchangeHttp.dio.interceptors.add(CookieManager(PersistCookieJar(dir: value)))})
         .catchError((e) {
       LogUtil.printMessage(e);
 
@@ -103,9 +101,8 @@ class ExchangeApi {
   Future<AbnormalTransferHistory> getAbnormalTransferHistory(
     String address,
   ) async {
-    return await exchangeHttp
-        .postEntity(ExchangeConst.PATH_ABNORMAL_TRANSFER_LIST,
-            EntityFactory<AbnormalTransferHistory>(
+    return await exchangeHttp.postEntity(ExchangeConst.PATH_ABNORMAL_TRANSFER_LIST,
+        EntityFactory<AbnormalTransferHistory>(
       (response) {
         var abnormalTransferHistory = AbnormalTransferHistory();
         if (response is Map && response.length == 0) {
@@ -227,11 +224,49 @@ class ExchangeApi {
     );
   }
 
-  Future<ExchangeCoinList> getCoinList() async {
-    return await exchangeHttp.postEntity<ExchangeCoinList>(
+  Future<ExchangeCoinListV2> getCoinList() async {
+    var testData = '''
+    {
+    "assets": [
+        "USDT",
+        "HYN",
+        "RP"
+    ],
+    "activeExchangeMap": {
+        "USDT": [
+            "HYN",
+            "RP"
+        ]
+    },
+    "tokens": [
+        {
+            "symbol": "USDT",
+            "coinType": 60,
+            "chain": "erc20"
+        },
+        {
+            "symbol": "USDT",
+            "coinType": 1010,
+            "chain": "heco"
+        },
+        {
+            "symbol": "HYN",
+            "coinType": 546,
+            "chain": "atlas"
+        },
+        {
+            "symbol": "RP",
+            "coinType": 546,
+            "chain": "atlas"
+        }
+    ]
+}
+    ''';
+    var srcJson = jsonDecode(testData);
+    return ExchangeCoinListV2.fromJson(srcJson);
+    return await exchangeHttp.postEntity<ExchangeCoinListV2>(
       ExchangeConst.PATH_COIN_LIST,
-      EntityFactory<ExchangeCoinList>(
-          (coinList) => ExchangeCoinList.fromJson(coinList)),
+      EntityFactory<ExchangeCoinListV2>((coinList) => ExchangeCoinListV2.fromJson(coinList)),
       params: {},
     );
   }
@@ -248,8 +283,7 @@ class ExchangeApi {
   }
 
   Future<dynamic> testRecharge(String type, double balance) async {
-    return await exchangeHttp
-        .postEntity(ExchangeConst.PATH_QUICK_RECHARGE, null, params: {
+    return await exchangeHttp.postEntity(ExchangeConst.PATH_QUICK_RECHARGE, null, params: {
       "type": type,
       "balance": balance,
     });
@@ -263,6 +297,7 @@ class ExchangeApi {
     String outerAddress,
     String balance,
     String gasFee,
+    String chain,
   ) async {
     return await walletSignAndPost(
         path: ExchangeConst.PATH_WITHDRAW,
@@ -274,6 +309,7 @@ class ExchangeApi {
           'outer_address': outerAddress,
           'balance': balance,
           'fee': gasFee,
+          'chain': chain
         });
   }
 
@@ -283,11 +319,17 @@ class ExchangeApi {
     });
   }
 
+  Future<dynamic> getAddressV2(String symbol, String chain) async {
+    return postAndVerifySign(ExchangeConst.PATH_GET_ADDRESS, params: {
+      'type': symbol,
+      'chain': chain,
+    });
+  }
+
   Future<MarketInfoEntity> getMarketInfo(String market) async {
     return await exchangeHttp.postEntity(
       ExchangeConst.PATH_MARKET_INFO,
-      EntityFactory<MarketInfoEntity>(
-          (marketInfo) => MarketInfoEntity.fromJson(marketInfo)),
+      EntityFactory<MarketInfoEntity>((marketInfo) => MarketInfoEntity.fromJson(marketInfo)),
       params: {
         "market": market,
       },
@@ -302,8 +344,7 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> orderPutLimit(
-      String market, exchangeType, String price, String amount) async {
+  Future<dynamic> orderPutLimit(String market, exchangeType, String price, String amount) async {
     return await exchangeHttp.postEntity(
       ExchangeConst.PATH_ORDER_LIMIT,
       null,
@@ -317,8 +358,7 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> orderPutMarket(
-      String market, exchangeType, String amount) async {
+  Future<dynamic> orderPutMarket(String market, exchangeType, String amount) async {
     return await exchangeHttp.postEntity(
       ExchangeConst.PATH_ORDER_MARKET,
       null,

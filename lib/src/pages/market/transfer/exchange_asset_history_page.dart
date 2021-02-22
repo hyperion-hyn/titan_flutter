@@ -22,6 +22,7 @@ import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -266,7 +267,7 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
     var token = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
-    ).getCoinVoBySymbol(widget._symbol);
+    ).getCoinVoBySymbolAndCoinType(widget._symbol, CoinType.HYN_ATLAS);
 
     return Container(
       color: Colors.white,

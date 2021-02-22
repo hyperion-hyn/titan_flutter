@@ -68,8 +68,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
   }
 
   @override
-  void onCreated() {
-  }
+  void onCreated() {}
 
   @override
   void didPopNext() {
@@ -86,7 +85,10 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
   void didChangeDependencies() async {
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
-    widget.coinVo = WalletInheritedModel.of(context).getCoinVoBySymbol(widget.coinVo.symbol);
+    widget.coinVo = WalletInheritedModel.of(context).getCoinVoBySymbolAndCoinType(
+      widget.coinVo.symbol,
+      widget.coinVo.coinType,
+    );
   }
 
   @override
@@ -164,7 +166,8 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                             Container(
                               height: 61,
                               padding: const EdgeInsets.symmetric(vertical: 13),
-                              margin: const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 34),
+                              margin:
+                                  const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 34),
                               decoration: BoxDecoration(
                                 color: DefaultColors.colorf8f8f8,
                                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -196,7 +199,8 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                                           ),
                                           Text(
                                             S.of(context).send,
-                                            style: TextStyle(color: DefaultColors.color333, fontSize: 14),
+                                            style: TextStyle(
+                                                color: DefaultColors.color333, fontSize: 14),
                                           )
                                         ],
                                       ),
@@ -208,8 +212,11 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(builder: (context) => WalletReceivePage(widget.coinVo)));
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    WalletReceivePage(widget.coinVo)));
                                       },
                                       child: Row(
                                         children: <Widget>[
@@ -228,7 +235,8 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                                           ),
                                           Text(
                                             S.of(context).receiver,
-                                            style: TextStyle(color: DefaultColors.color333, fontSize: 14),
+                                            style: TextStyle(
+                                                color: DefaultColors.color333, fontSize: 14),
                                           )
                                         ],
                                       ),
@@ -243,7 +251,8 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                                         return InkWell(
                                           onTap: () {
                                             Fluttertoast.showToast(
-                                                msg: S.of(context).exchange_is_not_yet_open(widget.coinVo.symbol));
+                                                msg: S.of(context).exchange_is_not_yet_open(
+                                                    widget.coinVo.symbol));
                                           },
                                           child: Row(
                                             children: <Widget>[
@@ -343,10 +352,12 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
         widget.coinVo,
         transactionDetail.fromAddress,
       );*/
-      describe = "From: " + shortBlockChainAddress(transactionDetail.fromAddress, limitCharsLength: limitLength);
+      describe = "From: " +
+          shortBlockChainAddress(transactionDetail.fromAddress, limitCharsLength: limitLength);
     } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
       iconPath = "res/drawable/ic_wallet_account_list_send.png";
-      describe = "To: " + shortBlockChainAddress(transactionDetail.toAddress, limitCharsLength: limitLength);
+      describe = "To: " +
+          shortBlockChainAddress(transactionDetail.toAddress, limitCharsLength: limitLength);
     }
 
     if ((transactionDetail.state == null) ||
@@ -362,7 +373,9 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
         title = S.of(context).contract_call;
         iconPath = "res/drawable/ic_hyn_wallet_contract.png";
       }
-    } else if ((widget.coinVo.coinType == CoinType.HB_HT && transactionDetail.state == 0 && transactionDetail.gasUsed != "0")) {
+    } else if ((widget.coinVo.coinType == CoinType.HB_HT &&
+        transactionDetail.state == 0 &&
+        transactionDetail.gasUsed != "0")) {
       title = S.of(context).wallet_fail_title;
       titleColor = DefaultColors.colorf23524;
     }
@@ -386,9 +399,9 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                       context,
                       MaterialPageRoute(
                           builder: (context) => InAppWebViewContainer(
-                            initUrl: url,
-                            title: '',
-                          )));
+                                initUrl: url,
+                                title: '',
+                              )));
                 }
               },
               child: Padding(
@@ -413,8 +426,10 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                             children: <Widget>[
                               Text(
                                 amountText,
-                                style:
-                                    TextStyle(color: DefaultColors.color333, fontSize: 16, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    color: DefaultColors.color333,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
                               ),
                               if (amountSubText.isNotEmpty)
                                 Text(
@@ -427,7 +442,8 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                               Spacer(),
                               Text(
                                 title,
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: titleColor),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 14, color: titleColor),
                               ),
                             ],
                           ),
@@ -493,9 +509,10 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
   Future<List<dynamic>> onLoadData(int page) async {
     var retList = [];
     try {
-      List<TransactionDetailVo> transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
+      List<TransactionDetailVo> transferList =
+          await _accountTransferService.getTransferList(widget.coinVo, page);
       if (page == getStartPage()) {
-        if(!mounted){
+        if (!mounted) {
           return retList;
         }
         retList.add('header');
@@ -514,5 +531,4 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
     }
     return retList;
   }
-
 }

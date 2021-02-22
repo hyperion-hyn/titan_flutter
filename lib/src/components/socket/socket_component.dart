@@ -10,7 +10,9 @@ import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/market/entity/exchange_coin_list.dart';
+import 'package:titan/src/pages/market/entity/exchange_coin_list_v2.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:web_socket_channel/io.dart';
@@ -47,7 +49,7 @@ class _SocketState extends State<_SocketManager> {
   // 24小时候成交数据
   List<MarketItemEntity> _marketItemList = List();
 
-  ExchangeCoinList _exchangeCoinList;
+  ExchangeCoinListV2 _exchangeCoinList;
 
   // List<List<String>> _tradeDetailList;
   Timer _timer;
@@ -151,7 +153,7 @@ class _SocketState extends State<_SocketManager> {
       var json = jsonDecode(sharePref.getString(
         PrefsKey.CACHE_EXCHANGE_COIN_LIST,
       ));
-      _exchangeCoinList = ExchangeCoinList.fromJson(json);
+      _exchangeCoinList = ExchangeCoinListV2.fromJson(json);
     } catch (e) {}
   }
 
@@ -225,7 +227,7 @@ class _SocketState extends State<_SocketManager> {
     );
   }
 
-  Future<void> _cacheExchangeCoinList(ExchangeCoinList exchangeCoinList) async {
+  Future<void> _cacheExchangeCoinList(ExchangeCoinListV2 exchangeCoinList) async {
     var sharePref = await SharedPreferences.getInstance();
 
     await sharePref.setString(
@@ -314,7 +316,7 @@ enum SocketAspect { marketItemList }
 
 class MarketInheritedModel extends InheritedModel<SocketAspect> {
   final List<MarketItemEntity> marketItemList;
-  final ExchangeCoinList exchangeCoinList;
+  final ExchangeCoinListV2 exchangeCoinList;
 
   // final List<List<String>> tradeDetailList;
 
@@ -341,8 +343,16 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
     return marketItemEntity;
   }
 
-  List<String> activeTokens() {
+  List<String> activeAssets() {
     return exchangeCoinList?.assets ?? ['HYN', 'USDT', 'RP'];
+  }
+
+  List<Token> activeTokens() {
+    return exchangeCoinList?.tokens ?? [
+      Token('HYN', CoinType.HYN_ATLAS, 'ATLAS'),
+      Token('USDT', CoinType.ETHEREUM, 'ERC20'),
+      Token('RP', CoinType.HYN_ATLAS, 'HRC30')
+    ];
   }
 
   List<MarketItemEntity> getFilterMarketItemList() {
@@ -397,7 +407,7 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
       var realPercent = marketItem == null
           ? 0.0
           : (marketItem.kLineEntity.close - marketItem.kLineEntity.open) /
-              (marketItem.kLineEntity.open);
+          (marketItem.kLineEntity.open);
       return realPercent;
     } catch (e) {
       return 0.0;
@@ -420,10 +430,8 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
   }
 
   @override
-  bool updateShouldNotifyDependent(
-    MarketInheritedModel old,
-    Set<SocketAspect> dependencies,
-  ) {
+  bool updateShouldNotifyDependent(MarketInheritedModel old,
+      Set<SocketAspect> dependencies,) {
     return marketItemList != old.marketItemList &&
         dependencies.contains(SocketAspect.marketItemList);
     // ||
