@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/pages/wallet/dapp_authorization_dialog_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
@@ -130,12 +131,16 @@ class WebViewBrowserContainerState extends State<WebViewBrowserContainer> {
   Widget _body() {
 
     return WebView(
-      initialUrl: widget.initUrl,
+      // initialUrl: widget.initUrl,
+      initialUrl: '',
       onWebViewCreated: (WebViewController controller) {
         webViewController = controller;
 
         _controller.complete(controller);
-        if (widget.initUrl?.isEmpty ?? true) _loadHtmlFromAssets();
+
+        _loadHtmlFromAssets();
+
+        // if (widget.initUrl?.isEmpty ?? true) _loadHtmlFromAssets();
       },
       onPageFinished: (String url) async {
         String _title = await webViewController?.getTitle();
@@ -209,6 +214,22 @@ class WebViewBrowserContainerState extends State<WebViewBrowserContainer> {
     if (widget.initUrl != null && widget.initUrl.isNotEmpty) {
       Share.text(S.of(context).share, widget.initUrl, 'text/plain');
     }
+  }
+
+
+  Future<bool> showSendDialog<T>({
+    BuildContext context,
+    double value,
+  }) {
+    DAppAuthorizationDialogEntity entity = DAppAuthorizationDialogEntity(
+      title: '访问说明',
+      dAppName: 'RP 红包',
+    );
+
+    return showDAppAuthorizationDialog(
+      context: context,
+      entity: entity,
+    );
   }
 
 }

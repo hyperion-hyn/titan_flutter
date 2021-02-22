@@ -965,27 +965,9 @@ class HomePanelState extends State<HomePanel> {
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
       scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
       Application.router.navigateTo(context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
-
-      // todo: 弹窗
-      showSendDialog(context: context);
     } else {
       Application.router.navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
     }
-  }
-
-  Future<bool> showSendDialog<T>({
-    BuildContext context,
-    double value,
-  }) {
-    DAppAuthorizationDialogEntity entity = DAppAuthorizationDialogEntity(
-      title: '访问说明',
-      dAppName: 'RP 红包',
-    );
-
-    return showWalletSendDialog(
-      context: context,
-      entity: entity,
-    );
   }
 
   Future activeDMap(String dMapName) async {

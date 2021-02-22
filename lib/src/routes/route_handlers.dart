@@ -48,6 +48,7 @@ import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_hb_widget.dart';
 import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
+import 'package:titan/src/pages/webview/webview_browser.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/contribution/contribution_finish_page.dart';
@@ -103,6 +104,18 @@ void _cacheEntryRouteName(params) {
 }
 
 var toolsPageWebviewHandler = Handler(handlerFunc: (context, params) {
+  String webUrl = FluroConvertUtils.fluroCnParamsDecode(params['initUrl']?.first);
+  var language = SettingInheritedModel.of(Keys.rootKey.currentContext).netLanguageCode;
+  if (!webUrl.contains("?")) {
+    webUrl = webUrl + "?lang=$language";
+  } else {
+    webUrl = webUrl + "&lang=$language";
+  }
+  return WebViewBrowserContainer(
+      initUrl: webUrl, title: FluroConvertUtils.fluroCnParamsDecode(params['title']?.first));
+});
+
+var toolsPageWebviewHandlerOld = Handler(handlerFunc: (context, params) {
   String webUrl = FluroConvertUtils.fluroCnParamsDecode(params['initUrl']?.first);
   var language = SettingInheritedModel.of(Keys.rootKey.currentContext).netLanguageCode;
   if (!webUrl.contains("?")) {

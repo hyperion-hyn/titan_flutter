@@ -136,13 +136,14 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
       onLoadStart: (InAppWebViewController controller, String url) {
         print("onLoadStart $url");
 
-        controller.evaluateJavascript(source:
+       /* controller.evaluateJavascript(source:
         """
-    // window.flutter_inappwebview.callHandler('test', 'Text from Javascript').then(function(result) {
-    //   console.log(result);
-    // });
+    window.flutter_inappwebview.callHandler('test', 'Text from Javascript').then(function(result) {
+      console.log(result);
+    });
         """
-        );
+        );*/
+
         setState(() {
           this.url = url;
         });

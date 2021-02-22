@@ -237,7 +237,7 @@ class _DAppAuthorizationDialogState extends BaseState<DAppAuthorizationDialogPag
   }
 }
 
-Future<bool> showWalletSendDialog<T>({
+Future<bool> showDAppAuthorizationDialog<T>({
   @required BuildContext context,
   @required DAppAuthorizationDialogEntity entity,
 }) {
