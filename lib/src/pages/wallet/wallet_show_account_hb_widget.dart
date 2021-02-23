@@ -33,6 +33,7 @@ import 'package:titan/src/pages/wallet/wallet_receive_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/image_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
@@ -145,11 +146,20 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.only(top: 32, bottom: 24),
-                              child: Container(
-                                alignment: Alignment.center,
-                                width: 80,
-                                height: 80,
-                                child: Image.asset(widget.coinVo.logo),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    alignment: Alignment.center,
+                                    width: 80,
+                                    height: 80,
+                                    child: Image.asset(widget.coinVo.logo),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: ImageUtil.getChainIcon(widget.coinVo, 30),
+                                  )
+                                ],
                               ),
                             ),
                             Text(

@@ -95,7 +95,7 @@ class DefaultTokenDefine {
   static const BTC = const AssetToken(
     name: 'BITCOIN',
     decimals: 8,
-    logo: 'res/drawable/ic_btc_logo_large.png',
+    logo: 'res/drawable/ic_token_btc.png',
     symbol: 'BTC',
   );
 
@@ -104,7 +104,7 @@ class DefaultTokenDefine {
     name: "Hyperion",
     decimals: 18,
     contractAddress: null,
-    logo: "res/drawable/ic_hyn_logo_new.png",
+    logo: "res/drawable/ic_token_hyn.png",
     symbol: 'HYN',
   );
 
@@ -112,7 +112,7 @@ class DefaultTokenDefine {
     name: "Red Pocket",
     decimals: 18,
     contractAddress: '0x88880126bC73107118f18000309d10dB9f1d6a14',
-    logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
+    logo: "res/drawable/ic_token_rp.png",
     symbol: 'RP',
   );
 
@@ -122,7 +122,7 @@ class DefaultTokenDefine {
     contractAddress: '0x562D6AFA2A0aD94c8B2946e23C96E27F3cD023e8',
     // old
     // contractAddress: '0x6175228cBAbFEC03B3E67953501180B35ae55494',
-    logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
+    logo: "res/drawable/ic_token_rp.png",
     symbol: 'RP',
   );
 
@@ -130,7 +130,7 @@ class DefaultTokenDefine {
     name: "Red Pocket",
     decimals: 18,
     contractAddress: '0xdB86E8bD3d8d7cE0a757DAD02Cbb6fb704383df0',
-    logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
+    logo: "res/drawable/ic_token_rp.png",
     symbol: 'RP',
   );
 
@@ -139,7 +139,7 @@ class DefaultTokenDefine {
     name: 'Ethereum',
     decimals: 18,
     contractAddress: null,
-    logo: 'res/drawable/ic_eth.png',
+    logo: 'res/drawable/ic_token_eth.png',
     symbol: 'ETH',
   );
 
@@ -147,14 +147,14 @@ class DefaultTokenDefine {
     name: 'Hyperion',
     decimals: 18,
     contractAddress: '0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07',
-    logo: "res/drawable/ic_hyn_logo_empty.png",
+    logo: "res/drawable/ic_token_hyn.png",
     symbol: 'HYN ERC20',
   );
 
   static const USDT_ERC20 = const AssetToken(
     name: 'Tether USD',
     decimals: 6,
-    logo: 'res/drawable/usdt_logo.png',
+    logo: 'res/drawable/ic_token_usdt.png',
     contractAddress: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     symbol: 'USDT',
   );
@@ -162,7 +162,7 @@ class DefaultTokenDefine {
   static const USDT_ERC20_ROPSTEN = const AssetToken(
     name: 'Tether USD',
     decimals: 6,
-    logo: 'res/drawable/usdt_logo.png',
+    logo: 'res/drawable/ic_token_usdt.png',
     contractAddress: '0xE82B8Eb1ce4684475eFc1655928dD012fb5Fa0Bb',
     symbol: 'USDT',
   );
@@ -171,21 +171,21 @@ class DefaultTokenDefine {
       name: 'Hyperion ROPSTEN',
       decimals: 18,
       contractAddress: '0xE2Ba724b516Bacca8646Ad72796d23Af39C610A6',
-      logo: "res/drawable/ic_hyn_logo_empty.png",
+      logo: "res/drawable/ic_token_hyn.png",
       symbol: 'HYN ERC20');
 
   static const HYN_RINKEBY = const AssetToken(
       name: 'Hyperion RINKEBY',
       decimals: 18,
       contractAddress: '0x97B9e0EfeF243720FB024C823a39cBD73C25D601',
-      logo: "res/drawable/ic_hyn_logo_new.png",
+      logo: "res/drawable/ic_token_hyn.png",
       symbol: 'HYN ERC20');
 
   static final HYN_LOCAL = AssetToken(
       name: 'Hyperion LOCAL',
       decimals: 18,
       contractAddress: '0x97B9e0EfeF243720FB024C823a39cBD73C25D601',
-      logo: "res/drawable/ic_hyn_logo_new.png",
+      logo: "res/drawable/ic_token_hyn.png",
       symbol: 'HYN ERC20');
 
   /// huobi heco
@@ -193,7 +193,7 @@ class DefaultTokenDefine {
     name: "Huobi HT",
     decimals: 18,
     contractAddress: null,
-    logo: "res/drawable/ic_hb_logo_ht.png",
+    logo: "res/drawable/ic_token_ht.png",
     symbol: 'HT',
   );
 
@@ -201,7 +201,7 @@ class DefaultTokenDefine {
     name: 'Huobi HUSD',
     decimals: 8,
     contractAddress: '0x0298c2b32eae4da002a15f36fdf7615bea3da047',
-    logo: "res/drawable/ic_hb_logo_husd.png",
+    logo: "res/drawable/ic_token_husd.png",
     symbol: 'HUSD',
   );
 
@@ -209,7 +209,7 @@ class DefaultTokenDefine {
     name: 'Huobi HUSD',
     decimals: 18,
     contractAddress: '0x8Dd66eefEF4B503EB556b1f50880Cc04416B916B',
-    logo: "res/drawable/ic_hb_logo_husd.png",
+    logo: "res/drawable/ic_token_husd.png",
     symbol: 'HUSD',
   );
 
@@ -217,7 +217,7 @@ class DefaultTokenDefine {
     name: 'Heco USDT',
     decimals: 18,
     contractAddress: '0xa71edc38d189767582c38a3145b5873052c3e47a',
-    logo: 'res/drawable/usdt_logo.png',
+    logo: 'res/drawable/ic_token_usdt.png',
     symbol: 'USDT',
   );
 
@@ -225,7 +225,7 @@ class DefaultTokenDefine {
     name: 'Heco USDT',
     decimals: 6,
     contractAddress: '0x04F535663110A392A6504839BEeD34E019FdB4E0',
-    logo: 'res/drawable/usdt_logo.png',
+    logo: 'res/drawable/ic_token_usdt.png',
     symbol: 'USDT',
   );
 }

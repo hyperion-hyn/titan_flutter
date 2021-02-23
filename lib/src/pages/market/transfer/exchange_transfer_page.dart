@@ -22,7 +22,10 @@ import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/image_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/DottedLine.dart';
 import 'package:titan/src/config/consts.dart';
@@ -31,6 +34,7 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/widget/loading_button/click_loading_button.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'dart:math' as math;
 
 class ExchangeTransferPage extends StatefulWidget {
   final String tokenSymbol;
@@ -55,6 +59,15 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   void onCreated() {
     super.onCreated();
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+
+    var token = MarketInheritedModel.of(
+      context,
+      aspect: SocketAspect.marketItemList,
+    ).getFirstTokenBySymbol(widget.tokenSymbol);
+
+    if (token != null) {
+      _selectedToken = token;
+    }
   }
 
   @override
@@ -308,6 +321,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _coinTypeSelection() {
+    var coinVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).getCoinVoBySymbolAndCoinType(_selectedToken.symbol, _selectedToken.coinType);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -323,13 +341,37 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         InkWell(
           child: Row(
             children: <Widget>[
-              Text(
-                '${_selectedToken.symbol} ${_selectedToken.chain}',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                ),
+              Stack(
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    width: 36,
+                    height: 36,
+                    child: ImageUtil.getCoinImage(coinVo.logo),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: ImageUtil.getChainIcon(coinVo, 15),
+                  )
+                ],
               ),
+              SizedBox(width: 8),
+              RichText(
+                  text: TextSpan(children: [
+                TextSpan(
+                    text: _selectedToken.symbol,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                    )),
+                TextSpan(
+                    text: ' (${_selectedToken.chain.toUpperCase()})',
+                    style: TextStyle(
+                      color: DefaultColors.color999,
+                      fontSize: 13,
+                    )),
+              ])),
               Spacer(),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 0),
@@ -345,7 +387,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             _showTokenListDialog();
           },
         ),
-        Divider()
       ],
     );
   }
@@ -363,53 +404,55 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     // }
   }
 
-  _showTokenListDialog() {
+  _showTokenListDialog() async {
     var tokens = MarketInheritedModel.of(
       context,
       aspect: SocketAspect.marketItemList,
     ).activeTokens();
 
-    List<Widget> tokenItemList = [Container()];
-
-    tokens.forEach((token) {
-      tokenItemList.add(_tokenItem(token));
-    });
-
-    showModalBottomSheet(
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(15.0),
-            topRight: Radius.circular(15.0),
+    UiUtil.showBottomDialogView(
+      context,
+      dialogHeight: MediaQuery.of(context).size.height - 80,
+      isScrollControlled: true,
+      customWidget: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Center(
+              child: Text(S.of(context).choose_currency, style: TextStyles.textC333S14bold),
+            ),
           ),
-        ),
-        builder: (BuildContext context) {
-          return Container(
-            child: Wrap(
-              children: <Widget>[
-                Column(
-                  children: tokenItemList,
-                ),
-                InkWell(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Center(
-                      child: Text(
-                        S.of(context).cancel,
-                        style: TextStyle(
-                          color: HexColor('#FF777777'),
-                        ),
-                      ),
-                    ),
+          Expanded(
+            child: CustomScrollView(
+              semanticChildCount: tokens.length,
+              slivers: <Widget>[
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      final int itemIndex = index ~/ 2;
+                      if (index.isEven) {
+                        return _tokenItem(tokens[itemIndex]);
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Divider(height: 1),
+                      );
+                    },
+                    semanticIndexCallback: (Widget widget, int localIndex) {
+                      if (localIndex.isEven) {
+                        return localIndex ~/ 2;
+                      }
+                      return null;
+                    },
+                    childCount: math.max(0, tokens.length * 2 - 1),
                   ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                )
+                ),
               ],
             ),
-          );
-        });
+          ),
+        ],
+      ),
+    );
   }
 
   _confirm() {
@@ -429,30 +472,53 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     );
   }
 
-  _divider(double height) {
-    return Container(
-      width: double.infinity,
-      height: height,
-      color: HexColor('#FFEEEEEE'),
-    );
-  }
-
   _tokenItem(Token token) {
+    var coinVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).getCoinVoBySymbolAndCoinType(token.symbol, token.coinType);
     return Column(
       children: [
         InkWell(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: Text(
-                '${token.symbol} ${token.chain}',
-                style: TextStyle(
-                    color: _selectedToken.symbol == token.symbol &&
-                            _selectedToken.coinType == token.coinType
-                        ? Theme.of(context).primaryColor
-                        : HexColor('#FF777777')),
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                child: Stack(
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      width: 48,
+                      height: 48,
+                      child: ImageUtil.getCoinImage(coinVo.logo),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: ImageUtil.getChainIcon(coinVo, 20),
+                    )
+                  ],
+                ),
               ),
-            ),
+              Text(
+                '${token.symbol}',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Spacer(),
+              Text(
+                '${token.chain.toUpperCase()}',
+                style: TextStyle(
+                  color: HexColor('#FF777777'),
+                  fontSize: 14,
+                ),
+              ),
+              SizedBox(
+                width: 16,
+              )
+            ],
           ),
           onTap: () {
             setState(() {
@@ -462,7 +528,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             Navigator.of(context).pop();
           },
         ),
-        _divider(1)
       ],
     );
   }

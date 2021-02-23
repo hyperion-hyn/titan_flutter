@@ -350,10 +350,23 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
   List<Token> activeTokens() {
     return exchangeCoinList?.tokens ??
         [
-          Token('HYN', CoinType.HYN_ATLAS, 'ATLAS'),
-          Token('USDT', CoinType.ETHEREUM, 'ERC20'),
-          Token('RP', CoinType.HYN_ATLAS, 'HRC30')
+          Token('HYN', CoinType.HYN_ATLAS, 'atlas'),
+          Token('USDT', CoinType.ETHEREUM, 'erc20'),
+          Token('RP', CoinType.HYN_ATLAS, 'atlas'),
         ];
+  }
+
+  Token getFirstTokenBySymbol(String symbol) {
+    Token result;
+    bool endLoop = false;
+
+    exchangeCoinList?.tokens?.forEach((token) {
+      if (!endLoop && token.symbol == symbol) {
+        result = token;
+        endLoop = true;
+      }
+    });
+    return result;
   }
 
   List<Token> activeTokensBySymbol(String symbol) {

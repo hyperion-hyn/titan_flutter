@@ -239,6 +239,16 @@ class ExchangeApi {
         ]
     },
     "tokens": [
+      {
+            "symbol": "HYN",
+            "coinType": 546,
+            "chain": "atlas"
+        },
+        {
+            "symbol": "RP",
+            "coinType": 546,
+            "chain": "atlas"
+        },
         {
             "symbol": "USDT",
             "coinType": 60,
@@ -248,16 +258,6 @@ class ExchangeApi {
             "symbol": "USDT",
             "coinType": 1010,
             "chain": "heco"
-        },
-        {
-            "symbol": "HYN",
-            "coinType": 546,
-            "chain": "atlas"
-        },
-        {
-            "symbol": "RP",
-            "coinType": 546,
-            "chain": "atlas"
         }
     ]
 }
