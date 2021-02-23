@@ -12,14 +12,13 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
-import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/exchange_coin_list_v2.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -40,12 +39,8 @@ class ExchangeQrcodeDepositPage extends StatefulWidget {
 }
 
 class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage> {
-  Token _selectedToken = Token('HYN', CoinType.HYN_ATLAS, 'ATLAS');
-  Map symbolToChain = {
-    DefaultTokenDefine.HYN_Atlas.symbol: S.of(Keys.rootKey.currentContext).atlas_main_chain,
-    DefaultTokenDefine.USDT_ERC20.symbol: "ERC20",
-    DefaultTokenDefine.HYN_RP_HRC30.symbol: "HRC30"
-  };
+  String _selectedSymbol = 'HYN';
+  Token _selectedToken = Token('HYN', CoinType.HYN_ATLAS, 'atlas');
   GlobalKey _qrImageBoundaryKey = GlobalKey();
   AllPageState _currentState = LoadingState();
   ExchangeApi _exchangeApi = ExchangeApi();
@@ -118,9 +113,9 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
       );
     }
 
-    var changeAddress = _selectedToken.symbol == DefaultTokenDefine.USDT_ERC20.symbol
-        ? exchangeAddress
-        : WalletUtil.ethAddressToBech32Address(exchangeAddress);
+    var address = _selectedToken.coinType == CoinType.HYN_ATLAS
+        ? WalletUtil.ethAddressToBech32Address(exchangeAddress)
+        : exchangeAddress;
 
     return Padding(
       padding: const EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
@@ -129,7 +124,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
           SliverToBoxAdapter(
             child: InkWell(
               onTap: () {
-                _showCoinSelectDialog();
+                _showTokenSelectionDialog();
               },
               child: Container(
                   height: 40,
@@ -144,7 +139,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        _selectedToken.symbol,
+                        _selectedSymbol,
                         style: TextStyle(
                             color: HexColor(
                               '#333333',
@@ -175,7 +170,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
           ),
           SliverToBoxAdapter(
             child: Text(
-              S.of(context).chain_name,
+              '${S.of(context).chain_name}',
               style: TextStyle(
                   color: HexColor(
                     '#777777',
@@ -185,21 +180,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
             ),
           ),
           SliverToBoxAdapter(
-            child: Row(
-              children: [
-                Container(
-                    margin: EdgeInsets.only(top: 8, bottom: 12),
-                    padding: EdgeInsets.only(left: 12, right: 12, top: 3, bottom: 3),
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 0.5, color: Theme.of(context).primaryColor),
-                      borderRadius: BorderRadius.all(Radius.circular(2)),
-                    ),
-                    child: Text(
-                      symbolToChain[_selectedToken.symbol],
-                      style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 10),
-                    )),
-              ],
-            ),
+            child: _chainList(),
           ),
           SliverToBoxAdapter(
             child: Container(
@@ -219,14 +200,14 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
                       key: _qrImageBoundaryKey,
                       child: QrImage(
                         padding: const EdgeInsets.all(9),
-                        data: changeAddress,
+                        data: address,
                         size: 84,
                       ),
                     ),
                   ),
                   InkWell(
                     onTap: () {
-                      _saveQrImage(changeAddress);
+                      _saveQrImage(address);
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 15, right: 15, top: 4, bottom: 4),
@@ -255,7 +236,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
                     ),
                   ),
                   Text(
-                    changeAddress,
+                    address,
                     style: TextStyle(
                         color: HexColor(
                           '#333333',
@@ -265,7 +246,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
                   ),
                   InkWell(
                     onTap: () {
-                      Clipboard.setData(ClipboardData(text: changeAddress));
+                      Clipboard.setData(ClipboardData(text: address));
                       UiUtil.toast(S.of(context).copyed);
                     },
                     child: Container(
@@ -289,9 +270,49 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
             ),
           ),
           SliverToBoxAdapter(
-            child: _remainders(_selectedToken.symbol),
+            child: _remainders(_selectedToken),
           )
         ],
+      ),
+    );
+  }
+
+  _chainList() {
+    List<Token> tokensBySymbol = MarketInheritedModel.of(
+      context,
+      aspect: SocketAspect.marketItemList,
+    ).activeTokensBySymbol(_selectedSymbol);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Wrap(
+        children: List.generate(tokensBySymbol.length, (index) {
+          bool isSelected = _selectedToken.isSameToken(tokensBySymbol[index]);
+          return Container(
+            height: 30,
+            padding: EdgeInsets.only(right: 8),
+            child: OutlineButton(
+              child: Text(
+                '${tokensBySymbol[index].chain.toUpperCase()}',
+                style: TextStyle(
+                  color: isSelected ? Theme.of(context).primaryColor : DefaultColors.color999,
+                  fontSize: 13,
+                ),
+              ),
+              onPressed: () {
+                _selectedToken = tokensBySymbol[index];
+                if (mounted) setState(() {});
+              },
+              borderSide: BorderSide(
+                color: isSelected ? Theme.of(context).primaryColor : DefaultColors.color999,
+                width: 1,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4.0),
+              ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -312,30 +333,17 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
     );
   }
 
-  _showCoinSelectDialog() {
+  _showTokenSelectionDialog() {
     var activeAssets = MarketInheritedModel.of(
-          context,
-          aspect: SocketAspect.marketItemList,
-        ).exchangeCoinList?.assets ??
-        ['HYN', 'USDT', 'RP'];
+      context,
+      aspect: SocketAspect.marketItemList,
+    ).exchangeCoinList?.assets;
 
     List<Widget> activeCoinItemList = [Container()];
 
-    if (activeAssets.contains("HYN")) {
-      activeCoinItemList.add(
-        _coinItem(DefaultTokenDefine.HYN_Atlas.symbol),
-      );
-    }
-    if (activeAssets.contains('USDT')) {
-      activeCoinItemList.add(
-        _coinItem(DefaultTokenDefine.USDT_ERC20.symbol),
-      );
-    }
-    if (activeAssets.contains('RP')) {
-      activeCoinItemList.add(
-        _coinItem(DefaultTokenDefine.HYN_RP_HRC30.symbol),
-      );
-    }
+    activeAssets.forEach((symbol) {
+      activeCoinItemList.add(_tokenItem(symbol));
+    });
 
     showModalBottomSheet(
         context: context,
@@ -374,7 +382,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
         });
   }
 
-  _coinItem(String symbol) {
+  _tokenItem(String symbol) {
     return Column(
       children: [
         InkWell(
@@ -384,17 +392,20 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
               child: Text(
                 symbol,
                 style: TextStyle(
-                    color: _selectedToken.symbol == symbol
+                    color: _selectedSymbol == symbol
                         ? Theme.of(context).primaryColor
                         : HexColor('#FF777777')),
               ),
             ),
           ),
           onTap: () {
-            setState(() {
-              _selectedToken.symbol = symbol;
-              // _gasFeeFullStrFunc();
-            });
+            _selectedSymbol = symbol;
+            _selectedToken = MarketInheritedModel.of(
+              context,
+              aspect: SocketAspect.marketItemList,
+            ).activeTokensBySymbol(_selectedSymbol)?.first;
+
+            if (mounted) setState(() {});
             Navigator.of(context).pop();
           },
         ),
@@ -411,14 +422,14 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
     );
   }
 
-  _remainders(String tokenSymbol) {
+  _remainders(Token token) {
     var assetList = ExchangeInheritedModel.of(context).exchangeModel.activeAccount?.assetList;
 
-    var minHyn = assetList?.getTokenAsset('HYN')?.rechargeMin ?? '0';
-    var minUsdt = assetList?.getTokenAsset('USDT')?.rechargeMin ?? '0';
-    var minRp = assetList?.getTokenAsset('RP')?.rechargeMin ?? '0';
+    var minHyn = assetList?.getTokenAsset(token.symbol)?.rechargeMin ?? '0';
+    var minUsdt = assetList?.getTokenAsset(token.symbol)?.rechargeMin ?? '0';
+    var minRp = assetList?.getTokenAsset(token.symbol)?.rechargeMin ?? '0';
 
-    if (tokenSymbol == DefaultTokenDefine.HYN_Atlas.symbol) {
+    if (token.symbol == DefaultTokenDefine.HYN_Atlas.symbol) {
       return RichText(
         text: TextSpan(
           children: [
@@ -429,7 +440,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
                   color: DefaultColors.color777,
                 )),
             TextSpan(
-              text: 'Atlas-HYN',
+              text: '${token.chain.toUpperCase()}-HYN',
               style: TextStyle(
                   fontSize: 10, color: DefaultColors.color333, fontWeight: FontWeight.bold),
             ),
@@ -453,7 +464,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
           ],
         ),
       );
-    } else if (tokenSymbol == DefaultTokenDefine.USDT_ERC20.symbol) {
+    } else if (token.symbol == DefaultTokenDefine.USDT_ERC20.symbol) {
       return RichText(
         text: TextSpan(
           children: [
@@ -464,7 +475,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
                   color: DefaultColors.color777,
                 )),
             TextSpan(
-              text: ' ERC20-USDT ',
+              text: ' ${token.symbol} (${token.chain.toUpperCase()}) ',
               style: TextStyle(
                   fontSize: 10, color: DefaultColors.color333, fontWeight: FontWeight.bold),
             ),
@@ -491,7 +502,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
           ],
         ),
       );
-    } else if (tokenSymbol == DefaultTokenDefine.HYN_RP_HRC30.symbol) {
+    } else if (token.symbol == DefaultTokenDefine.HYN_RP_HRC30.symbol) {
       return RichText(
         text: TextSpan(
           children: [
@@ -502,7 +513,7 @@ class ExchangeQrcodeDepositPageState extends BaseState<ExchangeQrcodeDepositPage
                   color: DefaultColors.color777,
                 )),
             TextSpan(
-              text: ' HRC30-RP ',
+              text: ' ${token.chain.toUpperCase()}-RP ',
               style: TextStyle(
                   fontSize: 10, color: DefaultColors.color333, fontWeight: FontWeight.bold),
             ),

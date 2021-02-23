@@ -227,7 +227,7 @@ class ExchangeApi {
   Future<ExchangeCoinListV2> getCoinList() async {
     var testData = '''
     {
-    "assets": [
+    "base": [
         "USDT",
         "HYN",
         "RP"

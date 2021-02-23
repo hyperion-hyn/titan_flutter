@@ -27,7 +27,6 @@ class ExchangeCoinListV2 extends Object {
 
 @JsonSerializable()
 class Token extends Object {
-
   @JsonKey(name: 'symbol')
   String symbol;
 
@@ -37,10 +36,17 @@ class Token extends Object {
   @JsonKey(name: 'chain')
   String chain;
 
-  Token(this.symbol,this.coinType,this.chain,);
+  Token(
+    this.symbol,
+    this.coinType,
+    this.chain,
+  );
 
   factory Token.fromJson(Map<String, dynamic> srcJson) => _$TokenFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$TokenToJson(this);
 
+  bool isSameToken(Token token) {
+    return token?.symbol == symbol && token?.coinType == coinType ?? false;
+  }
 }

@@ -348,11 +348,22 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
   }
 
   List<Token> activeTokens() {
-    return exchangeCoinList?.tokens ?? [
-      Token('HYN', CoinType.HYN_ATLAS, 'ATLAS'),
-      Token('USDT', CoinType.ETHEREUM, 'ERC20'),
-      Token('RP', CoinType.HYN_ATLAS, 'HRC30')
-    ];
+    return exchangeCoinList?.tokens ??
+        [
+          Token('HYN', CoinType.HYN_ATLAS, 'ATLAS'),
+          Token('USDT', CoinType.ETHEREUM, 'ERC20'),
+          Token('RP', CoinType.HYN_ATLAS, 'HRC30')
+        ];
+  }
+
+  List<Token> activeTokensBySymbol(String symbol) {
+    List<Token> result = List();
+    activeTokens().forEach((token) {
+      if (token.symbol == symbol) {
+        result.add(token);
+      }
+    });
+    return result;
   }
 
   List<MarketItemEntity> getFilterMarketItemList() {
@@ -407,7 +418,7 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
       var realPercent = marketItem == null
           ? 0.0
           : (marketItem.kLineEntity.close - marketItem.kLineEntity.open) /
-          (marketItem.kLineEntity.open);
+              (marketItem.kLineEntity.open);
       return realPercent;
     } catch (e) {
       return 0.0;
@@ -430,8 +441,10 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
   }
 
   @override
-  bool updateShouldNotifyDependent(MarketInheritedModel old,
-      Set<SocketAspect> dependencies,) {
+  bool updateShouldNotifyDependent(
+    MarketInheritedModel old,
+    Set<SocketAspect> dependencies,
+  ) {
     return marketItemList != old.marketItemList &&
         dependencies.contains(SocketAspect.marketItemList);
     // ||
