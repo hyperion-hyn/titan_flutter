@@ -225,45 +225,6 @@ class ExchangeApi {
   }
 
   Future<ExchangeCoinListV2> getCoinList() async {
-    var testData = '''
-    {
-    "base": [
-        "USDT",
-        "HYN",
-        "RP"
-    ],
-    "activeExchangeMap": {
-        "USDT": [
-            "HYN",
-            "RP"
-        ]
-    },
-    "tokens": [
-      {
-            "symbol": "HYN",
-            "coinType": 546,
-            "chain": "atlas"
-        },
-        {
-            "symbol": "RP",
-            "coinType": 546,
-            "chain": "atlas"
-        },
-        {
-            "symbol": "USDT",
-            "coinType": 60,
-            "chain": "erc20"
-        },
-        {
-            "symbol": "USDT",
-            "coinType": 1010,
-            "chain": "heco"
-        }
-    ]
-}
-    ''';
-    var srcJson = jsonDecode(testData);
-    return ExchangeCoinListV2.fromJson(srcJson);
     return await exchangeHttp.postEntity<ExchangeCoinListV2>(
       ExchangeConst.PATH_COIN_LIST,
       EntityFactory<ExchangeCoinListV2>((coinList) => ExchangeCoinListV2.fromJson(coinList)),

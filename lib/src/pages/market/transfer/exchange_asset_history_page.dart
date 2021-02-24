@@ -349,10 +349,7 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => InAppWebViewContainer(
-                          initUrl: url,
-                          title: '',
-                        )));
+                    builder: (context) => InAppWebViewContainer(initUrl: url, title: '')));
           }
         }
       },

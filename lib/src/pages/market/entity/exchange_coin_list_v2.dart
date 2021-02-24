@@ -4,7 +4,7 @@ part 'exchange_coin_list_v2.g.dart';
 
 @JsonSerializable()
 class ExchangeCoinListV2 extends Object {
-  @JsonKey(name: 'base')
+  @JsonKey(name: 'assets')
   List<String> assets;
 
   @JsonKey(name: 'activeExchangeMap')
