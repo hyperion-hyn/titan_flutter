@@ -341,20 +341,24 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         InkWell(
           child: Row(
             children: <Widget>[
-              Stack(
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    width: 36,
-                    height: 36,
-                    child: ImageUtil.getCoinImage(coinVo.logo),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: ImageUtil.getChainIcon(coinVo, 15),
-                  )
-                ],
+              Container(
+                width: 40,
+                height: 40,
+                child: Stack(
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      width: 36,
+                      height: 36,
+                      child: ImageUtil.getCoinImage(coinVo.logo),
+                    ),
+                    Positioned(
+                      bottom: 2,
+                      right: 2,
+                      child: ImageUtil.getChainIcon(coinVo, 14),
+                    )
+                  ],
+                ),
               ),
               SizedBox(width: 8),
               RichText(
@@ -484,20 +488,24 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-                child: Stack(
-                  children: [
-                    Container(
-                      alignment: Alignment.center,
-                      width: 48,
-                      height: 48,
-                      child: ImageUtil.getCoinImage(coinVo.logo),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: ImageUtil.getChainIcon(coinVo, 20),
-                    )
-                  ],
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  child: Stack(
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        width: 48,
+                        height: 48,
+                        child: ImageUtil.getCoinImage(coinVo.logo),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: ImageUtil.getChainIcon(coinVo, 18),
+                      )
+                    ],
+                  ),
                 ),
               ),
               Text(

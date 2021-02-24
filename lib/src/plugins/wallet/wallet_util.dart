@@ -571,7 +571,6 @@ class WalletUtil {
 
   static String getChainNameByCoinType(int coinType) {
     var chainNme = '';
-
     if (coinType == CoinType.BITCOIN) {
       chainNme = 'Bitcoin';
     } else if (coinType == CoinType.ETHEREUM) {

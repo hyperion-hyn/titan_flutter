@@ -175,20 +175,24 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.only(top: 32, bottom: 24),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    alignment: Alignment.center,
-                                    width: 80,
-                                    height: 80,
-                                    child: Image.asset(coinVo.logo),
-                                  ),
-                                  Positioned(
-                                    bottom: 0,
-                                    right: 0,
-                                    child: ImageUtil.getChainIcon(coinVo, 30),
-                                  )
-                                ],
+                              child: Container(
+                                width: 82,
+                                height: 82,
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      width: 80,
+                                      height: 80,
+                                      child: Image.asset(coinVo.logo),
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: ImageUtil.getChainIcon(coinVo, 25),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                             Text(

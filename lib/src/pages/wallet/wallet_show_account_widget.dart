@@ -184,20 +184,24 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.only(top: 32, bottom: 24),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    alignment: Alignment.center,
-                                    width: 80,
-                                    height: 80,
-                                    child: Image.asset(widget.coinVo.logo),
-                                  ),
-                                  Positioned(
-                                    bottom: 0,
-                                    right: 0,
-                                    child: ImageUtil.getChainIcon(widget.coinVo, 30),
-                                  )
-                                ],
+                              child: Container(
+                                width: 82,
+                                height: 82,
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      width: 80,
+                                      height: 80,
+                                      child: Image.asset(widget.coinVo.logo),
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: ImageUtil.getChainIcon(widget.coinVo, 25),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                             Text(

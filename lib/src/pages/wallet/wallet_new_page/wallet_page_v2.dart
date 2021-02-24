@@ -255,13 +255,13 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
             slivers: <Widget>[
               _headerWidget(activatedWalletVo),
               _chainWidget(CoinType.HYN_ATLAS),
-              _coinListWidget(activatedWalletVo, CoinType.HYN_ATLAS),
+              _tokenListByChain(activatedWalletVo, CoinType.HYN_ATLAS),
               _chainWidget(CoinType.ETHEREUM),
-              _coinListWidget(activatedWalletVo, CoinType.ETHEREUM),
+              _tokenListByChain(activatedWalletVo, CoinType.ETHEREUM),
               _chainWidget(CoinType.HB_HT),
-              _coinListWidget(activatedWalletVo, CoinType.HB_HT),
+              _tokenListByChain(activatedWalletVo, CoinType.HB_HT),
               _chainWidget(CoinType.BITCOIN),
-              _coinListWidget(activatedWalletVo, CoinType.BITCOIN),
+              _tokenListByChain(activatedWalletVo, CoinType.BITCOIN),
               _hynBurnWidget(),
             ],
           ),
@@ -550,9 +550,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                               "res/drawable/ic_wallet_account_list_receiver_v3.png",
                               width: 18,
                             ),
-                            SizedBox(
-                              width: 7,
-                            ),
+                            SizedBox(width: 7),
                             Text(
                               S.of(context).receiver,
                               style: TextStyles.textC333S12,
@@ -611,7 +609,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     }
   }
 
-  _coinListWidget(WalletViewVo activatedWalletVo, int coinType) {
+  _tokenListByChain(WalletViewVo activatedWalletVo, int coinType) {
     var tokensByCoinType = activatedWalletVo.tokensByCoinType(coinType);
     return SliverList(
         delegate: SliverChildBuilderDelegate(
@@ -690,20 +688,24 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
               children: [
                 Row(
                   children: <Widget>[
-                    Stack(
-                      children: [
-                        Container(
-                          alignment: Alignment.center,
-                          width: 48,
-                          height: 48,
-                          child: ImageUtil.getCoinImage(coin.logo),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: ImageUtil.getChainIcon(coin, 20),
-                        )
-                      ],
+                    Container(
+                      width: 50,
+                      height: 50,
+                      child: Stack(
+                        children: [
+                          Container(
+                            alignment: Alignment.center,
+                            width: 48,
+                            height: 48,
+                            child: ImageUtil.getCoinImage(coin.logo),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: ImageUtil.getChainIcon(coin, 18),
+                          )
+                        ],
+                      ),
                     ),
                     SizedBox(
                       width: 12,
@@ -862,13 +864,13 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
             child: CustomScrollView(
               slivers: <Widget>[
                 _chainWidget(CoinType.HYN_ATLAS),
-                _coinListDialogWidget(activatedWalletVo, CoinType.HYN_ATLAS, jumpType),
+                _dialogTokenListByChain(activatedWalletVo, CoinType.HYN_ATLAS, jumpType),
                 _chainWidget(CoinType.ETHEREUM),
-                _coinListDialogWidget(activatedWalletVo, CoinType.ETHEREUM, jumpType),
+                _dialogTokenListByChain(activatedWalletVo, CoinType.ETHEREUM, jumpType),
                 _chainWidget(CoinType.HB_HT),
-                _coinListDialogWidget(activatedWalletVo, CoinType.HB_HT, jumpType),
+                _dialogTokenListByChain(activatedWalletVo, CoinType.HB_HT, jumpType),
                 _chainWidget(CoinType.BITCOIN),
-                _coinListDialogWidget(activatedWalletVo, CoinType.BITCOIN, jumpType),
+                _dialogTokenListByChain(activatedWalletVo, CoinType.BITCOIN, jumpType),
               ],
             ),
           ),
@@ -877,7 +879,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     );
   }
 
-  _coinListDialogWidget(WalletViewVo activatedWalletVo, int coinType, WalletPageJump jumpType) {
+  _dialogTokenListByChain(WalletViewVo activatedWalletVo, int coinType, WalletPageJump jumpType) {
     var tokensByCoinType = activatedWalletVo.tokensByCoinType(coinType);
     return SliverList(
         delegate: SliverChildBuilderDelegate(
