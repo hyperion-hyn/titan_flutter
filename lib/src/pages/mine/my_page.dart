@@ -303,6 +303,7 @@ class _MyPageState extends BaseState<MyPage> {
                     '0x70247395aFFd13C2347aA8c748225f1bFeD2C32A'.toLowerCase(),
                     '0x9D05DDfC30bc83e7215EB3C5C3C7A443e7Ee1dB6'.toLowerCase(),
                     '0x5AD1e746E6610401f598486d8747d9907Cf114b2'.toLowerCase(),
+                    '0x9AE56FD9862CbF6188b495D8eE6A45EE261E5306'.toLowerCase(),
                   ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
                     _buildMenuBar(
                         '链上子钱包',

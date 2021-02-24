@@ -12,6 +12,11 @@ class HbApi{
     return '${HecoExplore.hecoScanWeb}/tx/$txHash';
   }
 
+  static String getAddressDetailUrl(String address) {
+    return '${HecoExplore.hecoScanWeb}/address/$address';
+  }
+
+
   Future<List<HtTransferHistory>> queryHtHistory(String address, int page) async {
     Map result = await HttpCore.instance.get("${HecoExplore.hecoScanApi}/v1/account/coin-tx-list", params: {
       "address": address,
