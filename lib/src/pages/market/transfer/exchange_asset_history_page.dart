@@ -331,9 +331,7 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
           HynTransferHistory hynTransferHistory = await _api.queryHYNTxDetail(
             assetHistory.txId,
           );
-
           var transactionType = (assetHistory.name ?? '') == 'withdraw' ? 2 : 1;
-
           var transactionDetailVo = TransactionDetailVo.fromHynTransferHistory(
             hynTransferHistory,
             transactionType,
@@ -346,7 +344,7 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
                   builder: (context) => WalletShowTransactionSimpleInfoPage(
                       transactionDetailVo.hash, transactionDetailVo.symbol)));
         } else {
-          var url = EtherscanApi.getTxDetailUrl(assetHistory.txId);
+          var url = assetHistory.getTxDetailUrl();
           if (url != null) {
             Navigator.push(
                 context,

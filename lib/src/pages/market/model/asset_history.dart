@@ -1,6 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
+import 'package:titan/src/pages/wallet/api/hb_api.dart';
+import 'package:titan/src/plugins/wallet/config/heco.dart';
 
 part 'asset_history.g.dart';
 
@@ -38,6 +41,14 @@ class AssetHistory extends Object {
 
   bool isAtlas() {
     return chain == 'atlas';
+  }
+
+  String getTxDetailUrl() {
+    if (chain == 'heco') {
+      return HbApi.getTxDetailUrl(txId);
+    } else {
+      return EtherscanApi.getTxDetailUrl(txId);
+    }
   }
 
   bool isAbnormal() {
@@ -93,13 +104,9 @@ class AssetHistory extends Object {
     } else if ((name ?? '') == 'running') {
       switch (status) {
         case '1':
-          return S
-              .of(Keys.rootKey.currentContext)
-              .exchange_assets_running_status_1;
+          return S.of(Keys.rootKey.currentContext).exchange_assets_running_status_1;
         case '2':
-          return S
-              .of(Keys.rootKey.currentContext)
-              .exchange_assets_running_status_2;
+          return S.of(Keys.rootKey.currentContext).exchange_assets_running_status_2;
         default:
           return '-';
       }
@@ -121,8 +128,7 @@ class AssetHistory extends Object {
     this.chain,
   );
 
-  factory AssetHistory.fromJson(Map<String, dynamic> srcJson) =>
-      _$AssetHistoryFromJson(srcJson);
+  factory AssetHistory.fromJson(Map<String, dynamic> srcJson) => _$AssetHistoryFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$AssetHistoryToJson(this);
 }
