@@ -44,6 +44,9 @@ class AssetHistory extends Object {
   }
 
   String getTxDetailUrl() {
+    if (txId == null || txId.isEmpty) {
+      return null;
+    }
     if (chain == 'heco') {
       return HbApi.getTxDetailUrl(txId);
     } else {
