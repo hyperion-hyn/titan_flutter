@@ -351,7 +351,7 @@ class MarketInheritedModel extends InheritedModel<SocketAspect> {
     return exchangeCoinList?.tokens ??
         [
           Token('HYN', CoinType.HYN_ATLAS, 'atlas'),
-          Token('USDT', CoinType.ETHEREUM, 'erc20'),
+          Token('USDT', CoinType.ETHEREUM, 'heco'),
           Token('RP', CoinType.HYN_ATLAS, 'atlas'),
         ];
   }
