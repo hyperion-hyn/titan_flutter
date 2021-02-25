@@ -32,7 +32,8 @@ void main() {
     mapEnt["amount"] = 0;
     var amountFrom = amountFromJson(mapEnt);
     var amountTo = amountToJson(null);
-    print("$amountFrom  $amountTo");
+    var testKey = mapEnt['aaa'];
+    print("$amountFrom  $amountTo  $testKey");
   });
 }
 
