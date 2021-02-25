@@ -882,7 +882,8 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
     addressData.htBalance = ConvertTokenUnit.weiToDecimal(htBalance);
 
     print("'mm-$address', '$ethBalance,$hynBalance,$usdtBalance,$rpBalance'");
-    await AppCache.saveValue('mm-$address', '$ethBalance,$hynBalance,$usdtBalance,$rpBalance');
+    await AppCache.saveValue('mm-$address',
+        '$ethBalance,$hynBalance,$usdtBalance,$rpBalance,$htBalance,$hecoUsdtBalance');
   }
 
   Future<AddressData> newAddressData(
@@ -899,6 +900,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
     var balanceStr = await getCachedBalance(address);
     if (balanceStr != null && balanceStr.isNotEmpty) {
       var ary = balanceStr.split(',');
+
       if (ary.length >= 3) {
         ethBalance = ConvertTokenUnit.weiToDecimal(BigInt.parse(ary[0]));
         hynBalance = ConvertTokenUnit.weiToDecimal(BigInt.parse(ary[1]));
@@ -911,7 +913,11 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
           htBalance = ConvertTokenUnit.weiToDecimal(BigInt.parse(ary[4]));
         }
         if (ary.length >= 6) {
-          husdtBalance = ConvertTokenUnit.weiToDecimal(BigInt.parse(ary[5]));
+          husdtBalance = ConvertTokenUnit.weiToDecimal(
+              BigInt.parse(ary[5]),
+              HecoConfig.chainType == HecoChainType.mainnet
+                  ? DefaultTokenDefine.HUSDT.decimals
+                  : DefaultTokenDefine.HUSDT_TEST.decimals);
         }
       } else {
         ethBalance = Decimal.zero;
