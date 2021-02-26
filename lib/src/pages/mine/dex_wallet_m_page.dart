@@ -93,7 +93,7 @@ class AddressIndex {
   static const int M_HYN = 4;
   static const int C_RP = 6;
   static const int HT = 15;
-  static const int HECO_U = 11;
+  static const int USDT_HECO = 16;
 }
 
 class TokenType {
@@ -224,10 +224,10 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                 accs.add(accountRp);
 
                 // heco-u归2
-                ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.HECO_U}");
+                ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.USDT_HECO}");
                 ethAddress = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
                 account = await newAddressData(
-                    ethWallet, 'U 归/出 (HECO)', ethAddress, AddressIndex.HECO_U);
+                    ethWallet, 'U 归/出 (HECO)', ethAddress, AddressIndex.USDT_HECO);
                 accs.add(account);
 
                 //归eth gas
@@ -439,7 +439,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
         onTap: () {
           if (addressData.address.startsWith('hyn1')) {
             AtlasApi.goToHynScanPage(context, addressData.address);
-          } else if (addressData.index == AddressIndex.HECO_U ||
+          } else if (addressData.index == AddressIndex.USDT_HECO ||
               addressData.index == AddressIndex.HT) {
             openAddressWebPageHeco(addressData.address);
           } else {
@@ -462,7 +462,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                 if (addressData.index != AddressIndex.M_HYN &&
                     addressData.index != AddressIndex.C_RP &&
                     addressData.index != AddressIndex.HT &&
-                    addressData.index != AddressIndex.HECO_U)
+                    addressData.index != AddressIndex.USDT_HECO)
                   Row(
                     children: <Widget>[
                       Text(
@@ -506,7 +506,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                     ],
                   ),
                 if (addressData.index == AddressIndex.HT ||
-                    addressData.index == AddressIndex.HECO_U)
+                    addressData.index == AddressIndex.USDT_HECO)
                   Row(
                     children: <Widget>[
                       Text('HT', style: TextStyle(fontSize: 13)),
@@ -515,7 +515,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                           style: TextStyle(fontSize: 13)),
                     ],
                   ),
-                if (addressData.index == AddressIndex.HECO_U)
+                if (addressData.index == AddressIndex.USDT_HECO)
                   Row(
                     children: <Widget>[
                       Text('HUSDT', style: TextStyle(fontSize: 13)),
@@ -848,7 +848,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
     } else if (addressData.index == AddressIndex.HT) {
       //HT
       ret[4] = await WalletUtil.getBalanceByCoinTypeAndAddress(CoinType.HB_HT, addressData.address);
-    } else if (addressData.index == AddressIndex.HECO_U) {
+    } else if (addressData.index == AddressIndex.USDT_HECO) {
       //H-USDT
       ret = await Future.wait([
         Future.value(BigInt.zero),
@@ -1353,7 +1353,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
       return [TokenType.USDT_ERC20, TokenType.ETH];
     } else if (data.index == AddressIndex.GAS) {
       return [TokenType.ETH];
-    } else if (data.index == AddressIndex.HECO_U) {
+    } else if (data.index == AddressIndex.USDT_HECO) {
       return [TokenType.HT, TokenType.USDT_HECO];
     } else if (data.index == AddressIndex.HT) {
       return [TokenType.HT];
