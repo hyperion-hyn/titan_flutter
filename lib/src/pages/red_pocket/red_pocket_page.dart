@@ -607,25 +607,25 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Spacer(),
-                    InkWell(
-                      onTap: () {
-                        String webUrl = FluroConvertUtils.fluroCnParamsEncode(
-                          "https://h.hyn.space/redpocket",
-                        );
-                        String webTitle = FluroConvertUtils.fluroCnParamsEncode(
-                          S.of(context).detailed_introduction,
-                        );
-                        Application.router.navigateTo(context,
-                            Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
-                      },
-                      child: Text(
-                        S.of(context).detailed_introduction,
-                        style: TextStyle(
-                          color: Colors.blue,
-                        ),
-                      ),
-                    )
+                    //Spacer(),
+                    // InkWell(
+                    //   onTap: () {
+                    //     String webUrl = FluroConvertUtils.fluroCnParamsEncode(
+                    //       "https://h.hyn.space/redpocket",
+                    //     );
+                    //     String webTitle = FluroConvertUtils.fluroCnParamsEncode(
+                    //       S.of(context).detailed_introduction,
+                    //     );
+                    //     Application.router.navigateTo(context,
+                    //         Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+                    //   },
+                    //   child: Text(
+                    //     S.of(context).detailed_introduction,
+                    //     style: TextStyle(
+                    //       color: Colors.blue,
+                    //     ),
+                    //   ),
+                    // )
                   ],
                 ),
                 SizedBox(
