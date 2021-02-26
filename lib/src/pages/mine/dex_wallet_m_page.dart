@@ -641,7 +641,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                     final client = WalletUtil.getWeb3Client(coinType);
                                     final credentials = await client
                                         .credentialsFromPrivateKey(addressData.hdWallet.privKey);
-                                    var gasPrice = HecoGasPrice.getRecommend().fastBigInt;
+                                    var gasPrice = HecoGasPrice.getRecommend().averageBigInt;
                                     var fromAddress = await credentials.extractAddress();
                                     var nonce = await WalletUtil.getWeb3Client(coinType)
                                         .getTransactionCount(fromAddress,
