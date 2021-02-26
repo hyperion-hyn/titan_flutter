@@ -22,9 +22,11 @@ import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/image_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
@@ -266,7 +268,7 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
     var token = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
-    ).getCoinVoBySymbol(widget._symbol);
+    ).getCoinVoBySymbolAndCoinType(widget._symbol, CoinType.HYN_ATLAS);
 
     return Container(
       color: Colors.white,
@@ -279,7 +281,7 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
                   Row(
                     children: <Widget>[
                       Image.asset(
-                        token?.logo ?? '',
+                        ImageUtil.getGeneralTokenLogo(widget._symbol),
                         width: 32,
                         height: 32,
                       ),
@@ -329,9 +331,7 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
           HynTransferHistory hynTransferHistory = await _api.queryHYNTxDetail(
             assetHistory.txId,
           );
-
           var transactionType = (assetHistory.name ?? '') == 'withdraw' ? 2 : 1;
-
           var transactionDetailVo = TransactionDetailVo.fromHynTransferHistory(
             hynTransferHistory,
             transactionType,
@@ -344,15 +344,12 @@ class _ExchangeAssetHistoryPageState extends BaseState<ExchangeAssetHistoryPage>
                   builder: (context) => WalletShowTransactionSimpleInfoPage(
                       transactionDetailVo.hash, transactionDetailVo.symbol)));
         } else {
-          var url = EtherscanApi.getTxDetailUrl(assetHistory.txId);
+          var url = assetHistory.getTxDetailUrl();
           if (url != null) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => InAppWebViewContainer(
-                          initUrl: url,
-                          title: '',
-                        )));
+                    builder: (context) => InAppWebViewContainer(initUrl: url, title: '')));
           }
         }
       },

@@ -105,13 +105,10 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                     channel: channelValue,
                     response: response,
                   );
-                } else if (channelValue.startsWith("user") &&
-                    channelValue.contains("tick")) {
-                  yield ChannelUserTickState(
-                      channel: channelValue, response: response);
+                } else if (channelValue.startsWith("user") && channelValue.contains("tick")) {
+                  yield ChannelUserTickState(channel: channelValue, response: response);
                 } else {
-                  yield ChannelKLinePeriodState(
-                      channel: channelValue, response: response);
+                  yield ChannelKLinePeriodState(channel: channelValue, response: response);
                 }
               }
               // yield ReceivedDataSuccessState(response: dataMap);
@@ -148,16 +145,12 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     } else if (event is MarketSymbolEvent) {
       // 价格行情
       var response = await _exchangeApi.getMarketAllSymbol();
-      List<MarketItemEntity> _marketItemList =
-          MarketSymbolList.fromJsonToMarketItemList(response);
+      List<MarketItemEntity> _marketItemList = MarketSymbolList.fromJsonToMarketItemList(response);
 
       yield MarketSymbolState(_marketItemList);
     } else if (event is UpdateExchangeCoinListEvent) {
       try {
         var exchangeCoinList = await _exchangeApi.getCoinList();
-
-        //var json =jsonDecode('{"assets":["USDT","HYN","RP"],"activeExchangeMap":{"USDT":["HYN","RP"],"HYN":["RP"]}}');
-        //var exchangeCoinList = ExchangeCoinList.fromJson(json);
 
         yield UpdateExchangeCoinListState(exchangeCoinList);
       } catch (e) {}

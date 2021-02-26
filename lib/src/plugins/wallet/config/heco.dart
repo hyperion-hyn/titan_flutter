@@ -1,6 +1,7 @@
 import 'package:titan/env.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 
 class HecoGasLimit {
   static const int TRANSFER = 21000;
@@ -22,6 +23,16 @@ enum HecoChainType { mainnet, test }
 
 class HecoConfig {
   static HecoChainType chainType = env.buildType == BuildType.DEV ? HecoChainType.test : HecoChainType.mainnet;
+
+  static String getUsdtErc20Address() {
+    switch (HecoConfig.chainType) {
+      case HecoChainType.mainnet:
+        return DefaultTokenDefine.HUSDT.contractAddress;
+      case HecoChainType.test:
+        return DefaultTokenDefine.HUSDT_TEST.contractAddress;
+    }
+    return '';
+  }
 }
 
 class HecoRpcProvider {

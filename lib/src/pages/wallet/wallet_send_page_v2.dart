@@ -128,7 +128,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     else if (CoinType.ETHEREUM == _coinType) {
       var initGasPrice = _selectedGasPrice;
       // gasPrice = _isCustom ? Decimal?.tryParse(_lastGasPrice ?? '0') ?? initGasPrice : initGasPrice;
-      var _lastGasPriceGWei = Decimal.tryParse(_lastGasPrice ?? '0') * Decimal.fromInt(EthereumUnitValue.G_WEI);
+      var _lastGasPriceGWei =
+          Decimal.tryParse(_lastGasPrice ?? '0') * Decimal.fromInt(EthereumUnitValue.G_WEI);
       gasPrice = _isCustom ? (_lastGasPriceGWei ?? initGasPrice) : initGasPrice;
     }
     // 3.ATLAS
@@ -164,16 +165,17 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     }
     // 3.ATLAS
     else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
-
-      if (widget.coinVo.symbol == 'RP') {
+      if (widget.coinVo.symbol == 'HYN') {
+        gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+      } else {
         gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
       }
     }
     // 3.HB
     else if (widget.coinVo.coinType == CoinType.HB_HT) {
-      gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
-      if (widget.coinVo.symbol == 'HUSD') {
+      if (widget.coinVo.symbol == 'HT') {
+        gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+      } else {
         gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
       }
     }
@@ -192,9 +194,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     // 2.ETH
     else if (CoinType.ETHEREUM == _coinType) {
       fees = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(
-              (_gasPrice * Decimal.fromInt(_gasLimit))
-                  .toStringAsFixed(0)));
+          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toStringAsFixed(0)));
     }
     // 3.ATLAS
     else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
@@ -227,9 +227,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     // 2.ETH
     else if (CoinType.ETHEREUM == _coinType) {
       var feesDecimalValue = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(
-              (_gasPrice * Decimal.fromInt(_gasLimit))
-                  .toStringAsFixed(0)));
+          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toStringAsFixed(0)));
 
       var ethQuotePrice = WalletInheritedModel.of(context).tokenLegalPrice('ETH')?.price ?? 0;
       var gasPriceEstimate = feesDecimalValue * Decimal.parse(ethQuotePrice.toString());

@@ -174,14 +174,17 @@ class HYNApi {
           securityContact: createAtlasEntity.payload.contact,
           website: createAtlasEntity.payload.home),
       operatorAddress: createAtlasEntity.payload.map3Address,
-      slotPubKey: '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
+      slotPubKey:
+          '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
       slotKeySig:
           '2a42c89854e15c8d5f6bde111217a53767c94c96ff061ea65a1f0f392fadafe383c6e94d1873956e399e0e869bb2cd11885fcb155eed2e783570a3b305b2c1c33ce846227458eec0abae735bf6460a25f70bf3d24da592790e59d826ca07e910',
     );
     print(message);
 
     var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
-        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
+        password: password,
+        message: message,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
     return rawTx;
   }
 
@@ -202,7 +205,8 @@ class HYNApi {
           website: createAtlasEntity.payload.home),
       operatorAddress: createAtlasEntity.payload.map3Address,
       slotKeyToRemove: "",
-      slotKeyToAdd: '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
+      slotKeyToAdd:
+          '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
       slotKeyToAddSig:
           '2a42c89854e15c8d5f6bde111217a53767c94c96ff061ea65a1f0f392fadafe383c6e94d1873956e399e0e869bb2cd11885fcb155eed2e783570a3b305b2c1c33ce846227458eec0abae735bf6460a25f70bf3d24da592790e59d826ca07e910',
       eposStatus: 0, //0、 Active 1、Inactive 2、Banned
@@ -210,7 +214,9 @@ class HYNApi {
     print(message);
 
     var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
-        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
+        password: password,
+        message: message,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
     return rawTx;
   }
 
@@ -220,11 +226,14 @@ class HYNApi {
     String password,
     localWallet.Wallet wallet,
   ) async {
-    var message = CollectAtlasRewardMessage(delegatorAddress: map3Address, validatorAddress: atlasAddress);
+    var message =
+        CollectAtlasRewardMessage(delegatorAddress: map3Address, validatorAddress: atlasAddress);
     print(message);
 
     var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
-        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
+        password: password,
+        message: message,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
     return rawTx;
   }
 
@@ -241,7 +250,9 @@ class HYNApi {
     print(message);
 
     var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
-        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
+        password: password,
+        message: message,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
     return rawTx;
   }
 
@@ -251,11 +262,14 @@ class HYNApi {
     String password,
     localWallet.Wallet wallet,
   ) async {
-    var message = ReDelegateAtlasMessage(delegatorAddress: map3Address, validatorAddress: atlasAddress);
+    var message =
+        ReDelegateAtlasMessage(delegatorAddress: map3Address, validatorAddress: atlasAddress);
     print(message);
 
     var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
-        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
+        password: password,
+        message: message,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
     return rawTx;
   }
 
@@ -265,11 +279,14 @@ class HYNApi {
     String password,
     localWallet.Wallet wallet,
   ) async {
-    var message = UnReDelegateAtlasMessage(delegatorAddress: map3Address, validatorAddress: atlasAddress);
+    var message =
+        UnReDelegateAtlasMessage(delegatorAddress: map3Address, validatorAddress: atlasAddress);
     print(message);
 
     var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
-        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
+        password: password,
+        message: message,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
     return rawTx;
   }
 
@@ -301,7 +318,9 @@ class HYNApi {
     print(message);
 
     return await wallet.signTransaction(CoinType.HYN_ATLAS,
-        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
+        password: password,
+        message: message,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
   }
 
   static Future transEditMap3Node(
@@ -349,7 +368,9 @@ class HYNApi {
     print(message);
 
     return await wallet.signTransaction(CoinType.HYN_ATLAS,
-        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
+        password: password,
+        message: message,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
   }
 
   static Future transMicroMap3Node(
@@ -358,8 +379,7 @@ class HYNApi {
     String map3NodeAddress,
     localWallet.Wallet wallet,
   ) async {
-
-    var stakingDecimalValue = Decimal.tryParse(staking)??Decimal.zero;
+    var stakingDecimalValue = Decimal.tryParse(staking) ?? Decimal.zero;
     var amount = ConvertTokenUnit.decimalToWeiNew(stakingDecimalValue);
     print("[hyn_api] amount:${amount}");
 
@@ -372,7 +392,9 @@ class HYNApi {
     print(message);
 
     return await wallet.signTransaction(CoinType.HYN_ATLAS,
-        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
+        password: password,
+        message: message,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
   }
 
   static Future transUnMicroMap3Node(
@@ -390,7 +412,9 @@ class HYNApi {
     print(message);
 
     return await wallet.signTransaction(CoinType.HYN_ATLAS,
-        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
+        password: password,
+        message: message,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
   }
 
   static Future transCollectMap3Node(
@@ -403,7 +427,9 @@ class HYNApi {
     print(message);
 
     return await wallet.signTransaction(CoinType.HYN_ATLAS,
-        password: password, message: message, gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
+        password: password,
+        message: message,
+        gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
   }
 
   static Future transPreEditMap3Node(
@@ -544,8 +570,9 @@ class HYNApi {
             delegatorAddress = (dataDecoded["delegatorAddress"] as String).toLowerCase();
           }
 
-          var isCreator =
-              map3NodeAddress.isNotEmpty && delegatorAddress.isNotEmpty && map3NodeAddress == delegatorAddress;
+          var isCreator = map3NodeAddress.isNotEmpty &&
+              delegatorAddress.isNotEmpty &&
+              map3NodeAddress == delegatorAddress;
 
           var isRenew;
           if (dataDecoded.keys.contains('isRenew')) {
@@ -554,13 +581,17 @@ class HYNApi {
 
           if (isCreator) {
             if (isRenew != null) {
-              typeStr = isRenew ? S.of(context).preset_next_node_renew : S.of(context).preset_next_stop_renew;
+              typeStr = isRenew
+                  ? S.of(context).preset_next_node_renew
+                  : S.of(context).preset_next_stop_renew;
             } else {
               typeStr = S.of(context).msg_renew_map3;
             }
           } else {
             if (isRenew != null) {
-              typeStr = isRenew ? S.of(context).preset_next_follow_renew : S.of(context).preset_next_do_not_follow;
+              typeStr = isRenew
+                  ? S.of(context).preset_next_follow_renew
+                  : S.of(context).preset_next_do_not_follow;
             } else {
               typeStr = S.of(context).msg_renew_map3;
             }
@@ -591,8 +622,9 @@ class HYNApi {
   }
 
   static String toAddressHint(int hynMessageType, bool isFrom) {
-    var titleStr =
-        isFrom ? S.of(Keys.rootKey.currentContext).tx_from_address : S.of(Keys.rootKey.currentContext).tx_to_address;
+    var titleStr = isFrom
+        ? S.of(Keys.rootKey.currentContext).tx_from_address
+        : S.of(Keys.rootKey.currentContext).tx_to_address;
     switch (hynMessageType) {
       case MessageType.typeNormal:
         return titleStr;
@@ -659,14 +691,18 @@ class HYNApi {
   }
 
   static bool isGasFeeEnough(BigInt gasPrice, int gasLimit, {BigInt stakingAmount}) {
-    var hynCoin =
-        WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol(DefaultTokenDefine.HYN_Atlas.symbol);
+    var hynCoin = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbolAndCoinType(
+      DefaultTokenDefine.HYN_Atlas.symbol,
+      CoinType.HYN_ATLAS,
+    );
     var gasFees = gasPrice * BigInt.from(gasLimit);
     if (stakingAmount == null) {
       stakingAmount = BigInt.from(0);
     }
     if ((hynCoin.balance - stakingAmount) < gasFees) {
-      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).insufficient_gas_fee, gravity: ToastGravity.CENTER);
+      Fluttertoast.showToast(
+          msg: S.of(Keys.rootKey.currentContext).insufficient_gas_fee,
+          gravity: ToastGravity.CENTER);
       return false;
     }
     return true;

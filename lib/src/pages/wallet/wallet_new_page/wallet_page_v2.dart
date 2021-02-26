@@ -28,6 +28,7 @@ import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget_v2.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -239,119 +240,132 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
       //     ],
       //   );
       var _hasBackupWallet = activatedWalletVo.wallet?.walletExpandInfoEntity?.isBackup ?? false;
-      return Stack(
-        children: [
-          LoadDataContainer(
-            bloc: loadDataBloc,
-            enablePullUp: false,
-            showLoadingWidget: false,
-            onLoadData: () {
-              // listLoadingData();
-            },
-            onRefresh: () async {
-              listLoadingData();
-            },
-            child: CustomScrollView(
-              slivers: <Widget>[
-                _headerWidget(activatedWalletVo),
-                _coinListWidget(activatedWalletVo),
-                _hynBurnWidget(),
-              ],
-            ),
+      return Stack(children: [
+        LoadDataContainer(
+          bloc: loadDataBloc,
+          enablePullUp: false,
+          showLoadingWidget: false,
+          onLoadData: () {
+            // listLoadingData();
+          },
+          onRefresh: () async {
+            listLoadingData();
+          },
+          child: CustomScrollView(
+            slivers: <Widget>[
+              _headerWidget(activatedWalletVo),
+              _chainWidget(CoinType.HYN_ATLAS),
+              _tokenListByChain(activatedWalletVo, CoinType.HYN_ATLAS),
+              _chainWidget(CoinType.ETHEREUM),
+              _tokenListByChain(activatedWalletVo, CoinType.ETHEREUM),
+              _chainWidget(CoinType.HB_HT),
+              _tokenListByChain(activatedWalletVo, CoinType.HB_HT),
+              _chainWidget(CoinType.BITCOIN),
+              _tokenListByChain(activatedWalletVo, CoinType.BITCOIN),
+              _hynBurnWidget(),
+            ],
           ),
-          if (!_hasBackupWallet && !Application.hasShowBackupWalletDialog)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 16,
-              child: Container(
-                margin: EdgeInsets.only(left: 16,right: 16),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey[500],
-                        blurRadius: 20.0,
+        ),
+        if (!_hasBackupWallet && !Application.hasShowBackupWalletDialog)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 16,
+            child: Container(
+              margin: EdgeInsets.only(left: 16, right: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey[500],
+                    blurRadius: 20.0,
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 38,
+                        height: 38,
                       ),
+                      Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: Image.asset(
+                          "res/drawable/ic_wallet_account_backup_remind.png",
+                          width: 16,
+                          height: 16,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 6,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: Text(S.of(context).safety_reminder,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: HexColor("#333333"),
+                                decoration: TextDecoration.none)),
+                      ),
+                      Spacer(),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            Application.hasShowBackupWalletDialog = true;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Image.asset(
+                            "res/drawable/map3_node_close.png",
+                            width: 18,
+                            height: 18,
+                          ),
+                        ),
+                      )
                     ],
                   ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(width: 38,height: 38,),
-                        Spacer(),
-                        Padding(
-                          padding: const EdgeInsets.only(top:20.0),
-                          child: Image.asset(
-                            "res/drawable/ic_wallet_account_backup_remind.png",
-                            width: 16,
-                            height: 16,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 6,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top:20.0),
-                          child: Text(S.of(context).safety_reminder,
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: HexColor("#333333"),
-                                  decoration: TextDecoration.none)),
-                        ),
-                        Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              Application.hasShowBackupWalletDialog = true;
-                            });
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Image.asset(
-                              "res/drawable/map3_node_close.png",
-                              width: 18,
-                              height: 18,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 13, bottom: 21.0, left: 20, right: 20),
-                      child: Text(S.of(context).mnemonic_not_backed_up_loss,
-                          style: TextStyle(
-                              fontSize: 14, color: HexColor("#666666"), decoration: TextDecoration.none)),
-                    ),
-                    ClickOvalButton(
-                      S.of(context).backup_now,
-                          () async {
-                            setState(() {
-                              Application.hasShowBackupWalletDialog = true;
-                            });
-                        var walletStr = FluroConvertUtils.object2string(activatedWalletVo.wallet.toJson());
-                        Application.router.navigateTo(
-                            context,
-                            Routes.wallet_setting_wallet_backup_notice +
-                                '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
-                      },
-                      btnColor: [HexColor("#E7C01A"), HexColor("#F7D33D")],
-                      fontSize: 16,
-                      fontColor: DefaultColors.color333,
-                      width: 200,
-                      height: 38,
-                    ),
-                    SizedBox(height: 16,)
-                  ],
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 13, bottom: 21.0, left: 20, right: 20),
+                    child: Text(S.of(context).mnemonic_not_backed_up_loss,
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: HexColor("#666666"),
+                            decoration: TextDecoration.none)),
+                  ),
+                  ClickOvalButton(
+                    S.of(context).backup_now,
+                    () async {
+                      setState(() {
+                        Application.hasShowBackupWalletDialog = true;
+                      });
+                      var walletStr =
+                          FluroConvertUtils.object2string(activatedWalletVo.wallet.toJson());
+                      Application.router.navigateTo(
+                          context,
+                          Routes.wallet_setting_wallet_backup_notice +
+                              '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
+                    },
+                    btnColor: [HexColor("#E7C01A"), HexColor("#F7D33D")],
+                    fontSize: 16,
+                    fontColor: DefaultColors.color333,
+                    width: 200,
+                    height: 38,
+                  ),
+                  SizedBox(
+                    height: 16,
+                  )
+                ],
               ),
-            )
-        ]
-      );
+            ),
+          )
+      ]);
     } else {
       return EmptyWalletViewV2(
         loadDataBloc: loadDataBloc,
@@ -536,9 +550,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                               "res/drawable/ic_wallet_account_list_receiver_v3.png",
                               width: 18,
                             ),
-                            SizedBox(
-                              width: 7,
-                            ),
+                            SizedBox(width: 7),
                             Text(
                               S.of(context).receiver,
                               style: TextStyles.textC333S12,
@@ -578,21 +590,49 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     );
   }
 
-  _coinListWidget(WalletViewVo activatedWalletVo) {
+  _chainWidget(int coinType) {
+    var chainName = WalletUtil.getChainNameByCoinType(coinType);
+    if (chainName.isNotEmpty) {
+      return SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+          ),
+          child: Text(
+            chainName,
+            style: TextStyle(color: DefaultColors.color999),
+          ),
+        ),
+      );
+    } else {
+      return SliverToBoxAdapter(child: SizedBox());
+    }
+  }
+
+  _tokenListByChain(WalletViewVo activatedWalletVo, int coinType) {
+    var tokensByCoinType = activatedWalletVo.tokensByCoinType(coinType);
     return SliverList(
-        delegate: SliverChildBuilderDelegate((context, index) {
-      var coinVo = activatedWalletVo.coins[index];
-      var hasPrice = true;
-      return InkWell(
+        delegate: SliverChildBuilderDelegate(
+      (context, index) {
+        var coinVo = tokensByCoinType[index];
+        var hasPrice = true;
+        return _buildAccountItem(
+          context,
+          coinVo,
+          hasPrice: hasPrice,
+          isLastIndex: tokensByCoinType.length == (index + 1),
           onTap: () {
-            var coinVo = activatedWalletVo.coins[index];
+            var coinVo = tokensByCoinType[index];
             var coinVoJsonStr = FluroConvertUtils.object2string(coinVo.toJson());
-            Application.router
-                .navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
+            Application.router.navigateTo(
+              context,
+              Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr',
+            );
           },
-          child: _buildAccountItem(context, coinVo,
-              hasPrice: hasPrice, isLastIndex: activatedWalletVo.coins.length == (index + 1)));
-    }, childCount: activatedWalletVo.coins.length));
+        );
+      },
+      childCount: tokensByCoinType.length,
+    ));
   }
 
   _hynBurnWidget() {
@@ -608,8 +648,13 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
     );
   }
 
-  Widget _buildAccountItem(BuildContext context, CoinViewVo coin,
-      {bool hasPrice = true, bool isLastIndex = false}) {
+  Widget _buildAccountItem(
+    BuildContext context,
+    CoinViewVo coin, {
+    bool hasPrice = true,
+    bool isLastIndex = false,
+    Function onTap,
+  }) {
     var symbol = coin.symbol;
     var symbolQuote = WalletInheritedModel.of(context).tokenLegalPrice(symbol);
     var subSymbol = "";
@@ -633,146 +678,162 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
           : '${symbolQuote?.legal?.sign ?? ''} *****';
     }
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 22.0, right: 22, top: 12, bottom: 12),
-          child: Column(
-            children: [
-              Row(
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.center,
-                    width: 48,
-                    height: 48,
-                    child: ImageUtil.getCoinImage(coin.logo),
-                  ),
-                  SizedBox(
-                    width: 12,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              symbol,
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF252525)),
-                            ),
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              subSymbol,
-                              style: TextStyle(fontSize: 12),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 4,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Text(
-                            _isShowBalances
-                                ? "${FormatUtil.coinBalanceHumanReadFormat(coin)}"
-                                : '*****',
-                            textAlign: TextAlign.right,
-                            style: TextStyle(color: Color(0xFF252525), fontSize: 16),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          SizedBox(
-                            height: 4,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Text(
-                              balancePrice,
-                              style: TextStyles.textC9b9b9bS12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Spacer(),
-                  if (coin.refreshStatus == Status.failed)
-                    InkWell(
-                      onTap: () {
-                        BlocProvider.of<WalletCmpBloc>(context)
-                            .add(UpdateActivatedWalletBalanceEvent(symbol: symbol));
-                      },
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 22.0, right: 22, top: 12, bottom: 12),
+            child: Column(
+              children: [
+                Row(
+                  children: <Widget>[
+                    Container(
+                      width: 50,
+                      height: 50,
+                      child: Stack(
                         children: [
-                          InkWell(
-                            onTap: () {
-                              BlocProvider.of<WalletCmpBloc>(context)
-                                  .add(UpdateActivatedWalletBalanceEvent(symbol: symbol));
-                            },
-                            child: Text(
-                              S.of(context).failed_to_load,
-                              style: TextStyle(color: HexColor("#FF1A1A"), fontSize: 12),
-                            ),
+                          Container(
+                            alignment: Alignment.center,
+                            width: 48,
+                            height: 48,
+                            child: ImageUtil.getCoinImage(coin.logo),
                           ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 3.0),
-                            child: Icon(
-                              Icons.refresh,
-                              size: 16,
-                              color: HexColor("#AAAAAA"),
-                            ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: ImageUtil.getChainIcon(coin, 18),
                           )
                         ],
                       ),
                     ),
-                  if (coin.refreshStatus == Status.loading && !_isRefreshBalances)
                     SizedBox(
-                      height: 19,
-                      width: 19,
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.transparent,
-                        valueColor: new AlwaysStoppedAnimation<Color>(DefaultColors.colore7bb00),
-                        strokeWidth: 1,
+                      width: 12,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                symbol,
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF252525)),
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Text(
+                                subSymbol,
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                        ],
                       ),
-                    )
-                ],
-              ),
-            ],
-          ),
-        ),
-        if (!isLastIndex)
-          Container(
-            margin: EdgeInsets.only(
-              left: 24,
-              right: 32,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              _isShowBalances
+                                  ? "${FormatUtil.coinBalanceHumanReadFormat(coin)}"
+                                  : '*****',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(color: Color(0xFF252525), fontSize: 16),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              child: Text(
+                                balancePrice,
+                                style: TextStyles.textC9b9b9bS12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Spacer(),
+                    if (coin.refreshStatus == Status.failed)
+                      InkWell(
+                        onTap: () {
+                          BlocProvider.of<WalletCmpBloc>(context)
+                              .add(UpdateActivatedWalletBalanceEvent(symbol: symbol));
+                        },
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                BlocProvider.of<WalletCmpBloc>(context)
+                                    .add(UpdateActivatedWalletBalanceEvent(symbol: symbol));
+                              },
+                              child: Text(
+                                S.of(context).failed_to_load,
+                                style: TextStyle(color: HexColor("#FF1A1A"), fontSize: 12),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 3.0),
+                              child: Icon(
+                                Icons.refresh,
+                                size: 16,
+                                color: HexColor("#AAAAAA"),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    if (coin.refreshStatus == Status.loading && !_isRefreshBalances)
+                      SizedBox(
+                        height: 19,
+                        width: 19,
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.transparent,
+                          valueColor: new AlwaysStoppedAnimation<Color>(DefaultColors.colore7bb00),
+                          strokeWidth: 1,
+                        ),
+                      )
+                  ],
+                ),
+              ],
             ),
-            height: 0.5,
-            color: HexColor('#F2F2F2'),
-          )
-      ],
+          ),
+          if (!isLastIndex)
+            Container(
+              margin: EdgeInsets.only(
+                left: 24,
+                right: 32,
+              ),
+              height: 0.5,
+              color: HexColor('#F2F2F2'),
+            )
+        ],
+      ),
     );
   }
 
@@ -802,60 +863,69 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
           Expanded(
             child: CustomScrollView(
               slivers: <Widget>[
-                SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                  var coinVo = activatedWalletVo.coins[index];
-                  var hasPrice = true;
-                  return InkWell(
-                      onTap: () {
-                        var coinVo = activatedWalletVo.coins[index];
-                        switch (jumpType) {
-                          case WalletPageJump.PAGE_SEND:
-                            Application.router.navigateTo(
-                                context,
-                                Routes.wallet_account_send_transaction +
-                                    '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
-                            break;
-                          case WalletPageJump.PAGE_RECEIVER:
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => WalletReceivePage(coinVo)));
-                            break;
-                          case WalletPageJump.PAGE_EXCHANGE:
-                            if ((coinVo.symbol == DefaultTokenDefine.HYN_Atlas.symbol) ||
-                                (coinVo.symbol == DefaultTokenDefine.HYN_RP_HRC30.symbol)) {
-                              var base = 'USDT';
-                              var quote = 'HYN';
-                              if (coinVo.symbol == DefaultTokenDefine.HYN_RP_HRC30.symbol) {
-                                base = 'HYN';
-                                quote = 'RP';
-                              }
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ExchangeDetailPage(
-                                            base: base,
-                                            quote: quote,
-                                            exchangeType: ExchangeType.BUY,
-                                          )));
-                            } else {
-                              Fluttertoast.showToast(
-                                  msg: S.of(context).exchange_is_not_yet_open(coinVo.symbol));
-                            }
-                            break;
-                        }
-                      },
-                      child: _buildAccountItem(context, coinVo,
-                          hasPrice: hasPrice,
-                          isLastIndex: activatedWalletVo.coins.length == (index + 1)));
-                }, childCount: activatedWalletVo.coins.length)),
+                _chainWidget(CoinType.HYN_ATLAS),
+                _dialogTokenListByChain(activatedWalletVo, CoinType.HYN_ATLAS, jumpType),
+                _chainWidget(CoinType.ETHEREUM),
+                _dialogTokenListByChain(activatedWalletVo, CoinType.ETHEREUM, jumpType),
+                _chainWidget(CoinType.HB_HT),
+                _dialogTokenListByChain(activatedWalletVo, CoinType.HB_HT, jumpType),
+                _chainWidget(CoinType.BITCOIN),
+                _dialogTokenListByChain(activatedWalletVo, CoinType.BITCOIN, jumpType),
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  _dialogTokenListByChain(WalletViewVo activatedWalletVo, int coinType, WalletPageJump jumpType) {
+    var tokensByCoinType = activatedWalletVo.tokensByCoinType(coinType);
+    return SliverList(
+        delegate: SliverChildBuilderDelegate(
+      (context, index) {
+        var coinVo = tokensByCoinType[index];
+        var hasPrice = true;
+        return _buildAccountItem(context, coinVo,
+            hasPrice: hasPrice, isLastIndex: tokensByCoinType.length == (index + 1), onTap: () {
+          var coinVo = tokensByCoinType[index];
+          switch (jumpType) {
+            case WalletPageJump.PAGE_SEND:
+              Application.router.navigateTo(
+                  context,
+                  Routes.wallet_account_send_transaction +
+                      '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
+              break;
+            case WalletPageJump.PAGE_RECEIVER:
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => WalletReceivePage(coinVo)));
+              break;
+            case WalletPageJump.PAGE_EXCHANGE:
+              if ((coinVo.symbol == DefaultTokenDefine.HYN_Atlas.symbol) ||
+                  (coinVo.symbol == DefaultTokenDefine.HYN_RP_HRC30.symbol)) {
+                var base = 'USDT';
+                var quote = 'HYN';
+                if (coinVo.symbol == DefaultTokenDefine.HYN_RP_HRC30.symbol) {
+                  base = 'HYN';
+                  quote = 'RP';
+                }
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ExchangeDetailPage(
+                              base: base,
+                              quote: quote,
+                              exchangeType: ExchangeType.BUY,
+                            )));
+              } else {
+                Fluttertoast.showToast(msg: S.of(context).exchange_is_not_yet_open(coinVo.symbol));
+              }
+              break;
+          }
+        });
+      },
+      childCount: tokensByCoinType.length,
+    ));
   }
 
   Future listLoadingData() async {

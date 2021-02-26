@@ -27,6 +27,7 @@ import 'package:titan/src/pages/red_pocket/widget/rp_floating_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_level_widget.dart';
 import 'package:titan/src/pages/red_pocket/widget/rp_statistics_widget.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -62,7 +63,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   @override
   void onCreated() {
-
     _isLoading = true;
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
@@ -145,7 +145,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           //if (!_isLoading) RpFloatingWidget(actionType: -1,),
         ],
       ),
-
     );
   }
 
@@ -157,8 +156,9 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
 
     var rpBalanceStr = '--';
-    var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
+    var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbolAndCoinType(
       DefaultTokenDefine.HYN_RP_HRC30.symbol,
+      CoinType.HYN_ATLAS,
     );
     try {
       rpBalanceStr = FormatUtil.coinBalanceHumanReadFormat(
@@ -259,7 +259,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    iconWalletWidget(activeWallet.wallet, isCircle: true,size: 44),
+                    iconWalletWidget(activeWallet.wallet, isCircle: true, size: 44),
                     SizedBox(
                       width: 16.0,
                     ),
@@ -616,8 +616,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         String webTitle = FluroConvertUtils.fluroCnParamsEncode(
                           S.of(context).detailed_introduction,
                         );
-                        Application.router
-                            .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+                        Application.router.navigateTo(context,
+                            Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                       },
                       child: Text(
                         S.of(context).detailed_introduction,
@@ -871,7 +871,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   _navToShareRp() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
     if (activeWallet != null) {
-
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -915,7 +914,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         });
       }
     } catch (e) {
-
       if (mounted) {
         _loadDataBloc.add(RefreshFailEvent());
         setState(() {

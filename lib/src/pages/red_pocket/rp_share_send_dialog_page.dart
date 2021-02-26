@@ -13,6 +13,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_send_success_location_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_send_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -89,7 +90,10 @@ Future<bool> showShareRpSendDialog<T>(
     gas1Desc: 'RP ${S.of(context).rp_send_dialog_gas_create}',
     gasUnit: 'HYN',
     action: (String password) async {
-      var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('RP');
+      var coinVo = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbolAndCoinType(
+        'RP',
+        CoinType.HYN_ATLAS,
+      );
 
       RpShareReqEntity result = await RPApi().postSendShareRp(
         password: password,

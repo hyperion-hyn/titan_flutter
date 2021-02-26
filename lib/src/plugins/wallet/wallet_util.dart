@@ -407,7 +407,7 @@ class WalletUtil {
       {String method, List params, int id = 1}) async {
     //{jsonrpc: 2.0, id: 1, result: 0x4547fdfbf3f1cfd25c0fa7267a97c7832ddda76352456b8e78898e9bd619adb7}
     var rpcApi = _getRpcApiByCoinType(coinType);
-    var data  = await  HttpCore.instance.post(rpcApi,
+    var data = await HttpCore.instance.post(rpcApi,
         params: {"jsonrpc": "2.0", "method": method, "params": params, "id": id},
         options: RequestOptions(contentType: Headers.jsonContentType));
 
@@ -421,7 +421,7 @@ class WalletUtil {
     }
 
     //亚马逊错误???
-    if(!data.containsKey('result') && !data.containsKey('jsonrpc')) {
+    if (!data.containsKey('result') && !data.containsKey('jsonrpc')) {
       throw RPCError(0, data.toString(), "");
     }
 
@@ -567,5 +567,19 @@ class WalletUtil {
 
     var url = 'https://static-hk.hyn.mobi/static/avatar/$fileName.png';
     return url;
+  }
+
+  static String getChainNameByCoinType(int coinType) {
+    var chainNme = '';
+    if (coinType == CoinType.BITCOIN) {
+      chainNme = 'Bitcoin';
+    } else if (coinType == CoinType.ETHEREUM) {
+      chainNme = 'Ethereum';
+    } else if (coinType == CoinType.HYN_ATLAS) {
+      chainNme = 'Atlas';
+    } else if (coinType == CoinType.HB_HT) {
+      chainNme = 'Heco';
+    }
+    return chainNme;
   }
 }

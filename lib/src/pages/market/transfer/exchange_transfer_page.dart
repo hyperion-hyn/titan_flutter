@@ -14,6 +14,7 @@ import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/entity/exchange_coin_list_v2.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_history_list_page.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
@@ -21,7 +22,10 @@ import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/image_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/DottedLine.dart';
 import 'package:titan/src/config/consts.dart';
@@ -30,6 +34,7 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/widget/loading_button/click_loading_button.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'dart:math' as math;
 
 class ExchangeTransferPage extends StatefulWidget {
   final String tokenSymbol;
@@ -43,7 +48,7 @@ class ExchangeTransferPage extends StatefulWidget {
 }
 
 class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
-  String _selectedTokenSymbol = 'HYN';
+  Token _selectedToken = Token('HYN', CoinType.HYN_ATLAS, 'ATLAS');
   TextEditingController _amountController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _fromExchangeToWallet = false;
@@ -54,12 +59,20 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   void onCreated() {
     super.onCreated();
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+
+    var token = MarketInheritedModel.of(
+      context,
+      aspect: SocketAspect.marketItemList,
+    ).getFirstTokenBySymbol(widget.tokenSymbol);
+
+    if (token != null) {
+      _selectedToken = token;
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    _selectedTokenSymbol = widget.tokenSymbol ?? 'HYN';
   }
 
   @override
@@ -147,7 +160,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ExchangeTransferHistoryListPage(_selectedTokenSymbol)));
+                    builder: (context) => ExchangeTransferHistoryListPage(_selectedToken.symbol)));
           },
           child: Padding(
             padding: EdgeInsets.all(16),
@@ -308,6 +321,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _coinTypeSelection() {
+    var coinVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).getCoinVoBySymbolAndCoinType(_selectedToken.symbol, _selectedToken.coinType);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -323,13 +341,41 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         InkWell(
           child: Row(
             children: <Widget>[
-              Text(
-                _getTokenNameBySymbol(_selectedTokenSymbol),
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
+              Container(
+                width: 40,
+                height: 40,
+                child: Stack(
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      width: 36,
+                      height: 36,
+                      child: ImageUtil.getCoinImage(coinVo.logo),
+                    ),
+                    Positioned(
+                      bottom: 2,
+                      right: 2,
+                      child: ImageUtil.getChainIcon(coinVo, 14),
+                    )
+                  ],
                 ),
               ),
+              SizedBox(width: 8),
+              RichText(
+                  text: TextSpan(children: [
+                TextSpan(
+                    text: _selectedToken.symbol,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                    )),
+                TextSpan(
+                    text: ' (${_selectedToken.chain.toUpperCase()})',
+                    style: TextStyle(
+                      color: DefaultColors.color999,
+                      fontSize: 13,
+                    )),
+              ])),
               Spacer(),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 0),
@@ -345,7 +391,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             _showTokenListDialog();
           },
         ),
-        Divider()
       ],
     );
   }
@@ -363,53 +408,55 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     // }
   }
 
-  _showTokenListDialog() {
+  _showTokenListDialog() async {
     var tokens = MarketInheritedModel.of(
       context,
       aspect: SocketAspect.marketItemList,
     ).activeTokens();
 
-    List<Widget> tokenItemList = [Container()];
-
-    tokens.forEach((token) {
-      tokenItemList.add(_tokenItem(token));
-    });
-
-    showModalBottomSheet(
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(15.0),
-            topRight: Radius.circular(15.0),
+    UiUtil.showBottomDialogView(
+      context,
+      dialogHeight: MediaQuery.of(context).size.height - 80,
+      isScrollControlled: true,
+      customWidget: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Center(
+              child: Text(S.of(context).choose_currency, style: TextStyles.textC333S14bold),
+            ),
           ),
-        ),
-        builder: (BuildContext context) {
-          return Container(
-            child: Wrap(
-              children: <Widget>[
-                Column(
-                  children: tokenItemList,
-                ),
-                InkWell(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Center(
-                      child: Text(
-                        S.of(context).cancel,
-                        style: TextStyle(
-                          color: HexColor('#FF777777'),
-                        ),
-                      ),
-                    ),
+          Expanded(
+            child: CustomScrollView(
+              semanticChildCount: tokens.length,
+              slivers: <Widget>[
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      final int itemIndex = index ~/ 2;
+                      if (index.isEven) {
+                        return _tokenItem(tokens[itemIndex]);
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Divider(height: 1),
+                      );
+                    },
+                    semanticIndexCallback: (Widget widget, int localIndex) {
+                      if (localIndex.isEven) {
+                        return localIndex ~/ 2;
+                      }
+                      return null;
+                    },
+                    childCount: math.max(0, tokens.length * 2 - 1),
                   ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                )
+                ),
               ],
             ),
-          );
-        });
+          ),
+        ],
+      ),
+    );
   }
 
   _confirm() {
@@ -429,39 +476,66 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     );
   }
 
-  _divider(double height) {
-    return Container(
-      width: double.infinity,
-      height: height,
-      color: HexColor('#FFEEEEEE'),
-    );
-  }
-
-  _tokenItem(String symbol) {
+  _tokenItem(Token token) {
+    var coinVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).getCoinVoBySymbolAndCoinType(token.symbol, token.coinType);
     return Column(
       children: [
         InkWell(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: Text(
-                _getTokenNameBySymbol(symbol),
-                style: TextStyle(
-                    color: _selectedTokenSymbol == symbol
-                        ? Theme.of(context).primaryColor
-                        : HexColor('#FF777777')),
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  child: Stack(
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        width: 48,
+                        height: 48,
+                        child: ImageUtil.getCoinImage(coinVo.logo),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: ImageUtil.getChainIcon(coinVo, 18),
+                      )
+                    ],
+                  ),
+                ),
               ),
-            ),
+              Text(
+                '${token.symbol}',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Spacer(),
+              Text(
+                '${token.chain.toUpperCase()}',
+                style: TextStyle(
+                  color: HexColor('#FF777777'),
+                  fontSize: 14,
+                ),
+              ),
+              SizedBox(
+                width: 16,
+              )
+            ],
           ),
           onTap: () {
             setState(() {
-              _selectedTokenSymbol = symbol;
+              _selectedToken = token;
               // _gasFeeFullStrFunc();
             });
             Navigator.of(context).pop();
           },
         ),
-        _divider(1)
       ],
     );
   }
@@ -482,32 +556,32 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                 .exchangeModel
                 .activeAccount
                 ?.assetList
-                ?.getTokenAsset(_selectedTokenSymbol)
+                ?.getTokenAsset(_selectedToken.symbol)
                 ?.withdrawMin ??
             '0'
         : ExchangeInheritedModel.of(context)
                 .exchangeModel
                 .activeAccount
                 ?.assetList
-                ?.getTokenAsset(_selectedTokenSymbol)
+                ?.getTokenAsset(_selectedToken.symbol)
                 ?.rechargeMin ??
             '0';
     var _maxTransferAmount = ExchangeInheritedModel.of(context)
             .exchangeModel
             .activeAccount
             .assetList
-            ?.getTokenAsset(_selectedTokenSymbol)
+            ?.getTokenAsset(_selectedToken.symbol)
             ?.withdrawMax ??
         '0';
 
     var minAndMaxAmountHint = '';
 
     if (_fromExchangeToWallet) {
-      minAndMaxAmountHint = '$_minTransferText $_minTransferAmount $_selectedTokenSymbol' +
+      minAndMaxAmountHint = '$_minTransferText $_minTransferAmount ${_selectedToken.symbol}' +
           ',' +
-          '$_maxTransferText $_maxTransferAmount $_selectedTokenSymbol';
+          '$_maxTransferText $_maxTransferAmount ${_selectedToken.symbol}';
     } else {
-      minAndMaxAmountHint = '$_minTransferText $_minTransferAmount $_selectedTokenSymbol';
+      minAndMaxAmountHint = '$_minTransferText $_minTransferAmount ${_selectedToken.symbol}';
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -594,7 +668,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                             children: <Widget>[
                               Spacer(),
                               Text(
-                                _selectedTokenSymbol,
+                                _selectedToken.symbol,
                                 style: TextStyle(
                                   color: HexColor('#FF777777'),
                                   fontSize: 12,
@@ -658,7 +732,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                 ),
               ),
               TextSpan(
-                text: ' $_selectedTokenSymbol',
+                text: ' ${_selectedToken.symbol}',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 12,
@@ -678,7 +752,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           .exchangeModel
           .activeAccount
           ?.assetList
-          ?.getTokenAsset(_selectedTokenSymbol)
+          ?.getTokenAsset(_selectedToken.symbol)
           ?.exchangeAvailable;
       if (_exchangeAvailable != null) {
         return FormatUtil.truncateDecimalNum(Decimal.parse(_exchangeAvailable), 6);
@@ -689,10 +763,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       var coinVo = WalletInheritedModel.of(
         context,
         aspect: WalletAspect.activatedWallet,
-      ).getCoinVoBySymbol(_selectedTokenSymbol);
+      ).getCoinVoBySymbolAndCoinType(_selectedToken.symbol, _selectedToken.coinType);
       if (coinVo != null) {
         return FormatUtil.coinBalanceByDecimal(coinVo, 6);
       } else {
+        print('getCoinVoBySymbolAndCoinType null');
         return '0';
       }
     }
@@ -704,10 +779,8 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         _withdraw();
       } else {
         ///HYN-Atlas and HYN-ERC20 both use symbol [HYN]
-        var symbol = _selectedTokenSymbol == DefaultTokenDefine.HYN_ERC20.symbol
-            ? DefaultTokenDefine.HYN_Atlas.symbol
-            : _selectedTokenSymbol;
-        var ret = await _exchangeApi.getAddress(symbol);
+        var symbol = _selectedToken.symbol;
+        var ret = await _exchangeApi.getAddressV2(symbol, _selectedToken.chain);
         var exchangeAddress = ret['address'];
         _deposit(exchangeAddress);
       }
@@ -724,12 +797,14 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
-    ).getCoinVoBySymbol(_selectedTokenSymbol);
+    ).getCoinVoBySymbolAndCoinType(_selectedToken.symbol, _selectedToken.coinType);
 
     var toAddress = exchangeAddress;
     if (coinVo.coinType == CoinType.HYN_ATLAS) {
       toAddress = WalletUtil.ethAddressToBech32Address(exchangeAddress);
     }
+
+    if (coinVo.coinType == CoinType.HB_HT) {}
 
     Application.router.navigateTo(
       context,
@@ -742,7 +817,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
-    ).getCoinVoBySymbol(_selectedTokenSymbol);
+    ).getCoinVoBySymbolAndCoinType(_selectedToken.symbol, _selectedToken.coinType);
     var coinVoStr = FluroConvertUtils.object2string(coinVo.toJson());
 
     var _withdrawAmount = _amountController.text;
@@ -751,12 +826,12 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         .exchangeModel
         .activeAccount
         .assetList
-        ?.getTokenAsset(_selectedTokenSymbol)
+        ?.getTokenAsset(_selectedToken.symbol)
         ?.withdrawFeeByGas;
 
     Application.router.navigateTo(
       context,
-      '${Routes.exchange_withdraw_confirm_page}?coinVo=$coinVoStr&amount=$_withdrawAmount&withdrawFeeByGas=$_withDrawFeeByGas',
+      '${Routes.exchange_withdraw_confirm_page}?coinVo=$coinVoStr&amount=$_withdrawAmount&withdrawFeeByGas=$_withDrawFeeByGas&chain=${_selectedToken.chain}',
     );
   }
 }

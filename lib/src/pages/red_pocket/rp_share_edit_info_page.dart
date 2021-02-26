@@ -25,6 +25,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_share_config_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_share_req_entity.dart';
 import 'package:titan/src/pages/red_pocket/rp_record_detail_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_send_dialog_page.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -405,7 +406,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                                   ? Padding(
                                       padding: EdgeInsets.only(
                                         left: 16,
-                                        top: (key == _hynAmountKey || key == _rpAmountKey) ? 18 : 16,
+                                        top:
+                                            (key == _hynAmountKey || key == _rpAmountKey) ? 18 : 16,
                                       ),
                                       child: Text(
                                         unit,
@@ -419,7 +421,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                                     )
                                   : null,
                             ),
-                            keyboardType: keyboardType ?? TextInputType.numberWithOptions(decimal: true),
+                            keyboardType:
+                                keyboardType ?? TextInputType.numberWithOptions(decimal: true),
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(maxLength),
                             ],
@@ -509,12 +512,10 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
     var rpBalanceStr = '--';
     var hynBalanceStr = '--';
 
-    var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-      DefaultTokenDefine.HYN_RP_HRC30.symbol,
-    );
-    var hynToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-      DefaultTokenDefine.HYN_Atlas.symbol,
-    );
+    var rpToken = WalletInheritedModel.of(context)
+        .getCoinVoBySymbolAndCoinType(DefaultTokenDefine.HYN_RP_HRC30.symbol, CoinType.HYN_ATLAS);
+    var hynToken = WalletInheritedModel.of(context)
+        .getCoinVoBySymbolAndCoinType(DefaultTokenDefine.HYN_Atlas.symbol, CoinType.HYN_ATLAS);
     try {
       rpBalanceStr = FormatUtil.coinBalanceHumanReadFormat(
         rpToken,
@@ -553,7 +554,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
               var coinVo = WalletInheritedModel.of(
                 context,
                 aspect: WalletAspect.activatedWallet,
-              ).getCoinVoBySymbol('RP');
+              ).getCoinVoBySymbolAndCoinType('RP', CoinType.HYN_ATLAS);
               var rpBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
 
               var minRp = _rpShareConfig?.rpMin ?? '0.01';
@@ -601,7 +602,7 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
               var coinVo = WalletInheritedModel.of(
                 context,
                 aspect: WalletAspect.activatedWallet,
-              ).getCoinVoBySymbol('HYN');
+              ).getCoinVoBySymbolAndCoinType('HYN', CoinType.HYN_ATLAS);
 
               var hynBalance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
 
@@ -805,7 +806,9 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                             TextSpan(
                               text: '$address',
                               style: TextStyle(
-                                  color: _openCageData == null ? HexColor('#1F81FF') : HexColor('#999999'),
+                                  color: _openCageData == null
+                                      ? HexColor('#1F81FF')
+                                      : HexColor('#999999'),
                                   fontSize: 12),
                             ),
                           ],
@@ -820,7 +823,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: (_selectedPosition != null) ? '  ${S.of(context).edit_location}' : "",
+                          text:
+                              (_selectedPosition != null) ? '  ${S.of(context).edit_location}' : "",
                           style: TextStyle(color: HexColor('#1F81FF'), fontSize: 12),
                         ),
                       ],
@@ -851,7 +855,9 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
                             child: Padding(
                               padding: const EdgeInsets.only(top: 60, left: 20),
                               child: Text(
-                                _isLoadingOpenCage ? "" : S.of(context).rp_edit_click_position_title,
+                                _isLoadingOpenCage
+                                    ? ""
+                                    : S.of(context).rp_edit_click_position_title,
                                 style: TextStyle(color: Colors.white, fontSize: 14),
                               ),
                             ),
@@ -1016,8 +1022,11 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
     _focusKey = null;
     _validController.add('-1');
 
-    if ((_isInvalidHynAmount && _isInvalidRpAmount) || _isInvalidCount || (_isInvalidRange && _isLocation)) {
-      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+    if ((_isInvalidHynAmount && _isInvalidRpAmount) ||
+        _isInvalidCount ||
+        (_isInvalidRange && _isLocation)) {
+      _scrollController.animateTo(0,
+          duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
       return;
     }
@@ -1035,7 +1044,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
     if (_isNewBee) {
       if (rpValue <= Decimal.zero) {
         Fluttertoast.showToast(msg: S.of(context).rp_edit_amount_rp_toast);
-        _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+        _scrollController.animateTo(0,
+            duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
         return;
       }
@@ -1044,12 +1054,14 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
       var hynMin = _rpShareConfig?.hynMin ?? '0.01';
       if (hynValue <= Decimal.zero) {
         Fluttertoast.showToast(msg: S.of(context).rp_edit_amount_hyn_toast);
-        _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+        _scrollController.animateTo(0,
+            duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
         return;
       } else if (hynValue > Decimal.zero && hynValue < Decimal.parse(hynMin)) {
         Fluttertoast.showToast(msg: S.of(context).rp_edit_amount_toast_less_than(hynMin));
-        _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+        _scrollController.animateTo(0,
+            duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
         return;
       }
@@ -1057,7 +1069,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
     } else {
       if (rpValue <= Decimal.zero && hynValue <= Decimal.zero) {
         Fluttertoast.showToast(msg: S.of(context).rp_edit_amount_toast);
-        _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+        _scrollController.animateTo(0,
+            duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
         return;
       }
 
@@ -1067,7 +1080,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
         }
 
         if (_isInvalidHynAmount) {
-          _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+          _scrollController.animateTo(0,
+              duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
           return;
         }
       }
@@ -1078,7 +1092,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
         }
 
         if (_isInvalidRpAmount) {
-          _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+          _scrollController.animateTo(0,
+              duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
           return;
         }
       }
@@ -1091,7 +1106,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
     var count = int.tryParse(_countController.text ?? '0') ?? 0;
     if (count <= 0) {
       Fluttertoast.showToast(msg: S.of(context).rp_edit_count_toast);
-      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+      _scrollController.animateTo(0,
+          duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
 
       return;
     }
@@ -1123,7 +1139,8 @@ class _RpShareEditInfoState extends BaseState<RpShareEditInfoPage> {
       if (_openCageData == null) {
         _positionBloc.add(GetOpenCageEvent(_selectedPosition, _language));
         Fluttertoast.showToast(msg: S.of(context).please_edit_location_hint);
-        _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+        _scrollController.animateTo(0,
+            duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
         return;
       }
       reqEntity.location = _addressText ?? '';

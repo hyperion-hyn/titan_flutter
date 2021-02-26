@@ -40,6 +40,7 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/image_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
@@ -120,7 +121,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
   void didChangeDependencies() async {
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
-    widget.coinVo = WalletInheritedModel.of(context).getCoinVoBySymbol(widget.coinVo.symbol);
+    widget.coinVo = WalletInheritedModel.of(context).getCoinVoBySymbolAndCoinType(
+      widget.coinVo.symbol,
+      widget.coinVo.coinType
+    );
   }
 
   @override
@@ -181,10 +185,23 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                             Padding(
                               padding: const EdgeInsets.only(top: 32, bottom: 24),
                               child: Container(
-                                alignment: Alignment.center,
-                                width: 80,
-                                height: 80,
-                                child: Image.asset(widget.coinVo.logo),
+                                width: 82,
+                                height: 82,
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      width: 80,
+                                      height: 80,
+                                      child: Image.asset(widget.coinVo.logo),
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: ImageUtil.getChainIcon(widget.coinVo, 25),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                             Text(
@@ -201,7 +218,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                             Container(
                               height: 61,
                               padding: const EdgeInsets.symmetric(vertical: 13),
-                              margin: const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 34),
+                              margin:
+                                  const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 34),
                               decoration: BoxDecoration(
                                 color: DefaultColors.colorf8f8f8,
                                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -238,7 +256,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                         // 比特币还在转账中
                                         if (dataList.length > 1) {
                                           TransactionDetailVo transaction = dataList[1];
-                                          if (transaction.state == 0 && widget.coinVo.coinType == CoinType.BITCOIN) {
+                                          if (transaction.state == 0 &&
+                                              widget.coinVo.coinType == CoinType.BITCOIN) {
                                             UiUtil.showConfirmDialog(
                                               context,
                                               content: S.of(context).has_unconfirm_btc_wait,
@@ -266,7 +285,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                           ),
                                           Text(
                                             S.of(context).send,
-                                            style: TextStyle(color: DefaultColors.color333, fontSize: 14),
+                                            style: TextStyle(
+                                                color: DefaultColors.color333, fontSize: 14),
                                           )
                                         ],
                                       ),
@@ -278,8 +298,11 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(builder: (context) => WalletReceivePage(widget.coinVo)));
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    WalletReceivePage(widget.coinVo)));
                                       },
                                       child: Row(
                                         children: <Widget>[
@@ -298,7 +321,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                           ),
                                           Text(
                                             S.of(context).receiver,
-                                            style: TextStyle(color: DefaultColors.color333, fontSize: 14),
+                                            style: TextStyle(
+                                                color: DefaultColors.color333, fontSize: 14),
                                           )
                                         ],
                                       ),
@@ -313,7 +337,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                         return InkWell(
                                           onTap: () {
                                             Fluttertoast.showToast(
-                                                msg: S.of(context).exchange_is_not_yet_open(widget.coinVo.symbol));
+                                                msg: S.of(context).exchange_is_not_yet_open(
+                                                    widget.coinVo.symbol));
                                           },
                                           child: Row(
                                             children: <Widget>[
@@ -413,10 +438,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
         widget.coinVo,
         transactionDetail.fromAddress,
       );*/
-      describe = "From: " + shortBlockChainAddress(transactionDetail.fromAddress, limitCharsLength: limitLength);
+      describe = "From: " +
+          shortBlockChainAddress(transactionDetail.fromAddress, limitCharsLength: limitLength);
     } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
       iconPath = "res/drawable/ic_wallet_account_list_send.png";
-      describe = "To: " + shortBlockChainAddress(transactionDetail.toAddress, limitCharsLength: limitLength);
+      describe = "To: " +
+          shortBlockChainAddress(transactionDetail.toAddress, limitCharsLength: limitLength);
     }
 
     if ((transactionDetail.state == null) ||
@@ -478,7 +505,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                       context,
                       MaterialPageRoute(
                           builder: (context) => InAppWebViewContainer(
-                                initUrl: BitcoinExplore.BITCOIN_TRANSATION_DETAIL + transactionDetail.hash,
+                                initUrl: BitcoinExplore.BITCOIN_TRANSATION_DETAIL +
+                                    transactionDetail.hash,
                                 title: '',
                               )));
                 } else {
@@ -516,8 +544,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                             children: <Widget>[
                               Text(
                                 amountText,
-                                style:
-                                    TextStyle(color: DefaultColors.color333, fontSize: 16, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    color: DefaultColors.color333,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
                               ),
                               if (amountSubText.isNotEmpty)
                                 Text(
@@ -530,7 +560,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                               Spacer(),
                               Text(
                                 title,
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: titleColor),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 14, color: titleColor),
                               ),
                             ],
                           ),
@@ -579,9 +610,11 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                 children: <Widget>[
                   SizedBox(width: 36),
                   Text('nonce ', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                  Text('${transactionDetail.nonce}', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                  Text('${transactionDetail.nonce}',
+                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
                   SizedBox(width: 16),
-                  Text('${S.of(context).price} ', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                  Text('${S.of(context).price} ',
+                      style: TextStyle(color: Colors.grey, fontSize: 12)),
                   Text(
                       '${ConvertTokenUnit.weiToGWei(weiInt: int.parse(transactionDetail.gasPrice)).toStringAsFixed(1)} GWEI',
                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
@@ -600,7 +633,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                             FlatButton(
                                 child: Text(S.of(context).confirm),
                                 onPressed: () async {
-                                  var password = await transactionInteractor.showPasswordDialog(context);
+                                  var password =
+                                      await transactionInteractor.showPasswordDialog(context);
                                   Navigator.pop(context, password);
                                 }),
                           ]);
@@ -610,17 +644,19 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                           return;
                         }
 
-                        var txHash =
-                            await transactionInteractor.cancelTransaction(context, transactionDetail, password);
+                        var txHash = await transactionInteractor.cancelTransaction(
+                            context, transactionDetail, password);
                         if (txHash != null) {
                           Fluttertoast.showToast(
-                              msg: S.of(context).wallet_cancel_send_tips, toastLength: Toast.LENGTH_LONG);
+                              msg: S.of(context).wallet_cancel_send_tips,
+                              toastLength: Toast.LENGTH_LONG);
                         }
                       } catch (exception) {
                         if (exception.toString().contains("nonce too low") ||
                             exception.toString().contains("known transaction")) {
                           Fluttertoast.showToast(
-                              msg: S.of(context).wallet_transaction_finish_tips, toastLength: Toast.LENGTH_LONG);
+                              msg: S.of(context).wallet_transaction_finish_tips,
+                              toastLength: Toast.LENGTH_LONG);
                         }
                       }
                     }, width: 52, height: 22, fontSize: 12, btnColor: [Color(0xffDEDEDE)]),
@@ -640,7 +676,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                             FlatButton(
                                 child: Text(S.of(context).confirm),
                                 onPressed: () async {
-                                  var password = await transactionInteractor.showPasswordDialog(context);
+                                  var password =
+                                      await transactionInteractor.showPasswordDialog(context);
                                   Navigator.pop(context, password);
                                 }),
                           ]);
@@ -649,11 +686,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                         if (password == null) {
                           return;
                         }
-                        var txHash =
-                            await transactionInteractor.speedUpTransaction(context, transactionDetail, password);
+                        var txHash = await transactionInteractor.speedUpTransaction(
+                            context, transactionDetail, password);
                         if (txHash != null) {
                           Fluttertoast.showToast(
-                              msg: S.of(context).wallet_have_speed_tips, toastLength: Toast.LENGTH_LONG);
+                              msg: S.of(context).wallet_have_speed_tips,
+                              toastLength: Toast.LENGTH_LONG);
                         }
                       } catch (exception) {
                         if (exception.toString().contains("nonce too low") ||
@@ -663,7 +701,11 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                               toastLength: Toast.LENGTH_LONG);
                         }
                       }
-                    }, width: 52, height: 22, fontSize: 12, btnColor: [Theme.of(context).primaryColor])
+                    },
+                        width: 52,
+                        height: 22,
+                        fontSize: 12,
+                        btnColor: [Theme.of(context).primaryColor])
                   ],
                 ],
               ),
@@ -688,7 +730,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 
   bool isNearestPendingTx(TransactionDetailVo transactionDetail) {
     // var ethAddress = WalletInheritedModel.of(context).activatedWallet?.wallet?.getEthAccount()?.address;
-    return /*transactionDetail.fromAddress == ethAddress && */ int.parse(transactionDetail.nonce) == txCount;
+    return /*transactionDetail.fromAddress == ethAddress && */ int.parse(transactionDetail.nonce) ==
+        txCount;
   }
 
   Future gotoSendTokenPage() {
@@ -704,7 +747,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     var retList = [];
 
     try {
-      List<TransactionDetailVo> transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
+      List<TransactionDetailVo> transferList =
+          await _accountTransferService.getTransferList(widget.coinVo, page);
       if (page == getStartPage()) {
         if (!mounted) {
           return retList;
@@ -721,7 +765,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
         if (widget.coinVo.coinType == CoinType.ETHEREUM) {
           try {
             isHaveNearestPendingTx = false;
-            var ethAddress = WalletInheritedModel.of(context).activatedWallet?.wallet?.getEthAccount()?.address;
+            var ethAddress =
+                WalletInheritedModel.of(context).activatedWallet?.wallet?.getEthAccount()?.address;
             if (ethAddress != null && ethAddress != '') {
               var localTransferType = widget.coinVo.symbol == 'ETH'
                   ? LocalTransferType.LOCAL_TRANSFER_ETH
@@ -741,7 +786,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
               }
               retList.addAll(localPendingTxs);
             }
-          } catch (e,stack) {
+          } catch (e, stack) {
             print("!!!!!  $e  $stack");
           }
         }
@@ -754,5 +799,4 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     }
     return retList;
   }
-
 }

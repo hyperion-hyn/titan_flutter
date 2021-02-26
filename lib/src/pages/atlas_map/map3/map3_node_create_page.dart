@@ -21,6 +21,7 @@ import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -525,7 +526,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
-    ).getCoinVoBySymbol('HYN');
+    ).getCoinVoBySymbolAndCoinType('HYN', CoinType.HYN_ATLAS);
 
     var staking = _inputStakingValue.toString();
 

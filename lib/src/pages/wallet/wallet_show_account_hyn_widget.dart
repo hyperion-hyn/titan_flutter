@@ -31,6 +31,7 @@ import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/pages/wallet/wallet_receive_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/image_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utils.dart';
 
@@ -49,8 +50,7 @@ class ShowAccountHynPage extends StatefulWidget {
   }
 }
 
-class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
-    with RouteAware {
+class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with RouteAware {
   DateFormat _dateFormat = new DateFormat("HH:mm MM/dd");
 
   AccountTransferService _accountTransferService = AccountTransferService();
@@ -133,12 +133,14 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
   @override
   Widget build(BuildContext context) {
     //activated quote sign
-    var activeQuoteVoAndSign = WalletInheritedModel.of(context)
-        .tokenLegalPrice(widget.coinVo.symbol);
+    var activeQuoteVoAndSign =
+        WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
 
     var coinVo =
-        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
-            .getCoinVoBySymbol(widget.coinVo.symbol);
+        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).getCoinVoBySymbolAndCoinType(
+      widget.coinVo.symbol,
+      widget.coinVo.coinType,
+    );
 
     return Scaffold(
         appBar: AppBar(
@@ -172,44 +174,51 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                         child: Column(
                           children: <Widget>[
                             Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 32, bottom: 24),
+                              padding: const EdgeInsets.only(top: 32, bottom: 24),
                               child: Container(
-                                alignment: Alignment.center,
-                                width: 80,
-                                height: 80,
-                                child: Image.asset(coinVo.logo),
+                                width: 82,
+                                height: 82,
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      width: 80,
+                                      height: 80,
+                                      child: Image.asset(coinVo.logo),
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: ImageUtil.getChainIcon(coinVo, 25),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                             Text(
                               "${FormatUtil.coinBalanceHumanReadFormat(coinVo)} ${coinVo.symbol}",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 "≈ ${activeQuoteVoAndSign?.legal?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coinVo) * (activeQuoteVoAndSign?.price ?? 0))}",
-                                style: TextStyle(
-                                    fontSize: 14, color: Color(0xFF6D6D6D)),
+                                style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
                               ),
                             ),
                             Container(
                               height: 61,
                               padding: const EdgeInsets.symmetric(vertical: 13),
-                              margin: const EdgeInsets.only(
-                                  right: 16, left: 16, bottom: 16, top: 34),
+                              margin:
+                                  const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 34),
                               decoration: BoxDecoration(
                                 color: DefaultColors.colorf8f8f8,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0)),
+                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
                               ),
                               child: IntrinsicHeight(
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: <Widget>[
                                     InkWell(
                                       onTap: () async {
@@ -248,8 +257,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                                           Text(
                                             S.of(context).send,
                                             style: TextStyle(
-                                                color: DefaultColors.color333,
-                                                fontSize: 14),
+                                                color: DefaultColors.color333, fontSize: 14),
                                           )
                                         ],
                                       ),
@@ -273,8 +281,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) =>
-                                                    WalletReceivePage(coinVo)));
+                                                builder: (context) => WalletReceivePage(coinVo)));
                                       },
                                       child: Row(
                                         children: <Widget>[
@@ -295,8 +302,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                                           Text(
                                             S.of(context).receiver,
                                             style: TextStyle(
-                                                color: DefaultColors.color333,
-                                                fontSize: 14),
+                                                color: DefaultColors.color333, fontSize: 14),
                                           )
                                         ],
                                       ),
@@ -311,37 +317,28 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                                         return InkWell(
                                           onTap: () {
                                             if ((widget.coinVo.symbol ==
-                                                    DefaultTokenDefine
-                                                        .HYN_Atlas.symbol) ||
+                                                    DefaultTokenDefine.HYN_Atlas.symbol) ||
                                                 (widget.coinVo.symbol ==
-                                                    DefaultTokenDefine
-                                                        .HYN_RP_HRC30.symbol)) {
+                                                    DefaultTokenDefine.HYN_RP_HRC30.symbol)) {
                                               var base = 'USDT';
                                               var quote = 'HYN';
                                               if (widget.coinVo.symbol ==
-                                                  DefaultTokenDefine
-                                                      .HYN_RP_HRC30.symbol) {
+                                                  DefaultTokenDefine.HYN_RP_HRC30.symbol) {
                                                 base = 'USDT';
                                                 quote = 'RP';
                                               }
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ExchangeDetailPage(
+                                                      builder: (context) => ExchangeDetailPage(
                                                             base: base,
                                                             quote: quote,
-                                                            exchangeType:
-                                                                ExchangeType
-                                                                    .BUY,
+                                                            exchangeType: ExchangeType.BUY,
                                                           )));
                                             } else {
                                               Fluttertoast.showToast(
-                                                  msg: S
-                                                      .of(context)
-                                                      .exchange_is_not_yet_open(
-                                                          widget
-                                                              .coinVo.symbol));
+                                                  msg: S.of(context).exchange_is_not_yet_open(
+                                                      widget.coinVo.symbol));
                                             }
                                             /*Clipboard.setData(ClipboardData(text: coinVo.address));
                                             Scaffold.of(context)
@@ -390,10 +387,8 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                                 if (index == 0) {
                                   return SizedBox.shrink();
                                 } else {
-                                  var currentTransactionDetail =
-                                      dataList[index];
-                                  return _buildTransactionItem(
-                                      context, currentTransactionDetail);
+                                  var currentTransactionDetail = dataList[index];
+                                  return _buildTransactionItem(context, currentTransactionDetail);
                                 }
                               },
                               itemCount: max<int>(0, dataList.length),
@@ -417,8 +412,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
         ));
   }
 
-  Widget _buildTransactionItem(
-      BuildContext context, TransactionDetailVo transactionDetail) {
+  Widget _buildTransactionItem(BuildContext context, TransactionDetailVo transactionDetail) {
     var iconPath;
     var title = "";
     var titleColor = DefaultColors.color333;
@@ -455,8 +449,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
         widget.coinVo,
         transactionDetail.fromAddress,
       );
-      describe = "From: " +
-          shortBlockChainAddress(fromAddress, limitCharsLength: limitLength);
+      describe = "From: " + shortBlockChainAddress(fromAddress, limitCharsLength: limitLength);
     } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
       iconPath = "res/drawable/ic_wallet_account_list_send.png";
       if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
@@ -466,12 +459,10 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
         );
 
         toAddress = _toAddress(transactionDetail);
-        describe = "To: " +
-            shortBlockChainAddress(toAddress, limitCharsLength: limitLength);
+        describe = "To: " + shortBlockChainAddress(toAddress, limitCharsLength: limitLength);
       } else {
         describe = "To: " +
-            shortBlockChainAddress(transactionDetail.toAddress,
-                limitCharsLength: limitLength);
+            shortBlockChainAddress(transactionDetail.toAddress, limitCharsLength: limitLength);
       }
     }
 
@@ -497,8 +488,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
       titleColor = DefaultColors.colorf23524;
     }
 
-    var time = _dateFormat
-        .format(DateTime.fromMillisecondsSinceEpoch(transactionDetail.time));
+    var time = _dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transactionDetail.time));
 
     return Ink(
       color: Color(0xFFF5F5F5),
@@ -514,8 +504,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            WalletShowTransactionSimpleInfoPage(
+                        builder: (context) => WalletShowTransactionSimpleInfoPage(
                               transactionDetail.hash,
                               transactionDetail.symbol,
                               isContain: _isContain(transactionDetail),
@@ -561,9 +550,7 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                               Text(
                                 title,
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                    color: titleColor),
+                                    fontWeight: FontWeight.bold, fontSize: 14, color: titleColor),
                               ),
                             ],
                           ),
@@ -573,13 +560,10 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
                           Row(
                             children: <Widget>[
                               Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 4),
+                                padding: const EdgeInsets.symmetric(vertical: 4),
                                 child: Text(
                                   describe,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: DefaultColors.color999),
+                                  style: TextStyle(fontSize: 14, color: DefaultColors.color999),
                                 ),
                               ),
                               Spacer(),
@@ -630,12 +614,11 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage>
       if (page == getStartPage()) {
         retList.add('header');
 
-        if(context == null){
+        if (context == null) {
           return retList;
         }
         //update balance
-        BlocProvider.of<WalletCmpBloc>(context)
-            .add(UpdateActivatedWalletBalanceEvent(
+        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent(
           symbol: widget.coinVo.symbol,
           // contractAddress: widget.coinVo.contractAddress,
         ));

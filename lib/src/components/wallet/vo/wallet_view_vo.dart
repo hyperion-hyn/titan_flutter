@@ -25,4 +25,14 @@ class WalletViewVo {
         coins: target?.coins ?? this.coins,
         wallet: target?.wallet ?? this.wallet);
   }
+
+  List<CoinViewVo> tokensByCoinType(int coinType) {
+    List<CoinViewVo> result = List();
+    coins.forEach((token) {
+      if (token.coinType == coinType) {
+        result.add(token);
+      }
+    });
+    return result;
+  }
 }

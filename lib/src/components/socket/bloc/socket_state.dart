@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:titan/src/pages/market/entity/exchange_coin_list.dart';
+import 'package:titan/src/pages/market/entity/exchange_coin_list_v2.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 
 @immutable
@@ -101,7 +102,7 @@ class MarketSymbolState extends SocketState {
 }
 
 class UpdateExchangeCoinListState extends SocketState {
-  final ExchangeCoinList exchangeCoinList;
+  final ExchangeCoinListV2 exchangeCoinList;
 
   UpdateExchangeCoinListState(this.exchangeCoinList);
 }
