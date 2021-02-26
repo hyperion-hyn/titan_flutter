@@ -127,7 +127,7 @@ class _DAppAuthorizationDialogState extends BaseState<DAppAuthorizationDialogPag
                     ClickOvalButton(
                       S.of(context).exit,
                       (){
-                        //....
+                        Navigator.of(context).pop(false);
                       },
                       height: 34,
                       width: 120,
@@ -141,7 +141,7 @@ class _DAppAuthorizationDialogState extends BaseState<DAppAuthorizationDialogPag
                     ClickOvalButton(
                       S.of(context).confirm,
                       (){
-                        //...
+                        Navigator.of(context).pop(true);
                       },
                       height: 34,
                       width: 120,
