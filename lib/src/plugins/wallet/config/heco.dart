@@ -1,3 +1,4 @@
+import 'package:titan/config.dart';
 import 'package:titan/env.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
@@ -36,7 +37,7 @@ class HecoConfig {
 }
 
 class HecoRpcProvider {
-  static String MAIN_API = 'https://http-mainnet.hecochain.com';
+  static String MAIN_API = Config.HECO_RPC_API;
 
   static String TEST_API = 'https://http-testnet.hecochain.com';
 
