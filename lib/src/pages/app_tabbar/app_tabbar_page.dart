@@ -481,8 +481,8 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                     Image.asset(
                       imageName,
                       fit: BoxFit.cover,
-                      width: selected ? 27 : 24,
-                      height: selected ? 26 : 23,
+                      width: 20,
+                      height: 20,
                       // color: selected ? Theme.of(context).primaryColor : HexColor('#C8C8C8'),
                     ),
                     /*Icon(
