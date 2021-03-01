@@ -9,6 +9,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart';
+import 'package:titan/src/pages/bridge/cross_chain_bridge_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_success_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/red_pocket/widget/fl_pie_chart.dart';
@@ -129,6 +130,14 @@ class _WidgetDemoPageState extends State<WidgetDemoPage> with SingleTickerProvid
                             .add(SetRootPageEvent(page: AppLockScreen()));
                       },
                       child: Text('切换rootPage'),
+                    ),
+                    RaisedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) => CrossChainBridgePage(),
+                        ));
+                      },
+                      child: Text('Bridge'),
                     )
                   ],
                 ),

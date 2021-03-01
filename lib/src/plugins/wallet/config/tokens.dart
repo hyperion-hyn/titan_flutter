@@ -240,7 +240,7 @@ class DefaultTokenDefine {
   );
 
   static const HYN_HECO_TEST = const AssetToken(
-    name: "Heco HYN (DAI)",
+    name: "Heco HYN",
     decimals: 6,
     contractAddress: '0x04F535663110A392A6504839BEeD34E019FdB4E0',
     logo: "res/drawable/ic_token_hyn.png",
