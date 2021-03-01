@@ -456,10 +456,10 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
 
   Widget tabItem(IconData iconData, String text, int index, {String name}) {
     bool selected = index == this._currentTabIndex;
-    var imageName = 'res/drawable/tabbar_$name${'_new_year'}.png';
-    // if (selected) {
-    //   imageName = 'res/drawable/tabbar_$name${'_select'}.png';
-    // }
+    var imageName = 'res/drawable/tabbar_$name.png';
+    if (selected) {
+      imageName = 'res/drawable/tabbar_$name${'_select'}.png';
+    }
     return Expanded(
       child: Material(
         color: Colors.transparent,
