@@ -58,10 +58,12 @@ class Tokens {
         case HecoChainType.mainnet:
           tokens.add(DefaultTokenDefine.HUSD);
           tokens.add(DefaultTokenDefine.HUSDT);
+          //tokens.add(DefaultTokenDefine.HYN_HECO);
           break;
         case HecoChainType.test:
           tokens.add(DefaultTokenDefine.HUSD_TEST);
           tokens.add(DefaultTokenDefine.HUSDT_TEST);
+          tokens.add(DefaultTokenDefine.HYN_HECO_TEST);
           break;
       }
     }
@@ -227,5 +229,21 @@ class DefaultTokenDefine {
     contractAddress: '0x04F535663110A392A6504839BEeD34E019FdB4E0',
     logo: 'res/drawable/ic_token_usdt.png',
     symbol: 'USDT',
+  );
+
+  static const HYN_HECO = const AssetToken(
+    name: "Heco HYN",
+    decimals: 18,
+    contractAddress: null,
+    logo: "res/drawable/ic_token_hyn.png",
+    symbol: 'HYN',
+  );
+
+  static const HYN_HECO_TEST = const AssetToken(
+    name: "Heco HYN (DAI)",
+    decimals: 6,
+    contractAddress: '0x04F535663110A392A6504839BEeD34E019FdB4E0',
+    logo: "res/drawable/ic_token_hyn.png",
+    symbol: 'HYN',
   );
 }
