@@ -72,7 +72,7 @@ class RPApi {
   Future<dynamic> postRetrieveHyn({
     String password = '',
     WalletViewVo activeWallet,
-    int gasLimit = HyperionGasLimit.RP_CALL,
+    int gasLimit = HyperionGasLimit.RP_Collect_CALL,
   }) async {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(

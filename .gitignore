@@ -92,3 +92,8 @@ ios/Flutter/flutter_export_environment.sh
 vendor
 *.txt
 ios/Flutter/.last_build_id
+android/build.gradle
+android/build.gradle
+android/build.gradle
+android/build.gradle
+android/gradle/wrapper/gradle-wrapper.properties
