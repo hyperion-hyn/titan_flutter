@@ -24,6 +24,8 @@ class HyperionGasLimit {
 
   static const int RP_Collect_CALL = 1000000; //传导取回，gaslimit
 
+  static const int BRIDGE_CONTRACT_LOCK_HYN_CALL = 1000000;
+  static const int BRIDGE_CONTRACT_LOCK_TOKEN_CALL = 1000000;
 }
 
 class HyperionGasPrice {
@@ -105,6 +107,19 @@ class HyperionConfig {
 
   /// HYN抵押传导RP
   static String get hynStakingContractAddress {
+    switch (HyperionConfig.chainType) {
+      case HyperionChainType.mainnet:
+        return '0x6910E6F7fe7C8D5444E63F8285f5342FfC7FCA6b';
+      case HyperionChainType.test:
+        var address = '0x8c9b248A587619b5757A705Ac103dD5bcFA5Ab20';
+        return address;
+      case HyperionChainType.local:
+        return "0x2190490FEcA5D47290CFA4a762b1889718913319";
+    }
+    return '';
+  }
+
+  static String get bridgeLockContractAddress {
     switch (HyperionConfig.chainType) {
       case HyperionChainType.mainnet:
         return '0x6910E6F7fe7C8D5444E63F8285f5342FfC7FCA6b';

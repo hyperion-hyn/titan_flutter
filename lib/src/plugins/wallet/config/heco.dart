@@ -8,6 +8,8 @@ class HecoGasLimit {
   static const int TRANSFER = 21000;
   static const int HRC20_TRANSFER = 60000;
   static const int HRC20_APPROVE = 50000;
+
+  static const int BRIDGE_CONTRACT_BURN_TOKEN_CALL = 1000000;
 }
 
 class HecoGasPrice {
@@ -23,7 +25,8 @@ class HecoGasPrice {
 enum HecoChainType { mainnet, test }
 
 class HecoConfig {
-  static HecoChainType chainType = env.buildType == BuildType.DEV ? HecoChainType.test : HecoChainType.mainnet;
+  static HecoChainType chainType =
+      env.buildType == BuildType.DEV ? HecoChainType.test : HecoChainType.mainnet;
 
   static String getUsdtErc20Address() {
     switch (HecoConfig.chainType) {
@@ -31,6 +34,26 @@ class HecoConfig {
         return DefaultTokenDefine.HUSDT.contractAddress;
       case HecoChainType.test:
         return DefaultTokenDefine.HUSDT_TEST.contractAddress;
+    }
+    return '';
+  }
+
+  static String get hynContractAddress {
+    switch (chainType) {
+      case HecoChainType.mainnet:
+        return DefaultTokenDefine.HYN_HECO.contractAddress;
+      case HecoChainType.test:
+        return DefaultTokenDefine.HYN_HECO_TEST.contractAddress;
+    }
+    return '';
+  }
+
+  static String get burnTokenContractAddress {
+    switch (chainType) {
+      case HecoChainType.mainnet:
+        return '';
+      case HecoChainType.test:
+        return '';
     }
     return '';
   }

@@ -1,6 +1,9 @@
 import 'package:decimal/decimal.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
@@ -14,6 +17,7 @@ import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as localWallet;
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -726,4 +730,103 @@ class HYNApi {
 //   });
 //   return assetToken;
 // }
+
+  ///Bridge
+  ///
+
+  Future<dynamic> postBridgeLockHYN({
+    BigInt amount,
+    String password = '',
+    WalletViewVo activeWallet,
+    int gasLimit = HyperionGasLimit.BRIDGE_CONTRACT_LOCK_HYN_CALL,
+  }) async {
+    var address = activeWallet?.wallet?.getAtlasAccount()?.address ?? '';
+    var txHash = await activeWallet.wallet.sendBridgeLockHYN(
+      address,
+      password,
+      lockAmount: amount,
+      gasLimit: gasLimit,
+    );
+    print("[HYN_api] postLockHYN, address:$address, txHash:$txHash");
+    if (txHash == null) {
+      return;
+    }
+
+    // return await RPHttpCore.instance
+    //     .postEntity("/v1/rp/create", EntityFactory<dynamic>((json) => json),
+    //         params: {
+    //           "address": address,
+    //           "hyn_amount": amount.toString(),
+    //           "tx_hash": txHash,
+    //         },
+    //         options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future<dynamic> postBridgeLockToken({
+    String contractAddress,
+    BigInt amount,
+    BigInt burningAmount,
+    String password = '',
+    WalletViewVo activeWallet,
+  }) async {
+    var ownerAddress = activeWallet?.wallet?.getEthAccount()?.address ?? '';
+    final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
+    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(ownerAddress));
+    var approveHex = await postApprove(
+      password: password,
+      activeWallet: activeWallet,
+      amount: amount,
+      nonce: nonce,
+      // gasLimit: gasLimit,
+    );
+    if (approveHex?.isEmpty ?? true) {
+      throw HttpResponseCodeNotSuccess(
+        -30011,
+        S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee,
+      );
+    }
+
+    ///update nonce
+    nonce = await client.getTransactionCount(EthereumAddress.fromHex(ownerAddress));
+
+    var rawTxHash = await activeWallet.wallet.signBridgeLockToken(
+      contractAddress,
+      ownerAddress,
+      password,
+      amount: amount,
+      nonce: nonce,
+    );
+    if (rawTxHash == null) {
+      throw HttpResponseCodeNotSuccess(
+        -30012,
+        S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh,
+      );
+    }
+  }
+
+  Future<String> postApprove({
+    String contractAddress,
+    String password = '',
+    BigInt amount,
+    WalletViewVo activeWallet,
+    int nonce,
+  }) async {
+    var wallet = activeWallet?.wallet;
+    var gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+        .systemConfigEntity
+        .erc20ApproveGasLimit;
+
+    var approveHex = await wallet.sendApproveErc20Token(
+      contractAddress: contractAddress,
+      approveToAddress: HyperionConfig.bridgeLockContractAddress,
+      amount: amount,
+      password: password,
+      gasPrice: HyperionGasPrice.getRecommend().fastBigInt,
+      gasLimit: gasLimit,
+      nonce: nonce,
+      coinType: CoinType.HYN_ATLAS,
+    );
+
+    return approveHex;
+  }
 }

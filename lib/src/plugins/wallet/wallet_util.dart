@@ -14,6 +14,8 @@ import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
+import 'package:titan/src/plugins/wallet/bridge_atlas_abi.dart';
+import 'package:titan/src/plugins/wallet/bridge_heco_abi.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/heco.dart';
@@ -402,6 +404,19 @@ class WalletUtil {
     return contract;
   }
 
+  static web3.DeployedContract _newAtlasBridgeLockContract(String contractAddress, String name) {
+    final contract = web3.DeployedContract(web3.ContractAbi.fromJson(BRIDGE_ATLAS_ABI, name),
+        web3.EthereumAddress.fromHex(contractAddress));
+    return contract;
+  }
+
+  static web3.DeployedContract _newHecoBridgeLockContract(String contractAddress, String name) {
+    final contract = web3.DeployedContract(web3.ContractAbi.fromJson(BRIDGE_HECO_ABI, name),
+        web3.EthereumAddress.fromHex(contractAddress));
+    return contract;
+  }
+
+
   /// https://infura.io/docs/gettingStarted/makeRequests.md
   static Future<dynamic> postToEthereumNetwork(int coinType,
       {String method, List params, int id = 1}) async {
@@ -466,6 +481,10 @@ class WalletUtil {
 
   static web3.DeployedContract getHynStakingContract(String contractAddress) {
     return _getContract(WalletUtil._newHynStakingContract, contractAddress, 'HynStaking');
+  }
+
+  static web3.DeployedContract getAtlasBridgeLockContract(String contractAddress) {
+    return _getContract(WalletUtil._newAtlasBridgeLockContract, contractAddress, 'HynLock');
   }
 
   static web3.Web3Client getWeb3Client(int coinType, [bool printResponse = false]) {

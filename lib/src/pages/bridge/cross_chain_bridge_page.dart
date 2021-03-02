@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
@@ -8,6 +9,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/image_util.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class CrossChainBridgePage extends StatefulWidget {
   CrossChainBridgePage();
@@ -19,8 +21,9 @@ class CrossChainBridgePage extends StatefulWidget {
 }
 
 class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
-  bool isLockAndMine = false;
-  String selectedSymbol = 'HYN';
+  String _selectedSymbol = 'HYN';
+  var _fromChain = CoinType.HYN_ATLAS;
+  var _toChain = CoinType.HB_HT;
   TextEditingController _amountController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -68,7 +71,8 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
           _title(),
           _tokenInfo(),
           _direction(),
-          _amount(),
+          _transferAmount(),
+          _confirmButton(),
         ],
       ),
     );
@@ -103,13 +107,13 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
             Row(
               children: [
                 Image.asset(
-                  ImageUtil.getGeneralTokenLogo(selectedSymbol),
+                  ImageUtil.getGeneralTokenLogo(_selectedSymbol),
                   width: 32,
                   height: 32,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(selectedSymbol),
+                  child: Text(_selectedSymbol),
                 ),
               ],
             ),
@@ -120,18 +124,77 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   }
 
   _direction() {
+    var button = InkWell(
+      onTap: () {},
+      child: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: RotatedBox(
+          quarterTurns: 1,
+          child: IconButton(
+            icon: Image.asset(
+              'res/drawable/ic_wallet_account_list_exchange.png',
+              width: 50,
+              height: 50,
+            ),
+            onPressed: () {
+              setState(() {
+                var temp = _fromChain;
+                _fromChain = _toChain;
+                _toChain = temp;
+              });
+            },
+          ),
+        ),
+      ),
+    );
     return SliverToBoxAdapter(
       child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Text('跨链方向')],
+          children: [
+            Text('跨链方向'),
+            Row(
+              children: [
+                _chainItem(_fromChain),
+                button,
+                _chainItem(_toChain),
+              ],
+            )
+          ],
         ),
       ),
     );
   }
 
-  _amount() {
+  Widget _chainItem(int chainType) {
+    var name = chainType == CoinType.HYN_ATLAS ? 'ATLAS' : 'HECO';
+    return Expanded(
+        child: Center(
+      child: Text(
+        name,
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    ));
+  }
+
+  _tokenBalance() {
+    var chainType = _fromChain;
+    var coinVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).getCoinVoBySymbolAndCoinType(_selectedSymbol, chainType);
+    if (coinVo != null) {
+      return FormatUtil.coinBalanceByDecimal(coinVo, 6);
+    } else {
+      return '0';
+    }
+  }
+
+  _transferAmount() {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -143,7 +206,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                 Spacer(),
                 Text.rich(TextSpan(children: [
                   TextSpan(
-                    text: _availableAmount(),
+                    text: _tokenBalance(),
                     style: TextStyle(
                       color: HexColor('#FF333333'),
                       fontSize: 12,
@@ -179,7 +242,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                           return S.of(context).input_corrent_count_hint;
                         }
 
-                        if (Decimal.parse(value) > Decimal.parse(_availableAmount())) {
+                        if (Decimal.parse(value) > Decimal.parse(_tokenBalance())) {
                           return S.of(context).input_count_over_balance;
                         }
 
@@ -217,8 +280,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                                     ),
                                   ),
                                   onTap: () {
-                                    _amountController.text = _availableAmount();
-
+                                    _amountController.text = _tokenBalance();
                                     _amountController.selection =
                                         TextSelection.fromPosition(TextPosition(
                                       affinity: TextAffinity.downstream,
@@ -243,17 +305,50 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     );
   }
 
-  _availableAmount() {
-    var chainType = isLockAndMine ? CoinType.HB_HT : CoinType.HYN_ATLAS;
+  _confirmButton() {
+    return SliverToBoxAdapter(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 150,
+          ),
+          ClickOvalButton(
+            S.of(context).confirm,
+            () async {
+              FocusScope.of(context).requestFocus(FocusNode());
+              if (_formKey.currentState.validate()) {
+                await _transfer();
+              }
+            },
+            height: 46,
+            width: 300,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            btnColor: [
+              HexColor("#F7D33D"),
+              HexColor("#E7C01A"),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-    var coinVo = WalletInheritedModel.of(
-      context,
-      aspect: WalletAspect.activatedWallet,
-    ).getCoinVoBySymbolAndCoinType('HYN', chainType);
-    if (coinVo != null) {
-      return FormatUtil.coinBalanceByDecimal(coinVo, 6);
+  _transfer() {
+    if (_fromChain == CoinType.HYN_ATLAS) {
+      _lockTokens();
     } else {
-      return '0';
+      _burnTokens(_fromChain);
     }
+  }
+
+  ///Lock tokens on ATLAS
+  _lockTokens() {
+
+  }
+
+  ///To unlock tokens on ATLAS, burn tokens on other chain.
+  _burnTokens(int chainType) {
+    if (chainType == CoinType.HB_HT) {}
   }
 }
