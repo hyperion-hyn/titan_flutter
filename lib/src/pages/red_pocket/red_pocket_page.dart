@@ -611,7 +611,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     InkWell(
                       onTap: () {
                         String webUrl = FluroConvertUtils.fluroCnParamsEncode(
-                          "https://h.hyn.space/redpocket",
+                          "https://www.cofix.io/#/swap",
                         );
                         String webTitle = FluroConvertUtils.fluroCnParamsEncode(
                           S.of(context).detailed_introduction,

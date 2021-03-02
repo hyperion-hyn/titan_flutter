@@ -102,7 +102,10 @@ dependencies:
   carousel_slider: ^2.3.1
   fake_cookie_manager: ^0.1.0
   loading: ^1.0.1
-  flutter_inappwebview: ^3.1.0
+#  flutter_inappwebview: ^3.1.0
+  flutter_inappwebview:
+    path: ../flutter_inappwebview-3.4.0+2
+
   #  characters: ^0.5.0
   characters: ^1.0.0
   encrypt: ^4.0.2
