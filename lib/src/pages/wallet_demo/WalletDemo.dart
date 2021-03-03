@@ -581,6 +581,33 @@ class _WalletDemoState extends State<WalletDemo> {
               print(WalletUtil.getRandomAvatarUrl());
             },
             child: Text('print random avatar url'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              String seedPhrase = '';
+              List<String> words = seedPhrase.split(' ');
+              String trimStr = '';
+              List<String> trimWords = List();
+
+              words.forEach((element) {
+                if (element.isNotEmpty) {
+                  var trimWord = element.trim();
+
+                  trimWords.add(trimWord);
+                  trimStr = trimStr + ' ' + trimWord;
+                }
+              });
+
+              seedPhrase = trimStr.trim();
+
+              if (trimWords.length < 12) {
+                Fluttertoast.showToast(msg: '助记词数量小于12');
+                return;
+              }
+
+              print('seedPhrase $seedPhrase');
+            },
+            child: Text('Test SeedPhrase'),
           )
         ],
       ),
