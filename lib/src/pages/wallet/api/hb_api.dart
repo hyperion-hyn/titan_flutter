@@ -1,3 +1,4 @@
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
@@ -12,6 +13,7 @@ import 'package:titan/src/pages/wallet/model/ht_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/heco.dart';
+import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart' as web3;
@@ -64,6 +66,25 @@ class HbApi {
     }
   }
 
+
+  static bool isGasFeeEnough(BigInt gasPrice, int gasLimit, {BigInt transferAmount}) {
+    var hynCoin = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbolAndCoinType(
+      DefaultTokenDefine.HT.symbol,
+      CoinType.HB_HT,
+    );
+    var gasFees = gasPrice * BigInt.from(gasLimit);
+    if (transferAmount == null) {
+      transferAmount = BigInt.from(0);
+    }
+    if ((hynCoin.balance - transferAmount) < gasFees) {
+      Fluttertoast.showToast(
+          msg: S.of(Keys.rootKey.currentContext).insufficient_gas_fee,
+          gravity: ToastGravity.CENTER);
+      return false;
+    }
+    return true;
+  }
+  
   Future<dynamic> postBridgeBurnToken({
     String contractAddress,
     BigInt amount,

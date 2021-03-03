@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:k_chart/utils/date_format_util.dart';
 import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/app_lock/app_lock_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -15,6 +16,7 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_options_page.dart';
+import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/bitcoin.dart';
@@ -24,6 +26,7 @@ import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:bip39/bip39.dart' as bip39;
@@ -608,7 +611,18 @@ class _WalletDemoState extends State<WalletDemo> {
               print('seedPhrase $seedPhrase');
             },
             child: Text('Test SeedPhrase'),
-          )
+          ),
+          RaisedButton(onPressed: () async {
+            HYNApi hynApi = HYNApi();
+            var activeWallet = WalletInheritedModel.of(context).activatedWallet;
+            var amount = ConvertTokenUnit.strToBigInt('50');
+            var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+              context,
+              activeWallet?.wallet,
+            );
+            hynApi.postBridgeLockHYN(amount: amount, password: walletPassword, activeWallet: activeWallet);
+
+          },child: Text('postBridgeLockHYN'),)
         ],
       ),
     );

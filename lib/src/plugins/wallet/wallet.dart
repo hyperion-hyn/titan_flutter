@@ -14,6 +14,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
+import 'package:titan/src/pages/wallet/api/hb_api.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
@@ -841,6 +842,7 @@ class Wallet {
           type: web3.MessageType.typeNormal),
       fetchChainIdFromNetworkId: false,
     );
+    //return signedRaw;
     return bytesToHex(signedRaw, include0x: true, padToEvenLength: true);
   }
 
@@ -886,8 +888,7 @@ class Wallet {
     if (gasLimit == null) {
       gasLimit = HyperionGasLimit.BRIDGE_CONTRACT_LOCK_TOKEN_CALL;
     }
-    BigInt stakingAmount;
-    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
+    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: amount)) {
       throw HttpResponseCodeNotSuccess(
           -30011, S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas);
     }
@@ -934,10 +935,11 @@ class Wallet {
     if (gasLimit == null) {
       gasLimit = HecoGasLimit.BRIDGE_CONTRACT_BURN_TOKEN_CALL;
     }
-    BigInt stakingAmount;
-    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
+    if (!HbApi.isGasFeeEnough(gasPrice, gasLimit, transferAmount: amount)) {
       throw HttpResponseCodeNotSuccess(
-          -30011, S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas);
+        -30011,
+        S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas,
+      );
     }
 
     String methodName = 'burnToken';

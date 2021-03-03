@@ -747,7 +747,7 @@ class HYNApi {
       lockAmount: amount,
       gasLimit: gasLimit,
     );
-    print("[HYN_api] postLockHYN, address:$address, txHash:$txHash");
+    print("[HYN_api] postBridgeLockHYN, address:$address, txHash:$txHash");
     if (txHash == null) {
       return;
     }
@@ -779,7 +779,7 @@ class HYNApi {
     if (rawTxHash == null) {
       throw HttpResponseCodeNotSuccess(
         -30012,
-        S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh,
+        'Insufficient Token balance',
       );
     }
   }
