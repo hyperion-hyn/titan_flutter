@@ -23,6 +23,7 @@ import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/webview/in_app_browser_example.screen.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/pages/webview/webview_browser.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -729,7 +730,7 @@ class HomePanelState extends State<HomePanel> {
             ),
             GestureDetector(
               onTap: () {
-                inAppBrowserOpenUrl(url: 'https://consenlabs.github.io/dapp-sdk-doc/index.html');
+                // inAppBrowserOpenUrl(url: 'https://consenlabs.github.io/dapp-sdk-doc/index.html');
 
                 // Navigator.push(
                 //     context,
@@ -745,13 +746,13 @@ class HomePanelState extends State<HomePanel> {
                 //           // title: '',
                 //         ),),);
 
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => WebViewBrowserContainer(
-                //           initUrl: 'https://consenlabs.github.io/dapp-sdk-doc/index.html',
-                //           title: '',
-                //         )));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => WebViewBrowserContainer(
+                          initUrl: 'http://10.10.1.126:3000/hello.html',
+                          title: '',
+                        )));
 
                 // todo:
                 /*
