@@ -25,6 +25,7 @@ import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/bitcoin.dart';
@@ -155,6 +156,31 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
               fontSize: 15,
             ),
           ),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: (){
+                var url = SettingInheritedModel.of(context)?.areaModel?.isChinaMainland ?? true
+                    ? 'https://cn.etherscan.com/address/${WalletModelUtil.walletEthAddress}'
+                    : 'https://etherscan.io/address/${WalletModelUtil.walletEthAddress}';
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => InAppWebViewContainer(
+                          initUrl: url,
+                          title: '',
+                        )));
+              },
+              child: Text(
+                '区块浏览器',
+                style: TextStyle(
+                  color: HexColor("#1F81FF"),
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+          ],
         ),
         body: BlocListener<WalletCmpBloc, WalletCmpState>(
           listener: (context, state) {
