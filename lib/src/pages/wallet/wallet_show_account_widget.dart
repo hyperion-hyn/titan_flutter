@@ -157,6 +157,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
             ),
           ),
           actions: <Widget>[
+            if(widget.coinVo.coinType == CoinType.ETHEREUM)
             FlatButton(
               onPressed: (){
                 var url = SettingInheritedModel.of(context)?.areaModel?.isChinaMainland ?? true
