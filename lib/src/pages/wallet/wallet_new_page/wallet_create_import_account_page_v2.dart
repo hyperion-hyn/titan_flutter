@@ -89,8 +89,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
     _focusNode.addListener(() {
       if (_focusNode.hasFocus) {
         showErrorHint = true;
-        UiUtil.showErrorTopHint(
-            context, S.of(context).password_stored_phone_forget_not_retrieve,
+        UiUtil.showErrorTopHint(context, S.of(context).password_stored_phone_forget_not_retrieve,
             errorHintType: ErrorHintType.REMIND);
       } else {
         if (showErrorHint) {
@@ -113,26 +112,28 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
         backgroundColor: Colors.white,
         appBar: BaseAppBar(
           baseTitle: "",
-          actions: widget.isCreateWallet ? null : [
-            InkWell(
-              onTap: () async {
-                UiUtil.showScanImagePickerSheet(context, callback: (String text) {
-                  if (text.isEmpty || (text.isNotEmpty && !bip39.validateMnemonic(text))) {
-                    Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
-                  } else {
-                    _mnemonicController.text = text;
-                  }
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8.0, bottom: 8, left: 15, right: 15),
-                child: Icon(
-                  ExtendsIconFont.qrcode_scan,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          ],
+          actions: widget.isCreateWallet
+              ? null
+              : [
+                  InkWell(
+                    onTap: () async {
+                      UiUtil.showScanImagePickerSheet(context, callback: (String text) {
+                        if (text.isEmpty || (text.isNotEmpty && !bip39.validateMnemonic(text))) {
+                          Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
+                        } else {
+                          _mnemonicController.text = text;
+                        }
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 8, left: 15, right: 15),
+                      child: Icon(
+                        ExtendsIconFont.qrcode_scan,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
         ),
         body: _pageWidget(context));
   }
@@ -149,7 +150,9 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.isCreateWallet ? S.of(context).create_identity : S.of(context).restore_identity,
+                  widget.isCreateWallet
+                      ? S.of(context).create_identity
+                      : S.of(context).restore_identity,
                   style: TextStyles.textC333S14bold,
                 ),
                 Padding(
@@ -217,14 +220,15 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                               AppLockUtil.appLockSwitch(context, false);
 
                               if (tempListImagePath != null) {
-                                UiUtil.showLoadingDialog(context, S.of(context).avatar_uploading, (context) {
+                                UiUtil.showLoadingDialog(context, S.of(context).avatar_uploading,
+                                    (context) {
                                   dialogContext = context;
                                 });
 
                                 var netImagePath = await _atlasApi.postUploadImageFile(
                                   "0x",
                                   tempListImagePath,
-                                      (count, total) {},
+                                  (count, total) {},
                                 );
                                 if (netImagePath != null && netImagePath.isNotEmpty) {
                                   userImageLocalPath = tempListImagePath;
@@ -240,7 +244,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                             }
                           });
                         },
-                        child: iconWidget(userImagePath, null,null,isCircle: true,size: 60),
+                        child: iconWidget(userImagePath, null, null, isCircle: true, size: 60),
                       )
                     ],
                   ),
@@ -325,8 +329,8 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
                     padding: const EdgeInsets.only(bottom: 36.0, top: 22),
                     child: ClickOvalButton(
                       widget.isCreateWallet ? S.of(context).create : S.of(context).restore_identity,
-                          () async {
-                        if(isSubmitLoading){
+                      () async {
+                        if (isSubmitLoading) {
                           return;
                         }
                         await submitAction();
@@ -375,7 +379,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
       }
 
       Wallet wallet;
-      var mnemonic;
+      String mnemonic;
       if (widget.isCreateWallet) {
         mnemonic = await WalletUtil.makeMnemonic();
         if (mnemonic != null && mnemonic.isNotEmpty) {
@@ -388,6 +392,27 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
         }
       } else {
         mnemonic = _mnemonicController.text.trim();
+
+        ///
+        List<String> words = mnemonic.split(' ');
+        String trimStr = '';
+        List<String> trimWords = List();
+
+        words.forEach((element) {
+          if (element.isNotEmpty) {
+            var trimWord = element.trim();
+
+            trimWords.add(trimWord);
+            trimStr = trimStr + ' ' + trimWord;
+          }
+        });
+        if (trimWords.length < 12) {
+          Fluttertoast.showToast(msg: '助记词数量小于12');
+          return;
+        }
+
+        mnemonic = trimStr.trim();
+
         if (!bip39.validateMnemonic(mnemonic)) {
           Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
           return;
@@ -400,12 +425,12 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
         var walletList = await WalletUtil.scanWallets();
         bool hasSame = false;
         walletList.forEach((element) {
-          if(element.getEthAccount().address == address){
+          if (element.getEthAccount().address == address) {
             Fluttertoast.showToast(msg: S.of(context).wallet_already_exists);
             hasSame = true;
           }
         });
-        if(hasSame){
+        if (hasSame) {
           return;
         }
 
@@ -448,21 +473,22 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
       );
       AtlasApi.postUserSync(userPayload);
 
-      await Future.delayed(Duration(milliseconds: 3000),(){
+      await Future.delayed(Duration(milliseconds: 3000), () {
         // setState(() {
         //   isSubmitLoading = false;
         // });
-        Fluttertoast.showToast(msg: widget.isCreateWallet ? S.of(context).create_success : S.of(context).import_success);
+        Fluttertoast.showToast(
+            msg: widget.isCreateWallet
+                ? S.of(context).create_success
+                : S.of(context).import_success);
         Routes.popUntilCachedEntryRouteName(context, wallet);
-        if(widget.isCreateWallet){
+        if (widget.isCreateWallet) {
           var walletStr = FluroConvertUtils.object2string(wallet.toJson());
-          Application.router.navigateTo(
-              context,
-              Routes.wallet_setting_wallet_backup_notice +
-                  '?walletStr=$walletStr&hasLater=1');
+          Application.router.navigateTo(context,
+              Routes.wallet_setting_wallet_backup_notice + '?walletStr=$walletStr&hasLater=1');
         }
       }); //延时确保激活成功
-    } catch (error,stack) {
+    } catch (error, stack) {
       // setState(() {
       //   isSubmitLoading = false;
       // });
