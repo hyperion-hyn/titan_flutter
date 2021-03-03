@@ -1,4 +1,6 @@
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -11,6 +13,7 @@ import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/heco.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 
 class HbApi {
@@ -59,5 +62,73 @@ class HbApi {
     } else {
       throw new Exception();
     }
+  }
+
+  Future<dynamic> postBridgeBurnToken({
+    String contractAddress,
+    BigInt amount,
+    BigInt burningAmount,
+    String password = '',
+    WalletViewVo activeWallet,
+  }) async {
+    var ownerAddress = activeWallet?.wallet?.getEthAccount()?.address ?? '';
+    final client = WalletUtil.getWeb3Client(CoinType.HB_HT);
+    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(ownerAddress));
+    var approveHex = await postApprove(
+      password: password,
+      activeWallet: activeWallet,
+      amount: amount,
+      nonce: nonce,
+    );
+    if (approveHex?.isEmpty ?? true) {
+      throw HttpResponseCodeNotSuccess(
+        -30011,
+        S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee,
+      );
+    }
+
+    ///update nonce
+    nonce = nonce + 1;
+
+    var rawTxHash = await activeWallet.wallet.signBridgeBurnToken(
+      contractAddress,
+      ownerAddress,
+      password,
+      amount: amount,
+      nonce: nonce,
+    );
+
+    if (rawTxHash == null) {
+      throw HttpResponseCodeNotSuccess(
+        -30012,
+        S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh,
+      );
+    }
+  }
+
+  Future<String> postApprove({
+    String contractAddress,
+    String password = '',
+    BigInt amount,
+    WalletViewVo activeWallet,
+    int nonce,
+  }) async {
+    var wallet = activeWallet?.wallet;
+    var gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+        .systemConfigEntity
+        .erc20ApproveGasLimit;
+
+    var approveHex = await wallet.sendApproveErc20Token(
+      contractAddress: contractAddress,
+      approveToAddress: HecoConfig.burnTokenContractAddress,
+      amount: amount,
+      password: password,
+      gasPrice: HecoGasPrice.getRecommend().fastBigInt,
+      gasLimit: gasLimit,
+      nonce: nonce,
+      coinType: CoinType.HB_HT,
+    );
+
+    return approveHex;
   }
 }

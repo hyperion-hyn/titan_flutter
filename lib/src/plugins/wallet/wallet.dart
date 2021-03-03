@@ -794,7 +794,7 @@ class Wallet {
 
   ///Bridge
 
-  Future<String> sendBridgeLockHYN(
+  Future<String> signBridgeLockHYN(
     String ownerAddress,
     String password, {
     BigInt lockAmount,
@@ -818,8 +818,9 @@ class Wallet {
     var coinType = CoinType.HYN_ATLAS;
     final client = WalletUtil.getWeb3Client(coinType);
     var credentials = await getCredentials(coinType, password);
-    var hynLockContract =
-        WalletUtil.getAtlasBridgeLockContract(HyperionConfig.bridgeLockContractAddress);
+    var hynLockContract = WalletUtil.getAtlasBridgeLockContract(
+      HyperionConfig.bridgeLockContractAddress,
+    );
     String methodName = 'lockHyn';
 
     List<dynamic> parameters = [
@@ -836,6 +837,7 @@ class Wallet {
           gasPrice: web3.EtherAmount.inWei(gasPrice),
           maxGas: gasLimit,
           nonce: nonce,
+          value: web3.EtherAmount.inWei(lockAmount),
           type: web3.MessageType.typeNormal),
       fetchChainIdFromNetworkId: false,
     );
@@ -849,8 +851,35 @@ class Wallet {
     BigInt amount,
     BigInt gasPrice,
     int gasLimit,
-    int nonce,
   }) async {
+    final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
+    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(ownerAddress));
+
+    var approveGasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+        .systemConfigEntity
+        .erc20ApproveGasLimit;
+
+    var approveHex = await sendApproveErc20Token(
+      contractAddress: contractAddress,
+      approveToAddress: HyperionConfig.bridgeLockContractAddress,
+      amount: amount,
+      password: password,
+      gasPrice: HyperionGasPrice.getRecommend().fastBigInt,
+      gasLimit: approveGasLimit,
+      nonce: nonce,
+      coinType: CoinType.HYN_ATLAS,
+    );
+
+    if (approveHex?.isEmpty ?? true) {
+      throw HttpResponseCodeNotSuccess(
+        -30011,
+        S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee,
+      );
+    }
+
+    ///update nonce
+    nonce = nonce + 1;
+
     if (gasPrice == null) {
       gasPrice = HyperionGasPrice.getRecommend().fastBigInt;
     }
@@ -870,22 +899,71 @@ class Wallet {
       ownerAddress,
     ];
 
-    var coinType = CoinType.HYN_ATLAS;
-    final client = WalletUtil.getWeb3Client(coinType);
-    var credentials = await getCredentials(coinType, password);
+    var credentials = await getCredentials(CoinType.HYN_ATLAS, password);
     var bridgeContact = WalletUtil.getAtlasBridgeLockContract(
       HyperionConfig.bridgeLockContractAddress,
     );
     var signedRaw = await client.signTransaction(
       credentials,
       web3.Transaction.callContract(
-          contract: bridgeContact,
-          function: bridgeContact.function(methodName),
-          parameters: parameters,
-          gasPrice: web3.EtherAmount.inWei(gasPrice),
-          maxGas: gasLimit,
-          nonce: nonce,
-          type: web3.MessageType.typeNormal),
+        contract: bridgeContact,
+        function: bridgeContact.function(methodName),
+        parameters: parameters,
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+        type: web3.MessageType.typeNormal,
+      ),
+      fetchChainIdFromNetworkId: false,
+    );
+    return bytesToHex(signedRaw, include0x: true, padToEvenLength: true);
+  }
+
+  Future<String> signBridgeBurnToken(
+    String contractAddress,
+    String ownerAddress,
+    String password, {
+    BigInt amount,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    if (gasPrice == null) {
+      gasPrice = HecoGasPrice.getRecommend().fastBigInt;
+    }
+    if (gasLimit == null) {
+      gasLimit = HecoGasLimit.BRIDGE_CONTRACT_BURN_TOKEN_CALL;
+    }
+    BigInt stakingAmount;
+    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
+      throw HttpResponseCodeNotSuccess(
+          -30011, S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas);
+    }
+
+    String methodName = 'burnToken';
+    List<dynamic> parameters = [
+      contractAddress,
+      amount,
+      ownerAddress,
+    ];
+
+    var coinType = CoinType.HB_HT;
+    final client = WalletUtil.getWeb3Client(coinType);
+    var credentials = await getCredentials(coinType, password);
+    var bridgeContact = WalletUtil.getAtlasBridgeLockContract(
+      HecoConfig.burnTokenContractAddress,
+    );
+    var signedRaw = await client.signTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: bridgeContact,
+        function: bridgeContact.function(methodName),
+        parameters: parameters,
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+        type: web3.MessageType.typeNormal,
+      ),
       fetchChainIdFromNetworkId: false,
     );
     return bytesToHex(signedRaw, include0x: true, padToEvenLength: true);

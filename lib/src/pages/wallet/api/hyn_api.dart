@@ -741,7 +741,7 @@ class HYNApi {
     int gasLimit = HyperionGasLimit.BRIDGE_CONTRACT_LOCK_HYN_CALL,
   }) async {
     var address = activeWallet?.wallet?.getAtlasAccount()?.address ?? '';
-    var txHash = await activeWallet.wallet.sendBridgeLockHYN(
+    var txHash = await activeWallet.wallet.signBridgeLockHYN(
       address,
       password,
       lockAmount: amount,
@@ -770,31 +770,11 @@ class HYNApi {
     WalletViewVo activeWallet,
   }) async {
     var ownerAddress = activeWallet?.wallet?.getEthAccount()?.address ?? '';
-    final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
-    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(ownerAddress));
-    var approveHex = await postApprove(
-      password: password,
-      activeWallet: activeWallet,
-      amount: amount,
-      nonce: nonce,
-      // gasLimit: gasLimit,
-    );
-    if (approveHex?.isEmpty ?? true) {
-      throw HttpResponseCodeNotSuccess(
-        -30011,
-        S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee,
-      );
-    }
-
-    ///update nonce
-    nonce = await client.getTransactionCount(EthereumAddress.fromHex(ownerAddress));
-
     var rawTxHash = await activeWallet.wallet.signBridgeLockToken(
       contractAddress,
       ownerAddress,
       password,
       amount: amount,
-      nonce: nonce,
     );
     if (rawTxHash == null) {
       throw HttpResponseCodeNotSuccess(
