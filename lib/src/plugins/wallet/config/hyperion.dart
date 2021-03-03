@@ -25,6 +25,9 @@ class HyperionGasLimit {
   static const int RP_Collect_CALL = 1000000; //传导取回，gaslimit
 
   static const int RP_TRANSMIT_CALL = 1000000; //HYN -> RP，limit
+
+  static const int BRIDGE_CONTRACT_LOCK_HYN_CALL = 1000000;
+  static const int BRIDGE_CONTRACT_LOCK_TOKEN_CALL = 1000000;
 }
 
 class HyperionGasPrice {
