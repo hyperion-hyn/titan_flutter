@@ -406,7 +406,7 @@ class WalletUtil {
   static Future<dynamic> postToEthereumNetwork(int coinType,
       {String method, List params, int id = 1}) async {
     //{jsonrpc: 2.0, id: 1, result: 0x4547fdfbf3f1cfd25c0fa7267a97c7832ddda76352456b8e78898e9bd619adb7}
-    var rpcApi = _getRpcApiByCoinType(coinType);
+    var rpcApi = getRpcApiByCoinType(coinType);
     var data = await HttpCore.instance.post(rpcApi,
         params: {"jsonrpc": "2.0", "method": method, "params": params, "id": id},
         options: RequestOptions(contentType: Headers.jsonContentType));
@@ -474,14 +474,14 @@ class WalletUtil {
       return web3ClientMap[key];
     }
 
-    var rpcApi = _getRpcApiByCoinType(coinType);
+    var rpcApi = getRpcApiByCoinType(coinType);
     var web3Client = WalletUtil._newWeb3Client(rpcApi);
     web3Client.printResponse = printResponse;
     web3ClientMap[key] = web3Client;
     return web3Client;
   }
 
-  static String _getRpcApiByCoinType(int coinType) {
+  static String getRpcApiByCoinType(int coinType) {
     var rpcApi = '';
     if (coinType == CoinType.HYN_ATLAS) {
       rpcApi = HyperionRpcProvider.rpcUrl;

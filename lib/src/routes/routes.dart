@@ -12,6 +12,7 @@ class Routes {
 
   //tools page
   static const String toolspage_webview_page = '/toolspage/webview_page';
+  static const String toolspage_dapp_webview_page = '/toolspage/dapp_webview_page';
   static const String toolspage_qrcode_page = '/toolspage/qrcode_page';
 
   static const String app_lock = '/app_lock';
@@ -131,6 +132,8 @@ class Routes {
     //tools
     router.define(toolspage_webview_page,
         handler: toolsPageWebviewHandler, transitionType: pushNewPageTransitionType);
+    router.define(toolspage_dapp_webview_page,
+        handler: toolsPageDappWebviewHandler, transitionType: pushNewPageTransitionType);
     router.define(toolspage_qrcode_page,
         handler: toolsPageQrcodeHandler, transitionType: pushNewPageTransitionType);
 

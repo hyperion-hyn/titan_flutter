@@ -362,7 +362,7 @@ class Wallet {
     }
     // print('xxx balance $balance, transferValue $transferValue, gasPrice $gasPrice, gasFees $gasFees');
 
-    var chainId = _getChainId(coinType);
+    var chainId = getChainId(coinType);
     final rawTx = await client.signTransaction(
       credentials,
       web3.Transaction(
@@ -382,7 +382,7 @@ class Wallet {
     return bytesToHex(rawTx, include0x: true, padToEvenLength: true);
   }
 
-  int _getChainId(int coinType) {
+  int getChainId(int coinType) {
     if (coinType == CoinType.HYN_ATLAS) {
       return HyperionRpcProvider.chainId;
     } else if (coinType == CoinType.ETHEREUM) {
@@ -504,7 +504,7 @@ class Wallet {
 
     final contract = WalletUtil.getErc20Contract(contractAddress, 'HYN');
 
-    var chainId = _getChainId(coinType);
+    var chainId = getChainId(coinType);
 
     final rawTx = await client.signTransaction(
       credentials,
@@ -596,7 +596,7 @@ class Wallet {
     final client = WalletUtil.getWeb3Client(coinType);
     var credentials = await getCredentials(coinType, password);
     var erc20Contract = WalletUtil.getErc20Contract(contractAddress, 'HYN');
-    var chainId = _getChainId(coinType);
+    var chainId = getChainId(coinType);
     final txHash = await client.sendTransaction(
       credentials,
       web3.Transaction.callContract(
@@ -627,7 +627,7 @@ class Wallet {
     final client = WalletUtil.getWeb3Client(coinType);
     var credentials = await getCredentials(coinType, password);
     var erc20Contract = WalletUtil.getErc20Contract(contractAddress, 'HYN');
-    var chainId = _getChainId(coinType);
+    var chainId = getChainId(coinType);
     var signed = await client.signTransaction(
       credentials,
       web3.Transaction.callContract(

@@ -925,7 +925,7 @@ class HomePanelState extends State<HomePanel> {
       }
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
       scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
-      Application.router.navigateTo(context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
+      Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr");
     } else {
       Application.router.navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
     }
