@@ -119,6 +119,8 @@ class Const {
   static const String APP_POLICY =
       'https://github.com/hyperion-hyn/titan_flutter/blob/master/LICENSE';
   static const String HELP_PAGE = "http://h.hyn.space/helpPage";
+  static const String HELP_CENTER = 'https://h.hyn.space/helpcenter';
+
 }
 
 class Keys {
