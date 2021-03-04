@@ -730,7 +730,7 @@ class HomePanelState extends State<HomePanel> {
             ),
             GestureDetector(
               onTap: () {
-                // inAppBrowserOpenUrl(url: 'https://consenlabs.github.io/dapp-sdk-doc/index.html');
+                inAppBrowserOpenUrl(url: 'http://10.10.1.136:3000/hello.html');
 
                 // Navigator.push(
                 //     context,
@@ -746,13 +746,13 @@ class HomePanelState extends State<HomePanel> {
                 //           // title: '',
                 //         ),),);
 
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => WebViewBrowserContainer(
-                          initUrl: 'http://10.10.1.126:3000/hello.html',
-                          title: '',
-                        )));
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => WebViewBrowserContainer(
+                //           initUrl: 'http://10.10.1.126:3000/hello.html',
+                //           title: '',
+                //         )));
 
                 // todo:
                 /*
