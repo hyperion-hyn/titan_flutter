@@ -66,7 +66,6 @@ class HbApi {
     }
   }
 
-
   static bool isGasFeeEnough(BigInt gasPrice, int gasLimit, {BigInt transferAmount}) {
     var hynCoin = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbolAndCoinType(
       DefaultTokenDefine.HT.symbol,
@@ -84,11 +83,10 @@ class HbApi {
     }
     return true;
   }
-  
+
   Future<dynamic> postBridgeBurnToken({
     String contractAddress,
-    BigInt amount,
-    BigInt burningAmount,
+    BigInt burnAmount,
     String password = '',
     WalletViewVo activeWallet,
   }) async {
@@ -96,17 +94,20 @@ class HbApi {
     final client = WalletUtil.getWeb3Client(CoinType.HB_HT);
     var nonce = await client.getTransactionCount(EthereumAddress.fromHex(ownerAddress));
     var approveHex = await postApprove(
+      contractAddress: contractAddress,
       password: password,
       activeWallet: activeWallet,
-      amount: amount,
+      amount: burnAmount,
       nonce: nonce,
     );
     if (approveHex?.isEmpty ?? true) {
       throw HttpResponseCodeNotSuccess(
         -30011,
-        S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee,
+        'Insufficient HT to pay for gas fee',
       );
     }
+
+    print('--- approveHex $approveHex');
 
     ///update nonce
     nonce = nonce + 1;
@@ -115,16 +116,24 @@ class HbApi {
       contractAddress,
       ownerAddress,
       password,
-      amount: amount,
+      amount: burnAmount,
       nonce: nonce,
     );
 
     if (rawTxHash == null) {
       throw HttpResponseCodeNotSuccess(
         -30012,
-        S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh,
+        'Insufficient Token balance',
       );
     }
+
+    var responseMap = await WalletUtil.postToEthereumNetwork(
+      CoinType.HB_HT,
+      method: 'eth_sendRawTransaction',
+      params: [rawTxHash],
+    );
+
+    print('$responseMap');
   }
 
   Future<String> postApprove({

@@ -4,12 +4,22 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/market/entity/exchange_coin_list_v2.dart';
+import 'package:titan/src/pages/wallet/api/hb_api.dart';
+import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/image_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'dart:math' as math;
 
 class CrossChainBridgePage extends StatefulWidget {
   CrossChainBridgePage();
@@ -21,11 +31,14 @@ class CrossChainBridgePage extends StatefulWidget {
 }
 
 class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
-  String _selectedSymbol = 'HYN';
+  String _currentTokenSymbol = 'HYN';
   var _fromChain = CoinType.HYN_ATLAS;
   var _toChain = CoinType.HB_HT;
   TextEditingController _amountController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  HYNApi _hynApi = HYNApi();
+  HbApi _hbApi = HbApi();
 
   @override
   void initState() {
@@ -45,11 +58,8 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: null,
+      appBar: BaseAppBar(
+        baseTitle: '跨链',
         actions: [
           Center(
             child: Padding(
@@ -61,69 +71,35 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                     color: Colors.blue,
                   ),
                 ),
+                onTap: () {
+                  AtlasApi.goToAtlasMap3HelpPage(context);
+                },
               ),
             ),
-          )
-        ],
-      ),
-      body: CustomScrollView(
-        slivers: [
-          _title(),
-          _tokenInfo(),
-          _direction(),
-          _transferAmount(),
-          _confirmButton(),
-        ],
-      ),
-    );
-  }
-
-  _title() {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Text(
-          '跨链',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
           ),
-        ),
+        ],
       ),
-    );
-  }
-
-  _tokenInfo() {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Container(
+        color: Colors.white,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Text('资产'),
+            Expanded(
+              child: CustomScrollView(
+                slivers: [
+                  _chainSelection(),
+                  _tokenSelection(),
+                  _amount(),
+                ],
+              ),
             ),
-            Row(
-              children: [
-                Image.asset(
-                  ImageUtil.getGeneralTokenLogo(_selectedSymbol),
-                  width: 32,
-                  height: 32,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(_selectedSymbol),
-                ),
-              ],
-            ),
+            _confirmButton(),
           ],
         ),
       ),
     );
   }
 
-  _direction() {
+  _chainSelection() {
     var button = InkWell(
       onTap: () {},
       child: Padding(
@@ -153,13 +129,22 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('跨链方向'),
-            Row(
-              children: [
-                _chainItem(_fromChain),
-                button,
-                _chainItem(_toChain),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('跨链方向'),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: DefaultColors.colorf6f6f6,
+                borderRadius: BorderRadius.all(Radius.circular(6.0)),
+              ),
+              child: Row(
+                children: [
+                  _chainItem(_fromChain, true),
+                  button,
+                  _chainItem(_toChain, false),
+                ],
+              ),
             )
           ],
         ),
@@ -167,18 +152,55 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     );
   }
 
-  Widget _chainItem(int chainType) {
+  Widget _chainItem(int chainType, bool isFromChain) {
     var name = chainType == CoinType.HYN_ATLAS ? 'ATLAS' : 'HECO';
     return Expanded(
-        child: Center(
-      child: Text(
-        name,
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w500,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+                decoration: BoxDecoration(
+                  color: DefaultColors.colordedede,
+                  borderRadius: BorderRadius.all(Radius.circular(2.0)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  child: Text(
+                    isFromChain ? '从' : '到',
+                    style: TextStyle(fontSize: 9),
+                  ),
+                )),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Row(
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    width: 20,
+                    height: 20,
+                    child: Image.asset(
+                      '${ImageUtil.getGeneralChainLogo(name)}',
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      '$name 链',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
-    ));
+    );
   }
 
   _tokenBalance() {
@@ -186,7 +208,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
-    ).getCoinVoBySymbolAndCoinType(_selectedSymbol, chainType);
+    ).getCoinVoBySymbolAndCoinType(_currentTokenSymbol, chainType);
     if (coinVo != null) {
       return FormatUtil.coinBalanceByDecimal(coinVo, 6);
     } else {
@@ -194,107 +216,295 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     }
   }
 
-  _transferAmount() {
+  _tokenItem(Token token) {
+    var coinVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).getCoinVoBySymbolAndCoinType(token.symbol, token.coinType);
+    return Column(
+      children: [
+        InkWell(
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  child: ImageUtil.getCoinImage(coinVo.logo),
+                ),
+              ),
+              Text(
+                '${token.symbol}',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Spacer(),
+              Text(
+                '${token.chain.toUpperCase()}',
+                style: TextStyle(
+                  color: HexColor('#FF777777'),
+                  fontSize: 14,
+                ),
+              ),
+              SizedBox(
+                width: 16,
+              )
+            ],
+          ),
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
+
+  _tokenSelection() {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Row(
-              children: <Widget>[
-                Spacer(),
-                Text.rich(TextSpan(children: [
-                  TextSpan(
-                    text: _tokenBalance(),
-                    style: TextStyle(
-                      color: HexColor('#FF333333'),
-                      fontSize: 12,
-                    ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Text(
+                '资产',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: DefaultColors.colorf6f6f6,
+                borderRadius: BorderRadius.all(Radius.circular(6.0)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(14.0),
+                child: InkWell(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.center,
+                        width: 30,
+                        height: 30,
+                        child: Image.asset(
+                          '${ImageUtil.getGeneralTokenLogo(_currentTokenSymbol)}',
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'HYN',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Spacer(),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 0),
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          size: 18,
+                          color: HexColor('#FF999999'),
+                        ),
+                      )
+                    ],
                   ),
-                  TextSpan(
-                    text: ' HYN',
-                    style: TextStyle(
-                      color: HexColor('#FFAAAAAA'),
-                      fontSize: 12,
-                    ),
+                  onTap: () {
+                    _showTokenListDialog();
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _showTokenListDialog() async {
+    var tokens = MarketInheritedModel.of(
+      context,
+      aspect: SocketAspect.marketItemList,
+    ).activeTokens();
+
+    UiUtil.showBottomDialogView(
+      context,
+      dialogHeight: MediaQuery.of(context).size.height - 80,
+      isScrollControlled: true,
+      customWidget: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Center(
+              child: Text(S.of(context).choose_currency, style: TextStyles.textC333S14bold),
+            ),
+          ),
+          Expanded(
+            child: CustomScrollView(
+              semanticChildCount: tokens.length,
+              slivers: <Widget>[
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      final int itemIndex = index ~/ 2;
+                      if (index.isEven) {
+                        return _tokenItem(tokens[itemIndex]);
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Divider(height: 1),
+                      );
+                    },
+                    semanticIndexCallback: (Widget widget, int localIndex) {
+                      if (localIndex.isEven) {
+                        return localIndex ~/ 2;
+                      }
+                      return null;
+                    },
+                    childCount: math.max(0, tokens.length * 2 - 1),
                   ),
-                ])),
+                ),
               ],
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                  child: Form(
-                    key: _formKey,
-                    child: TextFormField(
-                      controller: _amountController,
-                      validator: (value) {
-                        value = value.trim();
-                        if (value.isEmpty) {
-                          return S.of(context).input_corrent_count_hint;
-                        }
-                        if (Decimal.parse(value) <= Decimal.zero) {
-                          return S.of(context).input_corrent_count_hint;
-                        }
-                        if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
-                          return S.of(context).input_corrent_count_hint;
-                        }
+          ),
+        ],
+      ),
+    );
+  }
 
-                        if (Decimal.parse(value) > Decimal.parse(_tokenBalance())) {
-                          return S.of(context).input_count_over_balance;
-                        }
-
-                        return null;
-                      },
-                      onChanged: (data) {
-                        _formKey.currentState.validate();
-                      },
-                      decoration: InputDecoration(
-                          border: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                            color: HexColor('#FFD7D7D7'),
-                          )),
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                            color: HexColor('#FFD7D7D7'),
-                          )),
-                          hintStyle: TextStyle(
-                            color: HexColor('#FF999999'),
-                            fontSize: 12,
-                          ),
-                          suffixIcon: Container(
-                            child: Container(
-                              width: 65,
-                              child: Center(
-                                child: InkWell(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Text(
-                                      S.of(context).all,
-                                      style: TextStyle(
-                                          color: HexColor('#FF333333'),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold),
-                                    ),
+  _amount() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    '数量',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Spacer(),
+                  Text.rich(TextSpan(children: [
+                    TextSpan(
+                      text: _tokenBalance(),
+                      style: TextStyle(
+                        color: HexColor('#FFAAAAAA'),
+                        fontSize: 12,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' HYN',
+                      style: TextStyle(
+                        color: HexColor('#FFAAAAAA'),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ])),
+                ],
+              ),
+            ),
+            Column(
+              children: [
+                Container(
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: DefaultColors.colorf6f6f6,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Form(
+                              key: _formKey,
+                              child: Container(
+                                child: TextFormField(
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                  validator: (value) {
+                                    value = value.trim();
+                                    try {
+                                      if (value.isEmpty) {
+                                        return S.of(context).input_corrent_count_hint;
+                                      }
+                                      if (Decimal.parse(value) <= Decimal.zero) {
+                                        return S.of(context).input_corrent_count_hint;
+                                      }
+                                      if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
+                                        return S.of(context).input_corrent_count_hint;
+                                      }
+                                      if (Decimal.parse(value) > Decimal.parse(_tokenBalance())) {
+                                        return S.of(context).input_count_over_balance;
+                                      }
+                                    } catch (e) {
+                                      return S.of(context).input_corrent_count_hint;
+                                    }
+                                    return null;
+                                  },
+                                  controller: _amountController,
+                                  style: TextStyle(
+                                    fontSize: 14,
                                   ),
-                                  onTap: () {
-                                    _amountController.text = _tokenBalance();
-                                    _amountController.selection =
-                                        TextSelection.fromPosition(TextPosition(
-                                      affinity: TextAffinity.downstream,
-                                      offset: _amountController.text.length,
-                                    ));
+                                  onChanged: (data) {
                                     _formKey.currentState.validate();
                                     setState(() {});
                                   },
+                                  decoration: InputDecoration(
+                                    hintText: '0.0',
+                                    hintStyle: TextStyles.textCaaaS14,
+                                    filled: true,
+                                    fillColor: Colors.transparent,
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 10,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          )),
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
-                    ),
+                          ),
+                          Container(
+                            height: 50,
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Center(
+                              child: InkWell(
+                                onTap: () {
+                                  _amountController.text = _tokenBalance();
+                                  _amountController.selection =
+                                      TextSelection.fromPosition(TextPosition(
+                                    affinity: TextAffinity.downstream,
+                                    offset: _amountController.text.length,
+                                  ));
+                                  _formKey.currentState.validate();
+                                  setState(() {});
+                                },
+                                child: Text(
+                                  '全部',
+                                  style: TextStyle(color: Colors.blue, fontSize: 14),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -306,35 +516,31 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   }
 
   _confirmButton() {
-    return SliverToBoxAdapter(
-      child: Column(
-        children: [
-          SizedBox(
-            height: 150,
-          ),
-          ClickOvalButton(
-            S.of(context).confirm,
-            () async {
-              FocusScope.of(context).requestFocus(FocusNode());
-              if (_formKey.currentState.validate()) {
-                await _transfer();
-              }
-            },
-            height: 46,
-            width: 300,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            btnColor: [
-              HexColor("#F7D33D"),
-              HexColor("#E7C01A"),
-            ],
-          ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: ClickOvalButton(
+        S.of(context).confirm,
+        () async {
+          if (_formKey.currentState.validate()) {
+            await _operate();
+          } else {
+            return;
+          }
+        },
+        height: 46,
+        width: 300,
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        btnColor: [
+          HexColor("#F7D33D"),
+          HexColor("#E7C01A"),
         ],
       ),
     );
   }
 
-  _transfer() {
+  ///only support atlas-heco now
+  _operate() {
     if (_fromChain == CoinType.HYN_ATLAS) {
       _lockTokens();
     } else {
@@ -343,12 +549,29 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   }
 
   ///Lock tokens on ATLAS
-  _lockTokens() {
-
-  }
+  _lockTokens() {}
 
   ///To unlock tokens on ATLAS, burn tokens on other chain.
-  _burnTokens(int chainType) {
-    if (chainType == CoinType.HB_HT) {}
+  _burnTokens(int chainType) async {
+    if (chainType == CoinType.HB_HT) {
+      var coinVo = WalletInheritedModel.of(
+        context,
+        aspect: WalletAspect.activatedWallet,
+      ).getCoinVoBySymbolAndCoinType(_currentTokenSymbol, chainType);
+
+      var wallet = WalletInheritedModel.of(context).activatedWallet;
+      var pwd = await UiUtil.showWalletPasswordDialogV2(context, wallet?.wallet);
+
+      if (pwd != null) {
+        _hbApi.postBridgeBurnToken(
+          contractAddress: coinVo.contractAddress,
+          activeWallet: wallet,
+          password: pwd,
+          burnAmount: ConvertTokenUnit.strToBigInt(_amountController.text),
+        );
+      } else {
+        Fluttertoast.showToast(msg: '密码错误');
+      }
+    }
   }
 }

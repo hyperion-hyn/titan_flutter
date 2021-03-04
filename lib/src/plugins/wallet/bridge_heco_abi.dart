@@ -288,6 +288,4 @@ const BRIDGE_HECO_ABI = '''
     "type": "function"
   }
 ]
-
-
 ''';

@@ -9,7 +9,7 @@ class HecoGasLimit {
   static const int HRC20_TRANSFER = 60000;
   static const int HRC20_APPROVE = 50000;
 
-  static const int BRIDGE_CONTRACT_BURN_TOKEN_CALL = 1000000;
+  static const int BRIDGE_CONTRACT_BURN_TOKEN_CALL = 100000;
 }
 
 class HecoGasPrice {
@@ -53,7 +53,7 @@ class HecoConfig {
       case HecoChainType.mainnet:
         return '';
       case HecoChainType.test:
-        return '';
+        return '0xdFc01fE7Bac53B4d72518d5ad0e1131b83628fF3';
     }
     return '';
   }

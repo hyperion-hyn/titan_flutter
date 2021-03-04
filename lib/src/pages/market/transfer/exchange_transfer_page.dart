@@ -395,19 +395,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     );
   }
 
-  _getTokenNameBySymbol(String symbol) {
-    return symbol;
-    // if (symbol == DefaultTokenDefine.HYN_Atlas.symbol) {
-    //   return 'HYN';
-    // } else if (symbol == DefaultTokenDefine.USDT_ERC20.symbol) {
-    //   return 'USDT';
-    // } else if (symbol == DefaultTokenDefine.HYN_RP_HRC30.symbol) {
-    //   return 'RP';
-    // } else {
-    //   return '';
-    // }
-  }
-
   _showTokenListDialog() async {
     var tokens = MarketInheritedModel.of(
       context,

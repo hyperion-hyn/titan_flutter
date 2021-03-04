@@ -517,7 +517,10 @@ class Wallet {
       web3.Transaction.callContract(
         contract: contract,
         function: contract.function('transfer'),
-        parameters: [web3.EthereumAddress.fromHex(toAddress), value],
+        parameters: [
+          web3.EthereumAddress.fromHex(toAddress),
+          value,
+        ],
         gasPrice: gasPrice != null ? web3.EtherAmount.inWei(gasPrice) : null,
         maxGas: gasLimit,
         nonce: nonce,
@@ -895,9 +898,9 @@ class Wallet {
 
     String methodName = 'lockToken';
     List<dynamic> parameters = [
-      contractAddress,
+      web3.EthereumAddress.fromHex(contractAddress),
       amount,
-      ownerAddress,
+      web3.EthereumAddress.fromHex(ownerAddress),
     ];
 
     var credentials = await getCredentials(CoinType.HYN_ATLAS, password);
@@ -930,29 +933,29 @@ class Wallet {
     int nonce,
   }) async {
     if (gasPrice == null) {
-      gasPrice = HecoGasPrice.getRecommend().fastBigInt;
+      gasPrice = HecoGasPrice.getRecommend().averageBigInt;
     }
     if (gasLimit == null) {
       gasLimit = HecoGasLimit.BRIDGE_CONTRACT_BURN_TOKEN_CALL;
     }
-    if (!HbApi.isGasFeeEnough(gasPrice, gasLimit, transferAmount: amount)) {
+    if (!HbApi.isGasFeeEnough(gasPrice, gasLimit)) {
       throw HttpResponseCodeNotSuccess(
         -30011,
-        S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas,
+        'Insufficient HT for gas fee',
       );
     }
 
     String methodName = 'burnToken';
     List<dynamic> parameters = [
-      contractAddress,
+      web3.EthereumAddress.fromHex(contractAddress),
       amount,
-      ownerAddress,
+      web3.EthereumAddress.fromHex(ownerAddress)
     ];
 
     var coinType = CoinType.HB_HT;
     final client = WalletUtil.getWeb3Client(coinType);
     var credentials = await getCredentials(coinType, password);
-    var bridgeContact = WalletUtil.getAtlasBridgeLockContract(
+    var bridgeContact = WalletUtil.getHecoBridgeBurnContract(
       HecoConfig.burnTokenContractAddress,
     );
     var signedRaw = await client.signTransaction(
@@ -964,9 +967,9 @@ class Wallet {
         gasPrice: web3.EtherAmount.inWei(gasPrice),
         maxGas: gasLimit,
         nonce: nonce,
-        type: web3.MessageType.typeNormal,
+        //type: web3.MessageType.typeNormal,
       ),
-      fetchChainIdFromNetworkId: false,
+      fetchChainIdFromNetworkId: true,
     );
     return bytesToHex(signedRaw, include0x: true, padToEvenLength: true);
   }

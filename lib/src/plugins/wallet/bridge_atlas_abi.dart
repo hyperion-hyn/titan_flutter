@@ -302,5 +302,4 @@ const BRIDGE_ATLAS_ABI = '''
     "type": "function"
   }
 ]
-
 ''';

@@ -416,7 +416,6 @@ class WalletUtil {
     return contract;
   }
 
-
   /// https://infura.io/docs/gettingStarted/makeRequests.md
   static Future<dynamic> postToEthereumNetwork(int coinType,
       {String method, List params, int id = 1}) async {
@@ -484,7 +483,11 @@ class WalletUtil {
   }
 
   static web3.DeployedContract getAtlasBridgeLockContract(String contractAddress) {
-    return _getContract(WalletUtil._newAtlasBridgeLockContract, contractAddress, 'HynLock');
+    return _getContract(WalletUtil._newAtlasBridgeLockContract, contractAddress, 'BridgeLock');
+  }
+
+  static web3.DeployedContract getHecoBridgeBurnContract(String contractAddress) {
+    return _getContract(WalletUtil._newHecoBridgeLockContract, contractAddress, 'BridgeBurn');
   }
 
   static web3.Web3Client getWeb3Client(int coinType, [bool printResponse = false]) {
