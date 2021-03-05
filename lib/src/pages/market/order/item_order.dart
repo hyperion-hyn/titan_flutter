@@ -81,7 +81,7 @@ class OrderItemState extends State<OrderItem> {
                   width: 8.0,
                 ),
                 Text(
-                  "${FormatUtil.formatMarketOrderDate(int.parse(widget._order.ctime) * 1000)}",
+                  "${FormatUtil.formatMarketOrderDate(int.parse(widget._order.ctime))}",
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey,

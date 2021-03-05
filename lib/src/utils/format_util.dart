@@ -126,7 +126,13 @@ class FormatUtil {
   }
 
   static String formatMarketOrderDate(int timestamp, {bool isSecond = true}) {
-    return DateFormat("HH:mm MM/dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ?? "";
+    int length = '$timestamp'.length;
+
+    var ts = timestamp;
+    if (length < 12) {
+      ts = ts * 1000;
+    }
+    return DateFormat("HH:mm MM/dd").format(DateTime.fromMillisecondsSinceEpoch(ts)) ?? "";
   }
 
   static String formatTimer(int seconds) {
