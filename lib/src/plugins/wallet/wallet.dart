@@ -667,7 +667,7 @@ class Wallet {
     if (gasLimit == null) {
       gasLimit = HyperionGasLimit.RP_CALL;
     }
-    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
+    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, amount: stakingAmount)) {
       return null;
     }
 
@@ -709,7 +709,7 @@ class Wallet {
       gasLimit = HyperionGasLimit.RP_CALL;
     }
     BigInt stakingAmount;
-    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
+    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, amount: stakingAmount)) {
       return null;
     }
 
@@ -760,7 +760,7 @@ class Wallet {
       gasLimit = HyperionGasLimit.RP_CALL;
     }
     BigInt stakingAmount;
-    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
+    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, amount: stakingAmount)) {
       throw HttpResponseCodeNotSuccess(
           -30011, S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas);
     }
@@ -807,12 +807,12 @@ class Wallet {
     int nonce,
   }) async {
     if (gasPrice == null) {
-      gasPrice = BigInt.from(1 * EthereumUnitValue.G_WEI);
+      gasPrice = HyperionGasPrice.getRecommend().averageBigInt;
     }
     if (gasLimit == null) {
       gasLimit = HyperionGasLimit.BRIDGE_CONTRACT_LOCK_TOKEN_CALL;
     }
-    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: lockAmount)) {
+    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, amount: lockAmount)) {
       throw HttpResponseCodeNotSuccess(
         -30011,
         S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas,
@@ -835,14 +835,15 @@ class Wallet {
     var signedRaw = await client.signTransaction(
       credentials,
       web3.Transaction.callContract(
-          contract: hynLockContract,
-          function: hynLockContract.function(methodName),
-          parameters: parameters,
-          gasPrice: web3.EtherAmount.inWei(gasPrice),
-          maxGas: gasLimit,
-          nonce: nonce,
-          value: web3.EtherAmount.inWei(lockAmount),
-          type: web3.MessageType.typeNormal),
+        contract: hynLockContract,
+        function: hynLockContract.function(methodName),
+        parameters: parameters,
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+        value: web3.EtherAmount.inWei(lockAmount),
+        type: web3.MessageType.typeNormal,
+      ),
       fetchChainIdFromNetworkId: false,
     );
     //return signedRaw;
@@ -869,7 +870,7 @@ class Wallet {
       approveToAddress: HyperionConfig.bridgeLockContractAddress,
       amount: amount,
       password: password,
-      gasPrice: HyperionGasPrice.getRecommend().fastBigInt,
+      gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
       gasLimit: approveGasLimit,
       nonce: nonce,
       coinType: CoinType.HYN_ATLAS,
@@ -886,14 +887,16 @@ class Wallet {
     nonce = nonce + 1;
 
     if (gasPrice == null) {
-      gasPrice = HyperionGasPrice.getRecommend().fastBigInt;
+      gasPrice = HyperionGasPrice.getRecommend().averageBigInt;
     }
     if (gasLimit == null) {
       gasLimit = HyperionGasLimit.BRIDGE_CONTRACT_LOCK_TOKEN_CALL;
     }
-    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: amount)) {
+    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, amount: amount)) {
       throw HttpResponseCodeNotSuccess(
-          -30011, S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas);
+        -30011,
+        S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas,
+      );
     }
 
     String methodName = 'lockToken';
@@ -907,6 +910,7 @@ class Wallet {
     var bridgeContact = WalletUtil.getAtlasBridgeLockContract(
       HyperionConfig.bridgeLockContractAddress,
     );
+
     var signedRaw = await client.signTransaction(
       credentials,
       web3.Transaction.callContract(

@@ -694,16 +694,16 @@ class HYNApi {
     return false;
   }
 
-  static bool isGasFeeEnough(BigInt gasPrice, int gasLimit, {BigInt stakingAmount}) {
-    var hynCoin = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbolAndCoinType(
+  static bool isGasFeeEnough(BigInt gasPrice, int gasLimit, {BigInt amount}) {
+    var hyn = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbolAndCoinType(
       DefaultTokenDefine.HYN_Atlas.symbol,
       CoinType.HYN_ATLAS,
     );
     var gasFees = gasPrice * BigInt.from(gasLimit);
-    if (stakingAmount == null) {
-      stakingAmount = BigInt.from(0);
+    if (amount == null) {
+      amount = BigInt.from(0);
     }
-    if ((hynCoin.balance - stakingAmount) < gasFees) {
+    if ((hyn.balance - amount) < gasFees) {
       Fluttertoast.showToast(
           msg: S.of(Keys.rootKey.currentContext).insufficient_gas_fee,
           gravity: ToastGravity.CENTER);
@@ -747,7 +747,7 @@ class HYNApi {
       lockAmount: amount,
       gasLimit: gasLimit,
     );
-    print("[HYN_api] postBridgeLockHYN, address:$address, txHash:$txHash");
+
     if (txHash == null) {
       return;
     }
@@ -765,7 +765,6 @@ class HYNApi {
   Future<dynamic> postBridgeLockToken({
     String contractAddress,
     BigInt amount,
-    BigInt burningAmount,
     String password = '',
     WalletViewVo activeWallet,
   }) async {
@@ -782,6 +781,14 @@ class HYNApi {
         'Insufficient Token balance',
       );
     }
+
+    var responseMap = await WalletUtil.postToEthereumNetwork(
+      CoinType.HYN_ATLAS,
+      method: 'eth_sendRawTransaction',
+      params: [rawTxHash],
+    );
+
+    print('$responseMap');
   }
 
   Future<String> postApprove({

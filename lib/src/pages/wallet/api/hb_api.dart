@@ -67,7 +67,7 @@ class HbApi {
   }
 
   static bool isGasFeeEnough(BigInt gasPrice, int gasLimit, {BigInt transferAmount}) {
-    var hynCoin = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbolAndCoinType(
+    var ht = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbolAndCoinType(
       DefaultTokenDefine.HT.symbol,
       CoinType.HB_HT,
     );
@@ -75,10 +75,11 @@ class HbApi {
     if (transferAmount == null) {
       transferAmount = BigInt.from(0);
     }
-    if ((hynCoin.balance - transferAmount) < gasFees) {
+    if ((ht.balance - transferAmount) < gasFees) {
       Fluttertoast.showToast(
-          msg: S.of(Keys.rootKey.currentContext).insufficient_gas_fee,
-          gravity: ToastGravity.CENTER);
+        msg: S.of(Keys.rootKey.currentContext).insufficient_gas_fee,
+        gravity: ToastGravity.CENTER,
+      );
       return false;
     }
     return true;

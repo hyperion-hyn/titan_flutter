@@ -17,6 +17,7 @@ import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/image_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'dart:math' as math;
@@ -549,7 +550,38 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   }
 
   ///Lock tokens on ATLAS
-  _lockTokens() {}
+  _lockTokens() async {
+    var coinVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).getCoinVoBySymbolAndCoinType(_currentTokenSymbol, CoinType.HYN_ATLAS);
+
+    var wallet = WalletInheritedModel.of(context).activatedWallet;
+    var pwd = await UiUtil.showWalletPasswordDialogV2(context, wallet?.wallet);
+
+    if (pwd == null) {
+      return;
+    }
+
+    try {
+      if (_currentTokenSymbol == 'HYN') {
+        _hynApi.postBridgeLockHYN(
+          activeWallet: wallet,
+          password: pwd,
+          amount: ConvertTokenUnit.strToBigInt(_amountController.text),
+        );
+      } else {
+        _hynApi.postBridgeLockToken(
+          contractAddress: coinVo.contractAddress,
+          activeWallet: wallet,
+          password: pwd,
+          amount: ConvertTokenUnit.strToBigInt(_amountController.text),
+        );
+      }
+    } catch (e) {
+      LogUtil.toastException(e);
+    }
+  }
 
   ///To unlock tokens on ATLAS, burn tokens on other chain.
   _burnTokens(int chainType) async {
@@ -562,15 +594,19 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       var wallet = WalletInheritedModel.of(context).activatedWallet;
       var pwd = await UiUtil.showWalletPasswordDialogV2(context, wallet?.wallet);
 
-      if (pwd != null) {
+      if (pwd == null) {
+        return;
+      }
+
+      try {
         _hbApi.postBridgeBurnToken(
           contractAddress: coinVo.contractAddress,
           activeWallet: wallet,
           password: pwd,
           burnAmount: ConvertTokenUnit.strToBigInt(_amountController.text),
         );
-      } else {
-        Fluttertoast.showToast(msg: '密码错误');
+      } catch (e) {
+        LogUtil.toastException(e);
       }
     }
   }
