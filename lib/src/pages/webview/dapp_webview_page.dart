@@ -147,8 +147,6 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
   }
 
   Widget _body() {
-    print('!!!!444: ${widget.initUrl}  $walletAddress');
-
 
     return InAppWebView(
 
@@ -316,12 +314,7 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
   }
 
   updateNetwork() async {
-    print("!!!555 $selectCoinType");
     walletAddress = WalletInheritedModel.of(context).activatedWallet.wallet.getEthAccount().address ?? "";
-    if(selectCoinType == CoinType.HYN_ATLAS) {
-      walletAddress = WalletUtil.ethAddressToBech32Address(walletAddress);
-      print("!!! $walletAddress");
-    }
     rpcUrl = WalletUtil.getRpcApiByCoinType(selectCoinType) ?? "";
     chainId = WalletInheritedModel.of(context).activatedWallet.wallet.getChainId(selectCoinType) ?? "";
     var webviewOptions = InAppWebViewGroupOptions(

@@ -896,6 +896,11 @@ class AtlasApi {
         type == MessageType.typeTerminateMap3Return);
   }
 
+  /*static bool isWithdrawStakeHyn() {
+    return (type == MessageType.typeUnMicrostakingReturn ||
+        type == MessageType.typeTerminateMap3Return);
+  }*/
+
   static double getTransferBillAmount(HynTransferHistory hynTransferHistory) {
     var amountStr = (Decimal.parse(hynTransferHistory.payload.amount) +
             Decimal.parse(hynTransferHistory.payload.reward))
