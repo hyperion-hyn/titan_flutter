@@ -15,7 +15,7 @@ class OrderItem extends StatefulWidget {
 
   OrderItem(
     this._order, {
-      this.marketCoin,
+    this.marketCoin,
     this.revokeOrder,
   });
 
@@ -36,7 +36,7 @@ class OrderItemState extends State<OrderItem> {
       _base = widget._order.market.split('/')[0];
       _quote = widget._order.market.split('/')[1];
     }
-    if(widget?.marketCoin != null && (widget?.marketCoin?.isNotEmpty ?? false)){
+    if (widget?.marketCoin != null && (widget?.marketCoin?.isNotEmpty ?? false)) {
       _base = widget.marketCoin.split('/')[0];
       _quote = widget.marketCoin.split('/')[1];
     }
@@ -66,9 +66,8 @@ class OrderItemState extends State<OrderItem> {
                             : "${S.of(context).exchange_sell} ",
                         style: TextStyle(
                           fontSize: 16,
-                          color: widget._order.side == '1'
-                              ? HexColor("#53AE86")
-                              : HexColor("#CC5858"),
+                          color:
+                              widget._order.side == '1' ? HexColor("#53AE86") : HexColor("#CC5858"),
                         )),
                     TextSpan(
                         text: widget._order.market,
@@ -82,7 +81,7 @@ class OrderItemState extends State<OrderItem> {
                   width: 8.0,
                 ),
                 Text(
-                  "${FormatUtil.formatMarketOrderDate(int.parse(widget._order.ctime))}",
+                  "${FormatUtil.formatMarketOrderDate(int.parse(widget._order.ctime) * 1000)}",
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey,
