@@ -5,6 +5,7 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -186,8 +187,18 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
           //print('[inapp] --> webView, progress:${progress}');
         });
       },
-      onConsoleMessage: (_,message){
-        print("!!!!!onConsoleMessage $message");
+      onConsoleMessage: (_, message) {
+        if(message.messageLevel == ConsoleMessageLevel.DEBUG) {
+          logger.d(message.message);
+        } else if(message.messageLevel == ConsoleMessageLevel.TIP) {
+          logger.v(message.message);
+        } else if(message.messageLevel == ConsoleMessageLevel.LOG) {
+          logger.i(message.message);
+        } else if(message.messageLevel == ConsoleMessageLevel.WARNING) {
+          logger.w(message.message);
+        } else if(message.messageLevel == ConsoleMessageLevel.ERROR) {
+          logger.e(message.message);
+        }
       },
     );
   }
@@ -245,24 +256,24 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
 
   void initDappJsHandle(InAppWebViewController controller){
     controller.addJavaScriptHandler(handlerName: "signTransaction", callback: (data){
-      print("!!!!signTransaction $data");
+      print("TODO !!!!signTransaction $data");
     });
 
     controller.addJavaScriptHandler(handlerName: "signMessage", callback: (data){
-      print("!!!!signMessage $data");
+      print("TODO !!!!signMessage $data");
       flutterCallToWeb(controller, "executeCallback(${data[0]}, null, \"hello callback native\")");
     });
 
     controller.addJavaScriptHandler(handlerName: "signPersonalMessage", callback: (data){
-      print("!!!!signPersonalMessage $data");
+      print("TODO !!!!signPersonalMessage $data");
     });
 
     controller.addJavaScriptHandler(handlerName: "signTypedMessage", callback: (data){
-      print("!!!!signTypedMessage $data");
+      print("TODO !!!!signTypedMessage $data");
     });
 
     controller.addJavaScriptHandler(handlerName: "ethCall", callback: (data){
-      print("!!!!ethCall $data");
+      print("TODO !!!!ethCall $data");
     });
   }
 
