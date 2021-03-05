@@ -936,7 +936,14 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     }
 
     try {
-      await _rpApi.postRetrieveHyn(activeWallet: _activeWallet, password: password);
+      var collectRpTransmitGasLimit =
+          SettingInheritedModel.ofConfig(context).systemConfigEntity.collectRpTransmitGasLimit;
+
+      await _rpApi.postRetrieveHyn(
+        activeWallet: _activeWallet,
+        password: password,
+        gasLimit: collectRpTransmitGasLimit,
+      );
       Fluttertoast.showToast(msg: S.of(context).rp_retrieve_staking_request_success);
       getNetworkData();
     } catch (e) {
