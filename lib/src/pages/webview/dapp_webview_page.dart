@@ -157,8 +157,6 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
       initialOptions: InAppWebViewGroupOptions(
           android: AndroidInAppWebViewOptions(useShouldInterceptRequest: true),
           dappOptions: DappOptions(walletAddress,rpcUrl,chainId)
-//        inAppWebViewOptions: InAppWebViewOptions(
-//        debuggingEnabled: true,)
       ),
       onWebViewCreated: (InAppWebViewController controller) {
         webView = controller;
@@ -217,9 +215,9 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
 
   Widget networkItem(String imagePath,String networkName,int coinType){
     return InkWell(
-      onTap: (){
+      onTap: () async {
         selectCoinType = coinType;
-        updateNetwork();
+        await updateNetwork();
         setState(() {
 
         });
@@ -317,7 +315,7 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
     return "";
   }
 
-  updateNetwork(){
+  updateNetwork() async {
     print("!!!555 $selectCoinType");
     walletAddress = WalletInheritedModel.of(context).activatedWallet.wallet.getEthAccount().address ?? "";
     if(selectCoinType == CoinType.HYN_ATLAS) {
@@ -326,5 +324,12 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
     }
     rpcUrl = WalletUtil.getRpcApiByCoinType(selectCoinType) ?? "";
     chainId = WalletInheritedModel.of(context).activatedWallet.wallet.getChainId(selectCoinType) ?? "";
+    var webviewOptions = InAppWebViewGroupOptions(
+        android: AndroidInAppWebViewOptions(useShouldInterceptRequest: true),
+        dappOptions: DappOptions(walletAddress,rpcUrl,chainId)
+    );
+    if(webView != null){
+      await webView.setOptions(options: webviewOptions);
+    }
   }
 }
