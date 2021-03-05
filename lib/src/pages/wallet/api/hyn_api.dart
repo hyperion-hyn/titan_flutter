@@ -752,6 +752,14 @@ class HYNApi {
       return;
     }
 
+    var responseMap = await WalletUtil.postToEthereumNetwork(
+      CoinType.HYN_ATLAS,
+      method: 'eth_sendRawTransaction',
+      params: [txHash],
+    );
+
+    print('$responseMap');
+
     // return await RPHttpCore.instance
     //     .postEntity("/v1/rp/create", EntityFactory<dynamic>((json) => json),
     //         params: {

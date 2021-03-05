@@ -218,10 +218,6 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   }
 
   _tokenItem(Token token) {
-    var coinVo = WalletInheritedModel.of(
-      context,
-      aspect: WalletAspect.activatedWallet,
-    ).getCoinVoBySymbolAndCoinType(token.symbol, token.coinType);
     return Column(
       children: [
         InkWell(
@@ -232,7 +228,9 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                 child: Container(
                   width: 48,
                   height: 48,
-                  child: ImageUtil.getCoinImage(coinVo.logo),
+                  child: Image.asset(
+                    ImageUtil.getGeneralTokenLogo(token.symbol),
+                  ),
                 ),
               ),
               Text(
@@ -242,20 +240,14 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              Spacer(),
-              Text(
-                '${token.chain.toUpperCase()}',
-                style: TextStyle(
-                  color: HexColor('#FF777777'),
-                  fontSize: 14,
-                ),
-              ),
               SizedBox(
                 width: 16,
               )
             ],
           ),
           onTap: () {
+            _currentTokenSymbol = token.symbol;
+            setState(() {});
             Navigator.of(context).pop();
           },
         ),
@@ -300,7 +292,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                       ),
                       SizedBox(width: 8),
                       Text(
-                        'HYN',
+                        _currentTokenSymbol,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 18,
@@ -330,10 +322,10 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   }
 
   _showTokenListDialog() async {
-    var tokens = MarketInheritedModel.of(
-      context,
-      aspect: SocketAspect.marketItemList,
-    ).activeTokens();
+    var tokens = [
+      Token('HYN'),
+      Token('RP'),
+    ];
 
     UiUtil.showBottomDialogView(
       context,
@@ -407,7 +399,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                       ),
                     ),
                     TextSpan(
-                      text: ' HYN',
+                      text: ' $_currentTokenSymbol',
                       style: TextStyle(
                         color: HexColor('#FFAAAAAA'),
                         fontSize: 12,
@@ -610,4 +602,10 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       }
     }
   }
+}
+
+class Token {
+  String symbol;
+
+  Token(this.symbol);
 }
