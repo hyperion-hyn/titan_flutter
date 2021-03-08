@@ -157,6 +157,7 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
     );
   }
 
+
   Widget _body() {
     return InAppWebView(
       initialUrl: widget.initUrl,
@@ -343,9 +344,15 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
 
   dynamic callbackToJS(InAppWebViewController controller,
       {@required int callbackId, String value, String error}) async {
-    return flutterCallToWeb(controller,
-        "executeCallback($callbackId, ${error == null ? 'null' : '\"' + error + '\"'}, ${value ==
-            null ? 'null' : '\"' + value + '\"'})");
+
+    var errorStr = error == null ? 'null' : '\"' + error + '\"';
+    var valueStr = value == null ? 'null' : '\"' + value + '\"';
+    var source =
+    '''
+    executeCallback($callbackId, $errorStr, $valueStr)
+    ''';
+
+    return flutterCallToWeb(controller, source);
   }
 
   dynamic flutterCallToWeb(InAppWebViewController controller, String source) async {
