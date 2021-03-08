@@ -87,6 +87,9 @@ class HynTransferHistory extends Object {
   @JsonKey(name: 'internal_trans')
   List<InternalTransactions> internalTransactions;
 
+  @JsonKey(name: 'call_internal_trans')
+  List<Call_internal_trans> callInternalTrans;
+
   HynTransferHistory(
     this.atlasAddress,
     this.blockHash,
@@ -116,6 +119,7 @@ class HynTransferHistory extends Object {
     this.value,
     this.payload,
     this.internalTransactions,
+    this.callInternalTrans,
   );
 
   factory HynTransferHistory.fromJson(Map<String, dynamic> srcJson) => _$HynTransferHistoryFromJson(srcJson);
@@ -293,6 +297,55 @@ class InternalTransactions extends Object {
 
 }
 
+class Call_internal_trans extends Object {
+
+  @JsonKey(name: 'id')
+  int id;
+
+  @JsonKey(name: 'created_at')
+  String createdAt;
+
+  @JsonKey(name: 'updated_at')
+  String updatedAt;
+
+  @JsonKey(name: 'tx_hash')
+  String txHash;
+
+  @JsonKey(name: 'from')
+  String from;
+
+  @JsonKey(name: 'to')
+  String to;
+
+  @JsonKey(name: 'value')
+  String value;
+
+  @JsonKey(name: 'data')
+  String data;
+
+  @JsonKey(name: 'payload')
+  String payload;
+
+  @JsonKey(name: 'type')
+  String type;
+
+  @JsonKey(name: 'status')
+  int status;
+
+  @JsonKey(name: 'timestamp')
+  int timestamp;
+
+  @JsonKey(name: 'contract_address')
+  String contractAddress;
+
+  Call_internal_trans(this.id,this.createdAt,this.updatedAt,this.txHash,this.from,this.to,this.value,this.data,this.payload,this.type,this.status,this.timestamp,this.contractAddress,);
+
+  factory Call_internal_trans.fromJson(Map<String, dynamic> srcJson) => _$Call_internal_transFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$Call_internal_transToJson(this);
+
+}
+
 HynTransferHistory _$HynTransferHistoryFromJson(Map<String, dynamic> jsonMap) {
   return HynTransferHistory(
     jsonMap['atlas_address'] as String,
@@ -331,6 +384,11 @@ HynTransferHistory _$HynTransferHistoryFromJson(Map<String, dynamic> jsonMap) {
         ? null
         : InternalTransactions.fromJson(e as Map<String, dynamic>))
         ?.toList(),
+    (jsonMap['call_internal_trans'] as List)
+        ?.map((e) => e == null
+        ? null
+        : Call_internal_trans.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
   );
 }
 
@@ -364,6 +422,7 @@ Map<String, dynamic> _$HynTransferHistoryToJson(HynTransferHistory instance) =>
       'value': instance.value,
       'payload': instance.payload,
       'internal_trans': instance.internalTransactions,
+      'call_internal_trans': instance.callInternalTrans,
     };
 
 DataDecoded _$DataDecodedFromJson(Map<String, dynamic> json) {
@@ -474,6 +533,42 @@ Map<String, dynamic> _$InternalTransactionsToJson(
     <String, dynamic>{
       'tx_hash': instance.txHash,
       'log_index': instance.logIndex,
+      'from': instance.from,
+      'to': instance.to,
+      'value': instance.value,
+      'data': instance.data,
+      'payload': instance.payload,
+      'type': instance.type,
+      'status': instance.status,
+      'timestamp': instance.timestamp,
+      'contract_address': instance.contractAddress,
+    };
+
+Call_internal_trans _$Call_internal_transFromJson(Map<String, dynamic> json) {
+  return Call_internal_trans(
+    json['id'] as int,
+    json['created_at'] as String,
+    json['updated_at'] as String,
+    json['tx_hash'] as String,
+    json['from'] as String,
+    json['to'] as String,
+    json['value'] as String,
+    json['data'] as String,
+    json['payload'] as String,
+    json['type'] as String,
+    json['status'] as int,
+    json['timestamp'] as int,
+    json['contract_address'] as String,
+  );
+}
+
+Map<String, dynamic> _$Call_internal_transToJson(
+    Call_internal_trans instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
+      'tx_hash': instance.txHash,
       'from': instance.from,
       'to': instance.to,
       'value': instance.value,

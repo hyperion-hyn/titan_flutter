@@ -52,7 +52,6 @@ class WalletShowTransactionDetailPageState
   var inputData = "";
   var hasDecodeData = false;
   var selectLeftData = true;
-  var isContract = false;
 
   get _toHynAddress {
     var ethAddress = HYNApi.getHynToAddress(widget.transactionDetail);
@@ -86,9 +85,6 @@ class WalletShowTransactionDetailPageState
         hasDecodeData = true;
       }
       inputData = transDetail.data;
-
-      isContract = (transDetail.internalTransactions != null &&
-          transDetail.internalTransactions.length != 0);
 
       print("[widget.isContain] ${widget.isContain}");
       var fromAddressTitle = HYNApi.toAddressHint(transDetail.hynType, true);
@@ -211,9 +207,21 @@ class WalletShowTransactionDetailPageState
         ));
       }
 
+      var isContract = (transDetail.internalTransactions != null &&
+          transDetail.internalTransactions.length != 0);
       if (isContract) {
         _accountDetailViewList.add(AccountDetailItemView(
-          AccountDetailType.TEXT_INSIDE_TRANSFER,
+          AccountDetailType.TEXT_INSIDE_TRANSFER_CONTRACT,
+          S.of(context).amount_transfer,
+          transactionDetailVo: transDetail,
+        ));
+      }
+
+      var isWithdrawHyn = (transDetail.callInternalTrans != null &&
+          transDetail.callInternalTrans.length != 0);
+      if (isWithdrawHyn) {
+        _accountDetailViewList.add(AccountDetailItemView(
+          AccountDetailType.TEXT_INSIDE_TRANSFER_WITHDRAW,
           S.of(context).amount_transfer,
           transactionDetailVo: transDetail,
         ));
@@ -315,8 +323,14 @@ class WalletShowTransactionDetailPageState
                 return accountInfoItem(accountViewItem);
               case AccountDetailType.TEXT_TIME:
                 return accountInfoItem(accountViewItem, isTime: true);
-              case AccountDetailType.TEXT_INSIDE_TRANSFER:
-                return accountContractItem(accountViewItem);
+              case AccountDetailType.TEXT_INSIDE_TRANSFER_CONTRACT:
+                var contractList = widget.transactionDetail.internalTransactions;
+                var length = contractList.length;
+                return accountContractItem(accountViewItem.leftStr, length, contractList);
+              case AccountDetailType.TEXT_INSIDE_TRANSFER_WITHDRAW:
+                var contractList = widget.transactionDetail.callInternalTrans;
+                var length = contractList.length;
+                return accountContractItem(accountViewItem.leftStr, length, contractList);
               case AccountDetailType.TEXT_TWO_RIGHT:
                 return accountInfoItemTwoRight(accountViewItem);
               case AccountDetailType.TEXT_DECODE_VIEW:
@@ -401,11 +415,11 @@ class WalletShowTransactionDetailPageState
   }
 
   Widget accountContractItem(
-    AccountDetailItemView accountDetailItemView,
+  var leftStr, var length, var contractList,
   ) {
-    var contractList = List.generate(
-        widget.transactionDetail.internalTransactions.length, (index) {
-      var contractItem = widget.transactionDetail.internalTransactions[index];
+    var contractListWidget = List.generate(
+        length, (index) {
+      var contractItem = contractList[index];
       return Column(
         children: <Widget>[
           Padding(
@@ -415,7 +429,7 @@ class WalletShowTransactionDetailPageState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  accountDetailItemView.leftStr,
+                  leftStr,
                   style: TextStyles.textC333S13,
                 ),
                 Spacer(),
@@ -498,7 +512,7 @@ class WalletShowTransactionDetailPageState
 
     return Container(
       child: Column(
-        children: contractList,
+        children: contractListWidget,
       ),
     );
   }
@@ -763,7 +777,8 @@ enum AccountDetailType {
   TEXT_STATUS,
   TEXT_TEXT,
   TEXT_TIME,
-  TEXT_INSIDE_TRANSFER,
+  TEXT_INSIDE_TRANSFER_CONTRACT,
+  TEXT_INSIDE_TRANSFER_WITHDRAW,
   TEXT_TWO_RIGHT,
   TEXT_DECODE_VIEW
 }
