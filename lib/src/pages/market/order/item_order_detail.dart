@@ -50,14 +50,11 @@ class OrderDetailItemState extends State<OrderDetailItem> {
           child: RichText(
             text: TextSpan(children: [
               TextSpan(
-                  text: _isBuy
-                      ? "${S.of(context).buy} "
-                      : "${S.of(context).sale} ",
+                  text: _isBuy ? "${S.of(context).buy} " : "${S.of(context).sale} ",
                   style: TextStyle(
                     fontSize: 16,
-                    color: widget._orderDetail.side == '1'
-                        ? HexColor("#53AE86")
-                        : HexColor("#CC5858"),
+                    color:
+                        widget._orderDetail.side == '1' ? HexColor("#53AE86") : HexColor("#CC5858"),
                   )),
               TextSpan(
                   text: widget._orderDetail.market,
@@ -93,9 +90,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                           height: 4.0,
                         ),
                         Text(
-                          FormatUtil.formatMarketOrderDate(
-                            int.parse(widget._orderDetail.time) * 1000,
-                          ),
+                          FormatUtil.formatMarketOrderDate(int.parse(widget._orderDetail.time)),
                           style: TextStyle(
                             color: DefaultColors.color333,
                             fontWeight: FontWeight.w500,
