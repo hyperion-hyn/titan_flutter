@@ -25,6 +25,7 @@ import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/wallet/api/hb_api.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/heco.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -120,15 +121,8 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
           ),
           actions: <Widget>[
             FlatButton(
-              onPressed: (){
-                var url = 'https://hecoinfo.com/address/${WalletModelUtil.walletEthAddress}';
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => InAppWebViewContainer(
-                          initUrl: url,
-                          title: '',
-                        )));
+              onPressed: () {
+                HbApi.jumpToScanByAddress(context, WalletModelUtil.walletEthAddress);
               },
               child: Text(
                 '区块浏览器',
@@ -325,6 +319,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                           ],
                         ),
                       ),
+                      _localRecordHint(),
                       dataList.length > 1
                           ? ListView.builder(
                               primary: false,
@@ -430,16 +425,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
             color: Colors.white,
             child: InkWell(
               onTap: () {
-                var url = HbApi.getTxDetailUrl(transactionDetail.hash);
-                if (url != null) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => InAppWebViewContainer(
-                                initUrl: url,
-                                title: '',
-                              )));
-                }
+                HbApi.jumpToScanByHash(context, transactionDetail.hash);
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 21),
@@ -524,6 +510,189 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
           SizedBox(
             height: 18.0,
           ),
+          Divider(
+            height: 1,
+            indent: 21,
+            endIndent: 21,
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _localRecordHint() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: HexColor('#F6FAFF'),
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+          child: RichText(
+              text: TextSpan(
+                  text: '仅显示本地发出的交易，如要查看该币种的更多记录，请点击右上方',
+                  style: TextStyle(fontSize: 12, color: HexColor("#595B75"), height: 1.8),
+                  children: [
+                TextSpan(
+                    text: ' [区块浏览器] ',
+                    style: TextStyle(fontSize: 12, color: HexColor("#1F81FF"), height: 1.8)),
+                TextSpan(
+                    text: '进行查看',
+                    style: TextStyle(fontSize: 12, color: HexColor("#595B75"), height: 1.8))
+              ])),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTxnItemV2(BuildContext context, TransactionDetailVo transactionDetail) {
+    var iconPath;
+    var title = "";
+    var describe = "";
+    var amountText = "";
+    var amountSubText = "";
+    amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)}";
+
+    if (transactionDetail.type == TransactionType.TRANSFER_IN) {
+      if (transactionDetail.amount > 0) {
+        amountText = '+$amountText';
+      }
+    } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
+      if (transactionDetail.amount > 0) {
+        amountText = '-$amountText';
+      }
+    }
+
+    var isPending = transactionDetail.state == null;
+    var limitLength = isPending ? 4 : 6;
+
+    if (transactionDetail.type == TransactionType.TRANSFER_IN) {
+      iconPath = "res/drawable/ic_wallet_account_list_receiver.png";
+      describe = "From: " +
+          shortBlockChainAddress(transactionDetail.fromAddress, limitCharsLength: limitLength);
+    } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
+      iconPath = "res/drawable/ic_wallet_account_list_send.png";
+      describe = "To: " +
+          shortBlockChainAddress(transactionDetail.toAddress, limitCharsLength: limitLength);
+    }
+
+    if ((transactionDetail.state == null) ||
+        (transactionDetail.state != null &&
+            transactionDetail.state == 0 &&
+            transactionDetail.gasUsed == "0" &&
+            widget.coinVo.coinType == CoinType.HB_HT)) {
+      title = S.of(context).pending;
+    } else if ((widget.coinVo.coinType == CoinType.HB_HT) && transactionDetail.state == 1) {
+      title = S.of(context).completed;
+      if (HYNApi.isContractTokenAddress(transactionDetail.toAddress)) {
+        // 代币
+        title = S.of(context).contract_call;
+        iconPath = "res/drawable/ic_hyn_wallet_contract.png";
+      }
+    } else if ((widget.coinVo.coinType == CoinType.HB_HT &&
+        transactionDetail.state == 0 &&
+        transactionDetail.gasUsed != "0")) {
+      title = S.of(context).wallet_fail_title;
+    }
+
+    var time = _dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transactionDetail.time));
+
+    return Ink(
+      color: Color(0xFFF5F5F5),
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 18,
+          ),
+          Ink(
+            color: Colors.white,
+            child: InkWell(
+              onTap: () {
+                HbApi.jumpToScanByHash(context, transactionDetail.hash);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 21),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset(
+                      iconPath,
+                      width: 20,
+                      height: 20,
+                    ),
+                    SizedBox(
+                      width: 13,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                amountText,
+                                style: TextStyle(
+                                    color: DefaultColors.color333,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              if (amountSubText.isNotEmpty)
+                                Text(
+                                  amountSubText,
+                                  style: TextStyle(
+                                    color: DefaultColors.color999,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              Spacer(),
+                              Text(
+                                title,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: DefaultColors.color333,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 4.0),
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: Text(
+                                  describe,
+                                  style: TextStyle(fontSize: 14, color: DefaultColors.color999),
+                                ),
+                              ),
+                              Spacer(),
+                              Text(
+                                time,
+                                style: TextStyle(
+                                  color: DefaultColors.color999,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 14),
+                    Image.asset(
+                      "res/drawable/add_position_image_next.png",
+                      height: 13,
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 18.0),
           Divider(
             height: 1,
             indent: 21,
