@@ -714,9 +714,12 @@ class HomePanelState extends State<HomePanel> {
             ),
             GestureDetector(
               onTap: () {
-                UiUtil.showScanImagePickerSheet(context, callback: (String text) {
-                  _parseText(text);
-                });
+                var scanStr = FluroConvertUtils.fluroCnParamsEncode('http://10.10.1.120:3000');
+                // var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://ht.mdex.com/#/swap');
+                Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr");
+                // UiUtil.showScanImagePickerSheet(context, callback: (String text) {
+                //   _parseText(text);
+                // });
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 24.0, right: 24),

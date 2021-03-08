@@ -74,42 +74,42 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
       child: Scaffold(
         appBar: widget.isShowAppBar
             ? BaseAppBar(
-                baseTitle: title ?? widget.title,
-                actions: <Widget>[
-                  /*IconButton(
+          baseTitle: title ?? widget.title,
+          actions: <Widget>[
+            /*IconButton(
               icon: Icon(Icons.share),
               tooltip: S.of(context).share,
               onPressed: () {
                 _shareQr(context);
               },
             ),*/
-                  InkWell(
-                      onTap: () {
-                        _showNetworkSelect();
-                      },
-                      child: Center(
-                          child: Text(
-                        "${getCoinTypeStr()}网络",
-                        style: TextStyles.textC333S14,
-                      ))),
-                  IconButton(
-                    icon: Icon(Icons.more_vert),
-                    onPressed: () {
-                      _shareQr(context);
-                    },
-                  ),
-                ],
-                leading: Builder(
-                  builder: (BuildContext context) {
-                    return IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    );
-                  },
-                ),
-              )
+            InkWell(
+                onTap: () {
+                  _showNetworkSelect();
+                },
+                child: Center(
+                    child: Text(
+                      "${getCoinTypeStr()}网络",
+                      style: TextStyles.textC333S14,
+                    ))),
+            IconButton(
+              icon: Icon(Icons.more_vert),
+              onPressed: () {
+                _shareQr(context);
+              },
+            ),
+          ],
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              );
+            },
+          ),
+        )
             : null,
         body: SafeArea(
           child: Column(
@@ -211,7 +211,10 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
   void _showNetworkSelect() {
     UiUtil.showBottomDialogView(
       context,
-      dialogHeight: MediaQuery.of(context).size.height - 80,
+      dialogHeight: MediaQuery
+          .of(context)
+          .size
+          .height - 80,
       isScrollControlled: true,
       customWidget: Column(
         children: [
@@ -273,6 +276,18 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
         handlerName: "signTransaction",
         callback: (data) {
           print("TODO !!!!signTransaction $data");
+          int callbackId = data[0];
+
+          callbackToJS(controller, callbackId: callbackId, value: 'signed_raw_tx TODO');
+
+          // final client = WalletUtil.getWeb3Client(selectCoinType);
+          // var wallet = WalletInheritedModel
+          //     .of(context)
+          //     .activatedWallet
+          //     .wallet;
+          // var password = '11111111';
+
+          // wallet.signTransaction(selectCoinType, password: password, );
         });
 
     controller.addJavaScriptHandler(
@@ -305,8 +320,13 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
             String recipient = data[1];
             String payload = data[2];
             final client = WalletUtil.getWeb3Client(selectCoinType);
-            var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
-            var from = wallet.getEthAccount().address;
+            var wallet = WalletInheritedModel
+                .of(context)
+                .activatedWallet
+                .wallet;
+            var from = wallet
+                .getEthAccount()
+                .address;
             var bytes = hexToBytes(payload);
 
             var ret = await client.callRaw(
@@ -324,7 +344,8 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
   dynamic callbackToJS(InAppWebViewController controller,
       {@required int callbackId, String value, String error}) async {
     return flutterCallToWeb(controller,
-        "executeCallback($callbackId, ${error == null ? 'null' : '\"' + error + '\"'}, ${value == null ? 'null' : '\"' + value + '\"'})");
+        "executeCallback($callbackId, ${error == null ? 'null' : '\"' + error + '\"'}, ${value ==
+            null ? 'null' : '\"' + value + '\"'})");
   }
 
   dynamic flutterCallToWeb(InAppWebViewController controller, String source) async {
@@ -359,7 +380,9 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
 
         AppLockUtil.ignoreAppLock(context, true);
 
-        await Share.file(S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
+        await Share.file(S
+            .of(context)
+            .nav_share_app, 'app.png', imageByte, 'image/png');
       });
     }
   }
@@ -378,10 +401,19 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
 
   updateNetwork() async {
     walletAddress =
-        WalletInheritedModel.of(context).activatedWallet.wallet.getEthAccount().address ?? "";
+        WalletInheritedModel
+            .of(context)
+            .activatedWallet
+            .wallet
+            .getEthAccount()
+            .address ?? "";
     rpcUrl = WalletUtil.getRpcApiByCoinType(selectCoinType) ?? "";
     chainId =
-        WalletInheritedModel.of(context).activatedWallet.wallet.getChainId(selectCoinType) ?? "";
+        WalletInheritedModel
+            .of(context)
+            .activatedWallet
+            .wallet
+            .getChainId(selectCoinType) ?? "";
     var webviewOptions = InAppWebViewGroupOptions(
         android: AndroidInAppWebViewOptions(useShouldInterceptRequest: true),
         dappOptions: DappOptions(walletAddress, rpcUrl, chainId));
