@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:k_chart/utils/date_format_util.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
@@ -74,42 +75,42 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
       child: Scaffold(
         appBar: widget.isShowAppBar
             ? BaseAppBar(
-          baseTitle: title ?? widget.title,
-          actions: <Widget>[
-            /*IconButton(
+                baseTitle: title ?? widget.title,
+                actions: <Widget>[
+                  /*IconButton(
               icon: Icon(Icons.share),
               tooltip: S.of(context).share,
               onPressed: () {
                 _shareQr(context);
               },
             ),*/
-            InkWell(
-                onTap: () {
-                  _showNetworkSelect();
-                },
-                child: Center(
-                    child: Text(
-                      "${getCoinTypeStr()}网络",
-                      style: TextStyles.textC333S14,
-                    ))),
-            IconButton(
-              icon: Icon(Icons.more_vert),
-              onPressed: () {
-                _shareQr(context);
-              },
-            ),
-          ],
-          leading: Builder(
-            builder: (BuildContext context) {
-              return IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              );
-            },
-          ),
-        )
+                  InkWell(
+                      onTap: () {
+                        _showNetworkSelect();
+                      },
+                      child: Center(
+                          child: Text(
+                        "${getCoinTypeStr()}网络",
+                        style: TextStyles.textC333S14,
+                      ))),
+                  IconButton(
+                    icon: Icon(Icons.more_vert),
+                    onPressed: () {
+                      _shareQr(context);
+                    },
+                  ),
+                ],
+                leading: Builder(
+                  builder: (BuildContext context) {
+                    return IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  },
+                ),
+              )
             : null,
         body: SafeArea(
           child: Column(
@@ -211,10 +212,7 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
   void _showNetworkSelect() {
     UiUtil.showBottomDialogView(
       context,
-      dialogHeight: MediaQuery
-          .of(context)
-          .size
-          .height - 80,
+      dialogHeight: MediaQuery.of(context).size.height - 80,
       isScrollControlled: true,
       customWidget: Column(
         children: [
@@ -274,11 +272,37 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
   void initDappJsHandle(InAppWebViewController controller) {
     controller.addJavaScriptHandler(
         handlerName: "signTransaction",
-        callback: (data) {
+        callback: (data) async {
           print("TODO !!!!signTransaction $data");
           int callbackId = data[0];
-
-          callbackToJS(controller, callbackId: callbackId, value: 'signed_raw_tx TODO');
+          try {
+            // alpha.signTransaction(id, tx.to || null, tx.value, nonce, gasLimit, gasPrice, data);
+            String to = data[1] == null ? null : data[1].toString();
+            BigInt value = data[2] == null ? null : BigInt.parse(data[2].toString());
+            int nonce = data[3] == null || data[3] == -1 ? null : int.parse(data[3].toString());
+            int gasLimit = data[4] == null ? null : int.parse(data[4].toString());
+            BigInt gasPrice = data[5] == null ? null : BigInt.parse(data[5].toString());
+            Uint8List _data = data[6] == null ? null : hexToBytes(data[6]);
+            print('xxxx1 to $to, value $value, nonce $nonce, gas $gasLimit, price $gasPrice, data ${data[6]}');
+            var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+            var signed = await wallet.signTransaction(
+              selectCoinType,
+              password: '11111111',
+              toAddress: to,
+              value: value,
+              nonce: nonce,
+              gasPrice: gasPrice,
+              gasLimit: gasLimit,
+              data: _data,
+            );
+            print('signed $signed');
+            callbackToJS(controller, callbackId: callbackId, value: signed);
+          } catch (e, st) {
+            logger.e(st);
+            callbackToJS(controller, callbackId: callbackId, error: e.toString());
+          }
+          //
+          // callbackToJS(controller, callbackId: callbackId, value: 'signed_raw_tx TODO');
 
           // final client = WalletUtil.getWeb3Client(selectCoinType);
           // var wallet = WalletInheritedModel
@@ -320,13 +344,8 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
             String recipient = data[1];
             String payload = data[2];
             final client = WalletUtil.getWeb3Client(selectCoinType);
-            var wallet = WalletInheritedModel
-                .of(context)
-                .activatedWallet
-                .wallet;
-            var from = wallet
-                .getEthAccount()
-                .address;
+            var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+            var from = wallet.getEthAccount().address;
             var bytes = hexToBytes(payload);
 
             var ret = await client.callRaw(
@@ -344,8 +363,7 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
   dynamic callbackToJS(InAppWebViewController controller,
       {@required int callbackId, String value, String error}) async {
     return flutterCallToWeb(controller,
-        "executeCallback($callbackId, ${error == null ? 'null' : '\"' + error + '\"'}, ${value ==
-            null ? 'null' : '\"' + value + '\"'})");
+        "executeCallback($callbackId, ${error == null ? 'null' : '\"' + error + '\"'}, ${value == null ? 'null' : '\"' + value + '\"'})");
   }
 
   dynamic flutterCallToWeb(InAppWebViewController controller, String source) async {
@@ -380,9 +398,7 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
 
         AppLockUtil.ignoreAppLock(context, true);
 
-        await Share.file(S
-            .of(context)
-            .nav_share_app, 'app.png', imageByte, 'image/png');
+        // await Share.file(S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
       });
     }
   }
@@ -401,19 +417,10 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
 
   updateNetwork() async {
     walletAddress =
-        WalletInheritedModel
-            .of(context)
-            .activatedWallet
-            .wallet
-            .getEthAccount()
-            .address ?? "";
+        WalletInheritedModel.of(context).activatedWallet.wallet.getEthAccount().address ?? "";
     rpcUrl = WalletUtil.getRpcApiByCoinType(selectCoinType) ?? "";
     chainId =
-        WalletInheritedModel
-            .of(context)
-            .activatedWallet
-            .wallet
-            .getChainId(selectCoinType) ?? "";
+        WalletInheritedModel.of(context).activatedWallet.wallet.getChainId(selectCoinType) ?? "";
     var webviewOptions = InAppWebViewGroupOptions(
         android: AndroidInAppWebViewOptions(useShouldInterceptRequest: true),
         dappOptions: DappOptions(walletAddress, rpcUrl, chainId));
