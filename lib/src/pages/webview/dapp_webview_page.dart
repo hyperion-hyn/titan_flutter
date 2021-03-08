@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -5,14 +8,16 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/widget_shot.dart';
+import 'package:web3dart/credentials.dart';
+import 'package:web3dart/crypto.dart';
 
 class DAppWebViewPage extends StatefulWidget {
-
   final String initUrl;
   final String title;
   final bool isShowAppBar;
@@ -44,7 +49,7 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
   var walletAddress;
   var rpcUrl;
   var chainId;
-  var selectCoinType = CoinType.HYN_ATLAS;
+  var selectCoinType = CoinType.HB_HT;
 
   @override
   void didChangeDependencies() {
@@ -79,10 +84,14 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
               },
             ),*/
             InkWell(
-                onTap: (){
+                onTap: () {
                   _showNetworkSelect();
                 },
-                child: Center(child: Text("${getCoinTypeStr()}网络",style: TextStyles.textC333S14,))),
+                child: Center(
+                    child: Text(
+                      "${getCoinTypeStr()}网络",
+                      style: TextStyles.textC333S14,
+                    ))),
             IconButton(
               icon: Icon(Icons.more_vert),
               onPressed: () {
@@ -106,7 +115,9 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
           child: Column(
             children: <Widget>[
               if (isLoading)
-                SizedBox(height: 2, child: progress < 1.0 ? LinearProgressIndicator(value: progress) : Container()),
+                SizedBox(
+                    height: 2,
+                    child: progress < 1.0 ? LinearProgressIndicator(value: progress) : Container()),
               Expanded(
                 child: _body(),
               ),
@@ -147,15 +158,12 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
   }
 
   Widget _body() {
-
     return InAppWebView(
-
       initialUrl: widget.initUrl,
       initialHeaders: {},
       initialOptions: InAppWebViewGroupOptions(
           android: AndroidInAppWebViewOptions(useShouldInterceptRequest: true),
-          dappOptions: DappOptions(walletAddress,rpcUrl,chainId)
-      ),
+          dappOptions: DappOptions(walletAddress, rpcUrl, chainId)),
       onWebViewCreated: (InAppWebViewController controller) {
         webView = controller;
 
@@ -184,16 +192,29 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
           //print('[inapp] --> webView, progress:${progress}');
         });
       },
-      onConsoleMessage: (_,message){
-        print("!!!!!onConsoleMessage $message");
+      onConsoleMessage: (_, message) {
+        if (message.messageLevel == ConsoleMessageLevel.DEBUG) {
+          logger.d(message.message);
+        } else if (message.messageLevel == ConsoleMessageLevel.TIP) {
+          logger.v(message.message);
+        } else if (message.messageLevel == ConsoleMessageLevel.LOG) {
+          logger.i(message.message);
+        } else if (message.messageLevel == ConsoleMessageLevel.WARNING) {
+          logger.w(message.message);
+        } else if (message.messageLevel == ConsoleMessageLevel.ERROR) {
+          logger.e(message.message);
+        }
       },
     );
   }
 
-  void _showNetworkSelect(){
+  void _showNetworkSelect() {
     UiUtil.showBottomDialogView(
       context,
-      dialogHeight: MediaQuery.of(context).size.height - 80,
+      dialogHeight: MediaQuery
+          .of(context)
+          .size
+          .height - 80,
       isScrollControlled: true,
       customWidget: Column(
         children: [
@@ -203,23 +224,21 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
               child: Text("选择网络", style: TextStyles.textC333S14bold),
             ),
           ),
-          networkItem("res/drawable/ic_token_hyn.png","Atlas",CoinType.HYN_ATLAS),
-          networkItem('res/drawable/ic_token_eth.png',"Ethereum",CoinType.ETHEREUM),
-          networkItem("res/drawable/ic_token_ht.png","Heco",CoinType.HB_HT),
+          networkItem("res/drawable/ic_token_hyn.png", "Atlas", CoinType.HYN_ATLAS),
+          networkItem('res/drawable/ic_token_eth.png', "Ethereum", CoinType.ETHEREUM),
+          networkItem("res/drawable/ic_token_ht.png", "Heco", CoinType.HB_HT),
         ],
       ),
     );
   }
 
-  Widget networkItem(String imagePath,String networkName,int coinType){
+  Widget networkItem(String imagePath, String networkName, int coinType) {
     return InkWell(
       onTap: () async {
         selectCoinType = coinType;
         await updateNetwork();
-        setState(() {
-
-        });
-        Future.delayed(Duration(milliseconds: 1000),(){
+        setState(() {});
+        Future.delayed(Duration(milliseconds: 1000), () {
           webView.reload();
         });
         Navigator.of(context).pop();
@@ -229,39 +248,104 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
           Row(
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 16,right: 10,top: 15,bottom: 15),
-                child: Image.asset(imagePath,width: 40,height: 40,),
+                padding: const EdgeInsets.only(left: 16, right: 10, top: 15, bottom: 15),
+                child: Image.asset(
+                  imagePath,
+                  width: 40,
+                  height: 40,
+                ),
               ),
-              Text(networkName,style: TextStyles.textC333S16bold,)
+              Text(
+                networkName,
+                style: TextStyles.textC333S16bold,
+              )
             ],
           ),
-          Divider(height:1,indent: 16,endIndent: 16,)
+          Divider(
+            height: 1,
+            indent: 16,
+            endIndent: 16,
+          )
         ],
       ),
     );
   }
 
-  void initDappJsHandle(InAppWebViewController controller){
-    controller.addJavaScriptHandler(handlerName: "signTransaction", callback: (data){
-      print("!!!!signTransaction $data");
-    });
+  void initDappJsHandle(InAppWebViewController controller) {
+    controller.addJavaScriptHandler(
+        handlerName: "signTransaction",
+        callback: (data) {
+          print("TODO !!!!signTransaction $data");
+          int callbackId = data[0];
 
-    controller.addJavaScriptHandler(handlerName: "signMessage", callback: (data){
-      print("!!!!signMessage $data");
-      flutterCallToWeb(controller, "executeCallback(${data[0]}, null, \"hello callback native\")");
-    });
+          callbackToJS(controller, callbackId: callbackId, value: 'signed_raw_tx TODO');
 
-    controller.addJavaScriptHandler(handlerName: "signPersonalMessage", callback: (data){
-      print("!!!!signPersonalMessage $data");
-    });
+          // final client = WalletUtil.getWeb3Client(selectCoinType);
+          // var wallet = WalletInheritedModel
+          //     .of(context)
+          //     .activatedWallet
+          //     .wallet;
+          // var password = '11111111';
 
-    controller.addJavaScriptHandler(handlerName: "signTypedMessage", callback: (data){
-      print("!!!!signTypedMessage $data");
-    });
+          // wallet.signTransaction(selectCoinType, password: password, );
+        });
 
-    controller.addJavaScriptHandler(handlerName: "ethCall", callback: (data){
-      print("!!!!ethCall $data");
-    });
+    controller.addJavaScriptHandler(
+        handlerName: "signMessage",
+        callback: (data) {
+          print("TODO !!!!signMessage $data");
+          flutterCallToWeb(
+              controller, "executeCallback(${data[0]}, null, \"hello callback native\")");
+        });
+
+    controller.addJavaScriptHandler(
+        handlerName: "signPersonalMessage",
+        callback: (data) {
+          print("TODO !!!!signPersonalMessage $data");
+        });
+
+    controller.addJavaScriptHandler(
+        handlerName: "signTypedMessage",
+        callback: (data) {
+          print("TODO1 !!!!signTypedMessage $data");
+          int callbackId = data[0];
+          callbackToJS(controller, callbackId: callbackId, value: 'demo back');
+        });
+
+    controller.addJavaScriptHandler(
+        handlerName: "ethCall",
+        callback: (data) async {
+          int callbackId = data[0];
+          try {
+            String recipient = data[1];
+            String payload = data[2];
+            final client = WalletUtil.getWeb3Client(selectCoinType);
+            var wallet = WalletInheritedModel
+                .of(context)
+                .activatedWallet
+                .wallet;
+            var from = wallet
+                .getEthAccount()
+                .address;
+            var bytes = hexToBytes(payload);
+
+            var ret = await client.callRaw(
+                sender: EthereumAddress.fromHex(from),
+                contract: EthereumAddress.fromHex(recipient),
+                data: bytes);
+            callbackToJS(controller, callbackId: callbackId, value: ret);
+          } catch (e) {
+            logger.e(e);
+            callbackToJS(controller, callbackId: callbackId, error: e.toString());
+          }
+        });
+  }
+
+  dynamic callbackToJS(InAppWebViewController controller,
+      {@required int callbackId, String value, String error}) async {
+    return flutterCallToWeb(controller,
+        "executeCallback($callbackId, ${error == null ? 'null' : '\"' + error + '\"'}, ${value ==
+            null ? 'null' : '\"' + value + '\"'})");
   }
 
   dynamic flutterCallToWeb(InAppWebViewController controller, String source) async {
@@ -296,13 +380,15 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
 
         AppLockUtil.ignoreAppLock(context, true);
 
-        await Share.file(S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
+        await Share.file(S
+            .of(context)
+            .nav_share_app, 'app.png', imageByte, 'image/png');
       });
     }
   }
 
-  String getCoinTypeStr(){
-    switch(selectCoinType){
+  String getCoinTypeStr() {
+    switch (selectCoinType) {
       case CoinType.HYN_ATLAS:
         return "Atlas";
       case CoinType.ETHEREUM:
@@ -314,14 +400,24 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
   }
 
   updateNetwork() async {
-    walletAddress = WalletInheritedModel.of(context).activatedWallet.wallet.getEthAccount().address ?? "";
+    walletAddress =
+        WalletInheritedModel
+            .of(context)
+            .activatedWallet
+            .wallet
+            .getEthAccount()
+            .address ?? "";
     rpcUrl = WalletUtil.getRpcApiByCoinType(selectCoinType) ?? "";
-    chainId = WalletInheritedModel.of(context).activatedWallet.wallet.getChainId(selectCoinType) ?? "";
+    chainId =
+        WalletInheritedModel
+            .of(context)
+            .activatedWallet
+            .wallet
+            .getChainId(selectCoinType) ?? "";
     var webviewOptions = InAppWebViewGroupOptions(
         android: AndroidInAppWebViewOptions(useShouldInterceptRequest: true),
-        dappOptions: DappOptions(walletAddress,rpcUrl,chainId)
-    );
-    if(webView != null){
+        dappOptions: DappOptions(walletAddress, rpcUrl, chainId));
+    if (webView != null) {
       await webView.setOptions(options: webviewOptions);
     }
   }
