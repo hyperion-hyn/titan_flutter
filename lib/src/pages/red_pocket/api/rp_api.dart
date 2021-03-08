@@ -74,11 +74,13 @@ class RPApi {
     WalletViewVo activeWallet,
     int gasLimit = HyperionGasLimit.RP_TRANSMIT_CALL,
   }) async {
+    print("[Rp_api] postRetrieveHyn, gasLimit:$gasLimit");
+
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(
       HynContractMethod.WITHDRAW,
       password,
-      gasLimit: gasLimit,
+      gasLimit: gasLimit??HyperionGasLimit.RP_TRANSMIT_CALL,
     );
     print("[Rp_api] postRetrieveHyn, address:$address, txHash:$txHash");
     if (txHash == null) {
