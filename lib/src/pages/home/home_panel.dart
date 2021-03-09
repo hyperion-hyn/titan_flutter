@@ -714,7 +714,8 @@ class HomePanelState extends State<HomePanel> {
             ),
             GestureDetector(
               onTap: () {
-                var scanStr = FluroConvertUtils.fluroCnParamsEncode('http://10.10.1.120:3000');
+                // var scanStr = FluroConvertUtils.fluroCnParamsEncode('http://10.10.1.129:3000');
+                var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://app.uniswap.org/#/');
                 // var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://ht.mdex.com/#/swap');
                 Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr");
                 // UiUtil.showScanImagePickerSheet(context, callback: (String text) {

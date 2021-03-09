@@ -271,9 +271,9 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
 
   void initDappJsHandle(InAppWebViewController controller) {
     controller.addJavaScriptHandler(
-        handlerName: "signTransaction",
+        handlerName: "processSignTransaction",
         callback: (data) async {
-          print("TODO !!!!signTransaction $data");
+          print("TODO !!!!processSignTransaction $data");
           int callbackId = data[0];
           try {
             // alpha.signTransaction(id, tx.to || null, tx.value, nonce, gasLimit, gasPrice, data);
@@ -286,6 +286,50 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
             print('xxxx1 to $to, value $value, nonce $nonce, gas $gasLimit, price $gasPrice, data ${data[6]}');
             var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
             var signed = await wallet.signTransaction(
+              selectCoinType,
+              password: '11111111',
+              toAddress: to,
+              value: value,
+              nonce: nonce,
+              gasPrice: gasPrice,
+              gasLimit: gasLimit,
+              data: _data,
+            );
+            print('signed $signed');
+            callbackToJS(controller, callbackId: callbackId, value: signed);
+          } catch (e, st) {
+            logger.e(st);
+            callbackToJS(controller, callbackId: callbackId, error: e.toString());
+          }
+          //
+          // callbackToJS(controller, callbackId: callbackId, value: 'signed_raw_tx TODO');
+
+          // final client = WalletUtil.getWeb3Client(selectCoinType);
+          // var wallet = WalletInheritedModel
+          //     .of(context)
+          //     .activatedWallet
+          //     .wallet;
+          // var password = '11111111';
+
+          // wallet.signTransaction(selectCoinType, password: password, );
+        });
+
+    controller.addJavaScriptHandler(
+        handlerName: "processTransaction",
+        callback: (data) async {
+          print("TODO !!!!processTransaction $data");
+          int callbackId = data[0];
+          try {
+            // alpha.signTransaction(id, tx.to || null, tx.value, nonce, gasLimit, gasPrice, data);
+            String to = data[1] == null ? null : data[1].toString();
+            BigInt value = data[2] == null ? null : BigInt.parse(data[2].toString());
+            int nonce = data[3] == null || data[3] == -1 ? null : int.parse(data[3].toString());
+            int gasLimit = data[4] == null ? null : int.parse(data[4].toString());
+            BigInt gasPrice = data[5] == null ? null : BigInt.parse(data[5].toString());
+            Uint8List _data = data[6] == null ? null : hexToBytes(data[6]);
+            print('xxxx1 to $to, value $value, nonce $nonce, gas $gasLimit, price $gasPrice, data ${data[6]}');
+            var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+            var signed = await wallet.sendTransaction(
               selectCoinType,
               password: '11111111',
               toAddress: to,

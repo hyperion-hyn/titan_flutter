@@ -234,6 +234,7 @@ class Wallet {
     BigInt value,
     int nonce,
     int gasLimit,
+    Uint8List data,
     web3.IMessage message,
     int optType = OptType.TRANSFER,
   }) async {
@@ -260,6 +261,7 @@ class Wallet {
       message: message,
       gasLimit: gasLimit,
       nonce: nonce,
+      data: data,
     );
 
     var responseMap = await WalletUtil.postToEthereumNetwork(coinType,
