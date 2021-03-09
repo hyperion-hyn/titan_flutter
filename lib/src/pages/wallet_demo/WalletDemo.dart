@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/app_lock/app_lock_component.dart';
+import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -15,6 +16,8 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_options_page.dart';
+import 'package:titan/src/pages/wallet/model/transaction_info_vo.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/bitcoin.dart';
@@ -608,7 +611,46 @@ class _WalletDemoState extends State<WalletDemo> {
               print('seedPhrase $seedPhrase');
             },
             child: Text('Test SeedPhrase'),
-          )
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var ret = await Injector.of(context).repository.txInfoDao.insertOrUpdate(
+                    TransactionInfoVo.fromJson({
+                      "chain": "heco",
+                      "hash": "222",
+                      "symbol": "USDT",
+                      "from": "111",
+                      "to": "111",
+                      "amount": 60,
+                      "time": 123,
+                      "status": 1
+                    }),
+                    WalletModelUtil.walletEthAddress,
+                  );
+              print('$ret');
+            },
+            child: Text('Insert tx info'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var list = await Injector.of(context).repository.txInfoDao.getListByChain(
+                    'heco',
+                    WalletModelUtil.walletEthAddress,
+                  );
+              print('$list');
+            },
+            child: Text('get tx info list'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var list = await Injector.of(context).repository.txInfoDao.deleteAll();
+              print('$list');
+            },
+            child: Text('delete tx info list'),
+          ),
         ],
       ),
     );

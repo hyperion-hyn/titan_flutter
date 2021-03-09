@@ -4,6 +4,7 @@ import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/app.dart';
 import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
+import 'package:titan/src/data/db/heco_txn_dao.dart';
 import 'package:titan/src/data/db/transfer_history_dao.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/global.dart';
@@ -20,7 +21,8 @@ import 'src/plugins/titan_plugin.dart';
 
 void main() {
   if (env == null) {
-    BuildEnvironment.init(channel: BuildChannel.OFFICIAL, buildType: BuildType.DEV, packageType: "test");
+    BuildEnvironment.init(
+        channel: BuildChannel.OFFICIAL, buildType: BuildType.DEV, packageType: "test");
   }
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,8 +34,13 @@ void main() {
   Api api = Api();
   SearchHistoryDao searchDao = SearchHistoryDao();
   TransferHistoryDao transferHistoryDao = TransferHistoryDao();
-  Repository repository =
-      Repository(api: api, searchHistoryDao: searchDao, transferHistoryDao: transferHistoryDao);
+  TxnInfoDao hecoTxnDao = TxnInfoDao();
+  Repository repository = Repository(
+    api: api,
+    searchHistoryDao: searchDao,
+    transferHistoryDao: transferHistoryDao,
+    txnInfoDao: hecoTxnDao,
+  );
   SearchInteractor searchInteractor = SearchInteractor(repository);
   TransactionInteractor transactionInteractor = TransactionInteractor(repository);
 

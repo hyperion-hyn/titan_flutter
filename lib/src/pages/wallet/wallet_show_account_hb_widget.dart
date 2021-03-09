@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -533,14 +534,19 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
           child: RichText(
               text: TextSpan(
-                  text: '仅显示本地发出的交易，如要查看该币种的更多记录，请点击右上方',
+                  text: '仅显示本地发出的交易，如要查看该币种的更多记录，请点击',
                   style: TextStyle(fontSize: 12, color: HexColor("#595B75"), height: 1.8),
                   children: [
                 TextSpan(
-                    text: ' [区块浏览器] ',
-                    style: TextStyle(fontSize: 12, color: HexColor("#1F81FF"), height: 1.8)),
+                  text: ' [区块浏览器] ',
+                  style: TextStyle(fontSize: 12, color: HexColor("#1F81FF"), height: 1.8),
+                  recognizer: new TapGestureRecognizer()
+                    ..onTap = () {
+                      HbApi.jumpToScanByAddress(context, WalletModelUtil.walletEthAddress);
+                    },
+                ),
                 TextSpan(
-                    text: '进行查看',
+                    text: '进行查看。',
                     style: TextStyle(fontSize: 12, color: HexColor("#595B75"), height: 1.8))
               ])),
         ),
@@ -716,7 +722,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
     var retList = [];
     try {
       List<TransactionDetailVo> transferList =
-          await _accountTransferService.getTransferList(widget.coinVo, page);
+          await _accountTransferService.getHecoTxListV2(widget.coinVo, page);
       if (page == getStartPage()) {
         if (!mounted) {
           return retList;

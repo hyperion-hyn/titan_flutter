@@ -1,6 +1,7 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:titan/src/data/db/app_database.dart';
+import 'package:titan/src/data/db/heco_txn_dao.dart';
 import 'package:titan/src/data/db/transfer_history_dao.dart';
 
 import 'search_history_dao.dart';
@@ -38,6 +39,24 @@ void _createTablesV2(Batch batch) {
 ''');
 }
 
+/// Create tables
+void _createTablesV3(Batch batch) {
+  batch.execute('DROP TABLE IF EXISTS ${TxnInfoDao.kTable}');
+  batch.execute('''
+  create table ${TxnInfoDao.kTable} (
+  ${TxnInfoDao.kColumnId} integer primary key autoincrement, 
+  ${TxnInfoDao.kColumnChain} text,
+  ${TxnInfoDao.kColumnAddress} text,
+  ${TxnInfoDao.kColumnHash} text not null unique,
+  ${TxnInfoDao.kColumnTime} integer,
+  ${TxnInfoDao.kColumnFromAddress} text,
+  ${TxnInfoDao.kColumnToAddress} text,
+  ${TxnInfoDao.kColumnSymbol} text,
+  ${TxnInfoDao.kColumnAmount} integer,
+  ${TxnInfoDao.kColumnStatus} integer)
+''');
+}
+
 class DBProvider {
   static Database _db;
 
@@ -48,23 +67,23 @@ class DBProvider {
     var databasePath = await getDatabasesPath();
     String path = join(databasePath, dbName);
     //https://github.com/tekartik/sqflite/blob/93a20bee6eba0119cef5bada2700e67999ab20a9/sqflite/doc/migration_example.md
-    _db = await openDatabase(
-      path,
-      version: 2,
-      onCreate: (db, version) async {
+    _db = await openDatabase(path, version: 3, onCreate: (db, version) async {
+      var batch = db.batch();
+      _createTablesV1(batch);
+      _createTablesV2(batch);
+      _createTablesV3(batch);
+      await batch.commit();
+    }, onUpgrade: (Database db, int oldVersion, int newVersion) async {
+      if (oldVersion == 1 && newVersion == 2) {
         var batch = db.batch();
-        _createTablesV1(batch);
         _createTablesV2(batch);
         await batch.commit();
-      },
-      onUpgrade: (Database db, int oldVersion, int newVersion) async {
-        if(oldVersion == 1 && newVersion == 2){
-          var batch = db.batch();
-          _createTablesV2(batch);
-          await batch.commit();
-        }
+      } else if (oldVersion == 2 && newVersion == 3) {
+        var batch = db.batch();
+        _createTablesV3(batch);
+        await batch.commit();
       }
-    );
+    });
     return _db;
   }
 
