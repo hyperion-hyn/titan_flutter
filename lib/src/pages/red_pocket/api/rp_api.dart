@@ -56,6 +56,7 @@ class RPApi {
     );
     print("[Rp_api] postStakingRp, address:$address, txHash:$txHash");
     if (txHash == null) {
+      throw HttpResponseCodeNotSuccess(-10000, "Unknown error");
       return;
     }
 
@@ -86,6 +87,7 @@ class RPApi {
     );
     print("[Rp_api] postRetrieveHyn, address:$address, txHash:$txHash");
     if (txHash == null) {
+      throw HttpResponseCodeNotSuccess(-10000, "Unknown error");
       return;
     }
     return await RPHttpCore.instance
