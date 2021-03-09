@@ -18,6 +18,7 @@ class ClickOvalButton extends StatefulWidget {
   FontWeight fontWeight = FontWeight.w500;
   bool isDisable;
   Widget prefixIcon;
+  Color borderColor;
 
   ClickOvalButton(
     this.text,
@@ -33,6 +34,7 @@ class ClickOvalButton extends StatefulWidget {
     this.fontWeight,
     this.isDisable = false,
     this.prefixIcon,
+    this.borderColor,
   }) {
     if (loadingTextStr != null) {
       this.loadingText = loadingTextStr;
@@ -55,6 +57,7 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
         borderRadius: BorderRadius.all(
             Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
         gradient: getGradient(),
+        border: Border.all(color: widget.borderColor ?? Colors.transparent, width: 0.5),
       ),
       child: (widget.isLoading && !widget.isDisable)
           ? Stack(
