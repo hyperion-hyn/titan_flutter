@@ -78,11 +78,13 @@ class RPApi {
   }) async {
     print("[Rp_api] postRetrieveHyn, gasLimit:$gasLimit");
 
+    var newGasLimit = (gasLimit??HyperionGasLimit.RP_TRANSMIT_CALL) >= 9000000 ? HyperionGasLimit.RP_TRANSMIT_CALL:gasLimit;
+
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(
       HynContractMethod.WITHDRAW,
       password,
-      gasLimit: gasLimit??HyperionGasLimit.RP_TRANSMIT_CALL,
+      gasLimit: newGasLimit,
       gasPrice: BigInt.from(2 * EthereumUnitValue.G_WEI),
     );
     print("[Rp_api] postRetrieveHyn, address:$address, txHash:$txHash");
