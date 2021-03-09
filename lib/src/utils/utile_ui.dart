@@ -1084,7 +1084,7 @@ class UiUtil {
                     showCamera: true,
                     cropConfig: null,
                     compressSize: 500,
-                    uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
+                    uiConfig: UIConfig(uiThemeColor: Color(0xffF7D33D)),
                   );
 
                   if (tempListImagePaths != null && tempListImagePaths.length == 1) {

@@ -18,6 +18,9 @@ import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
+import 'package:titan/src/pages/webview/dapp_authorization_dialog_page.dart';
+import 'package:titan/src/pages/webview/dapp_send_dialog_page.dart';
 import 'package:titan/src/pages/wallet/wallet_gas_setting_page.dart';
 import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -89,6 +92,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
 
   bool get _isBbcOrEth => (CoinType.BITCOIN == _coinType || CoinType.ETHEREUM == _coinType);
 
+  bool get _isHt => (CoinType.HB_HT == _coinType);
+
   String get _baseUnit {
     var baseUnit = widget.coinVo.symbol;
 
@@ -116,6 +121,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
 
   String get _quoteSign => _activatedQuoteSign?.legal?.sign ?? '';
 
+  Decimal _gasPriceHt = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+
   Decimal get _gasPrice {
     var gasPrice = _selectedGasPrice;
 
@@ -138,7 +145,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     }
     // 3.HB
     else if (widget.coinVo.coinType == CoinType.HB_HT) {
-      gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+      gasPrice = _gasPriceHt;
     }
 
     return gasPrice;
@@ -371,6 +378,17 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
   }
 
   void _initLastData() async {
+
+    if (_isHt) {
+      var gasPriceHt = await WalletUtil.ethGasPrice(widget.coinVo.coinType);
+
+      _gasPriceHt = Decimal.tryParse(gasPriceHt.toString())??Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
+
     if (!_isBbcOrEth) return;
 
     if (_isBTC) {
@@ -1002,7 +1020,43 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         gasUnit: _baseUnit,
         gasPrice: _gasPrice,
       );
+
+      // todo： Dapp测试_1
+      /*showSendDialogDApp(
+        context: context,
+        to: _toController.text,
+        value: value,
+        valueUnit: widget.coinVo.symbol,
+        gasValue: _gasFees.toDouble(),
+        gasUnit: _baseUnit,
+        gasPrice: _gasPrice,
+      );*/
+
+
+      // todo： Dapp测试_2
+      // _getAuthorAddress("");
     }
+  }
+
+  Future<Map<String, dynamic>> _getAuthorAddress(data) async {
+
+    var isOK = await showAuthorSendDialog();
+    String text = isOK ? '【${WalletModelUtil.walletName}】address: ${WalletModelUtil.walletHynShortAddress}':'No';
+
+    return {"text": text ?? ""};
+  }
+
+
+  Future<bool> showAuthorSendDialog<T>() {
+    DAppAuthorizationDialogEntity entity = DAppAuthorizationDialogEntity(
+      title: '访问说明',
+      dAppName: 'RP 红包',
+    );
+
+    return showDAppAuthorizationDialog(
+      context: context,
+      entity: entity,
+    );
   }
 
   Future _parseText(double price, String barcode) async {
@@ -1152,6 +1206,69 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     );
 
     return showWalletSendDialog(
+      context: context,
+      entity: entity,
+    );
+  }
+
+  Future<bool> showSendDialogDApp<T>({
+    BuildContext context,
+    String to,
+    double value,
+    String valueUnit,
+    double gasValue,
+    String gasUnit,
+    Decimal gasPrice,
+  }) async {
+    if (to?.isEmpty ?? true) {
+      Fluttertoast.showToast(msg: S.of(context).net_error_please_again);
+      return false;
+    }
+
+    var walletVo = WalletInheritedModel.of(context).activatedWallet;
+    var wallet = walletVo.wallet;
+
+    var walletName = wallet.keystore.name;
+
+    var from = wallet.getAtlasAccount().address;
+    var fromAddressHyn = WalletUtil.ethAddressToBech32Address(from);
+    var fromAddress = shortBlockChainAddress(fromAddressHyn);
+
+    var toAddress = to;
+    if (_coinType == CoinType.HYN_ATLAS) {
+      toAddress = WalletUtil.bech32ToEthAddress(to);
+    } else {
+      toAddress = to;
+    }
+
+    DAppSendDialogEntity entity = DAppSendDialogEntity(
+      type: 'dApp_send_normal',
+      value: value,
+      valueUnit: valueUnit,
+      title: '合约转账',
+      fromName: walletName,
+      fromAddress: fromAddress,
+      toName: shortBlockChainAddress(to),
+      toAddress: '',
+      gas: gasValue.toString(),
+      gasDesc: '',
+      gasUnit: gasUnit,
+      cancelAction: (String password) async {
+        print("[DApp] 取消！！！！");
+
+
+        return true;
+      },
+      confirmAction: (String _) async {
+        print("[DApp] 确认！！！！");
+
+        return true;
+      },
+      isEnableEditGas: true,
+      coinType: CoinType.HYN_ATLAS,
+    );
+
+    return showDAppSendDialog(
       context: context,
       entity: entity,
     );
