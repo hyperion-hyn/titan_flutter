@@ -52,7 +52,7 @@ void _createTablesV3(Batch batch) {
   ${TxnInfoDao.kColumnFromAddress} text,
   ${TxnInfoDao.kColumnToAddress} text,
   ${TxnInfoDao.kColumnSymbol} text,
-  ${TxnInfoDao.kColumnAmount} integer,
+  ${TxnInfoDao.kColumnAmount} text,
   ${TxnInfoDao.kColumnStatus} integer)
 ''');
 }

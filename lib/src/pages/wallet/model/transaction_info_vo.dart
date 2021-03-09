@@ -7,6 +7,9 @@ class TransactionInfoVo extends Object {
   @JsonKey(name: 'id')
   int id;
 
+  @JsonKey(name: 'address')
+  String address;
+
   @JsonKey(name: 'chain')
   String chain;
 
@@ -16,14 +19,14 @@ class TransactionInfoVo extends Object {
   @JsonKey(name: 'symbol')
   String symbol;
 
-  @JsonKey(name: 'from')
-  String from;
+  @JsonKey(name: 'fromAddress')
+  String fromAddress;
 
-  @JsonKey(name: 'to')
-  String to;
+  @JsonKey(name: 'toAddress')
+  String toAddress;
 
   @JsonKey(name: 'amount')
-  int amount;
+  String amount;
 
   @JsonKey(name: 'time')
   int time;
@@ -34,14 +37,21 @@ class TransactionInfoVo extends Object {
   TransactionInfoVo(
     this.id,
     this.chain,
+    this.address,
     this.hash,
     this.symbol,
-    this.from,
-    this.to,
+    this.fromAddress,
+    this.toAddress,
     this.amount,
     this.time,
     this.status,
   );
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
+
 
   factory TransactionInfoVo.fromJson(Map<String, dynamic> srcJson) =>
       _$TransactionInfoVoFromJson(srcJson);

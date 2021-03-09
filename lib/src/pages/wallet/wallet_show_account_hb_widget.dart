@@ -42,6 +42,7 @@ import 'package:titan/src/utils/utils.dart';
 
 import '../../pages/wallet/model/transtion_detail_vo.dart';
 import 'api/hyn_api.dart';
+import 'model/transaction_info_vo.dart';
 import 'model/wallet_send_dialog_util.dart';
 
 class ShowAccountHbPage extends StatefulWidget {
@@ -329,8 +330,8 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                                 if (index == 0) {
                                   return SizedBox.shrink();
                                 } else {
-                                  var currentTransactionDetail = dataList[index];
-                                  return _buildTransactionItem(context, currentTransactionDetail);
+                                  var info = dataList[index];
+                                  return _buildTxnItemV2(context, info);
                                 }
                               },
                               itemCount: max<int>(0, dataList.length),
@@ -554,57 +555,35 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
     );
   }
 
-  Widget _buildTxnItemV2(BuildContext context, TransactionDetailVo transactionDetail) {
-    var iconPath;
+  Widget _buildTxnItemV2(BuildContext context, TransactionInfoVo txnInfo) {
+    var iconPath = '';
     var title = "";
     var describe = "";
     var amountText = "";
     var amountSubText = "";
-    amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)}";
+    amountText = "${FormatUtil.formatCoinNum(double.tryParse(txnInfo.amount))}";
 
-    if (transactionDetail.type == TransactionType.TRANSFER_IN) {
-      if (transactionDetail.amount > 0) {
-        amountText = '+$amountText';
-      }
-    } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
-      if (transactionDetail.amount > 0) {
-        amountText = '-$amountText';
-      }
-    }
-
-    var isPending = transactionDetail.state == null;
-    var limitLength = isPending ? 4 : 6;
-
-    if (transactionDetail.type == TransactionType.TRANSFER_IN) {
-      iconPath = "res/drawable/ic_wallet_account_list_receiver.png";
-      describe = "From: " +
-          shortBlockChainAddress(transactionDetail.fromAddress, limitCharsLength: limitLength);
-    } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
-      iconPath = "res/drawable/ic_wallet_account_list_send.png";
-      describe = "To: " +
-          shortBlockChainAddress(transactionDetail.toAddress, limitCharsLength: limitLength);
-    }
-
-    if ((transactionDetail.state == null) ||
-        (transactionDetail.state != null &&
-            transactionDetail.state == 0 &&
-            transactionDetail.gasUsed == "0" &&
-            widget.coinVo.coinType == CoinType.HB_HT)) {
+    if (txnInfo.status == 0) {
       title = S.of(context).pending;
-    } else if ((widget.coinVo.coinType == CoinType.HB_HT) && transactionDetail.state == 1) {
+    } else if (txnInfo.status == 1) {
       title = S.of(context).completed;
-      if (HYNApi.isContractTokenAddress(transactionDetail.toAddress)) {
-        // 代币
-        title = S.of(context).contract_call;
-        iconPath = "res/drawable/ic_hyn_wallet_contract.png";
-      }
-    } else if ((widget.coinVo.coinType == CoinType.HB_HT &&
-        transactionDetail.state == 0 &&
-        transactionDetail.gasUsed != "0")) {
+    } else if (txnInfo.status == 2) {
       title = S.of(context).wallet_fail_title;
     }
 
-    var time = _dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transactionDetail.time));
+    var limitLength = 4;
+
+    if (WalletModelUtil.walletEthAddress == txnInfo.toAddress) {
+      amountText = '+$amountText';
+      iconPath = "res/drawable/ic_wallet_account_list_receiver.png";
+      describe = "From: " + shortBlockChainAddress(txnInfo.fromAddress, limitCharsLength: limitLength);
+    } else if (WalletModelUtil.walletEthAddress == txnInfo.fromAddress) {
+      amountText = '-$amountText';
+      iconPath = "res/drawable/ic_wallet_account_list_send.png";
+      describe = "To: " + shortBlockChainAddress(txnInfo.toAddress, limitCharsLength: limitLength);
+    }
+
+    var time = _dateFormat.format(DateTime.fromMillisecondsSinceEpoch(txnInfo.time));
 
     return Ink(
       color: Color(0xFFF5F5F5),
@@ -617,7 +596,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
             color: Colors.white,
             child: InkWell(
               onTap: () {
-                HbApi.jumpToScanByHash(context, transactionDetail.hash);
+                HbApi.jumpToScanByHash(context, txnInfo.hash);
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 21),
@@ -721,8 +700,8 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
   Future<List<dynamic>> onLoadData(int page) async {
     var retList = [];
     try {
-      List<TransactionDetailVo> transferList =
-          await _accountTransferService.getHecoTxListV2(widget.coinVo, page);
+      List<TransactionInfoVo> transferList =
+          await _accountTransferService.getHecoTxListV2(context, widget.coinVo, page);
       if (page == getStartPage()) {
         if (!mounted) {
           return retList;

@@ -18,16 +18,16 @@ class TxnInfoDao {
   static const String kColumnAmount = 'amount';
   static const String kColumnStatus = 'status';
 
-  Future<TransactionInfoVo> insertOrUpdate(TransactionInfoVo entity, String address) async {
+  Future<TransactionInfoVo> insertOrUpdate(TransactionInfoVo entity) async {
     entity.id = await (await _db).rawInsert(
         'INSERT OR REPLACE INTO $kTable($kColumnChain,$kColumnAddress, $kColumnHash, $kColumnTime, $kColumnFromAddress, $kColumnToAddress, $kColumnSymbol, $kColumnAmount,$kColumnStatus) VALUES(?,?,?,?,?,?,?,?,?)',
         [
           entity.chain,
-          address,
+          entity.address,
           entity.hash,
           entity.time,
-          entity.from,
-          entity.to,
+          entity.fromAddress,
+          entity.toAddress,
           entity.symbol,
           entity.amount,
           entity.status,
@@ -35,14 +35,18 @@ class TxnInfoDao {
     return entity;
   }
 
-  Future<List<TransactionInfoVo>> getListByChain(
+  Future<List<TransactionInfoVo>> getListByChainAndSymbol(
     String chain,
+    String symbol,
     String address, {
     int offset: 0,
+    int limit: 20,
   }) async {
     var result = await (await _db).query(kTable,
-        where: '$kColumnAddress=? and $kColumnChain=?',
-        whereArgs: [address, chain],
+        where: '$kColumnAddress=? and $kColumnChain=? and $kColumnSymbol=?',
+        whereArgs: [address, chain, symbol],
+        offset: offset,
+        limit: limit,
         orderBy: '$kColumnId DESC');
     return result.map((item) => TransactionInfoVo.fromJson(item)).toList();
   }

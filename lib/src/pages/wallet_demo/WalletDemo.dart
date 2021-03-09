@@ -617,18 +617,19 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
+              var walletAddress = WalletModelUtil.walletEthAddress;
               var ret = await Injector.of(context).repository.txInfoDao.insertOrUpdate(
                     TransactionInfoVo.fromJson({
                       "chain": "heco",
-                      "hash": "222",
+                      "address": walletAddress,
+                      "hash": "0x${Random.secure().nextInt(100)}hash",
                       "symbol": "USDT",
-                      "from": "111",
+                      "from": walletAddress,
                       "to": "111",
-                      "amount": 60,
-                      "time": 123,
-                      "status": 1
+                      "amount": "${Random.secure().nextInt(1000)}",
+                      "time": DateTime.now().millisecondsSinceEpoch,
+                      "status": Random.secure().nextInt(2)
                     }),
-                    WalletModelUtil.walletEthAddress,
                   );
               print('$ret');
             },
@@ -636,8 +637,9 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              var list = await Injector.of(context).repository.txInfoDao.getListByChain(
+              var list = await Injector.of(context).repository.txInfoDao.getListByChainAndSymbol(
                     'heco',
+                    'USDT',
                     WalletModelUtil.walletEthAddress,
                   );
               print('$list');
