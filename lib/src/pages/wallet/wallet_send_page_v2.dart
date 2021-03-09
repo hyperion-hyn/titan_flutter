@@ -18,7 +18,9 @@ import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
-import 'package:titan/src/pages/wallet/dapp_send_dialog_page.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
+import 'package:titan/src/pages/webview/dapp_authorization_dialog_page.dart';
+import 'package:titan/src/pages/webview/dapp_send_dialog_page.dart';
 import 'package:titan/src/pages/wallet/wallet_gas_setting_page.dart';
 import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -1019,7 +1021,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         gasPrice: _gasPrice,
       );
 
-      // todo： Dapp测试
+      // todo： Dapp测试_1
       /*
       showSendDialogDApp(
         context: context,
@@ -1029,9 +1031,33 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         gasValue: _gasFees.toDouble(),
         gasUnit: _baseUnit,
         gasPrice: _gasPrice,
-      );
-      */
+      );*/
+
+
+      // todo： Dapp测试_2
+      // _getAuthorAddress("");
     }
+  }
+
+  Future<Map<String, dynamic>> _getAuthorAddress(data) async {
+
+    var isOK = await showAuthorSendDialog();
+    String text = isOK ? '【${WalletModelUtil.walletName}】address: ${WalletModelUtil.walletHynShortAddress}':'No';
+
+    return {"text": text ?? ""};
+  }
+
+
+  Future<bool> showAuthorSendDialog<T>() {
+    DAppAuthorizationDialogEntity entity = DAppAuthorizationDialogEntity(
+      title: '访问说明',
+      dAppName: 'RP 红包',
+    );
+
+    return showDAppAuthorizationDialog(
+      context: context,
+      entity: entity,
+    );
   }
 
   Future _parseText(double price, String barcode) async {
