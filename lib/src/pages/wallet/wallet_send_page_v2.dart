@@ -1022,8 +1022,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       );
 
       // todo： Dapp测试_1
-      /*
-      showSendDialogDApp(
+      /*showSendDialogDApp(
         context: context,
         to: _toController.text,
         value: value,

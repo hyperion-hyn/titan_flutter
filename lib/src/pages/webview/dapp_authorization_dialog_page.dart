@@ -99,7 +99,7 @@ class _DAppAuthorizationDialogState extends BaseState<DAppAuthorizationDialogPag
                           child: Text(
                             '你在第三方 DApp 上的使用行为将适用该第三方DApp 的《用户协议》和 《隐私政策》，由${widget.entity.dAppName} 治理 直接并单独向你承担责任。',
                             style: TextStyle(
-                              color: HexColor('#999999'),
+                              // color: HexColor('#999999'),
                               fontWeight: FontWeight.normal,
                               fontSize: 14,
                               height: 1.8,
