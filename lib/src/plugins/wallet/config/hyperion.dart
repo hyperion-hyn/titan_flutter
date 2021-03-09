@@ -24,7 +24,7 @@ class HyperionGasLimit {
 
   static const int RP_Collect_CALL = 1000000; //传导取回，gaslimit
 
-  static const int RP_TRANSMIT_CALL = 10000000; //HYN -> RP，limit
+  static const int RP_TRANSMIT_CALL = 5000000; //HYN -> RP，limit
 }
 
 class HyperionGasPrice {

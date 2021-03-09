@@ -30,6 +30,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -81,6 +82,7 @@ class RPApi {
       HynContractMethod.WITHDRAW,
       password,
       gasLimit: gasLimit??HyperionGasLimit.RP_TRANSMIT_CALL,
+      gasPrice: BigInt.from(2 * EthereumUnitValue.G_WEI),
     );
     print("[Rp_api] postRetrieveHyn, address:$address, txHash:$txHash");
     if (txHash == null) {
