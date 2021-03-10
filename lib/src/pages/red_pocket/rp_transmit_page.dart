@@ -890,6 +890,11 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     }
     //print("[$runtimeType] count:$count, hynSum:$hynSum");
 
+    // var entity = SettingInheritedModel.ofConfig(context).systemConfigEntity;
+    // var collectRpTransmitGasLimit =
+    //     entity.collectRpTransmitGasLimit;
+    // print("[rp] collectRpTransmitGasLimit:$collectRpTransmitGasLimit, xx.limit:${entity.canCheckMap3Node}");
+
     if (count <= 0 || hynSum == '0') {
       Fluttertoast.showToast(msg: '${S.of(context).rp_no_valid_contract}！');
       return;
