@@ -126,15 +126,17 @@ class HbApi {
         -30012,
         'Insufficient Token balance',
       );
+    } else {
+      return rawTxHash;
     }
 
-    var responseMap = await WalletUtil.postToEthereumNetwork(
-      CoinType.HB_HT,
-      method: 'eth_sendRawTransaction',
-      params: [rawTxHash],
-    );
-
-    print('$responseMap');
+    // var responseMap = await WalletUtil.postToEthereumNetwork(
+    //   CoinType.HB_HT,
+    //   method: 'eth_sendRawTransaction',
+    //   params: [rawTxHash],
+    // );
+    //
+    // print('$responseMap');
   }
 
   Future<String> postApprove({

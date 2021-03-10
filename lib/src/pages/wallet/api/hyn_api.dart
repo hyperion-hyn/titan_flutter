@@ -1,12 +1,15 @@
 import 'package:decimal/decimal.dart';
+import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_http.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
@@ -750,24 +753,15 @@ class HYNApi {
 
     if (txHash == null) {
       return;
+    } else {
+      return txHash;
     }
 
-    var responseMap = await WalletUtil.postToEthereumNetwork(
-      CoinType.HYN_ATLAS,
-      method: 'eth_sendRawTransaction',
-      params: [txHash],
-    );
-
-    print('$responseMap');
-
-    // return await RPHttpCore.instance
-    //     .postEntity("/v1/rp/create", EntityFactory<dynamic>((json) => json),
-    //         params: {
-    //           "address": address,
-    //           "hyn_amount": amount.toString(),
-    //           "tx_hash": txHash,
-    //         },
-    //         options: RequestOptions(contentType: "application/json"));
+    // var responseMap = await WalletUtil.postToEthereumNetwork(
+    //   CoinType.HYN_ATLAS,
+    //   method: 'eth_sendRawTransaction',
+    //   params: [txHash],
+    // );
   }
 
   Future<dynamic> postBridgeLockToken({

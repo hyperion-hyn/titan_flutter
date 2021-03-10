@@ -1158,6 +1158,7 @@ class UiUtil {
           );
         });
   }
+
 }
 
 typedef ImageCallback = void Function(String text);

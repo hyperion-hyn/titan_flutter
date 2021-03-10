@@ -612,17 +612,20 @@ class _WalletDemoState extends State<WalletDemo> {
             },
             child: Text('Test SeedPhrase'),
           ),
-          RaisedButton(onPressed: () async {
-            HYNApi hynApi = HYNApi();
-            var activeWallet = WalletInheritedModel.of(context).activatedWallet;
-            var amount = ConvertTokenUnit.strToBigInt('50');
-            var walletPassword = await UiUtil.showWalletPasswordDialogV2(
-              context,
-              activeWallet?.wallet,
-            );
-            hynApi.postBridgeLockHYN(amount: amount, password: walletPassword, activeWallet: activeWallet);
-
-          },child: Text('postBridgeLockHYN'),)
+          RaisedButton(
+            onPressed: () async {
+              HYNApi hynApi = HYNApi();
+              var activeWallet = WalletInheritedModel.of(context).activatedWallet;
+              var amount = ConvertTokenUnit.strToBigInt('50');
+              var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+                context,
+                activeWallet?.wallet,
+              );
+              hynApi.postBridgeLockHYN(
+                  amount: amount, password: walletPassword, activeWallet: activeWallet);
+            },
+            child: Text('postBridgeLockHYN'),
+          ),
         ],
       ),
     );

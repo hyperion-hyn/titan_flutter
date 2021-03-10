@@ -1,19 +1,22 @@
 import 'package:decimal/decimal.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
-import 'package:titan/src/components/socket/socket_component.dart';
-import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
-import 'package:titan/src/pages/market/entity/exchange_coin_list_v2.dart';
+import 'package:titan/src/pages/bridge/cross_chain_record_list_page.dart';
+import 'package:titan/src/pages/bridge/entity/cross_chain_token.dart';
 import 'package:titan/src/pages/wallet/api/hb_api.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/image_util.dart';
@@ -32,18 +35,27 @@ class CrossChainBridgePage extends StatefulWidget {
 }
 
 class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
-  String _currentTokenSymbol = 'HYN';
+  ///default token list
+  CrossChainToken _currentToken = CrossChainToken('HYN', '', '');
+  var _crossChainTokens = [
+    CrossChainToken('HYN', '', ''),
+    CrossChainToken('RP', '', ''),
+  ];
+
   var _fromChain = CoinType.HYN_ATLAS;
   var _toChain = CoinType.HB_HT;
+
   TextEditingController _amountController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   HYNApi _hynApi = HYNApi();
   HbApi _hbApi = HbApi();
+  AtlasApi _atlasApi = AtlasApi();
 
   @override
   void initState() {
     super.initState();
+    _updateTokenList();
   }
 
   @override
@@ -59,22 +71,49 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BaseAppBar(
-        baseTitle: '跨链',
-        actions: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: InkWell(
-                child: Text(
-                  '跨链帮助',
-                  style: TextStyle(
-                    color: Colors.blue,
-                  ),
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
+        title: Wrap(
+          children: [
+            Text(
+              "跨链",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 15,
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                AtlasApi.goToAtlasMap3HelpPage(context);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Image.asset(
+                  'res/drawable/ic_tooltip.png',
+                  width: 10,
+                  height: 10,
                 ),
-                onTap: () {
-                  AtlasApi.goToAtlasMap3HelpPage(context);
-                },
+              ),
+            )
+          ],
+        ),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CrossChainRecordListPage()),
+              );
+            },
+            child: Text(
+              '跨链记录',
+              style: TextStyle(
+                color: HexColor("#1F81FF"),
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
               ),
             ),
           ),
@@ -153,7 +192,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     );
   }
 
-  Widget _chainItem(int chainType, bool isFromChain) {
+  _chainItem(int chainType, bool isFromChain) {
     var name = chainType == CoinType.HYN_ATLAS ? 'ATLAS' : 'HECO';
     return Expanded(
       child: Padding(
@@ -209,7 +248,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
-    ).getCoinVoBySymbolAndCoinType(_currentTokenSymbol, chainType);
+    ).getCoinVoBySymbolAndCoinType(_currentToken.symbol, chainType);
     if (coinVo != null) {
       return FormatUtil.coinBalanceByDecimal(coinVo, 6);
     } else {
@@ -217,7 +256,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     }
   }
 
-  _tokenItem(Token token) {
+  _tokenItem(CrossChainToken token) {
     return Column(
       children: [
         InkWell(
@@ -246,7 +285,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
             ],
           ),
           onTap: () {
-            _currentTokenSymbol = token.symbol;
+            _currentToken = token;
             setState(() {});
             Navigator.of(context).pop();
           },
@@ -287,12 +326,12 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                         width: 30,
                         height: 30,
                         child: Image.asset(
-                          '${ImageUtil.getGeneralTokenLogo(_currentTokenSymbol)}',
+                          '${ImageUtil.getGeneralTokenLogo(_currentToken.symbol)}',
                         ),
                       ),
                       SizedBox(width: 8),
                       Text(
-                        _currentTokenSymbol,
+                        _currentToken.symbol,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 18,
@@ -322,11 +361,6 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   }
 
   _showTokenListDialog() async {
-    var tokens = [
-      Token('HYN'),
-      Token('RP'),
-    ];
-
     UiUtil.showBottomDialogView(
       context,
       dialogHeight: MediaQuery.of(context).size.height - 80,
@@ -341,14 +375,14 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
           ),
           Expanded(
             child: CustomScrollView(
-              semanticChildCount: tokens.length,
+              semanticChildCount: _crossChainTokens.length,
               slivers: <Widget>[
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
                       final int itemIndex = index ~/ 2;
                       if (index.isEven) {
-                        return _tokenItem(tokens[itemIndex]);
+                        return _tokenItem(_crossChainTokens[itemIndex]);
                       }
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -361,7 +395,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                       }
                       return null;
                     },
-                    childCount: math.max(0, tokens.length * 2 - 1),
+                    childCount: math.max(0, _crossChainTokens.length * 2 - 1),
                   ),
                 ),
               ],
@@ -399,7 +433,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                       ),
                     ),
                     TextSpan(
-                      text: ' $_currentTokenSymbol',
+                      text: ' ${_currentToken.symbol}',
                       style: TextStyle(
                         color: HexColor('#FFAAAAAA'),
                         fontSize: 12,
@@ -546,7 +580,10 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
-    ).getCoinVoBySymbolAndCoinType(_currentTokenSymbol, CoinType.HYN_ATLAS);
+    ).getCoinVoBySymbolAndCoinType(
+      _currentToken.symbol,
+      CoinType.HYN_ATLAS,
+    );
 
     var wallet = WalletInheritedModel.of(context).activatedWallet;
     var pwd = await UiUtil.showWalletPasswordDialogV2(context, wallet?.wallet);
@@ -556,20 +593,34 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     }
 
     try {
-      if (_currentTokenSymbol == 'HYN') {
-        _hynApi.postBridgeLockHYN(
+      String rawTxHash;
+      String tokenAddress;
+      if (_currentToken.symbol == 'HYN') {
+        tokenAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+        rawTxHash = await _hynApi.postBridgeLockHYN(
           activeWallet: wallet,
           password: pwd,
           amount: ConvertTokenUnit.strToBigInt(_amountController.text),
         );
       } else {
-        _hynApi.postBridgeLockToken(
+        tokenAddress = coinVo.contractAddress;
+        rawTxHash = await _hynApi.postBridgeLockToken(
           contractAddress: coinVo.contractAddress,
           activeWallet: wallet,
           password: pwd,
           amount: ConvertTokenUnit.strToBigInt(_amountController.text),
         );
       }
+
+      _postBridgeRequest(
+        wallet,
+        tokenAddress,
+        1,
+        ConvertTokenUnit.strToBigInt(_amountController.text).toString(),
+        rawTxHash,
+      );
+
+      if (rawTxHash != null) {}
     } catch (e) {
       LogUtil.toastException(e);
     }
@@ -581,7 +632,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       var coinVo = WalletInheritedModel.of(
         context,
         aspect: WalletAspect.activatedWallet,
-      ).getCoinVoBySymbolAndCoinType(_currentTokenSymbol, chainType);
+      ).getCoinVoBySymbolAndCoinType(_currentToken.symbol, chainType);
 
       var wallet = WalletInheritedModel.of(context).activatedWallet;
       var pwd = await UiUtil.showWalletPasswordDialogV2(context, wallet?.wallet);
@@ -589,23 +640,49 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       if (pwd == null) {
         return;
       }
-
+      String rawTxHash;
       try {
-        _hbApi.postBridgeBurnToken(
+        rawTxHash = await _hbApi.postBridgeBurnToken(
           contractAddress: coinVo.contractAddress,
           activeWallet: wallet,
           password: pwd,
           burnAmount: ConvertTokenUnit.strToBigInt(_amountController.text),
         );
+
+        if (rawTxHash != null) {
+          _postBridgeRequest(wallet, coinVo.contractAddress, 2,
+              ConvertTokenUnit.strToBigInt(_amountController.text).toString(), rawTxHash);
+        }
       } catch (e) {
         LogUtil.toastException(e);
       }
     }
   }
-}
 
-class Token {
-  String symbol;
+  _postBridgeRequest(
+    WalletViewVo wallet,
+    String tokenAddress,
+    int type,
+    String amount,
+    String rawTxHash,
+  ) async {
+    var ownerAddress = wallet?.wallet?.getEthAccount()?.address ?? '';
+    _atlasApi.postBridgetApply(
+      walletAddress: ownerAddress,
+      tokenAddress: tokenAddress,
+      type: type,
+      amount: amount,
+      rawTxHash: rawTxHash,
+    );
+  }
 
-  Token(this.symbol);
+  _updateTokenList() async {
+    try {
+      List<CrossChainToken> crossChainTokens = await _atlasApi.getCrossChainTokenList();
+      if (crossChainTokens != null && crossChainTokens.length > 0) {
+        _crossChainTokens = crossChainTokens;
+      }
+      if (mounted) setState(() {});
+    } catch (e) {}
+  }
 }
