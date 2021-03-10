@@ -149,8 +149,8 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
           child: IconButton(
             icon: Image.asset(
               'res/drawable/ic_wallet_account_list_exchange.png',
-              width: 50,
-              height: 50,
+              width: 30,
+              height: 30,
             ),
             onPressed: () {
               setState(() {
@@ -170,7 +170,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: Text('跨链方向'),
             ),
             Container(
@@ -213,7 +213,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                   ),
                 )),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Row(
                 children: [
                   Container(
@@ -297,12 +297,12 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   _tokenSelection() {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
                 '资产',
                 style: TextStyle(
@@ -425,6 +425,13 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                   ),
                   Spacer(),
                   Text.rich(TextSpan(children: [
+                    TextSpan(
+                      text: '${_fromChain == CoinType.HYN_ATLAS ? 'ATLAS' : 'HECO'}链可用 ',
+                      style: TextStyle(
+                        color: HexColor('#FFAAAAAA'),
+                        fontSize: 12,
+                      ),
+                    ),
                     TextSpan(
                       text: _tokenBalance(),
                       style: TextStyle(
