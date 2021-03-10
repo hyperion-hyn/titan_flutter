@@ -24,6 +24,7 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/wallet/api/hb_api.dart';
+import 'package:titan/src/pages/wallet/tx_info_item.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/heco.dart';
@@ -331,7 +332,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                                   return SizedBox.shrink();
                                 } else {
                                   var info = dataList[index];
-                                  return _buildTxnItemV2(context, info);
+                                  return TxInfoItem(info);
                                 }
                               },
                               itemCount: max<int>(0, dataList.length),
@@ -576,7 +577,8 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
     if (WalletModelUtil.walletEthAddress == txnInfo.toAddress) {
       amountText = '+$amountText';
       iconPath = "res/drawable/ic_wallet_account_list_receiver.png";
-      describe = "From: " + shortBlockChainAddress(txnInfo.fromAddress, limitCharsLength: limitLength);
+      describe =
+          "From: " + shortBlockChainAddress(txnInfo.fromAddress, limitCharsLength: limitLength);
     } else if (WalletModelUtil.walletEthAddress == txnInfo.fromAddress) {
       amountText = '-$amountText';
       iconPath = "res/drawable/ic_wallet_account_list_send.png";

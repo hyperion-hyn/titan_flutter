@@ -1143,16 +1143,17 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
             try {
               var walletAddress = wallet?.getEthAccount()?.address;
               Injector.of(context).repository.txInfoDao.insertOrUpdate(TransactionInfoVo(
-                  null,
-                  'heco',
-                  walletAddress,
-                  txHash,
-                  widget.coinVo.symbol,
-                  walletAddress,
-                  toAddress,
-                  '$value',
-                  DateTime.now().millisecondsSinceEpoch,
-                  0));
+                    null,
+                    'heco',
+                    walletAddress,
+                    txHash,
+                    widget.coinVo.symbol,
+                    walletAddress,
+                    toAddress,
+                    '$value',
+                    DateTime.now().millisecondsSinceEpoch,
+                    0,
+                  ));
               print('----insertOrUpdate txInfo success');
             } catch (e) {
               print('----insertOrUpdate txInfo failed');

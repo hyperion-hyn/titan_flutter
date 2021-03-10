@@ -47,14 +47,30 @@ class TransactionInfoVo extends Object {
     this.status,
   );
 
+  TransactionInfoVo copyWith([TransactionInfoVo info]) {
+    return TransactionInfoVo(
+      null,
+      info.chain,
+      info.address,
+      info.hash,
+      info.symbol,
+      info.fromAddress,
+      info.toAddress,
+      info.amount,
+      info.time,
+      info.status,
+    );
+  }
+
   @override
   String toString() {
     return toJson().toString();
   }
-
 
   factory TransactionInfoVo.fromJson(Map<String, dynamic> srcJson) =>
       _$TransactionInfoVoFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$TransactionInfoVoToJson(this);
 }
+
+enum TxInfoStatus { PENDING, SUCCESS, FAIL }
