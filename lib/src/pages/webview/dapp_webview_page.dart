@@ -1,32 +1,42 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:k_chart/utils/date_format_util.dart';
-import 'package:titan/generated/l10n.dart';
+import 'package:titan/generated/l10n.dart' as trans;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/widget_shot.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/crypto.dart';
+
+import 'dapp_authorization_dialog_page.dart';
+import 'dapp_send_dialog_page.dart';
 
 class DAppWebViewPage extends StatefulWidget {
   final String initUrl;
   final String title;
   final bool isShowAppBar;
+  int defaultCoin;
 
   DAppWebViewPage({
     this.initUrl,
     this.title = '',
     this.isShowAppBar = true,
+    this.defaultCoin = CoinType.HB_HT,
   });
 
   @override
@@ -50,7 +60,11 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
   var walletAddress;
   var rpcUrl;
   var chainId;
-  var selectCoinType = CoinType.HB_HT;
+  int get selectCoinType => widget.defaultCoin;
+  set setSelectCoinType (int selectCoin) {
+    widget.defaultCoin = selectCoin;
+  }
+  bool hadEnable = false;
 
   @override
   void didChangeDependencies() {
@@ -93,12 +107,12 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
                         "${getCoinTypeStr()}网络",
                         style: TextStyles.textC333S14,
                       ))),
-                  IconButton(
+                  /*IconButton(
                     icon: Icon(Icons.more_vert),
                     onPressed: () {
                       _shareQr(context);
                     },
-                  ),
+                  ),*/
                 ],
                 leading: Builder(
                   builder: (BuildContext context) {
@@ -234,7 +248,7 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
   Widget networkItem(String imagePath, String networkName, int coinType) {
     return InkWell(
       onTap: () async {
-        selectCoinType = coinType;
+        setSelectCoinType = coinType;
         await updateNetwork();
         setState(() {});
         Future.delayed(Duration(milliseconds: 1000), () {
@@ -272,47 +286,25 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
 
   void initDappJsHandle(InAppWebViewController controller) {
     controller.addJavaScriptHandler(
-        handlerName: "processSignTransaction",
+        handlerName: "enable",
         callback: (data) async {
-          print("TODO !!!!processSignTransaction $data");
-          int callbackId = data[0];
-          try {
-            // alpha.signTransaction(id, tx.to || null, tx.value, nonce, gasLimit, gasPrice, data);
-            String to = data[1] == null ? null : data[1].toString();
-            BigInt value = data[2] == null ? null : BigInt.parse(data[2].toString());
-            int nonce = data[3] == null || data[3] == -1 ? null : int.parse(data[3].toString());
-            int gasLimit = data[4] == null ? null : int.parse(data[4].toString());
-            BigInt gasPrice = data[5] == null ? null : BigInt.parse(data[5].toString());
-            Uint8List _data = data[6] == null ? null : hexToBytes(data[6]);
-            print('xxxx1 to $to, value $value, nonce $nonce, gas $gasLimit, price $gasPrice, data ${data[6]}');
-            var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
-            var signed = await wallet.signTransaction(
-              selectCoinType,
-              password: '11111111',
-              toAddress: to,
-              value: value,
-              nonce: nonce,
-              gasPrice: gasPrice,
-              gasLimit: gasLimit,
-              data: _data,
-            );
-            print('signed $signed');
-            callbackToJS(controller, callbackId: callbackId, value: signed);
-          } catch (e, st) {
-            logger.e(st);
-            callbackToJS(controller, callbackId: callbackId, error: e.toString());
+          print("TODO !!!!enable $data");
+          if(hadEnable){
+            return;
           }
-          //
-          // callbackToJS(controller, callbackId: callbackId, value: 'signed_raw_tx TODO');
-
-          // final client = WalletUtil.getWeb3Client(selectCoinType);
-          // var wallet = WalletInheritedModel
-          //     .of(context)
-          //     .activatedWallet
-          //     .wallet;
-          // var password = '11111111';
-
-          // wallet.signTransaction(selectCoinType, password: password, );
+          DAppAuthorizationDialogEntity entity = DAppAuthorizationDialogEntity(
+            title: "访问说明",
+            dAppName: widget.title,
+          );
+          var authorizaResult = await showDAppAuthorizationDialog(
+            context: context,
+            entity: entity,
+          );
+          if(authorizaResult == null || !authorizaResult){
+            Navigator.of(context).pop();
+          }else{
+            hadEnable = true;
+          }
         });
 
     controller.addJavaScriptHandler(
@@ -321,27 +313,44 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
           print("TODO !!!!processTransaction $data");
           int callbackId = data[0];
           try {
-            // alpha.signTransaction(id, tx.to || null, tx.value, nonce, gasLimit, gasPrice, data);
             String to = data[1] == null ? null : data[1].toString();
-            BigInt value = data[2] == null ? null : BigInt.parse(data[2].toString());
+            BigInt value = data[2] == null ? BigInt.zero : BigInt.parse(data[2].toString());
             int nonce = data[3] == null || data[3] == -1 ? null : int.parse(data[3].toString());
             int gasLimit = data[4] == null ? null : int.parse(data[4].toString());
-            BigInt gasPrice = data[5] == null ? null : BigInt.parse(data[5].toString());
+            Decimal gasPrice = data[5] == null ? null : Decimal.parse(data[5].toString());
             Uint8List _data = data[6] == null ? null : hexToBytes(data[6]);
             print('xxxx1 to $to, value $value, nonce $nonce, gas $gasLimit, price $gasPrice, data ${data[6]}');
-            var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
-            var signed = await wallet.sendTransaction(
-              selectCoinType,
-              password: '11111111',
-              toAddress: to,
+
+            showSendDialogDApp(
+              context: context,
+              to: to,
               value: value,
-              nonce: nonce,
+              valueUnit: getCoinTypeSymbol(),
+              gasValue: gasLimit.toDouble(),
+              gasUnit: getCoinTypeSymbol(),
               gasPrice: gasPrice,
-              gasLimit: gasLimit,
-              data: _data,
+              coinType: selectCoinType,
+              confirmAction: (String pswStr, Decimal gasPriceCallback) async {
+                print('xxxx222 to $to, value $value, nonce $nonce, gas $gasLimit, price $gasPriceCallback, data ${data[6]}');
+
+                var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                var signed = await wallet.sendTransaction(
+                  selectCoinType,
+                  password: pswStr,
+                  toAddress: to,
+                  value: value,
+                  nonce: nonce,
+                  gasPrice: BigInt.parse(FormatUtil.truncateDecimalNum(gasPriceCallback, 0)),
+                  gasLimit: gasLimit,
+                  data: _data,
+                );
+                print('signed $signed');
+                callbackToJS(controller, callbackId: callbackId, value: signed);
+
+                Navigator.of(context).pop();
+                return true;
+              }
             );
-            print('signed $signed');
-            callbackToJS(controller, callbackId: callbackId, value: signed);
           } catch (e, st) {
             logger.e(st);
             callbackToJS(controller, callbackId: callbackId, error: e.toString());
@@ -400,6 +409,60 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
             callbackToJS(controller, callbackId: callbackId, value: ret);
           } catch (e) {
             logger.e(e);
+            callbackToJS(controller, callbackId: callbackId, error: e.toString());
+          }
+        });
+
+    /***
+     * 重写签名调用
+     * 一般WC才会用到
+     * ***/
+    controller.addJavaScriptHandler(
+        handlerName: "processSignTransaction",
+        callback: (data) async {
+          print("TODO !!!!processSignTransaction $data");
+          int callbackId = data[0];
+          try {
+            String to = data[1] == null ? null : data[1].toString();
+            BigInt value = data[2] == null ? BigInt.zero : BigInt.parse(data[2].toString());
+            int nonce = data[3] == null || data[3] == -1 ? null : int.parse(data[3].toString());
+            int gasLimit = data[4] == null ? null : int.parse(data[4].toString());
+            Decimal gasPrice = data[5] == null ? null : Decimal.parse(data[5].toString());
+            Uint8List _data = data[6] == null ? null : hexToBytes(data[6]);
+            print('xxxx1 to $to, value $value, nonce $nonce, gas $gasLimit, price $gasPrice, data ${data[6]}');
+
+            showSendDialogDApp(
+                context: context,
+                to: to,
+                value: value,
+                valueUnit: getCoinTypeSymbol(),
+                gasValue: gasLimit.toDouble(),
+                gasUnit: getCoinTypeSymbol(),
+                gasPrice: gasPrice,
+                coinType: selectCoinType,
+                confirmAction: (String pswStr, Decimal gasPriceCallback) async {
+                  print('xxxx222 to $to, value $value, nonce $nonce, gas $gasLimit, price $gasPriceCallback, data ${data[6]}');
+
+                  var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                  var signed = await wallet.signTransaction(
+                    selectCoinType,
+                    password: pswStr,
+                    toAddress: to,
+                    value: value,
+                    nonce: nonce,
+                    gasPrice: BigInt.parse(FormatUtil.truncateDecimalNum(gasPriceCallback, 0)),
+                    gasLimit: gasLimit,
+                    data: _data,
+                  );
+                  print('signed $signed');
+                  callbackToJS(controller, callbackId: callbackId, value: signed);
+
+                  Navigator.of(context).pop();
+                  return true;
+                }
+            );
+          } catch (e, st) {
+            logger.e(st);
             callbackToJS(controller, callbackId: callbackId, error: e.toString());
           }
         });
@@ -467,6 +530,18 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
     return "";
   }
 
+  String getCoinTypeSymbol() {
+    switch (selectCoinType) {
+      case CoinType.HYN_ATLAS:
+        return "HYN";
+      case CoinType.ETHEREUM:
+        return "ETH";
+      case CoinType.HB_HT:
+        return "HT";
+    }
+    return "";
+  }
+
   updateNetwork() async {
     walletAddress =
         WalletInheritedModel.of(context).activatedWallet.wallet.getEthAccount().address ?? "";
@@ -479,5 +554,65 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
     if (webView != null) {
       await webView.setOptions(options: webviewOptions);
     }
+  }
+
+  Future<bool> showSendDialogDApp<T>({
+    BuildContext context,
+    String to,
+    BigInt value,
+    String valueUnit,
+    double gasValue,
+    String gasUnit,
+    Decimal gasPrice,
+    int coinType = CoinType.HB_HT,
+    DAppSendEntityCallBack confirmAction
+  }) async {
+    if (to?.isEmpty ?? true) {
+      Fluttertoast.showToast(msg: trans.S.of(context).net_error_please_again);
+      return false;
+    }
+
+    var walletVo = WalletInheritedModel.of(context).activatedWallet;
+    var wallet = walletVo.wallet;
+
+    var walletName = wallet.keystore.name;
+
+    var from = wallet.getAtlasAccount().address;
+    var fromAddressHyn = WalletUtil.ethAddressToBech32Address(from);
+    var fromAddress = shortBlockChainAddress(fromAddressHyn);
+
+    // var toAddress = to;
+    // if (_coinType == CoinType.HYN_ATLAS) {
+    //   toAddress = WalletUtil.bech32ToEthAddress(to);
+    // } else {
+    //   toAddress = to;
+    // }
+
+    DAppSendDialogEntity entity = DAppSendDialogEntity(
+      type: 'dApp_send_normal',
+      value: value,
+      valueUnit: valueUnit,
+      title: '合约转账',
+      fromName: walletName,
+      fromAddress: fromAddress,
+      toName: shortBlockChainAddress(to),
+      toAddress: '',
+      gas: gasValue.toString(),
+      gasDesc: '',
+      gasUnit: gasUnit,
+      gasPrice: gasPrice,
+      isEnableEditGas: true,
+      coinType: coinType,
+      cancelAction: (String cancelStr, Decimal gasPrice) async {
+        return false;
+      },
+      confirmAction: confirmAction,
+    );
+
+    return showDAppSendDialog(
+      context: context,
+      entity: entity,
+      isDismissible: false,
+    );
   }
 }

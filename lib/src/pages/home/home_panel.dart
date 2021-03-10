@@ -22,6 +22,7 @@ import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -715,9 +716,10 @@ class HomePanelState extends State<HomePanel> {
             GestureDetector(
               onTap: () {
                 // var scanStr = FluroConvertUtils.fluroCnParamsEncode('http://10.10.1.129:3000');
-                var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://app.uniswap.org/#/');
-                // var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://ht.mdex.com/#/swap');
-                Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr");
+                var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://ht.mdex.com/#/swap');
+                Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr&defaultCoin=${CoinType.HB_HT.toString()}&title=MDEX");
+                // var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://app.uniswap.org/#/');
+                // Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr&defaultCoin=${CoinType.ETHEREUM.toString()}&title=Uniswap");
                 // UiUtil.showScanImagePickerSheet(context, callback: (String text) {
                 //   _parseText(text);
                 // });

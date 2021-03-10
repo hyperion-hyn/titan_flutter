@@ -339,8 +339,10 @@ class UiUtil {
     bool enableDrag = true,
     bool isScrollControlled = false,
     List<Widget> actions,
-  }) {
+    bool isDismissible = true,
+      }) {
     return showModalBottomSheet<T>(
+        isDismissible: isDismissible,
         context: context,
         enableDrag: enableDrag,
         isScrollControlled: isScrollControlled,

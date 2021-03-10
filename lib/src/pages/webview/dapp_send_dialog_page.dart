@@ -32,9 +32,18 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
   bool _isLoading = false;
   final StreamController<double> _gasPriceController = StreamController.broadcast();
 
-  Decimal _minGasPrice = Decimal.one;
-  Decimal _maxGasPrice = Decimal.fromInt(100);
-  Decimal _gasPrice = Decimal.one;
+  Decimal _minGasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+  Decimal _maxGasPrice = Decimal.fromInt(100 * EthereumUnitValue.G_WEI);
+  Decimal get _gasPrice {
+    if(widget.entity.gasPrice != null){
+      return widget.entity.gasPrice;
+    } else {
+      return _minGasPrice;
+    }
+  }
+  set _setGasPrice(Decimal gasPrice) {
+    widget.entity.gasPrice = gasPrice;
+  }
 
   int get _defaultGasLimit {
     var defaultValue = widget.entity.gasUnit == "ETH"
@@ -72,7 +81,7 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
       }
     }
 
-    return gasLimit * EthereumUnitValue.G_WEI;
+    return gasLimit;
   }
 
   Decimal get _gasFees {
@@ -170,7 +179,7 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
                         ),
                       ],
                     ),
-                    if ((widget.entity?.value ?? 0) > 0)
+                    if (widget.entity.value != null)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -179,7 +188,8 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
                               top: 16,
                             ),
                             child: Text(
-                              '${widget.entity?.valueDirection} ${widget.entity?.value ?? '0'} ${widget.entity.valueUnit}',
+                              '${widget.entity?.valueDirection} ${widget.entity.value == BigInt.zero ? widget.entity.value
+                                  : ConvertTokenUnit.weiToEther(weiBigInt: widget.entity.value)} ${widget.entity.valueUnit}',
                               style: TextStyle(
                                 color: HexColor('#333333'),
                                 fontWeight: FontWeight.w600,
@@ -189,7 +199,7 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
                           ),
                         ],
                       ),
-                    if ((widget.entity?.value1 ?? 0) > 0)
+                    if (widget.entity.value1 != null)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -198,7 +208,8 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
                               top: 16,
                             ),
                             child: Text(
-                              '${widget.entity?.valueDirection} ${widget.entity?.value1 ?? '0'} ${widget.entity.value1Unit}',
+                              '${widget.entity?.valueDirection} ${widget.entity.value1 == BigInt.zero ? widget.entity.value1
+                                  : ConvertTokenUnit.weiToEther(weiBigInt: widget.entity.value1)} ${widget.entity.value1Unit}',
                               style: TextStyle(
                                 color: HexColor('#333333'),
                                 fontWeight: FontWeight.w600,
@@ -361,10 +372,10 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
                         inactiveColor: Colors.grey[300],
                         min: _minGasPrice.toDouble(),
                         max: _maxGasPrice.toDouble(),
-                        label: '$_gasPrice gwei',
+                        label: '${ConvertTokenUnit.weiToGWei(weiInt: _gasPrice.toInt())} gwei',
                         onChanged: (double newValue) {
                           _gasPriceController.add(newValue);
-                          _gasPrice = Decimal.parse(newValue.toString());
+                          _setGasPrice = Decimal.parse(newValue.toString());
                         },
                         semanticFormatterCallback: (double newValue) {
                           return '$newValue gwei';
@@ -386,7 +397,7 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
                   children: <Widget>[
                     Spacer(),
                     Text(
-                      "${_gasPrice.toStringAsPrecision(4)} gwei",
+                      "${ConvertTokenUnit.weiToGWei(weiInt: _gasPrice.toInt()).toStringAsPrecision(4)} gwei",
                       style: TextStyle(
                         fontSize: 14,
                         color: HexColor('#999999'),
@@ -402,7 +413,7 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
   }
 
   void _cancelAction() {
-    widget.entity.cancelAction('');
+    widget.entity.cancelAction('', Decimal.zero);
     Navigator.pop(context);
   }
 
@@ -411,30 +422,32 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
       context,
       WalletModelUtil.wallet,
     );
-    await widget.entity.confirmAction(password);
+    await widget.entity.confirmAction(password, _gasPrice);
   }
 }
 
 Future<bool> showDAppSendDialog<T>({
   @required BuildContext context,
   @required DAppSendDialogEntity entity,
+  bool isDismissible,
 }) {
   return UiUtil.showBottomDialogView(
     context,
     dialogHeight: MediaQuery.of(context).size.height - 90,
     isScrollControlled: true,
+    isDismissible: isDismissible,
     customWidget: DAppSendDialogPage(
       entity: entity,
     ),
   );
 }
 
-typedef DAppSendEntityCallBack = Future<bool> Function(String psw);
+typedef DAppSendEntityCallBack = Future<bool> Function(String psw, Decimal gasPrice);
 
 class DAppSendDialogEntity {
   final String type;
-  final double value;
-  final double value1;
+  final BigInt value;
+  final BigInt value1;
   final String valueUnit;
   final String value1Unit;
   final String valueDirection;
@@ -454,6 +467,7 @@ class DAppSendDialogEntity {
   final DAppSendEntityCallBack confirmAction;
   final bool isEnableEditGas;
   final int coinType;
+  Decimal gasPrice;
 
   DAppSendDialogEntity({
     this.type,
@@ -478,5 +492,6 @@ class DAppSendDialogEntity {
     this.contractAddress,
     this.isEnableEditGas = false,
     this.coinType,
+    this.gasPrice,
   });
 }

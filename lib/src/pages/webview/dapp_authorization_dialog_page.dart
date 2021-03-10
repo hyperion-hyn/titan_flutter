@@ -77,7 +77,7 @@ class _DAppAuthorizationDialogState extends BaseState<DAppAuthorizationDialogPag
                             top: 16,
                           ),
                           child: Text(
-                            '你正在访问第三方 DApp',
+                            widget.entity.dAppName,
                             style: TextStyle(
                               color: HexColor('#333333'),
                               fontWeight: FontWeight.w600,
@@ -97,7 +97,7 @@ class _DAppAuthorizationDialogState extends BaseState<DAppAuthorizationDialogPag
                             right: 16,
                           ),
                           child: Text(
-                            '你在第三方 DApp 上的使用行为将适用该第三方DApp 的《用户协议》和 《隐私政策》，由${widget.entity.dAppName} 治理 直接并单独向你承担责任。',
+                            '${widget.entity.dAppName} 正在申请访问你的钱包地址，你确认将钱包地址公开给此网站吗？',
                             style: TextStyle(
                               // color: HexColor('#999999'),
                               fontWeight: FontWeight.normal,
@@ -235,6 +235,8 @@ Future<bool> showDAppAuthorizationDialog<T>({
     dialogHeight: MediaQuery.of(context).size.height - 290,
     isScrollControlled: true,
     showCloseBtn: false,
+    enableDrag: false,
+    isDismissible: false,
     customWidget: DAppAuthorizationDialogPage(
       entity: entity,
     ),

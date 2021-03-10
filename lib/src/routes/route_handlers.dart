@@ -124,7 +124,7 @@ var toolsPageDappWebviewHandler = Handler(handlerFunc: (context, params) {
     webUrl = webUrl + "&lang=$language";
   }
   return DAppWebViewPage(
-      initUrl: webUrl, title: FluroConvertUtils.fluroCnParamsDecode(params['title']?.first));
+      initUrl: webUrl, title: params['title']?.first, defaultCoin: int.parse(params['defaultCoin']?.first),);
 });
 
 var toolsPageQrcodeHandler = Handler(handlerFunc: (context, params) {
