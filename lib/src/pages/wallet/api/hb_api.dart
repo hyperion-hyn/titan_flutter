@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/http.dart';
@@ -12,6 +14,7 @@ import 'package:titan/src/pages/wallet/model/hb_erc20_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/ht_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/config/heco.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -25,6 +28,28 @@ class HbApi {
 
   static String getAddressDetailUrl(String address) {
     return '${HecoExplore.hecoScanWeb}/address/$address';
+  }
+
+  static void jumpToScanByAddress(BuildContext context, String address) {
+    var txUrl = getAddressDetailUrl(address);
+    if (address != null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => InAppWebViewContainer(initUrl: txUrl, title: ''),
+          ));
+    }
+  }
+
+  static void jumpToScanByHash(BuildContext context, String txHash) {
+    var txUrl = getTxDetailUrl(txHash);
+    if (txHash != null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => InAppWebViewContainer(initUrl: txUrl, title: ''),
+          ));
+    }
   }
 
   Future<List<HtTransferHistory>> queryHtHistory(String address, int page) async {

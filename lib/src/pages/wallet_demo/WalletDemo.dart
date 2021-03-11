@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:k_chart/utils/date_format_util.dart';
 import 'package:titan/src/components/app_lock/app_lock_bloc.dart';
 import 'package:titan/src/components/app_lock/app_lock_component.dart';
+import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -16,6 +17,8 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_options_page.dart';
+import 'package:titan/src/pages/wallet/model/transaction_info_vo.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -44,13 +47,10 @@ class _WalletDemoState extends State<WalletDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Wallet Demo"),
-      ),
-      body: ListView(
-        shrinkWrap: true,
-        padding: EdgeInsets.all(16),
-        children: <Widget>[
+        appBar: AppBar(
+          title: Text("Wallet Demo"),
+        ),
+        body: ListView(shrinkWrap: true, padding: EdgeInsets.all(16), children: <Widget>[
           RaisedButton(
             onPressed: () async {
               var index = EthereumChainType.values.indexOf(EthereumConfig.chainType);
@@ -612,22 +612,40 @@ class _WalletDemoState extends State<WalletDemo> {
             },
             child: Text('Test SeedPhrase'),
           ),
+          SizedBox(
+            height: 20,
+          ),
           RaisedButton(
             onPressed: () async {
-              HYNApi hynApi = HYNApi();
-              var activeWallet = WalletInheritedModel.of(context).activatedWallet;
-              var amount = ConvertTokenUnit.strToBigInt('50');
-              var walletPassword = await UiUtil.showWalletPasswordDialogV2(
-                context,
-                activeWallet?.wallet,
-              );
-              hynApi.postBridgeLockHYN(
-                  amount: amount, password: walletPassword, activeWallet: activeWallet);
+              var walletAddress = WalletModelUtil.walletEthAddress;
+              var ret = await Injector.of(context).repository.txInfoDao.insertOrUpdate(
+                    TransactionInfoVo.fromJson({
+                      "chain": "heco",
+                      "address": walletAddress,
+                      "hash": "0x${Random.secure().nextInt(100)}hash",
+                      "symbol": "USDT",
+                      "from": walletAddress,
+                      "to": "111",
+                      "amount": "${Random.secure().nextInt(1000)}",
+                      "time": DateTime.now().millisecondsSinceEpoch,
+                      "status": Random.secure().nextInt(2)
+                    }),
+                  );
+              print('$ret');
             },
-            child: Text('postBridgeLockHYN'),
+            child: Text('Insert tx info'),
           ),
-        ],
-      ),
-    );
+          RaisedButton(
+            onPressed: () async {
+              var list = await Injector.of(context).repository.txInfoDao.getListByChainAndSymbol(
+                    'heco',
+                    'USDT',
+                    WalletModelUtil.walletEthAddress,
+                  );
+              print('$list');
+            },
+            child: Text('get tx info list'),
+          ),
+        ]));
   }
 }

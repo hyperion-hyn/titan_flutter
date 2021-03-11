@@ -14,7 +14,9 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/bridge/bridge_util.dart';
 import 'package:titan/src/pages/bridge/entity/cross_chain_record.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
+import 'package:titan/src/pages/wallet/api/hb_api.dart';
 import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
+import 'package:titan/src/pages/wallet/wallet_show_trasaction_simple_info_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -139,7 +141,14 @@ class _CrossChainRecordListPageState extends State<CrossChainRecordListPage> {
         onTap: () async {
           if (record.type == null) return;
           if (record.type == 1) {
-          } else {}
+            WalletShowTransactionSimpleInfoPage.jumpToAccountInfoPage(
+              context,
+              record.atlasTx,
+              _currentToken.symbol,
+            );
+          } else {
+            HbApi.jumpToScanByHash(context, record.hecoTx);
+          }
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
