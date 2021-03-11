@@ -37,6 +37,12 @@ class CrossChainRecord extends Object {
   @JsonKey(name: 'status')
   int status;
 
+  @JsonKey(name: 'created_at')
+  String createdAt;
+
+  @JsonKey(name: 'updated_at')
+  String updatedAt;
+
   CrossChainRecord(
     this.symbol,
     this.sender,
@@ -49,6 +55,8 @@ class CrossChainRecord extends Object {
     this.hecoTx,
     this.type,
     this.status,
+    this.createdAt,
+    this.updatedAt,
   );
 
   factory CrossChainRecord.fromJson(Map<String, dynamic> srcJson) =>

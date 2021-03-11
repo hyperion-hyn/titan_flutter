@@ -19,11 +19,12 @@ CrossChainRecord _$CrossChainRecordFromJson(Map<String, dynamic> json) {
     json['heco_tx'] as String,
     json['type'] as int,
     json['status'] as int,
+    json['created_at'] as String,
+    json['updated_at'] as String,
   );
 }
 
-Map<String, dynamic> _$CrossChainRecordToJson(CrossChainRecord instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$CrossChainRecordToJson(CrossChainRecord instance) => <String, dynamic>{
       'symbol': instance.symbol,
       'sender': instance.sender,
       'recipient': instance.recipient,
@@ -35,4 +36,6 @@ Map<String, dynamic> _$CrossChainRecordToJson(CrossChainRecord instance) =>
       'heco_tx': instance.hecoTx,
       'type': instance.type,
       'status': instance.status,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt
     };

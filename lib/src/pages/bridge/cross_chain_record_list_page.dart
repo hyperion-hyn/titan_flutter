@@ -254,7 +254,7 @@ class _CrossChainRecordListPageState extends State<CrossChainRecordListPage> {
                           height: 8.0,
                         ),
                         Text(
-                          '${FormatUtil.formatMarketOrderDate(1615431615689)}',
+                          '${FormatUtil.newFormatUTCDateStr(record.createdAt)}',
                           textAlign: TextAlign.right,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
