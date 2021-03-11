@@ -21,6 +21,10 @@ class HyperionGasLimit {
   // static const int HRC30_TRANSFER = 60000;
   // static const int HRC30_APPROVE = 50000;
   static const int RP_CALL = 300000; //如果不清楚填什么，就先用这个limit
+
+  static const int RP_Collect_CALL = 1000000; //传导取回，gaslimit
+
+  static const int RP_TRANSMIT_CALL = 5000000; //HYN -> RP，limit
 }
 
 class HyperionGasPrice {

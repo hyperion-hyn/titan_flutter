@@ -869,7 +869,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
     try {
       var response = await _rpApi.getCanRetrieve(_address);
-      print("[$runtimeType] getCanRetrieve, response:$response");
+      //print("[$runtimeType] getCanRetrieve, response:$response");
 
       var data = response;
       if ((data != null) && (data is Map<String, dynamic>)) {
@@ -888,7 +888,12 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       LogUtil.toastException(e);
       return;
     }
-    print("[$runtimeType] count:$count, hynSum:$hynSum");
+    //print("[$runtimeType] count:$count, hynSum:$hynSum");
+
+    // var entity = SettingInheritedModel.ofConfig(context).systemConfigEntity;
+    // var collectRpTransmitGasLimit =
+    //     entity.collectRpTransmitGasLimit;
+    // print("[rp] collectRpTransmitGasLimit:$collectRpTransmitGasLimit, xx.limit:${entity.canCheckMap3Node}");
 
     if (count <= 0 || hynSum == '0') {
       Fluttertoast.showToast(msg: '${S.of(context).rp_no_valid_contract}！');
@@ -936,7 +941,15 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     }
 
     try {
-      await _rpApi.postRetrieveHyn(activeWallet: _activeWallet, password: password);
+      var collectRpTransmitGasLimit =
+          SettingInheritedModel.ofConfig(context).systemConfigEntity.collectRpTransmitGasLimit;
+      print("[rp] collectRpTransmitGasLimit:$collectRpTransmitGasLimit");
+
+      await _rpApi.postRetrieveHyn(
+        activeWallet: _activeWallet,
+        password: password,
+        gasLimit: collectRpTransmitGasLimit,
+      );
       Fluttertoast.showToast(msg: S.of(context).rp_retrieve_staking_request_success);
       getNetworkData();
     } catch (e) {

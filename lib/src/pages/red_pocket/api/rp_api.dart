@@ -30,6 +30,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_stats.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -55,6 +56,7 @@ class RPApi {
     );
     print("[Rp_api] postStakingRp, address:$address, txHash:$txHash");
     if (txHash == null) {
+      throw HttpResponseCodeNotSuccess(-10000, "Unknown error");
       return;
     }
 
@@ -72,16 +74,22 @@ class RPApi {
   Future<dynamic> postRetrieveHyn({
     String password = '',
     WalletViewVo activeWallet,
-    int gasLimit = HyperionGasLimit.RP_CALL,
+    int gasLimit = HyperionGasLimit.RP_TRANSMIT_CALL,
   }) async {
+    print("[Rp_api] postRetrieveHyn, gasLimit:$gasLimit");
+
+    var newGasLimit = (gasLimit??HyperionGasLimit.RP_TRANSMIT_CALL) >= 9000000 ? HyperionGasLimit.RP_TRANSMIT_CALL:gasLimit;
+
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(
       HynContractMethod.WITHDRAW,
       password,
-      gasLimit: gasLimit,
+      gasLimit: newGasLimit,
+      gasPrice: BigInt.from(2 * EthereumUnitValue.G_WEI),
     );
     print("[Rp_api] postRetrieveHyn, address:$address, txHash:$txHash");
     if (txHash == null) {
+      throw HttpResponseCodeNotSuccess(-10000, "Unknown error");
       return;
     }
     return await RPHttpCore.instance

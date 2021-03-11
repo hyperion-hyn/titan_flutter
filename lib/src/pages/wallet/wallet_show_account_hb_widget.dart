@@ -40,6 +40,7 @@ import 'package:titan/src/utils/utils.dart';
 
 import '../../pages/wallet/model/transtion_detail_vo.dart';
 import 'api/hyn_api.dart';
+import 'model/wallet_send_dialog_util.dart';
 
 class ShowAccountHbPage extends StatefulWidget {
   CoinViewVo coinVo;
@@ -117,6 +118,28 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
               fontSize: 15,
             ),
           ),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: (){
+                var url = 'https://hecoinfo.com/address/${WalletModelUtil.walletEthAddress}';
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => InAppWebViewContainer(
+                          initUrl: url,
+                          title: '',
+                        )));
+              },
+              child: Text(
+                '区块浏览器',
+                style: TextStyle(
+                  color: HexColor("#1F81FF"),
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+          ],
         ),
         body: BlocListener<WalletCmpBloc, WalletCmpState>(
           listener: (context, state) {

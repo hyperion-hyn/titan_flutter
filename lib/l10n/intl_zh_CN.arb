@@ -3240,7 +3240,7 @@
   "@rp_staking_state_2": {},
   "rp_staking_state_3": "运行中",
   "@rp_staking_state_3": {},
-  "rp_staking_state_4": "释放中...",
+  "rp_staking_state_4": "锁仓中...",
   "@rp_staking_state_4": {},
   "rp_staking_state_5": "释放结束",
   "@rp_staking_state_5": {},
