@@ -124,7 +124,7 @@ class HyperionConfig {
   static String get bridgeLockContractAddress {
     switch (HyperionConfig.chainType) {
       case HyperionChainType.mainnet:
-        return '0x6910E6F7fe7C8D5444E63F8285f5342FfC7FCA6b';
+        return '0xcad9D1c5a06616391068422417e0c2afc74a65bf';
       case HyperionChainType.test:
         var address = '0x5D2c534fA7722f551225cD132387B5B41926146e';
         return address;

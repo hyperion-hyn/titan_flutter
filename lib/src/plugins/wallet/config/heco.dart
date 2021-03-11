@@ -51,7 +51,7 @@ class HecoConfig {
   static String get burnTokenContractAddress {
     switch (chainType) {
       case HecoChainType.mainnet:
-        return '';
+        return '0x9324e2BD211624F36119887664f2918605232eB6';
       case HecoChainType.test:
         return '0xA99Dd6fb2E6D97e3A2AFCb5ac1699693e4B2E6A6';
     }

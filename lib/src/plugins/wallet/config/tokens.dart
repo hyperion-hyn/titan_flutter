@@ -237,7 +237,7 @@ class DefaultTokenDefine {
   static const HYN_HECO = const AssetToken(
     name: "Heco HYN",
     decimals: 18,
-    contractAddress: '',
+    contractAddress: '0x3aC19481FAce71565155F370B3E34A1178745382',
     logo: "res/drawable/ic_token_hyn.png",
     symbol: 'HYN',
   );
@@ -253,7 +253,7 @@ class DefaultTokenDefine {
   static const RP_HECO = const AssetToken(
     name: "Heco RP",
     decimals: 18,
-    contractAddress: '',
+    contractAddress: '0x057899Dd6FcB69b23f3b4DC6c7c2bFA4A8a0b0EE',
     logo: "res/drawable/ic_token_rp.png",
     symbol: 'RP',
   );
