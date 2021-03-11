@@ -1,41 +1,28 @@
 class BridgeUtil {
   static String getCrossChainStatusText(int status) {
-    String stateDesc = '';
-
     if (status == null) {
-      return stateDesc;
+      return '';
     }
 
-    switch (status) {
-      case 0:
-        stateDesc = '';
-        break;
-      case 1:
-        stateDesc = '';
-        break;
-      case 2:
-        stateDesc = '';
-        break;
-      case 3:
-        stateDesc = '';
-        break;
-      case 4:
-        stateDesc = '';
-        break;
-      case 5:
-        stateDesc = '';
-        break;
-      case 6:
-        stateDesc = '';
-        break;
-      case 7:
-        stateDesc = '';
-        break;
-      default:
-        stateDesc = '';
-        break;
+    if (status == 0) {
+      return '已提交';
+    } else if (status == 1) {
+      return '处理中';
+    } else if (status == 2) {
+      return '处理中';
+    } else if (status == 3) {
+      return '处理中';
+    } else if (status == 4) {
+      return '处理中';
+    } else if (status == 5) {
+      return '处理中';
+    } else if (status == 6) {
+      return '处理中';
+    } else if (status == 7) {
+      return '已完成';
+    } else {
+      return '';
     }
-    return stateDesc;
   }
 }
 

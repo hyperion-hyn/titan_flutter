@@ -2,11 +2,13 @@ import 'package:decimal/decimal.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -37,10 +39,6 @@ class CrossChainBridgePage extends StatefulWidget {
 class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   ///default token list
   CrossChainToken _currentToken = CrossChainToken('HYN', '', '');
-  var _crossChainTokens = [
-    CrossChainToken('HYN', '', ''),
-    CrossChainToken('RP', '', ''),
-  ];
 
   var _fromChain = CoinType.HYN_ATLAS;
   var _toChain = CoinType.HB_HT;
@@ -256,43 +254,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     }
   }
 
-  _tokenItem(CrossChainToken token) {
-    return Column(
-      children: [
-        InkWell(
-          child: Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  child: Image.asset(
-                    ImageUtil.getGeneralTokenLogo(token.symbol),
-                  ),
-                ),
-              ),
-              Text(
-                '${token.symbol}',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(
-                width: 16,
-              )
-            ],
-          ),
-          onTap: () {
-            _currentToken = token;
-            setState(() {});
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    );
-  }
+
 
   _tokenSelection() {
     return SliverToBoxAdapter(
@@ -361,6 +323,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   }
 
   _showTokenListDialog() async {
+    var crossChainTokens = WalletInheritedModel.of(context).getCrossChainTokenList();
     UiUtil.showBottomDialogView(
       context,
       dialogHeight: MediaQuery.of(context).size.height - 80,
@@ -375,14 +338,14 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
           ),
           Expanded(
             child: CustomScrollView(
-              semanticChildCount: _crossChainTokens.length,
+              semanticChildCount: crossChainTokens.length,
               slivers: <Widget>[
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
                       final int itemIndex = index ~/ 2;
                       if (index.isEven) {
-                        return _tokenItem(_crossChainTokens[itemIndex]);
+                        return _tokenItem(crossChainTokens[itemIndex]);
                       }
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -395,7 +358,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                       }
                       return null;
                     },
-                    childCount: math.max(0, _crossChainTokens.length * 2 - 1),
+                    childCount: math.max(0, crossChainTokens.length * 2 - 1),
                   ),
                 ),
               ],
@@ -403,6 +366,44 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
           ),
         ],
       ),
+    );
+  }
+
+  _tokenItem(CrossChainToken token) {
+    return Column(
+      children: [
+        InkWell(
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  child: Image.asset(
+                    ImageUtil.getGeneralTokenLogo(token.symbol),
+                  ),
+                ),
+              ),
+              Text(
+                '${token.symbol}',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(
+                width: 16,
+              )
+            ],
+          ),
+          onTap: () {
+            _currentToken = token;
+            setState(() {});
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
     );
   }
 
@@ -684,12 +685,6 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   }
 
   _updateTokenList() async {
-    try {
-      List<CrossChainToken> crossChainTokens = await _atlasApi.getCrossChainTokenList();
-      if (crossChainTokens != null && crossChainTokens.length > 0) {
-        _crossChainTokens = crossChainTokens;
-      }
-      if (mounted) setState(() {});
-    } catch (e) {}
+    BlocProvider.of<WalletCmpBloc>(context)?.add(UpdateCrossChainTokenListEvent());
   }
 }

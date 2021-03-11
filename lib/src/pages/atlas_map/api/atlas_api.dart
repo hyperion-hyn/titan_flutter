@@ -1100,12 +1100,13 @@ class AtlasApi {
   }
 
   Future<List<CrossChainRecord>> getCrossChainRecord(
-    String address, {
+    String address,
+    String symbol, {
     int page = 1,
     int size = 20,
   }) async {
     return await AtlasHttpCore.instance.getEntity(
-      '/v1/cross_chain/records/$address',
+      '/v1/cross_chain/records/$address/$symbol',
       EntityFactory<List<CrossChainRecord>>((json) {
         var data = (json['data'] as List).map((map) {
           return CrossChainRecord.fromJson(map);
