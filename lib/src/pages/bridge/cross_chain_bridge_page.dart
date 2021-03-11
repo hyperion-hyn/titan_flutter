@@ -11,6 +11,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/bridge/cross_chain_record_list_page.dart';
 import 'package:titan/src/pages/bridge/entity/cross_chain_token.dart';
@@ -19,6 +20,8 @@ import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/image_util.dart';
@@ -103,7 +106,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CrossChainRecordListPage()),
+                MaterialPageRoute(builder: (context) => CrossChainRecordListPage(_currentToken)),
               );
             },
             child: Text(
@@ -684,8 +687,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         rawTxHash: rawTxHash,
       );
       if (data != null) {
-        Fluttertoast.showToast(msg: '提交成功', gravity: ToastGravity.CENTER);
-        _amountController.clear();
+        _submitFinish();
       } else {
         Fluttertoast.showToast(msg: '提交失败', gravity: ToastGravity.CENTER);
         _amountController.clear();
@@ -697,5 +699,11 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
 
   _updateTokenList() async {
     BlocProvider.of<WalletCmpBloc>(context)?.add(UpdateCrossChainTokenListEvent());
+  }
+
+  _submitFinish() {
+    var msg = '';
+    msg = FluroConvertUtils.fluroCnParamsEncode(msg);
+    Application.router.navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
   }
 }

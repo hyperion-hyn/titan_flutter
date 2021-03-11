@@ -27,7 +27,9 @@ import 'entity/cross_chain_token.dart';
 import 'dart:math' as math;
 
 class CrossChainRecordListPage extends StatefulWidget {
-  CrossChainRecordListPage();
+  final CrossChainToken crossChainToken;
+
+  CrossChainRecordListPage(this.crossChainToken);
 
   @override
   State<StatefulWidget> createState() {
@@ -50,6 +52,9 @@ class _CrossChainRecordListPageState extends State<CrossChainRecordListPage> {
   void initState() {
     super.initState();
     _updateTokenList();
+    if (widget.crossChainToken != null) {
+      _currentToken = widget.crossChainToken;
+    }
   }
 
   @override
