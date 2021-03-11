@@ -103,7 +103,7 @@ class HbApi {
     );
     if (approveHex?.isEmpty ?? true) {
       throw HttpResponseCodeNotSuccess(
-        -30011,
+        -30013,
         'Insufficient HT to pay for gas fee',
       );
     }

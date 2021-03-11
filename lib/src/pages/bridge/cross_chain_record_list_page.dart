@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
-import 'package:titan/src/basic/widget/data_list_state.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -14,11 +14,11 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/bridge/bridge_util.dart';
 import 'package:titan/src/pages/bridge/entity/cross_chain_record.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_util.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/image_util.dart';
-import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
 import 'entity/cross_chain_token.dart';
@@ -33,8 +33,13 @@ class CrossChainRecordListPage extends StatefulWidget {
   }
 }
 
-class _CrossChainRecordListPageState extends DataListState<CrossChainRecordListPage> {
+class _CrossChainRecordListPageState extends State<CrossChainRecordListPage> {
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
   AtlasApi _atlasApi = AtlasApi();
+
+  int _currentPage = 1;
+  int _size = 20;
+  List<CrossChainRecord> _recordList = List();
 
   ///default token list
   CrossChainToken _currentToken = CrossChainToken('HYN', '', '');
@@ -59,28 +64,72 @@ class _CrossChainRecordListPageState extends DataListState<CrossChainRecordListP
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(baseTitle: '跨链记录'),
-      body: LoadDataContainer(
-        bloc: loadDataBloc,
-        onLoadData: onWidgetLoadDataCallback,
-        onRefresh: onWidgetRefreshCallback,
-        onLoadingMore: onWidgetLoadingMoreCallback,
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: _tokenSelection(),
-            ),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return _crossChainRecordItem(dataList[index]);
-                },
-                childCount: dataList?.length ?? 0,
+      body: Container(
+        color: Colors.white,
+        child: LoadDataContainer(
+          bloc: _loadDataBloc,
+          enablePullUp: _recordList.isNotEmpty,
+          onLoadData: () {
+            _refresh();
+          },
+          onRefresh: () {
+            _refresh();
+          },
+          onLoadingMore: () {
+            _loadMore();
+          },
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: _tokenSelection(),
               ),
-            )
-          ],
+              _content()
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  _content() {
+    if (_recordList.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Container(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                height: 64,
+              ),
+              Image.asset(
+                'res/drawable/ic_empty_list.png',
+                height: 80,
+                width: 80,
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Text(
+                S.of(context).exchange_empty_list,
+                style: TextStyle(
+                  color: HexColor('#FF999999'),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    } else {
+      return SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            return _crossChainRecordItem(_recordList[index]);
+          },
+          childCount: _recordList?.length ?? 0,
+        ),
+      );
+    }
   }
 
   _crossChainRecordItem(CrossChainRecord record) {
@@ -100,13 +149,28 @@ class _CrossChainRecordListPageState extends DataListState<CrossChainRecordListP
               SizedBox(
                 height: 16,
               ),
-              Text(
-                '${(record.type ?? 1) == 1 ? 'ATLAS 到 HECO' : 'HECO 到 ATLAS'}',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              RichText(
+                  text: TextSpan(
+                      text: '${(record.type ?? 1) == 1 ? 'ATLAS' : 'HECO'}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      children: [
+                    TextSpan(
+                      text: ' 到 ',
+                      style: TextStyles.textC999S13,
+                    ),
+                    TextSpan(
+                      text: '${(record.type ?? 1) == 1 ? 'HECO' : 'ATLAS'}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ])),
               SizedBox(
                 height: 8,
               ),
@@ -128,11 +192,12 @@ class _CrossChainRecordListPageState extends DataListState<CrossChainRecordListP
                           height: 8.0,
                         ),
                         Text(
-                          '${record.value}',
+                          '${FormatUtil.weiToEtherStr(record.value)}',
                           style: TextStyle(
-                              color: DefaultColors.color333,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12),
+                            color: DefaultColors.color333,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                          ),
                         ),
                       ],
                     ),
@@ -261,6 +326,7 @@ class _CrossChainRecordListPageState extends DataListState<CrossChainRecordListP
                   ],
                 )),
           ),
+          Container(height: 8, color: DefaultColors.colorf2f2f2),
         ],
       ),
     );
@@ -344,7 +410,7 @@ class _CrossChainRecordListPageState extends DataListState<CrossChainRecordListP
           onTap: () {
             _currentToken = token;
             setState(() {});
-            onWidgetRefreshCallback();
+            _refresh();
             Navigator.of(context).pop();
           },
         ),
@@ -352,21 +418,38 @@ class _CrossChainRecordListPageState extends DataListState<CrossChainRecordListP
     );
   }
 
-  @override
-  Future<List<dynamic>> onLoadData(int page) async {
-    var retList = [];
+  Future _refresh() async {
+    _currentPage = 1;
+    _recordList.clear();
     try {
-      // List<CrossChainRecord> recordList = await _atlasApi.getCrossChainRecord(
-      //   WalletModelUtil.walletEthAddress,
-      //   _currentToken.symbol,
-      // );
-      List<CrossChainRecord> recordList = List.generate(
-          20, (index) => CrossChainRecord('HYN', '', '', '', '', '', '100', '', '', 1, 1));
-      retList.addAll(recordList);
-    } catch (e) {
-      LogUtil.toastException(e);
-    }
-    return retList;
+      List<CrossChainRecord> list = await _atlasApi.getCrossChainRecord(
+        WalletModelUtil.walletEthAddress,
+        _currentToken.symbol,
+        page: _currentPage,
+        size: _size,
+      );
+
+      _recordList.addAll(list);
+    } catch (e) {}
+    _loadDataBloc.add(RefreshSuccessEvent());
+    if (mounted) setState(() {});
+  }
+
+  _loadMore() async {
+    try {
+      List<CrossChainRecord> list = await _atlasApi.getCrossChainRecord(
+        WalletModelUtil.walletEthAddress,
+        _currentToken.symbol,
+        page: _currentPage + 1,
+        size: _size,
+      );
+      if (list.length > 0) {
+        _currentPage++;
+        _recordList.addAll(list);
+      }
+    } catch (e) {}
+    _loadDataBloc.add(LoadingMoreSuccessEvent());
+    if (mounted) setState(() {});
   }
 
   _updateTokenList() async {

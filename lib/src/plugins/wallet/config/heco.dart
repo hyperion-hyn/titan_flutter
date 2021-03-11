@@ -53,7 +53,7 @@ class HecoConfig {
       case HecoChainType.mainnet:
         return '';
       case HecoChainType.test:
-        return '0xdFc01fE7Bac53B4d72518d5ad0e1131b83628fF3';
+        return '0xA99Dd6fb2E6D97e3A2AFCb5ac1699693e4B2E6A6';
     }
     return '';
   }

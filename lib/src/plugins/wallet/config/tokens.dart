@@ -245,7 +245,7 @@ class DefaultTokenDefine {
   static const HYN_HECO_TEST = const AssetToken(
     name: "Heco HYN",
     decimals: 18,
-    contractAddress: '0x1990f4c2d9cbb7587e1864812d0403e52fa32f03',
+    contractAddress: '0x4A1E6629a1f97c0A089FAd4e80C6A0415760CF39',
     logo: "res/drawable/ic_token_hyn.png",
     symbol: 'HYN',
   );
@@ -261,7 +261,7 @@ class DefaultTokenDefine {
   static const RP_HECO_TEST = const AssetToken(
     name: "Heco RP",
     decimals: 18,
-    contractAddress: '0x786710cc6A52F4c07F5A2eCb2f03BCd00CE1d102',
+    contractAddress: '0xD949597c2829F8B4F023f7280d83210d18C46958',
     logo: "res/drawable/ic_token_rp.png",
     symbol: 'RP',
   );

@@ -784,13 +784,17 @@ class HYNApi {
       );
     }
 
-    var responseMap = await WalletUtil.postToEthereumNetwork(
-      CoinType.HYN_ATLAS,
-      method: 'eth_sendRawTransaction',
-      params: [rawTxHash],
-    );
+    return rawTxHash;
 
-    print('$responseMap');
+
+
+    // var responseMap = await WalletUtil.postToEthereumNetwork(
+    //   CoinType.HYN_ATLAS,
+    //   method: 'eth_sendRawTransaction',
+    //   params: [rawTxHash],
+    // );
+    //
+    // print('$responseMap');
   }
 
   Future<String> postApprove({

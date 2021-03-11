@@ -126,10 +126,10 @@ class HyperionConfig {
       case HyperionChainType.mainnet:
         return '0x6910E6F7fe7C8D5444E63F8285f5342FfC7FCA6b';
       case HyperionChainType.test:
-        var address = '0x540a2a86f3d5329f12e34330704d94e7c43a2076';
+        var address = '0x5D2c534fA7722f551225cD132387B5B41926146e';
         return address;
       case HyperionChainType.local:
-        return "0x2190490FEcA5D47290CFA4a762b1889718913319";
+        return "0x5D2c534fA7722f551225cD132387B5B41926146e";
     }
     return '';
   }

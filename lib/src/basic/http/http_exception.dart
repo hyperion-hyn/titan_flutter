@@ -140,6 +140,10 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
     S.of(Keys.rootKey.currentContext).rp_balance_not_enoungh,
   ),
   HttpResponseCodeNotSuccess(
+    -30013,
+    'Insufficient HT for gas fee',
+  ),
+  HttpResponseCodeNotSuccess(
     -40001,
     S.of(Keys.rootKey.currentContext).red_pocket_not_ready,
   ),

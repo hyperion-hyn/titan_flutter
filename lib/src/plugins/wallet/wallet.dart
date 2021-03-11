@@ -944,7 +944,7 @@ class Wallet {
     }
     if (!HbApi.isGasFeeEnough(gasPrice, gasLimit)) {
       throw HttpResponseCodeNotSuccess(
-        -30011,
+        -30013,
         'Insufficient HT for gas fee',
       );
     }

@@ -254,8 +254,6 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     }
   }
 
-
-
   _tokenSelection() {
     return SliverToBoxAdapter(
       child: Padding(
@@ -620,6 +618,10 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         );
       }
 
+      if (rawTxHash == null) {
+        return;
+      }
+
       _postBridgeRequest(
         wallet,
         tokenAddress,
@@ -627,8 +629,6 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         ConvertTokenUnit.strToBigInt(_amountController.text).toString(),
         rawTxHash,
       );
-
-      if (rawTxHash != null) {}
     } catch (e) {
       LogUtil.toastException(e);
     }
@@ -675,13 +675,24 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     String rawTxHash,
   ) async {
     var ownerAddress = wallet?.wallet?.getEthAccount()?.address ?? '';
-    _atlasApi.postBridgetApply(
-      walletAddress: ownerAddress,
-      tokenAddress: tokenAddress,
-      type: type,
-      amount: amount,
-      rawTxHash: rawTxHash,
-    );
+    try {
+      var data = await _atlasApi.postBridgetApply(
+        walletAddress: ownerAddress,
+        tokenAddress: tokenAddress,
+        type: type,
+        amount: amount,
+        rawTxHash: rawTxHash,
+      );
+      if (data != null) {
+        Fluttertoast.showToast(msg: '提交成功', gravity: ToastGravity.CENTER);
+        _amountController.clear();
+      } else {
+        Fluttertoast.showToast(msg: '提交失败', gravity: ToastGravity.CENTER);
+        _amountController.clear();
+      }
+    } catch (e) {
+      LogUtil.toastException(e);
+    }
   }
 
   _updateTokenList() async {
