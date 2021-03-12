@@ -103,6 +103,7 @@ SystemConfigEntity _$SystemConfigEntityFromJson(Map<String, dynamic> json) {
     json['canCheckMap3Node'] as bool ?? true,
     json['canCheckMap3NodeCount'] as int ?? 1,
     json['isOpenReStakingReward'] as bool ?? false,
+    json['collectRpTransmitGasLimit'] as int ?? 5000000,
   );
 }
 
@@ -125,4 +126,5 @@ Map<String, dynamic> _$SystemConfigEntityToJson(SystemConfigEntity instance) =>
       'canCheckMap3Node': instance.canCheckMap3Node,
       'canCheckMap3NodeCount': instance.canCheckMap3NodeCount,
       'isOpenReStakingReward': instance.isOpenReStakingReward,
+      'collectRpTransmitGasLimit': instance.collectRpTransmitGasLimit,
     };
