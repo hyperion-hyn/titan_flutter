@@ -424,7 +424,7 @@ class _CrossChainRecordListPageState extends State<CrossChainRecordListPage> {
           onTap: () {
             _currentToken = token;
             setState(() {});
-            _refresh();
+            _loadDataBloc.add(LoadingEvent());
             Navigator.of(context).pop();
           },
         ),
