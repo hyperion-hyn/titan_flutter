@@ -1063,7 +1063,7 @@ class AtlasApi {
     return await AtlasHttpCore.instance.getEntity(
       '/v1/cross_chain/tokens',
       EntityFactory<List<CrossChainToken>>((json) {
-        var data = (json['data'] as List).map((map) {
+        var data = (json as List).map((map) {
           return CrossChainToken.fromJson(map);
         }).toList();
         return data;
