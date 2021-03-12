@@ -234,7 +234,6 @@ class Wallet {
     BigInt value,
     int nonce,
     int gasLimit,
-    Uint8List data,
     web3.IMessage message,
     int optType = OptType.TRANSFER,
   }) async {
@@ -261,7 +260,6 @@ class Wallet {
       message: message,
       gasLimit: gasLimit,
       nonce: nonce,
-      data: data,
     );
 
     var responseMap = await WalletUtil.postToEthereumNetwork(coinType,
@@ -283,6 +281,72 @@ class Wallet {
             optType: optType);
       }
     }
+
+    return responseMap['result'];
+  }
+
+  /// DAPP发送转账
+  /// 如果[type]设置为 web3.MessageType.typeNormal 则是 Atlas转账
+  /// 如果[message]设置了，则为抵押相关的操作
+  /// 如果[type]和[message]都是null，则为ethereum转账
+  Future<String> sendDappTransaction(
+      int coinType, {
+        String password,
+        Credentials cred,
+        @required BigInt gasPrice,
+        String toAddress,
+        BigInt value,
+        int nonce,
+        int gasLimit,
+        Uint8List data,
+        web3.IMessage message,
+        int optType = OptType.TRANSFER,
+      }) async {
+    nonce = await getCurrentWalletNonce(coinType, nonce: nonce);
+
+    // 检查基础币是否足够
+    if (gasLimit == null || gasLimit < 21000) {
+      if (message != null) {
+        gasLimit = HyperionGasLimit.NODE_OPT;
+      } else {
+        gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+            .systemConfigEntity
+            .emptyDefaultGasLimit;
+      }
+    }
+
+    final signedRawHex = await signTransaction(
+      coinType,
+      password: password,
+      cred: cred,
+      toAddress: toAddress,
+      gasPrice: gasPrice,
+      value: value,
+      message: message,
+      gasLimit: gasLimit,
+      nonce: nonce,
+      data: data,
+    );
+
+    var responseMap = await WalletUtil.postToEthereumNetwork(coinType,
+        method: 'eth_sendRawTransaction', params: [signedRawHex]);
+    if (responseMap['error'] != null) {
+      var errorEntity = responseMap['error'];
+      throw RPCError(errorEntity['code'], errorEntity['message'], "");
+    }/* else if (responseMap['result'] != null) {
+      // 本地记录ethereum pending
+      if (coinType == CoinType.ETHEREUM) {
+        await Injector.of(Keys.rootKey.currentContext).transactionInteractor.insertTransactionDB(
+            responseMap['result'],
+            toAddress,
+            value,
+            gasPrice,
+            gasLimit,
+            LocalTransferType.LOCAL_TRANSFER_ETH,
+            nonce,
+            optType: optType);
+      }
+    }*/
 
     return responseMap['result'];
   }
