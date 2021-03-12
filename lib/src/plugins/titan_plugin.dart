@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
@@ -212,7 +213,7 @@ class TitanPlugin {
     return await callChannel.invokeMethod("trustDecrypt", {'cipherText': cipherText, 'password': password, 'fileName': fileName});
   }
 
-  static Future<String> signTypedMessage(Map<String, dynamic> dataMap) async {
+  static Future<Uint8List> signTypedMessage(Map<String, dynamic> dataMap) async {
     return await callChannel
         .invokeMethod("signTypedMessage", {'data': dataMap,});
   }

@@ -477,12 +477,12 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
         });
 
 
-    var contents = await loadJsonData();
+    var contents = await loadSignTypedJsonData();
     var callbackMsg = await TitanPlugin.signTypedMessage(contents);
     print("TODO !!!!processTransaction, callbackMsg: $callbackMsg");
   }
 
-  Future<Map<String, dynamic>> loadJsonData() async {
+  Future<Map<String, dynamic>> loadSignTypedJsonData() async {
     var jsonText = await rootBundle.loadString('res/dapp/sign_typed.json');
     var jsonData = json.decode(jsonText);
     //print("[DApp] loadJsonData, jsonData:${jsonData.runtimeType}");
