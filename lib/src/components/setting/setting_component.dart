@@ -55,7 +55,10 @@ class _SettingManagerState extends BaseState<_SettingManager> {
     BlocProvider.of<SettingBloc>(context).add(SystemConfigEvent());
 
     // 恢复历史设置
-    BlocProvider.of<SettingBloc>(context).add(RestoreSettingEvent());
+    Future.delayed(Duration(milliseconds: 1000), () {
+      BlocProvider.of<SettingBloc>(context).add(RestoreSettingEvent());
+    });
+
 
     //同步remote配置
     Future.delayed(Duration(milliseconds: 1000), () {

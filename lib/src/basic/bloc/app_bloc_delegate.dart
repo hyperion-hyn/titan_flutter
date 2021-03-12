@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
+import 'package:titan/src/components/atlas/bloc/bloc.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/utils/log_util.dart';
 
@@ -15,6 +16,7 @@ class AppBlocDelegate extends BlocDelegate {
       SubChannelEvent,
       HeartEvent,
       ReceivedDataEvent,
+      AtlasEpochUpdateEvent,
     ].contains(event.runtimeType)) {
       print('onEvent ${event.toString()}');
     }
@@ -32,7 +34,8 @@ class AppBlocDelegate extends BlocDelegate {
       ReceivedDataSuccessState,
       ChannelKLine24HourState,
       HeartSuccessState,
-      HeartState
+      HeartState,
+      AtlasEpochUpdateState,
     ].contains(transition.currentState.runtimeType)) {
       print("onTransition $transition");
     }

@@ -625,8 +625,8 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
     var walletName = wallet.keystore.name;
 
     var from = wallet.getAtlasAccount().address;
-    var fromAddressHyn = WalletUtil.ethAddressToBech32Address(from);
-    var fromAddress = shortBlockChainAddress(fromAddressHyn);
+    // var fromAddressHyn = WalletUtil.ethAddressToBech32Address(from);
+    var fromAddress = shortBlockChainAddress(from);
 
     // var toAddress = to;
     // if (_coinType == CoinType.HYN_ATLAS) {

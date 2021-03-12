@@ -52,6 +52,9 @@ class SystemConfigEntity extends Object {
   @JsonKey(name: 'isOpenReStakingReward')
   bool isOpenReStakingReward = false;
 
+  @JsonKey(name: 'collectRpTransmitGasLimit')
+  int collectRpTransmitGasLimit = 10000000;
+
   SystemConfigEntity(
     this.ethTransferGasLimit,
     this.erc20TransferGasLimit,
@@ -70,11 +73,13 @@ class SystemConfigEntity extends Object {
     this.canCheckMap3Node,
     this.canCheckMap3NodeCount,
     this.isOpenReStakingReward,
+    this.collectRpTransmitGasLimit,
   );
 
   SystemConfigEntity.def();
 
-  factory SystemConfigEntity.fromJson(Map<String, dynamic> srcJson) => _$SystemConfigEntityFromJson(srcJson);
+  factory SystemConfigEntity.fromJson(Map<String, dynamic> srcJson) =>
+      _$SystemConfigEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$SystemConfigEntityToJson(this);
 }

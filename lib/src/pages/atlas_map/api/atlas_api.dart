@@ -128,7 +128,8 @@ class AtlasApi {
   }
 
   static goToAtlasMap3HelpPage(BuildContext context) {
-    String webUrl = FluroConvertUtils.fluroCnParamsEncode(Const.HELP_PAGE);
+    var lang = SettingInheritedModel.of(context).languageModel.isZh() ? 'zh_CN' : 'en';
+    String webUrl = FluroConvertUtils.fluroCnParamsEncode(Const.HELP_CENTER + '?lang=$lang');
     String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(Keys.rootKey.currentContext).help);
     Application.router
         .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
@@ -655,15 +656,15 @@ class AtlasApi {
   }
 
   // 上传图片
-  Future<String> postUploadImageFile(
-      String address, String path, ProgressCallback onSendProgress, {bool isFromAsset = false}) async {
+  Future<String> postUploadImageFile(String address, String path, ProgressCallback onSendProgress,
+      {bool isFromAsset = false}) async {
     try {
       Map<String, dynamic> params = {};
       params["address"] = address;
-      if(isFromAsset){
+      if (isFromAsset) {
         File assetFile = await getImageFileFromAssets(path);
         params["file"] = MultipartFile.fromFileSync(assetFile.path);
-      }else{
+      } else {
         params["file"] = MultipartFile.fromFileSync(path);
       }
       FormData formData = FormData.fromMap(params);
@@ -700,7 +701,8 @@ class AtlasApi {
     final byteData = await rootBundle.load('assets/$path');
 
     final file = File('${(await getTemporaryDirectory()).path}/$path');
-    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    await file
+        .writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
 
     return file;
   }
