@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:decimal/decimal.dart';
@@ -13,6 +14,7 @@ import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -25,6 +27,10 @@ import 'package:web3dart/crypto.dart';
 
 import 'dapp_authorization_dialog_page.dart';
 import 'dapp_send_dialog_page.dart';
+
+import 'dart:async' show Future;
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart';
 
 class DAppWebViewPage extends StatefulWidget {
   final String initUrl;
@@ -284,7 +290,7 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
     );
   }
 
-  void initDappJsHandle(InAppWebViewController controller) {
+  void initDappJsHandle(InAppWebViewController controller) async{
     controller.addJavaScriptHandler(
         handlerName: "enable",
         callback: (data) async {
@@ -309,8 +315,11 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
 
     controller.addJavaScriptHandler(
         handlerName: "processTransaction",
-        callback: (data) async {
+        callback: (data)  {
           print("TODO !!!!processTransaction $data");
+
+
+
           int callbackId = data[0];
           try {
             String to = data[1] == null ? null : data[1].toString();
@@ -466,6 +475,18 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
             callbackToJS(controller, callbackId: callbackId, error: e.toString());
           }
         });
+
+
+    var contents = await loadJsonData();
+    var callbackMsg = await TitanPlugin.signTypedMessage(contents);
+    print("TODO !!!!processTransaction, callbackMsg: $callbackMsg");
+  }
+
+  Future<Map<String, dynamic>> loadJsonData() async {
+    var jsonText = await rootBundle.loadString('res/dapp/sign_typed.json');
+    var jsonData = json.decode(jsonText);
+    //print("[DApp] loadJsonData, jsonData:${jsonData.runtimeType}");
+    return jsonData;
   }
 
   dynamic callbackToJS(InAppWebViewController controller,

@@ -31,6 +31,15 @@
 		9AEF446323FC237F00E5733F /* UMCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AEF445523FC20A900E5733F /* UMCommon.framework */; };
 		9AEF446523FC238200E5733F /* UMCommonLog.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AEF445B23FC215900E5733F /* UMCommonLog.framework */; };
 		9AEF446723FC238400E5733F /* UMPush.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AEF445723FC210F00E5733F /* UMPush.framework */; };
+		9AEF723525FA1FBD00DA4C3A /* EIP712TypedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEF723425FA1FBD00DA4C3A /* EIP712TypedData.swift */; };
+		9AEF72F425FA253A00DA4C3A /* AlphaWalletAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEF72F325FA253A00DA4C3A /* AlphaWalletAddress.swift */; };
+		9AEF72F725FA276700DA4C3A /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEF72F625FA276700DA4C3A /* String.swift */; };
+		9AEF72FA25FA289000DA4C3A /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEF72F925FA289000DA4C3A /* Data.swift */; };
+		9AEF730225FA28EB00DA4C3A /* ABIEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEF72FD25FA28EB00DA4C3A /* ABIEncoder.swift */; };
+		9AEF730325FA28EB00DA4C3A /* ABIValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEF72FE25FA28EB00DA4C3A /* ABIValue.swift */; };
+		9AEF730425FA28EB00DA4C3A /* ABIType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEF72FF25FA28EB00DA4C3A /* ABIType.swift */; };
+		9AEF730525FA28EB00DA4C3A /* ABIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEF730025FA28EB00DA4C3A /* ABIError.swift */; };
+		9AEF730625FA28EB00DA4C3A /* Function.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEF730125FA28EB00DA4C3A /* Function.swift */; };
 		B754FA4F3E507D4176CE21C9 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41DD00F668BA4794C96C93BA /* Pods_Runner.framework */; };
 		F5147211237EF6F500931008 /* ErrorCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5147210237EF6F500931008 /* ErrorCode.swift */; };
 		F53740FF22E83D8500ADF4FF /* EncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53740FE22E83D8500ADF4FF /* EncryptionService.swift */; };
@@ -74,6 +83,15 @@
 		9AEF445923FC213E00E5733F /* UTDID.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UTDID.framework; sourceTree = "<group>"; };
 		9AEF445B23FC215900E5733F /* UMCommonLog.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UMCommonLog.framework; sourceTree = "<group>"; };
 		9AEF445D23FC22F900E5733F /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		9AEF723425FA1FBD00DA4C3A /* EIP712TypedData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EIP712TypedData.swift; sourceTree = "<group>"; };
+		9AEF72F325FA253A00DA4C3A /* AlphaWalletAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlphaWalletAddress.swift; sourceTree = "<group>"; };
+		9AEF72F625FA276700DA4C3A /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
+		9AEF72F925FA289000DA4C3A /* Data.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
+		9AEF72FD25FA28EB00DA4C3A /* ABIEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABIEncoder.swift; sourceTree = "<group>"; };
+		9AEF72FE25FA28EB00DA4C3A /* ABIValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABIValue.swift; sourceTree = "<group>"; };
+		9AEF72FF25FA28EB00DA4C3A /* ABIType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABIType.swift; sourceTree = "<group>"; };
+		9AEF730025FA28EB00DA4C3A /* ABIError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABIError.swift; sourceTree = "<group>"; };
+		9AEF730125FA28EB00DA4C3A /* Function.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Function.swift; sourceTree = "<group>"; };
 		AD1B0CAE230E4F7F00C5395E /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		F5147210237EF6F500931008 /* ErrorCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorCode.swift; sourceTree = "<group>"; };
 		F53740FE22E83D8500ADF4FF /* EncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionService.swift; sourceTree = "<group>"; };
@@ -209,9 +227,26 @@
 			path = Sensor;
 			sourceTree = "<group>";
 		};
+		9AEF72FC25FA28EB00DA4C3A /* TrustCore */ = {
+			isa = PBXGroup;
+			children = (
+				9AEF72FD25FA28EB00DA4C3A /* ABIEncoder.swift */,
+				9AEF72FE25FA28EB00DA4C3A /* ABIValue.swift */,
+				9AEF72FF25FA28EB00DA4C3A /* ABIType.swift */,
+				9AEF730025FA28EB00DA4C3A /* ABIError.swift */,
+				9AEF730125FA28EB00DA4C3A /* Function.swift */,
+			);
+			path = TrustCore;
+			sourceTree = "<group>";
+		};
 		F53740FD22E83D2A00ADF4FF /* Encryption */ = {
 			isa = PBXGroup;
 			children = (
+				9AEF72FC25FA28EB00DA4C3A /* TrustCore */,
+				9AEF72F925FA289000DA4C3A /* Data.swift */,
+				9AEF72F625FA276700DA4C3A /* String.swift */,
+				9AEF72F325FA253A00DA4C3A /* AlphaWalletAddress.swift */,
+				9AEF723425FA1FBD00DA4C3A /* EIP712TypedData.swift */,
 				F53740FE22E83D8500ADF4FF /* EncryptionService.swift */,
 				F537410D22E8683400ADF4FF /* EthEncryptionService.swift */,
 				9A86DB6823AC78900032B410 /* EncrytionPluginInterface.swift */,
@@ -395,6 +430,8 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
+				"${BUILT_PRODUCTS_DIR}/BigInt/BigInt.framework",
+				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
 				"${PODS_ROOT}/../Flutter/Flutter.framework",
 				"${BUILT_PRODUCTS_DIR}/MTBBarcodeScanner/MTBBarcodeScanner.framework",
@@ -410,9 +447,12 @@
 				"${BUILT_PRODUCTS_DIR}/Polyline/Polyline.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+				"${BUILT_PRODUCTS_DIR}/SipHash/SipHash.framework",
 				"${BUILT_PRODUCTS_DIR}/Solar/Solar.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftProtobuf/SwiftProtobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/TrezorCrypto/TrezorCrypto.framework",
+				"${BUILT_PRODUCTS_DIR}/TrustKeystore/TrustKeystore.framework",
 				"${BUILT_PRODUCTS_DIR}/TrustWalletCore/TrustWalletCore.framework",
 				"${BUILT_PRODUCTS_DIR}/Turf/Turf.framework",
 				"${BUILT_PRODUCTS_DIR}/ZLPhotoBrowser/ZLPhotoBrowser.framework",
@@ -435,6 +475,7 @@
 				"${BUILT_PRODUCTS_DIR}/package_info/package_info.framework",
 				"${BUILT_PRODUCTS_DIR}/path_provider/path_provider.framework",
 				"${BUILT_PRODUCTS_DIR}/r_scan/r_scan.framework",
+				"${BUILT_PRODUCTS_DIR}/secp256k1_ios/secp256k1_ios.framework",
 				"${BUILT_PRODUCTS_DIR}/shared_preferences/shared_preferences.framework",
 				"${BUILT_PRODUCTS_DIR}/sqflite/sqflite.framework",
 				"${BUILT_PRODUCTS_DIR}/uni_links/uni_links.framework",
@@ -447,6 +488,8 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BigInt.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Flutter.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MTBBarcodeScanner.framework",
@@ -462,9 +505,12 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Polyline.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SipHash.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Solar.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftKeychainWrapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftProtobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TrezorCrypto.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TrustKeystore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TrustWalletCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Turf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZLPhotoBrowser.framework",
@@ -487,6 +533,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/package_info.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/path_provider.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/r_scan.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/secp256k1_ios.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/shared_preferences.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/sqflite.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/uni_links.framework",
@@ -516,13 +563,22 @@
 				9A86DB6B23ACA1990032B410 /* BluetoothSensor.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				F53740FF22E83D8500ADF4FF /* EncryptionService.swift in Sources */,
+				9AEF723525FA1FBD00DA4C3A /* EIP712TypedData.swift in Sources */,
+				9AEF730325FA28EB00DA4C3A /* ABIValue.swift in Sources */,
 				F537410E22E8683400ADF4FF /* EthEncryptionService.swift in Sources */,
 				F537410C22E867A000ADF4FF /* DateExt.swift in Sources */,
 				9A86DB6523AC722F0032B410 /* SensorManager.swift in Sources */,
+				9AEF72F725FA276700DA4C3A /* String.swift in Sources */,
 				9A86DB7123AF4D3D0032B410 /* OnSensorValueChangeListener.swift in Sources */,
+				9AEF730625FA28EB00DA4C3A /* Function.swift in Sources */,
 				F5147211237EF6F500931008 /* ErrorCode.swift in Sources */,
+				9AEF730225FA28EB00DA4C3A /* ABIEncoder.swift in Sources */,
 				9A86DB6F23ACA4290032B410 /* GpsSensor.swift in Sources */,
+				9AEF72FA25FA289000DA4C3A /* Data.swift in Sources */,
 				9A86DB6D23ACA3290032B410 /* CellularSensor.swift in Sources */,
+				9AEF730525FA28EB00DA4C3A /* ABIError.swift in Sources */,
+				9AEF730425FA28EB00DA4C3A /* ABIType.swift in Sources */,
+				9AEF72F425FA253A00DA4C3A /* AlphaWalletAddress.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

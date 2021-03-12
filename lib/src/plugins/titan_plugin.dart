@@ -211,4 +211,9 @@ class TitanPlugin {
   static Future<String> trustDecrypt(String cipherText, String password, String fileName) async {
     return await callChannel.invokeMethod("trustDecrypt", {'cipherText': cipherText, 'password': password, 'fileName': fileName});
   }
+
+  static Future<String> signTypedMessage(Map<String, dynamic> dataMap) async {
+    return await callChannel
+        .invokeMethod("signTypedMessage", {'data': dataMap,});
+  }
 }

@@ -112,6 +112,35 @@ import CoreBluetooth
                     
                     break
                     
+                case "signTypedMessage":
+                    self.printLog("[ios] --> signTypedMessage, 0, methodCall.arguments:\(methodCall.arguments)")
+
+                    guard let params = methodCall.arguments as? [String: Any] else {
+                        result(FlutterError.init(code: "-1", message: "params is not [String: String]", details: nil))
+                        return
+                    }
+                    
+                    self.printLog("[ios] --> signTypedMessage, 1, params:\(params)")
+
+                    guard let data = params["data"] as? [String: Any]  else {
+                        result(FlutterError.init(code: "-1", message: "params can not find data", details: nil))
+                        return
+                    }
+                    
+                    if let paramss = data["params"] as? [Any] {
+                        var first = paramss[0]
+                        var second = paramss[1]
+                        
+//                        if let object = try? JSONDecoder().decode(EIP712TypedData.self, from: second) {
+//
+//                        }
+                        self.printLog("[ios] --> signTypedMessage, 2, first:\(first), second:\(second)")
+                    }
+                    
+                    self.printLog("[ios] --> signTypedMessage, 3, data:\(data)")
+                    
+                    result("signTypedMessageCallBack!!!!")
+                    
                 default:
                     result(FlutterMethodNotImplemented)
                 }
