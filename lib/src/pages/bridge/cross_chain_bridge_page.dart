@@ -53,6 +53,8 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   HbApi _hbApi = HbApi();
   AtlasApi _atlasApi = AtlasApi();
 
+  BuildContext dialogContext;
+
   @override
   void initState() {
     super.initState();
@@ -679,6 +681,10 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   ) async {
     var ownerAddress = wallet?.wallet?.getEthAccount()?.address ?? '';
     try {
+      UiUtil.showLoadingDialog(context, '提交中...', (context) {
+        dialogContext = context;
+      });
+
       var data = await _atlasApi.postBridgetApply(
         walletAddress: ownerAddress,
         tokenAddress: tokenAddress,
@@ -686,6 +692,10 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         amount: amount,
         rawTxHash: rawTxHash,
       );
+
+      if (dialogContext != null) {
+        Navigator.pop(dialogContext);
+      }
       if (data != null) {
         _submitFinish();
       } else {
