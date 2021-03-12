@@ -56,13 +56,13 @@ class Tokens {
     } else if (coinType == CoinType.HB_HT) {
       switch (HecoConfig.chainType) {
         case HecoChainType.mainnet:
-          tokens.add(DefaultTokenDefine.HUSD);
+          //tokens.add(DefaultTokenDefine.HUSD);
           tokens.add(DefaultTokenDefine.HUSDT);
           tokens.add(DefaultTokenDefine.HYN_HECO);
           tokens.add(DefaultTokenDefine.RP_HECO);
           break;
         case HecoChainType.test:
-          tokens.add(DefaultTokenDefine.HUSD_TEST);
+          //tokens.add(DefaultTokenDefine.HUSD_TEST);
           tokens.add(DefaultTokenDefine.HUSDT_TEST);
           tokens.add(DefaultTokenDefine.HYN_HECO_TEST);
           tokens.add(DefaultTokenDefine.RP_HECO_TEST);
