@@ -46,6 +46,7 @@ void _createTablesV3(Batch batch) {
   create table ${TxnInfoDao.kTable} (
   ${TxnInfoDao.kColumnId} integer primary key autoincrement, 
   ${TxnInfoDao.kColumnChain} text,
+  ${TxnInfoDao.kColumnNetwork} text,
   ${TxnInfoDao.kColumnAddress} text,
   ${TxnInfoDao.kColumnHash} text not null unique,
   ${TxnInfoDao.kColumnTime} integer,

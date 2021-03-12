@@ -89,7 +89,7 @@ class HecoRpcProvider {
 class HecoExplore {
   static String MAIN_SCAN_API = 'https://heco-api.hyn.space';
   static String TEST_SCAN_API = 'http://heco-api.test.hyn.space';
-  static String MAIN_SCAN_WEB = 'https://scan.hecochain.com';
+  static String MAIN_SCAN_WEB = 'https://hecoinfo.com/';
   static String TEST_SCAN_WEB = 'https://testnet.hecoinfo.com/';
 
   static String get hecoScanApi {

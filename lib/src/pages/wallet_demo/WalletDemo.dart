@@ -639,6 +639,7 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               var list = await Injector.of(context).repository.txInfoDao.getListByChainAndSymbol(
                     'heco',
+                    'test-net',
                     'USDT',
                     WalletModelUtil.walletEthAddress,
                   );

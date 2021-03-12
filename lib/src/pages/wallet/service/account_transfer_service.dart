@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:titan/env.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -199,6 +200,7 @@ class AccountTransferService {
       BuildContext context, CoinViewVo coinVo, int page) async {
     return Injector.of(context).repository.txInfoDao.getListByChainAndSymbol(
           'heco',
+          env.buildType == BuildType.DEV ? 'test-net' : 'main-net',
           coinVo.symbol,
           WalletModelUtil.walletEthAddress,
           limit: 10,
