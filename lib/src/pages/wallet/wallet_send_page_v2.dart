@@ -512,6 +512,21 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
                   fontWeight: FontWeight.normal,
                 ),
               ),
+              InkWell(
+                onTap: () {
+                  _amountController.text = FormatUtil.coinBalanceByDecimalStr(widget.coinVo, 6);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    S.of(context).all,
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 12
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
           _clipRectWidget(
@@ -974,24 +989,32 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         return;
       }
 
-      var symbol = widget.coinVo.symbol.toUpperCase();
+      // var symbol = widget.coinVo.symbol.toUpperCase();
+      //
+      // // todo: HRC30不需要预留币
+      // if (widget.coinVo.coinType == CoinType.HYN_ATLAS &&
+      //     symbol == DefaultTokenDefine.HYN_Atlas.symbol) {
+      //   var balance = Decimal.parse(
+      //     FormatUtil.coinBalanceDouble(
+      //       widget.coinVo,
+      //     ).toString(),
+      //   );
+      //
+      //   var estimateGas = ConvertTokenUnit.weiToEther(
+      //       weiBigInt: BigInt.parse(
+      //     (1 * EthereumUnitValue.G_WEI * 21000).toString(),
+      //   ));
+      //
+      //   if (balance - estimateGas < Decimal.parse(amountTrim)) {
+      //     amountTrim = (Decimal.parse(amountTrim) - estimateGas).toString();
+      //   }
+      // }
 
-      // todo: HRC30不需要预留币
-      if (widget.coinVo.coinType == CoinType.HYN_ATLAS &&
-          symbol == DefaultTokenDefine.HYN_Atlas.symbol) {
-        var balance = Decimal.parse(
-          FormatUtil.coinBalanceDouble(
-            widget.coinVo,
-          ).toString(),
-        );
-
-        var estimateGas = ConvertTokenUnit.weiToEther(
-            weiBigInt: BigInt.parse(
-          (1 * EthereumUnitValue.G_WEI * 21000).toString(),
-        ));
-
-        if (balance - estimateGas < Decimal.parse(amountTrim)) {
-          amountTrim = (Decimal.parse(amountTrim) - estimateGas).toString();
+      ///only contract token can send fully, if not, reserve gas fee
+      if (widget.coinVo.contractAddress == null) {
+        var balance = FormatUtil.coinBalanceDouble(widget.coinVo);
+        if (value + _gasFees.toDouble() > balance) {
+          value = double.parse((value - _gasFees.toDouble()).toStringAsFixed(6));
         }
       }
 

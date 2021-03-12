@@ -752,7 +752,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         aspect: WalletAspect.activatedWallet,
       ).getCoinVoBySymbolAndCoinType(_selectedToken.symbol, _selectedToken.coinType);
       if (coinVo != null) {
-        return FormatUtil.coinBalanceByDecimal(coinVo, 6);
+        return FormatUtil.coinBalanceByDecimalStr(coinVo, 6);
       } else {
         print('getCoinVoBySymbolAndCoinType null');
         return '0';

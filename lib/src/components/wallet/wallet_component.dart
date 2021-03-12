@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
@@ -277,6 +278,17 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
       }
     }
     return null;
+  }
+
+  Decimal getBalanceBySymbolAndCoinType(String symbol, int coinType) {
+    if (this.activatedWallet != null) {
+      for (var coin in this.activatedWallet.coins) {
+        if (coin.symbol == symbol && coin.coinType == coinType) {
+          return FormatUtil.coinBalanceByDecimal(coin);
+        }
+      }
+    }
+    return Decimal.zero;
   }
 
   CoinViewVo getCoinVoOfHyn() {

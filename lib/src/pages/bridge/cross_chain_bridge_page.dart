@@ -253,7 +253,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       aspect: WalletAspect.activatedWallet,
     ).getCoinVoBySymbolAndCoinType(_currentToken.symbol, chainType);
     if (coinVo != null) {
-      return FormatUtil.coinBalanceByDecimal(coinVo, 6);
+      return FormatUtil.coinBalanceByDecimalStr(coinVo, 6);
     } else {
       return '0';
     }
