@@ -877,15 +877,9 @@ class HomePanelState extends State<HomePanel> {
             ),
             GestureDetector(
               onTap: () {
-                // var scanStr = FluroConvertUtils.fluroCnParamsEncode('http://10.10.1.129:3000');
-                var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://ht.mdex.com/#/swap');
-                // var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://hpool.mdex.com/#/menu/');
-                Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr&defaultCoin=${CoinType.HB_HT.toString()}&title=MDEX");
-                // var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://app.uniswap.org/#/');
-                // Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr&defaultCoin=${CoinType.ETHEREUM.toString()}&title=Uniswap");
-                // UiUtil.showScanImagePickerSheet(context, callback: (String text) {
-                //   _parseText(text);
-                // });
+                UiUtil.showScanImagePickerSheet(context, callback: (String text) {
+                  _parseText(text);
+                });
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 24.0, right: 24),
@@ -1094,7 +1088,7 @@ class HomePanelState extends State<HomePanel> {
       }
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
       scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
-      Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr");
+      Application.router.navigateTo(context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
     } else {
       Application.router.navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
     }

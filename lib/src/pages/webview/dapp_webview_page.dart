@@ -125,7 +125,7 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
                       ))),
                   PopupMenuButton(
                     offset: Offset(0, 45),
-                    icon: Icon(Icons.more_vert),
+                    icon: Icon(Icons.more_horiz),
                     itemBuilder: (BuildContext context) => <PopupMenuItem<int>>[
                       PopupMenuItem(
                         value: 1,
