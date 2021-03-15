@@ -54,6 +54,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   AtlasApi _atlasApi = AtlasApi();
 
   BuildContext dialogContext;
+  bool isProcessing = false;
 
   @override
   void initState() {
@@ -559,6 +560,9 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       child: ClickOvalButton(
         S.of(context).confirm,
         () async {
+          if (isProcessing) {
+            return;
+          }
           if (_formKey.currentState.validate()) {
             await _operate();
           } else {
@@ -569,6 +573,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         width: 300,
         fontSize: 14,
         fontWeight: FontWeight.bold,
+        isDisable: isProcessing,
         btnColor: [
           HexColor("#F7D33D"),
           HexColor("#E7C01A"),
@@ -578,12 +583,18 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   }
 
   ///only support atlas-heco now
-  _operate() {
+  _operate() async {
+    setState(() {
+      isProcessing = true;
+    });
     if (_fromChain == CoinType.HYN_ATLAS) {
-      _lockTokens();
+      await _lockTokens();
     } else {
-      _burnTokens(_fromChain);
+      await _burnTokens(_fromChain);
     }
+    setState(() {
+      isProcessing = false;
+    });
   }
 
   ///Lock tokens on ATLAS
@@ -602,6 +613,14 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     if (pwd == null) {
       return;
     }
+
+    UiUtil.showLoadingDialog(
+      context,
+      '处理中...',
+      (context) {
+        dialogContext = context;
+      },
+    );
 
     try {
       String rawTxHash;
@@ -637,6 +656,9 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     } catch (e) {
       LogUtil.toastException(e);
     }
+    if (dialogContext != null) {
+      Navigator.pop(dialogContext);
+    }
   }
 
   ///To unlock tokens on ATLAS, burn tokens on other chain.
@@ -653,6 +675,15 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       if (pwd == null) {
         return;
       }
+
+      UiUtil.showLoadingDialog(
+        context,
+        '处理中...',
+        (context) {
+          dialogContext = context;
+        },
+      );
+
       String rawTxHash;
       try {
         rawTxHash = await _hbApi.postBridgeBurnToken(
@@ -669,6 +700,9 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       } catch (e) {
         LogUtil.toastException(e);
       }
+      if (dialogContext != null) {
+        Navigator.pop(dialogContext);
+      }
     }
   }
 
@@ -681,10 +715,6 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   ) async {
     var ownerAddress = wallet?.wallet?.getEthAccount()?.address ?? '';
     try {
-      UiUtil.showLoadingDialog(context, '提交中...', (context) {
-        dialogContext = context;
-      });
-
       var data = await _atlasApi.postBridgetApply(
         walletAddress: ownerAddress,
         tokenAddress: tokenAddress,
@@ -693,9 +723,6 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         rawTxHash: rawTxHash,
       );
 
-      if (dialogContext != null) {
-        Navigator.pop(dialogContext);
-      }
       if (data != null) {
         _submitFinish();
       } else {

@@ -340,7 +340,7 @@ class UiUtil {
     bool isScrollControlled = false,
     List<Widget> actions,
     bool isDismissible = true,
-      }) {
+  }) {
     return showModalBottomSheet<T>(
         isDismissible: isDismissible,
         context: context,
@@ -1160,7 +1160,6 @@ class UiUtil {
           );
         });
   }
-
 }
 
 typedef ImageCallback = void Function(String text);
