@@ -125,6 +125,9 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
       initialUrl: widget.initUrl,
       initialHeaders: {},
       initialOptions: InAppWebViewGroupOptions(
+        android: AndroidInAppWebViewOptions(
+            useShouldInterceptRequest: false,
+        )
 //        inAppWebViewOptions: InAppWebViewOptions(
 //        debuggingEnabled: true,)
           ),
