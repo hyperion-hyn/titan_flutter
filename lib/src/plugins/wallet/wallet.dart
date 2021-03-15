@@ -333,20 +333,7 @@ class Wallet {
     if (responseMap['error'] != null) {
       var errorEntity = responseMap['error'];
       throw RPCError(errorEntity['code'], errorEntity['message'], "");
-    }/* else if (responseMap['result'] != null) {
-      // 本地记录ethereum pending
-      if (coinType == CoinType.ETHEREUM) {
-        await Injector.of(Keys.rootKey.currentContext).transactionInteractor.insertTransactionDB(
-            responseMap['result'],
-            toAddress,
-            value,
-            gasPrice,
-            gasLimit,
-            LocalTransferType.LOCAL_TRANSFER_ETH,
-            nonce,
-            optType: optType);
-      }
-    }*/
+    }
 
     return responseMap['result'];
   }

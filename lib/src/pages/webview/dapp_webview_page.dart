@@ -336,7 +336,6 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
     controller.addJavaScriptHandler(
         handlerName: "enable",
         callback: (data) async {
-          print("TODO !!!!enable $data");
           if (hadEnable) {
             return;
           }
@@ -358,7 +357,6 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
     controller.addJavaScriptHandler(
         handlerName: "processTransaction",
         callback: (data) async {
-          print("TODO !!!!processTransaction $data");
           int callbackId = data[0];
           try {
             String to = data[1] == null ? null : data[1].toString();
@@ -469,7 +467,6 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
     controller.addJavaScriptHandler(
         handlerName: "processSignTransaction",
         callback: (data) async {
-          print("TODO !!!!processSignTransaction $data");
           int callbackId = data[0];
           try {
             String to = data[1] == null ? null : data[1].toString();

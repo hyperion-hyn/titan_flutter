@@ -391,6 +391,12 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
       context,
       WalletModelUtil.wallet,
     );
+    if(password == null || password.isEmpty){
+      setState(() {
+
+      });
+      return;
+    }
     await widget.entity.confirmAction(password, _gasPrice);
   }
 }
