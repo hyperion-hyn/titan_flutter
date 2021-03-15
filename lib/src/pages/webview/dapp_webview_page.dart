@@ -477,9 +477,12 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
         });
 
 
+    // 1. 获取signData
     var contents = await loadSignTypedJsonData();
     var callbackMsg = await TitanPlugin.signTypedMessage(contents);
     print("TODO !!!!processTransaction, callbackMsg: $callbackMsg");
+
+    // todo: 2. 钱包签名数据， wallet.signTransaction
   }
 
   Future<Map<String, dynamic>> loadSignTypedJsonData() async {
