@@ -1,8 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'system_config_entity.g.dart';
-
-@JsonSerializable()
 class SystemConfigEntity extends Object {
   @JsonKey(name: 'ethTransferGasLimit')
   int ethTransferGasLimit = 21000;
@@ -40,6 +37,9 @@ class SystemConfigEntity extends Object {
   @JsonKey(name: 'collectHalfMap3NodeGasLimit')
   int collectHalfMap3NodeGasLimit = 150000;
 
+  @JsonKey(name: 'emptyDefaultGasLimit')
+  int emptyDefaultGasLimit = 100000;
+
   @JsonKey(name: 'canShareMap3Node')
   bool canShareMap3Node = true;
 
@@ -68,6 +68,7 @@ class SystemConfigEntity extends Object {
     this.collectMap3NodeCreatorGasLimit,
     this.collectMap3NodePartnerGasLimit,
     this.collectHalfMap3NodeGasLimit,
+    this.emptyDefaultGasLimit,
     this.canShareMap3Node,
     this.canCheckMap3Node,
     this.canCheckMap3NodeCount,
@@ -82,3 +83,48 @@ class SystemConfigEntity extends Object {
 
   Map<String, dynamic> toJson() => _$SystemConfigEntityToJson(this);
 }
+
+SystemConfigEntity _$SystemConfigEntityFromJson(Map<String, dynamic> json) {
+  return SystemConfigEntity(
+    json['ethTransferGasLimit'] as int ?? 21000,
+    json['erc20TransferGasLimit'] as int ?? 65000,
+    json['erc20ApproveGasLimit'] as int ?? 50000,
+    json['createMap3NodeGasLimit'] as int ?? 560000,
+    json['delegateMap3NodeGasLimit'] as int ?? 700000,
+    json['collectMap3NodeCreatorGasLimit81'] as int ?? 2800000,
+    json['collectMap3NodeCreatorGasLimit61'] as int ?? 2100000,
+    json['collectMap3NodeCreatorGasLimit41'] as int ?? 1500000,
+    json['collectMap3NodeCreatorGasLimit21'] as int ?? 800000,
+    json['collectMap3NodeCreatorGasLimit'] as int ?? 800000,
+    json['collectMap3NodePartnerGasLimit'] as int ?? 80000,
+    json['collectHalfMap3NodeGasLimit'] as int ?? 150000,
+    json['emptyDefaultGasLimit'] as int ?? 100000,
+    json['canShareMap3Node'] as bool ?? true,
+    json['canCheckMap3Node'] as bool ?? true,
+    json['canCheckMap3NodeCount'] as int ?? 1,
+    json['isOpenReStakingReward'] as bool ?? false,
+    json['collectRpTransmitGasLimit'] as int ?? 5000000,
+  );
+}
+
+Map<String, dynamic> _$SystemConfigEntityToJson(SystemConfigEntity instance) =>
+    <String, dynamic>{
+      'ethTransferGasLimit': instance.ethTransferGasLimit,
+      'erc20TransferGasLimit': instance.erc20TransferGasLimit,
+      'erc20ApproveGasLimit': instance.erc20ApproveGasLimit,
+      'createMap3NodeGasLimit': instance.createMap3NodeGasLimit,
+      'delegateMap3NodeGasLimit': instance.delegateMap3NodeGasLimit,
+      'collectMap3NodeCreatorGasLimit81': instance.collectMap3NodeCreatorGasLimit81,
+      'collectMap3NodeCreatorGasLimit61': instance.collectMap3NodeCreatorGasLimit61,
+      'collectMap3NodeCreatorGasLimit41': instance.collectMap3NodeCreatorGasLimit41,
+      'collectMap3NodeCreatorGasLimit21': instance.collectMap3NodeCreatorGasLimit21,
+      'collectMap3NodeCreatorGasLimit': instance.collectMap3NodeCreatorGasLimit,
+      'collectMap3NodePartnerGasLimit': instance.collectMap3NodePartnerGasLimit,
+      'collectHalfMap3NodeGasLimit': instance.collectHalfMap3NodeGasLimit,
+      'emptyDefaultGasLimit': instance.emptyDefaultGasLimit,
+      'canShareMap3Node': instance.canShareMap3Node,
+      'canCheckMap3Node': instance.canCheckMap3Node,
+      'canCheckMap3NodeCount': instance.canCheckMap3NodeCount,
+      'isOpenReStakingReward': instance.isOpenReStakingReward,
+      'collectRpTransmitGasLimit': instance.collectRpTransmitGasLimit,
+    };

@@ -22,6 +22,7 @@ import 'package:titan/src/pages/mine/promote_qr_code_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -41,6 +42,12 @@ class HomePanel extends StatefulWidget {
 }
 
 class HomePanelState extends State<HomePanel> {
+
+  static const int DAPP_HECO_INDEX = 1;
+  static const int DAPP_ETH_INDEX = 2;
+  static const int DAPP_ATLAS_INDEX = 3;
+  var selectDappIndex = DAPP_HECO_INDEX;
+
   @override
   void initState() {
     super.initState();
@@ -83,6 +90,9 @@ class HomePanelState extends State<HomePanel> {
             child: _focusArea(context),
           ),
           SliverToBoxAdapter(
+            child: _dappView(),
+          ),
+          SliverToBoxAdapter(
             child: _dMap(),
           ),
         ],
@@ -91,6 +101,84 @@ class HomePanelState extends State<HomePanel> {
   }
 
   Widget _focusArea(context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 6, bottom: 20,left: 14, right: 14,),
+      padding: const EdgeInsets.only(top: 13, bottom: 13,),
+      decoration: BoxDecoration(
+        border: Border.all(color: DefaultColors.colorf2f2f2),
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => GlobalDataPage()));
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 13, right: 13,),
+                child: Row(
+                  children: [
+                    Image.asset(
+                        "res/drawable/ic_home_panel_data_display.png",width: 18,height: 18,
+                      ),
+                    SizedBox(width: 6,),
+                    Text("数据展示"),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: InkWell(
+              onTap:(){
+                Application.router.navigateTo(context, Routes.contribute_tasks_list);
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 13, right: 13,),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      "res/drawable/ic_home_panel_data_contribution.png",width: 18,height: 18,
+                    ),
+                    SizedBox(width: 6,),
+                    Text("数据贡献"),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: InkWell(
+              onTap: (){
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => WebViewContainer(
+                          initUrl: S.of(context).hyperion_project_intro_url,
+                          title: S.of(context).Hyperion,
+                        )));
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 13, right: 13,),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      "res/drawable/ic_home_panel_hyperion.png",width: 18,height: 18,
+                    ),
+                    SizedBox(width: 6,),
+                    Text("海伯利安"),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _focusAreaOld(context) {
 
     var colors = SupportedTheme.defaultBtnColors(context);
 
@@ -329,6 +417,158 @@ class HomePanelState extends State<HomePanel> {
     );
   }*/
 
+  Widget _dappView(){
+    return Padding(
+      padding: const EdgeInsets.only(left:14.0,right: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("DApp",style: TextStyles.textC333S16bold,),
+          Row(
+            children: [
+              _dappSelectTab("HECO",DAPP_HECO_INDEX),
+              Padding(
+                padding: const EdgeInsets.only(left:35.0,right: 35),
+                child: _dappSelectTab("ETH",DAPP_ETH_INDEX),
+              ),
+              _dappSelectTab("ATLAS",DAPP_ATLAS_INDEX),
+            ],
+          ),
+          if(selectDappIndex == DAPP_HECO_INDEX)
+            InkWell(
+              onTap: (){
+                var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://ht.mdex.com/#/swap');
+                Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr&defaultCoin=${CoinType.HB_HT.toString()}&title=MDEX");
+              },
+              child: Container(
+                padding: const EdgeInsets.only(left:24.0,right: 24,top: 21,bottom: 21),
+                decoration: BoxDecoration(
+                  color: HexColor("#140d25b9"),
+                  borderRadius: BorderRadius.all(Radius.circular(8))
+                ),
+                child: Row(
+                  children: [
+                    Image.asset("res/drawable/ic_home_panel_dapp_heco.png",width: 36,height: 36,),
+                    SizedBox(width: 10,),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("MDEX",style: TextStyles.textC333S14bold,),
+                          Text("Heco生态币种交易 多快好省就选MDEX.COM",style: TextStyles.textC999S12),
+                      ],),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          if(selectDappIndex == DAPP_ETH_INDEX)
+            InkWell(
+            onTap: (){
+              var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://app.uniswap.org/#/');
+              Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr&defaultCoin=${CoinType.ETHEREUM.toString()}&title=Uniswap");
+            },
+            child: Container(
+              padding: const EdgeInsets.only(left:24.0,right: 24,top: 21,bottom: 21),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  HexColor("#CA05E7"),
+                  HexColor("#F61B98"),
+                ]),
+                  color: HexColor("#140d25b9"),
+                  borderRadius: BorderRadius.all(Radius.circular(8))
+              ),
+              child: Row(
+                children: [
+                  Image.asset("res/drawable/ic_home_panel_dapp_uniswap.png",width: 36,height: 36,),
+                  SizedBox(width: 10,),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("UNISWAP",style: TextStyles.textC333S14bold,),
+                        Text("去中心化交易协议",style: TextStyles.textC999S12),
+                      ],),
+                  )
+                ],
+              ),
+            ),
+          ),
+          if(selectDappIndex == DAPP_ATLAS_INDEX)
+            InkWell(
+            onTap: () {
+              var entryRouteName = Uri.encodeComponent(Routes.red_pocket_page);
+
+              Application.router.navigateTo(
+                  context,
+                  Routes.red_pocket_page +
+                      "?entryRouteName=$entryRouteName");
+            },
+            child: Container(
+              padding: const EdgeInsets.only(left:24.0,right: 24,top: 21,bottom: 21),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0),
+                color: HexColor('#FFFFEDED'),
+              ),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'res/drawable/ic_wallet_image_rp_hrc30.png',
+                    width: 36,
+                    height: 36,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(S.of(context).red_pocket,style: TextStyles.textC333S14bold,),
+                        Text("拆红包，攒RP，与朋友圈分享更多空投奖励",style: TextStyles.textC999S12),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _dappSelectTab(String title,int selectIndex){
+    return InkWell(
+      onTap: (){
+        selectDappIndex = selectIndex;
+        setState(() {
+
+        });
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top:20.0,bottom: 20),
+        child: Column(
+          children: [
+            Text(title,style: selectDappIndex == selectIndex ? TextStyles.textC333S14bold : TextStyles.textC999S14,),
+            SizedBox(height: 6,),
+            if(selectDappIndex == selectIndex)
+              Container(
+                height: 2,
+                width: 20,
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [
+                      HexColor("#E7C01A"),
+                      HexColor("#F7D33D"),
+                    ])
+                ),
+              )
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _dMap() {
     return Padding(
       padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -337,83 +577,6 @@ class HomePanelState extends State<HomePanel> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 16,
-              bottom: 16,
-            ),
-            child: Text(
-              'HRC 30',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 17,
-              ),
-            ),
-          ),
-          Text(
-            S.of(context).application_class,
-            style: TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          InkWell(
-            onTap: () {
-              var entryRouteName = Uri.encodeComponent(Routes.red_pocket_page);
-
-              Application.router.navigateTo(
-                 context,
-                 Routes.red_pocket_page +
-                     "?entryRouteName=$entryRouteName");
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                color: HexColor('#FFFFEDED'),
-              ),
-              padding: EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(
-                      'res/drawable/ic_wallet_image_rp_hrc30.png',
-                      width: 40,
-                      height: 40,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          S.of(context).red_pocket,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 4,
-                        ),
-                        Text(
-                          S.of(context).world_first_hrc30_structure_example,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: DefaultColors.color999,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.only(top: 24, bottom: 16),
             child: Text(

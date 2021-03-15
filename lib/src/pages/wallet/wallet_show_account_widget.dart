@@ -815,6 +815,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
             }
           } catch (e, stack) {
             print("!!!!!  $e  $stack");
+            LogUtil.uploadException(e,"Eth coin type insert");
           }
         }
       }

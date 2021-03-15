@@ -339,8 +339,10 @@ class UiUtil {
     bool enableDrag = true,
     bool isScrollControlled = false,
     List<Widget> actions,
-  }) {
+    bool isDismissible = true,
+      }) {
     return showModalBottomSheet<T>(
+        isDismissible: isDismissible,
         context: context,
         enableDrag: enableDrag,
         isScrollControlled: isScrollControlled,
@@ -1084,7 +1086,7 @@ class UiUtil {
                     showCamera: true,
                     cropConfig: null,
                     compressSize: 500,
-                    uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
+                    uiConfig: UIConfig(uiThemeColor: Color(0xffF7D33D)),
                   );
 
                   if (tempListImagePaths != null && tempListImagePaths.length == 1) {

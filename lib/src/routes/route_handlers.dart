@@ -47,6 +47,7 @@ import 'package:titan/src/pages/wallet/wallet_new_page/wallet_setting_page_v2.da
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_hb_widget.dart';
 import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
+import 'package:titan/src/pages/webview/dapp_webview_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -112,6 +113,18 @@ var toolsPageWebviewHandler = Handler(handlerFunc: (context, params) {
   }
   return InAppWebViewContainer(
       initUrl: webUrl, title: FluroConvertUtils.fluroCnParamsDecode(params['title']?.first));
+});
+
+var toolsPageDappWebviewHandler = Handler(handlerFunc: (context, params) {
+  String webUrl = FluroConvertUtils.fluroCnParamsDecode(params['initUrl']?.first);
+  var language = SettingInheritedModel.of(Keys.rootKey.currentContext).netLanguageCode;
+  if (!webUrl.contains("?")) {
+    webUrl = webUrl + "?lang=$language";
+  } else {
+    webUrl = webUrl + "&lang=$language";
+  }
+  return DAppWebViewPage(
+      initUrl: webUrl, title: params['title']?.first, defaultCoin: int.parse(params['defaultCoin']?.first),);
 });
 
 var toolsPageQrcodeHandler = Handler(handlerFunc: (context, params) {

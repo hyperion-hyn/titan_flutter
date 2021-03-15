@@ -20,6 +20,9 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/wallet/model/transaction_info_vo.dart';
+import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
+import 'package:titan/src/pages/webview/dapp_authorization_dialog_page.dart';
+import 'package:titan/src/pages/webview/dapp_send_dialog_page.dart';
 import 'package:titan/src/pages/wallet/wallet_gas_setting_page.dart';
 import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -91,6 +94,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
 
   bool get _isBbcOrEth => (CoinType.BITCOIN == _coinType || CoinType.ETHEREUM == _coinType);
 
+  bool get _isHt => (CoinType.HB_HT == _coinType);
+
   String get _baseUnit {
     var baseUnit = widget.coinVo.symbol;
 
@@ -118,6 +123,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
 
   String get _quoteSign => _activatedQuoteSign?.legal?.sign ?? '';
 
+  Decimal _gasPriceHt = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+
   Decimal get _gasPrice {
     var gasPrice = _selectedGasPrice;
 
@@ -140,7 +147,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     }
     // 3.HB
     else if (widget.coinVo.coinType == CoinType.HB_HT) {
-      gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+      gasPrice = _gasPriceHt;
     }
 
     return gasPrice;
@@ -373,6 +380,17 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
   }
 
   void _initLastData() async {
+
+    if (_isHt) {
+      var gasPriceHt = await WalletUtil.ethGasPrice(widget.coinVo.coinType);
+
+      _gasPriceHt = Decimal.tryParse(gasPriceHt.toString())??Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
+
     if (!_isBbcOrEth) return;
 
     if (_isBTC) {
@@ -1027,6 +1045,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         gasUnit: _baseUnit,
         gasPrice: _gasPrice,
       );
+
     }
   }
 

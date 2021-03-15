@@ -900,11 +900,26 @@ class AtlasApi {
         type == MessageType.typeTerminateMap3Return);
   }
 
+  static bool isWithdrawStakeHyn(HynTransferHistory hynTransferHistory) {
+    if(hynTransferHistory.callInternalTrans != null && hynTransferHistory.callInternalTrans.length > 0){
+      return true;
+    }
+    return false;
+  }
+
   static double getTransferBillAmount(HynTransferHistory hynTransferHistory) {
     var amountStr = (Decimal.parse(hynTransferHistory.payload.amount) +
             Decimal.parse(hynTransferHistory.payload.reward))
         .toString();
     return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(amountStr)).toDouble();
+  }
+
+  static double getWithdrawStakeHynAmount(HynTransferHistory hynTransferHistory) {
+    BigInt amount;
+    hynTransferHistory.callInternalTrans.forEach((element) {
+      amount = amount + BigInt.parse(element.value);
+    });
+    return ConvertTokenUnit.weiToEther(weiBigInt: amount).toDouble();
   }
 
   static bool isTransferMap3Atlas(int type) {

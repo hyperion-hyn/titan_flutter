@@ -59,6 +59,7 @@ class TransactionDetailVo {
   TransferPayload payload;
   @JsonKey(name: 'internal_trans')
   List<InternalTransactions> internalTransactions;
+  List<Call_internal_trans> callInternalTrans;
 
   //加速，取消相关
   int speedUpTimes = 0;
@@ -95,6 +96,7 @@ class TransactionDetailVo {
     this.logsDecoded,
     this.payload,
     this.internalTransactions,
+    this.callInternalTrans,
     this.speedUpTimes,
     this.cancelTimes,
     this.lastOptType,
@@ -209,6 +211,7 @@ class TransactionDetailVo {
       logsDecoded: hynTransferHistory.logsDecoded,
       payload: hynTransferHistory.payload,
       internalTransactions: hynTransferHistory.internalTransactions,
+      callInternalTrans: hynTransferHistory.callInternalTrans,
     );
   }
 
@@ -244,6 +247,7 @@ class TransactionDetailVo {
       logsDecoded: hynTransferHistory.logsDecoded,
       payload: hynTransferHistory.payload,
       internalTransactions: hynTransferHistory.internalTransactions,
+      callInternalTrans: hynTransferHistory.callInternalTrans,
     );
   }
 

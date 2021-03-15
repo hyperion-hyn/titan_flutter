@@ -48,7 +48,7 @@ class _GlobalDataState extends State<GlobalDataPage> {
         length: 3,
         child: Scaffold(
           appBar: BaseAppBar(
-            baseTitle: S.of(context).my_nodes,
+            baseTitle: "数据展示",
           ),
           body: Scaffold(
             appBar: PreferredSize(
