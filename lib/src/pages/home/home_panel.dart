@@ -465,7 +465,7 @@ class HomePanelState extends State<HomePanel> {
           if(selectDappIndex == DAPP_ETH_INDEX)
             InkWell(
             onTap: (){
-              var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://app.uniswap.org/#/');
+              var scanStr = FluroConvertUtils.fluroCnParamsEncode('http://uniswap.defiplot.com/#/swap');
               Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr&defaultCoin=${CoinType.ETHEREUM.toString()}&title=Uniswap");
             },
             child: Container(
