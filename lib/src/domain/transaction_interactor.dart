@@ -1,5 +1,6 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
@@ -10,6 +11,7 @@ import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:web3dart/credentials.dart';
 
@@ -18,8 +20,8 @@ class TransactionInteractor {
 
   TransactionInteractor(this.repository);
 
-  Future<bool> insertTransactionDB(
-      String hash, String toAddress, BigInt value, BigInt gasPrice, int gasLimit, int transType, int nonce,
+  Future<bool> insertTransactionDB(String hash, String toAddress, BigInt value, BigInt gasPrice,
+      int gasLimit, int transType, int nonce,
       {int optType, contractAddress}) async {
     WalletViewVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
     String fromAddress = walletVo.wallet.getEthAccount().address;
@@ -31,7 +33,8 @@ class TransactionInteractor {
     var symbol;
     double amount;
     int decimal;
-    if (transType == LocalTransferType.LOCAL_TRANSFER_ETH || transType == LocalTransferType.LOCAL_TRANSFER_MAP3) {
+    if (transType == LocalTransferType.LOCAL_TRANSFER_ETH ||
+        transType == LocalTransferType.LOCAL_TRANSFER_MAP3) {
       symbol = "ETH";
       amount = ConvertTokenUnit.weiToDecimal(BigInt.parse(value.toString())).toDouble();
     } else if (transType == LocalTransferType.LOCAL_TRANSFER_ERC20) {
@@ -61,12 +64,14 @@ class TransactionInteractor {
         fromAddress: fromAddress,
         contractAddress: contractAddress);
     // await repository.transferHistoryDao.insertOrUpdate(transactionDetailVo);
-    return repository.transferHistoryDao.insertTransaction(transactionDetailVo, transType, contractAddress);
+    return repository.transferHistoryDao
+        .insertTransaction(transactionDetailVo, transType, contractAddress);
   }
 
   Future<List<TransactionDetailVo>> getLocalPendingTransactions(
       String fromAddress, int localTransferType, String erc20Address) {
-    return repository.transferHistoryDao.getTransactions(fromAddress, localTransferType, erc20Address);
+    return repository.transferHistoryDao
+        .getTransactions(fromAddress, localTransferType, erc20Address);
   }
 
   // Future<TransactionDetailVo> getShareTransaction(int type, bool isAll, {String contractAddress}) async {
@@ -88,7 +93,8 @@ class TransactionInteractor {
     var _ethAddress = fromAddress;
     if (_ethAddress != null) {
       if (nextNonce > 0) {
-        return _confirmTransactionOfNonce(_ethAddress, localTransferType, erc20Address, nextNonce - 1);
+        return _confirmTransactionOfNonce(
+            _ethAddress, localTransferType, erc20Address, nextNonce - 1);
       }
     }
     return false;
@@ -101,7 +107,8 @@ class TransactionInteractor {
       final client = WalletUtil.getWeb3Client(CoinType.ETHEREUM);
       var nextNonce = await client.getTransactionCount(EthereumAddress.fromHex(_ethAddress));
       if (nextNonce > 0) {
-        return _confirmTransactionOfNonce(_ethAddress, localTransferType, erc20Address, nextNonce - 1);
+        return _confirmTransactionOfNonce(
+            _ethAddress, localTransferType, erc20Address, nextNonce - 1);
       }
     }
     return false;
@@ -116,8 +123,8 @@ class TransactionInteractor {
     // if (int.parse(nonce) >= int.parse(tranEntity.nonce)) {
     //   repository.transferHistoryDao.deleteSameNonce();
     // }
-    return repository.transferHistoryDao
-        .deleteTransactionSmallOrEqualThanNonce(fromAddress, localTransferType, erc20Address, nonce);
+    return repository.transferHistoryDao.deleteTransactionSmallOrEqualThanNonce(
+        fromAddress, localTransferType, erc20Address, nonce);
   }
 
   Future<String> showPasswordDialog(BuildContext context) async {
@@ -129,23 +136,27 @@ class TransactionInteractor {
     return password;
   }
 
-  Future<String> cancelTransaction(BuildContext context, TransactionDetailVo vo, String password) async {
+  Future<String> cancelTransaction(
+      BuildContext context, TransactionDetailVo vo, String password) async {
     // var amount = ConvertTokenUnit.etherToWei(etherDouble: 0);
     return _replaceTransaction(context, vo, password, OptType.CANCEL);
   }
 
-  Future<String> speedUpTransaction(BuildContext context, TransactionDetailVo vo, String password) async {
+  Future<String> speedUpTransaction(
+      BuildContext context, TransactionDetailVo vo, String password) async {
     // var amount = ConvertTokenUnit.etherToWei(etherDouble: vo.amount);
     return _replaceTransaction(context, vo, password, OptType.SPEED_UP);
   }
 
-  Future<String> _replaceTransaction(
-      BuildContext context, TransactionDetailVo transactionDetailVo, String password, int optType) async {
-    var gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).ethGasPriceRecommend;
+  Future<String> _replaceTransaction(BuildContext context, TransactionDetailVo transactionDetailVo,
+      String password, int optType) async {
+    var gasPriceRecommend =
+        WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).ethGasPriceRecommend;
     var walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
 
+    Decimal originalGasPrice = Decimal.parse(transactionDetailVo.gasPrice);
     Decimal maxGasPrice = gasPriceRecommend.fast;
-    Decimal speedGasPrice = Decimal.parse(transactionDetailVo.gasPrice) * Decimal.parse("1.1");
+    Decimal speedGasPrice = originalGasPrice * Decimal.parse("1.1");
     Decimal resultGasPrice;
     if (speedGasPrice < maxGasPrice) {
       resultGasPrice = maxGasPrice;
@@ -154,14 +165,34 @@ class TransactionInteractor {
     }
 
     double amount = optType == OptType.SPEED_UP ? transactionDetailVo.amount : 0;
+
     if (transactionDetailVo.localTransferType == LocalTransferType.LOCAL_TRANSFER_ETH) {
-      var txHash = await walletVo.wallet.sendTransaction(CoinType.ETHEREUM,
-          optType: optType,
-          password: password,
-          value: ConvertTokenUnit.etherToWei(etherDouble: amount),
-          toAddress: transactionDetailVo.toAddress,
-          gasPrice: BigInt.parse(resultGasPrice.toString()),
-          nonce: int.parse(transactionDetailVo.nonce));
+      var gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+          .systemConfigEntity
+          .ethTransferGasLimit;
+
+      var resultGasFeeByEther = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((resultGasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+
+      Decimal balance = WalletInheritedModel.of(context).getBalanceBySymbolAndCoinType(
+        'ETH',
+        CoinType.ETHEREUM,
+      );
+
+      if (Decimal.parse('$amount') + resultGasFeeByEther > balance) {
+        amount = double.parse('${balance - resultGasFeeByEther}');
+      }
+
+      var txHash = await walletVo.wallet.sendTransaction(
+        CoinType.ETHEREUM,
+        optType: optType,
+        password: password,
+        value: ConvertTokenUnit.etherToWei(etherDouble: amount),
+        toAddress: transactionDetailVo.toAddress,
+        gasPrice: BigInt.parse(resultGasPrice.toString()),
+        nonce: int.parse(transactionDetailVo.nonce),
+        gasLimit: gasLimit,
+      );
       logger.i('ETH交易已提交，交易nonce ${transactionDetailVo.nonce}, hash $txHash');
       return txHash;
     } else if (transactionDetailVo.localTransferType == LocalTransferType.LOCAL_TRANSFER_ERC20) {

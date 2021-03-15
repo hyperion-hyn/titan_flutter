@@ -8,6 +8,8 @@ class HecoGasLimit {
   static const int TRANSFER = 21000;
   static const int HRC20_TRANSFER = 60000;
   static const int HRC20_APPROVE = 50000;
+
+  static const int BRIDGE_CONTRACT_BURN_TOKEN_CALL = 100000;
 }
 
 class HecoGasPrice {
@@ -23,7 +25,8 @@ class HecoGasPrice {
 enum HecoChainType { mainnet, test }
 
 class HecoConfig {
-  static HecoChainType chainType = env.buildType == BuildType.DEV ? HecoChainType.test : HecoChainType.mainnet;
+  static HecoChainType chainType =
+      env.buildType == BuildType.DEV ? HecoChainType.test : HecoChainType.mainnet;
 
   static String getUsdtErc20Address() {
     switch (HecoConfig.chainType) {
@@ -31,6 +34,26 @@ class HecoConfig {
         return DefaultTokenDefine.HUSDT.contractAddress;
       case HecoChainType.test:
         return DefaultTokenDefine.HUSDT_TEST.contractAddress;
+    }
+    return '';
+  }
+
+  static String get hynContractAddress {
+    switch (chainType) {
+      case HecoChainType.mainnet:
+        return DefaultTokenDefine.HYN_HECO.contractAddress;
+      case HecoChainType.test:
+        return DefaultTokenDefine.HYN_HECO_TEST.contractAddress;
+    }
+    return '';
+  }
+
+  static String get burnTokenContractAddress {
+    switch (chainType) {
+      case HecoChainType.mainnet:
+        return '0x9324e2BD211624F36119887664f2918605232eB6';
+      case HecoChainType.test:
+        return '0xA99Dd6fb2E6D97e3A2AFCb5ac1699693e4B2E6A6';
     }
     return '';
   }
@@ -66,8 +89,8 @@ class HecoRpcProvider {
 class HecoExplore {
   static String MAIN_SCAN_API = 'https://heco-api.hyn.space';
   static String TEST_SCAN_API = 'http://heco-api.test.hyn.space';
-  static String MAIN_SCAN_WEB = 'https://scan.hecochain.com';
-  static String TEST_SCAN_WEB = 'https://scan-testnet.hecochain.com';
+  static String MAIN_SCAN_WEB = 'https://hecoinfo.com/';
+  static String TEST_SCAN_WEB = 'https://testnet.hecoinfo.com/';
 
   static String get hecoScanApi {
     switch (HecoConfig.chainType) {

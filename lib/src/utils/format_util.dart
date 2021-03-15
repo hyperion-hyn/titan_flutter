@@ -174,11 +174,15 @@ class FormatUtil {
         .toString();
   }
 
-  static String coinBalanceByDecimal(CoinViewVo coinVo, int decimal) {
+  static String coinBalanceByDecimalStr(CoinViewVo coinVo, int decimal) {
     return truncateDecimalNum(
       ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0),
       decimal,
     );
+  }
+
+  static Decimal coinBalanceByDecimal(CoinViewVo coinVo) {
+    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0);
   }
 
   static String coinBalanceHumanReadFormat(CoinViewVo coinVo,

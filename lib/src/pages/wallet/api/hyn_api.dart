@@ -1,9 +1,15 @@
 import 'package:decimal/decimal.dart';
+import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/http/entity.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_http.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
@@ -14,6 +20,7 @@ import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as localWallet;
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -690,16 +697,16 @@ class HYNApi {
     return false;
   }
 
-  static bool isGasFeeEnough(BigInt gasPrice, int gasLimit, {BigInt stakingAmount}) {
-    var hynCoin = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbolAndCoinType(
+  static bool isGasFeeEnough(BigInt gasPrice, int gasLimit, {BigInt amount}) {
+    var hyn = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbolAndCoinType(
       DefaultTokenDefine.HYN_Atlas.symbol,
       CoinType.HYN_ATLAS,
     );
     var gasFees = gasPrice * BigInt.from(gasLimit);
-    if (stakingAmount == null) {
-      stakingAmount = BigInt.from(0);
+    if (amount == null) {
+      amount = BigInt.from(0);
     }
-    if ((hynCoin.balance - stakingAmount) < gasFees) {
+    if ((hyn.balance - amount) < gasFees) {
       Fluttertoast.showToast(
           msg: S.of(Keys.rootKey.currentContext).insufficient_gas_fee,
           gravity: ToastGravity.CENTER);
@@ -726,4 +733,93 @@ class HYNApi {
 //   });
 //   return assetToken;
 // }
+
+  ///Bridge
+  ///
+
+  Future<dynamic> postBridgeLockHYN({
+    BigInt amount,
+    String password = '',
+    WalletViewVo activeWallet,
+    int gasLimit = HyperionGasLimit.BRIDGE_CONTRACT_LOCK_HYN_CALL,
+  }) async {
+    var address = activeWallet?.wallet?.getAtlasAccount()?.address ?? '';
+    var txHash = await activeWallet.wallet.signBridgeLockHYN(
+      address,
+      password,
+      lockAmount: amount,
+      gasLimit: gasLimit,
+    );
+
+    if (txHash == null) {
+      return;
+    } else {
+      return txHash;
+    }
+
+    // var responseMap = await WalletUtil.postToEthereumNetwork(
+    //   CoinType.HYN_ATLAS,
+    //   method: 'eth_sendRawTransaction',
+    //   params: [txHash],
+    // );
+  }
+
+  Future<dynamic> postBridgeLockToken({
+    String contractAddress,
+    BigInt amount,
+    String password = '',
+    WalletViewVo activeWallet,
+  }) async {
+    var ownerAddress = activeWallet?.wallet?.getEthAccount()?.address ?? '';
+    var rawTxHash = await activeWallet.wallet.signBridgeLockToken(
+      contractAddress,
+      ownerAddress,
+      password,
+      amount: amount,
+    );
+    if (rawTxHash == null) {
+      throw HttpResponseCodeNotSuccess(
+        -30012,
+        'Insufficient Token balance',
+      );
+    }
+
+    return rawTxHash;
+
+
+
+    // var responseMap = await WalletUtil.postToEthereumNetwork(
+    //   CoinType.HYN_ATLAS,
+    //   method: 'eth_sendRawTransaction',
+    //   params: [rawTxHash],
+    // );
+    //
+    // print('$responseMap');
+  }
+
+  Future<String> postApprove({
+    String contractAddress,
+    String password = '',
+    BigInt amount,
+    WalletViewVo activeWallet,
+    int nonce,
+  }) async {
+    var wallet = activeWallet?.wallet;
+    var gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+        .systemConfigEntity
+        .erc20ApproveGasLimit;
+
+    var approveHex = await wallet.sendApproveErc20Token(
+      contractAddress: contractAddress,
+      approveToAddress: HyperionConfig.bridgeLockContractAddress,
+      amount: amount,
+      password: password,
+      gasPrice: HyperionGasPrice.getRecommend().fastBigInt,
+      gasLimit: gasLimit,
+      nonce: nonce,
+      coinType: CoinType.HYN_ATLAS,
+    );
+
+    return approveHex;
+  }
 }

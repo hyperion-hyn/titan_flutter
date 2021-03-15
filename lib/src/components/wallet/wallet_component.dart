@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
@@ -11,6 +12,8 @@ import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/bridge/entity/cross_chain_token.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -27,7 +30,8 @@ class WalletComponent extends SingleChildStatelessWidget {
     return RepositoryProvider(
       create: (ctx) => WalletRepository(),
       child: BlocProvider<WalletCmpBloc>(
-        create: (ctx) => WalletCmpBloc(walletRepository: RepositoryProvider.of<WalletRepository>(ctx)),
+        create: (ctx) =>
+            WalletCmpBloc(walletRepository: RepositoryProvider.of<WalletRepository>(ctx)),
         child: _WalletManager(child: child),
       ),
     );
@@ -52,6 +56,7 @@ class _WalletManagerState extends State<_WalletManager> {
   LegalSign _legalSign;
   GasPriceRecommend _ethGasPriceRecommend;
   GasPriceRecommend _btcGasPriceRecommend;
+  List<CrossChainToken> _crossChainTokenList = List();
 
   @override
   void initState() {
@@ -142,10 +147,13 @@ class _WalletManagerState extends State<_WalletManager> {
             ));
           }
         } else if (state is UpdateWalletExpandState) {
-          if(_activatedWallet != null) {
-            var newWallet = _activatedWallet.wallet.copyWith(Wallet(walletExpandInfoEntity: state.walletExpandInfoEntity));
+          if (_activatedWallet != null) {
+            var newWallet = _activatedWallet.wallet
+                .copyWith(Wallet(walletExpandInfoEntity: state.walletExpandInfoEntity));
             _activatedWallet = _activatedWallet.copyWith(WalletViewVo(wallet: newWallet));
           }
+        } else if (state is UpdateCrossChainTokenListState) {
+          _crossChainTokenList = state.crossChainTokenList;
         }
       },
       child: BlocBuilder<WalletCmpBloc, WalletCmpState>(
@@ -156,6 +164,7 @@ class _WalletManagerState extends State<_WalletManager> {
             activeLegal: _legalSign,
             ethGasPriceRecommend: _ethGasPriceRecommend,
             btcGasPriceRecommend: _btcGasPriceRecommend,
+            crossChainTokenList: _crossChainTokenList,
             child: widget.child,
           );
         },
@@ -197,6 +206,7 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
   final LegalSign activeLegal;
   final GasPriceRecommend ethGasPriceRecommend;
   final GasPriceRecommend btcGasPriceRecommend;
+  final List<CrossChainToken> crossChainTokenList;
 
   WalletInheritedModel({
     this.activatedWallet,
@@ -204,6 +214,7 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
     this.activeLegal,
     this.ethGasPriceRecommend,
     this.btcGasPriceRecommend,
+    this.crossChainTokenList,
     Key key,
     @required Widget child,
   }) : super(key: key, child: child);
@@ -269,6 +280,17 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
     return null;
   }
 
+  Decimal getBalanceBySymbolAndCoinType(String symbol, int coinType) {
+    if (this.activatedWallet != null) {
+      for (var coin in this.activatedWallet.coins) {
+        if (coin.symbol == symbol && coin.coinType == coinType) {
+          return FormatUtil.coinBalanceByDecimal(coin);
+        }
+      }
+    }
+    return Decimal.zero;
+  }
+
   CoinViewVo getCoinVoOfHyn() {
     if (this.activatedWallet != null) {
       for (var coin in this.activatedWallet.coins) {
@@ -278,6 +300,15 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
       }
     }
     return null;
+  }
+
+  List<CrossChainToken> getCrossChainTokenList() {
+    return crossChainTokenList.length > 0
+        ? crossChainTokenList
+        : [
+            CrossChainToken('HYN', '', ''),
+            CrossChainToken('RP', '', ''),
+          ];
   }
 
   @override
@@ -291,11 +322,14 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
 
   @override
   bool updateShouldNotifyDependent(WalletInheritedModel oldWidget, Set<WalletAspect> dependencies) {
-    return ((activatedWallet != oldWidget.activatedWallet && dependencies.contains(WalletAspect.activatedWallet)) ||
+    return ((activatedWallet != oldWidget.activatedWallet &&
+            dependencies.contains(WalletAspect.activatedWallet)) ||
         (quotesModel != oldWidget.quotesModel && dependencies.contains(WalletAspect.quote)) ||
         (activeLegal != oldWidget.activeLegal && dependencies.contains(WalletAspect.legal)) ||
-        ethGasPriceRecommend != oldWidget.ethGasPriceRecommend && dependencies.contains(WalletAspect.gasPrice) ||
-        btcGasPriceRecommend != oldWidget.btcGasPriceRecommend && dependencies.contains(WalletAspect.gasPrice));
+        ethGasPriceRecommend != oldWidget.ethGasPriceRecommend &&
+            dependencies.contains(WalletAspect.gasPrice) ||
+        btcGasPriceRecommend != oldWidget.btcGasPriceRecommend &&
+            dependencies.contains(WalletAspect.gasPrice));
   }
 
 // static Future<bool> saveQuoteSign(LegalSign quotesSign) {

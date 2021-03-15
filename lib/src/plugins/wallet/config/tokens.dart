@@ -56,12 +56,17 @@ class Tokens {
     } else if (coinType == CoinType.HB_HT) {
       switch (HecoConfig.chainType) {
         case HecoChainType.mainnet:
-          tokens.add(DefaultTokenDefine.HUSD);
+          //tokens.add(DefaultTokenDefine.HUSD);
           tokens.add(DefaultTokenDefine.HUSDT);
+          tokens.add(DefaultTokenDefine.HYN_HECO);
+          tokens.add(DefaultTokenDefine.RP_HECO);
           break;
         case HecoChainType.test:
-          tokens.add(DefaultTokenDefine.HUSD_TEST);
+          //tokens.add(DefaultTokenDefine.HUSD_TEST);
           tokens.add(DefaultTokenDefine.HUSDT_TEST);
+          tokens.add(DefaultTokenDefine.HYN_HECO_TEST);
+          tokens.add(DefaultTokenDefine.RP_HECO_TEST);
+
           break;
       }
     }
@@ -227,5 +232,37 @@ class DefaultTokenDefine {
     contractAddress: '0x04F535663110A392A6504839BEeD34E019FdB4E0',
     logo: 'res/drawable/ic_token_usdt.png',
     symbol: 'USDT',
+  );
+
+  static const HYN_HECO = const AssetToken(
+    name: "Heco HYN",
+    decimals: 18,
+    contractAddress: '0x3aC19481FAce71565155F370B3E34A1178745382',
+    logo: "res/drawable/ic_token_hyn.png",
+    symbol: 'HYN',
+  );
+
+  static const HYN_HECO_TEST = const AssetToken(
+    name: "Heco HYN",
+    decimals: 18,
+    contractAddress: '0x4A1E6629a1f97c0A089FAd4e80C6A0415760CF39',
+    logo: "res/drawable/ic_token_hyn.png",
+    symbol: 'HYN',
+  );
+
+  static const RP_HECO = const AssetToken(
+    name: "Heco RP",
+    decimals: 18,
+    contractAddress: '0x057899Dd6FcB69b23f3b4DC6c7c2bFA4A8a0b0EE',
+    logo: "res/drawable/ic_token_rp.png",
+    symbol: 'RP',
+  );
+
+  static const RP_HECO_TEST = const AssetToken(
+    name: "Heco RP",
+    decimals: 18,
+    contractAddress: '0xD949597c2829F8B4F023f7280d83210d18C46958',
+    logo: "res/drawable/ic_token_rp.png",
+    symbol: 'RP',
   );
 }
