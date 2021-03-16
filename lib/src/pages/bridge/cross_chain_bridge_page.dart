@@ -660,7 +660,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         );
       }
 
-      if (rawTxHash == null) {
+      if (rawTxHash != null) {
         result = await _postBridgeRequest(
           wallet,
           tokenAddress,
