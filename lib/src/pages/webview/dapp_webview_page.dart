@@ -368,6 +368,10 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
             print(
                 'xxxx1 to $to, value $value, nonce $nonce, gas $gasLimit, price $gasPrice, data ${data[6]}');
 
+            if(gasPrice == null && selectCoinType == CoinType.ETHEREUM){
+              gasPrice = await WalletUtil.ethGasPrice(selectCoinType);
+            }
+
             showSendDialogDApp(
                 context: context,
                 to: to,
@@ -478,6 +482,10 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
             print(
                 'xxxx1 to $to, value $value, nonce $nonce, gas $gasLimit, price $gasPrice, data ${data[6]}');
 
+            if(gasPrice == null && selectCoinType == CoinType.ETHEREUM){
+              gasPrice = await WalletUtil.ethGasPrice(selectCoinType);
+            }
+
             showSendDialogDApp(
                 context: context,
                 to: to,
@@ -509,6 +517,7 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
                   return true;
                 });
           } catch (e, st) {
+            Fluttertoast.showToast(msg: e.toString());
             logger.e(st);
             callbackToJS(controller, callbackId: callbackId, error: e.toString());
           }
