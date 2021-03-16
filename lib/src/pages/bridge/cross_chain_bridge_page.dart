@@ -8,6 +8,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -18,6 +19,8 @@ import 'package:titan/src/pages/bridge/entity/cross_chain_token.dart';
 import 'package:titan/src/pages/wallet/api/hb_api.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/ethereum.dart';
+import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -53,7 +56,6 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   HbApi _hbApi = HbApi();
   AtlasApi _atlasApi = AtlasApi();
 
-  BuildContext dialogContext;
   bool isProcessing = false;
 
   @override
@@ -618,10 +620,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     UiUtil.showLoadingDialog(
       context,
       '处理中...',
-      (context) {
-        dialogContext = context;
-      },
-      canDismiss: false,
+      (context) {},
     );
 
     var result = false;
@@ -630,10 +629,26 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       String tokenAddress;
       if (_currentToken.symbol == 'HYN') {
         tokenAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+
+        var gasLimit = Decimal.fromInt(HyperionGasLimit.BRIDGE_CONTRACT_LOCK_TOKEN_CALL);
+        var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+        var gasFee = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse((gasPrice * gasLimit).toStringAsFixed(0)));
+
+        var balance = WalletInheritedModel.of(context).getBalanceBySymbolAndCoinType(
+          'HYN',
+          CoinType.HYN_ATLAS,
+        );
+        var value = Decimal.tryParse('${_amountController.text}') ?? Decimal.zero;
+
+        if (value + gasFee > balance) {
+          value = value - gasFee;
+        }
+
         rawTxHash = await _hynApi.postBridgeLockHYN(
           activeWallet: wallet,
           password: pwd,
-          amount: ConvertTokenUnit.strToBigInt(_amountController.text),
+          amount: ConvertTokenUnit.strToBigInt('$value'),
         );
       } else {
         tokenAddress = coinVo.contractAddress;
@@ -660,9 +675,9 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       result = false;
       LogUtil.toastException(e);
     }
-    if (dialogContext != null) {
-      Navigator.pop(dialogContext);
-    }
+
+    ///pop loading dialog
+    Navigator.pop(context);
 
     if (result) {
       _submitFinish();
@@ -687,10 +702,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       UiUtil.showLoadingDialog(
         context,
         '处理中...',
-        (context) {
-          dialogContext = context;
-        },
-        canDismiss: false,
+        (context) {},
       );
 
       String rawTxHash;
@@ -704,16 +716,21 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         );
 
         if (rawTxHash != null) {
-          result = await _postBridgeRequest(wallet, coinVo.contractAddress, 2,
-              ConvertTokenUnit.strToBigInt(_amountController.text).toString(), rawTxHash);
+          result = await _postBridgeRequest(
+            wallet,
+            coinVo.contractAddress,
+            2,
+            ConvertTokenUnit.strToBigInt(_amountController.text).toString(),
+            rawTxHash,
+          );
         }
       } catch (e) {
         result = false;
         LogUtil.toastException(e);
       }
-      if (dialogContext != null) {
-        Navigator.pop(dialogContext);
-      }
+
+      ///pop loading dialog
+      Navigator.pop(context);
 
       if (result) {
         _submitFinish();
