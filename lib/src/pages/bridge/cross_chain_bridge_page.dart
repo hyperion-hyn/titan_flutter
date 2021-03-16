@@ -624,7 +624,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       canDismiss: false,
     );
 
-    var result;
+    var result = false;
     try {
       String rawTxHash;
       String tokenAddress;
@@ -657,6 +657,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         rawTxHash,
       );
     } catch (e) {
+      result = false;
       LogUtil.toastException(e);
     }
     if (dialogContext != null) {
@@ -693,7 +694,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       );
 
       String rawTxHash;
-      var result;
+      var result = false;
       try {
         rawTxHash = await _hbApi.postBridgeBurnToken(
           contractAddress: coinVo.contractAddress,
@@ -707,6 +708,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
               ConvertTokenUnit.strToBigInt(_amountController.text).toString(), rawTxHash);
         }
       } catch (e) {
+        result = false;
         LogUtil.toastException(e);
       }
       if (dialogContext != null) {
