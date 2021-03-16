@@ -12,6 +12,7 @@ import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
@@ -397,7 +398,15 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
       });
       return;
     }
-    await widget.entity.confirmAction(password, _gasPrice);
+
+    try {
+      await widget.entity.confirmAction(password, _gasPrice);
+    } catch (e, stack){
+      LogUtil.toastException(e,stack: null);
+      setState(() {
+
+      });
+    }
   }
 }
 

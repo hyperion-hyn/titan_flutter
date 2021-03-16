@@ -32,12 +32,12 @@ class LogUtil {
     }
   }
 
-  static toastException(dynamic error) {
+  static toastException(dynamic error,{dynamic stack = ""}) {
     var walletAddr =
         WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet?.getEthAccount()?.address ??
             "no wallet";
     if (error is HttpResponseCodeNotSuccess) {
-      uploadExceptionStr(error.toString(), "HttpResponseCodeNotSuccess $walletAddr");
+      uploadExceptionStr("${error.toString()} Stack: $stack", "HttpResponseCodeNotSuccess $walletAddr");
       if (error.subMsg != null) {
         var rpcReturn = MemoryCache.contractErrorStr(error.subMsg);
         if (rpcReturn != error.subMsg) {
@@ -74,7 +74,7 @@ class LogUtil {
         );
       }
     } else if (error is DioError) {
-      uploadExceptionStr(error.toString(), "DioError $walletAddr");
+      uploadExceptionStr("${error.toString()} Stack: $stack", "DioError $walletAddr");
       if (error.type == DioErrorType.CONNECT_TIMEOUT) {
         Fluttertoast.showToast(
           msg: S.of(Keys.rootKey.currentContext).network_error,
@@ -87,7 +87,7 @@ class LogUtil {
         );
       }
     } else if (error is PlatformException) {
-      uploadExceptionStr(error.toString(), "PlatformException $walletAddr");
+      uploadExceptionStr("${error.toString()} Stack: $stack", "PlatformException $walletAddr");
       if (error.code == ErrorCode.PASSWORD_WRONG) {
         Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).password_incorrect);
       } else if (error.code == ErrorCode.PARAMETERS_WRONG) {
@@ -99,14 +99,14 @@ class LogUtil {
         );
       }
     } else if (error is RPCError) {
-      uploadExceptionStr(error.toString(), "RPCError $walletAddr");
+      uploadExceptionStr("${error.toString()} Stack: $stack", "RPCError $walletAddr");
       Fluttertoast.showToast(
         msg: MemoryCache.contractErrorStr(error.message),
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.CENTER,
       );
     } else {
-      uploadExceptionStr(error.toString(), "OtherError $walletAddr");
+      uploadExceptionStr("${error.toString()} Stack: $stack", "OtherError $walletAddr");
       Fluttertoast.showToast(
         msg: error.toString(),
         gravity: ToastGravity.CENTER,

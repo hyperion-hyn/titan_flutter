@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:decimal/decimal.dart';
@@ -15,10 +16,12 @@ import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/widget_shot.dart';
@@ -47,7 +50,7 @@ class DAppWebViewPage extends StatefulWidget {
   }
 }
 
-class DAppWebViewPageState extends State<DAppWebViewPage> {
+class DAppWebViewPageState extends State<DAppWebViewPage> with WidgetsBindingObserver {
   final ShotController _shotController = new ShotController();
 
   InAppWebViewController webView;
@@ -70,6 +73,34 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
   }
 
   bool hadEnable = false;
+
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.inactive: // 处于这种状态的应用程序应该假设它们可能在任何时候暂停。
+        break;
+      case AppLifecycleState.resumed: //从后台切换前台，界面可见
+        await Future.delayed(Duration(milliseconds: 500),(){});
+        var clipStr = await TitanPlugin.getClipboardData();
+        await Clipboard.setData(ClipboardData(text: clipStr));
+        break;
+      case AppLifecycleState.paused: // 界面不可见，后台
+        break;
+      case AppLifecycleState.detached: // APP结束时调用
+        break;
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   void didChangeDependencies() {
@@ -234,7 +265,6 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
         initDappJsHandle(controller);
       },
       onLoadStart: (InAppWebViewController controller, String url) {
-        //print("onLoadStart $url");
         setState(() {
           this.url = url;
         });
@@ -249,8 +279,6 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
         updateBackOrForward();
       },
       onProgressChanged: (InAppWebViewController controller, int progress) {
-        //print("onProgressChanged $url");
-
         setState(() {
           this.progress = progress / 100;
           //print('[inapp] --> webView, progress:${progress}');
@@ -365,8 +393,6 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
             int gasLimit = data[4] == null ? null : int.parse(data[4].toString());
             BigInt gasPrice = data[5] == null ? null : BigInt.parse(data[5].toString());
             Uint8List _data = data[6] == null ? null : hexToBytes(data[6]);
-            print(
-                'xxxx1 to $to, value $value, nonce $nonce, gas $gasLimit, price $gasPrice, data ${data[6]}');
 
             if(gasPrice == null && selectCoinType == CoinType.ETHEREUM){
               gasPrice = await WalletUtil.ethGasPrice(selectCoinType);
@@ -382,8 +408,6 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
                 gasPrice: gasPrice,
                 coinType: selectCoinType,
                 confirmAction: (String pswStr, BigInt gasPriceCallback) async {
-                  print(
-                      'xxxx222 to $to, value $value, nonce $nonce, gas $gasLimit, price $gasPriceCallback, data ${data[6]}');
 
                   var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
                   var signed = await wallet.sendDappTransaction(
@@ -396,33 +420,20 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
                     gasLimit: gasLimit,
                     data: _data,
                   );
-                  print('signed $signed');
                   callbackToJS(controller, callbackId: callbackId, value: signed);
 
                   Navigator.of(context).pop();
                   return true;
                 });
-          } catch (e, st) {
-            logger.e(st);
+          } catch (e, stack) {
             callbackToJS(controller, callbackId: callbackId, error: e.toString());
+            LogUtil.toastException(e,stack: stack);
           }
-          //
-          // callbackToJS(controller, callbackId: callbackId, value: 'signed_raw_tx TODO');
-
-          // final client = WalletUtil.getWeb3Client(selectCoinType);
-          // var wallet = WalletInheritedModel
-          //     .of(context)
-          //     .activatedWallet
-          //     .wallet;
-          // var password = '11111111';
-
-          // wallet.signTransaction(selectCoinType, password: password, );
         });
 
     controller.addJavaScriptHandler(
         handlerName: "signMessage",
         callback: (data) {
-          print("TODO !!!!signMessage $data");
           flutterCallToWeb(
               controller, "executeCallback(${data[0]}, null, \"hello callback native\")");
         });
@@ -430,13 +441,11 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
     controller.addJavaScriptHandler(
         handlerName: "signPersonalMessage",
         callback: (data) {
-          print("TODO !!!!signPersonalMessage $data");
         });
 
     controller.addJavaScriptHandler(
         handlerName: "signTypedMessage",
         callback: (data) {
-          print("TODO1 !!!!signTypedMessage $data");
           int callbackId = data[0];
           callbackToJS(controller, callbackId: callbackId, value: 'demo back');
         });
@@ -459,7 +468,6 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
                 data: bytes);
             callbackToJS(controller, callbackId: callbackId, value: ret);
           } catch (e) {
-            logger.e(e);
             callbackToJS(controller, callbackId: callbackId, error: e.toString());
           }
         });
@@ -479,8 +487,6 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
             int gasLimit = data[4] == null ? null : int.parse(data[4].toString());
             BigInt gasPrice = data[5] == null ? null : BigInt.parse(data[5].toString());
             Uint8List _data = data[6] == null ? null : hexToBytes(data[6]);
-            print(
-                'xxxx1 to $to, value $value, nonce $nonce, gas $gasLimit, price $gasPrice, data ${data[6]}');
 
             if(gasPrice == null && selectCoinType == CoinType.ETHEREUM){
               gasPrice = await WalletUtil.ethGasPrice(selectCoinType);
@@ -496,8 +502,6 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
                 gasPrice: gasPrice,
                 coinType: selectCoinType,
                 confirmAction: (String pswStr, BigInt gasPriceCallback) async {
-                  print(
-                      'xxxx222 to $to, value $value, nonce $nonce, gas $gasLimit, price $gasPriceCallback, data ${data[6]}');
 
                   var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
                   var signed = await wallet.signTransaction(
@@ -510,16 +514,14 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
                     gasLimit: gasLimit,
                     data: _data,
                   );
-                  print('signed $signed');
                   callbackToJS(controller, callbackId: callbackId, value: signed);
 
                   Navigator.of(context).pop();
                   return true;
                 });
-          } catch (e, st) {
-            Fluttertoast.showToast(msg: e.toString());
-            logger.e(st);
+          } catch (e, stack) {
             callbackToJS(controller, callbackId: callbackId, error: e.toString());
+            LogUtil.toastException(e,stack: stack);
           }
         });
   }
@@ -557,19 +559,6 @@ class DAppWebViewPageState extends State<DAppWebViewPage> {
     }
 
     setState(() {});
-  }
-
-  void _shareQr(BuildContext context) async {
-    if (webView != null && !isLoading) {
-      webView.takeScreenshot().then((imageByte) async {
-        var len = imageByte.lengthInBytes;
-        //debugPrint("screenshot taken bytes $len");
-
-        AppLockUtil.ignoreAppLock(context, true);
-
-        // await Share.file(S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
-      });
-    }
   }
 
   String getCoinTypeStr() {
