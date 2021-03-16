@@ -275,46 +275,6 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                                         ],
                                       ),
                                     ),
-                                    Container(
-                                      height: 36,
-                                      width: 1,
-                                      color: DefaultColors.colord7d7d7,
-                                    ),
-                                    Builder(
-                                      builder: (BuildContext context) {
-                                        return InkWell(
-                                          onTap: () {
-                                            Fluttertoast.showToast(
-                                                msg: S.of(context).exchange_is_not_yet_open(
-                                                    widget.coinVo.symbol));
-                                          },
-                                          child: Row(
-                                            children: <Widget>[
-                                              Image.asset(
-                                                "res/drawable/ic_wallet_account_list_exchange.png",
-                                                width: 20,
-                                                height: 20,
-                                              ),
-                                              /*Icon(
-                                                ExtendsIconFont.copy_content,
-                                                color: Theme.of(context).primaryColor,
-                                                size: 20,
-                                              ),*/
-                                              SizedBox(
-                                                width: 12,
-                                              ),
-                                              Text(
-                                                S.of(context).exchange,
-                                                style: TextStyle(
-                                                  color: DefaultColors.color333,
-                                                  fontSize: 14,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    )
                                   ],
                                 ),
                               ),

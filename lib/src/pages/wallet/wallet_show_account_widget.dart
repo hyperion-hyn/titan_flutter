@@ -122,10 +122,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
   void didChangeDependencies() async {
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
-    widget.coinVo = WalletInheritedModel.of(context).getCoinVoBySymbolAndCoinType(
-      widget.coinVo.symbol,
-      widget.coinVo.coinType
-    );
+    widget.coinVo = WalletInheritedModel.of(context)
+        .getCoinVoBySymbolAndCoinType(widget.coinVo.symbol, widget.coinVo.coinType);
   }
 
   @override
@@ -157,30 +155,30 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
             ),
           ),
           actions: <Widget>[
-            if(widget.coinVo.coinType == CoinType.ETHEREUM)
-            FlatButton(
-              onPressed: (){
-                var url = SettingInheritedModel.of(context)?.areaModel?.isChinaMainland ?? true
-                    ? 'https://cn.etherscan.com/address/${WalletModelUtil.walletEthAddress}'
-                    : 'https://etherscan.io/address/${WalletModelUtil.walletEthAddress}';
+            if (widget.coinVo.coinType == CoinType.ETHEREUM)
+              FlatButton(
+                onPressed: () {
+                  var url = SettingInheritedModel.of(context)?.areaModel?.isChinaMainland ?? true
+                      ? 'https://cn.etherscan.com/address/${WalletModelUtil.walletEthAddress}'
+                      : 'https://etherscan.io/address/${WalletModelUtil.walletEthAddress}';
 
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => InAppWebViewContainer(
-                          initUrl: url,
-                          title: '',
-                        )));
-              },
-              child: Text(
-                '区块浏览器',
-                style: TextStyle(
-                  color: HexColor("#1F81FF"),
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InAppWebViewContainer(
+                                initUrl: url,
+                                title: '',
+                              )));
+                },
+                child: Text(
+                  '区块浏览器',
+                  style: TextStyle(
+                    color: HexColor("#1F81FF"),
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
         body: BlocListener<WalletCmpBloc, WalletCmpState>(
@@ -353,46 +351,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                           )
                                         ],
                                       ),
-                                    ),
-                                    Container(
-                                      height: 36,
-                                      width: 1,
-                                      color: DefaultColors.colord7d7d7,
-                                    ),
-                                    Builder(
-                                      builder: (BuildContext context) {
-                                        return InkWell(
-                                          onTap: () {
-                                            Fluttertoast.showToast(
-                                                msg: S.of(context).exchange_is_not_yet_open(
-                                                    widget.coinVo.symbol));
-                                          },
-                                          child: Row(
-                                            children: <Widget>[
-                                              Image.asset(
-                                                "res/drawable/ic_wallet_account_list_exchange.png",
-                                                width: 20,
-                                                height: 20,
-                                              ),
-                                              /*Icon(
-                                                ExtendsIconFont.copy_content,
-                                                color: Theme.of(context).primaryColor,
-                                                size: 20,
-                                              ),*/
-                                              SizedBox(
-                                                width: 12,
-                                              ),
-                                              Text(
-                                                S.of(context).exchange,
-                                                style: TextStyle(
-                                                  color: DefaultColors.color333,
-                                                  fontSize: 14,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      },
                                     )
                                   ],
                                 ),
@@ -815,7 +773,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
             }
           } catch (e, stack) {
             print("!!!!!  $e  $stack");
-            LogUtil.uploadException(e,"Eth coin type insert");
+            LogUtil.uploadException(e, "Eth coin type insert");
           }
         }
       }

@@ -620,8 +620,10 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       (context) {
         dialogContext = context;
       },
+      canDismiss: false,
     );
 
+    var result;
     try {
       String rawTxHash;
       String tokenAddress;
@@ -646,7 +648,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         return;
       }
 
-      _postBridgeRequest(
+      result = await _postBridgeRequest(
         wallet,
         tokenAddress,
         1,
@@ -658,6 +660,10 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     }
     if (dialogContext != null) {
       Navigator.pop(dialogContext);
+    }
+
+    if (result) {
+      _submitFinish();
     }
   }
 
@@ -706,7 +712,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     }
   }
 
-  _postBridgeRequest(
+  Future<bool> _postBridgeRequest(
     WalletViewVo wallet,
     String tokenAddress,
     int type,
@@ -724,13 +730,16 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       );
 
       if (data != null) {
-        _submitFinish();
+        _amountController.clear();
+        return true;
       } else {
         Fluttertoast.showToast(msg: '提交失败', gravity: ToastGravity.CENTER);
         _amountController.clear();
+        return false;
       }
     } catch (e) {
       LogUtil.toastException(e);
+      return false;
     }
   }
 
@@ -739,7 +748,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   }
 
   _submitFinish() {
-    var msg = '';
+    var msg = '您的跨链转账已广播，请等待区块链确认，大约需要15秒左右时间';
     msg = FluroConvertUtils.fluroCnParamsEncode(msg);
     Application.router.navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
   }

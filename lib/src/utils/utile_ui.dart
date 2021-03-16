@@ -948,7 +948,12 @@ class UiUtil {
     );
   }
 
-  static Future showLoadingDialog(BuildContext context, msg, Function createContext) async {
+  static Future showLoadingDialog(
+    BuildContext context,
+    msg,
+    Function createContext, {
+    bool canDismiss = true,
+  }) async {
     Widget widget = Center(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),
@@ -995,7 +1000,9 @@ class UiUtil {
               createContext(context);
               return WillPopScope(
                   onWillPop: () {
-                    Navigator.pop(context, true);
+                    if (canDismiss) {
+                      Navigator.pop(context, true);
+                    }
                     return;
                   },
                   child: widget);

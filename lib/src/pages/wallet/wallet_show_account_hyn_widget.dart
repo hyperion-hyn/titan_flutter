@@ -136,8 +136,8 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
     var activeQuoteVoAndSign =
         WalletInheritedModel.of(context).tokenLegalPrice(widget.coinVo.symbol);
 
-    var coinVo =
-        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).getCoinVoBySymbolAndCoinType(
+    var coinVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
+        .getCoinVoBySymbolAndCoinType(
       widget.coinVo.symbol,
       widget.coinVo.coinType,
     );
@@ -306,71 +306,6 @@ class _ShowAccountHynPageState extends DataListState<ShowAccountHynPage> with Ro
                                           )
                                         ],
                                       ),
-                                    ),
-                                    Container(
-                                      height: 36,
-                                      width: 1,
-                                      color: DefaultColors.colord7d7d7,
-                                    ),
-                                    Builder(
-                                      builder: (BuildContext context) {
-                                        return InkWell(
-                                          onTap: () {
-                                            if ((widget.coinVo.symbol ==
-                                                    DefaultTokenDefine.HYN_Atlas.symbol) ||
-                                                (widget.coinVo.symbol ==
-                                                    DefaultTokenDefine.HYN_RP_HRC30.symbol)) {
-                                              var base = 'USDT';
-                                              var quote = 'HYN';
-                                              if (widget.coinVo.symbol ==
-                                                  DefaultTokenDefine.HYN_RP_HRC30.symbol) {
-                                                base = 'USDT';
-                                                quote = 'RP';
-                                              }
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) => ExchangeDetailPage(
-                                                            base: base,
-                                                            quote: quote,
-                                                            exchangeType: ExchangeType.BUY,
-                                                          )));
-                                            } else {
-                                              Fluttertoast.showToast(
-                                                  msg: S.of(context).exchange_is_not_yet_open(
-                                                      widget.coinVo.symbol));
-                                            }
-                                            /*Clipboard.setData(ClipboardData(text: coinVo.address));
-                                            Scaffold.of(context)
-                                                .showSnackBar(SnackBar(content: Text(S.of(context).address_copied)));*/
-                                          },
-                                          child: Row(
-                                            children: <Widget>[
-                                              Image.asset(
-                                                "res/drawable/ic_wallet_account_list_exchange.png",
-                                                width: 20,
-                                                height: 20,
-                                                // color: Theme.of(context).primaryColor,
-                                              ),
-                                              /*Icon(
-                                                ExtendsIconFont.copy_content,
-                                                color: Theme.of(context).primaryColor,
-                                                size: 20,
-                                              ),*/
-                                              SizedBox(
-                                                width: 12,
-                                              ),
-                                              Text(
-                                                S.of(context).exchange,
-                                                style: TextStyle(
-                                                  color: DefaultColors.color333,
-                                                  fontSize: 14,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      },
                                     )
                                   ],
                                 ),
