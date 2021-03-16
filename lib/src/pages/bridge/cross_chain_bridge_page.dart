@@ -630,7 +630,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       if (_currentToken.symbol == 'HYN') {
         tokenAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 
-        var gasLimit = Decimal.fromInt(HyperionGasLimit.BRIDGE_CONTRACT_LOCK_TOKEN_CALL);
+        var gasLimit = Decimal.fromInt(HyperionGasLimit.BRIDGE_CONTRACT_LOCK_HYN_CALL);
         var gasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
         var gasFee = ConvertTokenUnit.weiToEther(
             weiBigInt: BigInt.parse((gasPrice * gasLimit).toStringAsFixed(0)));
