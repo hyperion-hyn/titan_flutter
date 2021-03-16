@@ -661,16 +661,14 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       }
 
       if (rawTxHash == null) {
-        return;
+        result = await _postBridgeRequest(
+          wallet,
+          tokenAddress,
+          1,
+          ConvertTokenUnit.strToBigInt(_amountController.text).toString(),
+          rawTxHash,
+        );
       }
-
-      result = await _postBridgeRequest(
-        wallet,
-        tokenAddress,
-        1,
-        ConvertTokenUnit.strToBigInt(_amountController.text).toString(),
-        rawTxHash,
-      );
     } catch (e) {
       result = false;
       LogUtil.toastException(e);
