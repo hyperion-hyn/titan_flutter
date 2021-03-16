@@ -587,6 +587,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
     setState(() {
       isProcessing = true;
     });
+
     if (_fromChain == CoinType.HYN_ATLAS) {
       await _lockTokens();
     } else {
@@ -691,6 +692,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       );
 
       String rawTxHash;
+      var result;
       try {
         rawTxHash = await _hbApi.postBridgeBurnToken(
           contractAddress: coinVo.contractAddress,
@@ -700,7 +702,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         );
 
         if (rawTxHash != null) {
-          _postBridgeRequest(wallet, coinVo.contractAddress, 2,
+          result = await _postBridgeRequest(wallet, coinVo.contractAddress, 2,
               ConvertTokenUnit.strToBigInt(_amountController.text).toString(), rawTxHash);
         }
       } catch (e) {
@@ -708,6 +710,10 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
       }
       if (dialogContext != null) {
         Navigator.pop(dialogContext);
+      }
+
+      if (result) {
+        _submitFinish();
       }
     }
   }
