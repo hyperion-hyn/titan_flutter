@@ -689,6 +689,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         (context) {
           dialogContext = context;
         },
+        canDismiss: false,
       );
 
       String rawTxHash;
