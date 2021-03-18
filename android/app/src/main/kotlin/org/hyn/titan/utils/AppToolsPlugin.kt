@@ -3,9 +3,19 @@ import android.app.Activity
 import android.content.ClipboardManager
 import android.content.Context
 import android.net.Uri
+import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonSyntaxException
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import org.hyn.titan.wallet.typemsg.CryptoFunctions
+import org.hyn.titan.wallet.typemsg.JsonRpcRequest
+import org.hyn.titan.wallet.typemsg.MessageUtils
+import org.hyn.titan.wallet.typemsg.ProviderTypedData
+import java.io.ByteArrayOutputStream
 
 //import io.flutter.plugin.common.PluginRegistry
 //import com.hyn.titan.tools.AppPrintInterface
@@ -111,6 +121,32 @@ class AppToolsPlugin() : FlutterPlugin {
                 result.success(true)
                 true
             }
+            "signTypedMessage" -> {
+                var dataMap = call.argument<Map<String, Any>>("data")
+                val cryptoFunctions = CryptoFunctions()
+                var gsonTool: Gson = GsonBuilder().enableComplexMapKeySerialization().create()
+                var jsonStr = gsonTool.toJson(dataMap)
+                try{
+                    var rawData: Array<ProviderTypedData> = gsonTool.fromJson(jsonStr)
+                    var writeBuffer = ByteArrayOutputStream()
+                    writeBuffer.write(cryptoFunctions.keccak256(MessageUtils.encodeParams(rawData)))
+                    writeBuffer.write(cryptoFunctions.keccak256(MessageUtils.encodeValues(rawData)))
+                    result.success(writeBuffer.toByteArray())
+                } catch (exception : JsonSyntaxException) {
+                    var jsonStr = gsonTool.toJson(dataMap)
+                    var request: JsonRpcRequest<JsonArray> = gsonTool.fromJson(jsonStr)
+                    if(request.params != null && request.params.size() >= 2){
+                        var structuredData = cryptoFunctions.getStructuredData(request.params[1].toString())
+                        result.success(structuredData)
+                    }else{
+                        result.success(null)
+                    }
+//                    val params: List<String> = gsonTool.fromJson(request.params)
+//                    if (params.size < 2)
+//                        throw InvalidJsonRpcParamsException(request.id)
+                }
+                true
+            }
             else -> false
         }
     }
@@ -131,3 +167,5 @@ class AppToolsPlugin() : FlutterPlugin {
     }
 
 }
+
+class InvalidJsonRpcParamsException(val requestId: Long) : Exception("Invalid JSON RPC Request")
