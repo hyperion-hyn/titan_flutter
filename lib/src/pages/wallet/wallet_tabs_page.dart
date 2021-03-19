@@ -40,7 +40,7 @@ class _WalletTabsPageState extends State<WalletTabsPage>
     if (isHiddenSwap) {
       return Scaffold(
         body: Padding(
-          padding: const EdgeInsets.only(top: 18,),
+          padding: const EdgeInsets.only(top: 38,),
           child: WalletPageV2(),
         ),
       );
