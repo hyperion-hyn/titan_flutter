@@ -37,7 +37,7 @@ class _WalletTabsPageState extends State<WalletTabsPage>
         SettingInheritedModel.ofConfig(context)?.systemConfigEntity?.isHiddenSwap??false;
     print("[wallet] isHiddenSwap:$isHiddenSwap");
 
-    if (!isHiddenSwap) {
+    if (isHiddenSwap) {
       return Scaffold(
         body: Padding(
           padding: const EdgeInsets.only(top: 18,),
