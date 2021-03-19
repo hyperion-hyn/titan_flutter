@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/market/exchange/exchange_page.dart';
 import 'package:titan/src/pages/wallet/wallet_new_page/wallet_page_v2.dart';
@@ -31,6 +32,19 @@ class _WalletTabsPageState extends State<WalletTabsPage>
 
   @override
   Widget build(BuildContext context) {
+
+    var isHiddenSwap =
+        SettingInheritedModel.ofConfig(context)?.systemConfigEntity?.isHiddenSwap??false;
+    print("[wallet] isHiddenSwap:$isHiddenSwap");
+
+    if (!isHiddenSwap) {
+      return Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.only(top: 18,),
+          child: WalletPageV2(),
+        ),
+      );
+    }
     return BlocListener<AppTabBarBloc, AppTabBarState>(
       listener: (context, state) {
         if (state is ChangeTabBarItemState) {

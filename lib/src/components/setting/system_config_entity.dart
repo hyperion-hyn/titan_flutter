@@ -55,6 +55,9 @@ class SystemConfigEntity extends Object {
   @JsonKey(name: 'collectRpTransmitGasLimit')
   int collectRpTransmitGasLimit = 10000000;
 
+  @JsonKey(name: 'isHiddenSwap')
+  bool isHiddenSwap = false;
+
   SystemConfigEntity(
     this.ethTransferGasLimit,
     this.erc20TransferGasLimit,
@@ -74,6 +77,7 @@ class SystemConfigEntity extends Object {
     this.canCheckMap3NodeCount,
     this.isOpenReStakingReward,
     this.collectRpTransmitGasLimit,
+    this.isHiddenSwap,
   );
 
   SystemConfigEntity.def();
@@ -104,11 +108,11 @@ SystemConfigEntity _$SystemConfigEntityFromJson(Map<String, dynamic> json) {
     json['canCheckMap3NodeCount'] as int ?? 1,
     json['isOpenReStakingReward'] as bool ?? false,
     json['collectRpTransmitGasLimit'] as int ?? 5000000,
+    json['isHiddenSwap'] as bool ?? false,
   );
 }
 
-Map<String, dynamic> _$SystemConfigEntityToJson(SystemConfigEntity instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$SystemConfigEntityToJson(SystemConfigEntity instance) => <String, dynamic>{
       'ethTransferGasLimit': instance.ethTransferGasLimit,
       'erc20TransferGasLimit': instance.erc20TransferGasLimit,
       'erc20ApproveGasLimit': instance.erc20ApproveGasLimit,
@@ -127,4 +131,5 @@ Map<String, dynamic> _$SystemConfigEntityToJson(SystemConfigEntity instance) =>
       'canCheckMap3NodeCount': instance.canCheckMap3NodeCount,
       'isOpenReStakingReward': instance.isOpenReStakingReward,
       'collectRpTransmitGasLimit': instance.collectRpTransmitGasLimit,
+      'isHiddenSwap': instance.isHiddenSwap,
     };
