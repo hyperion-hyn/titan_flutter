@@ -133,14 +133,14 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
                       width: 80,
                       height: 80,
                       padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                      child: InkWell(
-                        child: Image.asset('res/drawable/red_pocket.png'),
-                        onTap: () {
-                          var entryRouteName = Uri.encodeComponent(Routes.red_pocket_page);
-                          Application.router.navigateTo(
-                              context, Routes.red_pocket_page + "?entryRouteName=$entryRouteName");
-                        },
-                      ),
+                      // child: InkWell(
+                      //   child: Image.asset('res/drawable/red_pocket.png'),
+                      //   onTap: () {
+                      //     var entryRouteName = Uri.encodeComponent(Routes.red_pocket_page);
+                      //     Application.router.navigateTo(
+                      //         context, Routes.red_pocket_page + "?entryRouteName=$entryRouteName");
+                      //   },
+                      // ),
                     ),
                   ],
                 ),
