@@ -772,7 +772,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   }
 
   _submitFinish() {
-    var msg = '您的跨链转账已广播，请等待区块链确认，大约需要15秒左右时间';
+    var msg = '您的跨链转账已广播，正在等待区块链确认，请稍等片刻';
     msg = FluroConvertUtils.fluroCnParamsEncode(msg);
     Application.router.navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
   }
