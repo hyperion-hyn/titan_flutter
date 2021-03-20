@@ -945,12 +945,12 @@ class Wallet {
     if (gasLimit == null) {
       gasLimit = HyperionGasLimit.BRIDGE_CONTRACT_LOCK_TOKEN_CALL;
     }
-    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, amount: amount)) {
-      throw HttpResponseCodeNotSuccess(
-        -30011,
-        S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas,
-      );
-    }
+    // if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, amount: amount)) {
+    //   throw HttpResponseCodeNotSuccess(
+    //     -30011,
+    //     S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas,
+    //   );
+    // }
 
     String methodName = 'lockToken';
     List<dynamic> parameters = [
