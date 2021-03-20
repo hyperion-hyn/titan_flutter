@@ -10,10 +10,13 @@ import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/global_data/global_data.dart';
@@ -47,6 +50,8 @@ class HomePanelState extends State<HomePanel> {
   static const int DAPP_ETH_INDEX = 2;
   static const int DAPP_ATLAS_INDEX = 3;
   var selectDappIndex = DAPP_HECO_INDEX;
+  var _address = "";
+  get _isNoWallet => _address?.isEmpty ?? true;
 
   @override
   void initState() {
@@ -56,6 +61,18 @@ class HomePanelState extends State<HomePanel> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    var activatedWallet = WalletInheritedModel
+        .of(Keys.rootKey.currentContext)
+        ?.activatedWallet;
+    _address = activatedWallet?.wallet
+        ?.getEthAccount()
+        ?.address ?? "";
   }
 
   @override
@@ -423,7 +440,18 @@ class HomePanelState extends State<HomePanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("DApp",style: TextStyles.textC333S16bold,),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text("DApp",style: TextStyles.textC333S16bold,),
+              Spacer(),
+              InkWell(
+                  onTap: (){
+                    AtlasApi.goToAtlasMap3HelpPage(context);
+                  },
+                  child: Text("兑换教程",style: TextStyles.textC999S12,)),
+            ],
+          ),
           Row(
             children: [
               _dappSelectTab("HECO",DAPP_HECO_INDEX),
@@ -437,6 +465,11 @@ class HomePanelState extends State<HomePanel> {
           if(selectDappIndex == DAPP_HECO_INDEX)
             InkWell(
               onTap: (){
+                if (_isNoWallet) {
+                  _pushWalletManagerAction();
+                  return;
+                }
+
                 var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://ht.mdex.com/#/swap');
                 Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr&defaultCoin=${CoinType.HB_HT.toString()}&title=MDEX");
               },
@@ -465,6 +498,11 @@ class HomePanelState extends State<HomePanel> {
           if(selectDappIndex == DAPP_ETH_INDEX)
             InkWell(
             onTap: (){
+              if (_isNoWallet) {
+                _pushWalletManagerAction();
+                return;
+              }
+
               var scanStr = FluroConvertUtils.fluroCnParamsEncode('http://uniswap.defiplot.com/#/swap');
               Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr&defaultCoin=${CoinType.ETHEREUM.toString()}&title=Uniswap");
             },
@@ -497,6 +535,11 @@ class HomePanelState extends State<HomePanel> {
           if(selectDappIndex == DAPP_ATLAS_INDEX)
             InkWell(
             onTap: () {
+              if (_isNoWallet) {
+                _pushWalletManagerAction();
+                return;
+              }
+
               var entryRouteName = Uri.encodeComponent(Routes.red_pocket_page);
 
               Application.router.navigateTo(
@@ -536,6 +579,13 @@ class HomePanelState extends State<HomePanel> {
         ],
       ),
     );
+  }
+
+  void _pushWalletManagerAction() {
+    Application.router.navigateTo(
+        context,
+        Routes.map3node_create_wallet +
+            "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_NORMAL}");
   }
 
   Widget _dappSelectTab(String title,int selectIndex){

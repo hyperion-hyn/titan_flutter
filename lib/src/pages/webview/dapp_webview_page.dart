@@ -24,12 +24,14 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
 import 'package:titan/src/widget/widget_shot.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/crypto.dart';
 
 import 'dapp_authorization_dialog_page.dart';
 import 'dapp_send_dialog_page.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 
 class DAppWebViewPage extends StatefulWidget {
   final String initUrl;
@@ -50,9 +52,7 @@ class DAppWebViewPage extends StatefulWidget {
   }
 }
 
-class DAppWebViewPageState extends State<DAppWebViewPage> with WidgetsBindingObserver {
-  final ShotController _shotController = new ShotController();
-
+class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindingObserver {
   InAppWebViewController webView;
   String url = "";
   double progress = 0;
@@ -103,6 +103,12 @@ class DAppWebViewPageState extends State<DAppWebViewPage> with WidgetsBindingObs
   }
 
   @override
+  void onCreated() async {
+
+    super.onCreated();
+  }
+
+  @override
   void didChangeDependencies() {
     updateNetwork();
 
@@ -111,6 +117,7 @@ class DAppWebViewPageState extends State<DAppWebViewPage> with WidgetsBindingObs
 
   @override
   Widget build(BuildContext context) {
+
     return WillPopScope(
       onWillPop: () async {
         if (webView != null) {
@@ -258,7 +265,7 @@ class DAppWebViewPageState extends State<DAppWebViewPage> with WidgetsBindingObs
       initialHeaders: {},
       initialOptions: InAppWebViewGroupOptions(
           android: AndroidInAppWebViewOptions(useShouldInterceptRequest: true),
-          dappOptions: DappOptions(walletAddress, rpcUrl, chainId)),
+          dappOptions: DappOptions(walletAddress, rpcUrl, chainId,AppTabBarPage.initStr,AppTabBarPage.libraryStr)),
       onWebViewCreated: (InAppWebViewController controller) {
         webView = controller;
 
@@ -296,6 +303,10 @@ class DAppWebViewPageState extends State<DAppWebViewPage> with WidgetsBindingObs
         } else if (message.messageLevel == ConsoleMessageLevel.ERROR) {
           logger.e(message.message);
         }
+      },
+      onLoadError: (InAppWebViewController controller, String url, int code,
+          String message){
+        LogUtil.uploadExceptionStr("addr: $walletAddress url: $url message: $message","dapp error");
       },
     );
   }
@@ -593,7 +604,7 @@ class DAppWebViewPageState extends State<DAppWebViewPage> with WidgetsBindingObs
         WalletInheritedModel.of(context).activatedWallet.wallet.getChainId(selectCoinType) ?? "";
     var webviewOptions = InAppWebViewGroupOptions(
         android: AndroidInAppWebViewOptions(useShouldInterceptRequest: true),
-        dappOptions: DappOptions(walletAddress, rpcUrl, chainId));
+        dappOptions: DappOptions(walletAddress, rpcUrl, chainId,AppTabBarPage.initStr,AppTabBarPage.libraryStr));
     if (webView != null) {
       await webView.setOptions(options: webviewOptions);
     }

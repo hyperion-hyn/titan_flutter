@@ -51,6 +51,10 @@ import 'drawer_component.dart';
 import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 
 class AppTabBarPage extends StatefulWidget {
+
+  static String initStr;
+  static String libraryStr;
+
   @override
   State<StatefulWidget> createState() {
     return AppTabBarPageState();
@@ -117,9 +121,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     //   BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent(updateGasPrice: true));
     // });
 
-//    Future.delayed(Duration(milliseconds: 2000)).then((value) {
-//      BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
-//    });
+   Future.delayed(Duration(milliseconds: 1500)).then((value) {
+     BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
+   });
 
     // 检测是否有新弹窗
     Future.delayed(Duration(milliseconds: 2000)).then((value) {
@@ -149,9 +153,17 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
   }
 
   @override
-  void onCreated() {
+  void onCreated() async {
+    AppTabBarPage.initStr = await loadJsFileStr("init.js");
+    AppTabBarPage.libraryStr = await loadJsFileStr("alphawallet_min.js");
+
     TitanPlugin.f2pDeeplink();
     super.onCreated();
+  }
+
+  Future<String> loadJsFileStr(String path) async {
+    var jsText = await rootBundle.loadString('res/dapp/$path');
+    return jsText;
   }
 
   void getClipboardData() async {

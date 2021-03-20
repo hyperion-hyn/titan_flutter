@@ -44,6 +44,7 @@ TransactionDetailVo _$TransactionDetailVoFromJson(Map<String, dynamic> json) {
     speedUpTimes: json['speedUpTimes'] as int,
     cancelTimes: json['cancelTimes'] as int,
     lastOptType: json['lastOptType'] as int,
+    receiptStatus: true,
   );
 }
 
@@ -79,4 +80,5 @@ Map<String, dynamic> _$TransactionDetailVoToJson(
       'cancelTimes': instance.cancelTimes,
       'lastOptType': instance.lastOptType,
       'localTransferType': instance.localTransferType,
+      'receiptStatus': true,
     };

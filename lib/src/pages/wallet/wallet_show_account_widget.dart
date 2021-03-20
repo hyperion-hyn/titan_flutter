@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -465,7 +466,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       // transactionDetail.cancelTimes = 2;
       // transactionDetail.nonce = '2';
 
-      if (transactionDetail.lastOptType == OptType.SPEED_UP) {
+      if (!transactionDetail.receiptStatus) {
+        // speed up
+        title = "失败";
+      } else if (transactionDetail.lastOptType == OptType.SPEED_UP) {
         // speed up
         title = S.of(context).speed_up_times(transactionDetail.speedUpTimes);
       } else if (transactionDetail.lastOptType == OptType.CANCEL) {
@@ -496,7 +500,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                               )));
                 } else {
                   var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash);
-                  if (url != null) {
+                  if (url != null && transactionDetail.receiptStatus) {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -604,7 +608,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                       '${ConvertTokenUnit.weiToGWei(weiInt: int.parse(transactionDetail.gasPrice)).toStringAsFixed(1)} GWEI',
                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
                   Spacer(),
-                  if (isNearestPendingTx(transactionDetail)) ...[
+                  if (isNearestPendingTx(transactionDetail) && transactionDetail.receiptStatus) ...[
                     //取消交易按钮
                     ClickOvalButton(S.of(context).cancel, () async {
                       var password = await UiUtil.showDialogWidget(context,
@@ -765,6 +769,16 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
               localPendingTxs = await transactionInteractor.getLocalPendingTransactions(
                   ethAddress, localTransferType, widget.coinVo.contractAddress);
               for (var tx in localPendingTxs) {
+                //0xdedf95a9a7058981f5a2dea215c1ebd48956d927b00daf08398c5882a774a048  空
+                // var receipt = await client.getTransactionReceipt("0x9c2f9432da5cc6e0e4c4ee718d54f9ccb03a34f594f5322da91a3d3b06f2b212");
+                var receipt = await client.getTransactionReceipt(tx.hash);
+                var timeSpace = DateTime.now().millisecondsSinceEpoch - tx.time;
+                var timeDay = Decimal.fromInt(timeSpace) / Decimal.fromInt(24 * 3600 * 1000);
+                if(receipt != null){
+                  tx.receiptStatus = receipt.status;
+                }else if(receipt == null && timeDay >= Decimal.fromInt(2)){
+                  tx.receiptStatus = false;
+                }
                 if (int.parse(tx.nonce) == txCount) {
                   isHaveNearestPendingTx = true;
                 }

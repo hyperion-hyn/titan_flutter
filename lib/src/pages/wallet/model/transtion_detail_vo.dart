@@ -66,7 +66,7 @@ class TransactionDetailVo {
   int cancelTimes = 0;
   int lastOptType; //1 speedUp, 0 cancel
   int localTransferType;
-
+  bool receiptStatus;
   // int id;
 
   TransactionDetailVo({
@@ -100,6 +100,7 @@ class TransactionDetailVo {
     this.speedUpTimes,
     this.cancelTimes,
     this.lastOptType,
+    this.receiptStatus,
   });
 
   static double amountFromJson(dynamic json) {
@@ -212,6 +213,7 @@ class TransactionDetailVo {
       payload: hynTransferHistory.payload,
       internalTransactions: hynTransferHistory.internalTransactions,
       callInternalTrans: hynTransferHistory.callInternalTrans,
+      receiptStatus: true,
     );
   }
 
@@ -248,6 +250,7 @@ class TransactionDetailVo {
       payload: hynTransferHistory.payload,
       internalTransactions: hynTransferHistory.internalTransactions,
       callInternalTrans: hynTransferHistory.callInternalTrans,
+      receiptStatus: true,
     );
   }
 

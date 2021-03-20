@@ -284,6 +284,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
   @override
   void initState() {
     super.initState();
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
 
     _amountController.addListener(() {
       _updateValue();
