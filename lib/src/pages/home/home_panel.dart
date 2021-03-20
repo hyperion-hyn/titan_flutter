@@ -50,8 +50,6 @@ class HomePanelState extends State<HomePanel> {
   static const int DAPP_ETH_INDEX = 2;
   static const int DAPP_ATLAS_INDEX = 3;
   var selectDappIndex = DAPP_HECO_INDEX;
-  var _address = "";
-  get _isNoWallet => _address?.isEmpty ?? true;
 
   @override
   void initState() {
@@ -66,13 +64,6 @@ class HomePanelState extends State<HomePanel> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    var activatedWallet = WalletInheritedModel
-        .of(Keys.rootKey.currentContext)
-        ?.activatedWallet;
-    _address = activatedWallet?.wallet
-        ?.getEthAccount()
-        ?.address ?? "";
   }
 
   @override
@@ -435,6 +426,12 @@ class HomePanelState extends State<HomePanel> {
   }*/
 
   Widget _dappView(){
+    var activatedWallet = WalletInheritedModel
+        .of(Keys.rootKey.currentContext)
+        ?.activatedWallet;
+    var _address = activatedWallet?.wallet
+        ?.getEthAccount()
+        ?.address ?? "";
     return Padding(
       padding: const EdgeInsets.only(left:14.0,right: 14),
       child: Column(
@@ -465,7 +462,7 @@ class HomePanelState extends State<HomePanel> {
           if(selectDappIndex == DAPP_HECO_INDEX)
             InkWell(
               onTap: (){
-                if (_isNoWallet) {
+                if (_address?.isEmpty ?? true) {
                   _pushWalletManagerAction();
                   return;
                 }
@@ -498,7 +495,7 @@ class HomePanelState extends State<HomePanel> {
           if(selectDappIndex == DAPP_ETH_INDEX)
             InkWell(
             onTap: (){
-              if (_isNoWallet) {
+              if (_address?.isEmpty ?? true) {
                 _pushWalletManagerAction();
                 return;
               }
@@ -536,7 +533,7 @@ class HomePanelState extends State<HomePanel> {
           if(selectDappIndex == DAPP_ATLAS_INDEX)
             InkWell(
             onTap: () {
-              if (_isNoWallet) {
+              if (_address?.isEmpty ?? true) {
                 _pushWalletManagerAction();
                 return;
               }
