@@ -527,7 +527,8 @@ class HomePanelState extends State<HomePanel> {
                         Text("UNISWAP",style: TextStyles.textC333S14bold,),
                         Text("去中心化交易协议",style: TextStyles.textC999S12),
                       ],),
-                  )
+                  ),
+                  Text("暂未开放\nrp，hyn交易",style: TextStyles.textC999S12,textAlign: TextAlign.end,)
                 ],
               ),
             ),
