@@ -485,7 +485,7 @@ class HomePanelState extends State<HomePanel> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text("MDEX",style: TextStyles.textC333S14bold,),
-                          Text("Heco生态币种交易 多快好省就选MDEX.COM",style: TextStyles.textC999S12),
+                          Text(S.of(context).mdex_desc, style: TextStyles.textC999S12),
                       ],),
                     )
                   ],
