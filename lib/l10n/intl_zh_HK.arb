@@ -730,6 +730,8 @@
   "@customize": {},
   "cycling": "騎行",
   "@cycling": {},
+  "dapp_intruct_content": "正在申请访问你的钱包地址，你确认将钱包地址公开给此网站吗？",
+  "@dapp_intruct_content": {},
   "dapp_setting": "DApp設置",
   "@dapp_setting": {},
   "data_contribute": "數據貢獻",

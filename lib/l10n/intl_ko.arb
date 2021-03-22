@@ -730,6 +730,8 @@
   "@customize": {},
   "cycling": "사이클링",
   "@cycling": {},
+  "dapp_intruct_content": "You are applying for access to your wallet address. Are you sure to disclose your wallet address to this DApp?",
+  "@dapp_intruct_content": {},
   "dapp_setting": "Dmap 설정",
   "@dapp_setting": {},
   "data_contribute": "데이터 제공",

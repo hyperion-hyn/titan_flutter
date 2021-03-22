@@ -143,7 +143,7 @@ class HomePanelState extends State<HomePanel> {
                 Application.router.navigateTo(context, Routes.contribute_tasks_list);
               },
               child: Padding(
-                padding: const EdgeInsets.only(left: 13, right: 13,),
+                padding: const EdgeInsets.only(left: 8, right: 8,),
                 child: Row(
                   children: [
                     Image.asset(
@@ -525,7 +525,7 @@ class HomePanelState extends State<HomePanel> {
                         Text(S.of(context).decent_transac_protocol,style: TextStyles.textC999S12),
                       ],),
                   ),
-                  Text(S.of(context).not_yet_open_trading,style: TextStyles.textC999S12,textAlign: TextAlign.end,)
+                  Expanded(child: Text(S.of(context).not_yet_open_trading,style: TextStyles.textC999S12,textAlign: TextAlign.end,))
                 ],
               ),
             ),
