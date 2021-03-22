@@ -70,7 +70,7 @@ class _CrossChainRecordListPageState extends State<CrossChainRecordListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BaseAppBar(baseTitle: '跨链记录'),
+      appBar: BaseAppBar(baseTitle: S.of(context).bridge_cross_chain),
       body: Container(
         color: Colors.white,
         child: LoadDataContainer(
@@ -173,7 +173,7 @@ class _CrossChainRecordListPageState extends State<CrossChainRecordListPage> {
                       ),
                       children: [
                     TextSpan(
-                      text: ' 到 ',
+                      text: ' ${S.of(context).bridge_to} ',
                       style: TextStyles.textC999S13,
                     ),
                     TextSpan(
@@ -332,7 +332,7 @@ class _CrossChainRecordListPageState extends State<CrossChainRecordListPage> {
                         ),
                         Spacer(),
                         Text(
-                          '切换币种 >',
+                          '${S.of(context).choose_currency} >',
                           style: TextStyle(color: Colors.blue),
                         )
                       ],

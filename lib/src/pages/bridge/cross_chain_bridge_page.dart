@@ -85,7 +85,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         title: Wrap(
           children: [
             Text(
-              "跨链",
+              S.of(context).bridge_cross_chain,
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 15,
@@ -115,7 +115,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
               );
             },
             child: Text(
-              '跨链记录',
+              S.of(context).bridge_cross_chain_record,
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
@@ -177,7 +177,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Text('跨链方向'),
+              child: Text(S.of(context).bridge_cross_chain_direction),
             ),
             Container(
               decoration: BoxDecoration(
@@ -214,7 +214,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   child: Text(
-                    isFromChain ? '从' : '到',
+                    isFromChain ? S.of(context).bridge_from : S.of(context).bridge_to,
                     style: TextStyle(fontSize: 9),
                   ),
                 )),
@@ -233,7 +233,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                   SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      '$name 链',
+                      '${S.of(context).bridge_chain_name(name)}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -272,7 +272,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
-                '资产',
+                S.of(context).asset,
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                 ),
@@ -425,35 +425,39 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
               child: Row(
                 children: <Widget>[
                   Text(
-                    '数量',
+                    S.of(context).exchange_amount,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Spacer(),
-                  Text.rich(TextSpan(children: [
-                    TextSpan(
-                      text: '${_fromChain == CoinType.HYN_ATLAS ? 'ATLAS' : 'HECO'}链可用 ',
-                      style: TextStyle(
-                        color: HexColor('#FFAAAAAA'),
-                        fontSize: 12,
-                      ),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text.rich(TextSpan(children: [
+                        TextSpan(
+                          text: '${S.of(context).bridge_chain_name(_fromChain == CoinType.HYN_ATLAS ? 'ATLAS' : 'HECO')} ${S.of(context).available} ',
+                          style: TextStyle(
+                            color: HexColor('#FFAAAAAA'),
+                            fontSize: 12,
+                          ),
+                        ),
+                        TextSpan(
+                          text: _tokenBalance(),
+                          style: TextStyle(
+                            color: HexColor('#FFAAAAAA'),
+                            fontSize: 12,
+                          ),
+                        ),
+                        TextSpan(
+                          text: ' ${_currentToken.symbol}',
+                          style: TextStyle(
+                            color: HexColor('#FFAAAAAA'),
+                            fontSize: 12,
+                          ),
+                        ),
+                      ])),
                     ),
-                    TextSpan(
-                      text: _tokenBalance(),
-                      style: TextStyle(
-                        color: HexColor('#FFAAAAAA'),
-                        fontSize: 12,
-                      ),
-                    ),
-                    TextSpan(
-                      text: ' ${_currentToken.symbol}',
-                      style: TextStyle(
-                        color: HexColor('#FFAAAAAA'),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ])),
+                  ),
                 ],
               ),
             ),
@@ -537,7 +541,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
                                   setState(() {});
                                 },
                                 child: Text(
-                                  '全部',
+                                  S.of(context).all,
                                   style: TextStyle(color: Colors.blue, fontSize: 14),
                                 ),
                               ),
@@ -619,7 +623,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
 
     UiUtil.showLoadingDialog(
       context,
-      '处理中...',
+      '${S.of(context).bridge_record_status_processing}...',
       (context) {},
     );
 
@@ -699,7 +703,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
 
       UiUtil.showLoadingDialog(
         context,
-        '处理中...',
+        '${S.of(context).bridge_record_status_processing}...',
         (context) {},
       );
 
@@ -757,7 +761,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
         _amountController.clear();
         return true;
       } else {
-        Fluttertoast.showToast(msg: '提交失败', gravity: ToastGravity.CENTER);
+        Fluttertoast.showToast(msg: S.of(context).bridge_cross_chain_submit_failed, gravity: ToastGravity.CENTER);
         _amountController.clear();
         return false;
       }
@@ -772,7 +776,7 @@ class _CrossChainBridgePageState extends State<CrossChainBridgePage> {
   }
 
   _submitFinish() {
-    var msg = '您的跨链转账已广播，正在等待区块链确认，请稍等片刻';
+    var msg = S.of(context).bridge_cross_chain_brodcast_success;
     msg = FluroConvertUtils.fluroCnParamsEncode(msg);
     Application.router.navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
   }

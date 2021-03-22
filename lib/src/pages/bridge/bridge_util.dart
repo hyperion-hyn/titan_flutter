@@ -1,3 +1,6 @@
+import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/config/consts.dart';
+
 class BridgeUtil {
   static String getCrossChainStatusText(int status) {
     if (status == null) {
@@ -5,22 +8,24 @@ class BridgeUtil {
     }
 
     if (status == 0) {
-      return '已提交';
+      return S.of(Keys.rootKey.currentContext).bridge_record_status_submitted;
     } else if (status == 1) {
-      return '处理中';
+      return S.of(Keys.rootKey.currentContext).bridge_record_status_processing;
     } else if (status == 2) {
-      return '处理中';
+      return S.of(Keys.rootKey.currentContext).bridge_record_status_processing;
     } else if (status == 3) {
-      return '处理中';
+      return S.of(Keys.rootKey.currentContext).bridge_record_status_processing;
     } else if (status == 4) {
-      return '处理中';
+      return S.of(Keys.rootKey.currentContext).bridge_record_status_processing;
     } else if (status == 5) {
-      return '处理中';
+      return S.of(Keys.rootKey.currentContext).bridge_record_status_processing;
     } else if (status == 6) {
-      return '处理中';
+      return S.of(Keys.rootKey.currentContext).bridge_record_status_processing;
     } else if (status == 7) {
-      return '已完成';
-    } else {
+      return S.of(Keys.rootKey.currentContext).bridge_record_status_success;
+    } else if (status == 8) {
+      return S.of(Keys.rootKey.currentContext).bridge_record_status_failed;
+    }else {
       return '';
     }
   }

@@ -612,7 +612,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                               ),
                               SizedBox(width: 7),
                               Text(
-                                '跨链',
+                                S.of(context).bridge_cross_chain,
                                 style: TextStyles.textC333S12,
                               ),
                             ],
