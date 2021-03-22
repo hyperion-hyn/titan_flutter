@@ -20,7 +20,9 @@ class BridgeUtil {
       return '处理中';
     } else if (status == 7) {
       return '已完成';
-    } else {
+    } else if (status == 8) {
+      return '已失败';
+    }else {
       return '';
     }
   }
