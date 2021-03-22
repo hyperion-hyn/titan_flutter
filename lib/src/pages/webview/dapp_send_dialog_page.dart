@@ -198,19 +198,19 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
                       subContent: widget.entity.titleDesc,
                     ),
                     _rowText(
-                      title: "合约地址",
+                      title: S.of(context).contract_address,
                       content: widget.entity.toName,
                       subContent: widget.entity.toAddress,
                     ),
                     _rowText(
                       // title: S.of(context).exchange_from,
-                      title: "操作地址",
+                      title: S.of(context).operation_address,
                       content: widget.entity.fromAddress,
                       subContent: widget.entity.fromName,
                     ),
                     _rowText(
                       // title: S.of(context).exchange_to,
-                      title: "接收地址",
+                      title: S.of(context).receiver_address,
                       content: widget.entity.toName,
                       subContent: widget.entity.toAddress,
                     ),

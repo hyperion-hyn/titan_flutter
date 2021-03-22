@@ -6,10 +6,10 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:k_chart/utils/date_format_util.dart';
 import 'package:titan/generated/l10n.dart' as trans;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
@@ -20,7 +20,6 @@ import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
@@ -169,7 +168,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
                         value: 1,
                         child: Center(
                             child: Text(
-                          "重新加载",
+                          S.of(context).reload,
                           style: TextStyle(color: DefaultColors.color333, fontSize: 14),
                         )),
                       ),
@@ -183,7 +182,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
                         value: 2,
                         child: Center(
                             child: Text(
-                          "复制链接",
+                          S.of(context).copy_link,
                           style: TextStyle(color: DefaultColors.color333, fontSize: 14),
                         )),
                       ),
@@ -321,7 +320,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
           Padding(
             padding: const EdgeInsets.all(18.0),
             child: Center(
-              child: Text("选择网络", style: TextStyles.textC333S14bold),
+              child: Text(S.of(context).choose_network, style: TextStyles.textC333S14bold),
             ),
           ),
           networkItem("res/drawable/ic_token_hyn.png", "Atlas", CoinType.HYN_ATLAS),
@@ -379,7 +378,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
             return;
           }
           DAppAuthorizationDialogEntity entity = DAppAuthorizationDialogEntity(
-            title: "访问说明",
+            title: S.of(context).visit_instructions,
             dAppName: widget.title,
           );
           var authorizaResult = await showDAppAuthorizationDialog(
@@ -645,7 +644,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
       type: 'dApp_send_normal',
       value: value,
       valueUnit: valueUnit,
-      title: '合约转账',
+      title: S.of(context).contract_transfer,
       fromName: walletName,
       fromAddress: fromAddress,
       toName: shortBlockChainAddress(to),

@@ -131,7 +131,7 @@ class HomePanelState extends State<HomePanel> {
                         "res/drawable/ic_home_panel_data_display.png",width: 18,height: 18,
                       ),
                     SizedBox(width: 6,),
-                    Text("数据展示"),
+                    Text(S.of(context).global_nodes),
                   ],
                 ),
               ),
@@ -150,7 +150,7 @@ class HomePanelState extends State<HomePanel> {
                       "res/drawable/ic_home_panel_data_contribution.png",width: 18,height: 18,
                     ),
                     SizedBox(width: 6,),
-                    Text("数据贡献"),
+                    Text(S.of(context).data_contribute),
                   ],
                 ),
               ),
@@ -175,7 +175,7 @@ class HomePanelState extends State<HomePanel> {
                       "res/drawable/ic_home_panel_hyperion.png",width: 18,height: 18,
                     ),
                     SizedBox(width: 6,),
-                    Text("海伯利安"),
+                    Text(S.of(context).Hyperion),
                   ],
                 ),
               ),
@@ -446,7 +446,7 @@ class HomePanelState extends State<HomePanel> {
                   onTap: (){
                     AtlasApi.goToAtlasMap3HelpPage(context);
                   },
-                  child: Text("兑换教程",style: TextStyles.textC999S12,)),
+                  child: Text(S.of(context).redeem_tutorial,style: TextStyles.textC999S12,)),
             ],
           ),
           Row(
@@ -522,10 +522,10 @@ class HomePanelState extends State<HomePanel> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text("UNISWAP",style: TextStyles.textC333S14bold,),
-                        Text("去中心化交易协议",style: TextStyles.textC999S12),
+                        Text(S.of(context).decent_transac_protocol,style: TextStyles.textC999S12),
                       ],),
                   ),
-                  Text("暂未开放\nrp，hyn交易",style: TextStyles.textC999S12,textAlign: TextAlign.end,)
+                  Text(S.of(context).not_yet_open_trading,style: TextStyles.textC999S12,textAlign: TextAlign.end,)
                 ],
               ),
             ),
@@ -566,7 +566,7 @@ class HomePanelState extends State<HomePanel> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(S.of(context).red_pocket,style: TextStyles.textC333S14bold,),
-                        Text("拆红包，攒RP，与朋友圈分享更多空投奖励",style: TextStyles.textC999S12),
+                        Text(S.of(context).share_more_airdrop_rewards,style: TextStyles.textC999S12),
                       ],
                     ),
                   )
