@@ -97,7 +97,7 @@ class _DAppAuthorizationDialogState extends BaseState<DAppAuthorizationDialogPag
                             right: 16,
                           ),
                           child: Text(
-                            '${widget.entity.dAppName} 正在申请访问你的钱包地址，你确认将钱包地址公开给此网站吗？',
+                            '${widget.entity.dAppName} ${S.of(context).dapp_intruct_content}',
                             style: TextStyle(
                               // color: HexColor('#999999'),
                               fontWeight: FontWeight.normal,

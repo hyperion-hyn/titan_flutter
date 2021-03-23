@@ -124,7 +124,7 @@ class HomePanelState extends State<HomePanel> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => GlobalDataPage()));
               },
               child: Padding(
-                padding: const EdgeInsets.only(left: 13, right: 13,),
+                padding: const EdgeInsets.only(left: 8, right: 8,),
                 child: Row(
                   children: [
                     Image.asset(
@@ -143,8 +143,9 @@ class HomePanelState extends State<HomePanel> {
                 Application.router.navigateTo(context, Routes.contribute_tasks_list);
               },
               child: Padding(
-                padding: const EdgeInsets.only(left: 13, right: 13,),
+                padding: const EdgeInsets.only(left: 4, right: 4,),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
                       "res/drawable/ic_home_panel_data_contribution.png",width: 18,height: 18,
@@ -168,8 +169,9 @@ class HomePanelState extends State<HomePanel> {
                         )));
               },
               child: Padding(
-                padding: const EdgeInsets.only(left: 13, right: 13,),
+                padding: const EdgeInsets.only(left: 8, right: 8,),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
                       "res/drawable/ic_home_panel_hyperion.png",width: 18,height: 18,
@@ -485,7 +487,7 @@ class HomePanelState extends State<HomePanel> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text("MDEX",style: TextStyles.textC333S14bold,),
-                          Text("Heco生态币种交易 多快好省就选MDEX.COM",style: TextStyles.textC999S12),
+                          Text(S.of(context).mdex_desc, style: TextStyles.textC999S12),
                       ],),
                     )
                   ],
@@ -525,7 +527,7 @@ class HomePanelState extends State<HomePanel> {
                         Text(S.of(context).decent_transac_protocol,style: TextStyles.textC999S12),
                       ],),
                   ),
-                  Text(S.of(context).not_yet_open_trading,style: TextStyles.textC999S12,textAlign: TextAlign.end,)
+                  Expanded(child: Text(S.of(context).not_yet_open_trading,style: TextStyles.textC999S12,textAlign: TextAlign.end,))
                 ],
               ),
             ),
