@@ -124,7 +124,7 @@ class HomePanelState extends State<HomePanel> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => GlobalDataPage()));
               },
               child: Padding(
-                padding: const EdgeInsets.only(left: 13, right: 13,),
+                padding: const EdgeInsets.only(left: 8, right: 8,),
                 child: Row(
                   children: [
                     Image.asset(
@@ -143,8 +143,9 @@ class HomePanelState extends State<HomePanel> {
                 Application.router.navigateTo(context, Routes.contribute_tasks_list);
               },
               child: Padding(
-                padding: const EdgeInsets.only(left: 8, right: 8,),
+                padding: const EdgeInsets.only(left: 4, right: 4,),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
                       "res/drawable/ic_home_panel_data_contribution.png",width: 18,height: 18,
@@ -168,8 +169,9 @@ class HomePanelState extends State<HomePanel> {
                         )));
               },
               child: Padding(
-                padding: const EdgeInsets.only(left: 13, right: 13,),
+                padding: const EdgeInsets.only(left: 8, right: 8,),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
                       "res/drawable/ic_home_panel_hyperion.png",width: 18,height: 18,
