@@ -100,7 +100,7 @@ class TransactionDetailVo {
     this.speedUpTimes,
     this.cancelTimes,
     this.lastOptType,
-    this.receiptStatus,
+    this.receiptStatus = true,
   });
 
   static double amountFromJson(dynamic json) {
