@@ -23,6 +23,7 @@ import 'package:titan/src/plugins/wallet/config/hyperion.dart';
 import 'package:titan/src/plugins/wallet/hyn_erc20_abi.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/map3_staking_abi.dart';
+import 'package:titan/src/plugins/wallet/mdex_pair_abi.dart';
 import 'package:titan/src/plugins/wallet/rp_holding_abi.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
@@ -416,6 +417,12 @@ class WalletUtil {
     return contract;
   }
 
+  static web3.DeployedContract _newHecoMDexPairContract(String contractAddress, String name) {
+    final contract = web3.DeployedContract(web3.ContractAbi.fromJson(MDEX_PAIR_ABI, name),
+        web3.EthereumAddress.fromHex(contractAddress));
+    return contract;
+  }
+
   /// https://infura.io/docs/gettingStarted/makeRequests.md
   static Future<dynamic> postToEthereumNetwork(int coinType,
       {String method, List params, int id = 1}) async {
@@ -490,6 +497,10 @@ class WalletUtil {
     return _getContract(WalletUtil._newHecoBridgeLockContract, contractAddress, 'BridgeBurn');
   }
 
+  static web3.DeployedContract getHecoMDexPairContract(String contractAddress) {
+    return _getContract(WalletUtil._newHecoMDexPairContract, contractAddress, 'MdexPair');
+  }
+
   static web3.Web3Client getWeb3Client(int coinType, [bool printResponse = false]) {
     var key = _web3ClientMapKey(coinType);
     if (web3ClientMap.containsKey(key)) {
@@ -547,6 +558,20 @@ class WalletUtil {
           params: [web3.EthereumAddress.fromHex(address)]);
       return balance.first;
     }
+    return BigInt.from(0);
+  }
+
+  static Future<BigInt> getLastPrice(String name, {List<dynamic> params}) async {
+
+    final contract = getHecoMDexPairContract('0x8e6a7d6bd250d207df3b9efafc6c715885eda94e');
+    final function = contract.function(name);
+    final result = await getWeb3Client(CoinType.HB_HT).call(
+        contract: contract,
+        function: function,
+        params: params??[]);
+    print("[MDex] name:$name, result:$result");
+
+    return result.first;
     return BigInt.from(0);
   }
 

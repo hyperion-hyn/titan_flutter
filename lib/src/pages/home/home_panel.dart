@@ -26,12 +26,15 @@ import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/custom_click_oval_button.dart';
 import 'package:titan/src/widget/drag_tick.dart';
+import 'package:web3dart/web3dart.dart' as web3;
 
 class HomePanel extends StatefulWidget {
   final ScrollController scrollController;
@@ -139,8 +142,18 @@ class HomePanelState extends State<HomePanel> {
           ),
           Expanded(
             child: InkWell(
-              onTap:(){
-                Application.router.navigateTo(context, Routes.contribute_tasks_list);
+              onTap:() async{
+                //Application.router.navigateTo(context, Routes.contribute_tasks_list);
+                
+                var price0CumulativeLast = await WalletUtil.getLastPrice('price0CumulativeLast');
+                var price0CumulativeLastDecimal = ConvertTokenUnit.weiToDecimal(price0CumulativeLast);
+
+                var price1CumulativeLast = await WalletUtil.getLastPrice('price1CumulativeLast');
+                var price1CumulativeLastDecimal = ConvertTokenUnit.weiToDecimal(price1CumulativeLast);
+
+                var name = await WalletUtil.getLastPrice('price', params: [web3.EthereumAddress.fromHex("0x3ac19481face71565155f370b3e34a1178745382"), BigInt.from(18)]);
+
+                print("[Home_pannel_mdex] name:$name, price1CumulativeLast:$price1CumulativeLastDecimal, price0CumulativeLast:$price0CumulativeLastDecimal");
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 4, right: 4,),
