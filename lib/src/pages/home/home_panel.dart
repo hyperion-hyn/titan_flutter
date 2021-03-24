@@ -151,9 +151,13 @@ class HomePanelState extends State<HomePanel> {
                 var price1CumulativeLast = await WalletUtil.getLastPrice('price1CumulativeLast');
                 var price1CumulativeLastDecimal = ConvertTokenUnit.weiToDecimal(price1CumulativeLast);
 
+                var getReserves = await WalletUtil.getLastPrice('getReserves');
+
+
+
                 var name = await WalletUtil.getLastPrice('price', params: [web3.EthereumAddress.fromHex("0x3ac19481face71565155f370b3e34a1178745382"), BigInt.from(18)]);
 
-                print("[Home_pannel_mdex] name:$name, price1CumulativeLast:$price1CumulativeLastDecimal, price0CumulativeLast:$price0CumulativeLastDecimal");
+                print("[Home_pannel_mdex] getReserves:$getReserves, price1CumulativeLast:$price1CumulativeLastDecimal, price0CumulativeLast:$price0CumulativeLastDecimal");
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 4, right: 4,),
