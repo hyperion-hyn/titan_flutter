@@ -66,7 +66,6 @@ window.AlphaWallet.init(rpcURL, {
 //    alpha.ethCall(id, msgParams.to, msgParams.data);
   },
   enable: function() {
-      flutter_inappwebview.callHandler('enable');
       return new Promise(function(resolve, reject) {
           //send back the coinbase account as an array of one
           resolve([addressHex]);
