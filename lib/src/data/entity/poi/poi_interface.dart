@@ -1,10 +1,10 @@
 import 'package:mapbox_gl/mapbox_gl.dart';
 
 abstract class IPoi {
-  String name;
-  String address;
-  String remark;
-  final LatLng latLng;
+  String? name;
+  String? address;
+  String? remark;
+  final LatLng? latLng;
 
 
   IPoi({

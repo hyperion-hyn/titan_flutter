@@ -23,7 +23,7 @@ class SignalChatsPage extends StatefulWidget {
   static const int SIGNAL = -2;
   static const int NODE = -3;
 
-  final int type;
+  final int? type;
 
   SignalChatsPage({this.type});
 
@@ -34,13 +34,13 @@ class SignalChatsPage extends StatefulWidget {
 class _SignalChatsState extends State<SignalChatsPage>
     with AutomaticKeepAliveClientMixin {
   Api _api = Api();
-  SignalDailyVo _dailyVo;
-  List<SignalWeeklyVo> _weeklyVoList;
+  SignalDailyVo? _dailyVo;
+  List<SignalWeeklyVo>? _weeklyVoList;
   var _introduction = "";
-  List<Signal> _poiVoList;
-  Map3NodeVo _map3nodeVo;
-  SignalTotalVo _signalTotalVo;
-  all_page_state.AllPageState currentState = all_page_state.LoadingState();
+  List<Signal>? _poiVoList;
+  Map3NodeVo? _map3nodeVo;
+  SignalTotalVo? _signalTotalVo;
+  all_page_state.AllPageState? currentState = all_page_state.LoadingState();
 
   @override
   bool get wantKeepAlive => true;
@@ -123,10 +123,10 @@ class _SignalChatsState extends State<SignalChatsPage>
         children: <Widget>[
           _introductionWidget(),
           _signalTotalChartWidget(),
-          _dailySignalChartWidget(type: SensorType.GPS),
-          _dailySignalChartWidget(type: SensorType.WIFI),
-          _dailySignalChartWidget(type: SensorType.BLUETOOTH),
-          _dailySignalChartWidget(type: SensorType.CELLULAR),
+          _dailySignalChartWidget(SensorType.GPS),
+          _dailySignalChartWidget(SensorType.WIFI),
+          _dailySignalChartWidget(SensorType.BLUETOOTH),
+          _dailySignalChartWidget(SensorType.CELLULAR),
         ],
       ),
     );
@@ -148,7 +148,7 @@ class _SignalChatsState extends State<SignalChatsPage>
             placeholder: 'res/drawable/signal_map.png',
             fit: BoxFit.fill,
           )),
-          _dailySignalChartWidget(type: SensorType.POI),
+          _dailySignalChartWidget(SensorType.POI),
         ],
       ),
     );
@@ -157,12 +157,12 @@ class _SignalChatsState extends State<SignalChatsPage>
   Widget _nodeChartWidget() {
     var data = [];
 
-    if (_map3nodeVo != null && _map3nodeVo.tiles.length > 0) {
+    if (_map3nodeVo != null && (_map3nodeVo?.tiles?.length ?? 0) > 0) {
       var geoCoordCounts = [];
       var geoCoordMap = {};
 
-      for (var i = 0; i < _map3nodeVo.tiles.length; i++) {
-        var item = _map3nodeVo.tiles[i];
+      for (var i = 0; i < _map3nodeVo!.tiles.length; i++) {
+        var item = _map3nodeVo!.tiles[i];
         geoCoordMap[item.id.city] = item.id.location;
         var dict = {'name': item.id.city, 'value': item.count};
         geoCoordCounts.add(dict);
@@ -287,7 +287,7 @@ class _SignalChatsState extends State<SignalChatsPage>
       var wifi = [];
       var bluetooth = [];
       var cellular = [];
-      for (var item in _weeklyVoList) {
+      for (var item in _weeklyVoList!) {
         gps.add(item.gpsCount);
         wifi.add(item.wifiCount);
         bluetooth.add(item.blueToothCount);
@@ -507,7 +507,7 @@ class _SignalChatsState extends State<SignalChatsPage>
     );
   }
 
-  Widget _dailySignalChartWidget({int type}) {
+  Widget _dailySignalChartWidget(int type) {
     var _size = MediaQuery.of(context).size;
     double _chartsWidth = _size.width - 0;
     double _chartsHeight = type != SensorType.POI ? 250 : 180;
@@ -518,25 +518,25 @@ class _SignalChatsState extends State<SignalChatsPage>
       var list = [];
       switch (type) {
         case SensorType.WIFI:
-          list = _dailyVo.wifi;
+          list = _dailyVo!.wifi;
           break;
 
         case SensorType.CELLULAR:
-          list = _dailyVo.cellular;
+          list = _dailyVo!.cellular;
           break;
 
         case SensorType.BLUETOOTH:
-          list = _dailyVo.blueTooth;
+          list = _dailyVo!.blueTooth;
           break;
 
         case SensorType.GPS:
-          list = _dailyVo.gps;
+          list = _dailyVo!.gps;
 
           left = "25%";
           break;
 
         case SensorType.POI:
-          list = _poiVoList;
+          list = _poiVoList!;
           break;
       }
 
@@ -615,43 +615,7 @@ class _SignalChatsState extends State<SignalChatsPage>
     ));
   }
 
-  Widget _clipRRectWidget1(Widget child, [double width, double height]) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Material(
-        clipBehavior: Clip.antiAlias,
-        shadowColor: Colors.black12,
-        elevation: 5.0,
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(width: 0.05, color: Colors.black12),
-          borderRadius: BorderRadius.all(
-            Radius.circular(20.0),
-          ),
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(
-              Radius.circular(20.0),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 8.0,
-              ),
-            ],
-          ),
-          child: Center(
-            child: child,
-          ),
-          width: width,
-          height: height,
-        ),
-      ),
-    );
-  }
-
-  Widget _clipRRectWidget(Widget child, [double width, double height]) {
+  Widget _clipRRectWidget(Widget child, [double width = 0, double height = 0]) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Card(

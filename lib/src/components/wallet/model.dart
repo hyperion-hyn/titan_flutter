@@ -14,7 +14,7 @@ part 'model.g.dart';
 @JsonSerializable()
 class QuotesModel extends Equatable {
   // 行情数据，包括所有支持的法币
-  final List<TokenPriceViewVo> quotes;
+  final List<TokenPriceViewVo>? quotes;
 
   // final int lastUpdateTime;
 
@@ -22,7 +22,7 @@ class QuotesModel extends Equatable {
       });
 
   @override
-  List<Object> get props => [
+  List<dynamic>? get props => [
         /*symbolStr, */ quotes /*, lastUpdateTime*/
       ];
 
@@ -35,10 +35,10 @@ class QuotesModel extends Equatable {
 @JsonSerializable()
 class LegalSign extends Object {
   @JsonKey(name: 'legal')
-  String legal;
+  String? legal;
 
   @JsonKey(name: 'sign')
-  String sign;
+  String? sign;
 
   LegalSign({this.legal, this.sign});
 
@@ -63,7 +63,7 @@ class SupportedLegal {
 
   static List<LegalSign> all = [usd, cny];
 
-  static LegalSign of(String legal) {
+  static LegalSign? of(String legal) {
     for (var legalSign in all) {
       if (legalSign.legal == legal) {
         return legalSign.clone();
@@ -76,22 +76,22 @@ class SupportedLegal {
 // @JsonSerializable()
 class GasPriceRecommend extends Object {
   @JsonKey(name: 'fast')
-  Decimal fast;
+  Decimal? fast;
 
   @JsonKey(name: 'fastWait')
-  double fastWait;
+  double? fastWait;
 
   @JsonKey(name: 'average')
-  Decimal average;
+  Decimal? average;
 
   @JsonKey(name: 'avgWait')
-  double avgWait;
+  double? avgWait;
 
   @JsonKey(name: 'safeLow')
-  Decimal safeLow;
+  Decimal? safeLow;
 
   @JsonKey(name: 'safeLowWait')
-  double safeLowWait;
+  double? safeLowWait;
 
   GasPriceRecommend(
     this.fast,

@@ -3,31 +3,31 @@ import 'package:titan/src/data/entity/poi/poi_interface.dart';
 
 class PoliceStationPoi implements IDMapPoi {
   @override
-  String address;
+  String? address;
 
   @override
-  String name;
+  String? name;
 
   @override
-  String remark;
+  String? remark;
 
   @override
-  LatLng latLng;
+  LatLng? latLng;
 
 
   ///部门
-  String department;
+  String? department;
   ///电话
-  String telephone;
+  String? telephone;
   ///地区
-  String district;
+  String? district;
 
-  String id;
+  String? id;
 
-  PoliceStationPoi();
+  PoliceStationPoi.emptyEntity();
 
   factory PoliceStationPoi.fromMapFeature(Map<String, dynamic> feature) {
-    PoliceStationPoi poi = PoliceStationPoi();
+    PoliceStationPoi poi = PoliceStationPoi.emptyEntity();
 
     poi.id = feature["id"] is int ? feature["id"].toString() : feature["id"];
     var lat = feature["geometry"]["coordinates"][1];

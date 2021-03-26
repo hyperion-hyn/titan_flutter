@@ -3,27 +3,27 @@ import 'package:titan/src/data/entity/poi/poi_interface.dart';
 
 class EmbassyPoi implements IDMapPoi {
   @override
-  String address;
+  String? address;
 
   @override
-  String name;
+  String? name;
 
   @override
-  String remark;
+  String? remark;
 
   ///部门
-  String department;
+  String? department;
 
   ///官网
-  String website;
+  String? website;
 
   ///电话
-  String telephone;
+  String? telephone;
 
   @override
-  LatLng latLng;
+  LatLng? latLng;
 
-  String id;
+  String? id;
 
   EmbassyPoi();
 

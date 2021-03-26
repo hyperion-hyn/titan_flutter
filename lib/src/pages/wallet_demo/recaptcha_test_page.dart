@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class RecaptchaTestPage extends StatefulWidget {
-  final String apiKey;
-  final String language;
+  final String? apiKey;
+  final String? language;
   final String pluginURL;
   final String verifyUrl;
 
@@ -21,7 +21,7 @@ class RecaptchaTestPage extends StatefulWidget {
 }
 
 class _RecaptchaTestPageState extends State<RecaptchaTestPage> {
-  WebViewController webViewController;
+  WebViewController? webViewController;
 
   @override
   Widget build(BuildContext context) {

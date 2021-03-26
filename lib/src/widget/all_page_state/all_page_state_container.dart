@@ -8,8 +8,8 @@ import 'all_page_state.dart';
 class AllPageStateContainer extends StatefulWidget {
   final AllPageState allPageState;
   final VoidCallback onLoadData;
-  final Widget child;
-  final String loadingColor;
+  final Widget? child;
+  final String? loadingColor;
 
   AllPageStateContainer(this.allPageState, this.onLoadData,{this.child,this.loadingColor});
 
@@ -35,7 +35,7 @@ class AllPageStateContainerState extends State<AllPageStateContainer> {
       return buildFail(context, (widget.allPageState as LoadFailState).message);
     else
       if(widget.child != null)
-        return widget.child;
+        return widget.child!;
       return Container(
         width: 0.0,
         height: 0.0,
