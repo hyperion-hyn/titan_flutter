@@ -48,7 +48,6 @@ class HomePanel extends StatefulWidget {
 }
 
 class HomePanelState extends State<HomePanel> {
-
   static const int DAPP_HECO_INDEX = 1;
   static const int DAPP_ETH_INDEX = 2;
   static const int DAPP_ATLAS_INDEX = 3;
@@ -73,7 +72,8 @@ class HomePanelState extends State<HomePanel> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+        borderRadius:
+            BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
         color: Colors.white,
       ),
       child: CustomScrollView(
@@ -113,8 +113,16 @@ class HomePanelState extends State<HomePanel> {
 
   Widget _focusArea(context) {
     return Container(
-      margin: const EdgeInsets.only(top: 6, bottom: 20,left: 14, right: 14,),
-      padding: const EdgeInsets.only(top: 13, bottom: 13,),
+      margin: const EdgeInsets.only(
+        top: 6,
+        bottom: 20,
+        left: 14,
+        right: 14,
+      ),
+      padding: const EdgeInsets.only(
+        top: 13,
+        bottom: 13,
+      ),
       decoration: BoxDecoration(
         border: Border.all(color: DefaultColors.colorf2f2f2),
         borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -123,17 +131,24 @@ class HomePanelState extends State<HomePanel> {
         children: [
           Expanded(
             child: InkWell(
-              onTap: (){
+              onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => GlobalDataPage()));
               },
               child: Padding(
-                padding: const EdgeInsets.only(left: 8, right: 8,),
+                padding: const EdgeInsets.only(
+                  left: 8,
+                  right: 8,
+                ),
                 child: Row(
                   children: [
                     Image.asset(
-                        "res/drawable/ic_home_panel_data_display.png",width: 18,height: 18,
-                      ),
-                    SizedBox(width: 6,),
+                      "res/drawable/ic_home_panel_data_display.png",
+                      width: 18,
+                      height: 18,
+                    ),
+                    SizedBox(
+                      width: 6,
+                    ),
                     Text(S.of(context).global_nodes),
                   ],
                 ),
@@ -142,32 +157,45 @@ class HomePanelState extends State<HomePanel> {
           ),
           Expanded(
             child: InkWell(
-              onTap:() async{
+              onTap: () async {
                 //Application.router.navigateTo(context, Routes.contribute_tasks_list);
-                
-                var price0CumulativeLast = await WalletUtil.getLastPrice('price0CumulativeLast');
-                var price0CumulativeLastDecimal = ConvertTokenUnit.weiToDecimal(price0CumulativeLast);
 
-                var price1CumulativeLast = await WalletUtil.getLastPrice('price1CumulativeLast');
-                var price1CumulativeLastDecimal = ConvertTokenUnit.weiToDecimal(price1CumulativeLast);
+                Future<double> getPrice(String coinType, String contractAddress) async {
+                  var reserves = await WalletUtil.getLastPrice(
+                      contractAddress: contractAddress, name: 'getReserves');
+                  var reserve0 = reserves[0];
+                  var reserve0Decimal = ConvertTokenUnit.weiToDecimal(reserve0);
 
-                var getReserves = await WalletUtil.getLastPrice('getReserves');
+                  var reserve1 = reserves[1];
+                  var reserve1Decimal = ConvertTokenUnit.weiToDecimal(reserve1);
 
+                  return (reserve0Decimal / reserve1Decimal).toDouble();
+                }
 
+                // hyn
+                var hynPrice = await getPrice('HYN', '0x8e6a7d6bd250d207df3b9efafc6c715885eda94e');
 
-                var name = await WalletUtil.getLastPrice('price', params: [web3.EthereumAddress.fromHex("0x3ac19481face71565155f370b3e34a1178745382"), BigInt.from(18)]);
+                // rp
+                var rpPrice = await getPrice('RP', '0x057899dd6fcb69b23f3b4dc6c7c2bfa4a8a0b0ee');
+                print("[Home_pannel_mdex] hynPrice:$hynPrice, rpPrice:$rpPrice");
 
-                print("[Home_pannel_mdex] getReserves:$getReserves, price1CumulativeLast:$price1CumulativeLastDecimal, price0CumulativeLast:$price0CumulativeLastDecimal");
               },
               child: Padding(
-                padding: const EdgeInsets.only(left: 4, right: 4,),
+                padding: const EdgeInsets.only(
+                  left: 4,
+                  right: 4,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
-                      "res/drawable/ic_home_panel_data_contribution.png",width: 18,height: 18,
+                      "res/drawable/ic_home_panel_data_contribution.png",
+                      width: 18,
+                      height: 18,
                     ),
-                    SizedBox(width: 6,),
+                    SizedBox(
+                      width: 6,
+                    ),
                     Text(S.of(context).data_contribute),
                   ],
                 ),
@@ -176,24 +204,31 @@ class HomePanelState extends State<HomePanel> {
           ),
           Expanded(
             child: InkWell(
-              onTap: (){
+              onTap: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => WebViewContainer(
-                          initUrl: S.of(context).hyperion_project_intro_url,
-                          title: S.of(context).Hyperion,
-                        )));
+                              initUrl: S.of(context).hyperion_project_intro_url,
+                              title: S.of(context).Hyperion,
+                            )));
               },
               child: Padding(
-                padding: const EdgeInsets.only(left: 8, right: 8,),
+                padding: const EdgeInsets.only(
+                  left: 8,
+                  right: 8,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
-                      "res/drawable/ic_home_panel_hyperion.png",width: 18,height: 18,
+                      "res/drawable/ic_home_panel_hyperion.png",
+                      width: 18,
+                      height: 18,
                     ),
-                    SizedBox(width: 6,),
+                    SizedBox(
+                      width: 6,
+                    ),
                     Text(S.of(context).Hyperion),
                   ],
                 ),
@@ -206,7 +241,6 @@ class HomePanelState extends State<HomePanel> {
   }
 
   Widget _focusAreaOld(context) {
-
     var colors = SupportedTheme.defaultBtnColors(context);
 
     return Container(
@@ -225,7 +259,8 @@ class HomePanelState extends State<HomePanel> {
                   child: InkWell(
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => GlobalDataPage()));
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => GlobalDataPage()));
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -246,13 +281,17 @@ class HomePanelState extends State<HomePanel> {
                               children: <Widget>[
                                 Text(
                                   S.of(context).global_nodes,
-                                  style: TextStyle(fontWeight: FontWeight.w600, color: SupportedTheme.textColorBlack),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: SupportedTheme.textColorBlack),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4.0, right: 4),
                                   child: Text(
                                     S.of(context).global_map_server_nodes,
-                                    style: TextStyle(color: SupportedTheme.textColorBlack.withOpacity(0.8), fontSize: 12),
+                                    style: TextStyle(
+                                        color: SupportedTheme.textColorBlack.withOpacity(0.8),
+                                        fontSize: 12),
                                   ),
                                 )
                               ],
@@ -322,7 +361,9 @@ class HomePanelState extends State<HomePanel> {
                                       padding: const EdgeInsets.only(top: 8.0),
                                       child: Text(
                                         S.of(context).project_introduction,
-                                        style: TextStyle(color: SupportedTheme.textColorBlack.withOpacity(0.8), fontSize: 12),
+                                        style: TextStyle(
+                                            color: SupportedTheme.textColorBlack.withOpacity(0.8),
+                                            fontSize: 12),
                                       ),
                                     )
                                   ],
@@ -377,13 +418,16 @@ class HomePanelState extends State<HomePanel> {
                         children: <Widget>[
                           Text(
                             S.of(context).data_contribute,
-                            style: TextStyle(fontWeight: FontWeight.w600, color: SupportedTheme.textColorBlack),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, color: SupportedTheme.textColorBlack),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Text(
                               S.of(context).data_contribute_reward,
-                              style: TextStyle(color: SupportedTheme.textColorBlack.withOpacity(0.8), fontSize: 12),
+                              style: TextStyle(
+                                  color: SupportedTheme.textColorBlack.withOpacity(0.8),
+                                  fontSize: 12),
                             ),
                           ),
                         ],
@@ -444,155 +488,190 @@ class HomePanelState extends State<HomePanel> {
     );
   }*/
 
-  Widget _dappView(){
-    var activatedWallet = WalletInheritedModel
-        .of(Keys.rootKey.currentContext)
-        ?.activatedWallet;
-    var _address = activatedWallet?.wallet
-        ?.getEthAccount()
-        ?.address ?? "";
+  Widget _dappView() {
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
     return Padding(
-      padding: const EdgeInsets.only(left:14.0,right: 14),
+      padding: const EdgeInsets.only(left: 14.0, right: 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text("DApp",style: TextStyles.textC333S16bold,),
+              Text(
+                "DApp",
+                style: TextStyles.textC333S16bold,
+              ),
               Spacer(),
               InkWell(
-                  onTap: (){
+                  onTap: () {
                     AtlasApi.goToAtlasMap3HelpPage(context);
                   },
-                  child: Text(S.of(context).redeem_tutorial,style: TextStyles.textC999S12,)),
+                  child: Text(
+                    S.of(context).redeem_tutorial,
+                    style: TextStyles.textC999S12,
+                  )),
             ],
           ),
           Row(
             children: [
-              _dappSelectTab("HECO",DAPP_HECO_INDEX),
+              _dappSelectTab("HECO", DAPP_HECO_INDEX),
               Padding(
-                padding: const EdgeInsets.only(left:35.0,right: 35),
-                child: _dappSelectTab("ETH",DAPP_ETH_INDEX),
+                padding: const EdgeInsets.only(left: 35.0, right: 35),
+                child: _dappSelectTab("ETH", DAPP_ETH_INDEX),
               ),
-              _dappSelectTab("ATLAS",DAPP_ATLAS_INDEX),
+              _dappSelectTab("ATLAS", DAPP_ATLAS_INDEX),
             ],
           ),
-          if(selectDappIndex == DAPP_HECO_INDEX)
+          if (selectDappIndex == DAPP_HECO_INDEX)
             InkWell(
-              onTap: (){
+              onTap: () {
                 if (_address?.isEmpty ?? true) {
                   _pushWalletManagerAction();
                   return;
                 }
 
                 var scanStr = FluroConvertUtils.fluroCnParamsEncode('https://ht.mdex.com/#/swap');
-                Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr&defaultCoin=${CoinType.HB_HT.toString()}&title=MDEX");
+                Application.router.navigateTo(
+                    context,
+                    Routes.toolspage_dapp_webview_page +
+                        "?initUrl=$scanStr&defaultCoin=${CoinType.HB_HT.toString()}&title=MDEX");
               },
               child: Container(
-                padding: const EdgeInsets.only(left:24.0,right: 24,top: 21,bottom: 21),
+                padding: const EdgeInsets.only(left: 24.0, right: 24, top: 21, bottom: 21),
                 decoration: BoxDecoration(
-                  color: HexColor("#140d25b9"),
-                  borderRadius: BorderRadius.all(Radius.circular(8))
-                ),
+                    color: HexColor("#140d25b9"),
+                    borderRadius: BorderRadius.all(Radius.circular(8))),
                 child: Row(
                   children: [
-                    Image.asset("res/drawable/ic_home_panel_dapp_heco.png",width: 36,height: 36,),
-                    SizedBox(width: 10,),
+                    Image.asset(
+                      "res/drawable/ic_home_panel_dapp_heco.png",
+                      width: 36,
+                      height: 36,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("MDEX",style: TextStyles.textC333S14bold,),
+                          Text(
+                            "MDEX",
+                            style: TextStyles.textC333S14bold,
+                          ),
                           Text(S.of(context).mdex_desc, style: TextStyles.textC999S12),
-                      ],),
+                        ],
+                      ),
                     )
                   ],
                 ),
               ),
             ),
-          if(selectDappIndex == DAPP_ETH_INDEX)
+          if (selectDappIndex == DAPP_ETH_INDEX)
             InkWell(
-            onTap: (){
-              if (_address?.isEmpty ?? true) {
-                _pushWalletManagerAction();
-                return;
-              }
+              onTap: () {
+                if (_address?.isEmpty ?? true) {
+                  _pushWalletManagerAction();
+                  return;
+                }
 
-              var scanStr = FluroConvertUtils.fluroCnParamsEncode('http://uniswap.defiplot.com/#/swap');
-              Application.router.navigateTo(context, Routes.toolspage_dapp_webview_page + "?initUrl=$scanStr&defaultCoin=${CoinType.ETHEREUM.toString()}&title=Uniswap");
-            },
-            child: Container(
-              padding: const EdgeInsets.only(left:24.0,right: 24,top: 21,bottom: 21),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-                  HexColor("#CA05E7"),
-                  HexColor("#F61B98"),
-                ]),
-                  color: HexColor("#140d25b9"),
-                  borderRadius: BorderRadius.all(Radius.circular(8))
-              ),
-              child: Row(
-                children: [
-                  Image.asset("res/drawable/ic_home_panel_dapp_uniswap.png",width: 36,height: 36,),
-                  SizedBox(width: 10,),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("UNISWAP",style: TextStyles.textC333S14bold,),
-                        Text(S.of(context).decent_transac_protocol,style: TextStyles.textC999S12),
-                      ],),
-                  ),
-                  Expanded(child: Text(S.of(context).not_yet_open_trading,style: TextStyles.textC999S12,textAlign: TextAlign.end,))
-                ],
-              ),
-            ),
-          ),
-          if(selectDappIndex == DAPP_ATLAS_INDEX)
-            InkWell(
-            onTap: () {
-              if (_address?.isEmpty ?? true) {
-                _pushWalletManagerAction();
-                return;
-              }
-
-              var entryRouteName = Uri.encodeComponent(Routes.red_pocket_page);
-
-              Application.router.navigateTo(
-                  context,
-                  Routes.red_pocket_page +
-                      "?entryRouteName=$entryRouteName");
-            },
-            child: Container(
-              padding: const EdgeInsets.only(left:24.0,right: 24,top: 21,bottom: 21),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                color: HexColor('#FFFFEDED'),
-              ),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'res/drawable/ic_wallet_image_rp_hrc30.png',
-                    width: 36,
-                    height: 36,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(S.of(context).red_pocket,style: TextStyles.textC333S14bold,),
-                        Text(S.of(context).share_more_airdrop_rewards,style: TextStyles.textC999S12),
-                      ],
+                var scanStr =
+                    FluroConvertUtils.fluroCnParamsEncode('http://uniswap.defiplot.com/#/swap');
+                Application.router.navigateTo(
+                    context,
+                    Routes.toolspage_dapp_webview_page +
+                        "?initUrl=$scanStr&defaultCoin=${CoinType.ETHEREUM.toString()}&title=Uniswap");
+              },
+              child: Container(
+                padding: const EdgeInsets.only(left: 24.0, right: 24, top: 21, bottom: 21),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [
+                      HexColor("#CA05E7"),
+                      HexColor("#F61B98"),
+                    ]),
+                    color: HexColor("#140d25b9"),
+                    borderRadius: BorderRadius.all(Radius.circular(8))),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      "res/drawable/ic_home_panel_dapp_uniswap.png",
+                      width: 36,
+                      height: 36,
                     ),
-                  )
-                ],
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "UNISWAP",
+                            style: TextStyles.textC333S14bold,
+                          ),
+                          Text(S.of(context).decent_transac_protocol,
+                              style: TextStyles.textC999S12),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                        child: Text(
+                      S.of(context).not_yet_open_trading,
+                      style: TextStyles.textC999S12,
+                      textAlign: TextAlign.end,
+                    ))
+                  ],
+                ),
               ),
             ),
-          ),
+          if (selectDappIndex == DAPP_ATLAS_INDEX)
+            InkWell(
+              onTap: () {
+                if (_address?.isEmpty ?? true) {
+                  _pushWalletManagerAction();
+                  return;
+                }
+
+                var entryRouteName = Uri.encodeComponent(Routes.red_pocket_page);
+
+                Application.router.navigateTo(
+                    context, Routes.red_pocket_page + "?entryRouteName=$entryRouteName");
+              },
+              child: Container(
+                padding: const EdgeInsets.only(left: 24.0, right: 24, top: 21, bottom: 21),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: HexColor('#FFFFEDED'),
+                ),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      'res/drawable/ic_wallet_image_rp_hrc30.png',
+                      width: 36,
+                      height: 36,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            S.of(context).red_pocket,
+                            style: TextStyles.textC333S14bold,
+                          ),
+                          Text(S.of(context).share_more_airdrop_rewards,
+                              style: TextStyles.textC999S12),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -605,30 +684,34 @@ class HomePanelState extends State<HomePanel> {
             "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_NORMAL}");
   }
 
-  Widget _dappSelectTab(String title,int selectIndex){
+  Widget _dappSelectTab(String title, int selectIndex) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         selectDappIndex = selectIndex;
-        setState(() {
-
-        });
+        setState(() {});
       },
       child: Padding(
-        padding: const EdgeInsets.only(top:20.0,bottom: 20),
+        padding: const EdgeInsets.only(top: 20.0, bottom: 20),
         child: Column(
           children: [
-            Text(title,style: selectDappIndex == selectIndex ? TextStyles.textC333S14bold : TextStyles.textC999S14,),
-            SizedBox(height: 6,),
-            if(selectDappIndex == selectIndex)
+            Text(
+              title,
+              style: selectDappIndex == selectIndex
+                  ? TextStyles.textC333S14bold
+                  : TextStyles.textC999S14,
+            ),
+            SizedBox(
+              height: 6,
+            ),
+            if (selectDappIndex == selectIndex)
               Container(
                 height: 2,
                 width: 20,
                 decoration: BoxDecoration(
                     gradient: LinearGradient(colors: [
-                      HexColor("#E7C01A"),
-                      HexColor("#F7D33D"),
-                    ])
-                ),
+                  HexColor("#E7C01A"),
+                  HexColor("#F7D33D"),
+                ])),
               )
           ],
         ),
@@ -711,19 +794,22 @@ class HomePanelState extends State<HomePanel> {
                           ),
                           Text(
                             S.of(context).send,
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 13.0),
+                            style: TextStyle(
+                                color: Colors.white, fontWeight: FontWeight.w400, fontSize: 13.0),
                           )
                         ],
                       ),
                       () async {
                         await activeDMap('encryptShare');
                         var mapboxController =
-                            (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController;
+                            (Keys.mapContainerKey.currentState as MapContainerState)
+                                ?.mapboxMapController;
 
                         var lastLocation = await mapboxController?.lastKnownLocation();
                         if (lastLocation != null) {
                           Future.delayed(Duration(milliseconds: 500)).then((value) {
-                            mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(lastLocation, 17));
+                            mapboxController
+                                ?.animateCamera(CameraUpdate.newLatLngZoom(lastLocation, 17));
                           });
                         }
                       },
@@ -745,12 +831,14 @@ class HomePanelState extends State<HomePanel> {
                           ),
                           Text(
                             S.of(context).receiver,
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 13.0),
+                            style: TextStyle(
+                                color: Colors.white, fontWeight: FontWeight.w400, fontSize: 13.0),
                           )
                         ],
                       ),
                       () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
                       },
                       width: 100,
                       height: 35,
@@ -781,8 +869,9 @@ class HomePanelState extends State<HomePanel> {
                     },
                     child: Container(
                       padding: const EdgeInsets.all(16),
-                      decoration:
-                          BoxDecoration(color: HexColor("#FFFCE4"), borderRadius: BorderRadius.all(Radius.circular(8))),
+                      decoration: BoxDecoration(
+                          color: HexColor("#FFFCE4"),
+                          borderRadius: BorderRadius.all(Radius.circular(8))),
                       child: Row(
                         children: <Widget>[
                           Image.asset(
@@ -834,8 +923,9 @@ class HomePanelState extends State<HomePanel> {
                     },
                     child: Container(
                       padding: const EdgeInsets.fromLTRB(16, 16, 6, 8),
-                      decoration:
-                          BoxDecoration(color: HexColor("#FFFCE4"), borderRadius: BorderRadius.all(Radius.circular(8))),
+                      decoration: BoxDecoration(
+                          color: HexColor("#FFFCE4"),
+                          borderRadius: BorderRadius.all(Radius.circular(8))),
                       child: Row(
                         children: <Widget>[
                           Image.asset(
@@ -1008,7 +1098,8 @@ class HomePanelState extends State<HomePanel> {
     ];
 
     bool isChinaMainland =
-        SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel?.isChinaMainland ?? true;
+        SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel?.isChinaMainland ??
+            true;
     List<String> typeOfNearBys = [
       "restaurant",
       "lodging",
@@ -1067,7 +1158,11 @@ class HomePanelState extends State<HomePanel> {
 
   Widget _category() {
     return Container(
-      padding: const EdgeInsets.only(top: 4, left: 12, right: 12,),
+      padding: const EdgeInsets.only(
+        top: 4,
+        left: 12,
+        right: 12,
+      ),
       height: 46,
       //color: Colors.red,
       child: ListView.builder(
@@ -1086,7 +1181,10 @@ class HomePanelState extends State<HomePanel> {
               }
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8,),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 4,
+                vertical: 8,
+              ),
               child: Container(
                 // height: 20,
                 alignment: Alignment.center,
@@ -1095,7 +1193,8 @@ class HomePanelState extends State<HomePanel> {
                   border: Border.all(color: HexColor("#dedede")),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(model.title, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
+                child:
+                    Text(model.title, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
               ),
             ),
           );
@@ -1125,8 +1224,10 @@ class HomePanelState extends State<HomePanel> {
         return;
       }
       var infoEntity = Map3InfoEntity.onlyNodeId(idList[1]);
-      Application.router.navigateTo(context,
-          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
+      Application.router.navigateTo(
+          context,
+          Routes.map3node_contract_detail_page +
+              '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
     } else if (scanStr.contains(RpFriendInvitePage.shareDomain)) {
       var fromArr = scanStr.split("from=");
       if (fromArr[1].length > 0) {
@@ -1135,15 +1236,15 @@ class HomePanelState extends State<HomePanel> {
           showInviteDialog(context, fromArr[0], fromArr[1]);
         }
       }
-    } else if(scanStr.contains(RpShareGetDialogPage.shareDomain)){
+    } else if (scanStr.contains(RpShareGetDialogPage.shareDomain)) {
       /*RegExp regExpStr = new RegExp(r"(?<=rpId=).+(?<=&from)");
       String rpId = regExpStr.firstMatch(scanStr).group(0);
       print("!!!!3322 $rpId");*/
 
       var rpIdArrAfter = scanStr.split("?rpId=");
-      if(rpIdArrAfter.length > 0){
+      if (rpIdArrAfter.length > 0) {
         var rpIdBefore = rpIdArrAfter[1].split("&");
-        showShareRpOpenDialog(context,id: rpIdBefore[0]);
+        showShareRpOpenDialog(context, id: rpIdBefore[0]);
       }
     } else if (scanStr.contains(PromoteQrCodePage.downloadDomain)) {
       var fromArr = scanStr.split("from=");
@@ -1166,7 +1267,8 @@ class HomePanelState extends State<HomePanel> {
 
     var model = DMapDefine.kMapList[dMapName];
     if (model != null) {
-      if (model.dMapConfigModel.defaultLocation != null && model.dMapConfigModel.defaultZoom != null) {
+      if (model.dMapConfigModel.defaultLocation != null &&
+          model.dMapConfigModel.defaultZoom != null) {
         MapContainerState mapState = (Keys.mapContainerKey.currentState as MapContainerState);
         mapState.updateMyLocationTrackingMode(MyLocationTrackingMode.None);
         await Future.delayed(Duration(milliseconds: 300));
@@ -1193,5 +1295,9 @@ class SearchTextModel {
   String typeOfNearBy; //only not China mainland, category of type
 
   SearchTextModel(this.title, this.avatar,
-      {this.searchText, this.center, this.gaodeType, this.isCategorySearch = true, this.typeOfNearBy});
+      {this.searchText,
+      this.center,
+      this.gaodeType,
+      this.isCategorySearch = true,
+      this.typeOfNearBy});
 }

@@ -561,9 +561,9 @@ class WalletUtil {
     return BigInt.from(0);
   }
 
-  static Future<BigInt> getLastPrice(String name, {List<dynamic> params}) async {
+  static Future<List<dynamic>> getLastPrice({String contractAddress, String name, List<dynamic> params}) async {
 
-    final contract = getHecoMDexPairContract('0x8e6a7d6bd250d207df3b9efafc6c715885eda94e');
+    final contract = getHecoMDexPairContract(contractAddress);
     final function = contract.function(name);
     final result = await getWeb3Client(CoinType.HB_HT).call(
         contract: contract,
@@ -571,8 +571,7 @@ class WalletUtil {
         params: params??[]);
     print("[MDex] name:$name, result:$result");
 
-    return result.first;
-    return BigInt.from(0);
+    return result;
   }
 
   static String formatToHynAddrIfAtlasChain(CoinViewVo coinVo, String ethAddress) {
