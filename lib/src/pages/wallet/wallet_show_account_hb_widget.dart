@@ -329,6 +329,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
       children: [
         InkWell(
           onTap: () {
+            var webTitleStr = FluroConvertUtils.fluroCnParamsEncode("MDEX");
             var tokenContractAddress = widget.coinVo.contractAddress;
             var usdtContractAddress = env.buildType == BuildType.DEV
                 ? DefaultTokenDefine.HUSDT_TEST.contractAddress
@@ -339,7 +340,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
             Application.router.navigateTo(
                 context,
                 Routes.toolspage_dapp_webview_page +
-                    "?initUrl=$initUrl&defaultCoin=${CoinType.HB_HT.toString()}&title=MDEX");
+                    "?initUrl=$initUrl&defaultCoin=${CoinType.HB_HT.toString()}&title=$webTitleStr");
           },
           child: Row(
             children: <Widget>[
