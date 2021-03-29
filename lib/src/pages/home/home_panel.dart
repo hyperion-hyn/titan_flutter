@@ -174,10 +174,11 @@ class HomePanelState extends State<HomePanel> {
 
                 // hyn
                 var hynPrice = await getPrice('HYN', '0x8e6a7d6bd250d207df3b9efafc6c715885eda94e');
+                print("[Home_pannel_mdex] hynPrice:$hynPrice");
 
                 // rp
-                var rpPrice = await getPrice('RP', '0x057899dd6fcb69b23f3b4dc6c7c2bfa4a8a0b0ee');
-                print("[Home_pannel_mdex] hynPrice:$hynPrice, rpPrice:$rpPrice");
+                var rpPrice = await getPrice('RP', '0x2241E4D5cd6408E120974EDA698801eAA4bdc294');
+                print("[Home_pannel_mdex] rpPrice:$rpPrice");
 
               },
               child: Padding(
