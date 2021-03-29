@@ -20,6 +20,7 @@ import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/heco.dart';
 import 'package:titan/src/plugins/wallet/config/hyperion.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/hyn_erc20_abi.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/map3_staking_abi.dart';
@@ -572,6 +573,23 @@ class WalletUtil {
     print("[MDex] name:$name, result:$result");
 
     return result;
+  }
+
+  static Future<double> getPrice({String coinType, String contractAddress}) async {
+    var reserves = await getLastPrice(
+        contractAddress: contractAddress, name: 'getReserves');
+
+    if (reserves.length < 3) {
+      return 0;
+    }
+
+    var reserve0 = reserves[0];
+    var reserve0Decimal = ConvertTokenUnit.weiToDecimal(reserve0);
+
+    var reserve1 = reserves[1];
+    var reserve1Decimal = ConvertTokenUnit.weiToDecimal(reserve1);
+
+    return (reserve1Decimal / reserve0Decimal).toDouble();
   }
 
   static String formatToHynAddrIfAtlasChain(CoinViewVo coinVo, String ethAddress) {

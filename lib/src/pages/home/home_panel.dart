@@ -26,15 +26,13 @@ import 'package:titan/src/pages/red_pocket/rp_friend_invite_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_share_get_dialog_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/custom_click_oval_button.dart';
 import 'package:titan/src/widget/drag_tick.dart';
-import 'package:web3dart/web3dart.dart' as web3;
+
 
 class HomePanel extends StatefulWidget {
   final ScrollController scrollController;
@@ -158,28 +156,7 @@ class HomePanelState extends State<HomePanel> {
           Expanded(
             child: InkWell(
               onTap: () async {
-                //Application.router.navigateTo(context, Routes.contribute_tasks_list);
-
-                Future<double> getPrice(String coinType, String contractAddress) async {
-                  var reserves = await WalletUtil.getLastPrice(
-                      contractAddress: contractAddress, name: 'getReserves');
-                  var reserve0 = reserves[0];
-                  var reserve0Decimal = ConvertTokenUnit.weiToDecimal(reserve0);
-
-                  var reserve1 = reserves[1];
-                  var reserve1Decimal = ConvertTokenUnit.weiToDecimal(reserve1);
-
-                  return (reserve0Decimal / reserve1Decimal).toDouble();
-                }
-
-                // hyn
-                var hynPrice = await getPrice('HYN', '0x8e6a7d6bd250d207df3b9efafc6c715885eda94e');
-                print("[Home_pannel_mdex] hynPrice:$hynPrice");
-
-                // rp
-                var rpPrice = await getPrice('RP', '0x2241E4D5cd6408E120974EDA698801eAA4bdc294');
-                print("[Home_pannel_mdex] rpPrice:$rpPrice");
-
+                Application.router.navigateTo(context, Routes.contribute_tasks_list);
               },
               child: Padding(
                 padding: const EdgeInsets.only(
