@@ -165,23 +165,26 @@ class CoinMarketApi {
           if (legalSign != null) {
             var price = datas[key]["quote"][convert]["price"];
 
-            if (key == "HYN") {
-              if (legalSign.legal == "CNY") {
-                price = hynCNY;
-                //print("1, hynCNY, price:$price");
-              } else {
-                price = hynUSD;
-                //print("2, hynUSD, price:$price");
-              }
-            } else if (key == "RP") {
-              if (legalSign.legal == "CNY") {
-                price = rpCNY;
-                //print("3, rpCNY, price:$price");
-              } else {
-                price = rpUSD;
-                //print("4, rpUSD, price:$price");
+            if (env.buildType == BuildType.PROD) {
+              if (key == "HYN") {
+                if (legalSign.legal == "CNY") {
+                  price = hynCNY;
+                  //print("1, hynCNY, price:$price");
+                } else {
+                  price = hynUSD;
+                  //print("2, hynUSD, price:$price");
+                }
+              } else if (key == "RP") {
+                if (legalSign.legal == "CNY") {
+                  price = rpCNY;
+                  //print("3, rpCNY, price:$price");
+                } else {
+                  price = rpUSD;
+                  //print("4, rpUSD, price:$price");
+                }
               }
             }
+
             var percentChange24h = datas[key]["quote"][convert]["percent_change_24h"];
             var vo = TokenPriceViewVo(
                 symbol: key,
