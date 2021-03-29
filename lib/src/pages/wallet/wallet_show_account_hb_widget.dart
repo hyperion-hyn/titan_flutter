@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/env.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
@@ -259,11 +260,6 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                                             width: 20,
                                             height: 20,
                                           ),
-                                          /*Icon(
-                                            ExtendsIconFont.receiver,
-                                            color: Theme.of(context).primaryColor,
-                                            size: 20,
-                                          ),*/
                                           SizedBox(
                                             width: 12,
                                           ),
@@ -275,6 +271,16 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                                         ],
                                       ),
                                     ),
+                                    if (widget.coinVo.symbol == 'HYN' ||
+                                        widget.coinVo.symbol == 'RP')
+                                      Container(
+                                        height: 36,
+                                        width: 1,
+                                        color: DefaultColors.colord7d7d7,
+                                      ),
+                                    if (widget.coinVo.symbol == 'HYN' ||
+                                        widget.coinVo.symbol == 'RP')
+                                      _swapButton(),
                                   ],
                                 ),
                               ),
@@ -314,6 +320,49 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
             ),
           ),
         ));
+  }
+
+  Widget _swapButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        InkWell(
+          onTap: () {
+            var tokenContractAddress = widget.coinVo.contractAddress;
+            var usdtContractAddress = env.buildType == BuildType.DEV
+                ? DefaultTokenDefine.HUSDT_TEST.contractAddress
+                : DefaultTokenDefine.HUSDT.contractAddress;
+            var swapUrl =
+                'https://ht.mdex.com/#/swap?inputCurrency=$tokenContractAddress&&outputCurrency=$usdtContractAddress';
+            var initUrl = FluroConvertUtils.fluroCnParamsEncode(swapUrl);
+            Application.router.navigateTo(
+                context,
+                Routes.toolspage_dapp_webview_page +
+                    "?initUrl=$initUrl&defaultCoin=${CoinType.HB_HT.toString()}&title=MDEX");
+          },
+          child: Row(
+            children: <Widget>[
+              Image.asset(
+                "res/drawable/ic_wallet_account_list_exchange.png",
+                width: 20,
+                height: 20,
+              ),
+              SizedBox(
+                width: 12,
+              ),
+              Text(
+                S.of(context).exchange,
+                style: TextStyle(
+                  color: DefaultColors.color333,
+                  fontSize: 14,
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildTransactionItem(BuildContext context, TransactionDetailVo transactionDetail) {
