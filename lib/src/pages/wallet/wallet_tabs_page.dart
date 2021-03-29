@@ -34,7 +34,7 @@ class _WalletTabsPageState extends State<WalletTabsPage>
   Widget build(BuildContext context) {
 
     var isHiddenSwap =
-        SettingInheritedModel.ofConfig(context)?.systemConfigEntity?.isHiddenSwap??false;
+        SettingInheritedModel.ofConfig(context)?.systemConfigEntity?.isHiddenSwap??true;
     print("[wallet] isHiddenSwap:$isHiddenSwap");
 
     if (isHiddenSwap) {

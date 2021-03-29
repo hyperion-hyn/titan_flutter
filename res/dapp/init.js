@@ -17,7 +17,7 @@ window.AlphaWallet.init(rpcURL, {
        var gasPrice = tx.gasPrice || null;
        var data = tx.data || null;
        var nonce = tx.nonce || -1;
-       flutter_inappwebview.callHandler('processSignTransaction', id, tx.to || null, tx.value, nonce, gasLimit, gasPrice, data);
+       flutter_inappwebview.dappCallHandler('processSignTransaction', id, JSON.stringify([id, tx.to || null, tx.value, nonce, gasLimit, gasPrice, data]));
     //    alpha.signTransaction(id, tx.to || null, tx.value, nonce, gasLimit, gasPrice, data);
   },
   processTransaction: function (tx, cb){
@@ -29,7 +29,7 @@ window.AlphaWallet.init(rpcURL, {
     var gasPrice = tx.gasPrice || null;
     var data = tx.data || null;
     var nonce = tx.nonce || -1;
-    flutter_inappwebview.callHandler('processTransaction', id, tx.to || null, tx.value, nonce, gasLimit, gasPrice, data);
+    flutter_inappwebview.dappCallHandler('processTransaction', id, JSON.stringify([id, tx.to || null, tx.value, nonce, gasLimit, gasPrice, data]));
 //    alpha.signTransaction(id, tx.to || null, tx.value, nonce, gasLimit, gasPrice, data);
   },
   signMessage: function (msgParams, cb) {
@@ -37,7 +37,7 @@ window.AlphaWallet.init(rpcURL, {
       const { data, chainType } = msgParams
       const { id = 8888 } = msgParams
     AlphaWallet.addCallback(id, cb)
-    flutter_inappwebview.callHandler('signMessage', id, data);
+    flutter_inappwebview.dappCallHandler('signMessage', id, JSON.stringify([id, msgParams.data]));
 //    alpha.signMessage(id, data);
   },
   signPersonalMessage: function (msgParams, cb) {
@@ -45,7 +45,7 @@ window.AlphaWallet.init(rpcURL, {
       const { data, chainType } = msgParams
       const { id = 8888 } = msgParams
     AlphaWallet.addCallback(id, cb)
-    flutter_inappwebview.callHandler('signPersonalMessage', id, data);
+    flutter_inappwebview.dappCallHandler('signPersonalMessage', id, JSON.stringify([id, msgParams.data]));
 //    alpha.signPersonalMessage(id, data);
   },
   signTypedMessage: function (msgParams, cb) {
@@ -53,7 +53,7 @@ window.AlphaWallet.init(rpcURL, {
     const { data } = msgParams
     const { id = 8888 } = msgParams
     AlphaWallet.addCallback(id, cb)
-    flutter_inappwebview.callHandler('signTypedMessage', id, JSON.stringify(msgParams));
+    flutter_inappwebview.dappCallHandler('signTypedMessage', id, JSON.stringify([id, msgParams.data]));
 //    alpha.signTypedMessage(id, JSON.stringify(msgParams))
   },
   ethCall: function (msgParams, cb) {
@@ -62,11 +62,10 @@ window.AlphaWallet.init(rpcURL, {
     const { id = Math.floor((Math.random() * 100000) + 1) } = msgParams
     AlphaWallet.addCallback(id, cb)
     //alpha.ethCall(id, JSON.stringify(msgParams));
-    flutter_inappwebview.callHandler('ethCall', id, msgParams.to, msgParams.data);
+    flutter_inappwebview.dappCallHandler('ethCall', id, JSON.stringify([id, msgParams.to, msgParams.data]));
 //    alpha.ethCall(id, msgParams.to, msgParams.data);
   },
   enable: function() {
-      flutter_inappwebview.callHandler('enable');
       return new Promise(function(resolve, reject) {
           //send back the coinbase account as an array of one
           resolve([addressHex]);

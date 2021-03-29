@@ -109,8 +109,6 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
 
   @override
   void didChangeDependencies() {
-    updateNetwork();
-
     super.didChangeDependencies();
   }
 
@@ -259,6 +257,12 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
   }
 
   Widget _body() {
+    walletAddress =
+        WalletInheritedModel.of(context).activatedWallet.wallet.getEthAccount().address ?? "";
+    rpcUrl = WalletUtil.getRpcApiByCoinType(selectCoinType) ?? "";
+    chainId =
+        WalletInheritedModel.of(context).activatedWallet.wallet.getChainId(selectCoinType) ?? "";
+
     return InAppWebView(
       initialUrl: widget.initUrl,
       initialHeaders: {},
@@ -278,6 +282,24 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
       onLoadStop: (InAppWebViewController controller, String url) async {
         isLoading = false;
         print("onLoadStop $url");
+
+        if (hadEnable) {
+          return;
+        }
+        DAppAuthorizationDialogEntity entity = DAppAuthorizationDialogEntity(
+          title: S.of(context).visit_instructions,
+          dAppName: widget.title,
+        );
+        var authorizaResult = await showDAppAuthorizationDialog(
+          context: context,
+          entity: entity,
+        );
+        if (authorizaResult == null || !authorizaResult) {
+          Navigator.of(context).pop();
+        } else {
+          hadEnable = true;
+        }
+
         setState(() {
           this.url = url;
         });
@@ -374,7 +396,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
     controller.addJavaScriptHandler(
         handlerName: "enable",
         callback: (data) async {
-          if (hadEnable) {
+          /*if (hadEnable) {
             return;
           }
           DAppAuthorizationDialogEntity entity = DAppAuthorizationDialogEntity(
@@ -389,7 +411,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
             Navigator.of(context).pop();
           } else {
             hadEnable = true;
-          }
+          }*/
         });
 
     controller.addJavaScriptHandler(

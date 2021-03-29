@@ -56,7 +56,7 @@ class SystemConfigEntity extends Object {
   int collectRpTransmitGasLimit = 10000000;
 
   @JsonKey(name: 'isHiddenSwap')
-  bool isHiddenSwap = false;
+  bool isHiddenSwap = true;
 
   SystemConfigEntity(
     this.ethTransferGasLimit,
@@ -108,7 +108,7 @@ SystemConfigEntity _$SystemConfigEntityFromJson(Map<String, dynamic> json) {
     json['canCheckMap3NodeCount'] as int ?? 1,
     json['isOpenReStakingReward'] as bool ?? false,
     json['collectRpTransmitGasLimit'] as int ?? 5000000,
-    json['isHiddenSwap'] as bool ?? false,
+    json['isHiddenSwap'] as bool ?? true,
   );
 }
 
