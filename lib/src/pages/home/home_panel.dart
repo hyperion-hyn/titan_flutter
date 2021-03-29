@@ -33,6 +33,7 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/custom_click_oval_button.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 
+
 class HomePanel extends StatefulWidget {
   final ScrollController scrollController;
 
