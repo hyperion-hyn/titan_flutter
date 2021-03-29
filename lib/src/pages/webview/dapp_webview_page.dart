@@ -71,7 +71,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
     widget.defaultCoin = selectCoin;
   }
 
-  bool hadEnable = false;
+  bool hadShowEnableDialog = false;
 
   void initState() {
     super.initState();
@@ -283,9 +283,10 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
         isLoading = false;
         print("onLoadStop $url");
 
-        if (hadEnable) {
+        if (hadShowEnableDialog) {
           return;
         }
+        hadShowEnableDialog = true;
         DAppAuthorizationDialogEntity entity = DAppAuthorizationDialogEntity(
           title: S.of(context).visit_instructions,
           dAppName: widget.title,
@@ -296,8 +297,6 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
         );
         if (authorizaResult == null || !authorizaResult) {
           Navigator.of(context).pop();
-        } else {
-          hadEnable = true;
         }
 
         setState(() {

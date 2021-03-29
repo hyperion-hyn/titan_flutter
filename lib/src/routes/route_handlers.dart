@@ -117,6 +117,7 @@ var toolsPageWebviewHandler = Handler(handlerFunc: (context, params) {
 
 var toolsPageDappWebviewHandler = Handler(handlerFunc: (context, params) {
   String webUrl = FluroConvertUtils.fluroCnParamsDecode(params['initUrl']?.first);
+  String titleStr = FluroConvertUtils.fluroCnParamsDecode(params['title']?.first);
   var language = SettingInheritedModel.of(Keys.rootKey.currentContext).netLanguageCode;
   if (!webUrl.contains("?")) {
     webUrl = webUrl + "?lang=$language";
@@ -124,7 +125,7 @@ var toolsPageDappWebviewHandler = Handler(handlerFunc: (context, params) {
     webUrl = webUrl + "&lang=$language";
   }
   return DAppWebViewPage(
-      initUrl: webUrl, title: params['title']?.first, defaultCoin: int.parse(params['defaultCoin']?.first),);
+      initUrl: webUrl, title: titleStr, defaultCoin: int.parse(params['defaultCoin']?.first),);
 });
 
 var toolsPageQrcodeHandler = Handler(handlerFunc: (context, params) {

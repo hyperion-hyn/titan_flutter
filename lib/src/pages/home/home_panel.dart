@@ -530,7 +530,7 @@ class HomePanelState extends State<HomePanel> {
                 S.of(context).decent_transac_protocol),
             getDappItemWidget(
                 _address,
-                'https://app.sushi.com/?locale=zh-CN&utm_source=imtoken',
+                'https://app.sushi.com',
                 CoinType.ETHEREUM,
                 "SushiSwap",
                 null,
@@ -543,7 +543,7 @@ class HomePanelState extends State<HomePanel> {
                 "去中心化交易所"),
             getDappItemWidget(
                 _address,
-                'https://opensea.io/?ref=0xb9e29984fe50602e7a619662ebed4f90d93824c7&locale=zh-CN&utm_source=imtoken',
+                'https://opensea.io',
                 CoinType.ETHEREUM,
                 "OpenSea",
                 null,
@@ -580,7 +580,7 @@ class HomePanelState extends State<HomePanel> {
                 ),
               ),
             ] else ...[
-              getDappItemWidget(
+              /*getDappItemWidget(
                   _address,
                   'http://uniswap.defiplot.com/#/swap',
                   CoinType.ETHEREUM,
@@ -589,10 +589,10 @@ class HomePanelState extends State<HomePanel> {
                   null,
                   "res/drawable/ic_home_panel_dapp_dodo.png",
                   "DoDo",
-                  "基于 PMM 算法的去中心化交易平台"),
+                  "基于 PMM 算法的去中心化交易平台"),*/
               getDappItemWidget(
                   _address,
-                  'https://balancer.exchange/?locale=zh-CN&utm_source=imtoken#/swap',
+                  'https://balancer.exchange/#/swap',
                   CoinType.ETHEREUM,
                   "Balancer Exchange",
                   HexColor("#8000000"),
@@ -602,7 +602,7 @@ class HomePanelState extends State<HomePanel> {
                   "非托管投资组合管理，提供流动性与价格信息"),
               getDappItemWidget(
                   _address,
-                  'https://curve.fi/?locale=zh-CN&utm_source=imtoken',
+                  'https://curve.fi',
                   CoinType.ETHEREUM,
                   "Curve",
                   HexColor("#1aa5a4ce"),
@@ -612,7 +612,7 @@ class HomePanelState extends State<HomePanel> {
                   "稳定币优化的链上算法做市商，为你带来更好的交易深度"),
               getDappItemWidget(
                   _address,
-                  'https://dfi.money/#/vault?locale=zh-CN&utm_source=imtoken',
+                  'https://dfi.money/#/vault',
                   CoinType.ETHEREUM,
                   "DFI.money (YFII)",
                   HexColor("#f001659"),
@@ -622,7 +622,7 @@ class HomePanelState extends State<HomePanel> {
                   "去中心化被动投资平台"),
               getDappItemWidget(
                   _address,
-                  'https://www.chainzarena.com/?platform=imtoken&locale=zh-CN&utm_source=imtoken',
+                  'https://www.chainzarena.com/',
                   CoinType.ETHEREUM,
                   "ChainZ Arena",
                   HexColor("#f4e4435"),
@@ -632,7 +632,7 @@ class HomePanelState extends State<HomePanel> {
                   "首款可跨链 RPG 游戏"),
               getDappItemWidget(
                   _address,
-                  'https://play.cardmaker.io/?from=imtoken&locale=zh-CN&utm_source=imtoken',
+                  'https://play.cardmaker.io',
                   CoinType.ETHEREUM,
                   "卡牌制造者",
                   HexColor("#f654ee4"),
@@ -642,7 +642,7 @@ class HomePanelState extends State<HomePanel> {
                   "像玩游戏一样制作你的游戏"),
               getDappItemWidget(
                   _address,
-                  'https://blockchaincuties.com/?utm_source=referral&utm_medium=imtoken&lang=ZH&locale=zh-CN',
+                  'https://blockchaincuties.com',
                   CoinType.ETHEREUM,
                   "区块链萌宠",
                   HexColor("#142c8dde"),
@@ -693,10 +693,11 @@ class HomePanelState extends State<HomePanel> {
         }
 
         var scanStr = FluroConvertUtils.fluroCnParamsEncode(dappUrl);
+        var webTitleStr = FluroConvertUtils.fluroCnParamsEncode(webTitle);
         Application.router.navigateTo(
             context,
             Routes.toolspage_dapp_webview_page +
-                "?initUrl=$scanStr&defaultCoin=${coinType.toString()}&title=$webTitle");
+                "?initUrl=$scanStr&defaultCoin=${coinType.toString()}&title=$webTitleStr");
       },
       child: Container(
         padding: const EdgeInsets.only(left: 16.0, right: 16, top: 15, bottom: 15),
