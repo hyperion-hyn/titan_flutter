@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -122,10 +123,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
   void didChangeDependencies() async {
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
-    widget.coinVo = WalletInheritedModel.of(context).getCoinVoBySymbolAndCoinType(
-      widget.coinVo.symbol,
-      widget.coinVo.coinType
-    );
+    widget.coinVo = WalletInheritedModel.of(context)
+        .getCoinVoBySymbolAndCoinType(widget.coinVo.symbol, widget.coinVo.coinType);
   }
 
   @override
@@ -157,30 +156,30 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
             ),
           ),
           actions: <Widget>[
-            if(widget.coinVo.coinType == CoinType.ETHEREUM)
-            FlatButton(
-              onPressed: (){
-                var url = SettingInheritedModel.of(context)?.areaModel?.isChinaMainland ?? true
-                    ? 'https://cn.etherscan.com/address/${WalletModelUtil.walletEthAddress}'
-                    : 'https://etherscan.io/address/${WalletModelUtil.walletEthAddress}';
+            if (widget.coinVo.coinType == CoinType.ETHEREUM)
+              FlatButton(
+                onPressed: () {
+                  var url = SettingInheritedModel.of(context)?.areaModel?.isChinaMainland ?? true
+                      ? 'https://cn.etherscan.com/address/${WalletModelUtil.walletEthAddress}'
+                      : 'https://etherscan.io/address/${WalletModelUtil.walletEthAddress}';
 
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => InAppWebViewContainer(
-                          initUrl: url,
-                          title: '',
-                        )));
-              },
-              child: Text(
-                '区块浏览器',
-                style: TextStyle(
-                  color: HexColor("#1F81FF"),
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InAppWebViewContainer(
+                                initUrl: url,
+                                title: '',
+                              )));
+                },
+                child: Text(
+                  '区块浏览器',
+                  style: TextStyle(
+                    color: HexColor("#1F81FF"),
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
         body: BlocListener<WalletCmpBloc, WalletCmpState>(
@@ -353,46 +352,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                           )
                                         ],
                                       ),
-                                    ),
-                                    Container(
-                                      height: 36,
-                                      width: 1,
-                                      color: DefaultColors.colord7d7d7,
-                                    ),
-                                    Builder(
-                                      builder: (BuildContext context) {
-                                        return InkWell(
-                                          onTap: () {
-                                            Fluttertoast.showToast(
-                                                msg: S.of(context).exchange_is_not_yet_open(
-                                                    widget.coinVo.symbol));
-                                          },
-                                          child: Row(
-                                            children: <Widget>[
-                                              Image.asset(
-                                                "res/drawable/ic_wallet_account_list_exchange.png",
-                                                width: 20,
-                                                height: 20,
-                                              ),
-                                              /*Icon(
-                                                ExtendsIconFont.copy_content,
-                                                color: Theme.of(context).primaryColor,
-                                                size: 20,
-                                              ),*/
-                                              SizedBox(
-                                                width: 12,
-                                              ),
-                                              Text(
-                                                S.of(context).exchange,
-                                                style: TextStyle(
-                                                  color: DefaultColors.color333,
-                                                  fontSize: 14,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      },
                                     )
                                   ],
                                 ),
@@ -507,7 +466,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       // transactionDetail.cancelTimes = 2;
       // transactionDetail.nonce = '2';
 
-      if (transactionDetail.lastOptType == OptType.SPEED_UP) {
+      if (!transactionDetail.receiptStatus) {
+        // speed up
+        title = "失败";
+      } else if (transactionDetail.lastOptType == OptType.SPEED_UP) {
         // speed up
         title = S.of(context).speed_up_times(transactionDetail.speedUpTimes);
       } else if (transactionDetail.lastOptType == OptType.CANCEL) {
@@ -538,7 +500,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                               )));
                 } else {
                   var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash);
-                  if (url != null) {
+                  if (url != null && transactionDetail.receiptStatus) {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -646,7 +608,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                       '${ConvertTokenUnit.weiToGWei(weiInt: int.parse(transactionDetail.gasPrice)).toStringAsFixed(1)} GWEI',
                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
                   Spacer(),
-                  if (isNearestPendingTx(transactionDetail)) ...[
+                  if (isNearestPendingTx(transactionDetail) && transactionDetail.receiptStatus) ...[
                     //取消交易按钮
                     ClickOvalButton(S.of(context).cancel, () async {
                       var password = await UiUtil.showDialogWidget(context,
@@ -807,6 +769,16 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
               localPendingTxs = await transactionInteractor.getLocalPendingTransactions(
                   ethAddress, localTransferType, widget.coinVo.contractAddress);
               for (var tx in localPendingTxs) {
+                //0xdedf95a9a7058981f5a2dea215c1ebd48956d927b00daf08398c5882a774a048  空
+                // var receipt = await client.getTransactionReceipt("0x9c2f9432da5cc6e0e4c4ee718d54f9ccb03a34f594f5322da91a3d3b06f2b212");
+                var receipt = await client.getTransactionReceipt(tx.hash);
+                var timeSpace = DateTime.now().millisecondsSinceEpoch - tx.time;
+                var timeDay = Decimal.fromInt(timeSpace) / Decimal.fromInt(24 * 3600 * 1000);
+                if(receipt != null){
+                  tx.receiptStatus = receipt.status;
+                }else if(receipt == null && timeDay >= Decimal.fromInt(2)){
+                  tx.receiptStatus = false;
+                }
                 if (int.parse(tx.nonce) == txCount) {
                   isHaveNearestPendingTx = true;
                 }
@@ -815,7 +787,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
             }
           } catch (e, stack) {
             print("!!!!!  $e  $stack");
-            LogUtil.uploadException(e,"Eth coin type insert");
+            LogUtil.uploadException(e, "Eth coin type insert");
           }
         }
       }

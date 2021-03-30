@@ -82,4 +82,6 @@ class UpdateWalletExpandEvent extends WalletCmpEvent {
   UpdateWalletExpandEvent(this.address, this.walletExpandInfoEntity);
 }
 
+class UpdateCrossChainTokenListEvent extends WalletCmpEvent {}
+
 enum GasPriceType { ETH, BTC }

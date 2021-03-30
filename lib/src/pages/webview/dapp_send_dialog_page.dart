@@ -12,6 +12,7 @@ import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
@@ -32,56 +33,25 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
   bool _isLoading = false;
   final StreamController<double> _gasPriceController = StreamController.broadcast();
 
-  Decimal _minGasPrice = Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
-  Decimal _maxGasPrice = Decimal.fromInt(100 * EthereumUnitValue.G_WEI);
-  Decimal get _gasPrice {
+  BigInt _minGasPrice = BigInt.from(1 * EthereumUnitValue.G_WEI);
+  BigInt _maxGasPrice = BigInt.from(100 * EthereumUnitValue.G_WEI);
+  BigInt get _gasPrice {
     if(widget.entity.gasPrice != null){
       return widget.entity.gasPrice;
     } else {
       return _minGasPrice;
     }
   }
-  set _setGasPrice(Decimal gasPrice) {
+  set _setGasPrice(BigInt gasPrice) {
     widget.entity.gasPrice = gasPrice;
   }
 
-  int get _defaultGasLimit {
-    var defaultValue = widget.entity.gasUnit == "ETH"
-        ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
-        : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
-    return defaultValue;
-  }
-
   int get _gasLimit {
-    var gasLimit;
-
-    // 1.BTC
-    if (widget.entity.coinType == CoinType.BITCOIN) {
-      gasLimit = 78;
+    if (widget.entity.gas != null) {
+      return widget.entity.gas;
+    }else{
+      return SettingInheritedModel.ofConfig(context).systemConfigEntity.emptyDefaultGasLimit;
     }
-    // 2.ETH
-    else if (widget.entity.coinType == CoinType.ETHEREUM) {
-      var initGasLimit = _defaultGasLimit;
-      gasLimit = initGasLimit;
-    }
-    // 3.ATLAS
-    else if (widget.entity.coinType == CoinType.HYN_ATLAS) {
-      if (widget.entity.gasUnit == 'HYN') {
-        gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
-      } else {
-        gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
-      }
-    }
-    // 3.HB
-    else if (widget.entity.coinType == CoinType.HB_HT) {
-      if (widget.entity.gasUnit == 'HT') {
-        gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
-      } else {
-        gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
-      }
-    }
-
-    return gasLimit;
   }
 
   Decimal get _gasFees {
@@ -91,22 +61,22 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
     // 1.BTC
     if (widget.entity.coinType == CoinType.BITCOIN) {
       fees = ConvertTokenUnit.weiToDecimal(
-          BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toString()), 8);
+          _gasPrice * BigInt.from(_gasLimit), 8);
     }
     // 2.ETH
     else if (widget.entity.coinType == CoinType.ETHEREUM) {
       fees = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toStringAsFixed(0)));
+          weiBigInt: _gasPrice * BigInt.from(_gasLimit));
     }
     // 3.ATLAS
     else if (widget.entity.coinType == CoinType.HYN_ATLAS) {
       fees = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toStringAsFixed(0)));
+          weiBigInt: _gasPrice * BigInt.from(_gasLimit));
     }
     // 3.HB
     else if (widget.entity.coinType == CoinType.HB_HT) {
       fees = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse((_gasPrice * Decimal.fromInt(_gasLimit)).toStringAsFixed(0)));
+          weiBigInt: _gasPrice * BigInt.from(_gasLimit));
     }
     //print("[dDpp] _gasLimit:$_gasLimit, fees:$fees");
 
@@ -126,7 +96,7 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
   Widget build(BuildContext context) {
     Widget gas = _rowText(
       title: S.of(context).transfer_gas_fee,
-      content: '${widget.entity.gas} ${widget.entity.gasUnit}',
+      content: '${ConvertTokenUnit.weiToGWei(weiBigInt: _gasPrice)} ${widget.entity.gasUnit}',
       subContent: widget.entity.gasDesc,
       showLine: false,
     );
@@ -228,19 +198,19 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
                       subContent: widget.entity.titleDesc,
                     ),
                     _rowText(
-                      title: "合约地址",
+                      title: S.of(context).contract_address,
                       content: widget.entity.toName,
                       subContent: widget.entity.toAddress,
                     ),
                     _rowText(
                       // title: S.of(context).exchange_from,
-                      title: "操作地址",
+                      title: S.of(context).operation_address,
                       content: widget.entity.fromAddress,
                       subContent: widget.entity.fromName,
                     ),
                     _rowText(
                       // title: S.of(context).exchange_to,
-                      title: "接收地址",
+                      title: S.of(context).receiver_address,
                       content: widget.entity.toName,
                       subContent: widget.entity.toAddress,
                     ),
@@ -372,10 +342,10 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
                         inactiveColor: Colors.grey[300],
                         min: _minGasPrice.toDouble(),
                         max: _maxGasPrice.toDouble(),
-                        label: '${ConvertTokenUnit.weiToGWei(weiInt: _gasPrice.toInt())} gwei',
+                        label: '${ConvertTokenUnit.weiToGWei(weiBigInt: _gasPrice)} gwei',
                         onChanged: (double newValue) {
                           _gasPriceController.add(newValue);
-                          _setGasPrice = Decimal.parse(newValue.toString());
+                          _setGasPrice = BigInt.parse(newValue.toStringAsFixed(0));
                         },
                         semanticFormatterCallback: (double newValue) {
                           return '$newValue gwei';
@@ -397,7 +367,7 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
                   children: <Widget>[
                     Spacer(),
                     Text(
-                      "${ConvertTokenUnit.weiToGWei(weiInt: _gasPrice.toInt()).toStringAsPrecision(4)} gwei",
+                      "${ConvertTokenUnit.weiToGWei(weiBigInt: _gasPrice).toStringAsPrecision(4)} gwei",
                       style: TextStyle(
                         fontSize: 14,
                         color: HexColor('#999999'),
@@ -413,7 +383,7 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
   }
 
   void _cancelAction() {
-    widget.entity.cancelAction('', Decimal.zero);
+    widget.entity.cancelAction('', BigInt.zero);
     Navigator.pop(context);
   }
 
@@ -422,7 +392,21 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
       context,
       WalletModelUtil.wallet,
     );
-    await widget.entity.confirmAction(password, _gasPrice);
+    if(password == null || password.isEmpty){
+      setState(() {
+
+      });
+      return;
+    }
+
+    try {
+      await widget.entity.confirmAction(password, _gasPrice);
+    } catch (e, stack){
+      LogUtil.toastException(e,stack: null);
+      setState(() {
+
+      });
+    }
   }
 }
 
@@ -442,7 +426,7 @@ Future<bool> showDAppSendDialog<T>({
   );
 }
 
-typedef DAppSendEntityCallBack = Future<bool> Function(String psw, Decimal gasPrice);
+typedef DAppSendEntityCallBack = Future<bool> Function(String psw, BigInt gasPrice);
 
 class DAppSendDialogEntity {
   final String type;
@@ -457,7 +441,7 @@ class DAppSendDialogEntity {
   final String fromAddress;
   final String toName;
   final String toAddress;
-  final String gas;
+  final int gas;
   final String gas1;
   final String gasDesc;
   final String gas1Desc;
@@ -467,7 +451,7 @@ class DAppSendDialogEntity {
   final DAppSendEntityCallBack confirmAction;
   final bool isEnableEditGas;
   final int coinType;
-  Decimal gasPrice;
+  BigInt gasPrice;
 
   DAppSendDialogEntity({
     this.type,

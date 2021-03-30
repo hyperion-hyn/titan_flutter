@@ -37,6 +37,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   WalletCmpState get initialState => InitialWalletCmpState();
 
   NodeApi _nodeApi = NodeApi();
+  AtlasApi _atlasApi = AtlasApi();
 
   int _lastUpdateBalanceTime = 0;
   bool _updatingBalance = false;
@@ -99,6 +100,11 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       // TODO
     } else if (event is TurnOnTokensEvent) {
       // TODO
+    } else if (event is UpdateCrossChainTokenListEvent) {
+      var list = await _atlasApi.getCrossChainTokenList();
+      if (list != null) {
+        yield UpdateCrossChainTokenListState(list);
+      }
     }
   }
 

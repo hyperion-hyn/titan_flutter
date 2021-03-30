@@ -73,8 +73,7 @@ class TitanPlugin {
     return await callChannel.invokeMethod('initKeyPair', expired);
   }
 
-  static Future<bool> getClipboardData() async {
-    print("main onMethodCall111");
+  static Future<String> getClipboardData() async {
     return await callChannel.invokeMethod('clipboardData');
   }
 

@@ -19,6 +19,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/widget/hyn_burn_banner.dart';
+import 'package:titan/src/pages/bridge/cross_chain_bridge_page.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
@@ -260,8 +261,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
               _tokenListByChain(activatedWalletVo, CoinType.ETHEREUM),
               _chainWidget(CoinType.HB_HT),
               _tokenListByChain(activatedWalletVo, CoinType.HB_HT),
-              _chainWidget(CoinType.BITCOIN),
-              _tokenListByChain(activatedWalletVo, CoinType.BITCOIN),
+              // _chainWidget(CoinType.BITCOIN),
+              // _tokenListByChain(activatedWalletVo, CoinType.BITCOIN),
               _hynBurnWidget(),
             ],
           ),
@@ -476,23 +477,56 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
             Padding(
               padding: const EdgeInsets.only(left: 16, right: 16, top: 2),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 3.0),
-                    child: Text(
-                      '${activeQuotesSign?.sign ?? ''}',
-                      style: TextStyle(
-                          fontSize: 12, color: DefaultColors.color333, fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 3.0),
+                          child: Text(
+                            '${activeQuotesSign?.sign ?? ''}',
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: DefaultColors.color333,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            _isShowBalances
+                                ? ' ${FormatUtil.formatPrice(activatedWalletVo.balance)} '
+                                : ' *******',
+                            style: TextStyle(
+                                fontSize: 22,
+                                color: DefaultColors.color333,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Text(
-                    _isShowBalances
-                        ? ' ${FormatUtil.formatPrice(activatedWalletVo.balance)}'
-                        : ' *******',
-                    style: TextStyle(
-                        fontSize: 22, color: DefaultColors.color333, fontWeight: FontWeight.bold),
-                  ),
+                  if (_isRefreshBalances)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: InkWell(
+                        onTap: () {
+                          listLoadingData();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              backgroundColor: Colors.transparent,
+                              valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
+                              strokeWidth: 1,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -544,44 +578,50 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                         onTap: () {
                           _showActionDialog(WalletPageJump.PAGE_RECEIVER, activatedWalletVo);
                         },
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              "res/drawable/ic_wallet_account_list_receiver_v3.png",
-                              width: 18,
-                            ),
-                            SizedBox(width: 7),
-                            Text(
-                              S.of(context).receiver,
-                              style: TextStyles.textC333S12,
-                            ),
-                          ],
+                        child: Center(
+                          child: Wrap(
+                            children: [
+                              Image.asset(
+                                "res/drawable/ic_wallet_account_list_receiver_v3.png",
+                                width: 18,
+                              ),
+                              SizedBox(width: 7),
+                              Text(
+                                S.of(context).receiver,
+                                style: TextStyles.textC333S12,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CrossChainBridgePage()),
+                          );
+                        },
+                        child: Center(
+                          child: Wrap(
+                            children: [
+                              Image.asset(
+                                "res/drawable/ic_cross_chain.png",
+                                width: 18,
+                              ),
+                              SizedBox(width: 7),
+                              Text(
+                                S.of(context).bridge_cross_chain,
+                                style: TextStyles.textC333S12,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
-                if (_isRefreshBalances)
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: InkWell(
-                      onTap: () {
-                        listLoadingData();
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 3.0, bottom: 3, right: 10),
-                        child: SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            backgroundColor: Colors.transparent,
-                            valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
-                            strokeWidth: 1,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
               ],
             )
           ],
@@ -869,8 +909,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                 _dialogTokenListByChain(activatedWalletVo, CoinType.ETHEREUM, jumpType),
                 _chainWidget(CoinType.HB_HT),
                 _dialogTokenListByChain(activatedWalletVo, CoinType.HB_HT, jumpType),
-                _chainWidget(CoinType.BITCOIN),
-                _dialogTokenListByChain(activatedWalletVo, CoinType.BITCOIN, jumpType),
+                // _chainWidget(CoinType.BITCOIN),
+                // _dialogTokenListByChain(activatedWalletVo, CoinType.BITCOIN, jumpType),
               ],
             ),
           ),

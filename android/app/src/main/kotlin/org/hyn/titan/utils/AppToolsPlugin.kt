@@ -85,7 +85,7 @@ class AppToolsPlugin() : FlutterPlugin {
         }
     }
 
-    private fun getClipboardData(){
+    private fun getClipboardData() : String? {
         //获取系统剪贴板服务
         var clipboardManager = context!!.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         if (null != clipboardManager) {
@@ -93,8 +93,11 @@ class AppToolsPlugin() : FlutterPlugin {
             var clipData = clipboardManager.primaryClip
             if (null != clipData && clipData.itemCount > 0) {
                 // 从数据集中获取（粘贴）第一条文本数据
-                for(i in 0 until clipData.itemCount){
-                    var item = clipData.getItemAt(0)
+                var item = clipData.getItemAt(0)
+                return item?.text?.toString()
+
+                /*for(i in 0 until clipData.itemCount){
+                    var item = clipData.getItemAt(i)
                     if(item?.text?.contains("titan://contract/detail") == true){
                         var shareUser = item.text.split("key=")[1]
 
@@ -103,16 +106,17 @@ class AppToolsPlugin() : FlutterPlugin {
                         methodChannel?.invokeMethod("urlLauncher",mapValue)
                         return
                     }
-                }
+                }*/
             }
         }
+        return null
     }
 
     fun setMethodCallHandler(context: Context, call: MethodCall, result: MethodChannel.Result): Boolean {
         return when (call.method) {
             "clipboardData" -> {
-                getClipboardData()
-                result.success(true)
+                var clipData = getClipboardData()
+                result.success(clipData)
                 true
             }
             "f2pDeeplink" -> {

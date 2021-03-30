@@ -46,4 +46,8 @@ class ImageUtil {
   static String getGeneralTokenLogo(String token) {
     return 'res/drawable/ic_token_${token?.toLowerCase()}.png';
   }
+
+  static String getGeneralChainLogo(String chain) {
+    return 'res/drawable/ic_chain_${chain?.toLowerCase()}.png';
+  }
 }

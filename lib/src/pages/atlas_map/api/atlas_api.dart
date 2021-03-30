@@ -38,6 +38,8 @@ import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_reward_entity.dart';
+import 'package:titan/src/pages/bridge/entity/cross_chain_record.dart';
+import 'package:titan/src/pages/bridge/entity/cross_chain_token.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -1065,6 +1067,73 @@ class AtlasApi {
       options: RequestOptions(
         contentType: "application/json",
         baseUrl: Config.ATLAS_API_URL,
+      ),
+    );
+  }
+
+  Future<List<CrossChainToken>> getCrossChainTokenList({
+    int page = 1,
+    int size = 9999,
+  }) async {
+    return await AtlasHttpCore.instance.getEntity(
+      '/v1/cross_chain/tokens',
+      EntityFactory<List<CrossChainToken>>((json) {
+        var data = (json as List).map((map) {
+          return CrossChainToken.fromJson(map);
+        }).toList();
+        return data;
+      }),
+      params: {
+        'page': page,
+        'pageSize': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  Future<dynamic> postBridgetApply({
+    String walletAddress,
+    String tokenAddress,
+    String amount,
+    int type,
+    String rawTxHash,
+  }) async {
+    return await AtlasHttpCore.instance.postEntity(
+      "/v1/cross_chain/apply",
+      EntityFactory<dynamic>((json) => json),
+      params: {
+        "token_address": tokenAddress,
+        "address": walletAddress,
+        "amount": amount,
+        "type": type,
+        "raw_tx": rawTxHash,
+      },
+      options: RequestOptions(contentType: "application/json"),
+    );
+  }
+
+  Future<List<CrossChainRecord>> getCrossChainRecord(
+    String address,
+    String symbol, {
+    int page = 1,
+    int size = 20,
+  }) async {
+    return await AtlasHttpCore.instance.getEntity(
+      '/v1/cross_chain/records/list/$address/$symbol',
+      EntityFactory<List<CrossChainRecord>>((json) {
+        var data = (json['data'] as List).map((map) {
+          return CrossChainRecord.fromJson(map);
+        }).toList();
+        return data;
+      }),
+      params: {
+        'page': page,
+        'pageSize': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
       ),
     );
   }

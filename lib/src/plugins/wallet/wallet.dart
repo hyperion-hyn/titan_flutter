@@ -14,6 +14,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
+import 'package:titan/src/pages/wallet/api/hb_api.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
@@ -46,11 +47,10 @@ class Wallet {
   WalletExpandInfoEntity walletExpandInfoEntity;
 
   static WalletExpandInfoEntity expandInfoFromJson(dynamic json) {
-    if(json == null || json.toString().isEmpty){
+    if (json == null || json.toString().isEmpty) {
       return WalletExpandInfoEntity.defaultEntity();
-    }else{
-      return WalletExpandInfoEntity.fromJson(
-          json as Map<String, dynamic>);
+    } else {
+      return WalletExpandInfoEntity.fromJson(json as Map<String, dynamic>);
     }
   }
 
@@ -234,7 +234,6 @@ class Wallet {
     BigInt value,
     int nonce,
     int gasLimit,
-    Uint8List data,
     web3.IMessage message,
     int optType = OptType.TRANSFER,
   }) async {
@@ -261,7 +260,6 @@ class Wallet {
       message: message,
       gasLimit: gasLimit,
       nonce: nonce,
-      data: data,
     );
 
     var responseMap = await WalletUtil.postToEthereumNetwork(coinType,
@@ -287,6 +285,59 @@ class Wallet {
     return responseMap['result'];
   }
 
+  /// DAPP发送转账
+  /// 如果[type]设置为 web3.MessageType.typeNormal 则是 Atlas转账
+  /// 如果[message]设置了，则为抵押相关的操作
+  /// 如果[type]和[message]都是null，则为ethereum转账
+  Future<String> sendDappTransaction(
+      int coinType, {
+        String password,
+        Credentials cred,
+        @required BigInt gasPrice,
+        String toAddress,
+        BigInt value,
+        int nonce,
+        int gasLimit,
+        Uint8List data,
+        web3.IMessage message,
+        int optType = OptType.TRANSFER,
+      }) async {
+    nonce = await getCurrentWalletNonce(coinType, nonce: nonce);
+
+    // 检查基础币是否足够
+    if (gasLimit == null || gasLimit < 21000) {
+      if (message != null) {
+        gasLimit = HyperionGasLimit.NODE_OPT;
+      } else {
+        gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+            .systemConfigEntity
+            .emptyDefaultGasLimit;
+      }
+    }
+
+    final signedRawHex = await signTransaction(
+      coinType,
+      password: password,
+      cred: cred,
+      toAddress: toAddress,
+      gasPrice: gasPrice,
+      value: value,
+      message: message,
+      gasLimit: gasLimit,
+      nonce: nonce,
+      data: data,
+    );
+
+    var responseMap = await WalletUtil.postToEthereumNetwork(coinType,
+        method: 'eth_sendRawTransaction', params: [signedRawHex]);
+    if (responseMap['error'] != null) {
+      var errorEntity = responseMap['error'];
+      throw RPCError(errorEntity['code'], errorEntity['message'], "");
+    }
+
+    return responseMap['result'];
+  }
+
   /// 签名转账
   /// 如果[type]设置为 web3.MessageType.typeNormal 则是 Atlas转账
   /// 如果[message]设置了，则为抵押相关的操作
@@ -304,7 +355,8 @@ class Wallet {
     Uint8List data,
   }) async {
     // assert(password == null && cred == null, '密码/密钥不能为空');
-    assert(password == null || cred == null, S.of(Keys.rootKey.currentContext).pwd_or_private_key_can_not_be_empty);
+    assert(password == null || cred == null,
+        S.of(Keys.rootKey.currentContext).pwd_or_private_key_can_not_be_empty);
 
     if (gasPrice == null) {
       gasPrice = await WalletUtil.ethGasPrice(coinType);
@@ -463,8 +515,11 @@ class Wallet {
     int nonce,
     int gasLimit,
   }) async {
-    assert(contractAddress != null, S.of(Keys.rootKey.currentContext).contract_address_can_not_be_empty);
-    assert((password == null || cred == null), );
+    assert(contractAddress != null,
+        S.of(Keys.rootKey.currentContext).contract_address_can_not_be_empty);
+    assert(
+      (password == null || cred == null),
+    );
     assert(toAddress != null, S.of(Keys.rootKey.currentContext).receiver_can_not_be_empty);
     assert(value != null, S.of(Keys.rootKey.currentContext).transaction_amount_can_not_be_empty);
 
@@ -500,8 +555,10 @@ class Wallet {
     var balance = await WalletUtil.getBalanceByCoinTypeAndAddress(coinType, address.hexEip55);
     var gasFees = BigInt.from(gasLimit) * gasPrice;
     if (gasFees > balance) {
-      var baseCoinVo = WalletInheritedModel.of(Keys.rootKey.currentContext)?.getBaseCoinVo(coinType);
-      throw Exception('${baseCoinVo.symbol}${S.of(Keys.rootKey.currentContext).balance_not_enough_for_network_fee}');
+      var baseCoinVo =
+          WalletInheritedModel.of(Keys.rootKey.currentContext)?.getBaseCoinVo(coinType);
+      throw Exception(
+          '${baseCoinVo.symbol}${S.of(Keys.rootKey.currentContext).balance_not_enough_for_network_fee}');
     }
 
     final contract = WalletUtil.getErc20Contract(contractAddress, 'HYN');
@@ -513,7 +570,10 @@ class Wallet {
       web3.Transaction.callContract(
         contract: contract,
         function: contract.function('transfer'),
-        parameters: [web3.EthereumAddress.fromHex(toAddress), value],
+        parameters: [
+          web3.EthereumAddress.fromHex(toAddress),
+          value,
+        ],
         gasPrice: gasPrice != null ? web3.EtherAmount.inWei(gasPrice) : null,
         maxGas: gasLimit,
         nonce: nonce,
@@ -660,7 +720,7 @@ class Wallet {
     if (gasLimit == null) {
       gasLimit = HyperionGasLimit.RP_CALL;
     }
-    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
+    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, amount: stakingAmount)) {
       return null;
     }
 
@@ -702,7 +762,7 @@ class Wallet {
       gasLimit = HyperionGasLimit.RP_CALL;
     }
     BigInt stakingAmount;
-    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
+    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, amount: stakingAmount)) {
       return null;
     }
 
@@ -753,7 +813,7 @@ class Wallet {
       gasLimit = HyperionGasLimit.RP_CALL;
     }
     BigInt stakingAmount;
-    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)) {
+    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, amount: stakingAmount)) {
       throw HttpResponseCodeNotSuccess(
           -30011, S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas);
     }
@@ -789,6 +849,188 @@ class Wallet {
     return bytesToHex(signedRaw, include0x: true, padToEvenLength: true);
   }
 
+  ///Bridge
+
+  Future<String> signBridgeLockHYN(
+    String ownerAddress,
+    String password, {
+    BigInt lockAmount,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    if (gasPrice == null) {
+      gasPrice = HyperionGasPrice.getRecommend().averageBigInt;
+    }
+    if (gasLimit == null) {
+      gasLimit = HyperionGasLimit.BRIDGE_CONTRACT_LOCK_TOKEN_CALL;
+    }
+    if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, amount: lockAmount)) {
+      throw HttpResponseCodeNotSuccess(
+        -30011,
+        S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas,
+      );
+    }
+
+    var coinType = CoinType.HYN_ATLAS;
+    final client = WalletUtil.getWeb3Client(coinType);
+    var credentials = await getCredentials(coinType, password);
+    var hynLockContract = WalletUtil.getAtlasBridgeLockContract(
+      HyperionConfig.bridgeLockContractAddress,
+    );
+    String methodName = 'lockHyn';
+
+    List<dynamic> parameters = [
+      lockAmount,
+      web3.EthereumAddress.fromHex(ownerAddress),
+    ];
+
+    var signedRaw = await client.signTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: hynLockContract,
+        function: hynLockContract.function(methodName),
+        parameters: parameters,
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+        value: web3.EtherAmount.inWei(lockAmount),
+        type: web3.MessageType.typeNormal,
+      ),
+      fetchChainIdFromNetworkId: false,
+    );
+    //return signedRaw;
+    return bytesToHex(signedRaw, include0x: true, padToEvenLength: true);
+  }
+
+  Future<String> signBridgeLockToken(
+    String contractAddress,
+    String ownerAddress,
+    String password, {
+    BigInt amount,
+    BigInt gasPrice,
+    int gasLimit,
+  }) async {
+    final client = WalletUtil.getWeb3Client(CoinType.HYN_ATLAS);
+    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(ownerAddress));
+
+    var approveGasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext)
+        .systemConfigEntity
+        .erc20ApproveGasLimit;
+
+    var approveHex = await sendApproveErc20Token(
+      contractAddress: contractAddress,
+      approveToAddress: HyperionConfig.bridgeLockContractAddress,
+      amount: amount,
+      password: password,
+      gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
+      gasLimit: approveGasLimit,
+      nonce: nonce,
+      coinType: CoinType.HYN_ATLAS,
+    );
+
+    if (approveHex?.isEmpty ?? true) {
+      throw HttpResponseCodeNotSuccess(
+        -30011,
+        S.of(Keys.rootKey.currentContext).hyn_not_enough_for_network_fee,
+      );
+    }
+
+    ///update nonce
+    nonce = nonce + 1;
+
+    if (gasPrice == null) {
+      gasPrice = HyperionGasPrice.getRecommend().averageBigInt;
+    }
+    if (gasLimit == null) {
+      gasLimit = HyperionGasLimit.BRIDGE_CONTRACT_LOCK_TOKEN_CALL;
+    }
+    // if (!HYNApi.isGasFeeEnough(gasPrice, gasLimit, amount: amount)) {
+    //   throw HttpResponseCodeNotSuccess(
+    //     -30011,
+    //     S.of(Keys.rootKey.currentContext).hyn_balance_not_enough_gas,
+    //   );
+    // }
+
+    String methodName = 'lockToken';
+    List<dynamic> parameters = [
+      web3.EthereumAddress.fromHex(contractAddress),
+      amount,
+      web3.EthereumAddress.fromHex(ownerAddress),
+    ];
+
+    var credentials = await getCredentials(CoinType.HYN_ATLAS, password);
+    var bridgeContact = WalletUtil.getAtlasBridgeLockContract(
+      HyperionConfig.bridgeLockContractAddress,
+    );
+
+    var signedRaw = await client.signTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: bridgeContact,
+        function: bridgeContact.function(methodName),
+        parameters: parameters,
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+        type: web3.MessageType.typeNormal,
+      ),
+      fetchChainIdFromNetworkId: false,
+    );
+    return bytesToHex(signedRaw, include0x: true, padToEvenLength: true);
+  }
+
+  Future<String> signBridgeBurnToken(
+    String contractAddress,
+    String ownerAddress,
+    String password, {
+    BigInt amount,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    if (gasPrice == null) {
+      gasPrice = HecoGasPrice.getRecommend().averageBigInt;
+    }
+    if (gasLimit == null) {
+      gasLimit = HecoGasLimit.BRIDGE_CONTRACT_BURN_TOKEN_CALL;
+    }
+    if (!HbApi.isGasFeeEnough(gasPrice, gasLimit)) {
+      throw HttpResponseCodeNotSuccess(
+        -30013,
+        'Insufficient HT for gas fee',
+      );
+    }
+
+    String methodName = 'burnToken';
+    List<dynamic> parameters = [
+      web3.EthereumAddress.fromHex(contractAddress),
+      amount,
+      web3.EthereumAddress.fromHex(ownerAddress)
+    ];
+
+    var coinType = CoinType.HB_HT;
+    final client = WalletUtil.getWeb3Client(coinType);
+    var credentials = await getCredentials(coinType, password);
+    var bridgeContact = WalletUtil.getHecoBridgeBurnContract(
+      HecoConfig.burnTokenContractAddress,
+    );
+    var signedRaw = await client.signTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: bridgeContact,
+        function: bridgeContact.function(methodName),
+        parameters: parameters,
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+        //type: web3.MessageType.typeNormal,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+    return bytesToHex(signedRaw, include0x: true, padToEvenLength: true);
+  }
+
   Future<bool> delete(String password) async {
     return WalletChannel.delete(keystore.fileName, password);
   }
@@ -814,3 +1056,5 @@ class Wallet {
 enum HynContractMethod { STAKE, WITHDRAW }
 
 enum RpHoldingMethod { DEPOSIT_BURN, WITHDRAW }
+
+enum BridgetContractMethod { LOCK, BURN }

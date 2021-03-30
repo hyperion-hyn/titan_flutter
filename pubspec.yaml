@@ -11,7 +11,7 @@ description: Titan Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 4.0.57+2056
+version: 4.0.71+2060
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -103,8 +103,13 @@ dependencies:
   fake_cookie_manager: ^0.1.0
   loading: ^1.0.1
 #  flutter_inappwebview: ^3.1.0
+#  flutter_inappwebview:
+#    path: ../flutter_inappwebview
   flutter_inappwebview:
-    path: ../flutter_inappwebview
+    git:
+      url: git@github.com:hyperion-hyn/flutter_inappwebview.git
+      ref: feature-dapp-4.0.0+4
+
   #  characters: ^0.5.0
   characters: ^1.0.0
   encrypt: ^4.0.2
@@ -214,6 +219,7 @@ flutter:
     - res/lottie/
     - res/voice/
     - res/dapp/
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

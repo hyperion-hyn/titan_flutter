@@ -10,6 +10,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -18,6 +19,7 @@ import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/wallet/model/transaction_info_vo.dart';
 import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/pages/webview/dapp_authorization_dialog_page.dart';
 import 'package:titan/src/pages/webview/dapp_send_dialog_page.dart';
@@ -282,6 +284,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
   @override
   void initState() {
     super.initState();
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
 
     _amountController.addListener(() {
       _updateValue();
@@ -528,6 +531,21 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
                   fontWeight: FontWeight.normal,
                 ),
               ),
+              InkWell(
+                onTap: () {
+                  _amountController.text = FormatUtil.coinBalanceByDecimalStr(widget.coinVo, 6);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    S.of(context).all,
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 12
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
           _clipRectWidget(
@@ -990,24 +1008,32 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         return;
       }
 
-      var symbol = widget.coinVo.symbol.toUpperCase();
+      // var symbol = widget.coinVo.symbol.toUpperCase();
+      //
+      // // todo: HRC30不需要预留币
+      // if (widget.coinVo.coinType == CoinType.HYN_ATLAS &&
+      //     symbol == DefaultTokenDefine.HYN_Atlas.symbol) {
+      //   var balance = Decimal.parse(
+      //     FormatUtil.coinBalanceDouble(
+      //       widget.coinVo,
+      //     ).toString(),
+      //   );
+      //
+      //   var estimateGas = ConvertTokenUnit.weiToEther(
+      //       weiBigInt: BigInt.parse(
+      //     (1 * EthereumUnitValue.G_WEI * 21000).toString(),
+      //   ));
+      //
+      //   if (balance - estimateGas < Decimal.parse(amountTrim)) {
+      //     amountTrim = (Decimal.parse(amountTrim) - estimateGas).toString();
+      //   }
+      // }
 
-      // todo: HRC30不需要预留币
-      if (widget.coinVo.coinType == CoinType.HYN_ATLAS &&
-          symbol == DefaultTokenDefine.HYN_Atlas.symbol) {
-        var balance = Decimal.parse(
-          FormatUtil.coinBalanceDouble(
-            widget.coinVo,
-          ).toString(),
-        );
-
-        var estimateGas = ConvertTokenUnit.weiToEther(
-            weiBigInt: BigInt.parse(
-          (1 * EthereumUnitValue.G_WEI * 21000).toString(),
-        ));
-
-        if (balance - estimateGas < Decimal.parse(amountTrim)) {
-          amountTrim = (Decimal.parse(amountTrim) - estimateGas).toString();
+      ///only contract token can send fully, if not, reserve gas fee
+      if (widget.coinVo.contractAddress == null) {
+        var balance = FormatUtil.coinBalanceDouble(widget.coinVo);
+        if (value + _gasFees.toDouble() > balance) {
+          value = double.parse((value - _gasFees.toDouble()).toStringAsFixed(6));
         }
       }
 
@@ -1129,9 +1155,11 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
           }
         } else {
           // 2. Hyperion, Ethereum, Heco
+
+          var txHash;
           if (widget.coinVo.contractAddress != null) {
             // erc20 token
-            var txHash = await _transferErc20(
+            txHash = await _transferErc20(
               widget.coinVo.coinType,
               password,
               ConvertTokenUnit.strToBigInt(value.toString(), widget.coinVo.decimals),
@@ -1139,11 +1167,8 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
               wallet,
               gasPrice,
             );
-            if (txHash == null) {
-              return false;
-            }
           } else {
-            await _transferEth(
+            txHash = await _transferEth(
               widget.coinVo.coinType,
               password,
               ConvertTokenUnit.strToBigInt(value.toString(), widget.coinVo.decimals),
@@ -1151,6 +1176,32 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
               wallet,
               gasPrice,
             );
+          }
+
+          if (txHash == null) {
+            return false;
+          }
+
+          if (_coinType == CoinType.HB_HT) {
+            try {
+              var walletAddress = wallet?.getEthAccount()?.address;
+              Injector.of(context).repository.txInfoDao.insertOrUpdate(TransactionInfoVo(
+                    null,
+                    'heco',
+                    walletAddress,
+                    txHash,
+                    widget.coinVo.symbol,
+                    walletAddress,
+                    toAddress,
+                    '$value',
+                    DateTime.now().millisecondsSinceEpoch,
+                    0,
+                  ));
+              print('----insertOrUpdate txInfo success');
+            } catch (e) {
+              print('----insertOrUpdate txInfo failed');
+              LogUtil.uploadException(e);
+            }
           }
         }
 
@@ -1176,7 +1227,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     );
   }
 
-  Future _transferEth(
+  Future<String> _transferEth(
     int coinType,
     String password,
     BigInt amount,
@@ -1196,6 +1247,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     );
 
     logger.i('ETH transaction committed，txhash $txHash');
+    return txHash;
   }
 
   Future<String> _transferErc20(

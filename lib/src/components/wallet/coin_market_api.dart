@@ -6,7 +6,9 @@ import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_http.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
+import '../../../env.dart';
 import 'entity/tokens_price_entity.dart';
 import 'vo/token_price_view_vo.dart';
 
@@ -94,11 +96,63 @@ class CoinMarketApi {
     return list;
   }
 
-  /// 最新行情数据
+  /// 最新汇率数据
+  Future<double> getRate() async {
+    var res = await HttpCore.instance.get(
+        'https://jisuhuilv.market.alicloudapi.com/exchange/convert?amount=1&from=USD&to=CNY',
+        options: RequestOptions(headers: {
+          "Authorization": 'APPCODE e72ad7e637aa49698e0852587fea1c1f',
+          "Accept": "application/json"
+        }));
+    var responseEntity = ResponseEntity<Map>.fromJson(res, factory: EntityFactory((json) => json));
+
+    print("[Coin_market_api] data:${responseEntity.data}, code:${responseEntity.code}");
+
+    if (responseEntity.msg == 'ok') {
+      var resultMap = responseEntity.data;
+      return double?.tryParse(resultMap["rate"]) ?? 6.5;
+    }
+
+    throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
+  }
+
   Future<List<TokenPriceViewVo>> quotesLatest(List<String> quoteConverts) async {
     var response = await HttpCore.instance.get('api/v1/market/prices/latest',
-        options: RequestOptions(
-            headers: {"X-CMC_PRO_API_KEY": Config.COINMARKETCAP_PRVKEY, "Accept": "application/json"})) as Map;
+        options: RequestOptions(headers: {
+          "X-CMC_PRO_API_KEY": Config.COINMARKETCAP_PRVKEY,
+          "Accept": "application/json"
+        })) as Map;
+
+    print("[Coin_market_api] response:$response");
+
+    double hynUSD;
+    double hynCNY;
+    double rpUSD;
+    double rpCNY;
+
+    // hyn
+    if (env.buildType == BuildType.PROD) {
+      // usd -> cny
+      var rate = await getRate();
+      //print("[Home_pannel_mdex] rate:$rate");
+
+      hynUSD = await WalletUtil.getPrice(
+        coinType: 'HYN',
+        contractAddress: '0x8e6a7d6bd250d207df3b9efafc6c715885eda94e',
+      );
+
+      hynCNY = hynUSD * rate;
+      //print("[Home_pannel_mdex] hynUSD:$hynUSD, hynCNY:$hynCNY");
+
+      // rp
+      rpUSD = await WalletUtil.getPrice(
+        coinType: 'RP',
+        contractAddress: '0x2241E4D5cd6408E120974EDA698801eAA4bdc294',
+      );
+
+      rpCNY = rpUSD * rate;
+      //print("[Home_pannel_mdex] rpUSD:$rpUSD, rpCNY:$rpCNY");
+    }
 
     var status = response['state'];
     if (status['error_code'] == 0) {
@@ -110,6 +164,27 @@ class CoinMarketApi {
           var legalSign = SupportedLegal.of(convert);
           if (legalSign != null) {
             var price = datas[key]["quote"][convert]["price"];
+
+            if (env.buildType == BuildType.PROD) {
+              if (key == "HYN") {
+                if (legalSign.legal == "CNY") {
+                  price = hynCNY;
+                  //print("1, hynCNY, price:$price");
+                } else {
+                  price = hynUSD;
+                  //print("2, hynUSD, price:$price");
+                }
+              } else if (key == "RP") {
+                if (legalSign.legal == "CNY") {
+                  price = rpCNY;
+                  //print("3, rpCNY, price:$price");
+                } else {
+                  price = rpUSD;
+                  //print("4, rpUSD, price:$price");
+                }
+              }
+            }
+
             var percentChange24h = datas[key]["quote"][convert]["percent_change_24h"];
             var vo = TokenPriceViewVo(
                 symbol: key,

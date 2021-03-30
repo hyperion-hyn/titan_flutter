@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/widget/widget_shot.dart';
 
 class InAppWebViewContainer extends StatefulWidget {
@@ -23,7 +25,7 @@ class InAppWebViewContainer extends StatefulWidget {
   }
 }
 
-class InAppWebViewContainerState extends State<InAppWebViewContainer> {
+class InAppWebViewContainerState extends State<InAppWebViewContainer> with WidgetsBindingObserver {
   final ShotController _shotController = new ShotController();
 
   InAppWebViewController webView;
@@ -35,6 +37,34 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
 
   Function onBackPress;
   Function onForwardPress;
+
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.inactive: // 处于这种状态的应用程序应该假设它们可能在任何时候暂停。
+        break;
+      case AppLifecycleState.resumed: //从后台切换前台，界面可见
+        await Future.delayed(Duration(milliseconds: 500),(){});
+        var clipStr = await TitanPlugin.getClipboardData();
+        await Clipboard.setData(ClipboardData(text: clipStr));
+        break;
+      case AppLifecycleState.paused: // 界面不可见，后台
+        break;
+      case AppLifecycleState.detached: // APP结束时调用
+        break;
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +155,9 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
       initialUrl: widget.initUrl,
       initialHeaders: {},
       initialOptions: InAppWebViewGroupOptions(
+        android: AndroidInAppWebViewOptions(
+            useShouldInterceptRequest: false,
+        )
 //        inAppWebViewOptions: InAppWebViewOptions(
 //        debuggingEnabled: true,)
           ),

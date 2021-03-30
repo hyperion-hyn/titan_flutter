@@ -66,6 +66,7 @@ class TransactionDetailVo {
   int cancelTimes = 0;
   int lastOptType; //1 speedUp, 0 cancel
   int localTransferType;
+  bool receiptStatus;
   // int id;
 
   TransactionDetailVo({
@@ -99,6 +100,7 @@ class TransactionDetailVo {
     this.speedUpTimes,
     this.cancelTimes,
     this.lastOptType,
+    this.receiptStatus = true,
   });
 
   static double amountFromJson(dynamic json) {
@@ -127,7 +129,8 @@ class TransactionDetailVo {
     if (logsDecoded == null || logsDecoded.rewards == null || logsDecoded.rewards.isEmpty) {
       return "0.0";
     }
-    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(logsDecoded.rewards[0].amount)).toString();
+    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(logsDecoded.rewards[0].amount))
+        .toString();
     return amount;
   }
 
@@ -136,7 +139,8 @@ class TransactionDetailVo {
       return "0";
     }
     var amount = ConvertTokenUnit.weiToEther(
-            weiBigInt: BigInt.parse(FormatUtil.clearScientificCounting(double.parse(payload.amount))))
+            weiBigInt:
+                BigInt.parse(FormatUtil.clearScientificCounting(double.parse(payload.amount))))
         .toString();
     return FormatUtil.stringFormatCoinNum(amount);
   }
@@ -146,7 +150,8 @@ class TransactionDetailVo {
       return "0";
     }
     var amount = ConvertTokenUnit.weiToEther(
-            weiBigInt: BigInt.parse(FormatUtil.clearScientificCounting(double.parse(payload.reward))))
+            weiBigInt:
+                BigInt.parse(FormatUtil.clearScientificCounting(double.parse(payload.reward))))
         .toString();
     return FormatUtil.stringFormatCoinNum(amount);
   }
@@ -181,7 +186,8 @@ class TransactionDetailVo {
       state: hynTransferHistory.status,
       amount: AtlasApi.isTransferBill(hynTransferHistory.type)
           ? AtlasApi.getTransferBillAmount(hynTransferHistory)
-          : ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(hynTransferHistory.value)).toDouble(),
+          : ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(hynTransferHistory.value))
+              .toDouble(),
       symbol: symbol,
       fromAddress: AtlasApi.isTransferBill(hynTransferHistory.type)
           ? hynTransferHistory.payload.map3Node
@@ -207,6 +213,7 @@ class TransactionDetailVo {
       payload: hynTransferHistory.payload,
       internalTransactions: hynTransferHistory.internalTransactions,
       callInternalTrans: hynTransferHistory.callInternalTrans,
+      receiptStatus: true,
     );
   }
 
@@ -220,7 +227,8 @@ class TransactionDetailVo {
       state: hynTransferHistory.status,
       amount: AtlasApi.isTransferBill(hynTransferHistory.type)
           ? AtlasApi.getTransferBillAmount(hynTransferHistory)
-          : ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(hynTransferHistory.value)).toDouble(),
+          : ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(hynTransferHistory.value))
+              .toDouble(),
       symbol: symbol,
       fromAddress: hynTransferHistory.from,
       toAddress: hynTransferHistory.to,
@@ -242,10 +250,12 @@ class TransactionDetailVo {
       payload: hynTransferHistory.payload,
       internalTransactions: hynTransferHistory.internalTransactions,
       callInternalTrans: hynTransferHistory.callInternalTrans,
+      receiptStatus: true,
     );
   }
 
-  factory TransactionDetailVo.fromJson(Map<String, dynamic> json) => _$TransactionDetailVoFromJson(json);
+  factory TransactionDetailVo.fromJson(Map<String, dynamic> json) =>
+      _$TransactionDetailVoFromJson(json);
 
   Map<String, dynamic> toJson() => _$TransactionDetailVoToJson(this);
 
@@ -254,6 +264,8 @@ class TransactionDetailVo {
     return toJson().toString();
   }
 }
+
+
 
 class LocalTransferType {
   static const LOCAL_TRANSFER_ETH = 1;

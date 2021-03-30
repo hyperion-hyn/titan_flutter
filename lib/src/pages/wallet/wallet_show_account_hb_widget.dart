@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/env.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
@@ -23,8 +25,10 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/wallet/api/hb_api.dart';
+import 'package:titan/src/pages/wallet/tx_info_item.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/config/heco.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -40,6 +44,7 @@ import 'package:titan/src/utils/utils.dart';
 
 import '../../pages/wallet/model/transtion_detail_vo.dart';
 import 'api/hyn_api.dart';
+import 'model/transaction_info_vo.dart';
 import 'model/wallet_send_dialog_util.dart';
 
 class ShowAccountHbPage extends StatefulWidget {
@@ -120,15 +125,8 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
           ),
           actions: <Widget>[
             FlatButton(
-              onPressed: (){
-                var url = 'https://hecoinfo.com/address/${WalletModelUtil.walletEthAddress}';
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => InAppWebViewContainer(
-                          initUrl: url,
-                          title: '',
-                        )));
+              onPressed: () {
+                HbApi.jumpToScanByAddress(context, WalletModelUtil.walletEthAddress);
               },
               child: Text(
                 '区块浏览器',
@@ -262,11 +260,6 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                                             width: 20,
                                             height: 20,
                                           ),
-                                          /*Icon(
-                                            ExtendsIconFont.receiver,
-                                            color: Theme.of(context).primaryColor,
-                                            size: 20,
-                                          ),*/
                                           SizedBox(
                                             width: 12,
                                           ),
@@ -278,46 +271,16 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                                         ],
                                       ),
                                     ),
-                                    Container(
-                                      height: 36,
-                                      width: 1,
-                                      color: DefaultColors.colord7d7d7,
-                                    ),
-                                    Builder(
-                                      builder: (BuildContext context) {
-                                        return InkWell(
-                                          onTap: () {
-                                            Fluttertoast.showToast(
-                                                msg: S.of(context).exchange_is_not_yet_open(
-                                                    widget.coinVo.symbol));
-                                          },
-                                          child: Row(
-                                            children: <Widget>[
-                                              Image.asset(
-                                                "res/drawable/ic_wallet_account_list_exchange.png",
-                                                width: 20,
-                                                height: 20,
-                                              ),
-                                              /*Icon(
-                                                ExtendsIconFont.copy_content,
-                                                color: Theme.of(context).primaryColor,
-                                                size: 20,
-                                              ),*/
-                                              SizedBox(
-                                                width: 12,
-                                              ),
-                                              Text(
-                                                S.of(context).exchange,
-                                                style: TextStyle(
-                                                  color: DefaultColors.color333,
-                                                  fontSize: 14,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    )
+                                    if (widget.coinVo.symbol == 'HYN' ||
+                                        widget.coinVo.symbol == 'RP')
+                                      Container(
+                                        height: 36,
+                                        width: 1,
+                                        color: DefaultColors.colord7d7d7,
+                                      ),
+                                    if (widget.coinVo.symbol == 'HYN' ||
+                                        widget.coinVo.symbol == 'RP')
+                                      _swapButton(),
                                   ],
                                 ),
                               ),
@@ -325,6 +288,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                           ],
                         ),
                       ),
+                      _localRecordHint(),
                       dataList.length > 1
                           ? ListView.builder(
                               primary: false,
@@ -333,8 +297,8 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                                 if (index == 0) {
                                   return SizedBox.shrink();
                                 } else {
-                                  var currentTransactionDetail = dataList[index];
-                                  return _buildTransactionItem(context, currentTransactionDetail);
+                                  var info = dataList[index];
+                                  return TxInfoItem(info);
                                 }
                               },
                               itemCount: max<int>(0, dataList.length),
@@ -356,6 +320,50 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
             ),
           ),
         ));
+  }
+
+  Widget _swapButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        InkWell(
+          onTap: () {
+            var webTitleStr = FluroConvertUtils.fluroCnParamsEncode("MDEX");
+            var tokenContractAddress = widget.coinVo.contractAddress;
+            var usdtContractAddress = env.buildType == BuildType.DEV
+                ? DefaultTokenDefine.HUSDT_TEST.contractAddress
+                : DefaultTokenDefine.HUSDT.contractAddress;
+            var swapUrl =
+                'https://ht.mdex.com/#/swap?inputCurrency=$tokenContractAddress&&outputCurrency=$usdtContractAddress';
+            var initUrl = FluroConvertUtils.fluroCnParamsEncode(swapUrl);
+            Application.router.navigateTo(
+                context,
+                Routes.toolspage_dapp_webview_page +
+                    "?initUrl=$initUrl&defaultCoin=${CoinType.HB_HT.toString()}&title=$webTitleStr");
+          },
+          child: Row(
+            children: <Widget>[
+              Image.asset(
+                "res/drawable/ic_wallet_account_list_exchange.png",
+                width: 20,
+                height: 20,
+              ),
+              SizedBox(
+                width: 12,
+              ),
+              Text(
+                S.of(context).exchange,
+                style: TextStyle(
+                  color: DefaultColors.color333,
+                  fontSize: 14,
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildTransactionItem(BuildContext context, TransactionDetailVo transactionDetail) {
@@ -430,16 +438,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
             color: Colors.white,
             child: InkWell(
               onTap: () {
-                var url = HbApi.getTxDetailUrl(transactionDetail.hash);
-                if (url != null) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => InAppWebViewContainer(
-                                initUrl: url,
-                                title: '',
-                              )));
-                }
+                HbApi.jumpToScanByHash(context, transactionDetail.hash);
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 21),
@@ -534,6 +533,173 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
     );
   }
 
+  Widget _localRecordHint() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: HexColor('#F6FAFF'),
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+          child: RichText(
+              text: TextSpan(
+                  text: '仅显示本地发出的交易，如要查看该币种的更多记录，请点击',
+                  style: TextStyle(fontSize: 12, color: HexColor("#595B75"), height: 1.8),
+                  children: [
+                TextSpan(
+                  text: ' [区块浏览器] ',
+                  style: TextStyle(fontSize: 12, color: HexColor("#1F81FF"), height: 1.8),
+                  recognizer: new TapGestureRecognizer()
+                    ..onTap = () {
+                      HbApi.jumpToScanByAddress(context, WalletModelUtil.walletEthAddress);
+                    },
+                ),
+                TextSpan(
+                    text: '进行查看。',
+                    style: TextStyle(fontSize: 12, color: HexColor("#595B75"), height: 1.8))
+              ])),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTxnItemV2(BuildContext context, TransactionInfoVo txnInfo) {
+    var iconPath = '';
+    var title = "";
+    var describe = "";
+    var amountText = "";
+    var amountSubText = "";
+    amountText = "${FormatUtil.formatCoinNum(double.tryParse(txnInfo.amount))}";
+
+    if (txnInfo.status == 0) {
+      title = S.of(context).pending;
+    } else if (txnInfo.status == 1) {
+      title = S.of(context).completed;
+    } else if (txnInfo.status == 2) {
+      title = S.of(context).wallet_fail_title;
+    }
+
+    var limitLength = 4;
+
+    if (WalletModelUtil.walletEthAddress == txnInfo.toAddress) {
+      amountText = '+$amountText';
+      iconPath = "res/drawable/ic_wallet_account_list_receiver.png";
+      describe =
+          "From: " + shortBlockChainAddress(txnInfo.fromAddress, limitCharsLength: limitLength);
+    } else if (WalletModelUtil.walletEthAddress == txnInfo.fromAddress) {
+      amountText = '-$amountText';
+      iconPath = "res/drawable/ic_wallet_account_list_send.png";
+      describe = "To: " + shortBlockChainAddress(txnInfo.toAddress, limitCharsLength: limitLength);
+    }
+
+    var time = _dateFormat.format(DateTime.fromMillisecondsSinceEpoch(txnInfo.time));
+
+    return Ink(
+      color: Color(0xFFF5F5F5),
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 18,
+          ),
+          Ink(
+            color: Colors.white,
+            child: InkWell(
+              onTap: () {
+                HbApi.jumpToScanByHash(context, txnInfo.hash);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 21),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset(
+                      iconPath,
+                      width: 20,
+                      height: 20,
+                    ),
+                    SizedBox(
+                      width: 13,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                amountText,
+                                style: TextStyle(
+                                    color: DefaultColors.color333,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              if (amountSubText.isNotEmpty)
+                                Text(
+                                  amountSubText,
+                                  style: TextStyle(
+                                    color: DefaultColors.color999,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              Spacer(),
+                              Text(
+                                title,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: DefaultColors.color333,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 4.0),
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: Text(
+                                  describe,
+                                  style: TextStyle(fontSize: 14, color: DefaultColors.color999),
+                                ),
+                              ),
+                              Spacer(),
+                              Text(
+                                time,
+                                style: TextStyle(
+                                  color: DefaultColors.color999,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 14),
+                    Image.asset(
+                      "res/drawable/add_position_image_next.png",
+                      height: 13,
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 18.0),
+          Divider(
+            height: 1,
+            indent: 21,
+            endIndent: 21,
+          )
+        ],
+      ),
+    );
+  }
+
   Future gotoSendTokenPage() {
     shouldRefresh = true;
     return Application.router.navigateTo(
@@ -546,8 +712,8 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
   Future<List<dynamic>> onLoadData(int page) async {
     var retList = [];
     try {
-      List<TransactionDetailVo> transferList =
-          await _accountTransferService.getTransferList(widget.coinVo, page);
+      List<TransactionInfoVo> transferList =
+          await _accountTransferService.getHecoTxListV2(context, widget.coinVo, page);
       if (page == getStartPage()) {
         if (!mounted) {
           return retList;

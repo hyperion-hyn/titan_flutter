@@ -14,13 +14,17 @@ import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
+import 'package:titan/src/plugins/wallet/bridge_atlas_abi.dart';
+import 'package:titan/src/plugins/wallet/bridge_heco_abi.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/config/ethereum.dart';
 import 'package:titan/src/plugins/wallet/config/heco.dart';
 import 'package:titan/src/plugins/wallet/config/hyperion.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/hyn_erc20_abi.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/map3_staking_abi.dart';
+import 'package:titan/src/plugins/wallet/mdex_pair_abi.dart';
 import 'package:titan/src/plugins/wallet/rp_holding_abi.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
@@ -402,6 +406,24 @@ class WalletUtil {
     return contract;
   }
 
+  static web3.DeployedContract _newAtlasBridgeLockContract(String contractAddress, String name) {
+    final contract = web3.DeployedContract(web3.ContractAbi.fromJson(BRIDGE_ATLAS_ABI, name),
+        web3.EthereumAddress.fromHex(contractAddress));
+    return contract;
+  }
+
+  static web3.DeployedContract _newHecoBridgeLockContract(String contractAddress, String name) {
+    final contract = web3.DeployedContract(web3.ContractAbi.fromJson(BRIDGE_HECO_ABI, name),
+        web3.EthereumAddress.fromHex(contractAddress));
+    return contract;
+  }
+
+  static web3.DeployedContract _newHecoMDexPairContract(String contractAddress, String name) {
+    final contract = web3.DeployedContract(web3.ContractAbi.fromJson(MDEX_PAIR_ABI, name),
+        web3.EthereumAddress.fromHex(contractAddress));
+    return contract;
+  }
+
   /// https://infura.io/docs/gettingStarted/makeRequests.md
   static Future<dynamic> postToEthereumNetwork(int coinType,
       {String method, List params, int id = 1}) async {
@@ -468,6 +490,18 @@ class WalletUtil {
     return _getContract(WalletUtil._newHynStakingContract, contractAddress, 'HynStaking');
   }
 
+  static web3.DeployedContract getAtlasBridgeLockContract(String contractAddress) {
+    return _getContract(WalletUtil._newAtlasBridgeLockContract, contractAddress, 'BridgeLock');
+  }
+
+  static web3.DeployedContract getHecoBridgeBurnContract(String contractAddress) {
+    return _getContract(WalletUtil._newHecoBridgeLockContract, contractAddress, 'BridgeBurn');
+  }
+
+  static web3.DeployedContract getHecoMDexPairContract(String contractAddress) {
+    return _getContract(WalletUtil._newHecoMDexPairContract, contractAddress, 'MdexPair');
+  }
+
   static web3.Web3Client getWeb3Client(int coinType, [bool printResponse = false]) {
     var key = _web3ClientMapKey(coinType);
     if (web3ClientMap.containsKey(key)) {
@@ -526,6 +560,36 @@ class WalletUtil {
       return balance.first;
     }
     return BigInt.from(0);
+  }
+
+  static Future<List<dynamic>> getLastPrice({String contractAddress, String name, List<dynamic> params}) async {
+
+    final contract = getHecoMDexPairContract(contractAddress);
+    final function = contract.function(name);
+    final result = await getWeb3Client(CoinType.HB_HT).call(
+        contract: contract,
+        function: function,
+        params: params??[]);
+    print("[MDex] name:$name, result:$result");
+
+    return result;
+  }
+
+  static Future<double> getPrice({String coinType, String contractAddress}) async {
+    var reserves = await getLastPrice(
+        contractAddress: contractAddress, name: 'getReserves');
+
+    if (reserves.length < 3) {
+      return 0;
+    }
+
+    var reserve0 = reserves[0];
+    var reserve0Decimal = ConvertTokenUnit.weiToDecimal(reserve0);
+
+    var reserve1 = reserves[1];
+    var reserve1Decimal = ConvertTokenUnit.weiToDecimal(reserve1);
+
+    return (reserve1Decimal / reserve0Decimal).toDouble();
   }
 
   static String formatToHynAddrIfAtlasChain(CoinViewVo coinVo, String ethAddress) {
