@@ -2742,6 +2742,8 @@
   "@qrcode": {},
   "quick_unlock": "Quick unlock",
   "@quick_unlock": {},
+  "quote": "quote",
+  "@quote": {},
   "ralated_info_content": "For the convenience of subaccounts completing the card task, as long as the main account completes playing, the subaccount also automatically completes the card task.A master account can be associated with up to 10 subaccounts.",
   "@ralated_info_content": {},
   "ralated_info_title": "What is a task account association",

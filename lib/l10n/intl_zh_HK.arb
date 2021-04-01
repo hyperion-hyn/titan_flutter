@@ -2742,6 +2742,8 @@
   "@qrcode": {},
   "quick_unlock": "快捷解鎖",
   "@quick_unlock": {},
+  "quote": "quote",
+  "@quote": {},
   "ralated_info_content": "為了方便子賬戶完成打卡任務，只要主賬戶完成打卡，子賬戶也自動完成打卡任務。壹個主賬戶最多可以關聯10個子賬戶。",
   "@ralated_info_content": {},
   "ralated_info_title": "什麽是任務賬戶關聯",

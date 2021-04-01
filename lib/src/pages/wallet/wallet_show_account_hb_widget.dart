@@ -162,131 +162,140 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Container(
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(top: 32, bottom: 24),
-                              child: Container(
-                                width: 82,
-                                height: 82,
-                                child: Stack(
-                                  children: [
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 80,
-                                      height: 80,
-                                      child: Image.asset(widget.coinVo.logo),
+                      Stack(
+                        children: [
+                          Container(
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 32, bottom: 24),
+                                  child: Container(
+                                    width: 82,
+                                    height: 82,
+                                    child: Stack(
+                                      children: [
+                                        Container(
+                                          alignment: Alignment.center,
+                                          width: 80,
+                                          height: 80,
+                                          child: Image.asset(widget.coinVo.logo),
+                                        ),
+                                        Positioned(
+                                          bottom: 0,
+                                          right: 0,
+                                          child: ImageUtil.getChainIcon(widget.coinVo, 25),
+                                        )
+                                      ],
                                     ),
-                                    Positioned(
-                                      bottom: 0,
-                                      right: 0,
-                                      child: ImageUtil.getChainIcon(widget.coinVo, 25),
-                                    )
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                            Text(
-                              "${FormatUtil.coinBalanceHumanReadFormat(widget.coinVo)} ${widget.coinVo.symbol}",
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "≈ ${activeQuoteVoAndSign?.legal?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(widget.coinVo) * (activeQuoteVoAndSign?.price ?? 0))}",
-                                style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
-                              ),
-                            ),
-                            Container(
-                              height: 61,
-                              padding: const EdgeInsets.symmetric(vertical: 13),
-                              margin:
-                                  const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 34),
-                              decoration: BoxDecoration(
-                                color: DefaultColors.colorf8f8f8,
-                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                              ),
-                              child: IntrinsicHeight(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: <Widget>[
-                                    //发起新交易按钮
-                                    InkWell(
-                                      onTap: () async {
-                                        gotoSendTokenPage();
-                                      },
-                                      child: Row(
-                                        children: <Widget>[
-                                          Image.asset(
-                                            "res/drawable/ic_wallet_account_list_send.png",
-                                            width: 20,
-                                            height: 20,
-                                          ),
-                                          /*Icon(
-                                            ExtendsIconFont.send,
-                                            color: Theme.of(context).primaryColor,
-                                            size: 24,
-                                          ),*/
-                                          SizedBox(
-                                            width: 12,
-                                          ),
-                                          Text(
-                                            S.of(context).send,
-                                            style: TextStyle(
-                                                color: DefaultColors.color333, fontSize: 14),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      height: 36,
-                                      width: 1,
-                                      color: DefaultColors.colord7d7d7,
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    WalletReceivePage(widget.coinVo)));
-                                      },
-                                      child: Row(
-                                        children: <Widget>[
-                                          Image.asset(
-                                            "res/drawable/ic_wallet_account_list_receiver.png",
-                                            width: 20,
-                                            height: 20,
-                                          ),
-                                          SizedBox(
-                                            width: 12,
-                                          ),
-                                          Text(
-                                            S.of(context).receiver,
-                                            style: TextStyle(
-                                                color: DefaultColors.color333, fontSize: 14),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    if (widget.coinVo.symbol == 'HYN' ||
-                                        widget.coinVo.symbol == 'RP')
-                                      Container(
-                                        height: 36,
-                                        width: 1,
-                                        color: DefaultColors.colord7d7d7,
-                                      ),
-                                    if (widget.coinVo.symbol == 'HYN' ||
-                                        widget.coinVo.symbol == 'RP')
-                                      _swapButton(),
-                                  ],
+                                Text(
+                                  "${FormatUtil.coinBalanceHumanReadFormat(widget.coinVo)} ${widget.coinVo.symbol}",
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
-                              ),
-                            )
-                          ],
-                        ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "≈ ${activeQuoteVoAndSign?.legal?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(widget.coinVo) * (activeQuoteVoAndSign?.price ?? 0))}",
+                                    style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
+                                  ),
+                                ),
+                                Container(
+                                  height: 61,
+                                  padding: const EdgeInsets.symmetric(vertical: 13),
+                                  margin: const EdgeInsets.only(
+                                      right: 16, left: 16, bottom: 16, top: 34),
+                                  decoration: BoxDecoration(
+                                    color: DefaultColors.colorf8f8f8,
+                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  child: IntrinsicHeight(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: <Widget>[
+                                        //发起新交易按钮
+                                        InkWell(
+                                          onTap: () async {
+                                            gotoSendTokenPage();
+                                          },
+                                          child: Row(
+                                            children: <Widget>[
+                                              Image.asset(
+                                                "res/drawable/ic_wallet_account_list_send.png",
+                                                width: 20,
+                                                height: 20,
+                                              ),
+                                              /*Icon(
+                                                ExtendsIconFont.send,
+                                                color: Theme.of(context).primaryColor,
+                                                size: 24,
+                                              ),*/
+                                              SizedBox(
+                                                width: 12,
+                                              ),
+                                              Text(
+                                                S.of(context).send,
+                                                style: TextStyle(
+                                                    color: DefaultColors.color333, fontSize: 14),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 36,
+                                          width: 1,
+                                          color: DefaultColors.colord7d7d7,
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        WalletReceivePage(widget.coinVo)));
+                                          },
+                                          child: Row(
+                                            children: <Widget>[
+                                              Image.asset(
+                                                "res/drawable/ic_wallet_account_list_receiver.png",
+                                                width: 20,
+                                                height: 20,
+                                              ),
+                                              SizedBox(
+                                                width: 12,
+                                              ),
+                                              Text(
+                                                S.of(context).receiver,
+                                                style: TextStyle(
+                                                    color: DefaultColors.color333, fontSize: 14),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        if (widget.coinVo.symbol == 'HYN' ||
+                                            widget.coinVo.symbol == 'RP')
+                                          Container(
+                                            height: 36,
+                                            width: 1,
+                                            color: DefaultColors.colord7d7d7,
+                                          ),
+                                        if (widget.coinVo.symbol == 'HYN' ||
+                                            widget.coinVo.symbol == 'RP')
+                                          _swapButton(),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            child: _quoteButton(),
+                            right: 24,
+                            top: 32,
+                          ),
+                        ],
                       ),
                       _localRecordHint(),
                       dataList.length > 1
@@ -320,6 +329,45 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
             ),
           ),
         ));
+  }
+
+  Widget _quoteButton() {
+    if (widget.coinVo.symbol != 'HYN' && widget.coinVo.symbol != 'RP') {
+      return SizedBox();
+    }
+    return InkWell(
+      onTap: () {
+        var webTitleStr = FluroConvertUtils.fluroCnParamsEncode("MDEX");
+        var tokenContractAddress = widget.coinVo.contractAddress;
+
+        var tokenUrl = 'https://info.mdex.com/#/token/$tokenContractAddress';
+        var initUrl = FluroConvertUtils.fluroCnParamsEncode(tokenUrl);
+        Application.router.navigateTo(
+            context,
+            Routes.toolspage_dapp_webview_page +
+                "?initUrl=$initUrl&defaultCoin=${CoinType.HB_HT.toString()}&title=$webTitleStr");
+      },
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Image.asset(
+            "res/drawable/ic_quote.png",
+            width: 20,
+            height: 18,
+          ),
+          SizedBox(
+            width: 6,
+          ),
+          Text(
+            S.of(context).quote,
+            style: TextStyle(
+              color: DefaultColors.color999,
+              fontSize: 12,
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Widget _swapButton() {

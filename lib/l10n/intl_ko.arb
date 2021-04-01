@@ -2742,6 +2742,8 @@
   "@qrcode": {},
   "quick_unlock": "Quick unlock",
   "@quick_unlock": {},
+  "quote": "quote",
+  "@quote": {},
   "ralated_info_content": "카드 작업을 완료하는 하위 계정의 편의를 위해 기본 계정 재생이 완료되는 한 하위 계정도 자동으로 카드 작업을 완료합니다. 마스터 계정은 최대 10개의 하위 계정과 연결할 수 있습니다.",
   "@ralated_info_content": {},
   "ralated_info_title": "작업 계정 연결이란 무엇입니까?",
