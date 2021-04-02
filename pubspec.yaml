@@ -94,7 +94,7 @@ dependencies:
   web3dart:
     git:
       url: git@github.com:hyperion-hyn/web3dart.git
-      ref: stable
+      ref: feature-remove-msg-type
   bip39: ^1.0.3
   intl: ^0.16.1
   webview_flutter: 1.0.7
