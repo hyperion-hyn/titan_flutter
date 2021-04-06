@@ -15,6 +15,7 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'dart:math' as math;
 
 class DAppSendDialogPage extends StatefulWidget {
   final DAppSendDialogEntity entity;
@@ -34,7 +35,13 @@ class _DAppSendDialogState extends BaseState<DAppSendDialogPage> {
   final StreamController<double> _gasPriceController = StreamController.broadcast();
 
   BigInt _minGasPrice = BigInt.from(1 * EthereumUnitValue.G_WEI);
-  BigInt _maxGasPrice = BigInt.from(100 * EthereumUnitValue.G_WEI);
+  BigInt get _maxGasPrice {
+    if(widget.entity.gasPrice != null && widget.entity.gasPrice > BigInt.from(100 * EthereumUnitValue.G_WEI)) {
+      return widget.entity.gasPrice;
+    }else{
+      return BigInt.from(100 * EthereumUnitValue.G_WEI);
+    }
+  }
   BigInt get _gasPrice {
     if(widget.entity.gasPrice != null){
       return widget.entity.gasPrice;

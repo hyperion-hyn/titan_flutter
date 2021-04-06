@@ -646,4 +646,20 @@ class WalletUtil {
     }
     return chainNme;
   }
+
+  static Future<String> signPersonalMessage(
+    String fileName,
+    String password,
+    String personalMessage
+  ) {
+    return WalletChannel.signPersonalMessage(fileName, password, personalMessage);
+  }
+
+  static Future<String> signTypeMessage(
+      String fileName,
+      String password,
+      String typeMessage
+      ) {
+    return WalletChannel.signTypeMessage(fileName, password, typeMessage);
+  }
 }

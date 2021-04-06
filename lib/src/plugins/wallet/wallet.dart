@@ -436,6 +436,24 @@ class Wallet {
     return bytesToHex(rawTx, include0x: true, padToEvenLength: true);
   }
 
+  Future<String> signPersonalMessage(
+      int coinType,
+      String password,
+      String personalMessage,
+      ) async {
+    var resultStr = await WalletUtil.signPersonalMessage(keystore.fileName, password, personalMessage);
+    return resultStr;
+  }
+
+  Future<String> signTypeMessage(
+      int coinType,
+      String password,
+      String typeMessage,
+      ) async {
+    var resultStr = await WalletUtil.signTypeMessage(keystore.fileName, password, typeMessage);
+    return resultStr;
+  }
+
   int getChainId(int coinType) {
     if (coinType == CoinType.HYN_ATLAS) {
       return HyperionRpcProvider.chainId;

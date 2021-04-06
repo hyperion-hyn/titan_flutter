@@ -105,4 +105,24 @@ class WalletChannel {
       "coinTypeValue": coinTypeValue,
     });
   }
+
+  static Future<String> signPersonalMessage(
+    String fileName, String password, String personalMessage,
+  ) async {
+    return await TitanPlugin.callChannel.invokeMethod("signPersonalMessage", {
+      "fileName": fileName,
+      'password': password,
+      'message': personalMessage,
+    });
+  }
+
+  static Future<String> signTypeMessage(
+      String fileName, String password, String typeMessage,
+      ) async {
+    return await TitanPlugin.callChannel.invokeMethod("signTypeMessage", {
+      "fileName": fileName,
+      'password': password,
+      'typeMessage': typeMessage,
+    });
+  }
 }
