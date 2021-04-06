@@ -480,29 +480,36 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
           int callbackId = data[0];
           try {
             String personalMsg = data[1] == null ? null : data[1];
-            UiUtil.showBottomDialogView(context, dialogTitle:"签名信息", dialogSubTitle: "asdfasdfasdf利卡河上的李开复哈桑了解到恢复了刷卡机", actions: [
+            bool isSign = await UiUtil.showBottomDialogView(context, dialogTitle:"签名信息", dialogSubTitle: personalMsg, actions: [
               ClickOvalButton(
                 S.of(context).cancel,
-                () async {
-                  Navigator.pop(context);
+                    () {
+                  Navigator.of(context).pop(false);
                 },
-                width: 300,
-                height: 44,
-                fontColor: DefaultColors.color999,
-                btnColor: [HexColor("#F2F2F2")],
-                fontSize: 16,
+                width: 160,
+                height: 42,
+                fontSize: 14,
+                fontColor: Theme.of(context).primaryColor,
+                btnColor: [Colors.transparent],
+                borderColor: Theme.of(context).primaryColor,
+              ),
+              SizedBox(
+                width: 20,
               ),
               ClickOvalButton(
                 S.of(context).confirm,
-                () async {
-                  Navigator.pop(context);
+                    () {
+                  Navigator.of(context).pop(true);
                 },
-                width: 140,
-                height: 40,
-                btnColor: [HexColor("#FF4B4B")],
-                fontSize: 16,
+                btnColor: [HexColor("#E7C01A"), HexColor("#F7D33D")],
+                fontSize: 14,
+                width: 160,
+                height: 42,
               ),
             ]);
+            if(!isSign){
+              return;
+            }
             var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
             var password = await UiUtil.showWalletPasswordDialogV2(
               context,
@@ -513,7 +520,8 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
             }
             String result =
                 await wallet.signPersonalMessage(selectCoinType, password, personalMsg);
-            callbackToJS(controller, callbackId: callbackId, value: result);
+            Fluttertoast.showToast(msg: "signed $result",toastLength: Toast.LENGTH_LONG);
+            // callbackToJS(controller, callbackId: callbackId, value: result);
           } catch (e, stack) {
             callbackToJS(controller, callbackId: callbackId, error: e.toString());
             LogUtil.toastException(e, stack: stack);
@@ -541,7 +549,8 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
               return;
             }
             String result = await wallet.signTypeMessage(selectCoinType, password, typeMsg);
-            callbackToJS(controller, callbackId: callbackId, value: result);
+            Fluttertoast.showToast(msg: "signed $result",toastLength: Toast.LENGTH_LONG);
+            // callbackToJS(controller, callbackId: callbackId, value: result);
           } catch (e, stack) {
             callbackToJS(controller, callbackId: callbackId, error: e.toString());
             LogUtil.toastException(e, stack: stack);
