@@ -94,7 +94,7 @@ dependencies:
   web3dart:
     git:
       url: git@github.com:hyperion-hyn/web3dart.git
-      ref: feature-remove-msg-type
+      ref: stable
   bip39: ^1.0.3
   intl: ^0.16.1
   webview_flutter: 1.0.7
@@ -102,9 +102,9 @@ dependencies:
   carousel_slider: ^2.3.1
   fake_cookie_manager: ^0.1.0
   loading: ^1.0.1
-#  flutter_inappwebview: ^3.1.0
-#  flutter_inappwebview:
-#    path: ../flutter_inappwebview
+  #  flutter_inappwebview: ^3.1.0
+  #  flutter_inappwebview:
+  #    path: ../flutter_inappwebview
   flutter_inappwebview:
     git:
       url: git@github.com:hyperion-hyn/flutter_inappwebview.git
