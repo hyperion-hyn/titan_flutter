@@ -61,9 +61,9 @@ class HyperionRpcProvider {
   static int get chainId {
     switch (HyperionConfig.chainType) {
       case HyperionChainType.mainnet:
-        return 1;
+        return 8888;
       case HyperionChainType.test:
-        return 1;
+        return 9999;
       case HyperionChainType.local:
         break;
     }

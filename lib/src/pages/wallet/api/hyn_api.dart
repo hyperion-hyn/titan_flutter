@@ -189,7 +189,7 @@ class HYNApi {
     print(message);
 
     var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
-        toAddress: AtlasOptAddress.atlas,
+        toAddress: AtlasAccountAddress.validator,
         password: password,
         message: message,
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
@@ -222,7 +222,7 @@ class HYNApi {
     print(message);
 
     var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
-        toAddress: AtlasOptAddress.atlas,
+        toAddress: AtlasAccountAddress.validator,
         password: password,
         message: message,
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
@@ -240,7 +240,7 @@ class HYNApi {
     print(message);
 
     var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
-        toAddress: AtlasOptAddress.atlas,
+        toAddress: AtlasAccountAddress.validator,
         password: password,
         message: message,
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
@@ -260,7 +260,7 @@ class HYNApi {
     print(message);
 
     var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
-        toAddress: AtlasOptAddress.atlas,
+        toAddress: AtlasAccountAddress.validator,
         password: password,
         message: message,
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
@@ -278,7 +278,7 @@ class HYNApi {
     print(message);
 
     var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
-        toAddress: AtlasOptAddress.atlas,
+        toAddress: AtlasAccountAddress.validator,
         password: password,
         message: message,
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
@@ -296,7 +296,7 @@ class HYNApi {
     print(message);
 
     var rawTx = await wallet.signTransaction(CoinType.HYN_ATLAS,
-        toAddress: AtlasOptAddress.atlas,
+        toAddress: AtlasAccountAddress.validator,
         password: password,
         message: message,
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
@@ -331,7 +331,7 @@ class HYNApi {
     print(message);
 
     return await wallet.signTransaction(CoinType.HYN_ATLAS,
-        toAddress: AtlasOptAddress.map3,
+        toAddress: AtlasAccountAddress.map3,
         password: password,
         message: message,
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
@@ -364,7 +364,7 @@ class HYNApi {
     print("[hyn_api] --> payload:${payload.toJson()}");
 
     return await wallet.signTransaction(CoinType.HYN_ATLAS,
-        toAddress: AtlasOptAddress.map3,
+        toAddress: AtlasAccountAddress.map3,
         password: password,
         message: message,
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
@@ -383,7 +383,7 @@ class HYNApi {
     print(message);
 
     return await wallet.signTransaction(CoinType.HYN_ATLAS,
-        toAddress: AtlasOptAddress.map3,
+        toAddress: AtlasAccountAddress.map3,
         password: password,
         message: message,
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
@@ -408,7 +408,7 @@ class HYNApi {
     print(message);
 
     return await wallet.signTransaction(CoinType.HYN_ATLAS,
-        toAddress: AtlasOptAddress.map3,
+        toAddress: AtlasAccountAddress.map3,
         password: password,
         message: message,
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
@@ -429,7 +429,7 @@ class HYNApi {
     print(message);
 
     return await wallet.signTransaction(CoinType.HYN_ATLAS,
-        toAddress: AtlasOptAddress.map3,
+        toAddress: AtlasAccountAddress.map3,
         password: password,
         message: message,
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
@@ -445,7 +445,7 @@ class HYNApi {
     print(message);
 
     return await wallet.signTransaction(CoinType.HYN_ATLAS,
-        toAddress: AtlasOptAddress.map3,
+        toAddress: AtlasAccountAddress.map3,
         password: password,
         message: message,
         gasPrice: HyperionGasPrice.getRecommend().averageBigInt);
@@ -476,7 +476,7 @@ class HYNApi {
 
     return wallet.sendTransaction(
       CoinType.HYN_ATLAS,
-      toAddress: AtlasOptAddress.map3,
+      toAddress: AtlasAccountAddress.map3,
       password: password,
       gasPrice: HyperionGasPrice.getRecommend().averageBigInt,
       message: message,
@@ -798,8 +798,6 @@ class HYNApi {
     }
 
     return rawTxHash;
-
-
 
     // var responseMap = await WalletUtil.postToEthereumNetwork(
     //   CoinType.HYN_ATLAS,

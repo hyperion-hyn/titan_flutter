@@ -7,6 +7,7 @@ import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utils.dart';
@@ -15,7 +16,9 @@ import 'create_atlas_entity.dart';
 
 abstract class AtlasMessage {
   Future<dynamic> action(String password);
+
   Map3NodeActionEvent get type;
+
   ConfirmInfoDescription get description;
 }
 
@@ -46,16 +49,17 @@ class ConfirmInfoDescription {
 get _walletAddressAndName {
   var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
   var walletName = activatedWallet?.wallet?.keystore?.name ?? "";
-  var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address ?? "");
+  var hynAddress =
+      WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address ?? "");
   var address = shortBlockChainAddress(hynAddress);
   return "$walletName ($address)";
 }
-
 
 //==================================Atlas Message Begin==============================================
 
 class ConfirmCreateAtlasNodeMessage implements AtlasMessage {
   final CreateAtlasEntity entity;
+
   ConfirmCreateAtlasNodeMessage({this.entity});
 
   @override
@@ -89,6 +93,7 @@ class ConfirmCreateAtlasNodeMessage implements AtlasMessage {
 
 class ConfirmEditAtlasNodeMessage implements AtlasMessage {
   final CreateAtlasEntity entity;
+
   ConfirmEditAtlasNodeMessage({this.entity});
 
   @override
@@ -125,7 +130,9 @@ class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
   final String nodeId;
   final String map3Address;
   final String atlasAddress;
-  ConfirmAtlasReceiveAwardMessage({this.nodeName, this.nodeId, this.map3Address, this.atlasAddress});
+
+  ConfirmAtlasReceiveAwardMessage(
+      {this.nodeName, this.nodeId, this.map3Address, this.atlasAddress});
 
   @override
   Future<dynamic> action(String password) async {
@@ -158,6 +165,7 @@ class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
 class ConfirmAtlasActiveMessage implements AtlasMessage {
   final String nodeId;
   final CreateAtlasEntity entity;
+
   ConfirmAtlasActiveMessage({this.nodeId, this.entity});
 
   @override
@@ -194,6 +202,7 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
   final String nodeId;
   final String map3Address;
   final String atlasAddress;
+
   ConfirmAtlasStakeMessage({this.nodeName, this.nodeId, this.map3Address, this.atlasAddress});
 
   @override
@@ -229,6 +238,7 @@ class ConfirmAtlasUnStakeMessage implements AtlasMessage {
   final String nodeId;
   final String map3Address;
   final String atlasAddress;
+
   ConfirmAtlasUnStakeMessage({this.nodeName, this.nodeId, this.map3Address, this.atlasAddress});
 
   @override
@@ -263,6 +273,7 @@ class ConfirmAtlasUnStakeMessage implements AtlasMessage {
 
 class ConfirmCreateMap3NodeMessage implements AtlasMessage {
   final CreateMap3Entity entity;
+
   ConfirmCreateMap3NodeMessage({this.entity});
 
   @override
@@ -306,13 +317,15 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
 class ConfirmEditMap3NodeMessage implements AtlasMessage {
   final CreateMap3Entity entity;
   final String map3NodeAddress;
+
   ConfirmEditMap3NodeMessage({this.entity, this.map3NodeAddress});
 
   @override
   Future<dynamic> action(String password) async {
     try {
       var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-      var rawTx = await HYNApi.transEditMap3Node(this.entity, password, this.map3NodeAddress, wallet);
+      var rawTx =
+          await HYNApi.transEditMap3Node(this.entity, password, this.map3NodeAddress, wallet);
       this.entity.rawTx = rawTx;
 
       var uploadRawTx = '[ConfirmEditMap3NodeMessage] wallet:${wallet.toJson()}, rawTx:$rawTx';
@@ -324,7 +337,8 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
 
       var uploadTxHashEntity = '[ConfirmEditMap3NodeMessage] txHashEntity:${txHashEntity.toJson()}';
       LogUtil.printMessage(uploadTxHashEntity);
-      LogUtil.uploadException("[ConfirmEditMap3NodeMessage] action, uploadTxHashEntity", uploadTxHashEntity);
+      LogUtil.uploadException(
+          "[ConfirmEditMap3NodeMessage] action, uploadTxHashEntity", uploadTxHashEntity);
 
       return txHashEntity.txHash.isNotEmpty;
     } catch (e) {
@@ -347,7 +361,9 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
       fromName: S.of(Keys.rootKey.currentContext).wallet,
       fromDetail: _walletAddressAndName,
       toName: S.of(Keys.rootKey.currentContext).map3_node,
-      toDetail: entity.payload.nodeId == null ? '' : S.of(Keys.rootKey.currentContext).node_num_and_node_id(entity.payload.nodeId),
+      toDetail: entity.payload.nodeId == null
+          ? ''
+          : S.of(Keys.rootKey.currentContext).node_num_and_node_id(entity.payload.nodeId),
       fee: "0.0001",
     );
   }
@@ -383,9 +399,11 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
         nonce,
       );
 
-      var uploadPreMsgRawText = '[ConfirmPreEditMap3NodeMessage] wallet:${wallet.toJson()}, rawTx:$rawTx';
+      var uploadPreMsgRawText =
+          '[ConfirmPreEditMap3NodeMessage] wallet:${wallet.toJson()}, rawTx:$rawTx';
       LogUtil.printMessage(uploadPreMsgRawText);
-      LogUtil.uploadException("[ConfirmPreEditMap3NodeMessage] action, uploadTxHashEntity", uploadPreMsgRawText);
+      LogUtil.uploadException(
+          "[ConfirmPreEditMap3NodeMessage] action, uploadTxHashEntity", uploadPreMsgRawText);
 
       return rawTx.isNotEmpty;
     } catch (e) {
@@ -416,6 +434,7 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
 class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
   final PledgeMap3Entity entity;
   final String map3NodeAddress;
+
   ConfirmTerminateMap3NodeMessage({this.entity, this.map3NodeAddress});
 
   @override
@@ -428,9 +447,11 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
       this.entity.rawTx = rawTx;
       LogUtil.printMessage("[Confirm] rawTx:$rawTx");
 
-      var uploadRawText = '[ConfirmTerminateMap3NodeMessage] wallet:${wallet.toJson()}, rawTx:$rawTx';
+      var uploadRawText =
+          '[ConfirmTerminateMap3NodeMessage] wallet:${wallet.toJson()}, rawTx:$rawTx';
       LogUtil.printMessage(uploadRawText);
-      LogUtil.uploadException("[ConfirmTerminateMap3NodeMessage] action, uploadTxHashEntity", uploadRawText);
+      LogUtil.uploadException(
+          "[ConfirmTerminateMap3NodeMessage] action, uploadTxHashEntity", uploadRawText);
 
       TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
       LogUtil.printMessage("[Confirm] rawTx:$rawTx, txHashEntity:${txHashEntity.txHash}");
@@ -452,7 +473,9 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
       title: S.of(Keys.rootKey.currentContext).confirm_termination_node,
       amountDirection: "+",
       fromName: S.of(Keys.rootKey.currentContext).map3_node,
-      fromDetail: S.of(Keys.rootKey.currentContext).node_num_and_node_id(entity?.payload?.userIdentity ?? ""),
+      fromDetail: S
+          .of(Keys.rootKey.currentContext)
+          .node_num_and_node_id(entity?.payload?.userIdentity ?? ""),
       amount: "0",
       toName: S.of(Keys.rootKey.currentContext).wallet,
       toDetail: _walletAddressAndName,
@@ -465,18 +488,21 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
   final PledgeMap3Entity entity;
   final String map3NodeAddress;
   final String amount;
+
   ConfirmCancelMap3NodeMessage({this.entity, this.map3NodeAddress, this.amount});
 
   @override
   Future<dynamic> action(String password) async {
     try {
       var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-      var rawTx = await HYNApi.transUnMicroMap3Node(this.amount, password, this.map3NodeAddress, wallet);
+      var rawTx =
+          await HYNApi.transUnMicroMap3Node(this.amount, password, this.map3NodeAddress, wallet);
       this.entity.rawTx = rawTx;
 
       var uploadRawText = '[ConfirmCancelMap3NodeMessage] wallet:${wallet.toJson()}, rawTx:$rawTx';
       LogUtil.printMessage(uploadRawText);
-      LogUtil.uploadException("[ConfirmCancelMap3NodeMessage] action, uploadTxHashEntity", uploadRawText);
+      LogUtil.uploadException(
+          "[ConfirmCancelMap3NodeMessage] action, uploadTxHashEntity", uploadRawText);
 
       TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
       LogUtil.printMessage("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -499,7 +525,9 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
       title: S.of(Keys.rootKey.currentContext).confirm_cancel,
       amountDirection: "+",
       fromName: S.of(Keys.rootKey.currentContext).map3_node,
-      fromDetail: S.of(Keys.rootKey.currentContext).node_num_and_node_id(entity?.payload?.userIdentity ?? ""),
+      fromDetail: S
+          .of(Keys.rootKey.currentContext)
+          .node_num_and_node_id(entity?.payload?.userIdentity ?? ""),
       amount: amount ?? "0",
       toName: S.of(Keys.rootKey.currentContext).wallet,
       toDetail: _walletAddressAndName,
@@ -529,7 +557,8 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
 
     try {
       var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-      var rawTx = await HYNApi.transMicroMap3Node(this.amount, password, this.map3NodeAddress, wallet);
+      var rawTx =
+          await HYNApi.transMicroMap3Node(this.amount, password, this.map3NodeAddress, wallet);
       LogUtil.printMessage("[Confirm] rawTx:${rawTx}");
 
       this.entity.rawTx = rawTx;
@@ -541,6 +570,7 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
       LogUtil.printMessage(e);
       LogUtil.toastException(e);
       print(stack);
+
       ///  "code":-10000,"msg":"Unknown error","data":null,"subMsg":"-32000 | delegation amount too small"}
     }
 
@@ -569,6 +599,7 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
   final PledgeMap3Entity entity;
   final String amount;
   final List<String> addressList;
+
   ConfirmCollectMap3NodeMessage({
     this.entity,
     this.amount,
@@ -585,7 +616,8 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
 
       var uploadRawText = '[ConfirmCollectMap3NodeMessage] wallet:${wallet.toJson()}, rawTx:$rawTx';
       LogUtil.printMessage(uploadRawText);
-      LogUtil.uploadException("[ConfirmCollectMap3NodeMessage] action, uploadTxHashEntity", uploadRawText);
+      LogUtil.uploadException(
+          "[ConfirmCollectMap3NodeMessage] action, uploadTxHashEntity", uploadRawText);
 
       TxHashEntity txHashEntity = await AtlasApi().getMap3Reward(this.entity);
       LogUtil.printMessage("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -621,6 +653,7 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
 class ConfirmDivideMap3NodeMessage implements AtlasMessage {
   final PledgeMap3Entity entity;
   final String map3NodeAddress;
+
   ConfirmDivideMap3NodeMessage({this.entity, this.map3NodeAddress});
 
   @override
@@ -653,9 +686,6 @@ class ConfirmDivideMap3NodeMessage implements AtlasMessage {
     );
   }
 }
-
-
-
 
 class TransactionStatus {
   static const nil = 0;
