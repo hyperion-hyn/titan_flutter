@@ -731,6 +731,7 @@ class Wallet {
     var credentials = await getCredentials(coinType, password);
     var stakingContract =
         WalletUtil.getHynStakingContract(HyperionConfig.hynStakingContractAddress);
+    var chainId = getChainId(coinType);
     return await client.sendTransaction(
       credentials,
       web3.Transaction.callContract(
@@ -742,6 +743,7 @@ class Wallet {
         maxGas: gasLimit,
         type: web3.MessageType.typeNormal,
       ),
+      chainId: chainId,
       fetchChainIdFromNetworkId: false,
     );
   }
@@ -782,6 +784,7 @@ class Wallet {
     var credentials = await getCredentials(coinType, password);
     var rpHoldingContract =
         WalletUtil.getRpHoldingContract(HyperionConfig.rpHoldingContractAddress);
+    var chainId = getChainId(coinType);
     return await client.sendTransaction(
       credentials,
       web3.Transaction.callContract(
@@ -793,6 +796,7 @@ class Wallet {
         type: web3.MessageType.typeNormal,
       ),
       fetchChainIdFromNetworkId: false,
+      chainId: chainId
     );
   }
 
@@ -834,6 +838,7 @@ class Wallet {
     var credentials = await getCredentials(coinType, password);
     var rpHoldingContract =
         WalletUtil.getRpHoldingContract(HyperionConfig.rpHoldingContractAddress);
+    var chainId = getChainId(coinType);
     var signedRaw = await client.signTransaction(
       credentials,
       web3.Transaction.callContract(
@@ -844,6 +849,7 @@ class Wallet {
           maxGas: gasLimit,
           nonce: nonce,
           type: web3.MessageType.typeNormal),
+      chainId: chainId,
       fetchChainIdFromNetworkId: false,
     );
     return bytesToHex(signedRaw, include0x: true, padToEvenLength: true);
@@ -884,7 +890,7 @@ class Wallet {
       lockAmount,
       web3.EthereumAddress.fromHex(ownerAddress),
     ];
-
+    var chainId = getChainId(coinType);
     var signedRaw = await client.signTransaction(
       credentials,
       web3.Transaction.callContract(
@@ -897,6 +903,7 @@ class Wallet {
         value: web3.EtherAmount.inWei(lockAmount),
         type: web3.MessageType.typeNormal,
       ),
+      chainId: chainId,
       fetchChainIdFromNetworkId: false,
     );
     //return signedRaw;
@@ -963,7 +970,7 @@ class Wallet {
     var bridgeContact = WalletUtil.getAtlasBridgeLockContract(
       HyperionConfig.bridgeLockContractAddress,
     );
-
+    var chainId = getChainId(CoinType.HYN_ATLAS);
     var signedRaw = await client.signTransaction(
       credentials,
       web3.Transaction.callContract(
@@ -976,6 +983,7 @@ class Wallet {
         type: web3.MessageType.typeNormal,
       ),
       fetchChainIdFromNetworkId: false,
+      chainId: chainId
     );
     return bytesToHex(signedRaw, include0x: true, padToEvenLength: true);
   }
@@ -1015,6 +1023,7 @@ class Wallet {
     var bridgeContact = WalletUtil.getHecoBridgeBurnContract(
       HecoConfig.burnTokenContractAddress,
     );
+    var chainId = getChainId(coinType);
     var signedRaw = await client.signTransaction(
       credentials,
       web3.Transaction.callContract(
@@ -1026,6 +1035,7 @@ class Wallet {
         nonce: nonce,
         //type: web3.MessageType.typeNormal,
       ),
+      chainId: chainId,
       fetchChainIdFromNetworkId: true,
     );
     return bytesToHex(signedRaw, include0x: true, padToEvenLength: true);
