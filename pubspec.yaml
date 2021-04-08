@@ -102,9 +102,9 @@ dependencies:
   carousel_slider: ^2.3.1
   fake_cookie_manager: ^0.1.0
   loading: ^1.0.1
-#  flutter_inappwebview: ^3.1.0
-#  flutter_inappwebview:
-#    path: ../flutter_inappwebview
+  #  flutter_inappwebview: ^3.1.0
+  #  flutter_inappwebview:
+  #    path: ../flutter_inappwebview
   flutter_inappwebview:
     git:
       url: git@github.com:hyperion-hyn/flutter_inappwebview.git
