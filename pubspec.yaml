@@ -96,7 +96,7 @@ dependencies:
       url: git@github.com:hyperion-hyn/web3dart.git
       ref: stable
   bip39: ^1.0.3
-  intl: ^0.16.1
+  intl: 0.17.0
   webview_flutter: 1.0.7
   pull_to_refresh: 1.6.3
   carousel_slider: ^2.3.1
