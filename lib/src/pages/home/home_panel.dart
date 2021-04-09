@@ -580,16 +580,16 @@ class HomePanelState extends State<HomePanel> {
                 ),
               ),
             ] else ...[
-              /*getDappItemWidget(
+              getDappItemWidget(
                   _address,
-                  'http://uniswap.defiplot.com/#/swap',
+                  'http://10.10.1.130:3000/',
                   CoinType.ETHEREUM,
                   "DoDo",
                   HexColor("#1ffff600"),
                   null,
                   "res/drawable/ic_home_panel_dapp_dodo.png",
                   "DoDo",
-                  "基于 PMM 算法的去中心化交易平台"),*/
+                  "Test!!!!!"),
               getDappItemWidget(
                   _address,
                   'https://balancer.exchange/#/swap',
