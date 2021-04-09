@@ -119,6 +119,8 @@ class WalletChannel {
   static Future<String> signTypeMessage(
       String fileName, String password, String typeMessage,
       ) async {
+    print("[wallet_channel] typeMessage:$typeMessage");
+
     return await TitanPlugin.callChannel.invokeMethod("signTypeMessage", {
       "fileName": fileName,
       'password': password,

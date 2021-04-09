@@ -112,8 +112,8 @@ import CoreBluetooth
                     
                     break
                     
-                case "signTypedMessage":
-                    self.printLog("[ios] --> signTypedMessage, 0, methodCall.arguments:\(methodCall.arguments)")
+                case "signTypeMessage":
+                    self.printLog("[ios] --> signTypeMessage, 0, methodCall.arguments:\(methodCall.arguments)")
 
                     guard let params = methodCall.arguments as? [String: Any] else {
                         result(FlutterError.init(code: "-1", message: "params is not [String: String]", details: nil))
@@ -121,23 +121,19 @@ import CoreBluetooth
                     }
                     
                     self.printLog("[ios] --> signTypedMessage, 1, params:\(params)")
-
-                    guard let data = params["data"] as? [String: Any]  else {
-                        result(FlutterError.init(code: "-1", message: "params can not find data", details: nil))
-                        return
-                    }
+ 
                     
-                    guard let paramss = data["params"] as? [Any] else{
+                    guard let paramss = params["typeMessage"] as? [String: Any] else{
                         result(FlutterError.init(code: "-1", message: "paramss can not find data", details: nil))
                         return
                     }
                     
 
-                    let address = paramss[0]
+                    let address = paramss["from"]
                     self.printLog("[ios] --> signTypedMessage, 2-1, address:\(address)")
 
 
-                    guard let secondDict = paramss[1] as? [String: Any] ,let jsonData = try? JSONSerialization.data(withJSONObject:secondDict) else {
+                    guard let secondDict = paramss["data"] as? [String: Any] ,let jsonData = try? JSONSerialization.data(withJSONObject:secondDict) else {
                         result(FlutterError.init(code: "-1", message: "paramss can not find types", details: nil))
                         return
                     }
@@ -152,10 +148,7 @@ import CoreBluetooth
                     let digest = eip712v3And4Data.digest
                     self.printLog("[ios] --> signTypedMessage, 2-3, digest.length:\(digest.count)")
 
-//                    guard let digestStr = String(data: digest, encoding: .utf8) else {
-//                        result(FlutterError.init(code: "-1", message: "data convert string error", details: nil))
-//                        return
-//                    }
+ 
                     self.printLog("[ios] --> signTypedMessage, 2-4, digest:\(digest)")
                     
                     result(FlutterStandardTypedData(bytes: digest))
