@@ -12,6 +12,7 @@ import '../../../env.dart';
 import 'entity/tokens_price_entity.dart';
 import 'vo/token_price_view_vo.dart';
 
+
 class CoinMarketApi {
   /// 历史行情数据
   Future<List<TokenPriceViewVo>> quotes(int timestamp) async {
@@ -54,16 +55,46 @@ class CoinMarketApi {
         percentChange24h: response.ethPercentChangeUsd24h);
     list.add(ethVo2);
 
+    // usd:0.0166 , $: 0.11205
+    var hynCnyPrice = response.hynCnyPrice;
+    var hynUsdPrice = response.hynUsdPrice;
+
+    double hynUSD;
+    double hynCNY;
+    // hyn
+    if (env.buildType == BuildType.PROD) {
+      // usd -> cny
+      var rate = await getRate();
+      //print("[Home_pannel_mdex] rate:$rate");
+
+      hynUSD = await WalletUtil.getPrice(
+        coinType: 'HYN',
+        contractAddress: '0x8e6a7d6bd250d207df3b9efafc6c715885eda94e',
+      );
+
+      hynCNY = hynUSD * rate;
+      //print("[Home_pannel_mdex] hynUSD:$hynUSD, hynCNY:$hynCNY");
+
+      if (hynCnyPrice <= 0.001) {
+        hynCnyPrice = double.tryParse(hynCNY.toStringAsPrecision(8));
+      }
+
+      if (hynUsdPrice <= 0.001) {
+        hynUsdPrice = double.tryParse(hynUSD.toStringAsPrecision(8));
+      }
+    }
+
+
     var hynVo1 = TokenPriceViewVo(
         symbol: "HYN",
         legal: cnyLegalSign,
-        price: response.hynCnyPrice,
+        price: hynCnyPrice,
         percentChange24h: response.hynPercentChangeCny24h);
     list.add(hynVo1);
     var hynVo2 = TokenPriceViewVo(
         symbol: "HYN",
         legal: usdLegalSign,
-        price: response.hynUsdPrice,
+        price: hynUsdPrice,
         percentChange24h: response.hynPercentChangeUsd24h);
     list.add(hynVo2);
 
@@ -95,6 +126,7 @@ class CoinMarketApi {
 
     return list;
   }
+
 
   /// 最新汇率数据
   Future<double> getRate() async {
