@@ -19,6 +19,8 @@ class AppTabBarBloc extends Bloc<AppTabBarEvent, AppTabBarState> {
       yield InitialAppTabBarState();
     }
     else if (event is CheckNewAnnouncementEvent) {
+      print("[bloc] isShowDialog,1111");
+
       var announcement = await _newsApi.getAnnouncement();
       if (announcement != null) {
         var isShowDialog = false;
@@ -34,6 +36,8 @@ class AppTabBarBloc extends Bloc<AppTabBarEvent, AppTabBarState> {
           isShowDialog = true;
         }
         sharePre.setString(PrefsKey.lastAnnouncement, json.encode(announcement));
+
+        print("[bloc] isShowDialog:$isShowDialog");
 
         if(isShowDialog){
           yield CheckNewAnnouncementState(announcement: announcement);

@@ -1556,7 +1556,7 @@
   "@insufficient_gas_price_hint": {},
   "insufficient_permission": "no permission",
   "@insufficient_permission": {},
-  "internal_external_combustion_increasing_value": "Total supply of HYN decreases by both internal and external burning, which causes the appreciation of HYN. Token burning will happen in every 30 epochs. Total burning amount will be demonstrated",
+  "internal_external_combustion_increasing_value": "Total supply of HYN decreases by both internal and external burning, which causes the appreciation of HYN. ",
   "@internal_external_combustion_increasing_value": {},
   "internet_bar": "Internet Cafe",
   "@internet_bar": {},

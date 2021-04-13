@@ -1556,7 +1556,7 @@
   "@insufficient_gas_price_hint": {},
   "insufficient_permission": "权限不足",
   "@insufficient_permission": {},
-  "internal_external_combustion_increasing_value": "通过内燃和外燃机制持续降低HYN供给总量，从而提升HYN价值。每过30个纪元燃烧一次，并展示本轮燃烧总量。",
+  "internal_external_combustion_increasing_value": "通过内燃和外燃机制持续降低HYN供给总量，从而提升HYN价值。",
   "@internal_external_combustion_increasing_value": {},
   "internet_bar": "网吧",
   "@internet_bar": {},
