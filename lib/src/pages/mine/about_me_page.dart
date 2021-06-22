@@ -87,8 +87,8 @@ class _AboutMeState extends BaseState<AboutMePage> {
               showValue: "https://www.hyn.space/",
               value: "https://www.hyn.space/",
               isUrl: true),
-          _buildInfoContainer(
-              label: S.of(context).block_explorer, showValue: "https://hynscan.io/", value: "https://hynscan.io/", isUrl: true),
+          // _buildInfoContainer(
+          //     label: S.of(context).block_explorer, showValue: "https://hynscan.io/", value: "https://hynscan.io/", isUrl: true),
           _buildInfoContainer(
               label: S.of(context).open_source_url,
               showValue: "https://github.com/hyperion-hyn/",

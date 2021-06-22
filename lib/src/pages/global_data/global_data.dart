@@ -45,7 +45,7 @@ class _GlobalDataState extends State<GlobalDataPage> {
 
     return Scaffold(
       body: DefaultTabController(
-        length: 3,
+        length: 2,
         child: Scaffold(
           appBar: BaseAppBar(
             baseTitle: "数据展示",
@@ -79,9 +79,9 @@ class _GlobalDataState extends State<GlobalDataPage> {
                         ),
                         unselectedLabelColor: HexColor("#FF333333"),
                         tabs: [
-                          Tab(
-                            text: S.of(context).global_data_map3,
-                          ),
+                          // Tab(
+                          //   text: S.of(context).global_data_map3,
+                          // ),
                           Tab(
                             text: S.of(context).global_data_signal,
                           ),
@@ -98,7 +98,8 @@ class _GlobalDataState extends State<GlobalDataPage> {
             ),
             body: TabBarView(
               children: [
-                SignalChatsPage(type: SignalChatsPage.NODE),
+                // TODO: test_vivi_0622
+                // SignalChatsPage(type: SignalChatsPage.NODE),
                 SignalChatsPage(type: SignalChatsPage.SIGNAL),
                 SignalChatsPage(type: SignalChatsPage.POI),
               ],

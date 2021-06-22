@@ -181,36 +181,37 @@ class HomePanelState extends State<HomePanel> {
               ),
             ),
           ),
+          // TODO: test_vivi_0622
           Expanded(
             child: InkWell(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => WebViewContainer(
-                              initUrl: S.of(context).hyperion_project_intro_url,
-                              title: S.of(context).Hyperion,
-                            )));
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => WebViewContainer(
+                //               initUrl: S.of(context).hyperion_project_intro_url,
+                //               title: S.of(context).Hyperion,
+                //             )));
               },
               child: Padding(
                 padding: const EdgeInsets.only(
                   left: 8,
                   right: 8,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Image.asset(
-                      "res/drawable/ic_home_panel_hyperion.png",
-                      width: 18,
-                      height: 18,
-                    ),
-                    SizedBox(
-                      width: 6,
-                    ),
-                    Text(S.of(context).Hyperion),
-                  ],
-                ),
+                // child: Row(
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   children: [
+                //     Image.asset(
+                //       "res/drawable/ic_home_panel_hyperion.png",
+                //       width: 18,
+                //       height: 18,
+                //     ),
+                //     SizedBox(
+                //       width: 6,
+                //     ),
+                //     Text(S.of(context).Hyperion),
+                //   ],
+                // ),
               ),
             ),
           ),
