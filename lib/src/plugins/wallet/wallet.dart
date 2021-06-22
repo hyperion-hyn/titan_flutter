@@ -106,6 +106,7 @@ class Wallet {
     return "";
   }
 
+  // TODO: test_vivi_0622
   Future<BigInt> getBalanceByCoinTypeAndAddress(int coinType, String address,
       [String contractAddress, String block = 'latest']) async {
     return WalletUtil.getBalanceByCoinTypeAndAddress(coinType, address, contractAddress, block);

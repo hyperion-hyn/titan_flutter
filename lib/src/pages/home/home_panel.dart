@@ -500,7 +500,8 @@ class HomePanelState extends State<HomePanel> {
                 padding: const EdgeInsets.only(left: 35.0, right: 35),
                 child: _dappSelectTab("ETH", DAPP_ETH_INDEX),
               ),
-              _dappSelectTab("ATLAS", DAPP_ATLAS_INDEX),
+              // TODO: test_vivi_0622
+              // _dappSelectTab("ATLAS", DAPP_ATLAS_INDEX),
             ],
           ),
           if (selectDappIndex == DAPP_HECO_INDEX)
@@ -652,7 +653,8 @@ class HomePanelState extends State<HomePanel> {
                   "数字宠物收藏品冒险游戏"),
             ],
           ],
-          if (selectDappIndex == DAPP_ATLAS_INDEX)
+          // TODO: test_vivi_0622
+          /*if (selectDappIndex == DAPP_ATLAS_INDEX)
             getDappItemWidget(
                 null,
                 null,
@@ -672,7 +674,7 @@ class HomePanelState extends State<HomePanel> {
 
               Application.router
                   .navigateTo(context, Routes.red_pocket_page + "?entryRouteName=$entryRouteName");
-            }),
+            }),*/
         ],
       ),
     );

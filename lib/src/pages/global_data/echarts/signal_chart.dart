@@ -706,7 +706,7 @@ class _SignalChatsState extends State<SignalChatsPage>
 
   Future _getData() async {
     var languageCode = Localizations.localeOf(context).languageCode;
-    print("[signal_chart] _getData, widget.type:${widget.type}");
+    //print("[signal_chart] _getData, widget.type:${widget.type}");
 
     switch (widget.type) {
       case SignalChatsPage.NODE:
@@ -719,8 +719,8 @@ class _SignalChatsState extends State<SignalChatsPage>
               if (widget.type == SignalChatsPage.NODE) {
                 if (mounted) {
                   setState(() {
-                    print(
-                        "[signal_chart] _getData, 2-1 widget.type:${widget.type}");
+                    // print(
+                    //     "[signal_chart] _getData, 2-1 widget.type:${widget.type}");
                     currentState = null;
                   });
                 }
@@ -731,8 +731,8 @@ class _SignalChatsState extends State<SignalChatsPage>
             if (widget.type == SignalChatsPage.NODE) {
               if (mounted) {
                 setState(() {
-                  print(
-                      "[signal_chart] _getData, 2-2 widget.type:${widget.type}");
+                  // print(
+                  //     "[signal_chart] _getData, 2-2 widget.type:${widget.type}");
                   currentState = all_page_state.LoadFailState();
                 });
               }
@@ -753,8 +753,8 @@ class _SignalChatsState extends State<SignalChatsPage>
             if (widget.type == SignalChatsPage.SIGNAL) {
               if (mounted) {
                 setState(() {
-                  print(
-                      "[signal_chart] _getData, 2-1 widget.type:${widget.type}");
+                  // print(
+                  //     "[signal_chart] _getData, 2-1 widget.type:${widget.type}");
                   currentState = null;
                 });
               }
@@ -765,8 +765,8 @@ class _SignalChatsState extends State<SignalChatsPage>
             if (widget.type == SignalChatsPage.SIGNAL) {
               if (mounted) {
                 setState(() {
-                  print(
-                      "[signal_chart] _getData, 2-2 widget.type:${widget.type}");
+                  // print(
+                  //     "[signal_chart] _getData, 2-2 widget.type:${widget.type}");
                   currentState = all_page_state.LoadFailState();
                 });
               }
@@ -784,8 +784,8 @@ class _SignalChatsState extends State<SignalChatsPage>
             if (widget.type == SignalChatsPage.POI) {
               if (mounted) {
                 setState(() {
-                  print(
-                      "[signal_chart] _getData, 2-1 widget.type:${widget.type}");
+                  // print(
+                  //     "[signal_chart] _getData, 2-1 widget.type:${widget.type}");
                   currentState = null;
                 });
               }
@@ -796,8 +796,8 @@ class _SignalChatsState extends State<SignalChatsPage>
             if (widget.type == SignalChatsPage.POI) {
               if (mounted) {
                 setState(() {
-                  print(
-                      "[signal_chart] _getData, 2-2 widget.type:${widget.type}");
+                  // print(
+                  //     "[signal_chart] _getData, 2-2 widget.type:${widget.type}");
                   currentState = all_page_state.LoadFailState();
                 });
               }

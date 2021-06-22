@@ -335,12 +335,14 @@ class WalletUtil {
     var ethAddress;
     for (var account in map['accounts']) {
       if (account['coinType'] == CoinType.ETHEREUM) {
+
+        // TODO: test_vivi_0622
         // add hyperion tokens
-        backAccounts.add({
-          "address": account["address"],
-          "derivationPath": account['derivationPath'],
-          'coinType': CoinType.HYN_ATLAS,
-        });
+        // backAccounts.add({
+        //   "address": account["address"],
+        //   "derivationPath": account['derivationPath'],
+        //   'coinType': CoinType.HYN_ATLAS,
+        // });
 
         ethAddress = account["address"];
       }
@@ -601,9 +603,11 @@ class WalletUtil {
   }
 
   static String ethAddressToBech32Address(String ethAddress) {
+    // TODO: test_vivi_0622
     if (ethAddress == null) {
       return null;
     }
+    return ethAddress;
 
     try {
       return web3.ethAddressToBech32Address(ethAddress);

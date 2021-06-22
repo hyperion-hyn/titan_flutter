@@ -255,15 +255,17 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
           child: CustomScrollView(
             slivers: <Widget>[
               _headerWidget(activatedWalletVo),
-              _chainWidget(CoinType.HYN_ATLAS),
-              _tokenListByChain(activatedWalletVo, CoinType.HYN_ATLAS),
+              // TODO: test_vivi_0622
+              // _chainWidget(CoinType.HYN_ATLAS),
+              // _tokenListByChain(activatedWalletVo, CoinType.HYN_ATLAS),
               _chainWidget(CoinType.ETHEREUM),
               _tokenListByChain(activatedWalletVo, CoinType.ETHEREUM),
               _chainWidget(CoinType.HB_HT),
               _tokenListByChain(activatedWalletVo, CoinType.HB_HT),
               // _chainWidget(CoinType.BITCOIN),
               // _tokenListByChain(activatedWalletVo, CoinType.BITCOIN),
-              _hynBurnWidget(),
+              // TODO: test_vivi_0622
+              // _hynBurnWidget(),
             ],
           ),
         ),
@@ -595,6 +597,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                         ),
                       ),
                     ),
+                    /*
                     Expanded(
                       child: InkWell(
                         onTap: () {
@@ -620,6 +623,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                         ),
                       ),
                     ),
+                    */
                   ],
                 ),
               ],
@@ -903,8 +907,9 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
           Expanded(
             child: CustomScrollView(
               slivers: <Widget>[
-                _chainWidget(CoinType.HYN_ATLAS),
-                _dialogTokenListByChain(activatedWalletVo, CoinType.HYN_ATLAS, jumpType),
+                // TODO: test_vivi_0622
+                // _chainWidget(CoinType.HYN_ATLAS),
+                // _dialogTokenListByChain(activatedWalletVo, CoinType.HYN_ATLAS, jumpType),
                 _chainWidget(CoinType.ETHEREUM),
                 _dialogTokenListByChain(activatedWalletVo, CoinType.ETHEREUM, jumpType),
                 _chainWidget(CoinType.HB_HT),

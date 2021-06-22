@@ -34,6 +34,7 @@ class Account {
     } else if (coinType == CoinType.BITCOIN) {
       token = DefaultTokenDefine.BTC;
     } else if (coinType == CoinType.HYN_ATLAS) {
+      // TODO: test_vivi_0622
       token = DefaultTokenDefine.HYN_Atlas;
     } else if (coinType == CoinType.HB_HT) {
       token = DefaultTokenDefine.HT;
