@@ -402,40 +402,40 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 12,
-              left: 8,
-              right: 8,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 6),
-                  child: ClipRRect(
-                    child:
-                        // todo: old: ic_map3_node_item_2, new: map3_logo_new
-                        Image.asset("res/drawable/map3_logo_new.png",
-                            width: 80, height: 80, fit: BoxFit.cover),
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                ),
-                SizedBox(width: 16),
-                Flexible(
-                  child: Text(desc,
-                      style:
-                          TextStyle(fontSize: 12, height: 1.7, color: DefaultColors.color99000000)),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: ClickOvalButton(S.of(context).create_contract, () {
-              _pushCreateContractAction();
-            }),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(
+          //     bottom: 12,
+          //     left: 8,
+          //     right: 8,
+          //   ),
+          //   child: Row(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: <Widget>[
+          //       Padding(
+          //         padding: const EdgeInsets.only(top: 6),
+          //         child: ClipRRect(
+          //           child:
+          //               // todo: old: ic_map3_node_item_2, new: map3_logo_new
+          //               Image.asset("res/drawable/map3_logo_new.png",
+          //                   width: 80, height: 80, fit: BoxFit.cover),
+          //           borderRadius: BorderRadius.circular(4.0),
+          //         ),
+          //       ),
+          //       SizedBox(width: 16),
+          //       Flexible(
+          //         child: Text(desc,
+          //             style:
+          //                 TextStyle(fontSize: 12, height: 1.7, color: DefaultColors.color99000000)),
+          //       )
+          //     ],
+          //   ),
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.only(top: 8),
+          //   child: ClickOvalButton(S.of(context).create_contract, () {
+          //     _pushCreateContractAction();
+          //   }),
+          // ),
         ],
       ),
     );
@@ -449,7 +449,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         child: Column(
           children: <Widget>[
             _nodesMapWidget(),
-            _nodeIntroduceWidget(),
+            // _nodeIntroduceWidget(),
           ],
         ),
       ),

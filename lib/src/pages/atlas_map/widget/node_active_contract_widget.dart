@@ -75,7 +75,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
 
     var width = (MediaQuery.of(context).size.width - 4.0 * 16) / 3.0;
     var nodeName = infoEntity.name;
-    var nodeId = "${S.of(context).node_num}: ${infoEntity.nodeId}";
+    // var nodeId = "${S.of(context).node_num}: ${infoEntity.nodeId}";
 
     //print("[object] item.nodeId:${item.nodeId}");
 
@@ -124,7 +124,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                 SizedBox(
                   height: 4,
                 ),
-                Text(nodeId, style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B"))),
+                // Text(nodeId, style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B"))),
               ],
             ),
             Positioned(

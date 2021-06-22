@@ -88,15 +88,15 @@ class AtlasNodeDetailItem extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                          child: Text(
-                            S.of(context).node_num_and_node_id(_atlasInfo.nodeId),
-                            style: TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        //   child: Text(
+                        //     S.of(context).node_num_and_node_id(_atlasInfo.nodeId),
+                        //     style: TextStyle(
+                        //       fontSize: 12,
+                        //     ),
+                        //   ),
+                        // ),
                         Container(
                           height: 8,
                         ),

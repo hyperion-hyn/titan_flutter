@@ -1028,6 +1028,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
     var nodeName =
         _map3nodeInformationEntity?.map3Node?.description?.name ?? _map3infoEntity?.name ?? "***";
+    if (nodeName.length > 1) {
+      nodeName = nodeName.substring(0, 1) + '的节点';
+    }
     var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
     var oldYearValue = oldYear > 0
         ? "${S.of(context).node_age}：${FormatUtil.formatPrice(oldYear.toDouble())}"
@@ -1035,7 +1038,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
     var hynAddress = WalletUtil.ethAddressToBech32Address(_nodeAddress);
     var nodeAddress = "${UiUtil.shortEthAddress(hynAddress ?? "***", limitLength: 8)}";
-    var nodeIdPre = "${S.of(context).node_num} ";
+    // var nodeIdPre = "${S.of(context).node_num} ";
 
     var descPre = S.of(context).map3_node_notification;
     var describe = _map3nodeInformationEntity?.map3Node?.description?.details ??
@@ -1047,6 +1050,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     var contact = _map3nodeInformationEntity?.map3Node?.description?.securityContact ??
         _map3infoEntity?.contact ??
         '';
+
+    desc = '';
+    contact = '';
 
     return Container(
       decoration: BoxDecoration(
@@ -1153,25 +1159,25 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                         ],
                       ),
                       //Text(_stateDescText, style: TextStyle(color: _statusColor, fontSize: 12)),
-                      Container(
-                        height: 4,
-                      ),
-                      Text.rich(TextSpan(children: [
-                        TextSpan(
-                            text: nodeIdPre,
-                            style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              fontSize: 12,
-                              color: HexColor("#333333"),
-                            )),
-                        TextSpan(
-                            text: _nodeId,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12,
-                              color: HexColor("#333333"),
-                            )),
-                      ])),
+                      // Container(
+                      //   height: 4,
+                      // ),
+                      // Text.rich(TextSpan(children: [
+                      //   TextSpan(
+                      //       text: nodeIdPre,
+                      //       style: TextStyle(
+                      //         fontWeight: FontWeight.normal,
+                      //         fontSize: 12,
+                      //         color: HexColor("#333333"),
+                      //       )),
+                      //   TextSpan(
+                      //       text: _nodeId,
+                      //       style: TextStyle(
+                      //         fontWeight: FontWeight.w500,
+                      //         fontSize: 12,
+                      //         color: HexColor("#333333"),
+                      //       )),
+                      // ])),
                     ],
                   ),
                 )
@@ -1237,30 +1243,30 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                         ],
                       ),
                     ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        descPre,
-                        style: TextStyle(fontSize: 12, color: HexColor("#999999")),
-                      ),
-                      Flexible(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8,
-                            right: 16,
-                          ),
-                          child: Text(
-                            desc,
-                            maxLines: 3,
-                            textAlign: TextAlign.justify,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 13, color: HexColor("#333333")),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: <Widget>[
+                  //     Text(
+                  //       descPre,
+                  //       style: TextStyle(fontSize: 12, color: HexColor("#999999")),
+                  //     ),
+                  //     Flexible(
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.only(
+                  //           left: 8,
+                  //           right: 16,
+                  //         ),
+                  //         child: Text(
+                  //           desc,
+                  //           maxLines: 3,
+                  //           textAlign: TextAlign.justify,
+                  //           overflow: TextOverflow.ellipsis,
+                  //           style: TextStyle(fontSize: 13, color: HexColor("#333333")),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   Visibility(
                     visible: _canEditNode,
                     child: Padding(
@@ -1757,10 +1763,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                                         style:
                                             TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                                   ])),
-                                  Container(
-                                    height: 4,
-                                  ),
-                                  _item("${S.of(context).node_num}：", atlasEntity?.nodeId ?? ''),
+                                  // Container(
+                                  //   height: 4,
+                                  // ),
+                                  // _item("${S.of(context).node_num}：", atlasEntity?.nodeId ?? ''),
                                 ],
                               ),
                             ),

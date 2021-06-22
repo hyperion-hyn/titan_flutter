@@ -198,6 +198,9 @@ Widget getMap3NodeWaitItem(
   }
 
   var nodeName = infoEntity?.name ?? "";
+  if (nodeName.length > 1) {
+    nodeName = nodeName.substring(0, 1) + '的节点';
+  }
   var nodeAddress =
       "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(infoEntity?.address ?? ""), limitLength: 8)}";
 
@@ -205,10 +208,10 @@ Widget getMap3NodeWaitItem(
   var nodeId = " ${infoEntity.nodeId ?? ""}";
   var feeRatePre = "${S.of(context).manage_fee}：";
   var feeRate = FormatUtil.formatPercent(double.parse(infoEntity?.getFeeRate() ?? "0"));
-  var descPre = S.of(context).map3_node_notification + "：";
-  var desc = (infoEntity?.describe ?? "").isEmpty
-      ? S.of(context).map3_node_notification_default
-      : infoEntity.describe;
+  // var descPre = S.of(context).map3_node_notification + "：";
+  // var desc = (infoEntity?.describe ?? "").isEmpty
+  //     ? S.of(context).map3_node_notification_default
+  //     : infoEntity.describe;
   var date = FormatUtil.newFormatUTCDateStr(infoEntity?.createdAt ?? "0", isSecond: true);
 
   if (infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index) {
@@ -341,24 +344,24 @@ Widget getMap3NodeWaitItem(
                           child: Row(
                             children: <Widget>[
                               Expanded(child: Text(nodeAddress, style: TextStyles.textC9b9b9bS12)),
-                              RichText(
-                                textAlign: TextAlign.end,
-                                overflow: TextOverflow.ellipsis,
-                                text: TextSpan(
-                                    text: nodeIdPre,
-                                    style: TextStyle(
-                                      color: HexColor("#999999"),
-                                      fontSize: 12,
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                          text: "$nodeId",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            color: HexColor("#333333"),
-                                          ))
-                                    ]),
-                              ),
+                              // RichText(
+                              //   textAlign: TextAlign.end,
+                              //   overflow: TextOverflow.ellipsis,
+                              //   text: TextSpan(
+                              //       text: nodeIdPre,
+                              //       style: TextStyle(
+                              //         color: HexColor("#999999"),
+                              //         fontSize: 12,
+                              //       ),
+                              //       children: [
+                              //         TextSpan(
+                              //             text: "$nodeId",
+                              //             style: TextStyle(
+                              //               fontSize: 13,
+                              //               color: HexColor("#333333"),
+                              //             ))
+                              //       ]),
+                              // ),
                             ],
                           ),
                         ),
@@ -387,26 +390,26 @@ Widget getMap3NodeWaitItem(
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    descPre,
-                    style: TextStyle(fontSize: 10, color: HexColor("#999999")),
-                  ),
-                  Flexible(
-                    child: Text(
-                      desc,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 11, color: HexColor("#333333")),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 8),
+            //   child: Row(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: <Widget>[
+            //       Text(
+            //         descPre,
+            //         style: TextStyle(fontSize: 10, color: HexColor("#999999")),
+            //       ),
+            //       Flexible(
+            //         child: Text(
+            //           desc,
+            //           maxLines: 2,
+            //           overflow: TextOverflow.ellipsis,
+            //           style: TextStyle(fontSize: 11, color: HexColor("#333333")),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.only(top: 12, bottom: 12),
               child: Divider(height: 1, color: Color(0x2277869e)),

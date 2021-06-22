@@ -191,17 +191,17 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
                               Container(
                                 height: 2,
                               ),
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    '${S.of(context).node_num}: ${nodeId}',
-                                    style: TextStyle(
-                                      color: DefaultColors.color999,
-                                      fontSize: 10,
-                                    ),
-                                  )
-                                ],
-                              )
+                              // Row(
+                              //   children: <Widget>[
+                              //     Text(
+                              //       '${S.of(context).node_num}: ${nodeId}',
+                              //       style: TextStyle(
+                              //         color: DefaultColors.color999,
+                              //         fontSize: 10,
+                              //       ),
+                              //     )
+                              //   ],
+                              // )
                             ],
                           ),
                         ),

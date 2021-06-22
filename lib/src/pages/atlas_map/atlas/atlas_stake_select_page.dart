@@ -304,13 +304,13 @@ Widget stakeHeaderInfo(
                   '${atlasInfoEntity.rank}',
                   style: TextStyle(color: HexColor("#228BA1"), fontSize: 16),
                 ),*/
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 2.0),
-                  child: Text(
-                    "${S.of(context).node_num}：${atlasInfoEntity.nodeId}",
-                    style: TextStyles.textC333S12,
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.only(bottom: 2.0),
+                //   child: Text(
+                //     "${S.of(context).node_num}：${atlasInfoEntity.nodeId}",
+                //     style: TextStyles.textC333S12,
+                //   ),
+                // ),
               ],
             ),
             Row(

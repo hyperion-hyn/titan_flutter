@@ -452,6 +452,8 @@ class AtlasApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
+
+
   Future<Map3InfoEntity> getMap3Info(String address, String nodeId) async {
     return AtlasHttpCore.instance.postEntity("/v1/map3/info", EntityFactory<Map3InfoEntity>(
       (json) {
@@ -506,6 +508,7 @@ class AtlasApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
+
   // 查询查询Map3节点列表
   Future<List<Map3InfoEntity>> getMap3NodeListStarted(
     String address, {
@@ -541,6 +544,7 @@ class AtlasApi {
         },
         options: RequestOptions(contentType: "application/json"));
   }
+
 
   // 查询查询Map3节点列表:查询查询待启动节点，未达到最小抵押量的
   Future<Map3StakingEntity> getMap3StakingList(
@@ -579,7 +583,7 @@ class AtlasApi {
         data: entity.toJson(),
         options: RequestOptions(contentType: "application/json"));
   }
-
+  
   // 获取节点的简介
   Future<Map3IntroduceEntity> _getMap3Introduce() async {
     return AtlasHttpCore.instance.postEntity(
@@ -627,6 +631,7 @@ class AtlasApi {
         },
         options: RequestOptions(contentType: "application/json"));
   }
+
 
   // 获取节点的抵押流水 (v2)
   Future<List<HynTransferHistory>> getMap3StakingLogList(String nodeAddress,

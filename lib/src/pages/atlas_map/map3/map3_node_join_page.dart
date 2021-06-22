@@ -417,6 +417,9 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
     var nodeAddress =
         "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(widget?.map3infoEntity?.address ?? "") ?? "***", limitLength: 9)}";
 
+    var nodeName = widget?.map3infoEntity?.name ?? "";
+    nodeName = nodeName.substring(0, 1) + '的节点';
+
     return Padding(
       padding:
           const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
@@ -431,7 +434,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
             children: <Widget>[
               Text.rich(TextSpan(children: [
                 TextSpan(
-                    text: widget?.map3infoEntity?.name ?? "",
+                    text: nodeName,
                     style:
                         TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                 TextSpan(

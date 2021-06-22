@@ -454,8 +454,8 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
                     tabItem(Icons.home, S.of(context).home_page, 0, name: 'home'),
                     tabItem(Icons.account_balance_wallet, S.of(context).wallet, 1, name: 'wallet'),
                     tabItem(Icons.explore, S.of(context).node, 2, name: 'node'),
-                    tabItem(Icons.description, S.of(context).information, 3, name: 'information'),
-                    tabItem(Icons.person, S.of(context).my_page, 4, name: 'person'),
+                    // tabItem(Icons.description, S.of(context).information, 3, name: 'information'),
+                    tabItem(Icons.person, S.of(context).my_page, 3, name: 'person'),
                   ],
                 ),
               ),
@@ -547,10 +547,10 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
       case 2:
         return AtlasNodeTabsPage();
 
-      case 3:
-        return InformationPage();
+      // case 3:
+      //   return InformationPage();
 
-      case 4:
+      case 3:
         return MyPage();
     }
 
