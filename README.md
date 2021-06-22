@@ -23,3 +23,5 @@ flutter packages pub run build_runner build --delete-conflicting-outputs
 # License
 
 Titan is available under the MIT license. See the [LICENSE](LICENSE) file for more info.
+
+# Model
