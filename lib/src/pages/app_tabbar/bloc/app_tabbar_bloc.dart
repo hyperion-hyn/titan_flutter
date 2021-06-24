@@ -22,20 +22,26 @@ class AppTabBarBloc extends Bloc<AppTabBarEvent, AppTabBarState> {
       print("[bloc] isShowDialog,1111");
 
       var announcement = await _newsApi.getAnnouncement();
+      print("[bloc] isShowDialog,2222, announcement：${announcement}");
+
+
       if (announcement != null) {
         var isShowDialog = false;
 
-        var sharePre = await SharedPreferences.getInstance();
-        var lastData = sharePre.getString(PrefsKey.lastAnnouncement);
-        if (lastData != null) {
-          var storeData = NewsDetail.fromJson(json.decode(lastData));
-          if (storeData.id != announcement.id) {
-            isShowDialog = true;
-          }
-        } else {
-          isShowDialog = true;
-        }
-        sharePre.setString(PrefsKey.lastAnnouncement, json.encode(announcement));
+        // var sharePre = await SharedPreferences.getInstance();
+        // var lastData = sharePre.getString(PrefsKey.lastAnnouncement);
+        // if (lastData != null) {
+        //   var storeData = NewsDetail.fromJson(json.decode(lastData));
+        //   if (storeData.id != announcement.id) {
+        //     isShowDialog = true;
+        //   }
+        // } else {
+        //   isShowDialog = true;
+        // }
+
+        isShowDialog = true;
+
+        // sharePre.setString(PrefsKey.lastAnnouncement, json.encode(announcement));
 
         print("[bloc] isShowDialog:$isShowDialog");
 
