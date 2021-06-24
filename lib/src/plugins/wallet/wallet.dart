@@ -71,7 +71,7 @@ class Wallet {
 
   Account getAtlasAccount() {
     for (var account in accounts) {
-      if (account.coinType == CoinType.HYN_ATLAS) {
+      if (account.coinType == CoinType.ETHEREUM) {
         return account;
       }
     }

@@ -64,8 +64,8 @@ class _SocketState extends State<_SocketManager> {
     super.initState();
 
     _initBloc();
-    _initWS();
-    _initData();
+    // _initWS();
+    // _initData();
   }
 
   @override

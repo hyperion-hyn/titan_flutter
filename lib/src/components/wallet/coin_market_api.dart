@@ -221,7 +221,7 @@ class CoinMarketApi {
             var vo = TokenPriceViewVo(
                 symbol: key,
                 legal: legalSign,
-                price: price,
+                price: double.parse(price.toString()),
                 percentChange24h: Decimal.tryParse(percentChange24h.toString()).toDouble());
             list.add(vo);
           }
