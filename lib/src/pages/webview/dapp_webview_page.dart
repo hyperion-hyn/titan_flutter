@@ -344,7 +344,8 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
               child: Text(S.of(context).choose_network, style: TextStyles.textC333S14bold),
             ),
           ),
-          networkItem("res/drawable/ic_token_hyn.png", "Atlas", CoinType.HYN_ATLAS),
+          // TODO: test_vivi_0622
+          // networkItem("res/drawable/ic_token_hyn.png", "Atlas", CoinType.HYN_ATLAS),
           networkItem('res/drawable/ic_token_eth.png', "Ethereum", CoinType.ETHEREUM),
           networkItem("res/drawable/ic_token_ht.png", "Heco", CoinType.HB_HT),
         ],
