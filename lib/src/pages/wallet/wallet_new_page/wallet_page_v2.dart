@@ -93,7 +93,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
         }
       } else if (state is QuotesState && state.status == Status.failed) {
         if (mounted) {
-          Fluttertoast.showToast(msg: S.of(context).failed_refresh_market);
+          // Fluttertoast.showToast(msg: S.of(context).failed_refresh_market);
         }
       }
     });
