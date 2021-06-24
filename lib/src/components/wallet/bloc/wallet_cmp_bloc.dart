@@ -141,7 +141,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
       var nowTime = DateTime.now().millisecondsSinceEpoch;
       //5 second cache time
-      bool isTimeExpired = nowTime - _lastUpdateBalanceTime > 5000;
+      bool isTimeExpired = nowTime - _lastUpdateBalanceTime > 25000;
       if (event.symbol == null && !isTimeExpired) {
         print('update balance too often, ignore request');
         return;

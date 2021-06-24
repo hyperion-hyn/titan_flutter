@@ -834,7 +834,8 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
                                     .add(UpdateActivatedWalletBalanceEvent(symbol: symbol));
                               },
                               child: Text(
-                                S.of(context).failed_to_load,
+                                // S.of(context).failed_to_load,
+                                '',
                                 style: TextStyle(color: HexColor("#FF1A1A"), fontSize: 12),
                               ),
                             ),
