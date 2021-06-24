@@ -597,7 +597,7 @@ class _MyPageState extends BaseState<MyPage> {
             ),
           ),
           Spacer(),
-          // TODO: test_vivi_0622
+          
           /*
           InkWell(
             onTap: shareApp,

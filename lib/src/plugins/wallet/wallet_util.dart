@@ -336,7 +336,7 @@ class WalletUtil {
     for (var account in map['accounts']) {
       if (account['coinType'] == CoinType.ETHEREUM) {
 
-        // TODO: test_vivi_0622
+        
         // add hyperion tokens
         // backAccounts.add({
         //   "address": account["address"],
@@ -603,7 +603,7 @@ class WalletUtil {
   }
 
   static String ethAddressToBech32Address(String ethAddress) {
-    // TODO: test_vivi_0622
+    
     if (ethAddress == null) {
       return null;
     }

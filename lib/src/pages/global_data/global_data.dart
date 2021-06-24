@@ -98,7 +98,7 @@ class _GlobalDataState extends State<GlobalDataPage> {
             ),
             body: TabBarView(
               children: [
-                // TODO: test_vivi_0622
+                
                 // SignalChatsPage(type: SignalChatsPage.NODE),
                 SignalChatsPage(type: SignalChatsPage.SIGNAL),
                 SignalChatsPage(type: SignalChatsPage.POI),

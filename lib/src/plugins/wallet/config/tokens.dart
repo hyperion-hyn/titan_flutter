@@ -28,7 +28,7 @@ class Tokens {
 
   static List<AssetToken> defaultContractTokensByCoinType(int coinType) {
     List<AssetToken> tokens = [];
-    // TODO: test_vivi_0622
+    
     if (coinType == CoinType.HYN_ATLAS) {
       switch (HyperionConfig.chainType) {
         case HyperionChainType.mainnet:
@@ -77,7 +77,7 @@ class Tokens {
   static List<AssetToken> defaultTokens() {
     List<AssetToken> tokens = [];
 
-    // TODO: test_vivi_0622
+    
     // hyperion
     // tokens.add(DefaultTokenDefine.HYN_Atlas);
     // tokens.addAll(defaultContractTokensByCoinType(CoinType.HYN_ATLAS));

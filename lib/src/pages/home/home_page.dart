@@ -233,7 +233,7 @@ class HomePageState extends BaseState<HomePage> {
           return LayoutBuilder(builder: (context, constraints) {
             return Stack(
               children: <Widget>[
-                // TODO: test_vivi_0622
+                
                 // if (state is DefaultScaffoldMapState) _rpShareBroadcastView(),
                 buildMainSheetPanel(context, constraints),
               ],

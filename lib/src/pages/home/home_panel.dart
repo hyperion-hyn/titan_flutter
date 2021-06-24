@@ -181,7 +181,7 @@ class HomePanelState extends State<HomePanel> {
               ),
             ),
           ),
-          // TODO: test_vivi_0622
+          
           Expanded(
             child: InkWell(
               onTap: () {
@@ -501,7 +501,7 @@ class HomePanelState extends State<HomePanel> {
                 padding: const EdgeInsets.only(left: 35.0, right: 35),
                 child: _dappSelectTab("ETH", DAPP_ETH_INDEX),
               ),
-              // TODO: test_vivi_0622
+              
               // _dappSelectTab("ATLAS", DAPP_ATLAS_INDEX),
             ],
           ),
@@ -654,7 +654,7 @@ class HomePanelState extends State<HomePanel> {
                   "数字宠物收藏品冒险游戏"),
             ],
           ],
-          // TODO: test_vivi_0622
+          
           /*if (selectDappIndex == DAPP_ATLAS_INDEX)
             getDappItemWidget(
                 null,

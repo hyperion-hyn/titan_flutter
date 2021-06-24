@@ -255,7 +255,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
           child: CustomScrollView(
             slivers: <Widget>[
               _headerWidget(activatedWalletVo),
-              // TODO: test_vivi_0622
+              
               // _chainWidget(CoinType.HYN_ATLAS),
               // _tokenListByChain(activatedWalletVo, CoinType.HYN_ATLAS),
               _chainWidget(CoinType.ETHEREUM),
@@ -264,7 +264,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
               _tokenListByChain(activatedWalletVo, CoinType.HB_HT),
               // _chainWidget(CoinType.BITCOIN),
               // _tokenListByChain(activatedWalletVo, CoinType.BITCOIN),
-              // TODO: test_vivi_0622
+              
               // _hynBurnWidget(),
             ],
           ),
@@ -908,7 +908,7 @@ class _WalletPageV2State extends BaseState<WalletPageV2> with AutomaticKeepAlive
           Expanded(
             child: CustomScrollView(
               slivers: <Widget>[
-                // TODO: test_vivi_0622
+                
                 // _chainWidget(CoinType.HYN_ATLAS),
                 // _dialogTokenListByChain(activatedWalletVo, CoinType.HYN_ATLAS, jumpType),
                 _chainWidget(CoinType.ETHEREUM),
