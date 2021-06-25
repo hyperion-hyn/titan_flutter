@@ -338,9 +338,19 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
     return InkWell(
       onTap: () {
         var webTitleStr = FluroConvertUtils.fluroCnParamsEncode("MDEX");
-        var tokenContractAddress = widget.coinVo.contractAddress;
 
-        var tokenUrl = 'https://info.mdex.com/#/token/$tokenContractAddress';
+        var rp = 'https://info.mdex.co/#/pair/0x2241e4d5cd6408e120974eda698801eaa4bdc294';
+        var hyn = 'https://info.mdex.co/#/pair/0x8e6a7d6bd250d207df3b9efafc6c715885eda94e';
+
+        var tokenUrl;
+        if (widget.coinVo.symbol == 'HYN') {
+          tokenUrl = hyn;
+        } else {
+          tokenUrl = rp;
+        }
+
+        // var tokenContractAddress = widget.coinVo.contractAddress;
+        // var tokenUrl = 'https://info.mdex.me/#/token/$tokenContractAddress';
         var initUrl = FluroConvertUtils.fluroCnParamsEncode(tokenUrl);
         Application.router.navigateTo(
             context,
@@ -383,7 +393,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                 ? DefaultTokenDefine.HUSDT_TEST.contractAddress
                 : DefaultTokenDefine.HUSDT.contractAddress;
             var swapUrl =
-                'https://ht.mdex.com/#/swap?inputCurrency=$tokenContractAddress&&outputCurrency=$usdtContractAddress';
+                'https://ht.mdex.me/#/swap?inputCurrency=$tokenContractAddress&&outputCurrency=$usdtContractAddress';
             var initUrl = FluroConvertUtils.fluroCnParamsEncode(swapUrl);
             Application.router.navigateTo(
                 context,

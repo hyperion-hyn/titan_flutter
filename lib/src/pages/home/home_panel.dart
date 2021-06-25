@@ -508,7 +508,7 @@ class HomePanelState extends State<HomePanel> {
           if (selectDappIndex == DAPP_HECO_INDEX)
             getDappItemWidget(
                 _address,
-                'https://ht.mdex.com/#/swap',
+                'https://ht.mdex.me/#/swap',
                 CoinType.HB_HT,
                 "MDEX",
                 HexColor("#140d25b9"),
