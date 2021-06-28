@@ -47,4 +47,18 @@ class NewsApi {
 
     return announcement;
   }
+
+  Future<String> getAnnouncementV3() async {
+    var announcement = await NewsHttpCore.instance
+        .getEntity("wp-json/sr/v3/news/last", EntityFactory<String>((data) {
+      print("[news_api] getAnnouncementV3, data:$data");
+
+      if (data is Map<String, dynamic>) {
+        return data['url'];
+      }
+      return null;
+    }));
+
+    return announcement;
+  }
 }

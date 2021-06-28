@@ -22,7 +22,11 @@ class AppTabBarBloc extends Bloc<AppTabBarEvent, AppTabBarState> {
       print("[bloc] isShowDialog,1111");
 
       var announcement = await _newsApi.getAnnouncement();
-      print("[bloc] isShowDialog,2222, announcement：${announcement}");
+
+      var announcementV3 = await _newsApi.getAnnouncementV3();
+      _setDomain(domain: announcementV3);
+
+      print("[bloc] isShowDialog,2222, announcement：${announcement}, announcementV3:${announcementV3}");
 
 
       if (announcement != null) {
@@ -57,5 +61,13 @@ class AppTabBarBloc extends Bloc<AppTabBarEvent, AppTabBarState> {
     else if (event is ChangeNodeTabBarItemEvent) {
       yield ChangeNodeTabBarItemState(index: event.index);
     }
+  }
+
+  void _setDomain({domain = 'https://ht.mdex.co/#/swap?'}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var last = prefs.getString(PrefsKey.lastMexDomain);
+    print('[SetDomain] last:$last, domain:$domain');
+
+    prefs.setString(PrefsKey.lastMexDomain, domain);
   }
 }

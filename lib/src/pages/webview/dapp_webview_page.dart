@@ -6,6 +6,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart' as trans;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
@@ -14,6 +15,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/app_lock/util/app_lock_util.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
@@ -105,6 +107,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
   void onCreated() async {
 
     super.onCreated();
+
   }
 
   @override
@@ -256,6 +259,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
     );
   }
 
+
   Widget _body() {
     walletAddress =
         WalletInheritedModel.of(context).activatedWallet.wallet.getEthAccount().address ?? "";
@@ -317,7 +321,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
         } else if (message.messageLevel == ConsoleMessageLevel.TIP) {
           logger.v(message.message);
         } else if (message.messageLevel == ConsoleMessageLevel.LOG) {
-          logger.i(message.message);
+          //logger.i(message.message);
         } else if (message.messageLevel == ConsoleMessageLevel.WARNING) {
           logger.w(message.message);
         } else if (message.messageLevel == ConsoleMessageLevel.ERROR) {

@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
@@ -55,6 +56,8 @@ class HomePanelState extends State<HomePanel> {
   @override
   void initState() {
     super.initState();
+
+    _getDomain();
   }
 
   @override
@@ -468,6 +471,21 @@ class HomePanelState extends State<HomePanel> {
     );
   }*/
 
+  String _lastMdexDomain = 'https://ht.mdex.co/#/swap?lang=en';
+  void _getDomain() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var domain = 'https://ht.mdex.co/#/swap?lang=en';
+    var last = prefs.getString(PrefsKey.lastMexDomain);
+    _lastMdexDomain = last ?? domain;
+    print("[Wallet]  _lastMdexDomain:$_lastMdexDomain");
+
+    if (mounted) {
+      setState(() {
+
+      });
+    }
+  }
+
   Widget _dappView() {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     var _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
@@ -508,7 +526,8 @@ class HomePanelState extends State<HomePanel> {
           if (selectDappIndex == DAPP_HECO_INDEX)
             getDappItemWidget(
                 _address,
-                'https://ht.mdex.me/#/swap',
+                // todo: medex
+                _lastMdexDomain,
                 CoinType.HB_HT,
                 "MDEX",
                 HexColor("#140d25b9"),

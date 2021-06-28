@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/env.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -75,7 +76,10 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
   }
 
   @override
-  void onCreated() {}
+  void onCreated() {
+
+    _getDomain();
+  }
 
   @override
   void didPopNext() {
@@ -96,6 +100,21 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
       widget.coinVo.symbol,
       widget.coinVo.coinType,
     );
+  }
+
+  String _lastMdexDomain = 'https://ht.mdex.co/#/swap?lang=en';
+  void _getDomain() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var domain = 'https://ht.mdex.co/#/swap?lang=en';
+    var last = prefs.getString(PrefsKey.lastMexDomain);
+    _lastMdexDomain = last ?? domain;
+    print("[Wallet]  _lastMdexDomain:$_lastMdexDomain");
+
+    if (mounted) {
+      setState(() {
+
+      });
+    }
   }
 
   @override
@@ -392,8 +411,9 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
             var usdtContractAddress = env.buildType == BuildType.DEV
                 ? DefaultTokenDefine.HUSDT_TEST.contractAddress
                 : DefaultTokenDefine.HUSDT.contractAddress;
+            // todo: medex
             var swapUrl =
-                'https://ht.mdex.me/#/swap?inputCurrency=$tokenContractAddress&&outputCurrency=$usdtContractAddress';
+                '$_lastMdexDomain&inputCurrency=$tokenContractAddress&&outputCurrency=$usdtContractAddress';
             var initUrl = FluroConvertUtils.fluroCnParamsEncode(swapUrl);
             Application.router.navigateTo(
                 context,
