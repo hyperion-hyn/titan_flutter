@@ -386,7 +386,7 @@ class _WalletDemoState extends State<WalletDemo> {
                       EthereumAddress.fromHex(createNodeWalletAddress),
                       ConvertTokenUnit.etherToWei(etherDouble: myStaking)
                     ]);
-                var ret = await wallet.estimateGasPrice(
+                var ret = await wallet.estimateGasLimit(
                   CoinType.ETHEREUM,
                   toAddress: EthereumConfig.map3EthereumContractAddress,
                   value: ConvertTokenUnit.etherToWei(etherDouble: amount),
