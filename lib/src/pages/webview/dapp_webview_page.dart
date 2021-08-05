@@ -31,7 +31,7 @@ import 'package:web3dart/credentials.dart';
 import 'package:web3dart/crypto.dart';
 
 import 'dapp_authorization_dialog_page.dart';
-import 'dapp_send_dialog_page.dart';
+import 'transfer_dialog_page.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 
 class DAppWebViewPage extends StatefulWidget {
@@ -429,10 +429,21 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
             int gasLimit = data[4] == null ? null : int.parse(data[4].toString());
             BigInt gasPrice = data[5] == null ? null : BigInt.parse(data[5].toString());
             Uint8List _data = data[6] == null ? null : hexToBytes(data[6]);
-
-            if(gasPrice == null && selectCoinType == CoinType.ETHEREUM){
-              gasPrice = await WalletUtil.ethGasPrice(selectCoinType);
-            }
+// print("!!!11 $_data $gasLimit $gasPrice $value");
+//             if(gasPrice == null && selectCoinType == CoinType.ETHEREUM){
+//               gasPrice = await WalletUtil.ethGasPrice(selectCoinType);
+//             }
+            // 30146
+            // var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+            // var ret = await wallet.estimateGasPrice(
+            //   CoinType.HB_HT,
+            //   toAddress: to,
+            //   value: value,
+            //   gasPrice: gasPrice,
+            //   gasLimit: BigInt.from(gasLimit * 10000),
+            //   data: bytesToHex(_data, include0x: true),
+            // );
+            // logger.i('estimateGasPrice $ret');
 
             showSendDialogDApp(
                 context: context,
@@ -442,8 +453,9 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
                 gasValue: gasLimit,
                 gasUnit: getCoinTypeSymbol(),
                 gasPrice: gasPrice,
+                transData: _data,
                 coinType: selectCoinType,
-                confirmAction: (String pswStr, BigInt gasPriceCallback) async {
+                confirmAction: (String pswStr, BigInt gasPriceCallback, int gasLimitCallback) async {
 
                   var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
                   var signed = await wallet.sendDappTransaction(
@@ -452,8 +464,8 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
                     toAddress: to,
                     value: value,
                     nonce: nonce,
-                    gasPrice: BigInt.parse(gasPriceCallback.toString()),
-                    gasLimit: gasLimit,
+                    gasPrice: gasPriceCallback,
+                    gasLimit: gasLimitCallback,
                     data: _data,
                   );
                   callbackToJS(controller, callbackId: callbackId, value: signed);
@@ -524,10 +536,10 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
             BigInt gasPrice = data[5] == null ? null : BigInt.parse(data[5].toString());
             Uint8List _data = data[6] == null ? null : hexToBytes(data[6]);
 
-            if(gasPrice == null && selectCoinType == CoinType.ETHEREUM){
-              gasPrice = await WalletUtil.ethGasPrice(selectCoinType);
-            }
-
+            // if(gasPrice == null && selectCoinType == CoinType.ETHEREUM){
+            //   gasPrice = await WalletUtil.ethGasPrice(selectCoinType);
+            // }
+            // print("!!!22 $_data");
             showSendDialogDApp(
                 context: context,
                 to: to,
@@ -536,8 +548,9 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
                 gasValue: gasLimit,
                 gasUnit: getCoinTypeSymbol(),
                 gasPrice: gasPrice,
+                transData: _data,
                 coinType: selectCoinType,
-                confirmAction: (String pswStr, BigInt gasPriceCallback) async {
+                confirmAction: (String pswStr, BigInt gasPriceCallback, int gasLimitCallback) async {
 
                   var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
                   var signed = await wallet.signTransaction(
@@ -546,8 +559,8 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
                     toAddress: to,
                     value: value,
                     nonce: nonce,
-                    gasPrice: BigInt.parse(gasPriceCallback.toString()),
-                    gasLimit: gasLimit,
+                    gasPrice: gasPriceCallback,
+                    gasLimit: gasLimitCallback,
                     data: _data,
                   );
                   callbackToJS(controller, callbackId: callbackId, value: signed);
@@ -643,8 +656,9 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
       int gasValue,
       String gasUnit,
       BigInt gasPrice,
+      Uint8List transData,
       int coinType = CoinType.HB_HT,
-      DAppSendEntityCallBack confirmAction}) async {
+      DAppSendConfirmCallBack confirmAction}) async {
     if (to?.isEmpty ?? true) {
       Fluttertoast.showToast(msg: trans.S.of(context).net_error_please_again);
       return false;
@@ -666,28 +680,28 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
     //   toAddress = to;
     // }
 
-    DAppSendDialogEntity entity = DAppSendDialogEntity(
-      type: 'dApp_send_normal',
+    SendDialogEntity entity = SendDialogEntity(
       value: value,
       valueUnit: valueUnit,
       title: S.of(context).contract_transfer,
       fromName: walletName,
       fromAddress: fromAddress,
       toName: shortBlockChainAddress(to),
-      toAddress: '',
+      toAddress: to,
       gas: gasValue,
       gasDesc: '',
       gasUnit: gasUnit,
       gasPrice: gasPrice,
+      transData: transData,
       isEnableEditGas: true,
       coinType: coinType,
-      cancelAction: (String cancelStr, BigInt gasPrice) async {
+      cancelAction: () async {
         return false;
       },
       confirmAction: confirmAction,
     );
 
-    return showDAppSendDialog(
+    return showTransferDialog(
       context: context,
       entity: entity,
       isDismissible: false,

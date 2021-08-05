@@ -156,7 +156,7 @@ class Wallet {
   }
 
   /// https://infura.io/docs/ethereum#operation/eth_estimateGas
-  Future<BigInt> estimateGasPrice(
+  Future<BigInt> estimateGasLimit(
     int coinType, {
     @required String toAddress,
     // Integer of the gas provided for the transaction execution.

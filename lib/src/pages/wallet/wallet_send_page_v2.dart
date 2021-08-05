@@ -22,7 +22,7 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/wallet/model/transaction_info_vo.dart';
 import 'package:titan/src/pages/wallet/model/wallet_send_dialog_util.dart';
 import 'package:titan/src/pages/webview/dapp_authorization_dialog_page.dart';
-import 'package:titan/src/pages/webview/dapp_send_dialog_page.dart';
+import 'package:titan/src/pages/webview/transfer_dialog_page.dart';
 import 'package:titan/src/pages/wallet/wallet_gas_setting_page.dart';
 import 'package:titan/src/pages/wallet/wallet_send_dialog_page.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -381,11 +381,11 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
   }
 
   void _initLastData() async {
-
     if (_isHt) {
       var gasPriceHt = await WalletUtil.ethGasPrice(widget.coinVo.coinType);
 
-      _gasPriceHt = Decimal.tryParse(gasPriceHt.toString())??Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
+      _gasPriceHt =
+          Decimal.tryParse(gasPriceHt.toString()) ?? Decimal.fromInt(1 * EthereumUnitValue.G_WEI);
 
       if (mounted) {
         setState(() {});
@@ -466,7 +466,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
                 children: <Widget>[
                   _toWidget(),
                   _amountWidget(),
-                  _gasWidget(),
+                  // _gasWidget(),
                   _highWidget(),
                 ],
               ),
@@ -539,10 +539,7 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     S.of(context).all,
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 12
-                    ),
+                    style: TextStyle(color: Colors.blue, fontSize: 12),
                   ),
                 ),
               )
@@ -1046,7 +1043,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
         gasUnit: _baseUnit,
         gasPrice: _gasPrice,
       );
-
     }
   }
 
@@ -1126,7 +1122,96 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       toAddress = to;
     }
 
-    WalletSendDialogEntity entity = WalletSendDialogEntity(
+    SendDialogEntity entity = SendDialogEntity(
+      value: ConvertTokenUnit.etherToWei(etherDecimal: Decimal.parse(value.toString())),
+      valueUnit: valueUnit,
+      title: widget.coinVo.contractAddress != null ? S.of(context).contract_transfer : "普通转账",
+      fromName: walletName,
+      fromAddress: fromAddress,
+      toName: shortBlockChainAddress(to),
+      toAddress: to,
+      gas: 0,
+      gasDesc: '',
+      gasUnit: gasUnit,
+      gasPrice: BigInt.parse(gasPrice.toString()),
+      transData: null,
+      isEnableEditGas: true,
+      coinType: _coinType,
+      contractAddress: widget.coinVo.contractAddress,
+      isMainCoin: widget.coinVo.contractAddress == null,
+      cancelAction: () async {
+        return false;
+      },
+      confirmAction: (String pswStr, BigInt gasPriceCallback, int gasLimitCallback) async {
+        // 2. Hyperion, Ethereum, Heco
+
+        var txHash;
+        if (widget.coinVo.contractAddress != null) {
+          print("!!!91");
+          // erc20 token
+          txHash = await _transferErc20(
+              widget.coinVo.coinType,
+              pswStr,
+              ConvertTokenUnit.strToBigInt(value.toString(), widget.coinVo.decimals),
+              toAddress,
+              wallet,
+              gasPriceCallback,
+              gasLimitCallback);
+          print("!!!92 $txHash");
+        } else {
+          txHash = await _transferEth(
+              widget.coinVo.coinType,
+              pswStr,
+              ConvertTokenUnit.strToBigInt(value.toString(), widget.coinVo.decimals),
+              toAddress,
+              wallet,
+              gasPriceCallback,
+              gasLimitCallback);
+        }
+
+        if (txHash == null) {
+          return false;
+        }
+
+        if (_coinType == CoinType.HB_HT) {
+          try {
+            var walletAddress = wallet?.getEthAccount()?.address;
+            Injector.of(context).repository.txInfoDao.insertOrUpdate(TransactionInfoVo(
+                  null,
+                  'heco',
+                  walletAddress,
+                  txHash,
+                  widget.coinVo.symbol,
+                  walletAddress,
+                  toAddress,
+                  '$value',
+                  DateTime.now().millisecondsSinceEpoch,
+                  0,
+                ));
+            print('----insertOrUpdate txInfo success');
+          } catch (e) {
+            print('----insertOrUpdate txInfo failed');
+            LogUtil.uploadException(e);
+          }
+        }
+
+        Navigator.of(context).pop();
+
+        var msg = S.of(context).transfer_broadcase_success_description;
+        msg = FluroConvertUtils.fluroCnParamsEncode(msg);
+        Application.router.navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
+
+        return true;
+      },
+    );
+
+    return showTransferDialog(
+      context: context,
+      entity: entity,
+      isDismissible: false,
+    );
+
+    /*WalletSendDialogEntity entity = WalletSendDialogEntity(
       type: 'tx_send_normal',
       value: value,
       valueUnit: valueUnit,
@@ -1139,21 +1224,6 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       gasDesc: '',
       gasUnit: gasUnit,
       action: (String password) async {
-        // 1.Bitcoin
-        if (_isBTC) {
-          var transResult = await wallet.sendBitcoinTransaction(
-              password,
-              wallet.getBitcoinZPub(),
-              toAddress,
-              gasPrice.toInt(),
-              ConvertTokenUnit.strToBigInt(value.toString(), 8).toInt());
-          if (transResult["code"] != 0) {
-            LogUtil.uploadException(transResult, "bitcoin upload");
-            Fluttertoast.showToast(
-                msg: "${transResult.toString()}", toastLength: Toast.LENGTH_LONG);
-            return false;
-          }
-        } else {
           // 2. Hyperion, Ethereum, Heco
 
           var txHash;
@@ -1203,17 +1273,11 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
               LogUtil.uploadException(e);
             }
           }
-        }
 
         return true;
       },
       finished: (String _) async {
-        var msg;
-        if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-          msg = S.of(context).transfer_message_broadcast_wait_six_seconds;
-        } else {
-          msg = S.of(context).transfer_broadcase_success_description;
-        }
+        var msg = S.of(context).transfer_broadcase_success_description;
         msg = FluroConvertUtils.fluroCnParamsEncode(msg);
         Application.router.navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
 
@@ -1224,40 +1288,27 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
     return showWalletSendDialog(
       context: context,
       entity: entity,
-    );
+    );*/
   }
 
-  Future<String> _transferEth(
-    int coinType,
-    String password,
-    BigInt amount,
-    String toAddress,
-    Wallet wallet,
-    Decimal gasPrice,
-  ) async {
+  Future<String> _transferEth(int coinType, String password, BigInt amount, String toAddress,
+      Wallet wallet, BigInt gasPrice, int gasLimit) async {
     print('[HYN] _transferErc20，_gasPrice $gasPrice,  _nonce:$_nonce');
 
-    final txHash = await wallet.sendTransaction(
-      coinType,
-      password: password,
-      gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
-      value: amount,
-      toAddress: toAddress,
-      nonce: _nonce,
-    );
+    final txHash = await wallet.sendTransaction(coinType,
+        password: password,
+        gasPrice: gasPrice,
+        value: amount,
+        toAddress: toAddress,
+        nonce: _nonce,
+        gasLimit: gasLimit);
 
     logger.i('ETH transaction committed，txhash $txHash');
     return txHash;
   }
 
-  Future<String> _transferErc20(
-    int coinType,
-    String password,
-    BigInt amount,
-    String toAddress,
-    Wallet wallet,
-    Decimal gasPrice,
-  ) async {
+  Future<String> _transferErc20(int coinType, String password, BigInt amount, String toAddress,
+      Wallet wallet, BigInt gasPrice, int gasLimit) async {
     var contractAddress = widget.coinVo.contractAddress;
     print('[HYN] _transferErc20，_gasPrice $gasPrice,  _nonce:$_nonce');
 
@@ -1265,11 +1316,11 @@ class _WalletSendStateV2 extends BaseState<WalletSendPageV2> with RouteAware {
       coinType,
       contractAddress: contractAddress,
       password: password,
-      gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
+      gasPrice: gasPrice,
       value: amount,
       toAddress: toAddress,
       nonce: _nonce,
-      gasLimit: _gasLimit,
+      gasLimit: gasLimit,
     );
 
     logger.i('HYN transaction committed，txhash $txHash ');

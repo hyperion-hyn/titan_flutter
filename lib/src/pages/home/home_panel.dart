@@ -100,7 +100,7 @@ class HomePanelState extends State<HomePanel> {
             child: _category(),
           ),
           SliverToBoxAdapter(
-            child: _focusArea(context),
+            child: _consensusMap(),
           ),
           SliverToBoxAdapter(
             child: _dappView(),
@@ -109,6 +109,68 @@ class HomePanelState extends State<HomePanel> {
             child: _dMap(),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _consensusMap() {
+    return InkWell(
+      onTap: () {
+        var scanStr = FluroConvertUtils.fluroCnParamsEncode("http://10.10.1.111:8080/explore");
+        var webTitleStr = FluroConvertUtils.fluroCnParamsEncode("共识地图");
+        Application.router.navigateTo(
+            context,
+            Routes.toolspage_dapp_webview_page +
+                "?initUrl=$scanStr&defaultCoin=${CoinType.HB_HT.toString()}&title=$webTitleStr");
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Stack(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 13),
+                    child: Image.asset(
+                      "res/drawable/bg_home_panel_consensus_map.png",
+                      height: 65,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              padding: const EdgeInsets.only(left: 15.0, right: 14, top: 13, bottom: 11),
+              margin: const EdgeInsets.symmetric(horizontal: 13),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(8))),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "共识地图",
+                          style: TextStyles.textC333S14bold,
+                        ),
+                        Text("参与地图建设，奖励丰厚哦！", style: TextStyles.textC333S12),
+                      ],
+                    ),
+                  ),
+                  Image.asset(
+                    "res/drawable/bg_home_panel_consensus_map_arrow.png",
+                    width: 20,
+                    height: 20,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
