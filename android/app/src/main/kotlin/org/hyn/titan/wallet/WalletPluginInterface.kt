@@ -1,7 +1,11 @@
 package org.hyn.titan.wallet
 
 import android.content.Context
+import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonSyntaxException
 import com.google.protobuf.ByteString
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -15,11 +19,16 @@ import org.hyn.titan.utils.toHex
 import org.hyn.titan.utils.toHexByteArray
 import org.hyn.titan.wallet.bitcoin.BitNumeric
 import org.hyn.titan.wallet.bitcoin.BitcoinTransEntity
-import org.hyn.titan.wallet.crypto.SecureRandomUtils
+import org.hyn.titan.wallet.typemsg.CryptoFunctions
+import org.hyn.titan.wallet.typemsg.JsonRpcRequest
+import org.hyn.titan.wallet.typemsg.MessageUtils
+import org.hyn.titan.wallet.typemsg.ProviderTypedData
+import org.web3j.utils.Numeric
 import timber.log.Timber
 import wallet.core.java.AnySigner
 import wallet.core.jni.*
 import wallet.core.jni.proto.Bitcoin
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 
@@ -46,6 +55,7 @@ class WalletPluginInterface(): FlutterPlugin {
     private var methodChannel: MethodChannel? = null
     private val sChannelName = "org.hyn.titan/wallet_call_channel"
     private var context: Context? = null
+    val MESSAGE_PREFIX = "\u0019Ethereum Signed Message:\n"
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         methodChannel = MethodChannel(
@@ -331,6 +341,61 @@ class WalletPluginInterface(): FlutterPlugin {
                 }
                 true
             }
+            /*以太Message签名*/
+            "signPersonalMessage" -> {
+                val password = call.argument<String>("password")
+                val fileName = call.argument<String>("fileName")
+                val message = call.argument<String>("message")
+                if(password != null && fileName != null && message != null) {
+                    val encodedMessage: ByteArray
+                    if (message.startsWith("0x")) {
+                        encodedMessage = Numeric.hexStringToByteArray(message)
+                    } else {
+                        encodedMessage = message.toByteArray()
+                    }
+
+                    val prefix: ByteArray = MESSAGE_PREFIX.toByteArray() + encodedMessage.size.toString().toByteArray()
+                    val prehash = ByteArray(prefix.size + encodedMessage.size)
+                    System.arraycopy(prefix, 0, prehash, 0, prefix.size)
+                    System.arraycopy(encodedMessage, 0, prehash, prefix.size, encodedMessage.size)
+
+                    var signRaw = walletSignData(password, fileName, prehash, result)
+                    result.success(signRaw)
+                }else{
+                    result.error(ErrorCode.PARAMETERS_WRONG, "parameters is null", null)
+                }
+                true
+            }
+            /*以太typeMessage签名*/
+            "signTypeMessage" -> {
+                val password = call.argument<String>("password")
+                val fileName = call.argument<String>("fileName")
+                val typeMessage = call.argument<String>("typeMessage")
+                if(password != null && fileName != null && typeMessage != null) {
+                    val cryptoFunctions = CryptoFunctions()
+                    var gsonTool: Gson = GsonBuilder().enableComplexMapKeySerialization().create()
+                    try{
+                        //旧的typedmessage签名方法，基本不用，只作为兼容
+                        var rawData: Array<ProviderTypedData> = gsonTool.fromJson(typeMessage)
+                        var writeBuffer = ByteArrayOutputStream()
+                        writeBuffer.write(cryptoFunctions.keccak256(MessageUtils.encodeParams(rawData)))
+                        writeBuffer.write(cryptoFunctions.keccak256(MessageUtils.encodeValues(rawData)))
+                        var byteMessage = writeBuffer.toByteArray()
+                        var signRaw = walletSignData(password, fileName, byteMessage, result)
+                        result.success(signRaw)
+                    } catch (exception : JsonSyntaxException) {
+                        //新的typedmessage签名方法，基本用这个
+                        var structuredData = cryptoFunctions.getStructuredData(typeMessage)
+                        var signRaw = walletSignData(password, fileName, structuredData, result)
+                        result.success(signRaw)
+                        return true
+                    }
+                    result.error(ErrorCode.UNKNOWN_ERROR, "unknown error", null)
+                }else{
+                    result.error(ErrorCode.PARAMETERS_WRONG, "parameters is null", null)
+                }
+                true
+            }
             else -> false
         }
     }
@@ -397,6 +462,29 @@ class WalletPluginInterface(): FlutterPlugin {
         } else {
             result.error(ErrorCode.UNKNOWN_ERROR, "cannot get mnemonic.", null)
         }
+    }
+
+    private fun walletSignData(password: String, fileName: String, tbsData: ByteArray, result: MethodChannel.Result) : String?{
+        val storedKey = StoredKey.load(KeyStoreUtil.getKeyStorePath(context!!, fileName))
+        if (storedKey.isMnemonic) {
+            var mnemonic = storedKey.decryptMnemonic(password.toByteArray())
+            if (mnemonic == null) {
+                mnemonic = storedKey.decryptMnemonic(password.toHexByteArray())
+            }
+            if (mnemonic.isNullOrEmpty()) {
+                result.error(ErrorCode.PASSWORD_WRONG, "wrong password.", null)
+            } else {
+                val newWallet = HDWallet(mnemonic, "")
+                val pk = newWallet.getKeyForCoin(CoinType.ETHEREUM)
+                val digest = Hash.keccak256(tbsData)
+                var signature = pk.sign(digest, Curve.SECP256K1)
+                if (signature != null && signature.size == 65 && signature[64] < 27) {
+                    signature[64] = (signature[64] + 0x1b.toByte()).toByte()
+                }
+                return Numeric.toHexString(signature)
+            }
+        }
+        return null
     }
 
     /**

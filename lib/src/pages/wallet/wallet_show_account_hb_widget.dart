@@ -413,7 +413,7 @@ class _ShowAccountHbPageState extends DataListState<ShowAccountHbPage> with Rout
                 : DefaultTokenDefine.HUSDT.contractAddress;
             // todo: medex
             var swapUrl =
-                '$_lastMdexDomain&inputCurrency=$tokenContractAddress&&outputCurrency=$usdtContractAddress';
+                '$_lastMdexDomain&inputCurrency=$usdtContractAddress&&outputCurrency=$tokenContractAddress';
             var initUrl = FluroConvertUtils.fluroCnParamsEncode(swapUrl);
             Application.router.navigateTo(
                 context,

@@ -112,6 +112,47 @@ import CoreBluetooth
                     
                     break
                     
+                case "signTypeMessage":
+                    self.printLog("[ios] --> signTypeMessage, 0, methodCall.arguments:\(methodCall.arguments)")
+
+                    guard let params = methodCall.arguments as? [String: Any] else {
+                        result(FlutterError.init(code: "-1", message: "params is not [String: String]", details: nil))
+                        return
+                    }
+                    
+                    self.printLog("[ios] --> signTypedMessage, 1, params:\(params)")
+ 
+                    
+                    guard let paramss = params["typeMessage"] as? [String: Any] else{
+                        result(FlutterError.init(code: "-1", message: "paramss can not find data", details: nil))
+                        return
+                    }
+                    
+
+                    let address = paramss["from"]
+                    self.printLog("[ios] --> signTypedMessage, 2-1, address:\(address)")
+
+
+                    guard let secondDict = paramss["data"] as? [String: Any] ,let jsonData = try? JSONSerialization.data(withJSONObject:secondDict) else {
+                        result(FlutterError.init(code: "-1", message: "paramss can not find types", details: nil))
+                        return
+                    }
+                        
+                    guard let eip712v3And4Data = try? JSONDecoder().decode(EIP712TypedData.self, from: jsonData) else {
+                        result(FlutterError.init(code: "-1", message: "json decode error", details: nil))
+                        return
+                    }
+                    self.printLog("[ios] --> signTypedMessage, 2-2, value:\(eip712v3And4Data.domainName)")
+
+
+                    let digest = eip712v3And4Data.digest
+                    self.printLog("[ios] --> signTypedMessage, 2-3, digest.length:\(digest.count)")
+
+ 
+                    self.printLog("[ios] --> signTypedMessage, 2-4, digest:\(digest)")
+                    
+                    result(FlutterStandardTypedData(bytes: digest))
+                    
                 default:
                     result(FlutterMethodNotImplemented)
                 }

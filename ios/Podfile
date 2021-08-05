@@ -35,6 +35,9 @@ target 'Runner' do
   pod 'RxSwift', '~> 5.0'
   pod 'TrustWalletCore', '~> 2.0.22'
   pod 'AlphaWalletWeb3Provider', :git=>'https://github.com/AlphaWallet/AlphaWallet-web3-provider', :commit => '23322dffdce9461e5760b268ec1cf579ac841e0f'
+  pod 'BigInt', '~> 3.1'
+  pod 'TrustKeystore', :git => 'https://github.com/alpha-wallet/trust-keystore.git', :commit => 'c0bdc4f6ffc117b103e19d17b83109d4f5a0e764'
+  
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 

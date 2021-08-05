@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:decimal/decimal.dart';
@@ -26,6 +27,7 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/widget_shot.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/crypto.dart';
@@ -33,6 +35,10 @@ import 'package:web3dart/crypto.dart';
 import 'dapp_authorization_dialog_page.dart';
 import 'transfer_dialog_page.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+
+import 'dart:async' show Future;
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart';
 
 class DAppWebViewPage extends StatefulWidget {
   final String initUrl;
@@ -86,7 +92,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
       case AppLifecycleState.inactive: // 处于这种状态的应用程序应该假设它们可能在任何时候暂停。
         break;
       case AppLifecycleState.resumed: //从后台切换前台，界面可见
-        await Future.delayed(Duration(milliseconds: 500),(){});
+        await Future.delayed(Duration(milliseconds: 500), () {});
         var clipStr = await TitanPlugin.getClipboardData();
         await Clipboard.setData(ClipboardData(text: clipStr));
         break;
@@ -105,7 +111,6 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
 
   @override
   void onCreated() async {
-
     super.onCreated();
 
   }
@@ -117,7 +122,6 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
       onWillPop: () async {
         if (webView != null) {
@@ -272,7 +276,8 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
       initialHeaders: {},
       initialOptions: InAppWebViewGroupOptions(
           android: AndroidInAppWebViewOptions(useShouldInterceptRequest: true),
-          dappOptions: DappOptions(walletAddress, rpcUrl, chainId,AppTabBarPage.initStr,AppTabBarPage.libraryStr)),
+          dappOptions: DappOptions(
+              walletAddress, rpcUrl, chainId, AppTabBarPage.initStr, AppTabBarPage.libraryStr)),
       onWebViewCreated: (InAppWebViewController controller) {
         webView = controller;
 
@@ -316,6 +321,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
         });
       },
       onConsoleMessage: (_, message) {
+        print("!!!! onConsoleMessage ${message.message}");
         if (message.messageLevel == ConsoleMessageLevel.DEBUG) {
           logger.d(message.message);
         } else if (message.messageLevel == ConsoleMessageLevel.TIP) {
@@ -328,9 +334,9 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
           logger.e(message.message);
         }
       },
-      onLoadError: (InAppWebViewController controller, String url, int code,
-          String message){
-        LogUtil.uploadExceptionStr("addr: $walletAddress url: $url message: $message","dapp error");
+      onLoadError: (InAppWebViewController controller, String url, int code, String message) {
+        LogUtil.uploadExceptionStr(
+            "addr: $walletAddress url: $url message: $message", "dapp error");
       },
     );
   }
@@ -348,7 +354,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
               child: Text(S.of(context).choose_network, style: TextStyles.textC333S14bold),
             ),
           ),
-          
+
           // networkItem("res/drawable/ic_token_hyn.png", "Atlas", CoinType.HYN_ATLAS),
           networkItem('res/drawable/ic_token_eth.png', "Ethereum", CoinType.ETHEREUM),
           networkItem("res/drawable/ic_token_ht.png", "Heco", CoinType.HB_HT),
@@ -396,7 +402,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
     );
   }
 
-  void initDappJsHandle(InAppWebViewController controller) {
+  void initDappJsHandle(InAppWebViewController controller) async {
     controller.addJavaScriptHandler(
         handlerName: "enable",
         callback: (data) async {
@@ -475,7 +481,7 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
                 });
           } catch (e, stack) {
             callbackToJS(controller, callbackId: callbackId, error: e.toString());
-            LogUtil.toastException(e,stack: stack);
+            LogUtil.toastException(e, stack: stack);
           }
         });
 
@@ -488,14 +494,85 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
 
     controller.addJavaScriptHandler(
         handlerName: "signPersonalMessage",
-        callback: (data) {
+        callback: (data) async {
+          int callbackId = data[0];
+          try {
+            String personalMsg = data[1] == null ? null : data[1];
+            bool isSign = await UiUtil.showBottomDialogView(context, dialogTitle:"签名信息", dialogSubTitle: personalMsg, actions: [
+              ClickOvalButton(
+                S.of(context).cancel,
+                    () {
+                  Navigator.of(context).pop(false);
+                },
+                width: 160,
+                height: 42,
+                fontSize: 14,
+                fontColor: Theme.of(context).primaryColor,
+                btnColor: [Colors.transparent],
+                borderColor: Theme.of(context).primaryColor,
+              ),
+              SizedBox(
+                width: 20,
+              ),
+              ClickOvalButton(
+                S.of(context).confirm,
+                    () {
+                  Navigator.of(context).pop(true);
+                },
+                btnColor: [HexColor("#E7C01A"), HexColor("#F7D33D")],
+                fontSize: 14,
+                width: 160,
+                height: 42,
+              ),
+            ]);
+            if(!isSign){
+              return;
+            }
+            var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+            var password = await UiUtil.showWalletPasswordDialogV2(
+              context,
+              WalletModelUtil.wallet,
+            );
+            if(password == null || password.isEmpty){
+              return;
+            }
+            String result =
+                await wallet.signPersonalMessage(selectCoinType, password, personalMsg);
+            // Fluttertoast.showToast(msg: "signed $result",toastLength: Toast.LENGTH_LONG);
+            callbackToJS(controller, callbackId: callbackId, value: result);
+          } catch (e, stack) {
+            callbackToJS(controller, callbackId: callbackId, error: e.toString());
+            LogUtil.toastException(e, stack: stack);
+          }
         });
 
     controller.addJavaScriptHandler(
         handlerName: "signTypedMessage",
-        callback: (data) {
+        callback: (data) async {
           int callbackId = data[0];
-          callbackToJS(controller, callbackId: callbackId, value: 'demo back');
+          try {
+            String typeMsg = data[1] == null ? null : data[1];
+            double dialogHeight = MediaQuery.of(context).size.height - 90;
+            double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+            bool isSign = await showSignMessageDialog(typeMsg, dialogHeight * 5);
+            if(!isSign){
+              return;
+            }
+            var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+            var password = await UiUtil.showWalletPasswordDialogV2(
+              context,
+              WalletModelUtil.wallet,
+            );
+            if(password == null || password.isEmpty){
+              return;
+            }
+            String result = await wallet.signTypeMessage(selectCoinType, password, typeMsg);
+            Fluttertoast.showToast(msg: "signed $result",toastLength: Toast.LENGTH_LONG);
+            // callbackToJS(controller, callbackId: callbackId, value: result);
+          } catch (e, stack) {
+            callbackToJS(controller, callbackId: callbackId, error: e.toString());
+            LogUtil.toastException(e, stack: stack);
+          }
         });
 
     controller.addJavaScriptHandler(
@@ -570,9 +647,26 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
                 });
           } catch (e, stack) {
             callbackToJS(controller, callbackId: callbackId, error: e.toString());
-            LogUtil.toastException(e,stack: stack);
+            LogUtil.toastException(e, stack: stack);
           }
         });
+
+    // 1. 获取signData
+    /*var contents = await loadSignTypedJsonData();
+    var callbackMsg = await TitanPlugin.signTypedMessage(contents);
+    print("TODO !!!!processTransaction, callbackMsg: $callbackMsg");
+    print("TODO !!!!processTransaction222, callbackMsg: ${bytesToHex(callbackMsg, include0x: true)}");
+    var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+    String result = await wallet.signMessage(selectCoinType,"11111111", Uint8List.fromList(callbackMsg));
+    print("TODO !!!!processTransaction333, callbackMsg: $result");*/
+// todo: 2. 钱包签名数据， wallet.signTransaction
+  }
+
+  Future<Map<String, dynamic>> loadSignTypedJsonData() async {
+    var jsonText = await rootBundle.loadString('res/dapp/sign_typed.json');
+    var jsonData = json.decode(jsonText);
+    //print("[DApp] loadJsonData, jsonData:${jsonData.runtimeType}");
+    return jsonData;
   }
 
   dynamic callbackToJS(InAppWebViewController controller,
@@ -642,7 +736,8 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
         WalletInheritedModel.of(context).activatedWallet.wallet.getChainId(selectCoinType) ?? "";
     var webviewOptions = InAppWebViewGroupOptions(
         android: AndroidInAppWebViewOptions(useShouldInterceptRequest: true),
-        dappOptions: DappOptions(walletAddress, rpcUrl, chainId,AppTabBarPage.initStr,AppTabBarPage.libraryStr));
+        dappOptions: DappOptions(
+            walletAddress, rpcUrl, chainId, AppTabBarPage.initStr, AppTabBarPage.libraryStr));
     if (webView != null) {
       await webView.setOptions(options: webviewOptions);
     }
@@ -706,5 +801,71 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
       entity: entity,
       isDismissible: false,
     );
+  }
+
+  Future<bool> showSignMessageDialog(String messageStr, double dialogHeight) async {
+    return await UiUtil.showBottomDialogView(context,
+        dialogHeight: dialogHeight,
+        customWidget:Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.only(
+                top: 19,
+                left: 49,
+                right: 49,
+                bottom: 3
+            ),
+            child: Text(
+              "签名信息",
+              style: TextStyle(
+                fontSize: 16,
+                color: DefaultColors.color333,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(left:10.0,right:10,top:16,bottom: 16),
+              child: Text(
+                  messageStr,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 14, color: HexColor('#666666'),
+                  )),
+            ),
+          ),
+        ),
+      ],
+    ), actions: [
+      ClickOvalButton(
+        S.of(context).cancel,
+            () {
+          Navigator.of(context).pop(false);
+        },
+        width: 160,
+        height: 42,
+        fontSize: 14,
+        fontColor: Theme.of(context).primaryColor,
+        btnColor: [Colors.transparent],
+        borderColor: Theme.of(context).primaryColor,
+      ),
+      SizedBox(
+        width: 20,
+      ),
+      ClickOvalButton(
+        S.of(context).confirm,
+            () {
+          Navigator.of(context).pop(true);
+        },
+        btnColor: [HexColor("#E7C01A"), HexColor("#F7D33D")],
+        fontSize: 14,
+        width: 160,
+        height: 42,
+      ),
+    ]);
   }
 }

@@ -3,15 +3,28 @@ import android.app.Activity
 import android.content.ClipboardManager
 import android.content.Context
 import android.net.Uri
+import android.util.Log
+import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonSyntaxException
+import com.hyn.titan.tools.AppPrintInterface
+import com.hyn.titan.tools.AppPrintTools
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import org.hyn.titan.wallet.typemsg.CryptoFunctions
+import org.hyn.titan.wallet.typemsg.JsonRpcRequest
+import org.hyn.titan.wallet.typemsg.MessageUtils
+import org.hyn.titan.wallet.typemsg.ProviderTypedData
+import java.io.ByteArrayOutputStream
 
 //import io.flutter.plugin.common.PluginRegistry
 //import com.hyn.titan.tools.AppPrintInterface
 //import com.hyn.titan.tools.AppPrintTools
 
-class AppToolsPlugin() : FlutterPlugin {
+class AppToolsPlugin : FlutterPlugin {
 
 
     /*
@@ -53,7 +66,13 @@ class AppToolsPlugin() : FlutterPlugin {
         }
     }
     */
-
+    constructor(){
+        AppPrintTools.appPrintInterface = object : AppPrintInterface {
+            override fun printLog(logMsg: String) {
+                methodChannel?.invokeMethod("printLog",logMsg)
+            }
+        }
+    }
 
     private var methodChannel: MethodChannel? = null
     private val sChannelName = "org.hyn.titan/call_channel"
@@ -115,6 +134,31 @@ class AppToolsPlugin() : FlutterPlugin {
                 result.success(true)
                 true
             }
+            "signTypedMessage" -> {
+                var dataMap = call.argument<Map<String, Any>>("data")
+                val cryptoFunctions = CryptoFunctions()
+                var gsonTool: Gson = GsonBuilder().enableComplexMapKeySerialization().create()
+                var jsonStr = gsonTool.toJson(dataMap)
+                try{
+                    //旧的typedmessage签名方法，基本不用，只作为兼容
+                    var rawData: Array<ProviderTypedData> = gsonTool.fromJson(jsonStr)
+                    var writeBuffer = ByteArrayOutputStream()
+                    writeBuffer.write(cryptoFunctions.keccak256(MessageUtils.encodeParams(rawData)))
+                    writeBuffer.write(cryptoFunctions.keccak256(MessageUtils.encodeValues(rawData)))
+                    result.success("$jsonStr")
+                } catch (exception : JsonSyntaxException) {
+                    //新的typedmessage签名方法，基本用这个
+                    var jsonStr = gsonTool.toJson(dataMap)
+                    var request: JsonRpcRequest<JsonArray> = gsonTool.fromJson(jsonStr)
+                    if(request.params != null && request.params.size() >= 2){
+                        var structuredData = cryptoFunctions.getStructuredData(request.params[1].toString())
+                        result.success(structuredData)
+                    }else{
+                        result.success(null)
+                    }
+                }
+                true
+            }
             else -> false
         }
     }
@@ -135,3 +179,5 @@ class AppToolsPlugin() : FlutterPlugin {
     }
 
 }
+
+class InvalidJsonRpcParamsException(val requestId: Long) : Exception("Invalid JSON RPC Request")

@@ -385,16 +385,18 @@ class UiUtil {
                         ),
                       ),
                     if (dialogSubTitle != null)
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 16,
-                          left: 49,
-                          right: 49,
-                        ),
-                        child: Text(
-                          dialogSubTitle,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 14, color: HexColor('#666666')),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 16,
+                            left: 49,
+                            right: 49,
+                          ),
+                          child: Text(
+                            dialogSubTitle,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 14, color: HexColor('#666666')),
+                          ),
                         ),
                       ),
                     if (actions != null)
