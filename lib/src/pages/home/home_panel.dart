@@ -116,7 +116,7 @@ class HomePanelState extends State<HomePanel> {
   Widget _consensusMap() {
     return InkWell(
       onTap: () {
-        var scanStr = FluroConvertUtils.fluroCnParamsEncode("http://10.10.1.111:8080/explore");
+        var scanStr = FluroConvertUtils.fluroCnParamsEncode("http://10.10.1.114:8080/explore");
         var webTitleStr = FluroConvertUtils.fluroCnParamsEncode("共识地图");
         Application.router.navigateTo(
             context,
