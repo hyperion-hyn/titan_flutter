@@ -116,7 +116,15 @@ class HomePanelState extends State<HomePanel> {
   Widget _consensusMap() {
     return InkWell(
       onTap: () {
-        var scanStr = FluroConvertUtils.fluroCnParamsEncode("http://10.10.1.114:8080/explore");
+        var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+        var _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+
+        if (_address?.isEmpty ?? true) {
+          _pushWalletManagerAction();
+          return;
+        }
+
+        var scanStr = FluroConvertUtils.fluroCnParamsEncode("https://challenge.hyn.space");
         var webTitleStr = FluroConvertUtils.fluroCnParamsEncode("共识地图");
         Application.router.navigateTo(
             context,
@@ -124,7 +132,7 @@ class HomePanelState extends State<HomePanel> {
                 "?initUrl=$scanStr&defaultCoin=${CoinType.HB_HT.toString()}&title=$webTitleStr");
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.only(bottom: 16),
         child: Stack(
           children: [
             Row(
@@ -132,7 +140,7 @@ class HomePanelState extends State<HomePanel> {
               children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 13),
+                    padding: const EdgeInsets.only(left:13,right:13,top:20),
                     child: Image.asset(
                       "res/drawable/bg_home_panel_consensus_map.png",
                       height: 65,
@@ -143,7 +151,7 @@ class HomePanelState extends State<HomePanel> {
               ],
             ),
             Container(
-              padding: const EdgeInsets.only(left: 15.0, right: 14, top: 13, bottom: 11),
+              padding: const EdgeInsets.only(left: 15.0, right: 14, top: 33, bottom: 11),
               margin: const EdgeInsets.symmetric(horizontal: 13),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(8))),
@@ -169,6 +177,13 @@ class HomePanelState extends State<HomePanel> {
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(left:23,),
+              child: Image.asset(
+                "res/drawable/red_pocket_exchange_hot.png",
+                height: 30,
+              ),
+            )
           ],
         ),
       ),
@@ -663,16 +678,16 @@ class HomePanelState extends State<HomePanel> {
                 ),
               ),
             ] else ...[
-              getDappItemWidget(
+              /*getDappItemWidget(
                   _address,
-                  'http://10.10.1.130:3000/',
+                  'http://uniswap.defiplot.com/#/swap',
                   CoinType.ETHEREUM,
                   "DoDo",
                   HexColor("#1ffff600"),
                   null,
                   "res/drawable/ic_home_panel_dapp_dodo.png",
                   "DoDo",
-                  "Test!!!!!"),
+                  "基于 PMM 算法的去中心化交易平台"),*/
               getDappItemWidget(
                   _address,
                   'https://balancer.exchange/#/swap',

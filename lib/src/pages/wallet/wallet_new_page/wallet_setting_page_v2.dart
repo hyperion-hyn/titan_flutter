@@ -497,7 +497,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
 
         ///log out exchange account
-        BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
+        // BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
       } else {
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
       }

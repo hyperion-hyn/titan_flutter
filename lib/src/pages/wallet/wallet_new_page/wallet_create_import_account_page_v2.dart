@@ -447,7 +447,7 @@ class _WalletCreateAccountPageV2State extends BaseState<WalletCreateAccountPageV
       BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
 
       ///Clear exchange account when switch wallet
-      BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
+      // BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
       await Future.delayed(Duration(milliseconds: 500)); //延时确保激活成功
 
       BlocProvider.of<WalletCmpBloc>(context)

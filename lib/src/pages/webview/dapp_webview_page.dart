@@ -263,6 +263,9 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
     );
   }
 
+  Future<GeolocationPermissionShowPromptResponse> getGeolocationPermission(String originStr) async {
+      return GeolocationPermissionShowPromptResponse(origin:originStr,allow:true,retain:false);
+  }
 
   Widget _body() {
     walletAddress =
@@ -274,8 +277,11 @@ class DAppWebViewPageState extends BaseState<DAppWebViewPage> with WidgetsBindin
     return InAppWebView(
       initialUrl: widget.initUrl,
       initialHeaders: {},
+      androidOnGeolocationPermissionsShowPrompt:(InAppWebViewController controller, String origin){
+        return getGeolocationPermission(origin);
+      },
       initialOptions: InAppWebViewGroupOptions(
-          android: AndroidInAppWebViewOptions(useShouldInterceptRequest: true),
+          android: AndroidInAppWebViewOptions(useShouldInterceptRequest: true,geolocationEnabled: true),
           dappOptions: DappOptions(
               walletAddress, rpcUrl, chainId, AppTabBarPage.initStr, AppTabBarPage.libraryStr)),
       onWebViewCreated: (InAppWebViewController controller) {

@@ -123,7 +123,7 @@ class FinishImportPage extends StatelessWidget {
     WalletUtil.useDigitsPwd(wallet);
 
     ///Clear exchange account when switch wallet
-    BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
+    // BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
 
     var userPayload = UserPayloadWithAddressEntity(Payload(userName: wallet.keystore.name),wallet.getAtlasAccount().address);
     AtlasApi.postUserSync(userPayload);

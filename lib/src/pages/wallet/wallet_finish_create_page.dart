@@ -122,8 +122,8 @@ class FinishCreatePage extends StatelessWidget {
       WalletUtil.useDigitsPwd(wallet);
 
       ///Clear exchange account when switch wallet
-      BlocProvider.of<ExchangeCmpBloc>(context)
-          .add(ClearExchangeAccountEvent());
+      // BlocProvider.of<ExchangeCmpBloc>(context)
+      //     .add(ClearExchangeAccountEvent());
 
       await Future.delayed(Duration(milliseconds: 300));
       // BlocProvider.of<WalletCmpBloc>(context)

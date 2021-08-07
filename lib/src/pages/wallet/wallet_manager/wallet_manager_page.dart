@@ -63,7 +63,7 @@ class WalletManagerPage extends StatefulWidget {
       // BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
 
       ///Clear exchange account when switch wallet
-      BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
+      // BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
     } else {
       if (noWalletUpdate != null) {
         noWalletUpdate();
