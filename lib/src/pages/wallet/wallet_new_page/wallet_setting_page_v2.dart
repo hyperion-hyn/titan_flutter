@@ -823,7 +823,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
       isShowCloseIcon: false,
       actions: [
         ClickOvalButton(
-          "完成",
+          S.of(context).finish,
               () {
             Navigator.pop(context);
           },
@@ -838,7 +838,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
           width: 20,
         ),
         ClickOvalButton(
-          "复制",
+          S.of(context).copy,
               () {
             Clipboard.setData(ClipboardData(text: result));
             UiUtil.toast(S.of(context).copyed);
