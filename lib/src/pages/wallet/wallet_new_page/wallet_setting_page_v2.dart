@@ -821,6 +821,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
       title: "",
       content: result,
       isShowCloseIcon: false,
+      barrierDismissible: false,
       actions: [
         ClickOvalButton(
           S.of(context).finish,
