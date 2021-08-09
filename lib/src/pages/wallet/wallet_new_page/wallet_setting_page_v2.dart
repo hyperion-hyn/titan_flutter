@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -28,6 +29,7 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/widget/screenshot_warning_dialog.dart';
 
 typedef TextChangeCallback = void Function(String text);
 
@@ -285,7 +287,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
         S.of(context).safety,
         Column(
           children: [
-            _optionItem(
+            _securityOptionItem(
                 imagePath: "res/drawable/ic_wallet_setting_show_mnemonic.png",
                 title: S.of(context).show_mnemonic_label,
                 editFunc: () {
@@ -649,6 +651,206 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
           ],
         ),
       ),
+    );
+  }
+
+  _securityOptionItem({
+    String imagePath,
+    String title,
+    String editHint = '',
+    String content,
+    bool isCanEdit = false,
+    Function editFunc,
+    TextChangeCallback editCallback,
+    TextInputType keyboardType = TextInputType.text,
+    String subContent = '',
+    String warning = '',
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top:16.0),
+          child: Image.asset(
+            imagePath,
+            width: 20,
+            height: 20,
+          ),
+        ),
+        SizedBox(
+          width: 8,
+        ),
+        Expanded(
+          child: Column(
+            children: [
+              InkWell(
+                onTap: () async {
+                  if (isCanEdit) {
+                    String text = await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => OptionEditPage(
+                          title: title,
+                          content: content,
+                          hint: editHint,
+                          keyboardType: keyboardType,
+                          maxLength: 8,
+                        )));
+                    if (text != null && text.isNotEmpty) {
+                      setState(() {
+                        editCallback(text);
+                      });
+                    }
+                    return;
+                  }
+                  if (editFunc != null) {
+                    editFunc();
+                    return;
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: HexColor("#333333"),
+                          fontSize: 14,
+                        ),
+                      ),
+                      Spacer(),
+                      if (warning.isNotEmpty)
+                        Row(
+                          children: [
+                            Image.asset(
+                              'res/drawable/ic_warning_triangle_v2.png',
+                              width: 15,
+                              height: 15,
+                            ),
+                            SizedBox(
+                              width: 6,
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                warning,
+                                style: TextStyle(color: HexColor('#E7BB00'), fontSize: 14),
+                              ),
+                            )
+                          ],
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 6),
+                        child: Icon(
+                          Icons.chevron_right,
+                          color: DefaultColors.color999,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Divider(
+                height: 0.5,
+              ),
+              InkWell(
+                onTap: () async {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ScreenshotWarningDialog(onConfirm: _showVerifyDialog);
+                      });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "显示私钥",
+                        style: TextStyle(
+                          color: HexColor("#333333"),
+                          fontSize: 14,
+                        ),
+                      ),
+                      Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 6),
+                        child: Icon(
+                          Icons.chevron_right,
+                          color: DefaultColors.color999,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (subContent.isNotEmpty)
+                Column(
+                  children: [
+                    Text(
+                      subContent,
+                      style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                    ),
+                  ],
+                ),
+              SizedBox(height: 16,)
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  _showVerifyDialog() async {
+    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+      context,
+      widget.wallet,
+    );
+
+    if (walletPassword == null) {
+      return;
+    }
+
+    var result = await WalletUtil.exportPrivateKey(
+      fileName: widget.wallet.keystore.fileName,
+      password: walletPassword,
+    );
+    UiUtil.showAlertView(
+      context,
+      title: "",
+      content: result,
+      isShowCloseIcon: false,
+      actions: [
+        ClickOvalButton(
+          "完成",
+              () {
+            Navigator.pop(context);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+          fontColor: DefaultColors.color333,
+          btnColor: [Colors.transparent],
+        ),
+        SizedBox(
+          width: 20,
+        ),
+        ClickOvalButton(
+          "复制",
+              () {
+            Clipboard.setData(ClipboardData(text: result));
+            UiUtil.toast(S.of(context).copyed);
+            Navigator.pop(context);
+          },
+          width: 115,
+          height: 36,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+      ],
+      // content: content,
     );
   }
 
