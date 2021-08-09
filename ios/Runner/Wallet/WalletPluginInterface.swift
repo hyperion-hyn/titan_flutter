@@ -410,6 +410,57 @@ class WalletPluginInterface {
             
             result(FlutterError.init(code: ErrorCode.UNKNOWN_ERROR, message: "can't find wallet", details: nil))
             return true
+
+            //以太Message签名
+        case "signPersonalMessage":
+
+            guard let params = methodCall.arguments as? [String: Any] else {
+                result(FlutterError.init(code: ErrorCode.PARAMETERS_WRONG, message: "params is not [String: Any]", details: nil))
+                return true
+            }
+            
+            guard let fileName = params["fileName"] as? NSString, let password = params["password"] as? NSString, let message = params["message"] else {
+                result(FlutterError.init(code: ErrorCode.PARAMETERS_WRONG, message: "params can not find message", details: nil))
+                return true
+            }
+            
+            for w in keyStore.wallets {
+                if(w.keyURL.lastPathComponent == fileName as String) {
+                    do {
+                       
+                        //print("[xxx] message \(message)")
+
+                        if let messageData = message as? String, let data = Data(hexString: messageData) {
+
+                        
+                            let prefix = "\u{19}Ethereum Signed Message:\n\(data.count)".data(using: .utf8)!
+                            let encodeData = prefix + data
+                            let privateKey = try w.privateKey(password: password as String, coin: CoinType.ethereum)
+                            var hash = privateKey.sign(digest: Hash.keccak256(data: encodeData), curve: .secp256k1)!
+                            hash[64] += 27
+                            
+                            //print("[xxx] prefix \(prefix)")
+                            //print("is sign hash: \(hash)")
+                            
+                            let res = "0x\(hash.hexString)"
+                            //print("is sign hash: \(res)")
+
+                            result(res)
+                    
+                        } else {
+                            result(FlutterError.init(code: ErrorCode.PASSWORD_WRONG, message: "sign error", details: "invalidSign"))
+                        }
+                        
+                    } catch {
+                        //print("export mnemonic error: \(error)")
+                        result(FlutterError.init(code: ErrorCode.PASSWORD_WRONG, message: "sign error", details: "invalidSign"))
+                    }
+                    return true
+                }
+            }
+            
+            result(FlutterError.init(code: ErrorCode.UNKNOWN_ERROR, message: "can't find wallet", details: nil))
+            return true
             
         default:
             return false
