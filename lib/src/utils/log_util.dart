@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/error/base_error.dart';
@@ -115,15 +112,6 @@ class LogUtil {
   }
 
   static uploadException(dynamic exception, [String errorPrefix = 'error']) {
-    if (env.buildType == BuildType.PROD) {
-      if (exception is Error) {
-        FlutterBugly.uploadException(
-            message: "[$errorPrefix]: ${exception.stackTrace}", detail: "[$errorPrefix]: ${exception.stackTrace}");
-      } else {
-        FlutterBugly.uploadException(
-            message: "[$errorPrefix]: ${exception?.toString()}", detail: "[$errorPrefix]: ${exception?.toString()}");
-      }
-    }
     if (exception is Error) {
       logger.e("[$errorPrefix]: ${exception.stackTrace}");
     } else {
@@ -132,9 +120,6 @@ class LogUtil {
   }
 
   static uploadExceptionStr(String exceptionStr, [String errorPrefix]) {
-    if (env.buildType == BuildType.PROD) {
-      FlutterBugly.uploadException(message: "[$errorPrefix]: $exceptionStr", detail: "[$errorPrefix]: $exceptionStr");
-    }
     logger.e("$exceptionStr  $errorPrefix");
   }
 

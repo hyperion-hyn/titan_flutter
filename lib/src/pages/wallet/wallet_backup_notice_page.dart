@@ -220,7 +220,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
       context,
       widget.wallet,
     );
-    print("walletPassword:$walletPassword");
+    // print("walletPassword:$walletPassword");
     if (walletPassword == null) {
       return;
     }
@@ -229,7 +229,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
       if ((wallet.keystore is KeyStore) && wallet.keystore.isMnemonic) {
         var mnemonic = await WalletUtil.exportMnemonic(
             fileName: wallet.keystore.fileName, password: walletPassword);
-        logger.i('your mnemonic is: $mnemonic');
+        // logger.i('your mnemonic is: $mnemonic');
 //        await UiUtil.showSetBioAuthDialog(
 //          context,
 //          '授权成功',

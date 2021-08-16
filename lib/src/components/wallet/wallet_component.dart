@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/src/components/auth/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/token_price_view_vo.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
@@ -12,7 +11,6 @@ import 'package:titan/src/components/wallet/vo/coin_view_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_view_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
-import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/bridge/entity/cross_chain_token.dart';
 import 'package:titan/src/plugins/wallet/config/tokens.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -132,13 +130,6 @@ class _WalletManagerState extends State<_WalletManager> {
           _activatedWallet = state.walletVo;
           if (_activatedWallet != null) {
             var balance = _calculateTotalBalance(_activatedWallet);
-            // for bugly log
-            if (_activatedWallet.wallet != null) {
-              var ethAddress = _activatedWallet?.wallet?.getEthAccount()?.address;
-              if (ethAddress != null) {
-                FlutterBugly.setUserId(ethAddress);
-              }
-            }
             _activatedWallet = _activatedWallet.copyWith(WalletViewVo(balance: balance));
 
             ///Refresh bio-auth config
@@ -331,13 +322,4 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
         btcGasPriceRecommend != oldWidget.btcGasPriceRecommend &&
             dependencies.contains(WalletAspect.gasPrice));
   }
-
-// static Future<bool> saveQuoteSign(LegalSign quotesSign) {
-//   var modelStr = json.encode(quotesSign.toJson());
-//   return AppCache.saveValue(PrefsKey.SETTING_QUOTE_SIGN, modelStr);
-// }
-
-//  static String formatPrice(double price) {
-//    return NumberFormat("#,###.#####").format(price);
-//  }
 }

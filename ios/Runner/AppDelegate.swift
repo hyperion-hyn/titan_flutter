@@ -40,7 +40,7 @@ import CoreBluetooth
 
         flutterMethodCallHandler()
 
-        setupUM(launchOptions: launchOptions)
+        //setupUM(launchOptions: launchOptions)
         
         if let userInfo = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] {
             msgPushAction(userInfo: userInfo as! [AnyHashable : Any])

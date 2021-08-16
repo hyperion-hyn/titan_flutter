@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/src/components/atlas/bloc/bloc.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/utils/log_util.dart';
