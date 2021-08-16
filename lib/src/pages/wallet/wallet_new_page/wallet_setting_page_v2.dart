@@ -750,7 +750,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                   ),
                 ),
               ),
-              Divider(
+              /*Divider(
                 height: 0.5,
               ),
               InkWell(
@@ -784,7 +784,7 @@ class _WalletSettingPageV2State extends State<WalletSettingPageV2> with RouteAwa
                     ],
                   ),
                 ),
-              ),
+              ),*/
               if (subContent.isNotEmpty)
                 Column(
                   children: [
