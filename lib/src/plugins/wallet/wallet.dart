@@ -199,8 +199,12 @@ class Wallet {
       }
       var response = await WalletUtil.postToEthereumNetwork(coinType,
           method: 'eth_estimateGas', params: [params]);
+      // print('888888, response:${response}');
+
       if (response['result'] != null) {
         BigInt amountUsed = hexToInt(response['result']);
+        // print('888888, 222, amountUsed:${amountUsed}');
+
 //        return amountUsed * gasPrice;
         return amountUsed;
       }

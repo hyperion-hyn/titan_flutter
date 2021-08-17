@@ -101,7 +101,11 @@ class _TransferDialogPageState extends BaseState<TransferDialogPage> {
           gasLimit: BigInt.from(widget.entity.gas),
           data: transData,
         );
-        gasLimit = (estimateGasLimit.toInt() * 1.5).toInt();
+        //print('888888, 3333, estimateGasLimit:${estimateGasLimit}');
+
+        gasLimit = (estimateGasLimit.toInt() * 3).toInt();
+        //print('888888, 4444, gasLimit:${gasLimit}');
+
       }else if(gasLimit == 0){
         gasLimit = 21000;
       }

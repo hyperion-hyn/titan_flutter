@@ -183,7 +183,7 @@ class WalletUtil {
       BigInt gasPrice = hexToInt(response['result']);
       return gasPrice;
     }
-    return BigInt.from(0);
+    return BigInt.from(3);
   }
 
   static Future<String> exportPrivateKey({
@@ -431,6 +431,8 @@ class WalletUtil {
       {String method, List params, int id = 1}) async {
     //{jsonrpc: 2.0, id: 1, result: 0x4547fdfbf3f1cfd25c0fa7267a97c7832ddda76352456b8e78898e9bd619adb7}
     var rpcApi = getRpcApiByCoinType(coinType);
+    // print("9999, rpcApi:${rpcApi}");
+
     var data = await HttpCore.instance.post(rpcApi,
         params: {"jsonrpc": "2.0", "method": method, "params": params, "id": id},
         options: RequestOptions(contentType: Headers.jsonContentType));
