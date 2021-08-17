@@ -53,11 +53,11 @@ class TitanApp : FlutterApplication() {
         })
 
         /** umeng init **/
-        iUMengPush.initUMeng(this,object :OnPushListener{
+        /*iUMengPush.initUMeng(this,object :OnPushListener{
             override fun onPushClick(title: String?, out_link: String,text: String) {
                 UmengPlugin.openWebView(title,out_link,text)
             }
-        })
+        })*/
 
     }
 }
