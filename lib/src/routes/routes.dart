@@ -93,12 +93,12 @@ class Routes {
   static String cachedEntryRouteName;
 
   static void popUntilCachedEntryRouteName<T extends Object>(BuildContext context, [T result]) {
-    print("Routes.cachedEntryRouteName:${Routes.cachedEntryRouteName}");
+    //print("Routes.cachedEntryRouteName:${Routes.cachedEntryRouteName}");
     if (Routes.cachedEntryRouteName == null) {
       //back to root
       Navigator.of(context).popUntilRouteName(Routes.root, result);
     } else {
-      print("Routes.cachedEntryRouteName:nulllllll, result:$result");
+      //print("Routes.cachedEntryRouteName:nulllllll, result:$result");
       Navigator.of(context).popUntilRouteName(Routes.cachedEntryRouteName, result);
 
       Routes.cachedEntryRouteName = null;
@@ -115,7 +115,7 @@ class Routes {
   static void configureRoutes(FluroRouter router) {
     router.notFoundHandler =
         Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-      print("ROUTE WAS NOT FOUND !!!");
+      //print("ROUTE WAS NOT FOUND !!!");
       return unknownPage();
     });
 

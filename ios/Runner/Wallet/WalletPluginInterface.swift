@@ -18,19 +18,19 @@ class WalletPluginInterface {
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let cachesDir = paths[0]
         let keyStore = NSString(string: cachesDir).appendingPathComponent("keystore")
-        print("KeyStore: \(keyStore)")
+        //print("KeyStore: \(keyStore)")
         
         //ensure the path is exist
         var isExist = FileManager.default.fileExists(atPath: keyStore)
-        print("before_isExist: \(isExist)")
+        //print("before_isExist: \(isExist)")
         
         if !isExist {
             do {
                 try FileManager.default.createDirectory(atPath: keyStore, withIntermediateDirectories: false, attributes: nil)
                 isExist = FileManager.default.fileExists(atPath: keyStore)
-                print("after_isExist: \(isExist)")
+                //print("after_isExist: \(isExist)")
             } catch let error as NSError {
-                print(error.localizedDescription);
+                //print(error.localizedDescription);
             }
         }
         
@@ -64,7 +64,7 @@ class WalletPluginInterface {
             }
             
             let path = wallet.keyURL.lastPathComponent
-            print("last path component is: \(path)")
+            //print("last path component is: \(path)")
             result(path)
             
             return true
@@ -162,7 +162,7 @@ class WalletPluginInterface {
                         try keyStore.delete(wallet: w, password: password)
                         result(true)
                     } catch {
-                        print("Delete error： \(error)")
+                        //print("Delete error： \(error)")
                         result(false)
                     }
                     return true
@@ -200,10 +200,10 @@ class WalletPluginInterface {
                         try updateKeyStor(name: name ?? w.key.name, wallet: w, password: oldPassword, newPassword: newPassword)
 //                      try keyStore.update(wallet: w, password: oldPassword, newPassword: newPassword)
                         let success = w.key.store(path: w.keyURL.path)
-                        print("is store success \(success)")
+                        //print("is store success \(success)")
                         result(w.keyURL.lastPathComponent)
                     } catch {
-                        print("export private key error: \(error)")
+                        //print("export private key error: \(error)")
                         result(FlutterError.init(code: ErrorCode.PASSWORD_WRONG, message: "password error", details: "invalidPassword"))
                     }
                     return true
@@ -232,7 +232,7 @@ class WalletPluginInterface {
 //                        let prvData = try keyStore.exportPrivateKey(wallet: w, password: password)
                         result(privateKey.data.hexString)
                     } catch {
-                        print("export private key error: \(error)")
+                        //print("export private key error: \(error)")
                         result(FlutterError.init(code: ErrorCode.PASSWORD_WRONG, message: "invalidPassword", details: "invalidPassword"))
                     }
                     return true
@@ -259,7 +259,7 @@ class WalletPluginInterface {
                         let mnemonic = try keyStore.exportMnemonic(wallet: w, password: password)
                         result(mnemonic)
                     } catch {
-                        print("export mnemonic error: \(error)")
+                        //print("export mnemonic error: \(error)")
                         result(FlutterError.init(code: ErrorCode.PASSWORD_WRONG, message: "password error", details: "invalidPassword"))
                     }
                     return true
@@ -395,7 +395,7 @@ class WalletPluginInterface {
                         let success = w.key.store(path: path)
                         //print("is store success \(success), account: \(account.address)")
                         if (success) {
-                            print("is store path: \(path)")
+                            //print("is store path: \(path)")
                             result(path)
                         } else {
                             result(FlutterError.init(code: ErrorCode.PARAMETERS_WRONG, message: "bitcoin active is fail", details: nil))
@@ -488,7 +488,7 @@ class WalletPluginInterface {
         map["isMnemonic"] = wallet.key.isMnemonic
         map["identifier"] = wallet.key.identifier
         map["accountCount"] = wallet.key.accountCount
-        print("[Wallet] walletToReturnMap, map:\(map)")
+        //print("[Wallet] walletToReturnMap, map:\(map)")
         
         return map
     }

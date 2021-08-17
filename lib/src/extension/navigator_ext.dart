@@ -25,7 +25,7 @@ extension NavigatorExt on NavigatorState {
   }
 
   void _setPopResult(route, result) {
-    print("[navigation] route.settings.arguments:${route.settings.arguments}, result:$result");
+    //print("[navigation] route.settings.arguments:${route.settings.arguments}, result:$result");
     var arguments = route.settings.arguments;
     if (arguments is Map) {
       (route.settings.arguments as Map)['result'] = result;
